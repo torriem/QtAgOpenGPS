@@ -5,6 +5,8 @@
 
 //namespace AgOpenGPS
 
+class FormGPS;
+
 class CABLine
 {
 public:
@@ -52,37 +54,26 @@ public:
     double rEastAB = 0, rNorthAB = 0;
     double ppRadiusAB = 0;
 
+    double angVel = 0;
 
 
 private:
     //pointers to mainform controls
-    //FormGPS mf;
-    //TODO: store a pointer to the Qt object providing GL functions
+    FormGPS *mf;
     //OpenGL gl;
 
 
 public:
-    CABLine(); //TODO: pass in opengl context
-    void deteteAB();
-    void setABLineByBPoint(double fixX, double fixY);
+    CABLine(FormGPS *mf);
+    void deleteAB();
+    void setABLineByPoint();
     void setABLineByHeading(); //do we need to pass in heading somewhere from the main form?
     void snapABLine();
-    void setABLineFromCurrent( /*????*/);
+    void getCurrentABLine();
 
-    void drawABLines(/*gl context*/);
+    void drawABLines();
 
     void resetABLine();
 };
-
-/* list of main form variables that this class needs:
- * fixPosX
- * fixPosY
- * pivotAxlePos
- * vehicle structure
- * fixHeading
- * pn structure
- * guidanceLineDistanceOff (write access)
- * guidanceLineSteerAngle (write access)
- */
 
 #endif // CABLINE_H

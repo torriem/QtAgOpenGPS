@@ -59,6 +59,10 @@ $GPVTG,054.7,T,034.4,M,005.5,N,010.2,K*48
     010.2,K      Ground speed, Kilometers per hour
     *48          Checksum
 */
+const double sm_a = 6378137.0;
+const double sm_b = 6356752.314;
+const double UTMScaleFactor = 0.9996;
+//private double UTMScaleFactor2 = 1.0004001600640256102440976390556;
 
 
 CNMEA::CNMEA(FormGPS *mf)
@@ -163,7 +167,8 @@ bool CNMEA::validateChecksum(QByteArray sentence) {
     }
 
     // Calculated checksum converted to a 2 digit hex string
-    QByteArray sumStr = QByteArray::number(sum, 16).mid(0,2);
+    QByteArray sumStr = QByteArray::number(sum, 16);
+    sumStr = QByteArray::number(sum, 16).mid(0,2);
 
     // Compare to checksum in sentence
     return (sumStr == sentence.mid(inx + 1, 2));
@@ -278,5 +283,100 @@ void CNMEA::parseRMC() {
 }
 
 void CNMEA::parseVTG() {
+    //$GPVTG,054.7,T,034.4,M,005.5,N,010.2,K*48
+    //is the sentence GGA
+    if (words[1].size() && words[5].size()) {
+        //kph for speed - knots read
+        speed = words[5].toDouble();
+        //we'll round it when we display it.
+        //speed = Math.Round(speed * 1.852, 1);
 
+        //True heading
+        headingTrue = words[1].toDouble();
+
+        updatedVTG = true;
+        theSent += nextNMEASentence;
+
+        mf->avgSpeed[mf->ringCounter] = speed;
+        if (mf->ringCounter++ > 8) mf->ringCounter = 0;
+    }
+}
+
+double CNMEA::distance(double northing1, double easting1, double northing2, double easting2) {
+    return sqrt( (easting1 - easting2) * (easting1 - easting2) +
+                 (northing1 - northing2) * (northing1 - northing2));
+}
+
+double CNMEA::distanceSquared(double northing1, double easting1, double northing2, double easting2) {
+    return (easting1 - easting2) * (easting1 - easting2) +
+           (northing1 - northing2) * (northing1 - northing2);
+}
+
+void CNMEA::decDeg2UTM() {
+    zone = floor( (longitude + 180.0) / 60) + 1;
+    geoUTMConverterXY(latitude * 0.01745329251994329576923690766743,
+                      longitude * 0.01745329251994329576923690766743);
+}
+
+double CNMEA::arcLengthOfMeridian(double phi) {
+    const double n = (sm_a - sm_b) / (sm_a + sm_b);
+    double alpha = ((sm_a + sm_b) / 2.0) * (1.0 + (pow(n, 2.0) / 4.0) + (pow(n, 4.0) / 64.0));
+    double beta = (-3.0 * n / 2.0) + (9.0 * pow(n, 3.0) / 16.0) + (-3.0 * pow(n, 5.0) / 32.0);
+    double gamma = (15.0 * pow(n, 2.0) / 16.0) + (-15.0 * pow(n, 4.0) / 32.0);
+    double delta = (-35.0 * pow(n, 3.0) / 48.0) + (105.0 * pow(n, 5.0) / 256.0);
+    double epsilon = (315.0 * pow(n, 4.0) / 512.0);
+    return alpha * (phi + (beta * sin(2.0 * phi))
+            + (gamma * sin(4.0 * phi))
+            + (delta * sin(6.0 * phi))
+            + (epsilon * sin(8.0 * phi)));
+
+}
+
+XY CNMEA::mapLatLonToXY(double phi, double lambda, double lambda0) {
+    XY xy;
+    //double tmp;
+    double ep2 = (pow(sm_a, 2.0) - pow(sm_b, 2.0)) / pow(sm_b, 2.0);
+    double nu2 = ep2 * pow(cos(phi), 2.0);
+    double n = pow(sm_a, 2.0) / (sm_b * sqrt(1 + nu2));
+    double t = tan(phi);
+    double t2 = t * t;
+    //tmp = (t2 * t2 * t2) - pow(t, 6.0);
+    double l = lambda - lambda0;
+    double l3Coef = 1.0 - t2 + nu2;
+    double l4Coef = 5.0 - t2 + 9 * nu2 + 4.0 * (nu2 * nu2);
+    double l5Coef = 5.0 - 18.0 * t2 + (t2 * t2) + 14.0 * nu2 - 58.0 * t2 * nu2;
+    double l6Coef = 61.0 - 58.0 * t2 + (t2 * t2) + 270.0 * nu2 - 330.0 * t2 * nu2;
+    double l7Coef = 61.0 - 479.0 * t2 + 179.0 * (t2 * t2) - (t2 * t2 * t2);
+    double l8Coef = 1385.0 - 3111.0 * t2 + 543.0 * (t2 * t2) - (t2 * t2 * t2);
+
+    /* Calculate easting (x) */
+    xy.x = n * cos(phi) * l
+        + (n / 6.0 * pow(cos(phi), 3.0) * l3Coef * pow(l, 3.0))
+        + (n / 120.0 * pow(cos(phi), 5.0) * l5Coef * pow(l, 5.0))
+        + (n / 5040.0 * pow(cos(phi), 7.0) * l7Coef * pow(l, 7.0));
+
+    /* Calculate northing (y) */
+    xy.y = arcLengthOfMeridian(phi)
+        + (t / 2.0 * n * pow(cos(phi), 2.0) * pow(l, 2.0))
+        + (t / 24.0 * n * pow(cos(phi), 4.0) * l4Coef * pow(l, 4.0))
+        + (t / 720.0 * n * pow(cos(phi), 6.0) * l6Coef * pow(l, 6.0))
+        + (t / 40320.0 * n * pow(cos(phi), 8.0) * l8Coef * pow(l, 8.0));
+
+    return xy;
+}
+
+void CNMEA::geoUTMConverterXY(double lat, double lon) {
+    XY xy = mapLatLonToXY(lat, lon, (-183.0 + (zone * 6.0)) * 0.01745329251994329576923690766743);
+
+    xy.x = xy.x * UTMScaleFactor + 500000.0;
+    xy.y = xy.y * UTMScaleFactor;
+    if (xy.y < 0.0)
+        xy.y = xy.y + 10000000.0;
+
+    //keep a copy of actual easting and northings
+    actualEasting = xy.x;
+    actualNorthing = xy.y;
+
+    easting = xy.x - utmEast;
+    northing = xy.y - utmNorth;
 }

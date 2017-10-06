@@ -10,6 +10,7 @@ public:
     double z;
     double k;
 
+    Vec4();
     Vec4(double x, double y, double z, double k);
     Vec4(const Vec4& src);
 };

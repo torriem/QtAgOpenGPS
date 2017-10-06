@@ -1,7 +1,12 @@
 #include "cvec.h"
 
-CVec::CVec(double x, double z, double h, int s, int p) :
-    x(x), z(z), h(h), strip(s), pt(p)
+CVec::CVec()
+    :x(0), z(0), h(0),strip(0),pt(0)
+{
+
+}
+CVec::CVec(double x, double z, double h, int s, int p)
+    :x(x), z(z), h(h), strip(s), pt(p)
 {
 }
 
