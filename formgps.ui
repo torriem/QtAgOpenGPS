@@ -31,7 +31,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QOpenGLWidget" name="openGLWidget"/>
+     <widget class="GLWidget" name="openGLControl"/>
     </item>
    </layout>
   </widget>
@@ -44,13 +44,40 @@
      <height>20</height>
     </rect>
    </property>
+   <property name="nativeMenuBar">
+    <bool>true</bool>
+   </property>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <addaction name="actionReset_All"/>
+    <addaction name="separator"/>
+    <addaction name="actionColors"/>
+    <addaction name="actionUnits"/>
+    <addaction name="actionGrid_On"/>
+    <addaction name="actionLightBar_On"/>
+    <addaction name="actionLog_NMEA"/>
+    <addaction name="actionPursuit_Line"/>
+    <addaction name="actionSky_On"/>
+    <addaction name="actionPolygons_On"/>
+    <addaction name="actionExtra_Guides"/>
+    <addaction name="separator"/>
+    <addaction name="actionPorts"/>
+    <addaction name="separator"/>
+    <addaction name="actionSettings"/>
+   </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionOpen"/>
+    <addaction name="actionLoad_Vehicle"/>
+    <addaction name="actionSave_Vehicle"/>
+    <addaction name="separator"/>
+    <addaction name="actionStart_field"/>
    </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuOptions"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpen">
@@ -58,8 +85,134 @@
     <string>Open</string>
    </property>
   </action>
+  <action name="actionOptions">
+   <property name="text">
+    <string>Options</string>
+   </property>
+  </action>
+  <action name="actionReset_All">
+   <property name="text">
+    <string>Reset All</string>
+   </property>
+  </action>
+  <action name="actionColors">
+   <property name="text">
+    <string>Colors</string>
+   </property>
+  </action>
+  <action name="actionUnits">
+   <property name="text">
+    <string>Units</string>
+   </property>
+  </action>
+  <action name="actionGrid_On">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Grid On</string>
+   </property>
+  </action>
+  <action name="actionLightBar_On">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Lightbar On</string>
+   </property>
+  </action>
+  <action name="actionLog_NMEA">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Log NMEA</string>
+   </property>
+  </action>
+  <action name="actionPursuit_Line">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Pursuit Line</string>
+   </property>
+  </action>
+  <action name="actionSky_On">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Sky On</string>
+   </property>
+  </action>
+  <action name="actionPolygons_On">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Polygons On</string>
+   </property>
+  </action>
+  <action name="actionExtra_Guides">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Extra Guides</string>
+   </property>
+  </action>
+  <action name="actionPorts">
+   <property name="text">
+    <string>Ports</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionLoad_Vehicle">
+   <property name="text">
+    <string>Load Vehicle</string>
+   </property>
+  </action>
+  <action name="actionSave_Vehicle">
+   <property name="text">
+    <string>Save Vehicle</string>
+   </property>
+  </action>
+  <action name="actionStart_field">
+   <property name="text">
+    <string>Start field</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>GLWidget</class>
+   <extends>QOpenGLWidget</extends>
+   <header>glwidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

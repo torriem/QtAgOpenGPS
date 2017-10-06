@@ -36,12 +36,13 @@ enum class btnStates {Off,Auto,On};
 //section button states
 enum class manBtn { Off, Auto, On };
 
+const int MAXSECTIONS = 9;
 
 class FormGPS : public QMainWindow
 {
     Q_OBJECT
 public:
-    const int MAXSECTIONS = 9;
+    QLocale locale;
     double testDouble = 0;
     bool testBool = false;
     int testInt = 0;
@@ -96,7 +97,8 @@ public:
     CCamera camera;
 
     //create world grid
-    QScopedPointer <CWorldGrid *> worldGrid;
+    //QScopedPointer <CWorldGrid> worldGrid;
+    CWorldGrid *worldGrid;
 
     //create instance of a stopwatch for timing of frames and NMEA hz determination
     //readonly Stopwatch swFrame = new Stopwatch();
@@ -111,20 +113,24 @@ public:
     int statusUpdateCounter = 1;
 
     //Parsing object of NMEA sentences
-    QScopedPointer<CNMEA *> pn;
+    //QScopedPointer<CNMEA> pn;
+    CNMEA *pn =NULL;
 
     //create an array of sections, so far only 8 section + 1 fullWidth Section
-    //CSection[] section = new CSection[MAXSECTIONS];
-    QScopedArrayPointer<CSection> section; //not sure this will work.
+    //QScopedArrayPointer<CSection> section;
+    CSection *section =NULL;
 
     //ABLine Instance
-    QScopedPointer<CABLine *> ABLine;
+    //QScopedPointer<CABLine> ABLine;
+    CABLine *ABLine =NULL;
 
     //Contour mode Instance
-    QScopedPointer<CContour *> ct;
+    //QScopedPointer<CContour> ct;
+    CContour *ct =NULL;
 
     //a brand new vehicle
-    QScopedPointer<CVehicle *> vehicle;
+    //QScopedPointer<CVehicle> vehicle;
+    CVehicle *vehicle =NULL;
 
     //module communication object
     CModuleComm mc;
@@ -236,10 +242,35 @@ public:
     //list of the list of patch data individual triangles for contour tracking
     QVector<QSharedPointer<QVector<Vec4>>> contourSaveList;
 
+    /**********************
+     * OpenGL.Designer.cs *
+     **********************/
+    //extracted Near, Far, Right, Left clipping planes of frustum
+    double frustum[24];
 
+    double fovy = 45;
+    double camDistanceFactor = -2;
+    int mouseX = 0, mouseY = 0;
+
+    //data buffer for pixels read from off screen buffer
+    //uchar grnPixels[80001];
 
     explicit FormGPS(QWidget *parent = 0);
     ~FormGPS();
+    /**********************
+     * OpenGL.Designer.cs *
+     **********************/
+
+    void openGLControl_Draw();
+    void openGLControl_Initialized();
+    //void openGLControl_Resized(); //because Qt uses Open, this stuff goes into _Draw()
+
+    void openGLControlBack_Draw();
+    void openGLControlBack_Initialized();
+    //void openGLControlBack_Resized(); //because Qt uses Open, this stuff goes into _Draw()
+
+    void drawLightBar(double Width, double Height, double offlineDistance);
+    void calcFrustum();
 
 private:
     Ui::FormGPS *ui;

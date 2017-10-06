@@ -23,6 +23,8 @@ public:
     CFlag(double latitude, double longitude,
           double easting, double northing,
           int color, int ID);
+    CFlag();
+    CFlag(const CFlag &);
 };
 
 #endif // CFLAG_H

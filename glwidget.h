@@ -1,11 +1,29 @@
 #ifndef GLWIDGET_H
 #define GLWIDGET_H
 
+#include <QOpenGLWidget>
+#include <QOpenGLFunctions_1_1>
+#include <functional>
 
-class GLWidget : public QOpenGLWidget
+
+class GLWidget : public QOpenGLWidget, public QOpenGLFunctions_1_1
 {
+    Q_OBJECT
 public:
-    GLWidget();
+    GLWidget(QWidget *parent = 0);
+    ~GLWidget();
+
+    void setPaintGLCallback(std::function<void ()> callback);
+    void setInitializeGLCallback(std::function<void ()> callback);
+
+protected:
+    void initializeGL() override;
+    void paintGL() override;
+    virtual void resizeGL(int width, int height) override;
+private:
+    //paintGL calls this (in the main form)
+    std::function<void ()> paintGL_callback;
+    std::function<void ()> initializeGL_callback;
 };
 
 #endif // GLWIDGET_H

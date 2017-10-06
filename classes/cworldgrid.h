@@ -5,6 +5,8 @@ class FormGPS;
 
 class CWorldGrid
 {
+private:
+    FormGPS *mf;
 public:
     //Z (Y)
     double northingMax;
@@ -15,9 +17,9 @@ public:
 
     const double texZoom = 20;
 
-    CWorldGrid();
-    void drawFieldSurface(FormGPS *mf);
-    void drawWorldGrid(FormGPS *mf,double _gridZoom);
+    CWorldGrid(FormGPS *mf);
+    void drawFieldSurface();
+    void drawWorldGrid(double _gridZoom);
     void createWorldGrid(double northing, double easting);
     void checkZoomWorldGrid(double northing, double easting);
 

@@ -2,7 +2,8 @@
 #include <QtOpenGL>
 #include "formgps.h"
 
-CWorldGrid::CWorldGrid()
+CWorldGrid::CWorldGrid(FormGPS *mf)
+    :mf(mf)
 {
 
 }
@@ -10,7 +11,7 @@ CWorldGrid::CWorldGrid()
 //TODO: pass in color and texture to draw functions instead of passing in the
 // entire FormGPS object
 
-void CWorldGrid::drawFieldSurface(FormGPS *mf) {
+void CWorldGrid::drawFieldSurface() {
     // Enable Texture Mapping and set color to white
     glEnable(GL_TEXTURE_2D);
     glColor3b(mf->redField, mf->grnField, mf->bluField);
@@ -30,7 +31,7 @@ void CWorldGrid::drawFieldSurface(FormGPS *mf) {
     glDisable(GL_TEXTURE_2D);
 }
 
-void CWorldGrid::drawWorldGrid(FormGPS *mf, double _gridZoom) {
+void CWorldGrid::drawWorldGrid(double _gridZoom) {
     //draw easting lines and westing lines to produce a grid
 
     glColor3b(mf->redField, mf->grnField, mf->bluField);
