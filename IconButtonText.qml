@@ -1,4 +1,5 @@
 import QtQuick 2.7
+import QtGraphicalEffects 1.0
 
 Rectangle {
     id: iconButton
@@ -13,7 +14,10 @@ Rectangle {
     property color color3: "#888888"
     property url icon: "images/AutoSteerOn.png"
     property string buttonText: "Hello"
+    property string leftText: ""
+    property string rightText: ""
     property int bordersize: 0
+    property double iconHeightScale: 0.75
 
     signal clicked(variant mouse)
 
@@ -37,8 +41,6 @@ Rectangle {
 
     Text {
         id: text1
-        x: 89
-        y: 122
         text: parent.buttonText
         anchors.bottom: parent.bottom
         anchors.bottomMargin: parent.height*0.05
@@ -49,42 +51,31 @@ Rectangle {
 
     Image {
         id: image
-        //x: 50
-        //y: 13
         width: parent.width
-        height: parent.height * 0.75
+        height: parent.height * parent.iconHeightScale
         anchors.top: parent.top
         anchors.topMargin: parent.height * 0.05
         fillMode: Image.PreserveAspectFit
         source: parent.icon
     }
 
+       Colorize {
+        id: disableFilter
+        anchors.fill:image
+        source: image
+        hue: 0.0
+        saturation: 0.0
+        lightness: 0.2
+        visible: !parent.enabled
+    }
+
     MouseArea {
         id: mouseArea
         hoverEnabled: true
         anchors.fill: parent
-        /*
-        onEntered: {
-            iconButton.border.width = 3;
-        }
-        onExited: {
-            iconButton.border.width = 2;
-        }
-        onPressed: {
-            iconButton.color1="#888888";
-            iconButton.color2="#888888";
-            iconButton.color3="#ffffff";
-        }
-
-        onReleased: {
-            iconButton.color1="#ffffff";
-            iconButton.color2="#ffffff";
-            iconButton.color3="#888888";
-        }
-
         onClicked: {
             parent.clicked(mouse)
-        }*/
+        }
     }
     states: [
         State {

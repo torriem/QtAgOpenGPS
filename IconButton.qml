@@ -1,4 +1,5 @@
 import QtQuick 2.7
+import QtGraphicalEffects 1.0
 
 Rectangle {
     id: iconButton
@@ -53,7 +54,22 @@ Rectangle {
         id: mouseArea
         hoverEnabled: true
         anchors.fill: parent
+
+        onClicked: {
+            parent.clicked(mouse)
+        }
     }
+
+    Colorize {
+        id: disableFilter
+        anchors.fill:image
+        source: image
+        hue: 0.0
+        saturation: 0.0
+        lightness: 0.2
+        visible: !parent.enabled
+    }
+
     states: [
         State {
             when: mouseArea.pressed

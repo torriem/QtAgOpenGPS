@@ -26,8 +26,30 @@ Item {
 
         IconButtonText{
             id: btnMenuDrawer
-            buttonText: "Menu"
+            buttonText: qsTr("Menu")
             icon: "images/ArrowRight.png"
+
+            //pseudo state
+            property bool menuin: false
+
+            function toggle_menu() {
+                if (menuin == false) {
+                    menuin = true
+                    icon="images/ArrowLeft.png"
+                } else {
+                    menuin = false
+                    icon="images/ArrowRight.png"
+                }
+            }
+
+           onClicked: {
+               toggle_menu();
+               if (menuin) {
+                   iconPalette.visible = true
+               } else {
+                   iconPalette.visible = false
+               }
+           }
         }
 
         IconButton{
@@ -38,12 +60,14 @@ Item {
         IconButtonText {
             id: btnPerimeter
             buttonText: "000.00"
+            iconHeightScale: 1.0
             icon: "images/PeriArea.png"
         }
 
         IconButtonText {
             id: btnAutoSteer
             buttonText: "                X"
+            enabled: false
         }
 
         IconButton {
@@ -64,6 +88,22 @@ Item {
             id: btnABLine
             buttonText: "X"
             icon: "images/ABLineOff.png"
+        }
+
+        IconButton {
+            id: btnContour
+            icon: "images/ContourOff.png"
+        }
+
+        IconButton {
+            id: btnManualOffOn
+            icon: "images/ManualOff.png"
+        }
+
+        IconButtonText {
+            id: btnSectionOffAutoOn
+            icon: "images/SectionMasterOff.png"
+            iconHeightScale: 1.0
         }
 
     }
@@ -141,76 +181,40 @@ Item {
         }
     }
 
-    Rectangle {
-        id: rectangle
-        width: childrenRect.width+10
-        height: childrenRect.height+10
-        color: "#bf163814"
-        visible: true
-        border.color: "#c3ecc0"
+    Column {
+        id: zoomButtons
+        spacing: 6
+        anchors.right: rightColumn.left
+        anchors.rightMargin: 20
+        anchors.top: parent.top
+        anchors.topMargin: 20
+
+        IconButton {
+            id: btnZoomOut
+            width: 70
+            height: 70
+            radius: 10
+            icon: "images/ZoomIn48.png"
+        }
+
+        IconButton {
+            id: btnZoomIn
+            width: 70
+            height: 70
+            radius: 10
+            icon: "images/ZoomOut48.png"
+        }
+    }
+
+
+    IconPalette {
+        id: iconPalette
         anchors.top: parent.top
         anchors.topMargin: 20
         anchors.left: leftColumn.right
         anchors.leftMargin: 15
+        visible: false
 
-        Grid {
-            id: grid
-            width: childrenRect.width
-            height: childrenRect.height
-            anchors.left: parent.left
-            anchors.leftMargin: 5
-            anchors.top: parent.top
-            anchors.topMargin: 5
-            spacing: 6
-            flow: Grid.TopToBottom
-            rows: 4
-            columns: 3
-
-            IconButton {
-                id: iconButton
-            }
-
-            IconButtonText {
-                id: iconButtonText
-            }
-
-            IconButtonText {
-                id: iconButtonText1
-            }
-
-            IconButtonText {
-                id: iconButtonText2
-            }
-
-            IconButton {
-                id: btnJob
-                icon: "images/JobActive.png"
-            }
-
-            IconButtonText {
-                id: iconButtonText3
-            }
-
-            IconButton {
-                id: iconButton2
-            }
-
-            IconButtonText {
-                id: iconButtonText4
-            }
-
-            IconButtonText {
-                id: btnUnits
-                buttonText: qsTr("Units")
-                icon: "images/AcHa.png"
-            }
-
-            IconButtonText {
-                id: btnFileExploer
-                icon: "images/FileExplorerWindows.png"
-                buttonText: qsTr("Explorer")
-            }
-
-        }
     }
+
 }
