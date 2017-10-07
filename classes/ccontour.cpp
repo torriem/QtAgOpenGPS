@@ -37,14 +37,14 @@ void CContour::startContourLine() {
     pivotAxlePosCT.northing -= (cos(mf->fixHeading) * 5.0);
 
     Vec4 point = Vec4(pivotAxlePosCT.easting, mf->fixHeading,
-                      pivotAxlePosCT.northing, (*mf->pn)->altitude);
+                      pivotAxlePosCT.northing, mf->pn->altitude);
     ptList->append(point);
 }
 
 //Add current position to stripList
 void CContour::addPoint() {
     Vec4 point = Vec4(mf->pivotAxlePos.easting, mf->fixHeading,
-                      mf->pivotAxlePos.northing, (*mf->pn)->altitude);
+                      mf->pivotAxlePos.northing, mf->pn->altitude);
     ptList->append(point);
 }
 
@@ -61,7 +61,7 @@ void CContour::stopContourLine()
         pivotAxlePosCT.northing += (cos(mf->fixHeading) * 5.0);
 
         Vec4 point = Vec4(pivotAxlePosCT.easting, mf->fixHeading,
-                          pivotAxlePosCT.northing, (*mf->pn)->altitude);
+                          pivotAxlePosCT.northing, mf->pn->altitude);
         ptList->append(point);
 
         //add the point list to the save list for appending to contour file
@@ -86,11 +86,11 @@ void CContour::buildContourGuidanceLine(double eastFix, double northFix)
     //double startX = eastFix + sin(mf->fixHeading)* 0;
     //double startY = northFix + cos(mf->fixHeading) * 0;
 
-    boxA.easting = eastFix - (sin(mf->fixHeading + PIBy2) *  2.0 * (*mf->vehicle)->toolWidth);
-    boxA.northing = northFix - (cos(mf->fixHeading + PIBy2) * 2.0 * (*mf->vehicle)->toolWidth);
+    boxA.easting = eastFix - (sin(mf->fixHeading + PIBy2) *  2.0 * mf->vehicle->toolWidth);
+    boxA.northing = northFix - (cos(mf->fixHeading + PIBy2) * 2.0 * mf->vehicle->toolWidth);
 
-    boxB.easting = eastFix + (sin(mf->fixHeading + PIBy2) *  2.0 * (*mf->vehicle)->toolWidth);
-    boxB.northing = northFix + (cos(mf->fixHeading + PIBy2) * 2.0 * (*mf->vehicle)->toolWidth);
+    boxB.easting = eastFix + (sin(mf->fixHeading + PIBy2) *  2.0 * mf->vehicle->toolWidth);
+    boxB.northing = northFix + (cos(mf->fixHeading + PIBy2) * 2.0 * mf->vehicle->toolWidth);
 
     boxC.easting = boxB.easting + (sin(mf->fixHeading) * 13.0);
     boxC.northing = boxB.northing + (cos(mf->fixHeading) * 13.0);
@@ -198,7 +198,7 @@ void CContour::buildContourGuidanceLine(double eastFix, double northFix)
     else piSide = -PIBy2;
 
     //offset calcs
-    double toolOffset = (*mf->vehicle)->toolOffset;
+    double toolOffset = mf->vehicle->toolOffset;
     if (isSameWay) toolOffset = 0.0;
     else
     {
@@ -207,7 +207,7 @@ void CContour::buildContourGuidanceLine(double eastFix, double northFix)
     }
 
     //move the Guidance Line over based on the overlap, width, and offset amount set in vehicle
-    double widthMinusOverlap = (*mf->vehicle)->toolWidth - (*mf->vehicle)->toolOverlap + toolOffset;
+    double widthMinusOverlap = mf->vehicle->toolWidth - mf->vehicle->toolOverlap + toolOffset;
 
     //absolute the distance
     distanceFromRefLine = fabs(distanceFromRefLine);
@@ -256,8 +256,8 @@ void CContour::distanceFromContourLine()
         //find the closest 2 points to current fix
         for (int t = 0; t < ptCount; t++)
         {
-            double dist = (((*mf->pn)->easting - ctList[t].x) * ((*mf->pn)->easting - ctList[t].x))
-                            + (((*mf->pn)->northing - ctList[t].z) * ((*mf->pn)->northing - ctList[t].z));
+            double dist = ((mf->pn->easting - ctList[t].x) * (mf->pn->easting - ctList[t].x))
+                            + ((mf->pn->northing - ctList[t].z) * (mf->pn->northing - ctList[t].z));
             if (dist < minDistA)
             {
                 minDistB = minDistA;
@@ -313,7 +313,7 @@ void CContour::distanceFromContourLine()
         double distSoFar;
 
         //how far should goal point be away  - speed * seconds * kmph -> m/s + min value
-        double goalPointDistance = (*mf->pn)->speed * (*mf->vehicle)->goalPointLookAhead * 0.27777777;
+        double goalPointDistance = mf->pn->speed * mf->vehicle->goalPointLookAhead * 0.27777777;
 
         //minimum of 4.0 meters look ahead
         if (goalPointDistance < 3.0) goalPointDistance = 3.0;
@@ -325,7 +325,7 @@ void CContour::distanceFromContourLine()
         {
             //counting down
             isABSameAsFixHeading = false;
-            distSoFar = (*mf->pn)->distance(ctList[A].z, ctList[A].x, rNorthCT, rEastCT);
+            distSoFar = mf->pn->distance(ctList[A].z, ctList[A].x, rNorthCT, rEastCT);
             //Is this segment long enough to contain the full lookahead distance?
             if (distSoFar > goalPointDistance)
             {
@@ -341,7 +341,7 @@ void CContour::distanceFromContourLine()
                 while (A > 0)
                 {
                     B--; A--;
-                    tempDist = (*mf->pn)->distance(ctList[B].z, ctList[B].x, ctList[A].z, ctList[A].x);
+                    tempDist = mf->pn->distance(ctList[B].z, ctList[B].x, ctList[A].z, ctList[A].x);
 
                     //will we go too far?
                     if ((tempDist + distSoFar) > goalPointDistance)
@@ -363,7 +363,7 @@ void CContour::distanceFromContourLine()
         {
             //counting up
             isABSameAsFixHeading = true;
-            distSoFar = (*mf->pn)->distance(ctList[B].z, ctList[B].x, rNorthCT, rEastCT);
+            distSoFar = mf->pn->distance(ctList[B].z, ctList[B].x, rNorthCT, rEastCT);
 
             //Is this segment long enough to contain the full lookahead distance?
             if (distSoFar > goalPointDistance)
@@ -381,7 +381,7 @@ void CContour::distanceFromContourLine()
                 while (B < ptCount - 1)
                 {
                     B++; A++;
-                    tempDist = (*mf->pn)->distance(ctList[B].z, ctList[B].x, ctList[A].z, ctList[A].x);
+                    tempDist = mf->pn->distance(ctList[B].z, ctList[B].x, ctList[A].z, ctList[A].x);
 
                     //will we go too far?
                     if ((tempDist + distSoFar) > goalPointDistance)
@@ -405,17 +405,17 @@ void CContour::distanceFromContourLine()
         }
 
         //calc "D" the distance from pivot axle to lookahead point
-        double goalPointDistanceSquared = (*mf->pn)->distanceSquared(goalPointCT.northing, goalPointCT.easting, pivotAxlePosCT.northing, pivotAxlePosCT.easting);
+        double goalPointDistanceSquared = mf->pn->distanceSquared(goalPointCT.northing, goalPointCT.easting, pivotAxlePosCT.northing, pivotAxlePosCT.easting);
 
         //calculate the the delta x in local coordinates and steering angle degrees based on wheelbase
         double localHeading = twoPI - mf->fixHeading;
         ppRadiusCT = goalPointDistanceSquared / (2 * (((goalPointCT.easting - pivotAxlePosCT.easting) * cos(localHeading)) + ((goalPointCT.northing - pivotAxlePosCT.northing) * sin(localHeading))));
 
         steerAngleCT = toDegrees(atan(2 * (((goalPointCT.easting - pivotAxlePosCT.easting) * cos(localHeading))
-            + ((goalPointCT.northing - pivotAxlePosCT.northing) * sin(localHeading))) * (*mf->vehicle)->wheelbase / goalPointDistanceSquared));
+            + ((goalPointCT.northing - pivotAxlePosCT.northing) * sin(localHeading))) * mf->vehicle->wheelbase / goalPointDistanceSquared));
 
-        if (steerAngleCT < -(*mf->vehicle)->maxSteerAngle) steerAngleCT = -(*mf->vehicle)->maxSteerAngle;
-        if (steerAngleCT > (*mf->vehicle)->maxSteerAngle) steerAngleCT = (*mf->vehicle)->maxSteerAngle;
+        if (steerAngleCT < -mf->vehicle->maxSteerAngle) steerAngleCT = -mf->vehicle->maxSteerAngle;
+        if (steerAngleCT > mf->vehicle->maxSteerAngle) steerAngleCT = mf->vehicle->maxSteerAngle;
 
         if (ppRadiusCT < -500) ppRadiusCT = -500;
         if (ppRadiusCT > 500) ppRadiusCT = 500;
@@ -424,14 +424,14 @@ void CContour::distanceFromContourLine()
         radiusPointCT.northing = pivotAxlePosCT.northing + (ppRadiusCT * sin(localHeading));
 
         //angular velocity in rads/sec  = 2PI * m/sec * radians/meters
-        angVel = twoPI * 0.277777 * (*mf->pn)->speed * (tan(toRadians(steerAngleCT))) / (*mf->vehicle)->wheelbase;
+        angVel = twoPI * 0.277777 * mf->pn->speed * (tan(toRadians(steerAngleCT))) / mf->vehicle->wheelbase;
 
         //clamp the steering angle to not exceed safe angular velocity
-        if (fabs(angVel) > (*mf->vehicle)->maxAngularVelocity)
+        if (fabs(angVel) > mf->vehicle->maxAngularVelocity)
         {
             steerAngleCT = toDegrees(steerAngleCT > 0 ?
-                    (atan(((*mf->vehicle)->wheelbase * (*mf->vehicle)->maxAngularVelocity) / (twoPI * (*mf->pn)->speed * 0.277777)))
-                : (atan(((*mf->vehicle)->wheelbase * -(*mf->vehicle)->maxAngularVelocity) / (twoPI * (*mf->pn)->speed * 0.277777))));
+                    (atan((mf->vehicle->wheelbase * mf->vehicle->maxAngularVelocity) / (twoPI * mf->pn->speed * 0.277777)))
+                : (atan((mf->vehicle->wheelbase * -mf->vehicle->maxAngularVelocity) / (twoPI * mf->pn->speed * 0.277777))));
         }
         //Convert to centimeters
         distanceFromCurrentLine = distanceFromCurrentLine * 1000.0;

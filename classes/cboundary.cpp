@@ -142,9 +142,9 @@ bool CBoundary::isPointInPolygon()
     for (int i = 0; i < ptList.size(); j = i++)
     {
         //TODO: reformat this expression and make sure it's right
-        result ^= (ptList[i].northing > testPoint.northing) ^ (ptList[j].northing > testPoint.northing &&
-            testPoint.easting < (ptList[j].easting - ptList[i].easting) *
-            (testPoint.northing - ptList[i].northing) / (ptList[j].northing - ptList[i].northing) + ptList[i].easting;
+        result ^= ((ptList[i].northing > testPoint.northing) ^ (ptList[j].northing > testPoint.northing)) &&
+            testPoint.easting < ((ptList[j].easting - ptList[i].easting) *
+            (testPoint.northing - ptList[i].northing) / (ptList[j].northing - ptList[i].northing) + ptList[i].easting);
     }
     return result;
 }

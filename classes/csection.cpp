@@ -1,13 +1,24 @@
 #include "csection.h"
+#include "formgps.h"
 #include <math.h>
 
 CSection::CSection()
 {
     triangleList = QSharedPointer<TriangleList>( new TriangleList);
-
 }
 
-void CSection::turnSectionOn(FormGPS *mf) {
+CSection::CSection(FormGPS *mf)
+    :mf(mf)
+{
+    triangleList = QSharedPointer<TriangleList>( new TriangleList);
+}
+
+void CSection::set_mainform(FormGPS *_mf)
+{
+    mf=_mf;
+}
+
+void CSection::turnSectionOn() {
     numTriangles = 0;
 
     //do not tally square meters on inital point, that would be silly
@@ -33,8 +44,8 @@ void CSection::turnSectionOn(FormGPS *mf) {
     }
 }
 
-void CSection::turnSectionOff(FormGPS *mf) {
-    addPathPoint(mf, mf->toolPos.northing, mf->toolPos.easting, mf->cosSectionHeading, mf->sinSectionHeading);
+void CSection::turnSectionOff() {
+    addPathPoint(mf->toolPos.northing, mf->toolPos.easting, mf->cosSectionHeading, mf->sinSectionHeading);
 
     isSectionOn = false;
     numTriangles = 0;
@@ -47,7 +58,7 @@ void CSection::turnSectionOff(FormGPS *mf) {
 //every time a new fix, a new patch point from last point to this point
 //only need prev point on the first points of triangle strip that makes a box (2 triangles)
 
-void CSection::addPathPoint(FormGPS *mf, double northing, double easting, double cosHeading, double sinHeading)
+void CSection::addPathPoint(double northing, double easting, double cosHeading, double sinHeading)
 {
     //add two triangles for next step.
     //left side and add the point to List

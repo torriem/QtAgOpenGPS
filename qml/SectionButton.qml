@@ -44,12 +44,17 @@ Rectangle {
 
     //property color buttonColor: "white"
     //property string buttonText: "Ok"
+    signal clicked
 
     color: "red"
+
 
     MouseArea {
         id: mouseArea
         anchors.fill: parent
+        onClicked: {
+           parent.clicked(mouse)
+        }
     }
 
     Text {

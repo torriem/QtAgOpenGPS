@@ -9,9 +9,8 @@ CFlag::CFlag(double latitude, double longitude,
 {
 }
 
-CFlag::CFlag(){
-    :latitude(0), longitude(0),
-    easting(0), northing(0),
+CFlag::CFlag()
+{
 }
 
 CFlag::CFlag(const CFlag& src) {

@@ -4,12 +4,16 @@
 #include <QVector>
 #include <QSharedPointer>
 #include "vec2.h"
-#include "formgps.h"
+#include "btnenum.h"
 
 typedef QVector<Vec2> TriangleList;
 
+class FormGPS;
+
 class CSection
 {
+private:
+    FormGPS *mf;
 public:
     //list of patch data individual triangles
     QSharedPointer<TriangleList> triangleList;
@@ -61,13 +65,16 @@ public:
     int numTriangles = 0;
 
     //used to determine state of Manual section button - Off Auto On
-    manBtn manBtnState = manBtn::Off;
+    manBtn manBtnState=manBtn::Off; //default to Off (see enum in formgps.h)
 
     CSection();
+    CSection(FormGPS *mf);
 
-    void turnSectionOn(FormGPS *mf);
-    void turnSectionOff(FormGPS *mf);
-    void addPathPoint(FormGPS *mf, double northing, double easting,
+    void set_mainform(FormGPS *mf);
+
+    void turnSectionOn();
+    void turnSectionOff();
+    void addPathPoint(double northing, double easting,
                       double cosHeading, double sinHeading);
 
 };

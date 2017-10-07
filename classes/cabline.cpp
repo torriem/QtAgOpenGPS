@@ -92,7 +92,7 @@ void CABLine::getCurrentABLine() {
     pivotAxlePosAB = mf->pivotAxlePos;
 
     //move the ABLine over based on the overlap amount set in vehicle
-    double widthMinusOverlap = (*mf->vehicle)->toolWidth - (*mf->vehicle)->toolOverlap;
+    double widthMinusOverlap = mf->vehicle->toolWidth - mf->vehicle->toolOverlap;
 
      //x2-x1
     double dx = refABLineP2.easting - refABLineP1.easting;
@@ -120,7 +120,7 @@ void CABLine::getCurrentABLine() {
     passNumber = int((howManyPathsAway < 0) ? floor(howManyPathsAway) : ceil(howManyPathsAway));
 
     //calculate the new point that is number of implement widths over
-    double toolOffset = (*mf->vehicle)->toolOffset;
+    double toolOffset = mf->vehicle->toolOffset;
     Vec2 point1;
 
     //depending which way you are going, the offset can be either side
@@ -179,7 +179,7 @@ void CABLine::getCurrentABLine() {
 
     //how far should goal point be away  - speed * seconds * kmph -> m/s + min value
 
-    double goalPointDistance = ((*mf->pn)->speed * (*mf->vehicle)->goalPointLookAhead * 0.2777777777);
+    double goalPointDistance = (mf->pn->speed * mf->vehicle->goalPointLookAhead * 0.2777777777);
     if (goalPointDistance < 7.0) goalPointDistance = 7.0;
 
     if (abFixHeadingDelta >= PIBy2)
@@ -196,16 +196,16 @@ void CABLine::getCurrentABLine() {
     }
 
     //calc "D" the distance from pivot axle to lookahead point
-    double goalPointDistanceDSquared = (*mf->pn)->distanceSquared(goalPointAB.northing, goalPointAB.easting, pivotAxlePosAB.northing, pivotAxlePosAB.easting);
+    double goalPointDistanceDSquared = mf->pn->distanceSquared(goalPointAB.northing, goalPointAB.easting, pivotAxlePosAB.northing, pivotAxlePosAB.easting);
 
     //calculate the the new x in local coordinates and steering angle degrees based on wheelbase
     double localHeading = twoPI - mf->fixHeading;
     ppRadiusAB = goalPointDistanceDSquared / (2 * (((goalPointAB.easting - pivotAxlePosAB.easting) * cos(localHeading)) + ((goalPointAB.northing - pivotAxlePosAB.northing) * sin(localHeading))));
 
     steerAngleAB = toDegrees(atan( 2 * (((goalPointAB.easting - pivotAxlePosAB.easting) * cos(localHeading)) +
-        ((goalPointAB.northing - pivotAxlePosAB.northing) * sin(localHeading))) * (*mf->vehicle)->wheelbase / goalPointDistanceDSquared)) ;
-    if (steerAngleAB < -(*mf->vehicle)->maxSteerAngle) steerAngleAB = -(*mf->vehicle)->maxSteerAngle;
-    if (steerAngleAB > (*mf->vehicle)->maxSteerAngle) steerAngleAB = (*mf->vehicle)->maxSteerAngle;
+        ((goalPointAB.northing - pivotAxlePosAB.northing) * sin(localHeading))) * mf->vehicle->wheelbase / goalPointDistanceDSquared)) ;
+    if (steerAngleAB < -mf->vehicle->maxSteerAngle) steerAngleAB = -mf->vehicle->maxSteerAngle;
+    if (steerAngleAB > mf->vehicle->maxSteerAngle) steerAngleAB = mf->vehicle->maxSteerAngle;
 
     //limit circle size for display purpose
     if (ppRadiusAB < -500) ppRadiusAB = -500;
@@ -220,13 +220,13 @@ void CABLine::getCurrentABLine() {
     //distanceFromCurrentLine = Math.Round(distanceFromCurrentLine * 1000.0, MidpointRounding.AwayFromZero);
 
     //angular velocity in rads/sec  = 2PI * m/sec * radians/meters
-    angVel = twoPI * 0.277777 * (*mf->pn)->speed * (tan(toRadians(steerAngleAB)))/(*mf->vehicle)->wheelbase;
+    angVel = twoPI * 0.277777 * mf->pn->speed * (tan(toRadians(steerAngleAB)))/mf->vehicle->wheelbase;
 
     //clamp the steering angle to not exceed safe angular velocity
-    if (fabs(angVel) > (*mf->vehicle)->maxAngularVelocity)
+    if (fabs(angVel) > mf->vehicle->maxAngularVelocity)
     {
-        steerAngleAB = toDegrees(steerAngleAB > 0 ? (atan(((*mf->vehicle)->wheelbase * (*mf->vehicle)->maxAngularVelocity) / (twoPI * (*mf->pn)->speed * 0.277777)))
-            : (atan(((*mf->vehicle)->wheelbase * -(*mf->vehicle)->maxAngularVelocity) / (twoPI * (*mf->pn)->speed * 0.277777))));
+        steerAngleAB = toDegrees(steerAngleAB > 0 ? (atan((mf->vehicle->wheelbase * mf->vehicle->maxAngularVelocity) / (twoPI * mf->pn->speed * 0.277777)))
+            : (atan((mf->vehicle->wheelbase * -mf->vehicle->maxAngularVelocity) / (twoPI * mf->pn->speed * 0.277777))));
     }
 
     //distance is negative if on left, positive if on right

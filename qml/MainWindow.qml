@@ -1,20 +1,12 @@
 import QtQuick 2.8
+import AgOpenGPS 1.0
 
-Item {
+OpenGLControl {
     id: item1
-    width:800
-    height:600
+    objectName: "openGLControl"
+    //width:800
+    //height:600
     anchors.fill: parent
-
-    Rectangle {
-        id: tempBG
-        anchors.fill:parent
-        color: "black"
-        anchors.rightMargin: 0
-        anchors.bottomMargin: 0
-        anchors.leftMargin: 0
-        anchors.topMargin: 0
-    }
 
     Column {
         id: leftColumn
@@ -26,8 +18,9 @@ Item {
 
         IconButtonText{
             id: btnMenuDrawer
+            objectName: "btnMenuDrawer"
             buttonText: qsTr("Menu")
-            icon: "images/ArrowRight.png"
+            icon: "/images/ArrowRight.png"
 
             //pseudo state
             property bool menuin: false
@@ -35,10 +28,10 @@ Item {
             function toggle_menu() {
                 if (menuin == false) {
                     menuin = true
-                    icon="images/ArrowLeft.png"
+                    icon="/images/ArrowLeft.png"
                 } else {
                     menuin = false
-                    icon="images/ArrowRight.png"
+                    icon="/images/ArrowRight.png"
                 }
             }
 
@@ -54,25 +47,29 @@ Item {
 
         IconButton{
             id: btnMinMaxZoom
-            icon: "images/Display.png"
+            objectName: "btnMinMaxZoom"
+            icon: "/images/Display.png"
         }
 
         IconButtonText {
             id: btnPerimeter
+            objectName: "btnPerimeter"
             buttonText: "000.00"
             iconHeightScale: 1.0
-            icon: "images/PeriArea.png"
+            icon: "/images/PeriArea.png"
         }
 
         IconButtonText {
             id: btnAutoSteer
-            buttonText: "                X"
+            objectName: "btnAutoSteer"
+            buttonText: "X"
             enabled: false
         }
 
         IconButton {
             id: btnFlag
-            icon: "images/FlagRed.png"
+            objectName: "btnFlag"
+            icon: "/images/FlagRed.png"
         }
     }
 
@@ -86,23 +83,27 @@ Item {
 
         IconButtonText{
             id: btnABLine
+            objectName: "btnABLine"
             buttonText: "X"
-            icon: "images/ABLineOff.png"
+            icon: "/images/ABLineOff.png"
         }
 
         IconButton {
             id: btnContour
-            icon: "images/ContourOff.png"
+            objectName: "btnContour"
+            icon: "/images/ContourOff.png"
         }
 
         IconButton {
             id: btnManualOffOn
-            icon: "images/ManualOff.png"
+            objectName: "btnManualOffOn"
+            icon: "/images/ManualOff.png"
         }
 
         IconButtonText {
             id: btnSectionOffAutoOn
-            icon: "images/SectionMasterOff.png"
+            objectName: "btnSectionOffAutoOn"
+            icon: "/images/SectionMasterOff.png"
             iconHeightScale: 1.0
         }
 
@@ -119,40 +120,48 @@ Item {
 
         SectionButton {
             id: btnSection1Man
+            objectName: "section1"
             state: "on"
         }
 
         SectionButton {
             id: btnSection2Man
+            objectName: "section2"
             state: "auto"
         }
 
         SectionButton {
             id: btnSection3Man
+            objectName: "section3"
         }
 
         SectionButton {
             id: btnSection4Man
+            objectName: "section4"
         }
 
         SectionButton {
             id: btnSection5Man
             visible: false
+            objectName: "section5"
         }
 
         SectionButton {
             id: btnSection6Man
             visible: false
+            objectName: "section6"
         }
 
         SectionButton {
             id: btnSection7Man
             visible: false
+            objectName: "section7"
         }
 
         SectionButton {
             id: btnSection8Man
             visible: false
+            objectName: "section8"
         }
     }
 
@@ -166,18 +175,20 @@ Item {
 
         IconButton {
             id: btnTiltDown
+            objectName: "btnTiltDown"
             width: 70
             height: 70
             radius: 10
-            icon: "images/TiltDown.png"
+            icon: "/images/TiltDown.png"
         }
 
         IconButton {
             id: btnTiltUp
+            objectName: "btnTiltUp"
             width: 70
             height: 70
             radius: 10
-            icon: "images/TiltUp.png"
+            icon: "/images/TiltUp.png"
         }
     }
 
@@ -190,19 +201,21 @@ Item {
         anchors.topMargin: 20
 
         IconButton {
-            id: btnZoomOut
+            id: btnZoomIn
+            objectName: "btnZoomIn"
             width: 70
             height: 70
             radius: 10
-            icon: "images/ZoomIn48.png"
+            icon: "/images/ZoomIn48.png"
         }
 
         IconButton {
-            id: btnZoomIn
+            id: btnZoomOut
+            objectName: "btnZoomOut"
             width: 70
             height: 70
             radius: 10
-            icon: "images/ZoomOut48.png"
+            icon: "/images/ZoomOut48.png"
         }
     }
 
