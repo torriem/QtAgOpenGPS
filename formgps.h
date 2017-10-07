@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QScopedPointer>
 #include <QtOpenGL>
+#include <QtQuick/QQuickItem>
 
 #include "vec2.h"
 #include "vec3.h"
@@ -12,6 +13,7 @@
 #include "cmodulecomm.h"
 #include "cperimeter.h"
 #include "ccamera.h"
+#include "btnenum.h"
 
 
 namespace Ui {
@@ -30,11 +32,7 @@ class CVehicle;
 class CPerimeter;
 class CBoundary;
 
-//master Manual and Auto, 3 states possible
-enum class btnStates {Off,Auto,On};
-
-//section button states
-enum class manBtn { Off, Auto, On };
+class OpenGLControl;
 
 const int MAXSECTIONS = 9;
 
@@ -42,7 +40,36 @@ class FormGPS : public QMainWindow
 {
     Q_OBJECT
 public:
+    explicit FormGPS(QWidget *parent = 0);
+    ~FormGPS();
+
+     /***********************************************
+     * Qt-specific things we need to keep track of *
+     ***********************************************/
     QLocale locale;
+    QQuickItem *qml_root;
+    QSignalMapper *sectionButtonsSignalMapper;
+
+    /***************************
+     * Qt and QML GUI elements *
+     ***************************/
+    OpenGLControl *openGLControl = NULL;
+    QObject *btnMinMaxZoom;
+    QObject *btnPerimeter;
+    QObject *btnAutoSteer;
+    QObject *btnFlag;
+    QObject *btnABLine;
+    QObject *btnManualOffOn;
+    QObject *btnSectionOffAutoOn;
+
+    QObject *sectionButton[MAXSECTIONS-1]; //zero based array
+
+
+
+
+    /*******************
+     * from FormGPS.cs *
+     *******************/
     double testDouble = 0;
     bool testBool = false;
     int testInt = 0;
@@ -139,7 +166,7 @@ public:
     CPerimeter periArea;
 
     //boundary instance
-    //CBoundary boundary;
+    CBoundary *boundary;
 
     /*************************
      *  Position.designer.cs *
@@ -255,9 +282,7 @@ public:
     //data buffer for pixels read from off screen buffer
     //uchar grnPixels[80001];
 
-    explicit FormGPS(QWidget *parent = 0);
-    ~FormGPS();
-    /**********************
+   /**********************
      * OpenGL.Designer.cs *
      **********************/
 
@@ -272,8 +297,28 @@ public:
     void drawLightBar(double Width, double Height, double offlineDistance);
     void calcFrustum();
 
+    void setZoom();
 private:
     Ui::FormGPS *ui;
+
+    void setupGui();
+
+
+public slots:
+    void openGLControl_set(OpenGLControl *);
+
+    /*******************
+     * from FormGPS.cs *
+     *******************/
+    void onBtnMinMaxZoom_clicked();
+    void onBtnPerimeter_clicked();
+    void onBtnAutoSteer_clicked();
+    void onBtnFlag_clicked();
+    void onBtnABLine_clicked();
+    void onBtnContour_clicked();
+    void onBtnManualOffOn_clicked();
+    void onBtnSectionOffAutoOn_clicked();
+    void onSectionButton_clicked(int section_num);
 };
 
 #endif // FORMGPS_H

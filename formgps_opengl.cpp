@@ -7,7 +7,8 @@
 #include "ccontour.h"
 #include "cabline.h"
 #include "cperimeter.h"
-
+#include "cboundary.h"
+#if 0
 void FormGPS::openGLControl_Draw()
 {
     //Do stuff that was initialized since Qt uses OpenGL and may have messed
@@ -253,14 +254,15 @@ void FormGPS::openGLControl_Draw()
             {
                 QString dist;
                 //turn on distance widget
-                txtDistanceOffABLine.Visible = true;
+                //TODO: tie into GUI
+                //txtDistanceOffABLine.Visible = true;
                 //lblDelta.Visible = true;
                 if (ct->distanceFromCurrentLine == 32000) ct->distanceFromCurrentLine = 0;
 
                 drawLightBar(ui->openGLControl->width(), ui->openGLControl->height(), ct->distanceFromCurrentLine * 0.1);
                 if ((ct->distanceFromCurrentLine) < 0.0)
                 {
-                    txtDistanceOffABLine.ForeColor = Color.Green;
+                    //**txtDistanceOffABLine.ForeColor = Color.Green;
 
                     if (isMetric) dist = QString((int)fabs(ct->distanceFromCurrentLine * 0.1)) + " " + QChar(0x2192);
                     else dist = QString((int)fabs(ct->distanceFromCurrentLine / 2.54 * 0.1)) + " " + QChar(0x2192);
@@ -269,7 +271,7 @@ void FormGPS::openGLControl_Draw()
 
                 else
                 {
-                    txtDistanceOffABLine.ForeColor = Color.Red;
+                    //**txtDistanceOffABLine.ForeColor = Color.Red;
                     if (isMetric) dist = QString("") + QChar(0x2190) + " " + ((int)fabs(ct->distanceFromCurrentLine * 0.1));
                     else dist = QString("") + QChar(0x2190)+ " " + ((int)fabs(ct->distanceFromCurrentLine / 2.54 * 0.1));
                     txtDistanceOffABLine.Text = dist;
@@ -289,7 +291,7 @@ void FormGPS::openGLControl_Draw()
                 {
                     QString dist;
 
-                    txtDistanceOffABLine.Visible = true;
+                    //**txtDistanceOffABLine.Visible = true;
                     //lblDelta.Visible = true;
                     drawLightBar(ui->openGLControl->width(),
                                  ui->openGLControl->height(),
@@ -297,7 +299,7 @@ void FormGPS::openGLControl_Draw()
                     if ((ABLine->distanceFromCurrentLine) < 0.0)
                     {
                         // --->
-                        txtDistanceOffABLine.ForeColor = Color.Green;
+                        //**txtDistanceOffABLine.ForeColor = Color.Green;
                         if (isMetric) dist = QString((int)fabs(ABLine->distanceFromCurrentLine * 0.1)) + " \u21D2";
                         else dist = QString((int)fabs(ABLine->distanceFromCurrentLine / 2.54 * 0.1)) + " \u21D2";
                         txtDistanceOffABLine.Text = dist;
@@ -306,10 +308,10 @@ void FormGPS::openGLControl_Draw()
                     else
                     {
                         // <----
-                        txtDistanceOffABLine.ForeColor = Color.Red;
+                        //**txtDistanceOffABLine.ForeColor = Color.Red;
                         if (isMetric) dist = "\u21D0 " + QString((int)fabs(ABLine->distanceFromCurrentLine * 0.1));
                         else dist = "\u21D0 " + QString((int)fabs(ABLine->distanceFromCurrentLine / 2.54 * 0.1));
-                        txtDistanceOffABLine.Text = dist;
+                        //**txtDistanceOffABLine.Text = dist;
                     }
 
                     //if (guidanceLineHeadingDelta < 0) lblDelta.ForeColor = Color.Red;
@@ -323,9 +325,9 @@ void FormGPS::openGLControl_Draw()
             //AB line is not set so turn off numbers
             if (!ABLine->isABLineSet && !ABLine->isABLineBeingSet && !ct->isContourBtnOn)
             {
-                txtDistanceOffABLine.Visible = false;
+                //**txtDistanceOffABLine.Visible = false;
                 //lblDelta.Visible = false;
-                btnAutoSteer.Text = "-";
+                //**btnAutoSteer.Text = "-";
             }
         }
 
@@ -374,3 +376,4 @@ void FormGPS::openGLControl_Draw()
         //maybe call the openGLControlBack_Draw() directly from here???
     }
 }
+#endif

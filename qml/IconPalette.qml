@@ -39,7 +39,7 @@ Rectangle {
 
         IconButton {
             id: btnJob
-            icon: "images/JobActive.png"
+            icon: "/images/JobActive.png"
         }
 
         IconButtonText {
@@ -57,12 +57,12 @@ Rectangle {
         IconButtonText {
             id: btnUnits
             buttonText: qsTr("Units")
-            icon: "images/AcHa.png"
+            icon: "/images/AcHa.png"
         }
 
         IconButtonText {
             id: btnFileExploer
-            icon: "images/FileExplorerWindows.png"
+            icon: "/images/FileExplorerWindows.png"
             buttonText: qsTr("Explorer")
         }
 

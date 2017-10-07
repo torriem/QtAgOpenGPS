@@ -12,10 +12,10 @@ Rectangle {
     property color color1: "#ffffff"
     property color color2: "#ffffff"
     property color color3: "#888888"
-    property url icon: "images/AutoSteerOn.png"
+    property url icon: "/images/AutoSteerOn.png"
     property int bordersize: 0
 
-    signal clicked(variant mouse)
+    signal clicked
 
     gradient: Gradient {
         GradientStop {
