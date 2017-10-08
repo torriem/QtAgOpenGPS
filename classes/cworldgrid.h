@@ -2,6 +2,7 @@
 #define CWORLDGRID_H
 
 class FormGPS;
+class QOpenGLContext;
 
 class CWorldGrid
 {
@@ -18,8 +19,8 @@ public:
     const double texZoom = 20;
 
     CWorldGrid(FormGPS *mf);
-    void drawFieldSurface();
-    void drawWorldGrid(double _gridZoom);
+    void drawFieldSurface(QOpenGLContext *c);
+    void drawWorldGrid(QOpenGLContext *c, double _gridZoom);
     void createWorldGrid(double northing, double easting);
     void checkZoomWorldGrid(double northing, double easting);
 

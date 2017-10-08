@@ -5,6 +5,9 @@
 #include "cvehicle.h"
 #include "cnmea.h"
 
+#include <QOpenGLContext>
+#include <QOpenGLFunctions_1_1>
+
 CABLine::CABLine(FormGPS *mf)
     :mf(mf)
 {
@@ -246,4 +249,159 @@ void CABLine::getCurrentABLine() {
     //mf->guidanceLineHeadingDelta = (Int16)((atan2(sin(temp - mf->fixHeading), cos(temp - mf->fixHeading))) * 10000);
     mf->guidanceLineDistanceOff = int(distanceFromCurrentLine);
     mf->guidanceLineSteerAngle = int(steerAngleAB * 10);
+}
+
+void CABLine::drawABLines(QOpenGLContext *glContext) {
+    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
+    //Draw AB Points
+    gl->glPointSize(8.0f);
+    gl->glBegin(GL_POINTS);
+
+    gl->glColor3f(0.5f, 0.0f, 0.0f);
+    gl->glVertex3d(refPoint1.easting, refPoint1.northing, 0.0);
+    gl->glColor3f(0.0f, 0.0f, 0.5f);
+    gl->glVertex3d(refPoint2.easting, refPoint2.northing, 0.0);
+
+    //gl.Color(0.6f, 0.95f, 0.95f);
+    //gl.Vertex(radiusPointAB.easting, radiusPointAB.northing, 0.0);
+
+    gl->glEnd();
+    gl->glPointSize(1.0f);
+
+    if (isABLineSet)
+    {
+        //Draw reference AB line
+        gl->glLineWidth(2);
+        gl->glEnable(GL_LINE_STIPPLE);
+        gl->glLineStipple(1, 0x07F0);
+        gl->glBegin(GL_LINES);
+        gl->glColor3f(0.9f, 0.5f, 0.7f);
+        gl->glVertex3d(refABLineP1.easting, refABLineP1.northing, 0);
+        gl->glVertex3d(refABLineP2.easting, refABLineP2.northing, 0);
+
+        gl->glEnd();
+        gl->glDisable(GL_LINE_STIPPLE);
+
+        //draw current AB Line
+        gl->glLineWidth(3);
+        gl->glBegin(GL_LINES);
+        gl->glColor3f(0.9f, 0.0f, 0.0f);
+
+        //calculate if tram line is here
+        if (tramPassEvery != 0)
+        {
+            int pass = (int)passNumber + (tramPassEvery*300) - passBasedOn;
+            if (pass % tramPassEvery != 0) gl->glColor3f(0.9f, 0.0f, 0.0f);
+            else gl->glColor3f(0, 0.9, 0);
+        }
+
+        //based on line pass, make ref purple
+        if (fabs(passBasedOn - passNumber) < 0.0000000001 && tramPassEvery != 0) gl->glColor3f(0.990f, 0.190f, 0.990f);
+
+        gl->glVertex3d(currentABLineP1.easting, currentABLineP1.northing, 0.0);
+        gl->glVertex3d(currentABLineP2.easting, currentABLineP2.northing, 0.0);
+        gl->glEnd();
+
+        if (mf->isSideGuideLines)
+        {
+            //get the tool offset and width
+            double toolOffset = mf->vehicle->toolOffset * 2;
+            double toolWidth = mf->vehicle->toolWidth - mf->vehicle->toolOverlap;
+
+            gl->glColor3f(0.0f, 0.90f, 0.50f);
+            gl->glLineWidth(1);
+            gl->glBegin(GL_LINES);
+
+            //precalculate sin cos
+            double cosHeading = cos(-abHeading);
+            double sinHeading = sin(-abHeading);
+
+            if (isABSameAsFixHeading)
+            {
+                gl->glVertex3d((cosHeading * (toolWidth + toolOffset)) + currentABLineP1.easting, (sinHeading * (toolWidth + toolOffset)) + currentABLineP1.northing, 0);
+                gl->glVertex3d((cosHeading * (toolWidth + toolOffset)) + currentABLineP2.easting, (sinHeading * (toolWidth + toolOffset)) + currentABLineP2.northing, 0);
+                gl->glVertex3d((cosHeading * (-toolWidth + toolOffset)) + currentABLineP1.easting, (sinHeading * (-toolWidth + toolOffset)) + currentABLineP1.northing, 0);
+                gl->glVertex3d((cosHeading * (-toolWidth + toolOffset)) + currentABLineP2.easting, (sinHeading * (-toolWidth + toolOffset)) + currentABLineP2.northing, 0);
+
+                toolWidth *= 2;
+                gl->glVertex3d((cosHeading * (toolWidth)) + currentABLineP1.easting, (sinHeading * (toolWidth)) + currentABLineP1.northing, 0);
+                gl->glVertex3d((cosHeading * (toolWidth)) + currentABLineP2.easting, (sinHeading * (toolWidth)) + currentABLineP2.northing, 0);
+                gl->glVertex3d((cosHeading * (-toolWidth)) + currentABLineP1.easting, (sinHeading * (-toolWidth)) + currentABLineP1.northing, 0);
+                gl->glVertex3d((cosHeading * (-toolWidth)) + currentABLineP2.easting, (sinHeading * (-toolWidth)) + currentABLineP2.northing, 0);
+            }
+            else
+            {
+                gl->glVertex3d((cosHeading * (toolWidth - toolOffset)) + currentABLineP1.easting, (sinHeading * (toolWidth - toolOffset)) + currentABLineP1.northing, 0);
+                gl->glVertex3d((cosHeading * (toolWidth - toolOffset)) + currentABLineP2.easting, (sinHeading * (toolWidth - toolOffset)) + currentABLineP2.northing, 0);
+                gl->glVertex3d((cosHeading * (-toolWidth - toolOffset)) + currentABLineP1.easting, (sinHeading * (-toolWidth - toolOffset)) + currentABLineP1.northing, 0);
+                gl->glVertex3d((cosHeading * (-toolWidth - toolOffset)) + currentABLineP2.easting, (sinHeading * (-toolWidth - toolOffset)) + currentABLineP2.northing, 0);
+
+                toolWidth *= 2;
+                gl->glVertex3d((cosHeading * (toolWidth)) + currentABLineP1.easting, (sinHeading * (toolWidth)) + currentABLineP1.northing, 0);
+                gl->glVertex3d((cosHeading * (toolWidth)) + currentABLineP2.easting, (sinHeading * (toolWidth)) + currentABLineP2.northing, 0);
+                gl->glVertex3d((cosHeading * (-toolWidth)) + currentABLineP1.easting, (sinHeading * (-toolWidth)) + currentABLineP1.northing, 0);
+                gl->glVertex3d((cosHeading * (-toolWidth)) + currentABLineP2.easting, (sinHeading * (-toolWidth)) + currentABLineP2.northing, 0);
+            }
+            gl->glEnd();
+        }
+
+        if (mf->isPureOn)
+        {
+            //draw the guidance circle
+            const int numSegments = 100;
+            {
+                gl->glColor3f(0.95f, 0.30f, 0.950f);
+                double theta = twoPI / numSegments;
+                double c = cos(theta);//precalculate the sine and cosine
+                double s = sin(theta);
+
+                double x = ppRadiusAB;//we start at angle = 0
+                double y = 0;
+
+                gl->glLineWidth(1);
+                gl->glBegin(GL_LINE_LOOP);
+                for (int ii = 0; ii < numSegments; ii++)
+                {
+                    //output vertex
+                    gl->glVertex2d(x + radiusPointAB.easting, y + radiusPointAB.northing);
+
+                    //apply the rotation matrix
+                    double t = x;
+                    x = (c * x) - (s * y);
+                    y = (s * t) + (c * y);
+                }
+                gl->glEnd();
+            }
+            //Draw lookahead Point
+            gl->glPointSize(4.0f);
+            gl->glBegin(GL_POINTS);
+            gl->glColor3f(1.0f, 0.5f, 0.95f);
+            gl->glVertex3d(goalPointAB.easting, goalPointAB.northing, 0.0);
+            //gl->glColor(0.6f, 0.95f, 0.95f);
+            //gl->glVertex3d(radiusPointAB.easting, radiusPointAB.northing, 0.0);
+            gl->glEnd();
+            gl->glPointSize(1.0f);
+        }
+
+        gl->glLineWidth(1);
+    }
+}
+
+void CABLine::resetABLine()
+{
+    refPoint1 = Vec2(0.2, 0.2);
+    refPoint2 = Vec2(0.3, 0.3);
+
+    refABLineP1 = Vec2(0.0, 0.0);
+    refABLineP2 = Vec2(0.0, 1.0);
+
+    currentABLineP1 = Vec2(0.0, 0.0);
+    currentABLineP2 = Vec2(0.0, 1.0);
+
+    abHeading = 0.0;
+    isABLineSet = false;
+    isABLineBeingSet = false;
+    howManyPathsAway = 0.0;
+    passNumber = 0;
+
 }

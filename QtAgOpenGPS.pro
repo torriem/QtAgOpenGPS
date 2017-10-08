@@ -50,7 +50,8 @@ SOURCES += main.cpp\
     classes/cboundary.cpp \
     mainoverlay.cpp \
     openglcontrolitem.cpp \
-    openglcontrol.cpp
+    openglcontrol.cpp \
+    formgps_ui.cpp
 
 HEADERS  += formgps.h \
     classes/cabline.h \

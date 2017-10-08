@@ -8,6 +8,7 @@
 #include "cvec.h"
 
 class FormGPS;
+class QOpenGLContext;
 
 class CContour
 {
@@ -75,7 +76,7 @@ public:
     void stopContourLine();
     void buildContourGuidanceLine(double eastFix, double northFix);
     void distanceFromContourLine();
-    void drawContourLine();
+    void drawContourLine(QOpenGLContext *c);
     void resetContour();
 
 };

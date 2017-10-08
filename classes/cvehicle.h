@@ -2,6 +2,7 @@
 #define CVEHICLE_H
 
 class FormGPS;
+class QOpenGLContext;
 
 class CVehicle
 {
@@ -56,7 +57,7 @@ public:
 
 
     CVehicle(FormGPS *mf);
-    void drawVehicle();
+    void drawVehicle(QOpenGLContext *c);
 
 };
 

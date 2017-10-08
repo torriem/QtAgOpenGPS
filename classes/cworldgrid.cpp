@@ -1,5 +1,6 @@
 #include "cworldgrid.h"
-#include <QtOpenGL>
+#include <QOpenGLContext>
+#include <QOpenGLFunctions_1_1>
 #include "formgps.h"
 
 CWorldGrid::CWorldGrid(FormGPS *mf)
@@ -11,45 +12,49 @@ CWorldGrid::CWorldGrid(FormGPS *mf)
 //TODO: pass in color and texture to draw functions instead of passing in the
 // entire FormGPS object
 
-void CWorldGrid::drawFieldSurface() {
+void CWorldGrid::drawFieldSurface(QOpenGLContext *glContext)
+{
+    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
     // Enable Texture Mapping and set color to white
-    glEnable(GL_TEXTURE_2D);
-    glColor3b(mf->redField, mf->grnField, mf->bluField);
+    gl->glEnable(GL_TEXTURE_2D);
+    gl->glColor3b(mf->redField, mf->grnField, mf->bluField);
 
     //the floor
-    glBindTexture(GL_TEXTURE_2D, mf->texture[1]);	// Select Our Texture
-    glBegin(GL_TRIANGLE_STRIP);				            // Build Quad From A Triangle Strip
-    glTexCoord2d(0, 0);
-    glVertex3d(eastingMin, northingMin, 0.0);                // Top Right
-    glTexCoord2d(texZoom, 0);
-    glVertex3d(eastingMax, northingMin, 0.0);               // Top Left
-    glTexCoord2d(0, texZoom);
-    glVertex3d(eastingMin, northingMax, 0.0);               // Bottom Right
-    glTexCoord2d(texZoom, texZoom);
-    glVertex3d(eastingMax, northingMax, 0.0);              // Bottom Left
-    glEnd();						// Done Building Triangle Strip
-    glDisable(GL_TEXTURE_2D);
+    gl->glBindTexture(GL_TEXTURE_2D, mf->texture[1]);	// Select Our Texture
+    gl->glBegin(GL_TRIANGLE_STRIP);				            // Build Quad From A Triangle Strip
+    gl->glTexCoord2d(0, 0);
+    gl->glVertex3d(eastingMin, northingMin, 0.0);                // Top Right
+    gl->glTexCoord2d(texZoom, 0);
+    gl->glVertex3d(eastingMax, northingMin, 0.0);               // Top Left
+    gl->glTexCoord2d(0, texZoom);
+    gl->glVertex3d(eastingMin, northingMax, 0.0);               // Bottom Right
+    gl->glTexCoord2d(texZoom, texZoom);
+    gl->glVertex3d(eastingMax, northingMax, 0.0);              // Bottom Left
+    gl->glEnd();						// Done Building Triangle Strip
+    gl->glDisable(GL_TEXTURE_2D);
 }
 
-void CWorldGrid::drawWorldGrid(double _gridZoom) {
+void CWorldGrid::drawWorldGrid(QOpenGLContext *glContext, double _gridZoom)
+{
+    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
     //draw easting lines and westing lines to produce a grid
 
-    glColor3b(mf->redField, mf->grnField, mf->bluField);
-    glBegin(GL_LINES);
+    gl->glColor3b(mf->redField, mf->grnField, mf->bluField);
+    gl->glBegin(GL_LINES);
     for (double x = eastingMin; x < eastingMax; x += _gridZoom)
     {
         //the x lines
-        glVertex3d(x, northingMax, 0.1 );
-        glVertex3d(x, northingMin, 0.1);
+        gl->glVertex3d(x, northingMax, 0.1 );
+        gl->glVertex3d(x, northingMin, 0.1);
     }
 
     for (double x = northingMin; x < northingMax; x += _gridZoom)
     {
         //the z lines
-        glVertex3d(eastingMax, x, 0.1 );
-        glVertex3d(eastingMin, x, 0.1 );
+        gl->glVertex3d(eastingMax, x, 0.1 );
+        gl->glVertex3d(eastingMin, x, 0.1 );
     }
-    glEnd();
+    gl->glEnd();
 }
 
 void CWorldGrid::createWorldGrid(double northing, double easting) {

@@ -3,6 +3,7 @@
 
 #include "vec2.h"
 
+class QOpenGLContext;
 //namespace AgOpenGPS
 
 class FormGPS;
@@ -71,7 +72,7 @@ public:
     void snapABLine();
     void getCurrentABLine();
 
-    void drawABLines();
+    void drawABLines(QOpenGLContext *c);
 
     void resetABLine();
 };

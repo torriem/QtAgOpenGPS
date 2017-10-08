@@ -3,6 +3,8 @@
 #include "formgps.h"
 #include "math.h"
 #include <QLocale>
+#include <QOpenGLContext>
+#include <QOpenGLFunctions_1_1>
 
 CBoundary::CBoundary(FormGPS *mf)
     :mf(mf)
@@ -72,47 +74,51 @@ bool CBoundary::isPrePointInPolygon(Vec2 testPoint)
     return oddNodes; //true means inside.
 }
 
-void CBoundary::drawBoundaryLine()
+void CBoundary::drawBoundaryLine(QOpenGLContext *glContext)
 {
+    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
+
     ////draw the perimeter line so far
     int ptCount = ptList.size();
     if (ptCount < 1) return;
-    glLineWidth(4);
-    glColor3f(0.98f, 0.2f, 0.60f);
-    glBegin(GL_LINE_STRIP);
+    gl->glLineWidth(4);
+    gl->glColor3f(0.98f, 0.2f, 0.60f);
+    gl->glBegin(GL_LINE_STRIP);
     for (int h = 0; h < ptCount; h++)
-        glVertex3d(ptList[h].easting, ptList[h].northing, 0);
-    glEnd();
+        gl->glVertex3d(ptList[h].easting, ptList[h].northing, 0);
+    gl->glEnd();
 
     //the "close the loop" line
-    glLineWidth(4);
-    glColor3f(0.9f, 0.32f, 0.70f);
-    glBegin(GL_LINE_STRIP);
-    glVertex3d(ptList[ptCount - 1].easting, ptList[ptCount - 1].northing, 0);
-    glVertex3d(ptList[0].easting, ptList[0].northing, 0);
-    glEnd();
+    gl->glLineWidth(4);
+    gl->glColor3f(0.9f, 0.32f, 0.70f);
+    gl->glBegin(GL_LINE_STRIP);
+    gl->glVertex3d(ptList[ptCount - 1].easting, ptList[ptCount - 1].northing, 0);
+    gl->glVertex3d(ptList[0].easting, ptList[0].northing, 0);
+    gl->glEnd();
 }
 
 //draw a blue line in the back buffer for section control over boundary line
-void CBoundary::drawBoundaryLineOnBackBuffer()
+void CBoundary::drawBoundaryLineOnBackBuffer(QOpenGLContext *glContext)
 {
+    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
+
     ////draw the perimeter line so far
     int ptCount = ptList.size();
     if (ptCount < 1) return;
-    glLineWidth(4);
-    glColor3f(0.0f, 0.99f, 0.0f);
-    glBegin(GL_LINE_STRIP);
+    gl->glLineWidth(4);
+    gl->glColor3f(0.0f, 0.99f, 0.0f);
+    gl->glBegin(GL_LINE_STRIP);
     for (int h = 0; h < ptCount; h++)
-        glVertex3d(ptList[h].easting, ptList[h].northing, 0);
-    glEnd();
+        gl->glVertex3d(ptList[h].easting, ptList[h].northing, 0);
+    gl->glEnd();
 
     //the "close the loop" line
-    glLineWidth(4);
-    glColor3f(0.0f, 0.990f, 0.0f);
-    glBegin(GL_LINE_STRIP);
-    glVertex3d(ptList[ptCount - 1].easting, ptList[ptCount - 1].northing, 0);
-    glVertex3d(ptList[0].easting, ptList[0].northing, 0);
-    glEnd();
+    gl->glLineWidth(4);
+    gl->glColor3f(0.0f, 0.990f, 0.0f);
+    gl->glBegin(GL_LINE_STRIP);
+    gl->glVertex3d(ptList[ptCount - 1].easting, ptList[ptCount - 1].northing, 0);
+    gl->glVertex3d(ptList[0].easting, ptList[0].northing, 0);
+    gl->glEnd();
 }
 
 void CBoundary::calculateBoundaryArea()

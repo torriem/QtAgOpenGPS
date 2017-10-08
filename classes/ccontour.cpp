@@ -5,7 +5,8 @@
 #include "cvec.h"
 #include <math.h>
 #include <limits>
-#include <QtOpenGL>
+#include <QOpenGLContext>
+#include <QOpenGLFunctions_1_1>
 #include "glm.h"
 
 const double DOUBLE_EPSILON=std::numeric_limits<double>::epsilon();
@@ -469,8 +470,10 @@ void CContour::distanceFromContourLine()
 }
 
 //draw the red follow me line
-void CContour::drawContourLine()
+void CContour::drawContourLine(QOpenGLContext *glContext)
 {
+    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
+
     //glColor3f(0.98f, 0.98f, 0.50f);
     //glBegin(GL_LINE_STRIP);
     ////for (int h = 0; h < ptCount; h++) glVertex3d(guideList[h].x, 0, guideList[h].z);
@@ -483,20 +486,20 @@ void CContour::drawContourLine()
 
     ////draw the guidance line
     int ptCount = ctList.size();
-    glLineWidth(2);
-    glColor3f(0.98f, 0.2f, 0.0f);
-    glBegin(GL_LINE_STRIP);
-    for (int h = 0; h < ptCount; h++) glVertex3d(ctList[h].x, ctList[h].z, 0);
-    glEnd();
+    gl->glLineWidth(2);
+    gl->glColor3f(0.98f, 0.2f, 0.0f);
+    gl->glBegin(GL_LINE_STRIP);
+    for (int h = 0; h < ptCount; h++) gl->glVertex3d(ctList[h].x, ctList[h].z, 0);
+    gl->glEnd();
 
-    glPointSize(2.0f);
-    glBegin(GL_POINTS);
+    gl->glPointSize(2.0f);
+    gl->glBegin(GL_POINTS);
 
-    glColor3f(0.7f, 0.7f, 0.25f);
-    for (int h = 0; h < ptCount; h++) glVertex3d(ctList[h].x, ctList[h].z, 0);
+    gl->glColor3f(0.7f, 0.7f, 0.25f);
+    for (int h = 0; h < ptCount; h++) gl->glVertex3d(ctList[h].x, ctList[h].z, 0);
 
-    glEnd();
-    glPointSize(1.0f);
+    gl->glEnd();
+    gl->glPointSize(1.0f);
 
     ////draw the reference line
     //glPointSize(3.0f);
@@ -535,7 +538,7 @@ void CContour::drawContourLine()
     {
         const int numSegments = 100;
         {
-            glColor3f(0.95f, 0.30f, 0.950f);
+            gl->glColor3f(0.95f, 0.30f, 0.950f);
 
             double theta = twoPI / (numSegments);
             double c = cos(theta);//precalculate the sine and cosine
@@ -544,32 +547,32 @@ void CContour::drawContourLine()
             double x = ppRadiusCT;//we start at angle = 0
             double y = 0;
 
-            glLineWidth(1);
-            glBegin(GL_LINE_LOOP);
+            gl->glLineWidth(1);
+            gl->glBegin(GL_LINE_LOOP);
             for (int ii = 0; ii < numSegments; ii++)
             {
                 //glVertex2f(x + cx, y + cy);//output vertex
-                glVertex2d(x + radiusPointCT.easting, y + radiusPointCT.northing);//output vertex
+                gl->glVertex2d(x + radiusPointCT.easting, y + radiusPointCT.northing);//output vertex
 
                 //apply the rotation matrix
                 double t = x;
                 x = (c * x) - (s * y);
                 y = (s * t) + (c * y);
             }
-            glEnd();
+            gl->glEnd();
 
             //Draw lookahead Point
-            glPointSize(4.0f);
-            glBegin(GL_POINTS);
+            gl->glPointSize(4.0f);
+            gl->glBegin(GL_POINTS);
 
             //glColor3f(1.0f, 1.0f, 0.25f);
             //glVertex3d(rEast, rNorth, 0.0);
 
-            glColor3f(1.0f, 0.5f, 0.95f);
-            glVertex3d(goalPointCT.easting, goalPointCT.northing, 0.0);
+            gl->glColor3f(1.0f, 0.5f, 0.95f);
+            gl->glVertex3d(goalPointCT.easting, goalPointCT.northing, 0.0);
 
-            glEnd();
-            glPointSize(1.0f);
+            gl->glEnd();
+            gl->glPointSize(1.0f);
         }
     }
 }

@@ -1,6 +1,7 @@
 #include "cvehicle.h"
 #include "formgps.h"
-#include <QtOpenGL>
+#include <QOpenGLContext>
+#include <QOpenGLFunctions_1_1>
 #include <QSettings>
 #include "csection.h"
 #include "glm.h"
@@ -74,13 +75,15 @@ CVehicle::CVehicle(FormGPS *mf)
                             DEFAULT_MAXSTEERINGANGLE).toDouble();
 }
 
-void CVehicle::drawVehicle() {
+void CVehicle::drawVehicle(QOpenGLContext *glContext) {
+    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
+
     //translate and rotate at pivot axle
-    glTranslated(mf->fixEasting, mf->fixNorthing, 0);
-    glPushMatrix();
+    gl->glTranslated(mf->fixEasting, mf->fixNorthing, 0);
+    gl->glPushMatrix();
 
     //most complicated translate ever!
-    glTranslated((sin(mf->fixHeading) * (hitchLength - antennaPivot)),
+    gl->glTranslated((sin(mf->fixHeading) * (hitchLength - antennaPivot)),
                     (cos(mf->fixHeading) * (hitchLength - antennaPivot)), 0);
 
     //settings doesn't change trailing hitch length if set to rigid, so do it here
@@ -95,56 +98,56 @@ void CVehicle::drawVehicle() {
     //there is a trailing tow between hitch
     if (tankTrailingHitchLength < -2.0 && isToolTrailing)
     {
-        glRotated(toDegrees(-mf->fixHeadingTank), 0.0, 0.0, 1.0);
+        gl->glRotated(toDegrees(-mf->fixHeadingTank), 0.0, 0.0, 1.0);
 
         //draw the tank hitch
-        glLineWidth(2);
-        glColor3f(0.7f, 0.7f, 0.97f);
+        gl->glLineWidth(2);
+        gl->glColor3f(0.7f, 0.7f, 0.97f);
 
-        glBegin(GL_LINES);
-        glVertex3d(0, trailingTank, 0);
-        glVertex3d(0, 0, 0);
-        glEnd();
+        gl->glBegin(GL_LINES);
+        gl->glVertex3d(0, trailingTank, 0);
+        gl->glVertex3d(0, 0, 0);
+        gl->glEnd();
 
         //section markers
-        glColor3f(0.95f, 0.950f, 0.0f);
-        glPointSize(6.0f);
-        glBegin(GL_POINTS);
-        glVertex3d(0, trailingTank, 0);
-        glEnd();
+        gl->glColor3f(0.95f, 0.950f, 0.0f);
+        gl->glPointSize(6.0f);
+        gl->glBegin(GL_POINTS);
+        gl->glVertex3d(0, trailingTank, 0);
+        gl->glEnd();
 
         //move down the tank hitch, unwind, rotate to section heading
-        glTranslated(0, trailingTank, 0);
-        glRotated(toDegrees(mf->fixHeadingTank), 0.0, 0.0, 1.0);
-        glRotated(toDegrees(-mf->fixHeadingSection), 0.0, 0.0, 1.0);
+        gl->glTranslated(0, trailingTank, 0);
+        gl->glRotated(toDegrees(mf->fixHeadingTank), 0.0, 0.0, 1.0);
+        gl->glRotated(toDegrees(-mf->fixHeadingSection), 0.0, 0.0, 1.0);
     }
 
     //no tow between hitch
-    else glRotated(toDegrees(-mf->fixHeadingSection), 0.0, 0.0, 1.0);
+    else gl->glRotated(toDegrees(-mf->fixHeadingSection), 0.0, 0.0, 1.0);
 
     //draw the hitch if trailing
     if (isToolTrailing)
     {
-        glLineWidth(2);
-        glColor3f(0.7f, 0.7f, 0.97f);
+        gl->glLineWidth(2);
+        gl->glColor3f(0.7f, 0.7f, 0.97f);
 
-        glBegin(GL_LINES);
-        glVertex3d(0, trailingTool, 0);
-        glVertex3d(0, 0, 0);
-        glEnd();
+        gl->glBegin(GL_LINES);
+        gl->glVertex3d(0, trailingTool, 0);
+        gl->glVertex3d(0, 0, 0);
+        gl->glEnd();
     }
 
     //draw the sections
-    glLineWidth(8);
-    glBegin(GL_LINES);
+    gl->glLineWidth(8);
+    gl->glBegin(GL_LINES);
 
     //draw section line
     if (mf->section[numOfSections].isSectionOn)
     {
-        if (mf->section[0].manBtnState == manBtn::Auto) glColor3f(0.0f, 0.97f, 0.0f);
-        else glColor3f(0.99, 0.99, 0);
-        glVertex3d(mf->section[numOfSections].positionLeft, trailingTool, 0);
-        glVertex3d(mf->section[numOfSections].positionRight, trailingTool, 0);
+        if (mf->section[0].manBtnState == manBtn::Auto) gl->glColor3f(0.0f, 0.97f, 0.0f);
+        else gl->glColor3f(0.99, 0.99, 0);
+        gl->glVertex3d(mf->section[numOfSections].positionLeft, trailingTool, 0);
+        gl->glVertex3d(mf->section[numOfSections].positionRight, trailingTool, 0);
     }
     else
         for (int j = 0; j < numOfSections; j++)
@@ -152,81 +155,81 @@ void CVehicle::drawVehicle() {
             //if section is on, green, if off, red color
             if (mf->section[j].isSectionOn)
             {
-                if (mf->section[j].manBtnState == manBtn::Auto) glColor3f(0.0f, 0.97f, 0.0f);
-                else glColor3f(0.97, 0.97, 0);
+                if (mf->section[j].manBtnState == manBtn::Auto) gl->glColor3f(0.0f, 0.97f, 0.0f);
+                else gl->glColor3f(0.97, 0.97, 0);
             }
-            else glColor3f(0.97f, 0.2f, 0.2f);
+            else gl->glColor3f(0.97f, 0.2f, 0.2f);
 
             //draw section line
-            glVertex3d(mf->section[j].positionLeft, trailingTool, 0);
-            glVertex3d(mf->section[j].positionRight, trailingTool, 0);
+            gl->glVertex3d(mf->section[j].positionLeft, trailingTool, 0);
+            gl->glVertex3d(mf->section[j].positionRight, trailingTool, 0);
         }
-    glEnd();
+    gl->glEnd();
 
     //draw section markers if close enough
     if (mf->camera.camSetDistance > -1500)
     {
-        glColor3f(0.0f, 0.0f, 0.0f);
+        gl->glColor3f(0.0f, 0.0f, 0.0f);
         //section markers
-        glPointSize(4.0f);
-        glBegin(GL_POINTS);
+        gl->glPointSize(4.0f);
+        gl->glBegin(GL_POINTS);
         for (int j = 0; j < numOfSections - 1; j++)
-            glVertex3d(mf->section[j].positionRight, trailingTool, 0);
-        glEnd();
+            gl->glVertex3d(mf->section[j].positionRight, trailingTool, 0);
+        gl->glEnd();
     }
 
     //draw vehicle
-    glPopMatrix();
-    glRotated(toDegrees(-mf->fixHeading), 0.0, 0.0, 1.0);
+    gl->glPopMatrix();
+    gl->glRotated(toDegrees(-mf->fixHeading), 0.0, 0.0, 1.0);
 
     //draw the vehicle Body
-    glColor3f(0.9, 0.5, 0.30);
-    glBegin(GL_TRIANGLE_FAN);
+    gl->glColor3f(0.9, 0.5, 0.30);
+    gl->glBegin(GL_TRIANGLE_FAN);
 
-    glVertex3d(0, 0, -0.2);
-    glVertex3d(1.8, -antennaPivot, 0.0);
-    glVertex3d(0, -antennaPivot + wheelbase, 0.0);
-    glColor3f(0.20, 0.0, 0.9);
-    glVertex3d(-1.8, -antennaPivot, 0.0);
-    glVertex3d(1.8, -antennaPivot, 0.0);
-    glEnd();
+    gl->glVertex3d(0, 0, -0.2);
+    gl->glVertex3d(1.8, -antennaPivot, 0.0);
+    gl->glVertex3d(0, -antennaPivot + wheelbase, 0.0);
+    gl->glColor3f(0.20, 0.0, 0.9);
+    gl->glVertex3d(-1.8, -antennaPivot, 0.0);
+    gl->glVertex3d(1.8, -antennaPivot, 0.0);
+    gl->glEnd();
 
     //draw the area side marker
-    glColor3f(0.95f, 0.90f, 0.0f);
-    glPointSize(4.0f);
-    glBegin(GL_POINTS);
-    if (mf->isAreaOnRight) glVertex3d(2.0, -antennaPivot, 0);
-    else glVertex3d(-2.0, -antennaPivot, 0);
+    gl->glColor3f(0.95f, 0.90f, 0.0f);
+    gl->glPointSize(4.0f);
+    gl->glBegin(GL_POINTS);
+    if (mf->isAreaOnRight) gl->glVertex3d(2.0, -antennaPivot, 0);
+    else gl->glVertex3d(-2.0, -antennaPivot, 0);
 
     //antenna
-    glColor3f(0.0f, 0.98f, 0.0f);
-    glVertex3d(0, 0, 0);
+    gl->glColor3f(0.0f, 0.98f, 0.0f);
+    gl->glVertex3d(0, 0, 0);
 
     //hitch pin
-    glColor3f(0.99f, 0.0f, 0.0f);
-    glVertex3d(0, hitchLength - antennaPivot, 0);
+    gl->glColor3f(0.99f, 0.0f, 0.0f);
+    gl->glVertex3d(0, hitchLength - antennaPivot, 0);
 
     ////rear Tires
     //glPointSize(12.0f);
     //glColor3f(0, 0, 0);
     //glVertex3d(-1.8, 0, -antennaPivot);
     //glVertex3d(1.8, 0, -antennaPivot);
-    glEnd();
+    gl->glEnd();
 
-    glLineWidth(1);
-    glColor3f(0.9, 0.95, 0.10);
-    glBegin(GL_LINE_STRIP);
+    gl->glLineWidth(1);
+    gl->glColor3f(0.9, 0.95, 0.10);
+    gl->glBegin(GL_LINE_STRIP);
     {
-        glVertex3d(1.2, -antennaPivot + wheelbase + 5, 0.0);
-        glVertex3d(0, -antennaPivot + wheelbase + 10, 0.0);
-        glVertex3d(-1.2, -antennaPivot + wheelbase + 5, 0.0);
+        gl->glVertex3d(1.2, -antennaPivot + wheelbase + 5, 0.0);
+        gl->glVertex3d(0, -antennaPivot + wheelbase + 10, 0.0);
+        gl->glVertex3d(-1.2, -antennaPivot + wheelbase + 5, 0.0);
     }
-    glEnd();
+    gl->glEnd();
 
     //draw the rigid hitch
-    glColor3f(0.37f, 0.37f, 0.97f);
-    glBegin(GL_LINES);
-    glVertex3d(0, hitchLength - antennaPivot, 0);
-    glVertex3d(0, -antennaPivot, 0);
-    glEnd();
+    gl->glColor3f(0.37f, 0.37f, 0.97f);
+    gl->glBegin(GL_LINES);
+    gl->glVertex3d(0, hitchLength - antennaPivot, 0);
+    gl->glVertex3d(0, -antennaPivot, 0);
+    gl->glEnd();
 }

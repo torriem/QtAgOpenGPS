@@ -2,6 +2,8 @@
 #define CCAMERA_H
 
 
+class QOpenGLContext;
+
 class CCamera
 {
 private:
@@ -18,7 +20,7 @@ public:
     //double camDelta = 0;
 
     CCamera();
-    void setWorldCam(double _fixPosX, double _fixPosY, double _fixHeading);
+    void setWorldCam(QOpenGLContext *c, double _fixPosX, double _fixPosY, double _fixHeading);
 
 };
 

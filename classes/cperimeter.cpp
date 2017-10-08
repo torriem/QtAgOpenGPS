@@ -1,12 +1,15 @@
 #include "cperimeter.h"
 #include <math.h>
-#include <QtOpenGL>
+#include <QOpenGLContext>
+#include <QOpenGLFunctions_1_1>
 
 CPerimeter::CPerimeter()
 {
 }
 
-void CPerimeter::drawPerimeterLine() {
+void CPerimeter::drawPerimeterLine(QOpenGLContext *glContext)
+{
+    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
 
     ////draw the perimeter line so far
     int ptCount = periPtList.size();
@@ -14,20 +17,20 @@ void CPerimeter::drawPerimeterLine() {
 
     //I'm assuming that the GL context is already set up by the caller, so
     //these calls will just work.
-    glLineWidth(2);
-    glColor3f(0.2f, 0.98f, 0.0f);
-    glBegin(GL_LINE_STRIP);
+    gl->glLineWidth(2);
+    gl->glColor3f(0.2f, 0.98f, 0.0f);
+    gl->glBegin(GL_LINE_STRIP);
     for (int h = 0; h < ptCount; h++)
-        glVertex2d(periPtList[h].easting, periPtList[h].northing);
-    glEnd();
+        gl->glVertex2d(periPtList[h].easting, periPtList[h].northing);
+    gl->glEnd();
 
     //the "close the loop" line
-    glLineWidth(1);
-    glColor3f(0.98f, 0.8f, 0.0f);
-    glBegin(GL_LINE_STRIP);
-    glVertex2d(periPtList[ptCount-1].easting, periPtList[ptCount-1].northing);
-    glVertex2d(periPtList[0].easting, periPtList[0].northing);
-    glEnd();
+    gl->glLineWidth(1);
+    gl->glColor3f(0.98f, 0.8f, 0.0f);
+    gl->glBegin(GL_LINE_STRIP);
+    gl->glVertex2d(periPtList[ptCount-1].easting, periPtList[ptCount-1].northing);
+    gl->glVertex2d(periPtList[0].easting, periPtList[0].northing);
+    gl->glEnd();
 
     area = 0; //accumulates area in the loop;
 

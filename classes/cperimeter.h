@@ -4,6 +4,8 @@
 #include <QVector>
 #include "vec2.h"
 
+class QOpenGLContext;
+
 class CPerimeter
 {
 public:
@@ -24,7 +26,7 @@ public:
 
     CPerimeter();
 
-    void drawPerimeterLine();
+    void drawPerimeterLine(QOpenGLContext *c);
 
 };
 
