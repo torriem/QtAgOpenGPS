@@ -20,6 +20,7 @@ signals:
 public slots:
     void sync();
     void cleanup();
+    void update();
 
 private slots:
     void handleWindowChanged(QQuickWindow *win);

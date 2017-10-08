@@ -12,35 +12,26 @@ GLWidget::~GLWidget()
 {
 }
 
-void GLWidget::setPaintGLCallback(std::function<void ()> callback) {
+void GLWidget::setPaintGLCallback(std::function<void (QOpenGLContext *)> callback) {
     paintGL_callback = callback;
 }
 
-void GLWidget::setInitializeGLCallback(std::function<void ()> callback) {
+void GLWidget::setInitializeGLCallback(std::function<void (QOpenGLContext *)> callback) {
     initializeGL_callback = callback;
 
 }
 
 void GLWidget::initializeGL() {
-   //load textures
-    //set clear Color
-    this->initializeOpenGLFunctions();
-    this->glClearColor(0.22f, 0.2858f, 0.16f, 1.0f);
-    // Set The Blending Function For Translucency
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    glCullFace(GL_BACK);
 
     //call the callback so the main form can load textures
-    if(initializeGL_callback) initializeGL_callback();
+    if(initializeGL_callback) initializeGL_callback(context());
 
 }
 
 void GLWidget::paintGL() {
     //call back to the main form since this needs access to main form
     //variables.
-    this->initializeOpenGLFunctions();
-    if(paintGL_callback) paintGL_callback();
+    if(paintGL_callback) paintGL_callback(context());
 }
 
 void GLWidget::resizeGL(int _width, int _height) {

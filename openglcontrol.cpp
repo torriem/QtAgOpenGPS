@@ -6,6 +6,14 @@
 void OpenGLControl::paint()
 {
     QOpenGLContext *c = ourwindow->openglContext();
+
+    if (!calledInit) {
+        if (initCallback)
+            initCallback(c);
+        calledInit=true;
+    }
+
+    /*
     QOpenGLFunctions_1_1 *f = c->versionFunctions<QOpenGLFunctions_1_1>();
     f->initializeOpenGLFunctions();
     //f->glClearColor( red, green, blue, 1.0f);
@@ -15,6 +23,11 @@ void OpenGLControl::paint()
     f->glClear(GL_COLOR_BUFFER_BIT);
     ourwindow->resetOpenGLState();
     std::cout << "." << std::flush;
+    */
+    if(paintCallback)
+        paintCallback(c);
+
+    ourwindow->resetOpenGLState();
 }
 
 OpenGLControl::OpenGLControl()
@@ -23,6 +36,14 @@ OpenGLControl::OpenGLControl()
 
 OpenGLControl::~OpenGLControl()
 {
+}
+
+void OpenGLControl::registerPaintCallback(std::function<void (QOpenGLContext *)> callback) {
+    paintCallback = callback;
+}
+
+void OpenGLControl::registerInitCallback(std::function<void (QOpenGLContext *)> callback) {
+    initCallback = callback;
 }
 
 

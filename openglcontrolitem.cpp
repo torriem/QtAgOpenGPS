@@ -43,4 +43,10 @@ OpenGLControl *OpenGLControlItem::renderer()
     return openglControl;
 }
 
+void OpenGLControlItem::update() {
+    // request a refresh of the item.
+    if (window())
+        window()->update();
+}
+
 
