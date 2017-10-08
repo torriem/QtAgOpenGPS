@@ -20,7 +20,8 @@ void CWorldGrid::drawFieldSurface(QOpenGLContext *glContext)
     gl->glColor3b(mf->redField, mf->grnField, mf->bluField);
 
     //the floor
-    gl->glBindTexture(GL_TEXTURE_2D, mf->texture[1]);	// Select Our Texture
+    //gl->glBindTexture(GL_TEXTURE_2D, mf->texture[1]);	// Select Our Texture
+    mf->texture[1]->bind();
     gl->glBegin(GL_TRIANGLE_STRIP);				            // Build Quad From A Triangle Strip
     gl->glTexCoord2d(0, 0);
     gl->glVertex3d(eastingMin, northingMin, 0.0);                // Top Right

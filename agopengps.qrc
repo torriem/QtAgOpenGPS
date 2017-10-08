@@ -107,5 +107,7 @@
         <file>qml/IconMenu.qml</file>
         <file>qml/IconPalette.qml</file>
         <file>qml/MainWindowTest.qml</file>
+        <file>images/floor.png</file>
+        <file>images/Landscape.png</file>
     </qresource>
 </RCC>

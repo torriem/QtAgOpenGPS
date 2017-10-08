@@ -7,9 +7,9 @@ void OpenGLControl::paint()
 {
     QOpenGLContext *c = ourwindow->openglContext();
 
-    if (!calledInit) {
-        if (initCallback)
-            initCallback(c);
+    if (initCallback && !calledInit) {
+        //std::cout << "Attempting to call init callback." << std::endl;
+        initCallback(c);
         calledInit=true;
     }
 
@@ -24,8 +24,11 @@ void OpenGLControl::paint()
     ourwindow->resetOpenGLState();
     std::cout << "." << std::flush;
     */
-    if(paintCallback)
+    if(paintCallback) {
+        //std::cout << "Attempting to call paint callback." << std::endl;
+
         paintCallback(c);
+    }
 
     ourwindow->resetOpenGLState();
 }
@@ -40,10 +43,12 @@ OpenGLControl::~OpenGLControl()
 
 void OpenGLControl::registerPaintCallback(std::function<void (QOpenGLContext *)> callback) {
     paintCallback = callback;
+    //std::cout << "paint callback is registered." << std::endl;
 }
 
 void OpenGLControl::registerInitCallback(std::function<void (QOpenGLContext *)> callback) {
     initCallback = callback;
+    //std::cout << "init callback is registered." << std::endl;
 }
 
 

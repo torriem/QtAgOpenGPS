@@ -6,6 +6,8 @@
 #include "openglcontrol.h"
 #include "qmlutil.h"
 
+#include <functional>
+
 #include <iostream>
 
 void FormGPS::setupGui()
@@ -154,8 +156,8 @@ void FormGPS::openGLControl_set(OpenGLControl *c){
     std::cout << "Apparently the renderer is activated now." << std::endl;
 
     //tell the control to call our main form function for drawing.
-    //c->registerInitCallback(openGLControl_Initialized);
-    //c->registerPaintCallback(openGLControl_Draw);
+    c->registerInitCallback(std::bind(&FormGPS::openGLControl_Initialized, this, std::placeholders::_1));
+    c->registerPaintCallback(std::bind(&FormGPS::openGLControl_Draw, this, std::placeholders::_1));
 }
 
 void FormGPS::onBtnMinMaxZoom_clicked(){

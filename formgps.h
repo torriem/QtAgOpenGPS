@@ -5,6 +5,7 @@
 #include <QScopedPointer>
 #include <QtQuick/QQuickItem>
 #include <QOpenGLFunctions>
+#include <QOpenGLTexture>
 
 #include "vec2.h"
 #include "vec3.h"
@@ -34,7 +35,7 @@ class CBoundary;
 
 class OpenGLControl;
 class OpenGLControlItem;
-class QOpenGLContext;
+class OpenGLContext;
 
 const int MAXSECTIONS = 9;
 
@@ -140,7 +141,8 @@ public:
 
     // Storage For Our Tractor, implement, background etc Textures
     //Texture particleTexture;
-    GLuint texture[3];
+    //GLuint texture[3];
+    QVector<QOpenGLTexture *> texture;
 
     //create the scene camera
     CCamera camera;
@@ -321,7 +323,7 @@ public:
     void calcFrustum(QOpenGLContext *glContext);
 
     void setZoom();
-    GLuint loadGLTextures(QOpenGLContext *glContext);
+    void loadGLTextures(QOpenGLContext *glContext);
 
 private:
     Ui::FormGPS *ui;

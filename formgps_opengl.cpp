@@ -11,14 +11,17 @@
 #include "openglcontrol.h"
 
 #include <QOpenGLFunctions_1_1>
+#include <iostream>
 
 void FormGPS::openGLControl_Draw(QOpenGLContext *glContext)
 {
     QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
     //gl->initializeOpenGLFunctions();//should already be initialized
 
-    //Do stuff that was initialized since Qt uses OpenGL and may have messed
-    //with the matrix stuff
+    //std::cout << "draw routine here." << std::endl;
+
+    //Do stuff that was in the initialized method, since Qt uses OpenGL and may
+    //have messed with the matrix stuff and other defaults
 
     //  Set the clear color.
 
@@ -240,7 +243,8 @@ void FormGPS::openGLControl_Draw(QOpenGLContext *glContext)
                 double winLeftPos = -(double)width() / 2;
                 double winRightPos = -winLeftPos;
                 gl->glEnable(GL_TEXTURE_2D);
-                gl->glBindTexture(GL_TEXTURE_2D, texture[0]);		// Select Our Texture
+                texture[0]->bind();
+                //gl->glBindTexture(GL_TEXTURE_2D, texture[0]);		// Select Our Texture
 
                 gl->glBegin(GL_TRIANGLE_STRIP);				// Build Quad From A Triangle Strip
                 gl->glTexCoord2i(0, 0); gl->glVertex2d(winRightPos, 0.0); // Top Right
@@ -397,7 +401,9 @@ void FormGPS::openGLControl_Initialized(QOpenGLContext *glContext)
     //QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
 
     //Load all the textures
+    std::cout << "initializing Open GL." << std::endl;
     loadGLTextures(glContext);
+    std::cout << "textures loaded." << std::endl;
 
     //now start the timer assuming no errors, otherwise the program will not stop on errors.
     //TODO:
@@ -1088,37 +1094,23 @@ void FormGPS::setZoom()
     //paint.
 }
 
-GLuint FormGPS::loadGLTextures(QOpenGLContext *glContext)
+void FormGPS::loadGLTextures(QOpenGLContext *glContext)
 {
-    /*
-    try
-    {
-        //  Background
-        particleTexture = new Texture();
-        particleTexture.Create(gl, @".\Dependencies\landscape.png");
-        texture[0] = particleTexture.TextureName;
-    }
-    catch (Exception e)
-    {
-        WriteErrorLog("Loading Landscape Textures" + e);
+    //assuming caller has set the Open GL context
 
-        MessageBox.Show("Texture File LANDSCAPE.PNG is Missing", e.Message);
-    }
+    QOpenGLTexture *t;
 
-    try
-    {
-        //  Floor
-        particleTexture = new Texture();
-        particleTexture.Create(gl, @".\Dependencies\Floor.png");
-        texture[1] = particleTexture.TextureName;
-    }
-    catch (Exception e)
-    {
-        WriteErrorLog("Loading Floor Texture" + e);
+    //  Background
+    t = new QOpenGLTexture(QImage(":/images/Landscape.png").mirrored());
+    t->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+    t->setMagnificationFilter(QOpenGLTexture::Linear);
 
-       MessageBox.Show("Texture File FLOOR.PNG is Missing", e.Message);
-     }
+    texture.append(t); //position 0
 
-    return texture[0];
-    */
+    //  Floor
+    t = new QOpenGLTexture(QImage(":/images/floor.png").mirrored());
+    t->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+    t->setMagnificationFilter(QOpenGLTexture::Linear);
+
+    texture.append(t); //position 1
 }
