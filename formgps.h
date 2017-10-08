@@ -3,8 +3,8 @@
 
 #include <QMainWindow>
 #include <QScopedPointer>
-#include <QtOpenGL>
 #include <QtQuick/QQuickItem>
+#include <QOpenGLFunctions>
 
 #include "vec2.h"
 #include "vec3.h"
@@ -33,6 +33,8 @@ class CPerimeter;
 class CBoundary;
 
 class OpenGLControl;
+class OpenGLControlItem;
+class QOpenGLContext;
 
 const int MAXSECTIONS = 9;
 
@@ -53,18 +55,38 @@ public:
     /***************************
      * Qt and QML GUI elements *
      ***************************/
+    OpenGLControlItem *openGLControl_item = NULL;
     OpenGLControl *openGLControl = NULL;
     QObject *btnMinMaxZoom;
     QObject *btnPerimeter;
     QObject *btnAutoSteer;
     QObject *btnFlag;
     QObject *btnABLine;
+    QObject *btnContour;
     QObject *btnManualOffOn;
     QObject *btnSectionOffAutoOn;
 
+    QObject *btnTiltDown;
+    QObject *btnTiltUp;
+
+    QObject *btnZoomIn;
+    QObject *btnZoomOut;
+
+    //icon palette -- do we need to keep these?
+    QObject *btnSnap;
+    QObject *btnTripOdometer;
+    QObject *btnGPSData;
+    QObject *btnSettings;
+    QObject *btnJob;
+    QObject *btnBoundaryMenu;
+    QObject *btnComm;
+    QObject *btnUnits;
+    QObject *btnFileExplorer;
+    QObject *btnAutoSteerConfig;
+
     QObject *sectionButton[MAXSECTIONS-1]; //zero based array
 
-
+    QObject *txtDistanceOffABLine;
 
 
     /*******************
@@ -280,24 +302,27 @@ public:
     int mouseX = 0, mouseY = 0;
 
     //data buffer for pixels read from off screen buffer
-    //uchar grnPixels[80001];
+    uchar grnPixels[80001];
+
 
    /**********************
      * OpenGL.Designer.cs *
      **********************/
 
-    void openGLControl_Draw();
-    void openGLControl_Initialized();
+    void openGLControl_Draw(QOpenGLContext *c);
+    void openGLControl_Initialized(QOpenGLContext *c);
     //void openGLControl_Resized(); //because Qt uses Open, this stuff goes into _Draw()
 
-    void openGLControlBack_Draw();
-    void openGLControlBack_Initialized();
+    void openGLControlBack_Draw(QOpenGLContext *c);
+    void openGLControlBack_Initialized(QOpenGLContext *c);
     //void openGLControlBack_Resized(); //because Qt uses Open, this stuff goes into _Draw()
 
-    void drawLightBar(double Width, double Height, double offlineDistance);
-    void calcFrustum();
+    void drawLightBar(QOpenGLContext *glContext, double Width, double Height, double offlineDistance);
+    void calcFrustum(QOpenGLContext *glContext);
 
     void setZoom();
+    GLuint loadGLTextures(QOpenGLContext *glContext);
+
 private:
     Ui::FormGPS *ui;
 
@@ -319,6 +344,24 @@ public slots:
     void onBtnManualOffOn_clicked();
     void onBtnSectionOffAutoOn_clicked();
     void onSectionButton_clicked(int section_num);
+
+    void onBtnTiltDown_clicked();
+    void onBtnTiltUp_clicked();
+
+    void onBtnZoomIn_clicked();
+    void onBtnZoomOut_clicked();
+
+    void onBtnSnap_clicked();
+    void onBtnTripOdometer_clicked();
+    void onBtnGPSData_clicked();
+    void onBtnSettings_clicked();
+    void onBtnJob_clicked();
+    void onBtnBoundaryMenu_clicked();
+    void onBtnComm_clicked();
+    void onBtnUnits_clicked();
+    void onBtnFileExplorer_clicked();
+    void onBtnAutoSteerConfig_clicked();
+
 };
 
 #endif // FORMGPS_H
