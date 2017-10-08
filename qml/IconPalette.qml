@@ -22,49 +22,87 @@ Rectangle {
         columns: 3
 
         IconButton {
-            id: iconButton
+            id: btnSnap
+            objectName: "btnSnap"
+            icon: "qrc:/images/Snap64.png"
         }
 
         IconButtonText {
-            id: iconButtonText
+            id: btnTripOdometer
+            objectName: "btnTripOdometer"
+            buttonText: qsTr("Trip")
+            icon: "qrc:/images/TripOdometer.png"
+            iconHeightScale: 1.0 //don't shrink icon to make room for text
         }
 
         IconButtonText {
-            id: iconButtonText1
+            id: btnGPSData
+            objectName: "btnGPSData"
+            buttonText: qsTr("GPS Data")
+            icon: "qrc:/images/Satellite64.png"
         }
 
         IconButtonText {
-            id: iconButtonText2
+            id: btnSettings
+            objectName: "btnSettings"
+            buttonText: qsTr("Settings")
+            icon: "qrc:/images/Settings64.png"
         }
 
         IconButton {
             id: btnJob
-            icon: "/images/JobActive.png"
+            objectName: "btnJob"
+            icon: "qrc:/images/JobActive.png"
         }
 
         IconButtonText {
-            id: iconButtonText3
+            id: btnBoundaryMenu
+            objectName: "btnBoundaryMenu"
+            buttonText: qsTr("Boundary")
+            icon: "qrc:/images/BoundaryMenu.png"
         }
 
-        IconButton {
-            id: iconButton2
+        Rectangle {
+            color: "transparent"
+            width: 100
+            height: 100
+
         }
 
         IconButtonText {
-            id: iconButtonText4
+            id: btnComm
+            objectName: "btnComm"
+            buttonText: qsTr("USB Ports")
+            icon: "qrc:/images/ComPorts.png"
         }
 
         IconButtonText {
             id: btnUnits
+            objectName: "btnUnits"
             buttonText: qsTr("Units")
-            icon: "/images/AcHa.png"
+            icon: "qrc:/images/AcHa.png"
         }
 
         IconButtonText {
             id: btnFileExploer
-            icon: "/images/FileExplorerWindows.png"
+            objectName: "btnFileExplorer"
+            icon: "qrc:/images/FileExplorerWindows.png"
             buttonText: qsTr("Explorer")
         }
+
+        Rectangle {
+            color: "transparent"
+            width: 100
+            height: 100
+        }
+
+        IconButtonText {
+            id: btnAutoSteer
+            objectName: "btnAutoSteerConfig"
+            buttonText: qsTr("Autosteer Config")
+            icon: "qrc:/images/AutoSteerConfig.png"
+        }
+
 
     }
 }

@@ -230,4 +230,13 @@ OpenGLControl {
 
     }
 
+    Text {
+        id: txtDistanceOffABLine
+        objectName: "txtDistanceOffABLine"
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        text: "Hi there"
+        color: "white"
+    }
+
 }
