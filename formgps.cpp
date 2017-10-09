@@ -46,6 +46,12 @@ FormGPS::FormGPS(QWidget *parent) :
     worldGrid->createWorldGrid(5005,5005);
     isGridOn = true;
 
+    section[0].positionLeft = -8.0;
+    section[0].positionRight = -3.0;
+    section[1].positionLeft = -3.0;
+    section[1].positionRight = 3.0;
+    section[2].positionLeft = 3.0;
+    section[2].positionRight = 8.0;
 
 }
 

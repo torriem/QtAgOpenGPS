@@ -21,12 +21,16 @@ void FormGPS::openGLControl_Draw()
 {
     QOpenGLContext *glContext = QOpenGLContext::currentContext();
     QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+    int width = glContext->surface()->size().width();
+    int height = glContext->surface()->size().height();
 
     //std::cout << "draw routine here." << std::endl;
 
     //Do stuff that was in the initialized method, since Qt uses OpenGL and may
     //have messed with the matrix stuff and other defaults
 
+    //qml has messed with the state variables; reset them to a sane state.
+    qmlview->resetOpenGLState();
     //  Set the clear color.
 
     gl->glClearColor(0.22f, 0.2858f, 0.16f, 1.0f);
@@ -38,7 +42,25 @@ void FormGPS::openGLControl_Draw()
     gl->glCullFace(GL_BACK);
 
     //set the camera to right distance
-    setZoom(gl);
+    setZoom();
+
+    //now move the "camera" to the calculated zoom settings
+    //I had to move these functions here because if setZoom is called
+    //from elsewhere in the GUI (say a button press), there's no GL
+    //context to work with.
+    gl->glMatrixMode(GL_PROJECTION);
+    gl->glLoadIdentity();
+    //  Create a perspective transformation.
+    //gl.Perspective(fovy, openGLControl.Width / (double)openGLControl.Height, 1, camDistanceFactor * camera.camSetDistance);
+    double aspect = width / height;
+    double fH = tan( fovy / 360 * M_PI);
+    double fW = fH * aspect;
+
+    gl->glFrustum(-fW, fW, -fH, fH, 1, camDistanceFactor * camera.camSetDistance );
+
+    //  Set the modelview matrix.
+    gl->glMatrixMode(GL_MODELVIEW);
+
 
     if (isGPSPositionInitialized)
     {
@@ -224,7 +246,7 @@ void FormGPS::openGLControl_Draw()
         //negative and positive on width, 0 at top to bottom ortho view
         //should this be the width of the opengl control?
         //gl->glOrtho(-(double)ui->openGLControlBack->width() / 2, (double)ui->openGLControlBack->width() / 2, (double)ui->openGLControlBack->height(), 0, -1, 1);
-        gl->glOrtho(-(double)qmlview->width() / 2, (double)qmlview->width() / 2, (double)qmlview->height(), 0, -1, 1);
+        gl->glOrtho(-(double)width / 2, width / 2, (double)height, 0, -1, 1);
 
         //  Create the appropriate modelview matrix.
         gl->glMatrixMode(GL_MODELVIEW);
@@ -243,7 +265,7 @@ void FormGPS::openGLControl_Draw()
                 //hite = 0.001;
 
                 //the background
-                double winLeftPos = -(double)qmlview->width() / 2;
+                double winLeftPos = -(double)width / 2;
                 double winRightPos = -winLeftPos;
                 gl->glEnable(GL_TEXTURE_2D);
                 //texture[0]->bind();
@@ -252,8 +274,8 @@ void FormGPS::openGLControl_Draw()
                 gl->glBegin(GL_TRIANGLE_STRIP);				// Build Quad From A Triangle Strip
                 gl->glTexCoord2i(0, 0); gl->glVertex2d(winRightPos, 0.0); // Top Right
                 gl->glTexCoord2i(1, 0); gl->glVertex2d(winLeftPos, 0.0); // Top Left
-                gl->glTexCoord2i(0, 1); gl->glVertex2d(winRightPos, hite * (double)height()); // Bottom Right
-                gl->glTexCoord2i(1, 1); gl->glVertex2d(winLeftPos, hite * (double)height()); // Bottom Left
+                gl->glTexCoord2i(0, 1); gl->glVertex2d(winRightPos, hite * height); // Bottom Right
+                gl->glTexCoord2i(1, 1); gl->glVertex2d(winLeftPos, hite * height); // Bottom Left
                 gl->glEnd();						// Done Building Triangle Strip
 
                 //disable, straight color
@@ -274,7 +296,7 @@ void FormGPS::openGLControl_Draw()
                 if (ct->distanceFromCurrentLine == 32000) ct->distanceFromCurrentLine = 0;
 
                 //drawLightBar(gl,openGLControl->viewportSize.width(), openGLControl->viewportSize.height(), ct->distanceFromCurrentLine * 0.1);
-                drawLightBar(gl,qmlview->width(), qmlview->height(), ct->distanceFromCurrentLine * 0.1);
+                drawLightBar(gl,width, height, ct->distanceFromCurrentLine * 0.1);
                 if ((ct->distanceFromCurrentLine) < 0.0)
                 {
                     txtDistanceOffABLine->setProperty("color","green");
@@ -310,8 +332,8 @@ void FormGPS::openGLControl_Draw()
                     txtDistanceOffABLine->setProperty("visible", "true");
                     //lblDelta.Visible = true;
                     drawLightBar(gl,
-                                 qmlview->width(),
-                                 qmlview->height(),
+                                 width,
+                                 height,
                                  ABLine->distanceFromCurrentLine * 0.1);
                     if ((ABLine->distanceFromCurrentLine) < 0.0)
                     {
@@ -397,7 +419,7 @@ void FormGPS::openGLControl_Draw()
     {
         gl->glClear(GL_COLOR_BUFFER_BIT);
     }
-    //qmlview->resetOpenGLState();
+    qmlview->resetOpenGLState();
 }
 
 /// Handles the OpenGLInitialized event of the openGLControl control.
@@ -405,6 +427,8 @@ void FormGPS::openGLControl_Initialized()
 {
     QOpenGLContext *glContext = QOpenGLContext::currentContext();
     QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+
+    qmlview->resetOpenGLState();
 
     //Load all the textures
     qDebug() << "initializing Open GL.";
@@ -1073,10 +1097,8 @@ void FormGPS::calcFrustum(QOpenGLFunctions_2_1 *gl)
 }
 
 //take the distance from object and convert to camera data
-void FormGPS::setZoom(QOpenGLFunctions_2_1 *gl)
+void FormGPS::setZoom()
 {
-    //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
-
     //match grid to cam distance and redo perspective
     if (camera.camSetDistance <= -20000) gridZoom = 2000;
     if (camera.camSetDistance >= -20000 && camera.camSetDistance < -10000) gridZoom =   2000;
@@ -1089,48 +1111,33 @@ void FormGPS::setZoom(QOpenGLFunctions_2_1 *gl)
     if (camera.camSetDistance >= -150 && camera.camSetDistance < -50) gridZoom =         10.06;
     if (camera.camSetDistance >= -50 && camera.camSetDistance < -1) gridZoom = 5.03;
     //1.216 2.532
-
-    //  Set the projection matrix.
-    gl->glMatrixMode(GL_PROJECTION);
-
-    //  Load the identity.
-    gl->glLoadIdentity();
-
-    //  Create a perspective transformation.
-    //gl.Perspective(fovy, openGLControl.Width / (double)openGLControl.Height, 1, camDistanceFactor * camera.camSetDistance);
-    double aspect = qmlview->width() / (double)qmlview->height();
-    double fH = tan( fovy / 360 * M_PI);
-    double fW = fH * aspect;
-
-    gl->glFrustum(-fW, fW, -fH, fH, 1, camDistanceFactor * camera.camSetDistance );
-
-    //  Set the modelview matrix.
-    gl->glMatrixMode(GL_MODELVIEW);
-
-
 }
 
 void FormGPS::loadGLTextures(QOpenGLFunctions_2_1 *gl)
 {
     //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
-    /*
+
     QOpenGLTexture *t;
+
+    gl->glGenTextures(2,texture); //generate 2 textures
 
     //  Background
     t = new QOpenGLTexture(QImage(":/images/Landscape.png").mirrored());
     t->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
     t->setMagnificationFilter(QOpenGLTexture::Linear);
+    t->bind(texture[0]);
 
-    texture.append(t); //position 0
+    //texture.append(t); //position 0
 
     //  Floor
     t = new QOpenGLTexture(QImage(":/images/floor.png").mirrored());
     t->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
     t->setMagnificationFilter(QOpenGLTexture::Linear);
+    t->bind(texture[1]);
 
-    texture.append(t); //position 1
-    */
+    //texture.append(t); //position 1
 
+/*
     QImage tex = QGLWidget::convertToGLFormat(QImage(":/images/Landscape.png"));
     gl->glGenTextures(1,&texture[0]);
     gl->glBindTexture(GL_TEXTURE_2D, texture[0]);
@@ -1146,4 +1153,5 @@ void FormGPS::loadGLTextures(QOpenGLFunctions_2_1 *gl)
     gl->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
     std::cout << texture[0] << " " << texture[1] << std::endl;
+*/
 }

@@ -59,6 +59,7 @@ public:
      * Qt and QML GUI elements *
      ***************************/
     QQuickView *qmlview;
+    QWidget *qmlcontainer;
     OpenGLControlItem *openGLControl_item = NULL;
     OpenGLControl *openGLControl = NULL;
     QObject *btnMinMaxZoom;
@@ -138,7 +139,7 @@ public:
 
     //Zoom variables
     double gridZoom;
-    double zoomValue = 15;
+    double zoomValue = 10;
     double triangleResolution = 1.0;
     double previousZoom = 25;
 
@@ -318,7 +319,7 @@ public:
     void drawLightBar(QOpenGLFunctions_2_1 *gl, double Width, double Height, double offlineDistance);
     void calcFrustum(QOpenGLFunctions_2_1 *gl);
 
-    void setZoom(QOpenGLFunctions_2_1 *gl);
+    void setZoom();
     void loadGLTextures(QOpenGLFunctions_2_1 *gl);
 
 private:

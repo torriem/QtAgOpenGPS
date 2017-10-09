@@ -11,8 +11,6 @@
 #include <QOpenGLFunctions_2_1>
 #include <functional>
 
-#include <iostream>
-
 void FormGPS::setupGui()
 {
     ui->setupUi(this);
@@ -23,20 +21,25 @@ void FormGPS::setupGui()
     qmlview = new QQuickView();
     qmlview->setSource(QUrl("qrc:/qml/MainWindow.qml"));
     qmlview->setColor(Qt::transparent);
+    //qmlview->setGeometry(0,0,800,600);
     qmlview->show();
 
     qmlview->setClearBeforeRendering(false);
     connect(qmlview,SIGNAL(beforeRendering()), this, SLOT(openGLControl_Draw()),Qt::DirectConnection);
     connect(qmlview,SIGNAL(sceneGraphInitialized()), this, SLOT(openGLControl_Initialized()),Qt::DirectConnection);
+    //connect(qmlview,SIGNAL(beforeRendering()), this, SLOT(renderGL()),Qt::DirectConnection);
+    //connect(qmlview,SIGNAL(sceneGraphInitialized()), this, SLOT(openGLControl_Initialized()),Qt::DirectConnection);
 
     //embed the view in a normal widget
 
-    QWidget *qmlcontainer = QWidget::createWindowContainer(qmlview);
+    qmlcontainer = QWidget::createWindowContainer(qmlview);
 
     //place the widget in our window's layout
     ui->verticalLayout->addWidget(qmlcontainer);
+
     //hide the section control lookahead widget; it should still work
     ui->openGLControlBack->hide();
+
     //get pointer to root QML object, which is the OpenGLControl,
     //store in a member variable for future use.
     qml_root = qmlview->rootObject();
@@ -143,7 +146,7 @@ void FormGPS::setupGui()
     //connnect section buttons to callbacks
     sectionButtonsSignalMapper = new QSignalMapper(this);
     for(int i=1; i < MAXSECTIONS; i++){
-        std::cout << (QString("section") + QString::number(i)).toStdString() << std::endl;
+        qDebug() << QString("section") <<i;
         sectionButton[i] = qmlItem(qml_root,QString("section")+QString::number(i));
         sectionButton[i]->setProperty("state","off");
         connect(sectionButton[i],SIGNAL(clicked()),
@@ -164,7 +167,7 @@ void FormGPS::setupGui()
 
 void FormGPS::openGLControl_set(OpenGLControl *c){
     openGLControl = c;
-    std::cout << "Apparently the renderer is activated now." << std::endl;
+    qDebug() << "Apparently the renderer is activated now." ;
 
     //tell the control to call our main form function for drawing.
     //c->registerInitCallback(std::bind(&FormGPS::openGLControl_Initialized, this, std::placeholders::_1));
@@ -176,30 +179,38 @@ void FormGPS::renderGL()
 {
     qDebug() << "before rendering a frame.";
 
-    QOpenGLContext *glContext = QOpenGLContext::currentContext();
-    QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+    qmlview->resetOpenGLState();
+    openGLControlBack_Draw();
+    /*
+    gltest_draw();
+    qmlview->resetOpenGLState();
+    return;
+    //QOpenGLContext *glContext = QOpenGLContext::currentContext();
+    //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
-    gl->glMatrixMode(GL_PROJECTION);
-    gl->glLoadIdentity();
-    gl->glOrtho(-2.0, 2.0, -2.0, 2.0, -1.5, 1.5);
+    //glViewport(0,0,400,400);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(-2.0, 2.0, -2.0, 2.0, -1.5, 1.5);
     //glFrustum(-1.0, 1.0, -1.0, 1.0, 1.5, 20.0);
-    gl->glMatrixMode(GL_MODELVIEW);
+    glMatrixMode(GL_MODELVIEW);
 
-    //glClearColor(0.22f, 0.2858f, 0.16f, 1.0f);
-    gl->glClear(GL_COLOR_BUFFER_BIT);
-    gl->glLoadIdentity();
+    glClearColor(0.22f, 0.2858f, 0.16f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glLoadIdentity();
 
     //gluLookAt(0.0, 0.0, -3.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
-    gl->glColor3f(1.0f, 1.0f, 1.0f);
+    glColor3f(1.0f, 1.0f, 1.0f);
 
     double size = 2 * 0.5;
 
 #   define V(a,b,c) glVertex3d( a size, b size, c size );
 #   define N(a,b,c) glNormal3d( a, b, c );
 
-    gl->glLineWidth(3);
-    /* PWO: I dared to convert the code to use macros... */
+    glLineWidth(3);
+    // PWO: I dared to convert the code to use macros...
     glBegin( GL_LINE_LOOP ); N( 1.0, 0.0, 0.0); V(+,-,+); V(+,-,-); V(+,+,-); V(+,+,+); glEnd();
     glBegin( GL_LINE_LOOP ); N( 0.0, 1.0, 0.0); V(+,+,+); V(+,+,-); V(-,+,-); V(-,+,+); glEnd();
     glBegin( GL_LINE_LOOP ); N( 0.0, 0.0, 1.0); V(+,+,+); V(-,+,+); V(-,-,+); V(+,-,+); glEnd();
@@ -213,39 +224,39 @@ void FormGPS::renderGL()
     glFlush();
 
     qmlview->resetOpenGLState();
-
+*/
 }
 
 void FormGPS::onBtnMinMaxZoom_clicked(){
-    std::cout<<"Min Max button clicked." <<std::endl;
+    qDebug()<<"Min Max button clicked." ;
 }
 
 void FormGPS::onBtnPerimeter_clicked(){
-    std::cout<<"Perimeter button clicked." <<std::endl;
+    qDebug()<<"Perimeter button clicked." ;
 }
 
 void FormGPS::onBtnAutoSteer_clicked(){
-    std::cout<<"Autosteer button clicked." <<std::endl;
+    qDebug()<<"Autosteer button clicked." ;
 }
 
 void FormGPS::onBtnFlag_clicked(){
-    std::cout<<"flag button clicked." <<std::endl;
+    qDebug()<<"flag button clicked." ;
 }
 
 void FormGPS::onBtnABLine_clicked(){
-    std::cout<<"abline button clicked." <<std::endl;
+    qDebug()<<"abline button clicked." ;
 }
 
 void FormGPS::onBtnContour_clicked(){
-    std::cout<<"contour button clicked." <<std::endl;
+    qDebug()<<"contour button clicked." ;
 }
 
 void FormGPS::onBtnManualOffOn_clicked(){
-    std::cout<<"Manual off on button clicked." <<std::endl;
+    qDebug()<<"Manual off on button clicked." ;
 }
 
 void FormGPS::onBtnSectionOffAutoOn_clicked(){
-    std::cout<<"Section off auto on button clicked." <<std::endl;
+    qDebug()<<"Section off auto on button clicked." ;
 }
 
 void FormGPS::onSectionButton_clicked(int section_num) {
@@ -253,12 +264,12 @@ void FormGPS::onSectionButton_clicked(int section_num) {
     //demo code only.
     QObject* button = qmlItem(qml_root,QString("section")+QString::number(section_num));
 
-    std::cout <<"section button " << section_num << " clicked." <<std::endl;
+    qDebug() <<"section button " << section_num << " clicked." ;
 
     QString state;
     state = button->property("state").toString();
 
-    std::cout << state.toStdString() << std::endl;
+    qDebug() << state;
 
     if(state == "on")
         button->setProperty("state",QVariant("auto"));
@@ -269,59 +280,83 @@ void FormGPS::onSectionButton_clicked(int section_num) {
 }
 
 void FormGPS::onBtnTiltDown_clicked(){
-    std::cout<<"TiltDown button clicked." <<std::endl;
+    qDebug()<<"TiltDown button clicked.";
+    camera.camPitch -= (camera.camPitch*0.03-1);
+    if (camera.camPitch > 0) camera.camPitch = 0;
+
+    ui->openGLControlBack->update();
 }
 
 void FormGPS::onBtnTiltUp_clicked(){
-    std::cout<<"TiltUp button clicked." <<std::endl;
+    qDebug()<<"TiltUp button clicked.";
+    camera.camPitch += (camera.camPitch*0.03-1);
+    if (camera.camPitch < -80) camera.camPitch = -80;
+
+    ui->openGLControlBack->update();
 }
 
 void FormGPS::onBtnZoomIn_clicked(){
-    std::cout<<"ZoomIn button clicked." <<std::endl;
+    qDebug() <<"ZoomIn button clicked.";
+    if (zoomValue <= 20) {
+        if ((zoomValue -= zoomValue * 0.1) < 6.0) zoomValue = 6.0;
+    } else {
+        if ((zoomValue -= zoomValue*0.05) < 6.0) zoomValue = 6.0;
+    }
+
+    camera.camSetDistance = zoomValue * zoomValue * -1;
+    setZoom();
 }
 
 void FormGPS::onBtnZoomOut_clicked(){
-    std::cout<<"ZoomOut button clicked." <<std::endl;
+    qDebug() <<"ZoomOut button clicked.";
+    ui->openGLControlBack->update();
+    if (zoomValue <= 20)
+        zoomValue += zoomValue*0.1;
+    else
+        zoomValue += zoomValue*0.05;
+    camera.camSetDistance = zoomValue * zoomValue * -1;
+    setZoom();
+    ui->openGLControlBack->update();
 }
 
 void FormGPS::onBtnSnap_clicked(){
-    std::cout<<"Snap button clicked." <<std::endl;
+    qDebug()<<"Snap button clicked." ;
 }
 
 void FormGPS::onBtnTripOdometer_clicked(){
-    std::cout<<"TripOdometer button clicked." <<std::endl;
+    qDebug()<<"TripOdometer button clicked." ;
 }
 
 void FormGPS::onBtnGPSData_clicked(){
-    std::cout<<"GPSData button clicked." <<std::endl;
+    qDebug()<<"GPSData button clicked." ;
 }
 
 void FormGPS::onBtnSettings_clicked(){
-    std::cout<<"Settings button clicked." <<std::endl;
+    qDebug()<<"Settings button clicked." ;
 }
 
 void FormGPS::onBtnJob_clicked(){
-    std::cout<<"Job button clicked." <<std::endl;
+    qDebug()<<"Job button clicked." ;
 }
 
 void FormGPS::onBtnBoundaryMenu_clicked(){
-    std::cout<<"BoundaryMenu button clicked." <<std::endl;
+    qDebug()<<"BoundaryMenu button clicked." ;
 }
 
 void FormGPS::onBtnComm_clicked(){
-    std::cout<<"Comm button clicked." <<std::endl;
+    qDebug()<<"Comm button clicked." ;
 }
 
 void FormGPS::onBtnUnits_clicked(){
-    std::cout<<"Units button clicked." <<std::endl;
+    qDebug()<<"Units button clicked." ;
 }
 
 void FormGPS::onBtnFileExplorer_clicked(){
-    std::cout<<"FileExplorer button clicked." <<std::endl;
+    qDebug()<<"FileExplorer button clicked." ;
 }
 
 void FormGPS::onBtnAutoSteerConfig_clicked(){
-    std::cout<<"AutoSteerConfig button clicked." <<std::endl;
+    qDebug()<<"AutoSteerConfig button clicked." ;
 }
 
 

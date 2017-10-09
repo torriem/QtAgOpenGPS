@@ -16,7 +16,7 @@ public:
 
     double camPitch;
     double offset;
-    double camSetDistance = -75; //put in setttings?
+    double camSetDistance = -100; //put in setttings?
     //double camDelta = 0;
 
     CCamera();
