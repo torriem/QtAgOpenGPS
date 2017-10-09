@@ -1,7 +1,7 @@
 #include "ccamera.h"
 #include <QOpenGLContext>
-#include <QOpenGLFunctions_1_1>
-#include <QSettings>
+#include <QOpenGLFunctions_2_1>
+#include "aogsettings.h"
 #include <math.h>
 #include "glm.h"
 
@@ -11,14 +11,15 @@
 CCamera::CCamera()
     :camPosZ(0.0)
 {
-    QSettings s;
-    camPitch = s.value("setCam_pitch",QVariant((double) DEFAULT_SETCAM_PITCH)).toDouble();
+    AOGSettings s;
+    camPitch = s.value("camera/pitch", DEFAULT_SETCAM_PITCH).toDouble();
 }
 
-void CCamera::setWorldCam(QOpenGLContext *glContext,
+void CCamera::setWorldCam(QOpenGLFunctions_2_1 *gl,
                           double _fixPosX, double _fixPosY,
                           double _fixHeading) {
-    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
+    //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+    //gl->initializeOpenGLFunctions();//should already be initialized
 
     camPosX = _fixPosX;
     camPosY = _fixPosY;

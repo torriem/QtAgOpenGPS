@@ -15,7 +15,7 @@ class CContour
 private:
     FormGPS *mf;
 public:
-    bool isContourOn, isContourBtnOn;
+    bool isContourOn=false, isContourBtnOn=false;
 
     //used to determine if section was off and now is on or vice versa
     bool wasSectionOn;

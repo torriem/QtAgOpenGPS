@@ -51,7 +51,9 @@ SOURCES += main.cpp\
     mainoverlay.cpp \
     openglcontrolitem.cpp \
     openglcontrol.cpp \
-    formgps_ui.cpp
+    formgps_ui.cpp \
+    aogsettings.cpp \
+    gltest.cpp
 
 HEADERS  += formgps.h \
     classes/cabline.h \
@@ -75,10 +77,14 @@ HEADERS  += formgps.h \
     mainoverlay.h \
     openglcontrolitem.h \
     openglcontrol.h \
-    qmlutil.h
+    qmlutil.h \
+    aogsettings.h \
+    gltest.h
 
 FORMS    += formgps.ui \
     mainoverlay.ui
 
 RESOURCES += \
     agopengps.qrc
+
+unix|win32: LIBS += -lglut -lGLU

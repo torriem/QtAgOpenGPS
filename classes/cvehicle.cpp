@@ -1,8 +1,8 @@
 #include "cvehicle.h"
 #include "formgps.h"
 #include <QOpenGLContext>
-#include <QOpenGLFunctions_1_1>
-#include <QSettings>
+#include <QOpenGLFunctions_2_1>
+#include "aogsettings.h"
 #include "csection.h"
 #include "glm.h"
 
@@ -33,50 +33,50 @@
 CVehicle::CVehicle(FormGPS *mf)
     :mf(mf)
 {
-    QSettings s;
+    AOGSettings s;
     //from settings grab the vehicle specifics
-    toolWidth = s.value("setVehicle_toolWidth", DEFAULT_TOOLWIDTH).toDouble();
-    toolOverlap = s.value("setVehicle_toolOverlap", DEFAULT_TOOLOVERLAP).toDouble();
-    toolTrailingHitchLength = s.value("setVehicle_toolTrailingHitchLength",
+    toolWidth = s.value("vehicle/toolWidth", DEFAULT_TOOLWIDTH).toDouble();
+    toolOverlap = s.value("vehicle/toolOverlap", DEFAULT_TOOLOVERLAP).toDouble();
+    toolTrailingHitchLength = s.value("vehicle/toolTrailingHitchLength",
                                       DEFAULT_TOOLTRAILINGHITCHLENGTH).toDouble();
-    tankTrailingHitchLength = s.value("setVehicle_tankTrailingHitchLength",
+    tankTrailingHitchLength = s.value("vehicle/tankTrailingHitchLength",
                                       DEFAULT_TANKTRAILINGHITCHLENGTH).toDouble();
-    toolOffset = s.value("setVehicle_toolOffset",DEFAULT_TOOLOFFSET).toDouble();
+    toolOffset = s.value("vehicle/toolOffset",DEFAULT_TOOLOFFSET).toDouble();
 
-    isToolBehindPivot = s.value("setVehicle_isToolBehindPivot",
+    isToolBehindPivot = s.value("vehicle/isToolBehindPivot",
                                 DEFAULT_ISTOOLBEHINDPIVOT).toBool();
-    isToolTrailing = s.value("setVehicle_isToolTrailing",
+    isToolTrailing = s.value("vehicle/isToolTrailing",
                              DEFAULT_ISTOOLTRAILING).toBool();
 
-    isPivotBehindAntenna = s.value("setVehicle_isPivotBehindAntenna",
+    isPivotBehindAntenna = s.value("vehicle/isPivotBehindAntenna",
                                    DEFAULT_ISPIVOTBEHINDANTENNA).toBool();
-    antennaHeight = s.value("setVehicle_antennaHeight",DEFAULT_ANTENNAHEIGHT).toDouble();
-    antennaPivot = s.value("setVehicle_antennaPivot",DEFAULT_ANTENNAPIVOT).toDouble();
-    hitchLength = s.value("setVehicle_hitchLength",DEFAULT_HITCHLENGTH).toDouble();
+    antennaHeight = s.value("vehicle/antennaHeight",DEFAULT_ANTENNAHEIGHT).toDouble();
+    antennaPivot = s.value("vehicle/antennaPivot",DEFAULT_ANTENNAPIVOT).toDouble();
+    hitchLength = s.value("vehicle/hitchLength",DEFAULT_HITCHLENGTH).toDouble();
 
-    wheelbase = s.value("setVehicle_wheelbase",DEFAULT_WHEELBASE).toDouble();
-    isSteerAxleAhead = s.value("setVehicle_isSteerAxleAhead",
+    wheelbase = s.value("vehicle/wheelbase",DEFAULT_WHEELBASE).toDouble();
+    isSteerAxleAhead = s.value("vehicle/isSteerAxleAhead",
                                DEFAULT_ISSTEERINGAXLEAHEAD).toBool();
 
-    toolLookAhead = s.value("setVehicle_lookAhead",DEFAULT_LOOKAHEAD).toDouble();
-    toolTurnOffDelay = s.value("setVehicle_turnOffDelay",DEFAULT_TURNOFFDELAY).toDouble();
+    toolLookAhead = s.value("vehicle/lookAhead",DEFAULT_LOOKAHEAD).toDouble();
+    toolTurnOffDelay = s.value("vehicle/turnOffDelay",DEFAULT_TURNOFFDELAY).toDouble();
 
-    numOfSections = s.value("setVehicle_numSections",DEFAULT_NUMSECTIONS).toInt();
+    numOfSections = s.value("vehicle/numSections",DEFAULT_NUMSECTIONS).toInt();
     numSuperSection = numOfSections+1;
 
-    slowSpeedCutoff = s.value("setVehicle_slowSpeedCutoff",DEFAULT_SLOWSPEEDCUTOFF).toDouble();
-    toolMinUnappliedPixels = s.value("setVehicle_minApplied",DEFAULT_MINAPPLIED).toInt();
+    slowSpeedCutoff = s.value("vehicle/slowSpeedCutoff",DEFAULT_SLOWSPEEDCUTOFF).toDouble();
+    toolMinUnappliedPixels = s.value("vehicle/minApplied",DEFAULT_MINAPPLIED).toInt();
 
-    goalPointLookAhead = s.value("setVehicle_goalPointLookAhead",
+    goalPointLookAhead = s.value("vehicle/goalPointLookAhead",
                                  DEFAULT_GOALPOINTLOOKAHEAD).toDouble();
-    maxAngularVelocity = s.value("setVehicle_maxAngularVelocity",
+    maxAngularVelocity = s.value("vehicle/maxAngularVelocity",
                                  DEFAULT_MAXANGULARVELOCITY).toDouble();
-    maxSteerAngle = s.value("setVehicle_maxSteerAngle",
+    maxSteerAngle = s.value("vehicle/maxSteerAngle",
                             DEFAULT_MAXSTEERINGANGLE).toDouble();
 }
 
 void CVehicle::drawVehicle(QOpenGLContext *glContext) {
-    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
+    QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
     //translate and rotate at pivot axle
     gl->glTranslated(mf->fixEasting, mf->fixNorthing, 0);

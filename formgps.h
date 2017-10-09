@@ -36,6 +36,8 @@ class CBoundary;
 class OpenGLControl;
 class OpenGLControlItem;
 class OpenGLContext;
+class QOpenGLFunctions_2_1;
+class QQuickView;
 
 const int MAXSECTIONS = 9;
 
@@ -56,6 +58,7 @@ public:
     /***************************
      * Qt and QML GUI elements *
      ***************************/
+    QQuickView *qmlview;
     OpenGLControlItem *openGLControl_item = NULL;
     OpenGLControl *openGLControl = NULL;
     QObject *btnMinMaxZoom;
@@ -141,8 +144,8 @@ public:
 
     // Storage For Our Tractor, implement, background etc Textures
     //Texture particleTexture;
-    //GLuint texture[3];
-    QVector<QOpenGLTexture *> texture;
+    GLuint texture[3];
+    //QVector<QOpenGLTexture *> texture;
 
     //create the scene camera
     CCamera camera;
@@ -311,19 +314,12 @@ public:
      * OpenGL.Designer.cs *
      **********************/
 
-    void openGLControl_Draw(QOpenGLContext *c);
-    void openGLControl_Initialized(QOpenGLContext *c);
-    //void openGLControl_Resized(); //because Qt uses Open, this stuff goes into _Draw()
 
-    void openGLControlBack_Draw(QOpenGLContext *c);
-    void openGLControlBack_Initialized(QOpenGLContext *c);
-    //void openGLControlBack_Resized(); //because Qt uses Open, this stuff goes into _Draw()
+    void drawLightBar(QOpenGLFunctions_2_1 *gl, double Width, double Height, double offlineDistance);
+    void calcFrustum(QOpenGLFunctions_2_1 *gl);
 
-    void drawLightBar(QOpenGLContext *glContext, double Width, double Height, double offlineDistance);
-    void calcFrustum(QOpenGLContext *glContext);
-
-    void setZoom();
-    void loadGLTextures(QOpenGLContext *glContext);
+    void setZoom(QOpenGLFunctions_2_1 *gl);
+    void loadGLTextures(QOpenGLFunctions_2_1 *gl);
 
 private:
     Ui::FormGPS *ui;
@@ -364,6 +360,16 @@ public slots:
     void onBtnFileExplorer_clicked();
     void onBtnAutoSteerConfig_clicked();
 
+    void renderGL();
+
+    /***************************
+     * from OpenGL.Designer.cs *
+     ***************************/
+    void openGLControl_Draw();
+    void openGLControl_Initialized();
+
+    void openGLControlBack_Draw();
+    void openGLControlBack_Initialized();
 };
 
 #endif // FORMGPS_H

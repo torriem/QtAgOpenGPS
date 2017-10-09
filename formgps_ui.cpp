@@ -6,6 +6,9 @@
 #include "openglcontrol.h"
 #include "qmlutil.h"
 
+#include "gltest.h"
+#include <QtOpenGL>
+#include <QOpenGLFunctions_2_1>
 #include <functional>
 
 #include <iostream>
@@ -17,30 +20,34 @@ void FormGPS::setupGui()
     /* Load the QML UI and display it in the main area of the GUI */
 
     //Load the QML into a view
-    QQuickView *qmlview = new QQuickView();
+    qmlview = new QQuickView();
     qmlview->setSource(QUrl("qrc:/qml/MainWindow.qml"));
     qmlview->setColor(Qt::transparent);
     qmlview->show();
 
+    qmlview->setClearBeforeRendering(false);
+    connect(qmlview,SIGNAL(beforeRendering()), this, SLOT(openGLControl_Draw()),Qt::DirectConnection);
+    connect(qmlview,SIGNAL(sceneGraphInitialized()), this, SLOT(openGLControl_Initialized()),Qt::DirectConnection);
+
     //embed the view in a normal widget
+
     QWidget *qmlcontainer = QWidget::createWindowContainer(qmlview);
 
     //place the widget in our window's layout
     ui->verticalLayout->addWidget(qmlcontainer);
     //hide the section control lookahead widget; it should still work
     ui->openGLControlBack->hide();
-
     //get pointer to root QML object, which is the OpenGLControl,
     //store in a member variable for future use.
     qml_root = qmlview->rootObject();
     //attach callback to signal so we can interact with the control
     //once it is realized.
-    connect(qml_root,SIGNAL(controlSet(OpenGLControl *)),this,
-            SLOT(openGLControl_set(OpenGLControl*)));
+    //connect(qml_root,SIGNAL(controlSet(OpenGLControl *)),this,
+    //        SLOT(openGLControl_set(OpenGLControl*)));
 
     //save a copy of this item because we'll need it to request updates
     //when GPS data comes in (or on a timer for FPS).
-    openGLControl_item = qobject_cast<OpenGLControlItem *>(qml_root);
+    //openGLControl_item = qobject_cast<OpenGLControlItem *>(qml_root);
 
     //connect qml button signals to callbacks (it's not automatic with qml)
     btnMinMaxZoom = qmlItem(qml_root,"btnMinMaxZoom");
@@ -149,6 +156,10 @@ void FormGPS::setupGui()
 
     txtDistanceOffABLine = qmlItem(qml_root,"txtDistanceOffABLine");
 
+
+    //ui->openGLControlBack->setPaintGLCallback(&gltest_draw);
+    //ui->openGLControlBack->setPaintGLCallback(std::bind(&FormGPS::openGLControl_Draw,this));
+
 }
 
 void FormGPS::openGLControl_set(OpenGLControl *c){
@@ -156,8 +167,53 @@ void FormGPS::openGLControl_set(OpenGLControl *c){
     std::cout << "Apparently the renderer is activated now." << std::endl;
 
     //tell the control to call our main form function for drawing.
-    c->registerInitCallback(std::bind(&FormGPS::openGLControl_Initialized, this, std::placeholders::_1));
-    c->registerPaintCallback(std::bind(&FormGPS::openGLControl_Draw, this, std::placeholders::_1));
+    //c->registerInitCallback(std::bind(&FormGPS::openGLControl_Initialized, this, std::placeholders::_1));
+    //c->registerPaintCallback(std::bind(&FormGPS::openGLControl_Draw, this, std::placeholders::_1));
+    //c->registerPaintCallback(std::bind(&gltest_draw,openGLControl,std::placeholders::_1));
+}
+
+void FormGPS::renderGL()
+{
+    qDebug() << "before rendering a frame.";
+
+    QOpenGLContext *glContext = QOpenGLContext::currentContext();
+    QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+
+    gl->glMatrixMode(GL_PROJECTION);
+    gl->glLoadIdentity();
+    gl->glOrtho(-2.0, 2.0, -2.0, 2.0, -1.5, 1.5);
+    //glFrustum(-1.0, 1.0, -1.0, 1.0, 1.5, 20.0);
+    gl->glMatrixMode(GL_MODELVIEW);
+
+    //glClearColor(0.22f, 0.2858f, 0.16f, 1.0f);
+    gl->glClear(GL_COLOR_BUFFER_BIT);
+    gl->glLoadIdentity();
+
+    //gluLookAt(0.0, 0.0, -3.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+    gl->glColor3f(1.0f, 1.0f, 1.0f);
+
+    double size = 2 * 0.5;
+
+#   define V(a,b,c) glVertex3d( a size, b size, c size );
+#   define N(a,b,c) glNormal3d( a, b, c );
+
+    gl->glLineWidth(3);
+    /* PWO: I dared to convert the code to use macros... */
+    glBegin( GL_LINE_LOOP ); N( 1.0, 0.0, 0.0); V(+,-,+); V(+,-,-); V(+,+,-); V(+,+,+); glEnd();
+    glBegin( GL_LINE_LOOP ); N( 0.0, 1.0, 0.0); V(+,+,+); V(+,+,-); V(-,+,-); V(-,+,+); glEnd();
+    glBegin( GL_LINE_LOOP ); N( 0.0, 0.0, 1.0); V(+,+,+); V(-,+,+); V(-,-,+); V(+,-,+); glEnd();
+    glBegin( GL_LINE_LOOP ); N(-1.0, 0.0, 0.0); V(-,-,+); V(-,+,+); V(-,+,-); V(-,-,-); glEnd();
+    glBegin( GL_LINE_LOOP ); N( 0.0,-1.0, 0.0); V(-,-,+); V(-,-,-); V(+,-,-); V(+,-,+); glEnd();
+    glBegin( GL_LINE_LOOP ); N( 0.0, 0.0,-1.0); V(-,-,-); V(-,+,-); V(+,+,-); V(+,-,-); glEnd();
+
+#   undef V
+#   undef N
+
+    glFlush();
+
+    qmlview->resetOpenGLState();
+
 }
 
 void FormGPS::onBtnMinMaxZoom_clicked(){
@@ -267,4 +323,5 @@ void FormGPS::onBtnFileExplorer_clicked(){
 void FormGPS::onBtnAutoSteerConfig_clicked(){
     std::cout<<"AutoSteerConfig button clicked." <<std::endl;
 }
+
 

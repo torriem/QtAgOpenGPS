@@ -1,6 +1,6 @@
 #include "cworldgrid.h"
 #include <QOpenGLContext>
-#include <QOpenGLFunctions_1_1>
+#include <QOpenGLFunctions_2_1>
 #include "formgps.h"
 
 CWorldGrid::CWorldGrid(FormGPS *mf)
@@ -12,16 +12,17 @@ CWorldGrid::CWorldGrid(FormGPS *mf)
 //TODO: pass in color and texture to draw functions instead of passing in the
 // entire FormGPS object
 
-void CWorldGrid::drawFieldSurface(QOpenGLContext *glContext)
+void CWorldGrid::drawFieldSurface(QOpenGLFunctions_2_1 *gl)
 {
-    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
+    //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+    gl->initializeOpenGLFunctions();//should already be initialized
     // Enable Texture Mapping and set color to white
     gl->glEnable(GL_TEXTURE_2D);
     gl->glColor3b(mf->redField, mf->grnField, mf->bluField);
 
     //the floor
-    //gl->glBindTexture(GL_TEXTURE_2D, mf->texture[1]);	// Select Our Texture
-    mf->texture[1]->bind();
+    gl->glBindTexture(GL_TEXTURE_2D, mf->texture[1]);	// Select Our Texture
+    //mf->texture[1]->bind();
     gl->glBegin(GL_TRIANGLE_STRIP);				            // Build Quad From A Triangle Strip
     gl->glTexCoord2d(0, 0);
     gl->glVertex3d(eastingMin, northingMin, 0.0);                // Top Right
@@ -35,9 +36,9 @@ void CWorldGrid::drawFieldSurface(QOpenGLContext *glContext)
     gl->glDisable(GL_TEXTURE_2D);
 }
 
-void CWorldGrid::drawWorldGrid(QOpenGLContext *glContext, double _gridZoom)
+void CWorldGrid::drawWorldGrid(QOpenGLFunctions_2_1 *gl, double _gridZoom)
 {
-    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
+    //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
     //draw easting lines and westing lines to produce a grid
 
     gl->glColor3b(mf->redField, mf->grnField, mf->bluField);

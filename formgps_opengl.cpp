@@ -10,13 +10,17 @@
 #include "cboundary.h"
 #include "openglcontrol.h"
 
-#include <QOpenGLFunctions_1_1>
+#include <QGLWidget>
+#include <QQuickView>
+//#include <QOpenGLFunctions_1_1>
+#include <QOpenGLFunctions_2_1>
+
 #include <iostream>
 
-void FormGPS::openGLControl_Draw(QOpenGLContext *glContext)
+void FormGPS::openGLControl_Draw()
 {
-    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
-    //gl->initializeOpenGLFunctions();//should already be initialized
+    QOpenGLContext *glContext = QOpenGLContext::currentContext();
+    QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
     //std::cout << "draw routine here." << std::endl;
 
@@ -34,8 +38,7 @@ void FormGPS::openGLControl_Draw(QOpenGLContext *glContext)
     gl->glCullFace(GL_BACK);
 
     //set the camera to right distance
-    setZoom();
-
+    setZoom(gl);
 
     if (isGPSPositionInitialized)
     {
@@ -45,20 +48,20 @@ void FormGPS::openGLControl_Draw(QOpenGLContext *glContext)
         gl->glLoadIdentity();
 
         //camera does translations and rotations
-        camera.setWorldCam(glContext, pivotAxlePos.easting, pivotAxlePos.northing, fixHeadingCam);
+        camera.setWorldCam(gl, pivotAxlePos.easting, pivotAxlePos.northing, fixHeadingCam);
 
         //calculate the frustum planes for culling
-        calcFrustum(glContext);
+        calcFrustum(gl);
 
         //draw the field ground images
-        worldGrid->drawFieldSurface(glContext);
+        //worldGrid->drawFieldSurface(gl);
 
         ////Draw the world grid based on camera position
         gl->glDisable(GL_DEPTH_TEST);
         gl->glDisable(GL_TEXTURE_2D);
 
         ////if grid is on draw it
-        if (isGridOn) worldGrid->drawWorldGrid(glContext,gridZoom);
+        if (isGridOn) worldGrid->drawWorldGrid(gl,gridZoom);
 
         //turn on blend for paths
         gl->glEnable(GL_BLEND);
@@ -213,7 +216,6 @@ void FormGPS::openGLControl_Draw(QOpenGLContext *glContext)
         gl->glColor3f(0.98f, 0.98f, 0.98f);
         gl->glDisable(GL_BLEND);
         gl->glEnable(GL_DEPTH_TEST);
-
         //// 2D Ortho --------------------------
         gl->glMatrixMode(GL_PROJECTION);
         gl->glPushMatrix();
@@ -221,7 +223,8 @@ void FormGPS::openGLControl_Draw(QOpenGLContext *glContext)
 
         //negative and positive on width, 0 at top to bottom ortho view
         //should this be the width of the opengl control?
-        //*****glOrtho2D(-(double)width() / 2, (double)width() / 2, (double)height(), 0);
+        //gl->glOrtho(-(double)ui->openGLControlBack->width() / 2, (double)ui->openGLControlBack->width() / 2, (double)ui->openGLControlBack->height(), 0, -1, 1);
+        gl->glOrtho(-(double)qmlview->width() / 2, (double)qmlview->width() / 2, (double)qmlview->height(), 0, -1, 1);
 
         //  Create the appropriate modelview matrix.
         gl->glMatrixMode(GL_MODELVIEW);
@@ -240,11 +243,11 @@ void FormGPS::openGLControl_Draw(QOpenGLContext *glContext)
                 //hite = 0.001;
 
                 //the background
-                double winLeftPos = -(double)width() / 2;
+                double winLeftPos = -(double)qmlview->width() / 2;
                 double winRightPos = -winLeftPos;
                 gl->glEnable(GL_TEXTURE_2D);
-                texture[0]->bind();
-                //gl->glBindTexture(GL_TEXTURE_2D, texture[0]);		// Select Our Texture
+                //texture[0]->bind();
+                gl->glBindTexture(GL_TEXTURE_2D, texture[0]);		// Select Our Texture
 
                 gl->glBegin(GL_TRIANGLE_STRIP);				// Build Quad From A Triangle Strip
                 gl->glTexCoord2i(0, 0); gl->glVertex2d(winRightPos, 0.0); // Top Right
@@ -270,7 +273,8 @@ void FormGPS::openGLControl_Draw(QOpenGLContext *glContext)
                 //lblDelta.Visible = true;
                 if (ct->distanceFromCurrentLine == 32000) ct->distanceFromCurrentLine = 0;
 
-                drawLightBar(glContext,openGLControl->viewportSize.width(), openGLControl->viewportSize.height(), ct->distanceFromCurrentLine * 0.1);
+                //drawLightBar(gl,openGLControl->viewportSize.width(), openGLControl->viewportSize.height(), ct->distanceFromCurrentLine * 0.1);
+                drawLightBar(gl,qmlview->width(), qmlview->height(), ct->distanceFromCurrentLine * 0.1);
                 if ((ct->distanceFromCurrentLine) < 0.0)
                 {
                     txtDistanceOffABLine->setProperty("color","green");
@@ -305,9 +309,9 @@ void FormGPS::openGLControl_Draw(QOpenGLContext *glContext)
 
                     txtDistanceOffABLine->setProperty("visible", "true");
                     //lblDelta.Visible = true;
-                    drawLightBar(glContext,
-                                 openGLControl->viewportSize.width(),
-                                 openGLControl->viewportSize.height(),
+                    drawLightBar(gl,
+                                 qmlview->width(),
+                                 qmlview->height(),
                                  ABLine->distanceFromCurrentLine * 0.1);
                     if ((ABLine->distanceFromCurrentLine) < 0.0)
                     {
@@ -322,8 +326,8 @@ void FormGPS::openGLControl_Draw(QOpenGLContext *glContext)
                     {
                         // <----
                         txtDistanceOffABLine->setProperty("color", "red");
-                        if (isMetric) dist = "\u21D0 " + QString((int)fabs(ABLine->distanceFromCurrentLine * 0.1));
-                        else dist = "\u21D0 " + QString((int)fabs(ABLine->distanceFromCurrentLine / 2.54 * 0.1));
+                        if (isMetric) dist = QChar(0x21D0) + QString((int)fabs(ABLine->distanceFromCurrentLine * 0.1));
+                        else dist = QChar(0x21D0) + QString((int)fabs(ABLine->distanceFromCurrentLine / 2.54 * 0.1));
                         txtDistanceOffABLine->setProperty("text", dist);
                     }
 
@@ -339,9 +343,9 @@ void FormGPS::openGLControl_Draw(QOpenGLContext *glContext)
             //AB line is not set so turn off numbers
             if (!ABLine->isABLineSet && !ABLine->isABLineBeingSet && !ct->isContourBtnOn)
             {
-                txtDistanceOffABLine->setProperty("visible", "false");
+                //**txtDistanceOffABLine->setProperty("visible", "false");
                 //lblDelta.Visible = false;
-                btnAutoSteer->setProperty("buttonText","-");
+                //**btnAutoSteer->setProperty("buttonText","-");
             }
         }
 
@@ -393,27 +397,30 @@ void FormGPS::openGLControl_Draw(QOpenGLContext *glContext)
     {
         gl->glClear(GL_COLOR_BUFFER_BIT);
     }
+    //qmlview->resetOpenGLState();
 }
 
 /// Handles the OpenGLInitialized event of the openGLControl control.
-void FormGPS::openGLControl_Initialized(QOpenGLContext *glContext)
+void FormGPS::openGLControl_Initialized()
 {
-    //QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
+    QOpenGLContext *glContext = QOpenGLContext::currentContext();
+    QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
     //Load all the textures
-    std::cout << "initializing Open GL." << std::endl;
-    loadGLTextures(glContext);
-    std::cout << "textures loaded." << std::endl;
+    qDebug() << "initializing Open GL.";
+    loadGLTextures(gl);
+    qDebug() << "textures loaded.";
 
     //now start the timer assuming no errors, otherwise the program will not stop on errors.
     //TODO:
     //tmrWatchdog.Enabled = true;
+    qmlview->resetOpenGLState();
 }
 
-#if 0
 //main openGL draw function
-void FormGPS::openGLControlBack_Draw(QOpenGLContext *c)
+void FormGPS::openGLControlBack_Draw()
 {
+#if 0
     QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
 
     gls.PixelStore(OpenGL.GL_PACK_ALIGNMENT, 1);
@@ -808,9 +815,9 @@ void FormGPS::openGLControlBack_Draw(QOpenGLContext *c)
     }
     //this is the end of the "frame". Now we wait for next NMEA sentence.
 
+#endif
 
 }
-#endif
 
 /*
 //Resize is called upn window creation
@@ -832,23 +839,15 @@ private void openGLControlBack_Resized(object sender, EventArgs e)
     gls.MatrixMode(OpenGL.GL_MODELVIEW);
 }
 
-
-//Draw section OpenGL window, not visible
-private void openGLControlBack_OpenGLInitialized(object sender, EventArgs e)
-{
-    OpenGL gls = openGLControlBack.OpenGL;
-
-    gls.Enable(OpenGL.GL_CULL_FACE);
-    gls.CullFace(OpenGL.GL_BACK);
-
-    gls.PixelStore(OpenGL.GL_PACK_ALIGNMENT, 1);
-
-}
 */
-
-void FormGPS::drawLightBar(QOpenGLContext *glContext, double Width, double Height, double offlineDistance)
+//Draw section OpenGL window, not visible
+void FormGPS::openGLControlBack_Initialized()
 {
-    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
+}
+
+void FormGPS::drawLightBar(QOpenGLFunctions_2_1 *gl, double Width, double Height, double offlineDistance)
+{
+    //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
     double down = 20;
 
     gl->glLineWidth(1);
@@ -958,9 +957,9 @@ void FormGPS::drawLightBar(QOpenGLContext *glContext, double Width, double Heigh
     }
 }
 
-void FormGPS::calcFrustum(QOpenGLContext *glContext)
+void FormGPS::calcFrustum(QOpenGLFunctions_2_1 *gl)
 {
-    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
+    //QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
 
     float proj[16];							// For Grabbing The PROJECTION Matrix
     float modl[16];							// For Grabbing The MODELVIEW Matrix
@@ -1074,8 +1073,10 @@ void FormGPS::calcFrustum(QOpenGLContext *glContext)
 }
 
 //take the distance from object and convert to camera data
-void FormGPS::setZoom()
+void FormGPS::setZoom(QOpenGLFunctions_2_1 *gl)
 {
+    //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+
     //match grid to cam distance and redo perspective
     if (camera.camSetDistance <= -20000) gridZoom = 2000;
     if (camera.camSetDistance >= -20000 && camera.camSetDistance < -10000) gridZoom =   2000;
@@ -1089,15 +1090,30 @@ void FormGPS::setZoom()
     if (camera.camSetDistance >= -50 && camera.camSetDistance < -1) gridZoom = 5.03;
     //1.216 2.532
 
-    //every paint call will automatically set the fov since OpenGL is being
-    //used by other parts of this program, so it has to be set every time we
-    //paint.
+    //  Set the projection matrix.
+    gl->glMatrixMode(GL_PROJECTION);
+
+    //  Load the identity.
+    gl->glLoadIdentity();
+
+    //  Create a perspective transformation.
+    //gl.Perspective(fovy, openGLControl.Width / (double)openGLControl.Height, 1, camDistanceFactor * camera.camSetDistance);
+    double aspect = qmlview->width() / (double)qmlview->height();
+    double fH = tan( fovy / 360 * M_PI);
+    double fW = fH * aspect;
+
+    gl->glFrustum(-fW, fW, -fH, fH, 1, camDistanceFactor * camera.camSetDistance );
+
+    //  Set the modelview matrix.
+    gl->glMatrixMode(GL_MODELVIEW);
+
+
 }
 
-void FormGPS::loadGLTextures(QOpenGLContext *glContext)
+void FormGPS::loadGLTextures(QOpenGLFunctions_2_1 *gl)
 {
-    //assuming caller has set the Open GL context
-
+    //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+    /*
     QOpenGLTexture *t;
 
     //  Background
@@ -1113,4 +1129,21 @@ void FormGPS::loadGLTextures(QOpenGLContext *glContext)
     t->setMagnificationFilter(QOpenGLTexture::Linear);
 
     texture.append(t); //position 1
+    */
+
+    QImage tex = QGLWidget::convertToGLFormat(QImage(":/images/Landscape.png"));
+    gl->glGenTextures(1,&texture[0]);
+    gl->glBindTexture(GL_TEXTURE_2D, texture[0]);
+    gl->glTexImage2D( GL_TEXTURE_2D, 0, 3, tex.width(), tex.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, tex.bits());
+    gl->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    gl->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+    tex = QGLWidget::convertToGLFormat(QImage(":/images/floor.png").mirrored());
+    gl->glGenTextures(1,&texture[1]);
+    gl->glBindTexture(GL_TEXTURE_2D, texture[1]);
+    gl->glTexImage2D( GL_TEXTURE_2D, 0, 3, tex.width(), tex.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, tex.bits());
+    gl->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    gl->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+    std::cout << texture[0] << " " << texture[1] << std::endl;
 }

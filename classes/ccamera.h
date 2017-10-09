@@ -3,7 +3,7 @@
 
 
 class QOpenGLContext;
-
+class QOpenGLFunctions_2_1;
 class CCamera
 {
 private:
@@ -16,11 +16,11 @@ public:
 
     double camPitch;
     double offset;
-    double camSetDistance = -75;
+    double camSetDistance = -75; //put in setttings?
     //double camDelta = 0;
 
     CCamera();
-    void setWorldCam(QOpenGLContext *c, double _fixPosX, double _fixPosY, double _fixHeading);
+    void setWorldCam(QOpenGLFunctions_2_1 *c, double _fixPosX, double _fixPosY, double _fixHeading);
 
 };
 

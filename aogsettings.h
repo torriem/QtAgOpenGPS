@@ -1,12 +1,13 @@
 #ifndef AOGSETTINGS_H
 #define AOGSETTINGS_H
 
-#include <QObject>
+#include <QSettings>
+#include <QVariant>
 
 class AOGSettings : public QSettings
 {
 public:
-    AOGSettings();
+    QVariant value(const QString &key, const QVariant &defaultvalue);
 };
 
 #endif // AOGSETTINGS_H

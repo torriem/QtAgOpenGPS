@@ -3,6 +3,8 @@
 #include <QQuickWindow>
 #include <iostream> //for cout debugging
 
+#include <QOpenGLFunctions_2_0>
+
 void OpenGLControl::paint()
 {
     QOpenGLContext *c = ourwindow->openglContext();
@@ -13,9 +15,43 @@ void OpenGLControl::paint()
         calledInit=true;
     }
 
-    /*
-    QOpenGLFunctions_1_1 *f = c->versionFunctions<QOpenGLFunctions_1_1>();
-    f->initializeOpenGLFunctions();
+    QOpenGLFunctions_2_0 *gl = c->versionFunctions<QOpenGLFunctions_2_0>();
+    gl->initializeOpenGLFunctions(); //necessary here?
+
+    gl->glViewport(0, 0, 400, 400);
+    gl->glMatrixMode(GL_PROJECTION);
+    gl->glLoadIdentity();
+    gl->glOrtho(-2.0, 2.0, -2.0, 2.0, -1.5, 1.5);
+    //glFrustum(-1.0, 1.0, -1.0, 1.0, 1.5, 20.0);
+    gl->glMatrixMode(GL_MODELVIEW);
+
+    //glClearColor(0.22f, 0.2858f, 0.16f, 1.0f);
+    gl->glClear(GL_COLOR_BUFFER_BIT);
+    gl->glLoadIdentity();
+
+    //gluLookAt(0.0, 0.0, -3.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+    gl->glColor3f(1.0f, 1.0f, 1.0f);
+
+    double size = 2 * 0.5;
+
+#   define V(a,b,c) gl->glVertex3d( a size, b size, c size );
+#   define N(a,b,c) gl->glNormal3d( a, b, c );
+
+    gl->glLineWidth(3);
+    /* PWO: I dared to convert the code to use macros... */
+    gl->glBegin( GL_LINE_LOOP ); N( 1.0, 0.0, 0.0); V(+,-,+); V(+,-,-); V(+,+,-); V(+,+,+); glEnd();
+    gl->glBegin( GL_LINE_LOOP ); N( 0.0, 1.0, 0.0); V(+,+,+); V(+,+,-); V(-,+,-); V(-,+,+); glEnd();
+    gl->glBegin( GL_LINE_LOOP ); N( 0.0, 0.0, 1.0); V(+,+,+); V(-,+,+); V(-,-,+); V(+,-,+); glEnd();
+    gl->glBegin( GL_LINE_LOOP ); N(-1.0, 0.0, 0.0); V(-,-,+); V(-,+,+); V(-,+,-); V(-,-,-); glEnd();
+    gl->glBegin( GL_LINE_LOOP ); N( 0.0,-1.0, 0.0); V(-,-,+); V(-,-,-); V(+,-,-); V(+,-,+); glEnd();
+    gl->glBegin( GL_LINE_LOOP ); N( 0.0, 0.0,-1.0); V(-,-,-); V(-,+,-); V(+,+,-); V(+,-,-); glEnd();
+
+#   undef V
+#   undef N
+
+    gl->glFlush();
+/*
     //f->glClearColor( red, green, blue, 1.0f);
     f->glClearColor(0.22f,0.2858f,0.16f , 1.0f);
     f->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -24,11 +60,13 @@ void OpenGLControl::paint()
     ourwindow->resetOpenGLState();
     std::cout << "." << std::flush;
     */
+    /*
     if(paintCallback) {
         //std::cout << "Attempting to call paint callback." << std::endl;
 
         paintCallback(c);
     }
+    */
 
     ourwindow->resetOpenGLState();
 }

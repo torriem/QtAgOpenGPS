@@ -8,7 +8,7 @@
 
 #include <functional>
 
-class OpenGLControl : public QObject, protected QOpenGLFunctions_1_1
+class OpenGLControl : public QObject
 {
     Q_OBJECT
 public:

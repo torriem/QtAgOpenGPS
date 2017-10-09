@@ -1,7 +1,8 @@
 import QtQuick 2.8
 import AgOpenGPS 1.0
 
-OpenGLControl {
+Item {
+    //We draw native opengl to this root object
     id: item1
     objectName: "openGLControl"
     //width:800
