@@ -21,7 +21,7 @@ Item {
             id: btnMenuDrawer
             objectName: "btnMenuDrawer"
             buttonText: qsTr("Menu")
-            icon: "/images/ArrowRight.png"
+            icon: "qrc:/images/ArrowRight.png"
 
             //pseudo state
             property bool menuin: false
@@ -29,10 +29,10 @@ Item {
             function toggle_menu() {
                 if (menuin == false) {
                     menuin = true
-                    icon="/images/ArrowLeft.png"
+                    icon="qrc:/images/ArrowLeft.png"
                 } else {
                     menuin = false
-                    icon="/images/ArrowRight.png"
+                    icon="qrc:/images/ArrowRight.png"
                 }
             }
 
@@ -49,7 +49,7 @@ Item {
         IconButton{
             id: btnMinMaxZoom
             objectName: "btnMinMaxZoom"
-            icon: "/images/Display.png"
+            icon: "qrc:/images/Display.png"
         }
 
         IconButtonText {
@@ -57,7 +57,7 @@ Item {
             objectName: "btnPerimeter"
             buttonText: "000.00"
             iconHeightScale: 1.0
-            icon: "/images/PeriArea.png"
+            icon: "qrc:/images/PeriArea.png"
         }
 
         IconButtonText {
@@ -70,7 +70,7 @@ Item {
         IconButton {
             id: btnFlag
             objectName: "btnFlag"
-            icon: "/images/FlagRed.png"
+            icon: "qrc:/images/FlagRed.png"
         }
     }
 
@@ -86,25 +86,25 @@ Item {
             id: btnABLine
             objectName: "btnABLine"
             buttonText: "X"
-            icon: "/images/ABLineOff.png"
+            icon: "qrc:/images/ABLineOff.png"
         }
 
         IconButton {
             id: btnContour
             objectName: "btnContour"
-            icon: "/images/ContourOff.png"
+            icon: "qrc:/images/ContourOff.png"
         }
 
         IconButton {
             id: btnManualOffOn
             objectName: "btnManualOffOn"
-            icon: "/images/ManualOff.png"
+            icon: "qrc:/images/ManualOff.png"
         }
 
         IconButtonText {
             id: btnSectionOffAutoOn
             objectName: "btnSectionOffAutoOn"
-            icon: "/images/SectionMasterOff.png"
+            icon: "qrc:/images/SectionMasterOff.png"
             iconHeightScale: 1.0
         }
 
@@ -180,7 +180,7 @@ Item {
             width: 70
             height: 70
             radius: 10
-            icon: "/images/TiltDown.png"
+            icon: "qrc:/images/TiltDown.png"
         }
 
         IconButton {
@@ -189,7 +189,7 @@ Item {
             width: 70
             height: 70
             radius: 10
-            icon: "/images/TiltUp.png"
+            icon: "qrc:/images/TiltUp.png"
         }
     }
 
@@ -207,7 +207,7 @@ Item {
             width: 70
             height: 70
             radius: 10
-            icon: "/images/ZoomIn48.png"
+            icon: "qrc:/images/ZoomIn48.png"
         }
 
         IconButton {
@@ -216,7 +216,7 @@ Item {
             width: 70
             height: 70
             radius: 10
-            icon: "/images/ZoomOut48.png"
+            icon: "qrc:/images/ZoomOut48.png"
         }
     }
 
