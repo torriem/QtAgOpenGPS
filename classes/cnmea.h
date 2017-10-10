@@ -21,7 +21,7 @@ public:
     //WGS84 Lat Long
     double latitude, longitude;
 
-    bool updatedGGA, updatedVTG, updatedRMC;
+    bool updatedGGA=false, updatedVTG=false, updatedRMC=false;
 
     QByteArray rawBuffer = "";
     QByteArray theSent = "";
@@ -29,9 +29,9 @@ public:
     QByteArray nextNMEASentence = "";
 
     //UTM coordinates
-    double northing, easting;
+    double northing=0, easting=0;
     double actualEasting, actualNorthing;
-    double zone;
+    double zone=0;
 
     //other GIS Info
     double altitude, speed;

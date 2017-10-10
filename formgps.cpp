@@ -34,10 +34,11 @@ FormGPS::FormGPS(QWidget *parent) :
     vehicle = new CVehicle(this);
     boundary = new CBoundary(this);
 
-    isUDPServerOn = s.value("port/udp_on", true).toBool();
+    isUDPServerOn = s.value("port/udp_on", false).toBool();
 
 
     /* test data to see if drawing routines are working. */
+    /*
     isGPSPositionInitialized = true;
     pivotAxlePos.easting = 5005;
     pivotAxlePos.northing = 5005;
@@ -48,7 +49,11 @@ FormGPS::FormGPS(QWidget *parent) :
     fixHeadingCam = 0;
     fixHeadingSection = 0;
     worldGrid->createWorldGrid(5005,5005);
+    */
+
     isGridOn = true;
+
+    isAtanCam = s.value("camera/useCalculatedHeading", true).toBool();
 
     section[0].positionLeft = -8.0;
     section[0].positionRight = -3.0;

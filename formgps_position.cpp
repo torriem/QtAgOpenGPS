@@ -406,7 +406,9 @@ void FormGPS::calculatePositionHeading()
     if (!isAtanCam)
     {
         //use NMEA headings for camera and tractor graphic
-        fixHeading = toRadians(pn->headingTrue);
+        qDebug() << fixHeadingCam << ", " << pn->headingTrue;
+        qDebug() << fixHeading << toRadians(pn->headingTrue);
+        //fixHeading = toRadians(pn->headingTrue);
         fixHeadingCam = pn->headingTrue;
     }
 
@@ -632,9 +634,10 @@ void FormGPS::initializeFirstFewGPSPositions()
         //reduce the huge utm coordinates
         pn->utmEast = (int)(pn->easting);
         pn->utmNorth = (int)(pn->northing);
+        qDebug() << pn->utmEast <<" from " << pn->easting;
         pn->easting = pn->easting - pn->utmEast;
         pn->northing = pn->northing - pn->utmNorth;
-
+        qDebug() << "pn easting is now " << pn->easting;
         //Draw a grid once we know where in the world we are.
         isFirstFixPositionSet = true;
         worldGrid->createWorldGrid(pn->northing, pn->easting);
