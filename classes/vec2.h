@@ -22,6 +22,7 @@ public:
     double getLengthSquared();
 
     friend Vec2 operator+ (Vec2 lhs, Vec2 rhs);
+    friend Vec2 operator- (Vec2 lhs, Vec2 rhs);
 };
 
 

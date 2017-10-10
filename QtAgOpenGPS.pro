@@ -55,7 +55,8 @@ SOURCES += main.cpp\
     aogsettings.cpp \
     gltest.cpp \
     formgps_udpcomm.cpp \
-    formgps_position.cpp
+    formgps_position.cpp \
+    formgps_serial.cpp
 
 HEADERS  += formgps.h \
     classes/cabline.h \

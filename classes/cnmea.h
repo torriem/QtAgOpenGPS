@@ -4,6 +4,8 @@
 #include <sstream>
 #include <QString>
 #include <QDateTime>
+#include <QByteArray>
+#include <QBuffer>
 
 class FormGPS;
 
@@ -44,7 +46,7 @@ public:
 
     //UTM numbers are huge, these cut them way down.
     int utmNorth, utmEast;
-    std::stringstream logNMEASentence;
+    QByteArray logNMEASentence;
 
     QByteArray currentNMEASentenceGGA = "";
     QByteArray currentNMEASentenceRMC = "";
