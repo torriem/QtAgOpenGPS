@@ -6,6 +6,8 @@
 #include <QtQuick/QQuickItem>
 #include <QOpenGLFunctions>
 #include <QOpenGLTexture>
+#include <QUdpSocket>
+#include <QElapsedTimer>
 
 #include "vec2.h"
 #include "vec3.h"
@@ -54,6 +56,7 @@ public:
     QLocale locale;
     QQuickItem *qml_root;
     QSignalMapper *sectionButtonsSignalMapper;
+    QTimer *tmrWatchdog;
 
     /***************************
      * Qt and QML GUI elements *
@@ -156,6 +159,7 @@ public:
     CWorldGrid *worldGrid;
 
     //create instance of a stopwatch for timing of frames and NMEA hz determination
+    QElapsedTimer swFrame;
     //readonly Stopwatch swFrame = new Stopwatch();
 
     //Time to do fix position update and draw routine
@@ -288,6 +292,18 @@ public:
     double rollZero = 0, pitchZero = 0;
     double rollAngle = 0, pitchAngle = 0;
 
+
+
+    void updateFixPosition(); //process a new position
+    void calculatePositionHeading(); // compute all headings and fixes
+    void addBoundaryPoint();
+    void addSectionContourPathPoints();
+    void calculateSectionLookAhead(double northing, double easting, double cosHeading, double sinHeading);
+    void initializeFirstFewGPSPositions();
+
+
+
+
     /************************
      * SaveOpen.Designer.cs *
      ************************/
@@ -310,6 +326,17 @@ public:
     //data buffer for pixels read from off screen buffer
     uchar grnPixels[80001];
 
+    /***********************
+     * UDPComm.designer.cs *
+     ***********************/
+private:
+    QUdpSocket *udpSocket = NULL;
+
+public:
+    bool isUDPServerOn = false;
+
+    void startUDPServer();
+    void stopUDPServer();
 
    /**********************
      * OpenGL.Designer.cs *
@@ -327,7 +354,17 @@ private:
 
     void setupGui();
 
+    /**************************
+     * SerialComm.Designer.cs *
+     **************************/
+    void autoSteerDataOutToPort();
+    void autoSteerSettingsOutToPort();
+    void sectionControlOutToPort();
 
+
+    /**************************
+     * UI/Qt object callbacks *
+     **************************/
 public slots:
     void openGLControl_set(OpenGLControl *);
 
@@ -371,6 +408,17 @@ public slots:
 
     void openGLControlBack_Draw();
     void openGLControlBack_Initialized();
+
+    /*
+     * from UDPComm.Designer.cs
+     */
+
+    void udpServerReadDatagrams();
+
+    /*
+     * From Position.Designer.cs
+     */
+    void scanForNMEA();
 };
 
 #endif // FORMGPS_H

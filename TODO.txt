@@ -1,0 +1,9 @@
+To do
+
+1. ABLine and Contour line UI stuff out of the GL drawing function.
+2. Move section lookahead stuff out of GL drawing functinone somehow.
+   Maybe after rendering frame, save a pixmap of the entire widget.
+
+For 1 and 2, do we need some way of synchronization so we know for sure
+that the data that gets processed in the timer loop has now been rendered?
+Does it matter?

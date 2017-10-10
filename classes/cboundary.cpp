@@ -4,7 +4,7 @@
 #include "math.h"
 #include <QLocale>
 #include <QOpenGLContext>
-#include <QOpenGLFunctions_1_1>
+#include <QOpenGLFunctions_2_1>
 
 CBoundary::CBoundary(FormGPS *mf)
     :mf(mf)
@@ -74,9 +74,8 @@ bool CBoundary::isPrePointInPolygon(Vec2 testPoint)
     return oddNodes; //true means inside.
 }
 
-void CBoundary::drawBoundaryLine(QOpenGLContext *glContext)
+void CBoundary::drawBoundaryLine(QOpenGLFunctions_2_1 *gl)
 {
-    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
 
     ////draw the perimeter line so far
     int ptCount = ptList.size();
@@ -98,9 +97,8 @@ void CBoundary::drawBoundaryLine(QOpenGLContext *glContext)
 }
 
 //draw a blue line in the back buffer for section control over boundary line
-void CBoundary::drawBoundaryLineOnBackBuffer(QOpenGLContext *glContext)
+void CBoundary::drawBoundaryLineOnBackBuffer(QOpenGLFunctions_2_1 *gl)
 {
-    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
 
     ////draw the perimeter line so far
     int ptCount = ptList.size();

@@ -7,6 +7,7 @@
 #include <QString>
 
 
+class QOpenGLFunctions_2_1;
 class QOpenGLContext;
 class FormGPS;
 
@@ -36,8 +37,8 @@ public:
     void preCalcBoundaryLines();
     bool isPrePointInPolygon(Vec2 testPoint);
 
-    void drawBoundaryLine(QOpenGLContext *c);
-    void drawBoundaryLineOnBackBuffer(QOpenGLContext *c);
+    void drawBoundaryLine(QOpenGLFunctions_2_1 *gl);
+    void drawBoundaryLineOnBackBuffer(QOpenGLFunctions_2_1 *gl);
     void calculateBoundaryArea();
     bool isPointInPolygon();
 };

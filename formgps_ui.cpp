@@ -5,8 +5,8 @@
 #include "openglcontrolitem.h"
 #include "openglcontrol.h"
 #include "qmlutil.h"
+#include <QTimer>
 
-#include "gltest.h"
 #include <QtOpenGL>
 #include <QOpenGLFunctions_2_1>
 #include <functional>
@@ -163,6 +163,11 @@ void FormGPS::setupGui()
     //ui->openGLControlBack->setPaintGLCallback(&gltest_draw);
     //ui->openGLControlBack->setPaintGLCallback(std::bind(&FormGPS::openGLControl_Draw,this));
 
+    tmrWatchdog = new QTimer(this);
+    connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(scanForNMEA()));
+    tmrWatchdog->start(50); //fire every 50ms.
+
+    swFrame.start();
 }
 
 void FormGPS::openGLControl_set(OpenGLControl *c){

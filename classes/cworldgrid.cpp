@@ -15,14 +15,14 @@ CWorldGrid::CWorldGrid(FormGPS *mf)
 void CWorldGrid::drawFieldSurface(QOpenGLFunctions_2_1 *gl)
 {
     //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
-    gl->initializeOpenGLFunctions();//should already be initialized
+
     // Enable Texture Mapping and set color to white
-    gl->glEnable(GL_TEXTURE_2D);
     gl->glColor3b(mf->redField, mf->grnField, mf->bluField);
+    gl->glEnable(GL_TEXTURE_2D);
 
     //the floor
     gl->glBindTexture(GL_TEXTURE_2D, mf->texture[1]);	// Select Our Texture
-    //mf->texture[1]->bind();
+
     gl->glBegin(GL_TRIANGLE_STRIP);				            // Build Quad From A Triangle Strip
     gl->glTexCoord2d(0, 0);
     gl->glVertex3d(eastingMin, northingMin, 0.0);                // Top Right
@@ -33,6 +33,7 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions_2_1 *gl)
     gl->glTexCoord2d(texZoom, texZoom);
     gl->glVertex3d(eastingMax, northingMax, 0.0);              // Bottom Left
     gl->glEnd();						// Done Building Triangle Strip
+    gl->glBindTexture(GL_TEXTURE_2D, 0);	// unbind texture
     gl->glDisable(GL_TEXTURE_2D);
 }
 

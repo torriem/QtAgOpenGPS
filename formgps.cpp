@@ -8,13 +8,14 @@
 #include "cboundary.h"
 #include "cvehicle.h"
 #include "mainoverlay.h"
-
+#include "aogsettings.h"
 
 FormGPS::FormGPS(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::FormGPS)
 {
     setupGui();
+    AOGSettings s;
 
     /* initialize child objects */
     /* these objects need pointers to this form
@@ -32,6 +33,9 @@ FormGPS::FormGPS(QWidget *parent) :
     ct = new CContour(this);
     vehicle = new CVehicle(this);
     boundary = new CBoundary(this);
+
+    isUDPServerOn = s.value("port/udp_on", true).toBool();
+
 
     /* test data to see if drawing routines are working. */
     isGPSPositionInitialized = true;
@@ -52,6 +56,8 @@ FormGPS::FormGPS(QWidget *parent) :
     section[1].positionRight = 3.0;
     section[2].positionLeft = 3.0;
     section[2].positionRight = 8.0;
+
+    if (isUDPServerOn) startUDPServer();
 
 }
 

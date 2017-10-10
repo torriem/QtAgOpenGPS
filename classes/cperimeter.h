@@ -19,7 +19,7 @@ public:
     QVector<QVector<Vec2>> periLineList;
 
     //button status
-    bool isBtnPerimeterPn = false;
+    bool isBtnPerimeterOn = false;
 
     //area variable
     double area = 0.0;

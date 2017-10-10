@@ -9,6 +9,8 @@
 #include "cperimeter.h"
 #include "cboundary.h"
 #include "openglcontrol.h"
+#include "cnmea.h"
+#include "glm.h"
 
 #include <QGLWidget>
 #include <QQuickView>
@@ -76,7 +78,7 @@ void FormGPS::openGLControl_Draw()
         calcFrustum(gl);
 
         //draw the field ground images
-        //worldGrid->drawFieldSurface(gl);
+        //worldGrid->drawFieldSurface(gl); //not yet working
 
         ////Draw the world grid based on camera position
         gl->glDisable(GL_DEPTH_TEST);
@@ -219,7 +221,7 @@ void FormGPS::openGLControl_Draw()
         periArea.drawPerimeterLine(glContext);
 
         //draw the boundary line
-        boundary->drawBoundaryLine(glContext);
+        boundary->drawBoundaryLine(gl);
 
         //screen text for debug
         //glDrawText(120, 10, 1, 1, 1, "Courier", 18, " camstep: " + testInt.ToString());
@@ -268,7 +270,6 @@ void FormGPS::openGLControl_Draw()
                 double winLeftPos = -(double)width / 2;
                 double winRightPos = -winLeftPos;
                 gl->glEnable(GL_TEXTURE_2D);
-                //texture[0]->bind();
                 gl->glBindTexture(GL_TEXTURE_2D, texture[0]);		// Select Our Texture
 
                 gl->glBegin(GL_TRIANGLE_STRIP);				// Build Quad From A Triangle Strip
@@ -279,6 +280,7 @@ void FormGPS::openGLControl_Draw()
                 gl->glEnd();						// Done Building Triangle Strip
 
                 //disable, straight color
+                gl->glBindTexture(GL_TEXTURE_2D, 0); //unbind the texture
                 gl->glDisable(GL_TEXTURE_2D);
             }
         }
@@ -444,66 +446,71 @@ void FormGPS::openGLControl_Initialized()
 //main openGL draw function
 void FormGPS::openGLControlBack_Draw()
 {
-#if 0
-    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
+    QOpenGLContext *glContext = QOpenGLContext::currentContext();
+    QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+    int width = glContext->surface()->size().width();
+    int height = glContext->surface()->size().height();
 
-    gls.PixelStore(OpenGL.GL_PACK_ALIGNMENT, 1);
-    gls.MatrixMode(OpenGL.GL_PROJECTION);
+    gl->glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    gl->glMatrixMode(GL_PROJECTION);
 
     //  Load the identity.
-    gls.LoadIdentity();
+    gl->glLoadIdentity();
 
     // change these at your own peril!!!! Very critical
     //  Create a perspective transformation.
-    gls.Perspective(6.0f, 1, 1, 6000);
+    //gl->glPerspective(6.0f, 1, 1, 6000);
+    double fH = tan( 6.0 / 360 * M_PI);
+    double fW = fH;
+    gl->glFrustum(-fW, fW, -fH, fH, 1, 6000 );
 
     //  Set the modelview matrix.
-    gls.MatrixMode(OpenGL.GL_MODELVIEW);
+    gl->glMatrixMode(GL_MODELVIEW);
 
-    gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
-    gl.LoadIdentity();					// Reset The View
+    gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
+    gl->glLoadIdentity();					// Reset The View
 
     //back the camera up
-    gl.Translate(0, 0, -390);
+    gl->glTranslated(0, 0, -390);
 
     //rotate camera so heading matched fix heading in the world
-    gl.Rotate(glm.toDegrees(fixHeadingSection), 0, 0, 1);
+    gl->glRotated(toDegrees(fixHeadingSection), 0, 0, 1);
 
     //translate to that spot in the world
-    gl.Translate(-toolPos.easting, -toolPos.northing, -fixZ);
+    gl->glTranslated(-toolPos.easting, -toolPos.northing, -fixZ);
 
     //patch color
-    gl.Color(0.0f, 0.5f, 0.0f);
+    gl->glColor3f(0.0f, 0.5f, 0.0f);
 
     //calculate the frustum for the section control window
-    CalcFrustum(gl);
+    calcFrustum(gl);
 
     //to draw or not the triangle patch
     bool isDraw;
 
     //draw patches j= # of sections
-    for (int j = 0; j < vehicle.numSuperSection; j++)
+    for (int j = 0; j < vehicle->numSuperSection; j++)
     {
         //every time the section turns off and on is a new patch
-        int patchCount = section[j].patchList.Count;
+        int patchCount = section[j].patchList.size();
 
         if (patchCount > 0)
         {
             //for every new chunk of patch
-            foreach (var triList in section[j].patchList)
+            foreach (QSharedPointer<QVector<Vec2>> triList, section[j].patchList)
             {
                 isDraw = false;
-                int count2 = triList.Count;
+                int count2 = triList->size();
                 for (int i = 0; i < count2; i+=3)
                 {
                     //determine if point is in frustum or not
-                    if (frustum[0] * triList[i].easting + frustum[1] * triList[i].northing + frustum[3] <= 0)
+                    if (frustum[0] * (*triList)[i].easting + frustum[1] * (*triList)[i].northing + frustum[3] <= 0)
                         continue;//right
-                    if (frustum[4] * triList[i].easting + frustum[5] * triList[i].northing + frustum[7] <= 0)
+                    if (frustum[4] * (*triList)[i].easting + frustum[5] * (*triList)[i].northing + frustum[7] <= 0)
                         continue;//left
-                   if (frustum[16] * triList[i].easting + frustum[17] * triList[i].northing + frustum[19] <= 0)
+                   if (frustum[16] * (*triList)[i].easting + frustum[17] * (*triList)[i].northing + frustum[19] <= 0)
                         continue;//bottom
-                    if (frustum[20] * triList[i].easting + frustum[21] * triList[i].northing + frustum[23] <= 0)
+                    if (frustum[20] * (*triList)[i].easting + frustum[21] * (*triList)[i].northing + frustum[23] <= 0)
                         continue;//top
 
                     //point is in frustum so draw the entire patch
@@ -514,47 +521,49 @@ void FormGPS::openGLControlBack_Draw()
                 if (isDraw)
                 {
                     //draw the triangles in each triangle strip
-                    gl.Begin(OpenGL.GL_TRIANGLE_STRIP);
-                    for (int i = 0; i < count2; i++) gl.Vertex(triList[i].easting, triList[i].northing, 0);
-                    gl.End();
+                    glBegin(GL_TRIANGLE_STRIP);
+                    for (int i = 0; i < count2; i++)
+                        gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0);
+                    gl->glEnd();
                 }
             }
         }
     }
 
     //draw boundary line
-    boundary.DrawBoundaryLineOnBackBuffer();
+    boundary->drawBoundaryLineOnBackBuffer(gl);
 
     //determine farthest ahead lookahead - is the height of the readpixel line
     double rpHeight = 0;
 
     //assume all sections are on and super can be on, if not set false to turn off.
-    vehicle.isSuperSectionAllowedOn = true;
+    vehicle->isSuperSectionAllowedOn = true;
 
     //find any off buttons, any outside of boundary, going backwards, and the farthest lookahead
-    for (int j = 0; j < vehicle.numOfSections; j++)
+    for (int j = 0; j < vehicle->numOfSections; j++)
     {
         if (section[j].sectionLookAhead > rpHeight) rpHeight = section[j].sectionLookAhead;
-        if (section[j].manBtnState == manBtn.Off) vehicle.isSuperSectionAllowedOn = false;
-        if (!section[j].isInsideBoundary) vehicle.isSuperSectionAllowedOn = false;
+        if (section[j].manBtnState == manBtn::Off) vehicle->isSuperSectionAllowedOn = false;
+        if (!section[j].isInsideBoundary) vehicle->isSuperSectionAllowedOn = false;
 
         //check if any sections going backwards
-        if (section[j].sectionLookAhead < 0) vehicle.isSuperSectionAllowedOn = false;
+        if (section[j].sectionLookAhead < 0) vehicle->isSuperSectionAllowedOn = false;
     }
 
     //if only one section, or going slow no need for super section
-    if (vehicle.numOfSections == 1 | pn.speed < vehicle.slowSpeedCutoff)
-            vehicle.isSuperSectionAllowedOn = false;
+    if (vehicle->numOfSections == 1 || pn->speed < vehicle->slowSpeedCutoff)
+            vehicle->isSuperSectionAllowedOn = false;
 
     //clamp the height after looking way ahead, this is for switching off super section only
-    rpHeight = Math.Abs(rpHeight) * 2.0;
+    rpHeight = fabs(rpHeight) * 2.0;
     if (rpHeight > 195) rpHeight = 195;
     if (rpHeight < 8) rpHeight = 8;
 
     //read the whole block of pixels up to max lookahead, one read only
-    gl.ReadPixels(vehicle.rpXPosition, 202, vehicle.rpWidth, (int)rpHeight,
-                        OpenGL.GL_GREEN, OpenGL.GL_UNSIGNED_BYTE, grnPixels);
+    gl->glReadPixels(vehicle->rpXPosition, 202, vehicle->rpWidth, (int)rpHeight,
+                        GL_GREEN, GL_UNSIGNED_BYTE, grnPixels);
 
+#if 0
     //10 % min is required for overlap, otherwise it never would be on.
     int pixLimit = (int)((double)(vehicle.rpWidth * rpHeight)/(double)(vehicle.numOfSections*1.5));
 
@@ -763,14 +772,14 @@ void FormGPS::openGLControlBack_Draw()
             }
 
             // Manual on, force the section On and exit loop so digital is also overidden
-            if (section[j].manBtnState == manBtn.On)
+            if (section[j].manBtnState == manBtn::On)
             {
                 section[j].sectionOnRequest = true;
                 section[j].sectionOffRequest = false;
                 continue;
             }
 
-            if (section[j].manBtnState == manBtn.Off)
+            if (section[j].manBtnState == manBtn::Off)
             {
                 section[j].sectionOnRequest = false;
                 section[j].sectionOffRequest = true;
@@ -810,7 +819,6 @@ void FormGPS::openGLControlBack_Draw()
         else btnSectionOffAutoOn.Enabled = false;
     }
 
-    gl.Flush();
 
     //Determine if sections want to be on or off
     ProcessSectionOnOffRequests();
@@ -829,11 +837,11 @@ void FormGPS::openGLControlBack_Draw()
         if (isJobStarted && stripOnlineGPS.Value != 1)
         {
             //auto save the field patches, contours accumulated so far
-            FileSaveField();
-            FileSaveContour();
+            fileSaveField();
+            fileSaveContour();
 
             //NMEA log file
-            if (isLogNMEA) FileSaveNMEA();
+            if (isLogNMEA) fileSaveNMEA();
         }
         saveCounter = 0;
     }
@@ -841,6 +849,7 @@ void FormGPS::openGLControlBack_Draw()
 
 #endif
 
+    gl->glFlush();
 }
 
 /*
@@ -850,17 +859,17 @@ private void openGLControlBack_Resized(object sender, EventArgs e)
     //  Get the OpenGL object.
     OpenGL gls = openGLControlBack.OpenGL;
 
-    gls.MatrixMode(OpenGL.GL_PROJECTION);
+    gl->glMatrixMode(OpenGL.GL_PROJECTION);
 
     //  Load the identity.
-    gls.LoadIdentity();
+    gl->glLoadIdentity();
 
     // change these at your own peril!!!! Very critical
     //  Create a perspective transformation.
-    gls.Perspective(6.0f, 1, 1, 6000);
+    gl->glPerspective(6.0f, 1, 1, 6000);
 
     //  Set the modelview matrix.
-    gls.MatrixMode(OpenGL.GL_MODELVIEW);
+    gl->glMatrixMode(OpenGL.GL_MODELVIEW);
 }
 
 */
@@ -1117,6 +1126,8 @@ void FormGPS::loadGLTextures(QOpenGLFunctions_2_1 *gl)
 {
     //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
+    /*
+
     QOpenGLTexture *t;
 
     gl->glGenTextures(2,texture); //generate 2 textures
@@ -1136,22 +1147,24 @@ void FormGPS::loadGLTextures(QOpenGLFunctions_2_1 *gl)
     t->bind(texture[1]);
 
     //texture.append(t); //position 1
+    */
 
-/*
     QImage tex = QGLWidget::convertToGLFormat(QImage(":/images/Landscape.png"));
     gl->glGenTextures(1,&texture[0]);
     gl->glBindTexture(GL_TEXTURE_2D, texture[0]);
-    gl->glTexImage2D( GL_TEXTURE_2D, 0, 3, tex.width(), tex.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, tex.bits());
     gl->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
     gl->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    gl->glTexImage2D( GL_TEXTURE_2D, 0, 3, tex.width(), tex.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, tex.bits());
 
-    tex = QGLWidget::convertToGLFormat(QImage(":/images/floor.png").mirrored());
+    tex = QGLWidget::convertToGLFormat(QImage(":/images/floor.png"));
+    qDebug() << tex.width() << ", " << tex.height();
     gl->glGenTextures(1,&texture[1]);
     gl->glBindTexture(GL_TEXTURE_2D, texture[1]);
     gl->glTexImage2D( GL_TEXTURE_2D, 0, 3, tex.width(), tex.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, tex.bits());
     gl->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
     gl->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    std::cout << texture[0] << " " << texture[1] << std::endl;
-*/
+    qDebug() << "textures: " << texture[0] << " " << texture[1];
 }

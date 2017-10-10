@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl quick quickwidgets
+QT       += core gui opengl quick quickwidgets network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -53,7 +53,9 @@ SOURCES += main.cpp\
     openglcontrol.cpp \
     formgps_ui.cpp \
     aogsettings.cpp \
-    gltest.cpp
+    gltest.cpp \
+    formgps_udpcomm.cpp \
+    formgps_position.cpp
 
 HEADERS  += formgps.h \
     classes/cabline.h \
@@ -88,3 +90,6 @@ RESOURCES += \
     agopengps.qrc
 
 unix|win32: LIBS += -lglut -lGLU
+
+DISTFILES += \
+    TODO.txt
