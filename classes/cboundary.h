@@ -22,14 +22,14 @@ public:
     QVector<Vec2> calcList;
 
     //area variable
-    double area;
+    double area = 0 ;
     QString areaHectare = "";
     QString areaAcre = "";
 
     //boundary variables
-    bool isOkToAddPoints;
-    bool isSet;
-    bool isDrawRightSide;
+    bool isOkToAddPoints = false;
+    bool isSet = false;
+    bool isDrawRightSide = false;
 
     CBoundary(FormGPS *mf);
 

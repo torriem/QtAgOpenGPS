@@ -12,7 +12,7 @@ public:
     static const int numRelayControls = 1;
     uchar relaySectionControl[numRelayControls];
 
-    QString serialRecvRelayStr;
+    QString serialRecvRelayStr = "";
 
     //public double angularVelocity = 0;
     //public double imuHeading = 0;
@@ -34,13 +34,13 @@ public:
 
     uchar autoSteerData[numSteerDataItems];
     uchar autoSteerSettings[numSteerSettingItems];
-    QString serialRecvAutoSteerStr;
+    QString serialRecvAutoSteerStr = "";
 
     //from autosteer module the a/d conversion of inclinometer
     int rollRaw = 0;
 
     //for the workswitch
-    bool isWorkSwitchOn, isWorkSwitchActiveLow, isWorkSwitchEnabled;
+    bool isWorkSwitchOn=false, isWorkSwitchActiveLow=false, isWorkSwitchEnabled=false;
     int workSwitchValue = 0;
 
     CModuleComm();

@@ -1,5 +1,6 @@
 #include "cnmea.h"
 #include "formgps.h"
+//#include "latlong-utm.h"
 
 //$GPGGA,123519,4807.038,N,01131.000,E,1,08,0.9,545.4,M,46.9,M ,  ,*47
 //   0     1      2      3    4      5 6  7  8   9    10 11  12 13  14
@@ -201,7 +202,9 @@ void CNMEA::parseGGA() {
             //get longitude and convert to decimal degrees
             longitude = words[4].mid(0,3).toDouble();
             temp = words[4].mid(3).toDouble();
-            longitude = longitude + temp * 0.01666666666666666666666666666667;
+            //qDebug() << "read: " << longitude << " " << temp;
+            longitude = longitude + temp /60.0;
+            //qDebug() << "got: " <<longitude;
 
          { if (words[5] == "W") longitude *= -1; }
 
@@ -313,9 +316,32 @@ double CNMEA::distanceSquared(double northing1, double easting1, double northing
 }
 
 void CNMEA::decDeg2UTM() {
-    zone = floor( (longitude + 180.0) / 60) + 1;
+    /*
+    int _zone;
+    double _easting;
+    double _northing;
+    double _lat;
+    double _lon;
+
+    LLtoUTM(dWGS84, latitude, longitude, _northing,_easting,_zone);
+
+    qDebug() << qSetRealNumberPrecision(10) <<
+              latitude << ", " <<
+              longitude << "=> " <<
+              _northing << ", " <<
+              _easting << ", zone: " << _zone;
+    */
+    zone = floor( (longitude + 180.0) / 6) + 1;
     geoUTMConverterXY(latitude * 0.01745329251994329576923690766743,
                       longitude * 0.01745329251994329576923690766743);
+
+    /*
+    qDebug ()<< qSetRealNumberPrecision(10) <<
+              latitude << ", " <<
+              longitude << "=> " <<
+              actualNorthing << ", " <<
+              actualEasting << ", zone: " << zone;
+    */
 }
 
 double CNMEA::arcLengthOfMeridian(double phi) {

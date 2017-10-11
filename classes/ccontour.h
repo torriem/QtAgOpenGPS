@@ -18,7 +18,7 @@ public:
     bool isContourOn=false, isContourBtnOn=false;
 
     //used to determine if section was off and now is on or vice versa
-    bool wasSectionOn;
+    bool wasSectionOn = false;
 
     //generated box for finding closest point
     Vec2 boxA = Vec2(0, 0);
@@ -27,10 +27,10 @@ public:
     Vec2 boxD = Vec2(2, 3);
 
     //current contour patch and point closest to current fix
-    int closestRefPatch, closestRefPoint;
+    int closestRefPatch = 0, closestRefPoint = 0;
 
     //angle to path line closest point and fix
-    double refHeading, ref2;
+    double refHeading = 0, ref2 = 0;
 
     // for closest line point to current fix
     double minDistance = 99999.0, refX, refZ;
@@ -39,11 +39,11 @@ public:
     double refLineSide = 1.0;
     Vec2 refPoint1 = Vec2(1, 1), refPoint2 = Vec2(2, 2);
 
-    double distanceFromRefLine;
-    double distanceFromCurrentLine;
+    double distanceFromRefLine = 0;
+    double distanceFromCurrentLine = 0;
 
-    int A, B, C;
-    double abFixHeadingDelta, abHeading;
+    int A = 0, B = 0, C = 0;
+    double abFixHeadingDelta = 0, abHeading = 0;
 
     bool isABSameAsFixHeading = true;
     bool isOnRightSideCurrentLine = true;
@@ -52,11 +52,11 @@ public:
     Vec2 pivotAxlePosCT = Vec2(0, 0);
     Vec2 goalPointCT = Vec2(0, 0);
     Vec2 radiusPointCT = Vec2(0, 0);
-    double steerAngleCT;
-    double rEastCT, rNorthCT;
-    double ppRadiusCT;
+    double steerAngleCT = 0;
+    double rEastCT = 0, rNorthCT = 0;
+    double ppRadiusCT = 0;
 
-    double angVel;
+    double angVel = 0;
 
     //list of strip data individual points
     QSharedPointer<QVector<Vec4>> ptList;

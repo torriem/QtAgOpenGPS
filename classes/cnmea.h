@@ -19,7 +19,7 @@ class CNMEA
 {
 public:
     //WGS84 Lat Long
-    double latitude, longitude;
+    double latitude = 0, longitude = 0;
 
     bool updatedGGA=false, updatedVTG=false, updatedRMC=false;
 
@@ -30,7 +30,7 @@ public:
 
     //UTM coordinates
     double northing=0, easting=0;
-    double actualEasting, actualNorthing;
+    double actualEasting=0, actualNorthing=0;
     double zone=0;
 
     //other GIS Info
@@ -45,8 +45,8 @@ public:
     char hemisphere = 'N';
 
     //UTM numbers are huge, these cut them way down.
-    int utmNorth, utmEast;
-    QByteArray logNMEASentence;
+    int utmNorth = 0, utmEast = 0;
+    QByteArray logNMEASentence = "";
 
     QByteArray currentNMEASentenceGGA = "";
     QByteArray currentNMEASentenceRMC = "";

@@ -7,15 +7,15 @@ class QOpenGLFunctions_2_1;
 class CCamera
 {
 private:
-    double camPosX;
-    double camPosY;
+    double camPosX = 0;
+    double camPosY = 0;
     const double camPosZ; //readonly in C# code
 public:
-    double fixHeading;
-    double camYaw;
+    double fixHeading = 0;
+    double camYaw = 0;
 
-    double camPitch;
-    double offset;
+    double camPitch = 0;
+    double offset = 0;
     double camSetDistance = -100; //put in setttings?
     //double camDelta = 0;
 

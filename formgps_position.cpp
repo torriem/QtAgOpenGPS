@@ -33,6 +33,8 @@ void FormGPS::scanForNMEA()
     //time for a frame update with new valid nmea data
     if (pn->updatedGGA || pn->updatedRMC)
     {
+        //qDebug() << qSetRealNumberPrecision(10) <<  pn->longitude <<", " <<pn->latitude << " => " <<
+        //            pn->actualEasting << ", " << pn->actualNorthing;
         //if saving a file ignore any movement
         if (isSavingFile) return;
 
@@ -406,11 +408,12 @@ void FormGPS::calculatePositionHeading()
     if (!isAtanCam)
     {
         //use NMEA headings for camera and tractor graphic
-        qDebug() << fixHeadingCam << ", " << pn->headingTrue;
-        qDebug() << fixHeading << toRadians(pn->headingTrue);
+        //qDebug() << "fixHeadingCam: " << fixHeadingCam << ", headingTrue: " << pn->headingTrue;
+        //qDebug() << "fixHeading: " << fixHeading << ", radians headingTrue: " << toRadians(pn->headingTrue);
         //fixHeading = toRadians(pn->headingTrue);
         fixHeadingCam = pn->headingTrue;
     }
+    //qDebug() << "fixHeading degrees: " << toDegrees(fixHeading) << ", northing: " << pn->northing << ", easting: " <<pn->easting;
 
     //check to make sure the grid is big enough
     worldGrid->checkZoomWorldGrid(pn->northing, pn->easting);
@@ -634,10 +637,10 @@ void FormGPS::initializeFirstFewGPSPositions()
         //reduce the huge utm coordinates
         pn->utmEast = (int)(pn->easting);
         pn->utmNorth = (int)(pn->northing);
-        qDebug() << pn->utmEast <<" from " << pn->easting;
+        //qDebug() << pn->utmEast <<" from " << pn->easting;
         pn->easting = pn->easting - pn->utmEast;
         pn->northing = pn->northing - pn->utmNorth;
-        qDebug() << "pn easting is now " << pn->easting;
+        //qDebug() << "pn easting is now " << pn->easting;
         //Draw a grid once we know where in the world we are.
         isFirstFixPositionSet = true;
         worldGrid->createWorldGrid(pn->northing, pn->easting);

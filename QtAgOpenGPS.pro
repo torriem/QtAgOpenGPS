@@ -90,7 +90,5 @@ FORMS    += formgps.ui \
 RESOURCES += \
     agopengps.qrc
 
-unix|win32: LIBS += -lglut -lGLU
-
 DISTFILES += \
     TODO.txt

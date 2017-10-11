@@ -11,11 +11,11 @@ private:
     FormGPS *mf;
 public:
     //Z (Y)
-    double northingMax;
-    double northingMin;
+    double northingMax = 0;
+    double northingMin = 0;
 
-    double eastingMax;
-    double eastingMin;
+    double eastingMax = 0;
+    double eastingMin = 0;
 
     const double texZoom = 20;
 
