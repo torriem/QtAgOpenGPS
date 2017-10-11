@@ -1,5 +1,6 @@
 #include <QNetworkDatagram>
 #include "formgps.h"
+#include "aogsettings.h"
 #include "cnmea.h"
 
 #define UDP_NMEA_PORT 9999
@@ -23,10 +24,13 @@ void FormGPS::udpServerReadDatagrams()
 
 void FormGPS::startUDPServer()
 {
+    AOGSettings s;
+    int port = s.value("port/udp_port_num",9999).toInt();
+
     if(udpSocket) stopUDPServer();
 
     udpSocket = new QUdpSocket(this); //should auto delete with the form
-    udpSocket->bind(UDP_NMEA_PORT); //by default, bind to all interfaces.
+    udpSocket->bind(port); //by default, bind to all interfaces.
 
     connect(udpSocket,SIGNAL(readyRead()),this,SLOT(udpServerReadDatagrams()));
 }

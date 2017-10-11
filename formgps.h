@@ -17,6 +17,7 @@
 #include "cperimeter.h"
 #include "ccamera.h"
 #include "btnenum.h"
+#include "aogsettings.h"
 
 
 namespace Ui {
@@ -96,6 +97,7 @@ public:
 
     QObject *txtDistanceOffABLine;
 
+    AOGSettings settings;
 
     /*******************
      * from FormGPS.cs *
@@ -109,8 +111,11 @@ public:
     QString vehiclefileName = "";
 
     //colors for sections and field background
-    uchar redSections, grnSections, bluSections;
-    uchar redField, grnField, bluField;
+    //uchar redSections, grnSections, bluSections;
+    //keep these in QSettings
+    //QColor sectionColor;
+    //QColor fieldColor;
+    //uchar redField, grnField, bluField;
 
     //polygon mode for section drawing
     bool isDrawPolygons = false;
@@ -149,7 +154,7 @@ public:
     // Storage For Our Tractor, implement, background etc Textures
     //Texture particleTexture;
     GLuint texture[3];
-    //QVector<QOpenGLTexture *> texture;
+    QVector<QOpenGLTexture *> texture1;
 
     //create the scene camera
     CCamera camera;
@@ -360,6 +365,13 @@ private:
     void autoSteerDataOutToPort();
     void autoSteerSettingsOutToPort();
     void sectionControlOutToPort();
+
+    /***********************
+     * FormGPS.Designer.cs *
+     ***********************/
+    //replaces ManualBtnUpdate since state logic is handled in onSectionButton_clicked
+    void setSectionBtnState(int sectnumber, enum manBtn);
+    void lineUpManualBtns();
 
 
     /**************************

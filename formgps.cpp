@@ -9,6 +9,8 @@
 #include "cvehicle.h"
 #include "mainoverlay.h"
 #include "aogsettings.h"
+#include <QColor>
+#include <QRgb>
 
 FormGPS::FormGPS(QWidget *parent) :
     QMainWindow(parent),
@@ -55,12 +57,21 @@ FormGPS::FormGPS(QWidget *parent) :
 
     isAtanCam = s.value("camera/useCalculatedHeading", true).toBool();
 
+    //fieldColor = QColor(s.value("display/fieldColor", "#82781E").toString());
+    //sectionColor = QColor(s.value("display/sectionColor", "#32DCC8").toString());
+
+
     section[0].positionLeft = -8.0;
     section[0].positionRight = -3.0;
     section[1].positionLeft = -3.0;
     section[1].positionRight = 3.0;
     section[2].positionLeft = 3.0;
     section[2].positionRight = 8.0;
+
+    //turn on the right number of section buttons.
+    //we don't need to do this on resize, but we will need
+    //to call it when settings change.
+    lineUpManualBtns();
 
     if (isUDPServerOn) startUDPServer();
 

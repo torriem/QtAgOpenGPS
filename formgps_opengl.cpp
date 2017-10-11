@@ -35,7 +35,7 @@ void FormGPS::openGLControl_Draw()
     qmlview->resetOpenGLState();
     //  Set the clear color.
 
-    gl->glClearColor(0.22f, 0.2858f, 0.16f, 1.0f);
+    //gl->glClearColor(0.22f, 0.2858f, 0.16f, 1.0f);
 
     // Set The Blending Function For Translucency
     gl->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -78,7 +78,7 @@ void FormGPS::openGLControl_Draw()
         calcFrustum(gl);
 
         //draw the field ground images
-        //worldGrid->drawFieldSurface(gl); //not yet working
+        worldGrid->drawFieldSurface(gl);
 
         ////Draw the world grid based on camera position
         gl->glDisable(GL_DEPTH_TEST);
@@ -91,7 +91,8 @@ void FormGPS::openGLControl_Draw()
         gl->glEnable(GL_BLEND);
 
         //section patch color
-        gl->glColor4b(redSections, grnSections, bluSections, 160);
+        QColor sectionColor = QColor(settings.value("display/sectionColor", "#32DCC8").toString());
+        gl->glColor4b(sectionColor.red(), sectionColor.green(), sectionColor.blue(),160);
         if (isDrawPolygons) gl->glPolygonMode(GL_FRONT, GL_LINE);
 
         //draw patches of sections
@@ -185,9 +186,9 @@ void FormGPS::openGLControl_Draw()
             {
                 gl->glPointSize(8.0f);
                 gl->glBegin(GL_POINTS);
-                if (flagPts[f].color == 0) gl->glColor3b(255, 0, flagPts[f].ID);
-                if (flagPts[f].color == 1) gl->glColor3b(0, 255, flagPts[f].ID);
-                if (flagPts[f].color == 2) gl->glColor3b(255, 255, flagPts[f].ID);
+                if (flagPts[f].color == 0) gl->glColor3ub(255, 0, flagPts[f].ID);
+                if (flagPts[f].color == 1) gl->glColor3ub(0, 255, flagPts[f].ID);
+                if (flagPts[f].color == 2) gl->glColor3ub(255, 255, flagPts[f].ID);
                 gl->glVertex3d(flagPts[f].easting, flagPts[f].northing, 0);
                 gl->glEnd();
             }
@@ -270,17 +271,19 @@ void FormGPS::openGLControl_Draw()
                 double winLeftPos = -(double)width / 2;
                 double winRightPos = -winLeftPos;
                 gl->glEnable(GL_TEXTURE_2D);
-                gl->glBindTexture(GL_TEXTURE_2D, texture[0]);		// Select Our Texture
+                texture1[0]->bind();
+                //gl->glBindTexture(GL_TEXTURE_2D, texture[0]);		// Select Our Texture
 
                 gl->glBegin(GL_TRIANGLE_STRIP);				// Build Quad From A Triangle Strip
-                gl->glTexCoord2i(0, 0); gl->glVertex2d(winRightPos, 0.0); // Top Right
-                gl->glTexCoord2i(1, 0); gl->glVertex2d(winLeftPos, 0.0); // Top Left
-                gl->glTexCoord2i(0, 1); gl->glVertex2d(winRightPos, hite * height); // Bottom Right
-                gl->glTexCoord2i(1, 1); gl->glVertex2d(winLeftPos, hite * height); // Bottom Left
+                gl->glTexCoord2i(0, 1); gl->glVertex2d(winRightPos, 0.0); // Top Right
+                gl->glTexCoord2i(1, 1); gl->glVertex2d(winLeftPos, 0.0); // Top Left
+                gl->glTexCoord2i(0, 0); gl->glVertex2d(winRightPos, hite * height); // Bottom Right
+                gl->glTexCoord2i(1, 0); gl->glVertex2d(winLeftPos, hite * height); // Bottom Left
                 gl->glEnd();						// Done Building Triangle Strip
 
                 //disable, straight color
-                gl->glBindTexture(GL_TEXTURE_2D, 0); //unbind the texture
+                //gl->glBindTexture(GL_TEXTURE_2D, 0); //unbind the texture
+                texture1[0]->release();
                 gl->glDisable(GL_TEXTURE_2D);
             }
         }
@@ -1126,29 +1129,23 @@ void FormGPS::loadGLTextures(QOpenGLFunctions_2_1 *gl)
 {
     //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
-    /*
-
     QOpenGLTexture *t;
-
-    gl->glGenTextures(2,texture); //generate 2 textures
 
     //  Background
     t = new QOpenGLTexture(QImage(":/images/Landscape.png").mirrored());
-    t->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
-    t->setMagnificationFilter(QOpenGLTexture::Linear);
-    t->bind(texture[0]);
+    //t->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+    //t->setMagnificationFilter(QOpenGLTexture::Linear);
 
-    //texture.append(t); //position 0
+    texture1.append(t); //position 0
 
     //  Floor
-    t = new QOpenGLTexture(QImage(":/images/floor.png").mirrored());
-    t->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
-    t->setMagnificationFilter(QOpenGLTexture::Linear);
-    t->bind(texture[1]);
+    t = new QOpenGLTexture(QImage(":/images/floor.png"));
+    //t->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+    //t->setMagnificationFilter(QOpenGLTexture::Linear);
+    //t->setWrapMode(QOpenGLTexture::Repeat);
 
-    //texture.append(t); //position 1
-    */
-
+    texture1.append(t); //position 1
+    /*
     QImage tex = QGLWidget::convertToGLFormat(QImage(":/images/Landscape.png"));
     gl->glGenTextures(1,&texture[0]);
     gl->glBindTexture(GL_TEXTURE_2D, texture[0]);
@@ -1156,7 +1153,7 @@ void FormGPS::loadGLTextures(QOpenGLFunctions_2_1 *gl)
     gl->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
     gl->glTexImage2D( GL_TEXTURE_2D, 0, 3, tex.width(), tex.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, tex.bits());
 
-    tex = QGLWidget::convertToGLFormat(QImage(":/images/floor.png"));
+    tex = QGLWidget::convertToGLFormat(QImage(":/images/floor.png").mirrored());
     qDebug() << tex.width() << ", " << tex.height();
     gl->glGenTextures(1,&texture[1]);
     gl->glBindTexture(GL_TEXTURE_2D, texture[1]);
@@ -1167,4 +1164,5 @@ void FormGPS::loadGLTextures(QOpenGLFunctions_2_1 *gl)
     gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     qDebug() << "textures: " << texture[0] << " " << texture[1];
+    */
 }

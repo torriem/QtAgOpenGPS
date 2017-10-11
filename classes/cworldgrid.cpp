@@ -2,6 +2,7 @@
 #include <QOpenGLContext>
 #include <QOpenGLFunctions_2_1>
 #include "formgps.h"
+#include "aogsettings.h"
 
 CWorldGrid::CWorldGrid(FormGPS *mf)
     :mf(mf)
@@ -9,19 +10,22 @@ CWorldGrid::CWorldGrid(FormGPS *mf)
 
 }
 
-//TODO: pass in color and texture to draw functions instead of passing in the
-// entire FormGPS object
-
 void CWorldGrid::drawFieldSurface(QOpenGLFunctions_2_1 *gl)
 {
     //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
     // Enable Texture Mapping and set color to white
-    gl->glColor3b(mf->redField, mf->grnField, mf->bluField);
+
+    QColor fieldColor = QColor(mf->settings.value("display/fieldColor", "#82781E").toString());
+    gl->glColor3ub(fieldColor.red(), fieldColor.green(), fieldColor.blue());
+    //gl->glColor3ub(255,0,0);
+
     gl->glEnable(GL_TEXTURE_2D);
 
     //the floor
-    gl->glBindTexture(GL_TEXTURE_2D, mf->texture[1]);	// Select Our Texture
+    //gl->glBindTexture(GL_TEXTURE_2D, mf->texture[1]);	// Select Our Texture
+    mf->texture1[1]->bind();
+
 
     gl->glBegin(GL_TRIANGLE_STRIP);				            // Build Quad From A Triangle Strip
     gl->glTexCoord2d(0, 0);
@@ -33,7 +37,9 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions_2_1 *gl)
     gl->glTexCoord2d(texZoom, texZoom);
     gl->glVertex3d(eastingMax, northingMax, 0.0);              // Bottom Left
     gl->glEnd();						// Done Building Triangle Strip
-    gl->glBindTexture(GL_TEXTURE_2D, 0);	// unbind texture
+    //gl->glBindTexture(GL_TEXTURE_2D, 0);	// unbind texture
+    mf->texture1[1]->release();
+
     gl->glDisable(GL_TEXTURE_2D);
 }
 
@@ -42,7 +48,8 @@ void CWorldGrid::drawWorldGrid(QOpenGLFunctions_2_1 *gl, double _gridZoom)
     //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
     //draw easting lines and westing lines to produce a grid
 
-    gl->glColor3b(mf->redField, mf->grnField, mf->bluField);
+    QColor fieldColor = QColor(mf->settings.value("display/fieldColor", "#82781E").toString());
+    gl->glColor3ub(fieldColor.red(), fieldColor.green(), fieldColor.blue());
     gl->glBegin(GL_LINES);
     for (double x = eastingMin; x < eastingMax; x += _gridZoom)
     {

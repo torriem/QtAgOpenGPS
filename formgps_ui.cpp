@@ -6,6 +6,8 @@
 #include "openglcontrol.h"
 #include "qmlutil.h"
 #include <QTimer>
+#include "cvehicle.h"
+#include "csection.h"
 
 #include <QtOpenGL>
 #include <QOpenGLFunctions_2_1>
@@ -277,12 +279,14 @@ void FormGPS::onSectionButton_clicked(int section_num) {
     qDebug() << state;
 
     if(state == "on")
-        button->setProperty("state",QVariant("auto"));
-    else if (state == "auto")
         button->setProperty("state",QVariant("off"));
-    else
+    else if (state == "auto")
         button->setProperty("state",QVariant("on"));
+    else
+        button->setProperty("state",QVariant("auto"));
 }
+
+
 
 void FormGPS::onBtnTiltDown_clicked(){
     qDebug()<<"TiltDown button clicked.";
@@ -362,6 +366,27 @@ void FormGPS::onBtnFileExplorer_clicked(){
 
 void FormGPS::onBtnAutoSteerConfig_clicked(){
     qDebug()<<"AutoSteerConfig button clicked." ;
+}
+
+void FormGPS::setSectionBtnState(int sectNumber, enum manBtn)
+{
+}
+
+void FormGPS::lineUpManualBtns()
+{
+    QObject* button;
+    for (int b=1; b< MAXSECTIONS; b++ ) {
+        button = qmlItem(qml_root,QString("section")+QString::number(b));
+
+        button->setProperty("enabled", "false");
+        if (b <= vehicle->numOfSections) {
+            button->setProperty("visible","true");
+            if (isJobStarted)
+                button->setProperty("enabled", "true");
+        } else {
+            button->setProperty("visible","false");
+        }
+    }
 }
 
 
