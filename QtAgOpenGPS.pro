@@ -7,6 +7,8 @@
 QT       += core gui opengl quick quickwidgets network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+lessThan(QT_MAJOR_VERSION, 5):error("requires Qt 5.8 or newer")
+equals(QT_MAJOR_VERSION,5):lessThan(QT_MINOR_VERSION,8):error("requires Qt 5.8 or newer")
 
 TARGET = QtAgOpenGPS
 TEMPLATE = app
