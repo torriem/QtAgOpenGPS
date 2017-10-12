@@ -524,7 +524,7 @@ void FormGPS::openGLControlBack_Draw()
                 if (isDraw)
                 {
                     //draw the triangles in each triangle strip
-                    glBegin(GL_TRIANGLE_STRIP);
+                    gl->glBegin(GL_TRIANGLE_STRIP);
                     for (int i = 0; i < count2; i++)
                         gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0);
                     gl->glEnd();
@@ -546,7 +546,7 @@ void FormGPS::openGLControlBack_Draw()
     for (int j = 0; j < vehicle->numOfSections; j++)
     {
         if (section[j].sectionLookAhead > rpHeight) rpHeight = section[j].sectionLookAhead;
-        if (section[j].manBtnState == manBtn::Off) vehicle->isSuperSectionAllowedOn = false;
+        if (section[j].manBtnState == btnStates::Off) vehicle->isSuperSectionAllowedOn = false;
         if (!section[j].isInsideBoundary) vehicle->isSuperSectionAllowedOn = false;
 
         //check if any sections going backwards
@@ -775,14 +775,14 @@ void FormGPS::openGLControlBack_Draw()
             }
 
             // Manual on, force the section On and exit loop so digital is also overidden
-            if (section[j].manBtnState == manBtn::On)
+            if (section[j].manBtnState == btnStates::On)
             {
                 section[j].sectionOnRequest = true;
                 section[j].sectionOffRequest = false;
                 continue;
             }
 
-            if (section[j].manBtnState == manBtn::Off)
+            if (section[j].manBtnState == btnStates::Off)
             {
                 section[j].sectionOnRequest = false;
                 section[j].sectionOffRequest = true;

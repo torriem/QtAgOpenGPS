@@ -62,11 +62,13 @@ FormGPS::FormGPS(QWidget *parent) :
 
 
     section[0].positionLeft = -8.0;
-    section[0].positionRight = -3.0;
-    section[1].positionLeft = -3.0;
-    section[1].positionRight = 3.0;
-    section[2].positionLeft = 3.0;
-    section[2].positionRight = 8.0;
+    section[0].positionRight = -4.0;
+    section[1].positionLeft = -4.0;
+    section[1].positionRight = 0.0;
+    section[2].positionLeft = 0.0;
+    section[2].positionRight = 4.0;
+    section[3].positionLeft = 4.0;
+    section[3].positionRight = 8.0;
 
     //turn on the right number of section buttons.
     //we don't need to do this on resize, but we will need

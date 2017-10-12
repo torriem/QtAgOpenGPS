@@ -2,7 +2,6 @@
 #define GLWIDGET_H
 
 #include <QOpenGLWidget>
-#include <QOpenGLFunctions_1_1>
 #include <functional>
 
 class QOpenGLContext;

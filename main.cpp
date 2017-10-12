@@ -1,7 +1,6 @@
 #include "formgps.h"
 #include <QApplication>
 #include <QCoreApplication>
-#include <GL/glut.h>
 
 #include "openglcontrolitem.h"
 

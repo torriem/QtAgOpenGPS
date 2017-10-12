@@ -2,7 +2,6 @@
 #define OPENGLCONTROL_H
 
 #include <QQuickItem>
-#include <QOpenGLFunctions_1_1>
 #include <QOpenGLContext>
 #include <QObject>
 

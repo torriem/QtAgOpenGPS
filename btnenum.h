@@ -2,9 +2,9 @@
 #define BTNENUM_H
 
 //master Manual and Auto, 3 states possible
-enum class btnStates {Off,Auto,On};
+enum btnStates {Off,Auto,On};
 
 //section button states
-enum class manBtn { Off, Auto, On };
+//enum class manBtn { Off, Auto, On };
 
 #endif // BTNENUM_H

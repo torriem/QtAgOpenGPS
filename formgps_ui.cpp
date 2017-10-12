@@ -368,7 +368,7 @@ void FormGPS::onBtnAutoSteerConfig_clicked(){
     qDebug()<<"AutoSteerConfig button clicked." ;
 }
 
-void FormGPS::setSectionBtnState(int sectNumber, enum manBtn)
+void FormGPS::setSectionBtnState(int sectNumber, btnStates manBtn)
 {
 }
 

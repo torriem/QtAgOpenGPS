@@ -3,6 +3,14 @@
 
 #include <math.h>
 
+#ifndef M_PI
+#  ifndef PI
+#     define M_PI 3.14159265358979323846
+#  else
+#     define M_PI PI
+#  endif
+#endif
+
 //inches to meters
 static const double in2m = 0.0254;
 
@@ -17,6 +25,7 @@ static const double twoPI = 6.28318530717958647692;
 
 static const double PIBy2 = 1.57079632679489661923;
 
+/*
 static inline float acos(float x)
 {
     return acosf(x);
@@ -61,7 +70,7 @@ static inline float cosh(float angle)
 {
     return coshf(angle);
 }
-
+*/
 static inline float toDegrees(float radians)
 {
     return radians * 180.0 / M_PI;
@@ -82,6 +91,7 @@ static inline double toRadians(double degrees)
     return degrees * M_PI / 180.0;
 }
 
+/*
 static inline float sin(float angle)
 {
     return sinf(angle);
@@ -101,5 +111,5 @@ static inline float tanh(float angle)
 {
      return tanhf(angle);
 }
-
+*/
 #endif // GLM_H

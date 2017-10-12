@@ -144,7 +144,7 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext) {
     //draw section line
     if (mf->section[numOfSections].isSectionOn)
     {
-        if (mf->section[0].manBtnState == manBtn::Auto) gl->glColor3f(0.0f, 0.97f, 0.0f);
+        if (mf->section[0].manBtnState == btnStates::Auto) gl->glColor3f(0.0f, 0.97f, 0.0f);
         else gl->glColor3f(0.99, 0.99, 0);
         gl->glVertex3d(mf->section[numOfSections].positionLeft, trailingTool, 0);
         gl->glVertex3d(mf->section[numOfSections].positionRight, trailingTool, 0);
@@ -155,7 +155,7 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext) {
             //if section is on, green, if off, red color
             if (mf->section[j].isSectionOn)
             {
-                if (mf->section[j].manBtnState == manBtn::Auto) gl->glColor3f(0.0f, 0.97f, 0.0f);
+                if (mf->section[j].manBtnState == btnStates::Auto) gl->glColor3f(0.0f, 0.97f, 0.0f);
                 else gl->glColor3f(0.97, 0.97, 0);
             }
             else gl->glColor3f(0.97f, 0.2f, 0.2f);

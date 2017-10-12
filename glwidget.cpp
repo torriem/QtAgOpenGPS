@@ -1,5 +1,3 @@
-#include <QtOpenGL>
-#include <GL/glut.h>
 #include "glwidget.h"
 
 GLWidget::GLWidget(QWidget *parent)

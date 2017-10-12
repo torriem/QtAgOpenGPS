@@ -370,7 +370,7 @@ private:
      * FormGPS.Designer.cs *
      ***********************/
     //replaces ManualBtnUpdate since state logic is handled in onSectionButton_clicked
-    void setSectionBtnState(int sectnumber, enum manBtn);
+    void setSectionBtnState(int sectnumber, btnStates manbtn);
     void lineUpManualBtns();
 
 

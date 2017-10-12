@@ -50,12 +50,10 @@ SOURCES += main.cpp\
     glwidget.cpp \
     formgps_opengl.cpp \
     classes/cboundary.cpp \
-    mainoverlay.cpp \
     openglcontrolitem.cpp \
     openglcontrol.cpp \
     formgps_ui.cpp \
     aogsettings.cpp \
-    gltest.cpp \
     formgps_udpcomm.cpp \
     formgps_position.cpp \
     formgps_serial.cpp
@@ -79,15 +77,12 @@ HEADERS  += formgps.h \
     glwidget.h \
     classes/cboundary.h \
     btnenum.h \
-    mainoverlay.h \
     openglcontrolitem.h \
     openglcontrol.h \
     qmlutil.h \
-    aogsettings.h \
-    gltest.h
+    aogsettings.h 
 
-FORMS    += formgps.ui \
-    mainoverlay.ui
+FORMS    += formgps.ui
 
 RESOURCES += \
     agopengps.qrc
