@@ -15,9 +15,11 @@
 
 void FormGPS::setupGui()
 {
+    /* Load the QML UI and display it in the main area of the GUI */
     ui->setupUi(this);
 
-    /* Load the QML UI and display it in the main area of the GUI */
+    ui->statusBar->hide();
+
 
     //Load the QML into a view
     qmlview = new QQuickView();
@@ -147,7 +149,7 @@ void FormGPS::setupGui()
 
     //connnect section buttons to callbacks
     sectionButtonsSignalMapper = new QSignalMapper(this);
-    for(int i=1; i < MAXSECTIONS; i++){
+    for(int i=0; i < MAXSECTIONS-1; i++){
         qDebug() << QString("section") <<i;
         sectionButton[i] = qmlItem(qml_root,QString("section")+QString::number(i));
         sectionButton[i]->setProperty("state","off");
@@ -157,7 +159,7 @@ void FormGPS::setupGui()
         sectionButtonsSignalMapper->setMapping(sectionButton[i], i);
     }
     connect(sectionButtonsSignalMapper,SIGNAL(mapped(int)),this,
-            SLOT(onSectionButton_clicked(int)));
+            SLOT(onBtnSectionMan_clicked(int)));
 
     txtDistanceOffABLine = qmlItem(qml_root,"txtDistanceOffABLine");
 
@@ -172,6 +174,7 @@ void FormGPS::setupGui()
     swFrame.start();
 }
 
+//not currently using this. TODO remove perhaps
 void FormGPS::openGLControl_set(OpenGLControl *c){
     openGLControl = c;
     qDebug() << "Apparently the renderer is activated now." ;
@@ -266,27 +269,19 @@ void FormGPS::onBtnSectionOffAutoOn_clicked(){
     qDebug()<<"Section off auto on button clicked." ;
 }
 
-void FormGPS::onSectionButton_clicked(int section_num) {
-    //just for kicks we will cycle the states.
-    //demo code only.
-    QObject* button = qmlItem(qml_root,QString("section")+QString::number(section_num));
-
-    qDebug() <<"section button " << section_num << " clicked." ;
-
-    QString state;
-    state = button->property("state").toString();
-
-    qDebug() << state;
-
-    if(state == "on")
-        button->setProperty("state",QVariant("off"));
-    else if (state == "auto")
-        button->setProperty("state",QVariant("on"));
-    else
-        button->setProperty("state",QVariant("auto"));
+//individual buttons for section (called by actual
+//qt callback onSectionButton_clicked() SLOT
+void FormGPS::onBtnSectionMan_clicked(int sectNumber) {
+    if (autoBtnState != btnStates::Auto) {
+        //if auto is off just have on-off for choices of section buttons
+        if (section[sectNumber].manBtnState == btnStates::Off) {
+            ///set to auto so that manuBtnUpdate will roll it over to On
+            section[sectNumber].manBtnState = btnStates::Auto;
+        }
+        //Roll over button to next state
+        manualBtnUpdate(sectNumber);
+    }
 }
-
-
 
 void FormGPS::onBtnTiltDown_clicked(){
     qDebug()<<"TiltDown button clicked.";
@@ -367,26 +362,4 @@ void FormGPS::onBtnFileExplorer_clicked(){
 void FormGPS::onBtnAutoSteerConfig_clicked(){
     qDebug()<<"AutoSteerConfig button clicked." ;
 }
-
-void FormGPS::setSectionBtnState(int sectNumber, btnStates manBtn)
-{
-}
-
-void FormGPS::lineUpManualBtns()
-{
-    QObject* button;
-    for (int b=1; b< MAXSECTIONS; b++ ) {
-        button = qmlItem(qml_root,QString("section")+QString::number(b));
-
-        button->setProperty("enabled", "false");
-        if (b <= vehicle->numOfSections) {
-            button->setProperty("visible","true");
-            if (isJobStarted)
-                button->setProperty("enabled", "true");
-        } else {
-            button->setProperty("visible","false");
-        }
-    }
-}
-
 

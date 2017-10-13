@@ -309,6 +309,7 @@ public:
 
 
 
+
     /************************
      * SaveOpen.Designer.cs *
      ************************/
@@ -359,9 +360,17 @@ private:
 
     void setupGui();
 
+
+    /**************
+     * FormGPS.cs *
+     **************/
+public:
+    void processSectionOnOffRequests();
+
     /**************************
      * SerialComm.Designer.cs *
      **************************/
+public:
     void autoSteerDataOutToPort();
     void autoSteerSettingsOutToPort();
     void sectionControlOutToPort();
@@ -370,7 +379,7 @@ private:
      * FormGPS.Designer.cs *
      ***********************/
     //replaces ManualBtnUpdate since state logic is handled in onSectionButton_clicked
-    void setSectionBtnState(int sectnumber, btnStates manbtn);
+    void manualBtnUpdate(int sectNumber);
     void lineUpManualBtns();
 
 
@@ -391,7 +400,6 @@ public slots:
     void onBtnContour_clicked();
     void onBtnManualOffOn_clicked();
     void onBtnSectionOffAutoOn_clicked();
-    void onSectionButton_clicked(int section_num);
 
     void onBtnTiltDown_clicked();
     void onBtnTiltUp_clicked();
@@ -409,6 +417,9 @@ public slots:
     void onBtnUnits_clicked();
     void onBtnFileExplorer_clicked();
     void onBtnAutoSteerConfig_clicked();
+
+    //was btnSection#Man_Click in c#
+    void onBtnSectionMan_clicked(int sectNumber);
 
     void renderGL();
 
@@ -431,6 +442,8 @@ public slots:
      * From Position.Designer.cs
      */
     void scanForNMEA();
+    void processSectionLookahead(); //called when section lookahead GL stuff is rendered
+
 };
 
 #endif // FORMGPS_H

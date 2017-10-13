@@ -15,6 +15,8 @@ public:
 
     void setPaintGLCallback(std::function<void ()> callback);
     void setInitializeGLCallback(std::function<void ()> callback);
+signals:
+    void afterRender(); //signal emits after paintGL completes
 
 protected:
     void initializeGL() override;

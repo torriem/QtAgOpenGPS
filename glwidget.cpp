@@ -30,6 +30,9 @@ void GLWidget::paintGL() {
     //call back to the main form since this needs access to main form
     //variables.
     if(paintGL_callback) paintGL_callback();
+
+    //notify main loop we're done.
+    emit afterRender();
 }
 
 void GLWidget::resizeGL(int _width, int _height) {

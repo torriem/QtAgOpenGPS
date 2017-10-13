@@ -110,5 +110,6 @@
         <file>images/floor.png</file>
         <file>images/Landscape.png</file>
         <file>qml/JobMenu.qml</file>
+        <file>qml/PortLight.qml</file>
     </qresource>
 </RCC>
