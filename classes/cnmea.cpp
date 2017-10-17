@@ -94,11 +94,13 @@ void CNMEA::parseNMEA()
     if (dollar == -1) return;
 
     //if the $ isn't first, get rid of the tail of corrupt sentence
-    if (dollar >= cr) rawBuffer = rawBuffer.mid(dollar);
+    if (dollar >= cr)
+        rawBuffer = rawBuffer.mid(dollar);
 
     cr = rawBuffer.indexOf("\r\n");
     dollar = rawBuffer.indexOf("$");
-    if (cr == -1 || dollar == -1) return;
+    if (cr == -1 || dollar == -1)
+        return;
 
     theSent = "";
 
@@ -111,12 +113,13 @@ void CNMEA::parseNMEA()
 
         //parse them accordingly
         words = nextNMEASentence.split(',');
-        if (words.size() < 9) return;
-        //qDebug() << words;
+        if (words.size() < 9)
+            return;
 
         if ((words[0] == "$GPGGA") || (words[0] == "$GNGGA")) parseGGA();
         if ((words[0] == "$GPVTG") || (words[0] == "$GNVTG")) parseVTG();
-        if ((words[0] == "$GPRMC") || (words[0] == "$GNRMC")) parseRMC();
+        if ((words[0] == "$GPRMC") || (words[0] == "$GNRMC"))
+            parseRMC();
         //pump the main loop in case UDP, Serial, or TCP data comes in.
         QCoreApplication::processEvents();
     }// while still data
@@ -131,12 +134,15 @@ QByteArray CNMEA::parse() {
         //double check for valid sentence
         // Find start of next sentence
         int start = rawBuffer.indexOf("$");
-        if (start == -1) return "";
+        if (start == -1)
+            return "";
+
         rawBuffer = rawBuffer.mid(start);
 
         // Find end of sentence
         int end = rawBuffer.indexOf("\r\n");
-        if (end == -1) return "";
+        if (end == -1)
+            return "";
 
         //the NMEA sentence to be parsed
         sentence = rawBuffer.mid(0, end + 2);
@@ -146,13 +152,12 @@ QByteArray CNMEA::parse() {
     }
 
     //if sentence has valid checksum, its all good
-    //what's with this while loop?
+    //TODO: what's with this while loop?
     //ask Brian.
     while (!validateChecksum(sentence));
 
     // Remove trailing checksum and \r\n and return
     sentence = sentence.mid(0, sentence.indexOf("*"));
-    qDebug() << sentence;
     return sentence;
 }
 
@@ -174,11 +179,16 @@ bool CNMEA::validateChecksum(QByteArray sentence) {
     }
 
     // Calculated checksum converted to a 2 digit hex string
-    QByteArray sumStr = QByteArray::number(sum, 16);
-    sumStr = QByteArray::number(sum, 16).mid(0,2);
+    QByteArray sumStr = QByteArray::number(sum, 16).toUpper();
+    if (sumStr.length() < 2)
+        sumStr.prepend('0');
+
+    //not needed because checksum is only 8 bit and will always
+    //be only 2 characters
+    //sumStr = QByteArray::number(sum, 16).mid(0,2);
 
     // Compare to checksum in sentence
-    return (sumStr == sentence.mid(inx + 1, 2));
+    return (sumStr == sentence.mid(inx + 1, 2).toUpper());
 
     //TODO: catch exceptions here like the C# code did?
 }
@@ -189,7 +199,7 @@ void CNMEA::parseGGA() {
     //        Time      Lat       Lon
 
     //is the sentence GGA
-    qDebug() << "Parse GGA.";
+    //qDebug() << "Parse GGA.";
     if (words[2].size() && words[3].size() &&
         words[4].size() && words[4].size() ) {
             //get latitude and convert to decimal degrees
@@ -209,9 +219,7 @@ void CNMEA::parseGGA() {
             //get longitude and convert to decimal degrees
             longitude = words[4].mid(0,3).toDouble();
             temp = words[4].mid(3).toDouble();
-            //qDebug() << "read: " << longitude << " " << temp;
             longitude = longitude + temp * 0.01666666666666666666666666666667;
-            //qDebug() << "got: " <<longitude;
 
          { if (words[5] == "W") longitude *= -1; }
 
@@ -236,14 +244,13 @@ void CNMEA::parseGGA() {
         theSent += nextNMEASentence;
         updatedGGA = true;
         mf->recvCounter = 0;
-        //qDebug() << words[0];
     }
 }
 
 void CNMEA::parseRMC() {
     //GPRMC parsing of the sentence
     //make sure there aren't missing coords in sentence
-    qDebug() << "Parse RMC.";
+    //qDebug() << "Parse RMC.";
     if (words[3].size() && words[4].size() &&
         words[5].size() && words[6].size()) {
         //get latitude and convert to decimal degrees
@@ -290,7 +297,6 @@ void CNMEA::parseRMC() {
 
         mf->avgSpeed[mf->ringCounter] = speed;
         if (mf->ringCounter++ > 8) mf->ringCounter = 0;
-        //qDebug() << words[0];
     }
 
 }
@@ -298,7 +304,7 @@ void CNMEA::parseRMC() {
 void CNMEA::parseVTG() {
     //$GPVTG,054.7,T,034.4,M,005.5,N,010.2,K*48
     //is the sentence GGA
-    qDebug() << "Parse VTG.";
+    //qDebug() << "Parse VTG.";
     if (words[1].size() && words[5].size()) {
         //kph for speed - knots read
         speed = words[5].toDouble();
@@ -313,7 +319,6 @@ void CNMEA::parseVTG() {
 
         mf->avgSpeed[mf->ringCounter] = speed;
         if (mf->ringCounter++ > 8) mf->ringCounter = 0;
-        //qDebug() << words[0];
     }
 }
 
@@ -328,21 +333,6 @@ double CNMEA::distanceSquared(double northing1, double easting1, double northing
 }
 
 void CNMEA::decDeg2UTM() {
-    /*
-    int _zone;
-    double _easting;
-    double _northing;
-    double _lat;
-    double _lon;
-
-    LLtoUTM(dWGS84, latitude, longitude, _northing,_easting,_zone);
-
-    qDebug() << qSetRealNumberPrecision(10) <<
-              latitude << ", " <<
-              longitude << "=> " <<
-              _northing << ", " <<
-              _easting << ", zone: " << _zone;
-    */
     zone = floor( (longitude + 180.0) / 6) + 1;
     geoUTMConverterXY(latitude * 0.01745329251994329576923690766743,
                       longitude * 0.01745329251994329576923690766743);
