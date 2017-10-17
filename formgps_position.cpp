@@ -26,9 +26,8 @@ double FootpointLatitude(double y);
 //called by watchdog timer every 50 ms
 void FormGPS::scanForNMEA()
 {
-    //qDebug() << "Looking for NMEA sentence." ;
     //parse any data from pn->rawBuffer
-    qDebug() << stopwatch.restart();
+    //qDebug() << stopwatch.restart();
     pn->parseNMEA();
 
     //time for a frame update with new valid nmea data
@@ -39,7 +38,8 @@ void FormGPS::scanForNMEA()
                     pn->headingTrue << ", " <<
                     //pn->longitude <<", " <<pn->latitude << " => " <<
                     pn->easting << ", " << pn->northing;
-                    */
+        */
+
         //if saving a file ignore any movement
         if (isSavingFile) return;
 
@@ -504,7 +504,6 @@ void FormGPS::addSectionContourPathPoints()
         {
             if (section[j].isSectionOn)
             {
-                qDebug() << "section j is on";
                 section[j].addPathPoint(toolPos.northing, toolPos.easting, cosSectionHeading, sinSectionHeading);
                 sectionCounter++;
             }

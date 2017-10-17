@@ -247,6 +247,7 @@ Item {
         y: 566
         height: 25
         color: "#ffffff"
+        opacity: 0.8
         anchors.right: parent.right
         anchors.rightMargin: 0
         anchors.left: parent.left
@@ -256,6 +257,7 @@ Item {
 
         Text {
             id: stripHz
+            objectName: "stripHz"
             text: qsTr("Hz")
             font.pixelSize: parent.height - 10;
             verticalAlignment: Text.AlignVCenter
@@ -266,6 +268,7 @@ Item {
 
         Text {
             id: stripDistance
+            objectName: "stripDistance"
             text: "555555 ft"
             font.pixelSize: parent.height - 10;
             anchors.verticalCenter: parent.verticalCenter
@@ -275,6 +278,7 @@ Item {
 
         Item {
             id: toolStripBtnResetDistance
+            objectName: "toolStripBtnResetDistance"
             width: 150
             height: parent.height - 10
             anchors.verticalCenter: parent.verticalCenter
@@ -284,6 +288,7 @@ Item {
 
         Text {
             id: stripAreaUser
+            objectName: "stripAreaUser"
             text: qsTr("188.88")
             font.pixelSize: parent.height - 10;
             verticalAlignment: Text.AlignVCenter
@@ -294,6 +299,7 @@ Item {
 
         Text {
             id: stripEqWidth
+            objectName: "stripEqWidth"
             text: "Width"
             font.pixelSize: parent.height - 10;
             verticalAlignment: Text.AlignVCenter
@@ -304,6 +310,7 @@ Item {
 
         Text {
             id: stripBoundaryArea
+            objectName: "stripBoundaryArea"
             text: "Area"
             font.pixelSize: parent.height - 10;
             verticalAlignment: Text.AlignVCenter
@@ -313,6 +320,7 @@ Item {
         }
         Text {
             id: stripAreaRate
+            objectName: "stripAreaRate"
             text: "Ac/hr"
             font.pixelSize: parent.height - 10;
             verticalAlignment: Text.AlignVCenter
@@ -322,6 +330,7 @@ Item {
         }
          Text {
             id: stripPortGPS
+            objectName: "stripPortGPS"
             text: "* *"
             font.pixelSize: parent.height - 10;
             verticalAlignment: Text.AlignVCenter
@@ -332,6 +341,7 @@ Item {
         }
         PortLight {
             id: stripOnlineGPS
+            objectName: "stripOnlineGPS"
             height: parent.height - 10
             width: (parent.height - 10) / 2
             color: "grey"
@@ -342,6 +352,7 @@ Item {
         }
        Text {
             id: stripPortArduino
+            objectName: "stripPortArduino"
             text: "* *"
             font.pixelSize: parent.height - 10;
             verticalAlignment: Text.AlignVCenter
@@ -352,6 +363,7 @@ Item {
         }
         PortLight {
             id: stripOnlineArduino
+            objectName: "stripOnlineArduino"
             height: parent.height - 10
             width: (parent.height - 10) / 2
             color: "grey"
@@ -362,6 +374,7 @@ Item {
         }
         Text {
             id: stripPortAutoSteer
+            objectName: "stripPortAutoSteer"
             text: "* *"
             font.pixelSize: parent.height - 10;
             verticalAlignment: Text.AlignVCenter
@@ -372,6 +385,7 @@ Item {
         }
         PortLight {
             id: stripOnlineAutoSteer
+            objectName: "stripOnlineAutoSteer"
             height: parent.height - 10
             width: (parent.height - 10) / 2
             color: "grey"

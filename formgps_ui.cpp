@@ -266,15 +266,17 @@ void FormGPS::onBtnSectionOffAutoOn_clicked(){
 //individual buttons for section (called by actual
 //qt callback onSectionButton_clicked() SLOT
 void FormGPS::onBtnSectionMan_clicked(int sectNumber) {
+    /*
     if (autoBtnState != btnStates::Auto) {
         //if auto is off just have on-off for choices of section buttons
         if (section[sectNumber].manBtnState == btnStates::Off) {
             ///set to auto so that manuBtnUpdate will roll it over to On
             section[sectNumber].manBtnState = btnStates::Auto;
         }
-        //Roll over button to next state
-        manualBtnUpdate(sectNumber);
     }
+    */
+    //Roll over button to next state
+    manualBtnUpdate(sectNumber);
 }
 
 void FormGPS::onBtnTiltDown_clicked(){

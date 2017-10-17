@@ -106,7 +106,7 @@ void FormGPS::openGLControl_Draw()
 
         //section patch color
         QColor sectionColor = QColor(settings.value("display/sectionColor", "#32DCC8").toString());
-        gl->glColor4b(sectionColor.red(), sectionColor.green(), sectionColor.blue(),160);
+        gl->glColor4ub(sectionColor.red(), sectionColor.green(), sectionColor.blue(),160);
         if (isDrawPolygons) gl->glPolygonMode(GL_FRONT, GL_LINE);
 
         //draw patches of sections
@@ -173,9 +173,10 @@ void FormGPS::openGLControl_Draw()
                                 //too small to mipmap it
                                 if (count2 - i <= (mipmap + 2)) step = 0;
                             }
+                        } else {
+                            for (int i = 0; i < count2; i++)
+                                gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0);
                         }
-
-                        else { for (int i = 0; i < count2; i++)  gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0); }
                         gl->glEnd();
                     }
                 }

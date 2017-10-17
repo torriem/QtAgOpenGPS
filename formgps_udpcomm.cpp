@@ -21,7 +21,7 @@ void FormGPS::udpServerReadDatagrams()
         //Will a ton of incoming data make this whole thing block
         //forever? maybe.
     }
-    qDebug() << pn->rawBuffer ;
+    //qDebug() << pn->rawBuffer ;
 }
 
 void FormGPS::startUDPServer()

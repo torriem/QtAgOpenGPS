@@ -78,6 +78,9 @@ FormGPS::FormGPS(QWidget *parent) :
     //to call it when settings change.
     lineUpManualBtns();
 
+    //hard wire this on for testing
+    isJobStarted = true;
+
     if (isUDPServerOn) startUDPServer();
 
 }
@@ -163,15 +166,6 @@ void FormGPS::manualBtnUpdate(int sectNumber)
         button->setProperty("state","off");
         break;
     }
-
-    //just for kicks and giggles we force sections on or off for testing
-    //purposes. Once section GL code is done, we'll do this elsewhere.
-    //if (section[sectNumber].manBtnState == btnStates::On)
-    //    section[sectNumber].turnSectionOn();
-    //else
-    //    section[sectNumber].turnSectionOff();
-
-
 }
 
 //This used to be part of openGLControlBack_Draw in the C# code, but
