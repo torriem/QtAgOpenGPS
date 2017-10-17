@@ -165,6 +165,7 @@ public:
 
     //create instance of a stopwatch for timing of frames and NMEA hz determination
     QElapsedTimer swFrame;
+    QElapsedTimer stopwatch; //general stopwatch for debugging purposes.
     //readonly Stopwatch swFrame = new Stopwatch();
 
     //Time to do fix position update and draw routine
@@ -291,7 +292,7 @@ public:
     int totalFixSteps = 10, currentStepFix = 0;
     Vec3 vHold;
     Vec3 stepFixPts[50];
-    double distanceCurrentStepFix = 0, fixStepDist, minFixStepDist = 0;
+    double distanceCurrentStepFix = 0, fixStepDist=0, minFixStepDist = 0;
     bool isFixHolding = false, isFixHoldLoaded = false;
 
     double rollZero = 0, pitchZero = 0;
@@ -350,7 +351,9 @@ public:
 
 
     void drawLightBar(QOpenGLFunctions_2_1 *gl, double Width, double Height, double offlineDistance);
-    void calcFrustum(QOpenGLFunctions_2_1 *gl);
+    //void calcFrustum(QOpenGLFunctions_2_1 *gl);
+    //transitioning to OPenGL ES; use our own computed matrices
+    void calcFrustum(const QMatrix4x4 &projection, const QMatrix4x4 &modelview);
 
     void setZoom();
     void loadGLTextures(QOpenGLFunctions_2_1 *gl);
@@ -365,7 +368,9 @@ private:
      * FormGPS.cs *
      **************/
 public:
+    void sectionCalcWidths();
     void processSectionOnOffRequests();
+    void scanForNMEA();
 
     /**************************
      * SerialComm.Designer.cs *
@@ -420,6 +425,7 @@ public slots:
 
     //was btnSection#Man_Click in c#
     void onBtnSectionMan_clicked(int sectNumber);
+    void tmrWatchdog_timeout();
 
     void renderGL();
 
@@ -441,8 +447,8 @@ public slots:
     /*
      * From Position.Designer.cs
      */
-    void scanForNMEA();
     void processSectionLookahead(); //called when section lookahead GL stuff is rendered
+
 
 };
 

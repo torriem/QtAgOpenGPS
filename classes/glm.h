@@ -112,4 +112,8 @@ static inline float tanh(float angle)
      return tanhf(angle);
 }
 */
+
+static inline double roundAwayFromZero(double number) {
+   return (number < 0) ? floor(number) : ceil(number);
+}
 #endif // GLM_H

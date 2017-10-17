@@ -16,6 +16,7 @@
 #include <QQuickView>
 //#include <QOpenGLFunctions_1_1>
 #include <QOpenGLFunctions_2_1>
+#include <QOpenGLFunctions>
 
 #include <iostream>
 
@@ -23,8 +24,12 @@ void FormGPS::openGLControl_Draw()
 {
     QOpenGLContext *glContext = QOpenGLContext::currentContext();
     QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+    QOpenGLFunctions *gles = glContext->functions();
     int width = glContext->surface()->size().width();
     int height = glContext->surface()->size().height();
+    QMatrix4x4 projection;
+    QMatrix4x4 modelview;
+
 
     //std::cout << "draw routine here." << std::endl;
 
@@ -52,6 +57,9 @@ void FormGPS::openGLControl_Draw()
     //context to work with.
     gl->glMatrixMode(GL_PROJECTION);
     gl->glLoadIdentity();
+
+    projection.setToIdentity();
+
     //  Create a perspective transformation.
     //gl.Perspective(fovy, openGLControl.Width / (double)openGLControl.Height, 1, camDistanceFactor * camera.camSetDistance);
     double aspect = width / height;
@@ -59,9 +67,13 @@ void FormGPS::openGLControl_Draw()
     double fW = fH * aspect;
 
     gl->glFrustum(-fW, fW, -fH, fH, 1, camDistanceFactor * camera.camSetDistance );
+    projection.frustum(-fW,fW,-fH,fH, 1, camDistanceFactor * camera.camSetDistance);
 
     //  Set the modelview matrix.
     gl->glMatrixMode(GL_MODELVIEW);
+
+    //default MODELVIEW matrix is identity
+    modelview.setToIdentity();
 
 
     if (isGPSPositionInitialized)
@@ -73,9 +85,11 @@ void FormGPS::openGLControl_Draw()
 
         //camera does translations and rotations
         camera.setWorldCam(gl, pivotAxlePos.easting, pivotAxlePos.northing, fixHeadingCam);
+        //do our own matrices
+        camera.setWorldCam(modelview, pivotAxlePos.easting, pivotAxlePos.northing, fixHeadingCam);
 
         //calculate the frustum planes for culling
-        calcFrustum(gl);
+        calcFrustum(projection, modelview);
 
         //draw the field ground images
         worldGrid->drawFieldSurface(gl);
@@ -457,14 +471,21 @@ void FormGPS::openGLControlBack_Draw()
     //split out into its own function.
     QOpenGLContext *glContext = QOpenGLContext::currentContext();
     QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+    QMatrix4x4 projection;
+    QMatrix4x4 modelview;
+
     int width = glContext->surface()->size().width();
     int height = glContext->surface()->size().height();
 
     gl->glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+
+    /* set projection */
     gl->glMatrixMode(GL_PROJECTION);
 
     //  Load the identity.
     gl->glLoadIdentity();
+    projection.setToIdentity();
 
     // change these at your own peril!!!! Very critical
     //  Create a perspective transformation.
@@ -472,27 +493,34 @@ void FormGPS::openGLControlBack_Draw()
     double fH = tan( 6.0 / 360 * M_PI);
     double fW = fH;
     gl->glFrustum(-fW, fW, -fH, fH, 1, 6000 );
+    projection.frustum(-fW, fW, -fH, fH, 1, 6000 );
+
+    /* end set projection */
 
     //  Set the modelview matrix.
     gl->glMatrixMode(GL_MODELVIEW);
 
     gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
     gl->glLoadIdentity();					// Reset The View
+    modelview.setToIdentity();
 
     //back the camera up
     gl->glTranslated(0, 0, -390);
+    modelview.translate(0, 0, -390);
 
     //rotate camera so heading matched fix heading in the world
     gl->glRotated(toDegrees(fixHeadingSection), 0, 0, 1);
+    modelview.rotate(toDegrees(fixHeadingSection), 0, 0, 1);
 
     //translate to that spot in the world
     gl->glTranslated(-toolPos.easting, -toolPos.northing, -fixZ);
+    modelview.translate(-toolPos.easting, -toolPos.northing, -fixZ);
 
     //patch color
     gl->glColor3f(0.0f, 0.5f, 0.0f);
 
     //calculate the frustum for the section control window
-    calcFrustum(gl);
+    calcFrustum(projection, modelview);
 
     //to draw or not the triangle patch
     bool isDraw;
@@ -707,17 +735,20 @@ void FormGPS::drawLightBar(QOpenGLFunctions_2_1 *gl, double Width, double Height
     }
 }
 
-void FormGPS::calcFrustum(QOpenGLFunctions_2_1 *gl)
+//void FormGPS::calcFrustum(QOpenGLFunctions_2_1 *gl)
+void FormGPS::calcFrustum(const QMatrix4x4 &projection, const QMatrix4x4 &modelview)
 {
     //QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
 
-    float proj[16];							// For Grabbing The PROJECTION Matrix
-    float modl[16];							// For Grabbing The MODELVIEW Matrix
-    float clip[16];							// Result Of Concatenating PROJECTION and MODELVIEW
+    //float proj[16];							// For Grabbing The PROJECTION Matrix
+    //float modl[16];							// For Grabbing The MODELVIEW Matrix
+    //float clip[16];							// Result Of Concatenating PROJECTION and MODELVIEW
     //float t;											    // Temporary Work Variable
 
-    gl->glGetFloatv (GL_PROJECTION_MATRIX, proj);		// Grab The Current PROJECTION Matrix
+    /*
+    gl->glGetFloatv (GL_PROJECTION_MATRIX, proj);		// Grab The Current PROJECTION Matrieprojection
     gl->glGetFloatv(GL_MODELVIEW_MATRIX, modl);		// Grab The Current MODELVIEW Matrix
+
 
     // Concatenate (Multiply) The Two Matricies
     clip[0] = modl[0] * proj[0] + modl[1] * proj[4] + modl[2] * proj[8] + modl[3] * proj[12];
@@ -739,6 +770,11 @@ void FormGPS::calcFrustum(QOpenGLFunctions_2_1 *gl)
     clip[13] = modl[12] * proj[1] + modl[13] * proj[5] + modl[14] * proj[9] + modl[15] * proj[13];
     clip[14] = modl[12] * proj[2] + modl[13] * proj[6] + modl[14] * proj[10] + modl[15] * proj[14];
     clip[15] = modl[12] * proj[3] + modl[13] * proj[7] + modl[14] * proj[11] + modl[15] * proj[15];
+    */
+
+    const float *clip;
+
+    clip = (projection * modelview).constData();
 
 
     // Extract the RIGHT clipping plane
@@ -823,6 +859,7 @@ void FormGPS::calcFrustum(QOpenGLFunctions_2_1 *gl)
 }
 
 //take the distance from object and convert to camera data
+//TODO, move Projection matrix stuff into here when OpenGL ES migration is complete
 void FormGPS::setZoom()
 {
     //match grid to cam distance and redo perspective
@@ -837,6 +874,8 @@ void FormGPS::setZoom()
     if (camera.camSetDistance >= -150 && camera.camSetDistance < -50) gridZoom =         10.06;
     if (camera.camSetDistance >= -50 && camera.camSetDistance < -1) gridZoom = 5.03;
     //1.216 2.532
+
+
 }
 
 void FormGPS::loadGLTextures(QOpenGLFunctions_2_1 *gl)

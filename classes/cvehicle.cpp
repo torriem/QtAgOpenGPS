@@ -80,6 +80,7 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext) {
 
     //translate and rotate at pivot axle
     gl->glTranslated(mf->fixEasting, mf->fixNorthing, 0);
+
     gl->glPushMatrix();
 
     //most complicated translate ever!
@@ -233,3 +234,5 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext) {
     gl->glVertex3d(0, -antennaPivot, 0);
     gl->glEnd();
 }
+
+

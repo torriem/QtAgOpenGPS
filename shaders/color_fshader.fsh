@@ -1,7 +1,9 @@
-uniform sampler2D qt_Texture0;
-varying highp vec4 qt_TexCoord0;
+/* A very simple fragment shader that paints everything a
+ * single color, defined by the color attribute
+ */
+uniform vec4 color;
 
 void main(void)
 {
-    gl_FragColor = texture2D(qt_Texture0, qt_TexCoord0.st);
+    gl_FragColor = color;
 }

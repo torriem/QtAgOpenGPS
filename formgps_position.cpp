@@ -28,18 +28,25 @@ void FormGPS::scanForNMEA()
 {
     //qDebug() << "Looking for NMEA sentence." ;
     //parse any data from pn->rawBuffer
+    qDebug() << stopwatch.restart();
     pn->parseNMEA();
 
     //time for a frame update with new valid nmea data
     if (pn->updatedGGA || pn->updatedRMC)
     {
-        //qDebug() << qSetRealNumberPrecision(10) <<  pn->longitude <<", " <<pn->latitude << " => " <<
-        //            pn->actualEasting << ", " << pn->actualNorthing;
+        /*
+        qDebug() << qSetRealNumberPrecision(15) <<
+                    pn->headingTrue << ", " <<
+                    //pn->longitude <<", " <<pn->latitude << " => " <<
+                    pn->easting << ", " << pn->northing;
+                    */
         //if saving a file ignore any movement
         if (isSavingFile) return;
 
         //accumulate time over multiple frames
-        hzTime += swFrame.restart(); //get elapsed time and reset in one operation
+        double wallclock = swFrame.restart();
+        //qDebug() << wallclock << "ms";
+        hzTime += wallclock; //get elapsed time and reset in one operation
 
         //now calculate NMEA rate
         if (timerPn++ == 36)
@@ -170,13 +177,17 @@ void FormGPS::updateFixPosition()
             if (ct->isContourOn)
             {
                 //TODO implement with serial code
-                //pn->logNMEASentence.append(recvSentenceSettings);
+                //TODO: pn->logNMEASentence.append(recvSentenceSettings);
             }
         }
 
         //To prevent drawing high numbers of triangles, determine and test before drawing vertex
         sectionTriggerDistance = pn->distance(pn->northing, pn->easting, prevSectionPos.northing, prevSectionPos.easting);
-
+        /*
+        qDebug() << sectionTriggerDistance << "\t" << sectionTriggerStepDistance << "\t"
+                 << pn->northing <<",\t"<< pn->easting << "\told: "
+                 << prevSectionPos.northing << ", " << prevSectionPos.easting;
+        */
         //section on off and points, contour points
         if (sectionTriggerDistance > sectionTriggerStepDistance)
                 addSectionContourPathPoints();
@@ -402,6 +413,7 @@ void FormGPS::calculatePositionHeading()
     //finally determine distance
     sectionTriggerStepDistance = sectionTriggerStepDistance * sectionTriggerStepDistance *
         metersPerSec * triangleResolution*2.0 + 1.0;
+    //qDebug() << metersPerSec << triangleResolution << sectionTriggerStepDistance;
 
     //  ** Torriem Cam   *****
     //Default using fix Atan2 to calc cam, if unchecked in display settings use True Heading from NMEA
@@ -492,6 +504,7 @@ void FormGPS::addSectionContourPathPoints()
         {
             if (section[j].isSectionOn)
             {
+                qDebug() << "section j is on";
                 section[j].addPathPoint(toolPos.northing, toolPos.easting, cosSectionHeading, sinSectionHeading);
                 sectionCounter++;
             }

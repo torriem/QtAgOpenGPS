@@ -1,6 +1,7 @@
 #ifndef CCAMERA_H
 #define CCAMERA_H
 
+#include <QMatrix4x4>
 
 class QOpenGLContext;
 class QOpenGLFunctions_2_1;
@@ -21,6 +22,7 @@ public:
 
     CCamera();
     void setWorldCam(QOpenGLFunctions_2_1 *c, double _fixPosX, double _fixPosY, double _fixHeading);
+    void setWorldCam(QMatrix4x4 &mvp, double _fixPosX, double _fixPosY, double _fixHeading);
 
 };
 

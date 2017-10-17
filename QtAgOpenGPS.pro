@@ -88,4 +88,6 @@ RESOURCES += \
     agopengps.qrc
 
 DISTFILES += \
-    TODO.txt
+    TODO.txt \
+    shaders/color_vshader.vsh \
+    shaders/color_fshader.fsh

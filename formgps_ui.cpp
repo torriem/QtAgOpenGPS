@@ -42,7 +42,7 @@ void FormGPS::setupGui()
     ui->verticalLayout->addWidget(qmlcontainer);
 
     //hide the section control lookahead widget; it should still work
-    ui->openGLControlBack->hide();
+    //ui->openGLControlBack->hide();
 
     //get pointer to root QML object, which is the OpenGLControl,
     //store in a member variable for future use.
@@ -164,14 +164,18 @@ void FormGPS::setupGui()
     txtDistanceOffABLine = qmlItem(qml_root,"txtDistanceOffABLine");
 
 
-    //ui->openGLControlBack->setPaintGLCallback(&gltest_draw);
-    //ui->openGLControlBack->setPaintGLCallback(std::bind(&FormGPS::openGLControl_Draw,this));
+    //ui->openGLControlBack->setPaintGLCallback(std::bind(&FormGPS::renderGL,this));
+    ui->openGLControlBack->setPaintGLCallback(std::bind(&FormGPS::openGLControlBack_Draw,this));
+
+    connect(ui->openGLControlBack,SIGNAL(afterRender()),this,SLOT(processSectionLookahead()));
 
     tmrWatchdog = new QTimer(this);
-    connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(scanForNMEA()));
+    connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(tmrWatchdog_timeout()));
     tmrWatchdog->start(50); //fire every 50ms.
 
     swFrame.start();
+
+    stopwatch.start();
 }
 
 //not currently using this. TODO remove perhaps
@@ -187,14 +191,6 @@ void FormGPS::openGLControl_set(OpenGLControl *c){
 
 void FormGPS::renderGL()
 {
-    qDebug() << "before rendering a frame.";
-
-    qmlview->resetOpenGLState();
-    openGLControlBack_Draw();
-    /*
-    gltest_draw();
-    qmlview->resetOpenGLState();
-    return;
     //QOpenGLContext *glContext = QOpenGLContext::currentContext();
     //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
@@ -233,8 +229,6 @@ void FormGPS::renderGL()
 
     glFlush();
 
-    qmlview->resetOpenGLState();
-*/
 }
 
 void FormGPS::onBtnMinMaxZoom_clicked(){

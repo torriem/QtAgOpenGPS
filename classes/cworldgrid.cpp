@@ -26,6 +26,7 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions_2_1 *gl)
     //gl->glBindTexture(GL_TEXTURE_2D, mf->texture[1]);	// Select Our Texture
     mf->texture1[1]->bind();
 
+    gl->glEnable(GL_BLEND);
 
     gl->glBegin(GL_TRIANGLE_STRIP);				            // Build Quad From A Triangle Strip
     gl->glTexCoord2d(0, 0);

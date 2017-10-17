@@ -12,6 +12,7 @@
 #include <QColor>
 #include <QRgb>
 #include "qmlutil.h"
+#include "glm.h"
 
 FormGPS::FormGPS(QWidget *parent) :
     QMainWindow(parent),
@@ -71,6 +72,7 @@ FormGPS::FormGPS(QWidget *parent) :
     section[3].positionLeft = 4.0;
     section[3].positionRight = 8.0;
 
+    sectionCalcWidths();
     //turn on the right number of section buttons.
     //we don't need to do this on resize, but we will need
     //to call it when settings change.
@@ -113,6 +115,33 @@ void FormGPS::lineUpManualBtns()
             button->setProperty("visible","false");
         }
     }
+}
+
+//function to calculate teh width of each section and update
+void FormGPS::sectionCalcWidths()
+{
+    for (int j = 0; j < MAXSECTIONS; j++)
+    {
+        section[j].sectionWidth = (section[j].positionRight - section[j].positionLeft);
+        section[j].rpSectionPosition = 200 + (int)(roundAwayFromZero(section[j].positionLeft * 10));
+        section[j].rpSectionWidth = (int)(roundAwayFromZero(section[j].sectionWidth * 10));
+    }
+
+    //calculate tool width based on extreme right and left values
+    vehicle->toolWidth = fabs(section[0].positionLeft) + fabs(section[vehicle->numOfSections - 1].positionRight);
+
+    //left and right tool position
+    vehicle->toolFarLeftPosition = section[0].positionLeft;
+    vehicle->toolFarRightPosition = section[vehicle->numOfSections - 1].positionRight;
+
+    //now do the full width section
+    section[vehicle->numOfSections].sectionWidth = vehicle->toolWidth;
+    section[vehicle->numOfSections].positionLeft = vehicle->toolFarLeftPosition;
+    section[vehicle->numOfSections].positionRight = vehicle->toolFarRightPosition;
+
+    //find the right side pixel position
+    vehicle->rpXPosition = 200 + (int)(roundAwayFromZero(vehicle->toolFarLeftPosition * 10));
+    vehicle->rpWidth = (int)(roundAwayFromZero(vehicle->toolWidth * 10));
 }
 
 //udate individual btn based on state after push.
@@ -517,4 +546,121 @@ void FormGPS::processSectionOnOffRequests()
             }
         }
     }
+}
+
+void FormGPS::tmrWatchdog_timeout()
+{
+    //tmrWatchdog->stop();
+    scanForNMEA();
+    //tmrWatchdog->start();
+    statusUpdateCounter++;
+
+    /* menu panel taken care of by qml */
+
+   //every third of a second update all status
+    if (statusUpdateCounter > 0)
+    {
+        //reset the counter
+        statusUpdateCounter = 0;
+
+        //counter used for saving field in background
+        saveCounter++;
+
+        if (isMetric)  //metric or imperial
+        {
+            //Hectares on the master section soft control and sections
+            btnSectionOffAutoOn->setProperty("buttonText",
+                     (totalSquareMeters < 999900 ?
+                          QString::number(totalSquareMeters * 0.0001,'g',2) :
+                          QString::number(totalSquareMeters * 0.0001,'g',1)));
+            btnPerimeter->setProperty("buttonText",
+                     QString::number(periArea.area * 0.0001,'g', 2));
+
+            //status strip values
+            /* TODO:
+            stripDistance.Text = Convert.ToString((UInt16)(userDistance)) + " m";
+            stripAreaUser.Text = HectaresUser;
+            lblSpeed.Text = SpeedKPH;
+            stripAreaRate.Text = (Math.Round(vehicle.toolWidth * pn.speed / 10,2)).ToString();
+            stripEqWidth.Text = vehiclefileName + (Math.Round(vehicle.toolWidth,2)).ToString() + " m";
+            toolStripStatusLabelBoundaryArea.Text = boundary.areaHectare;
+            */
+        }
+        else
+        {
+            //acres on the master section soft control and sections
+            btnSectionOffAutoOn->setProperty("buttonText",
+                     (totalSquareMeters < 404645 ?
+                          QString::number(totalSquareMeters * 0.00024710499815078974633856493327535, 'g',2) :
+                          QString::number(totalSquareMeters * 0.00024710499815078974633856493327535, 'g',1)));
+            btnPerimeter->setProperty("buttonText",
+                     QString::number(periArea.area * 0.00024710499815078974633856493327535, 'g',2));
+
+            //status strip values
+            /* TODO:
+            stripDistance.Text = Convert.ToString((UInt16)(userDistance * 3.28084)) + " ft";
+            stripAreaUser.Text = AcresUser;
+            lblSpeed.Text = SpeedMPH;
+            //stripGridZoom.Text = "Grid: " + GridFeet + " '";
+            stripAreaRate.Text = ((int)((vehicle.toolWidth * pn.speed / 10) * 2.47)).ToString();
+            stripEqWidth.Text = vehiclefileName + (Math.Round(vehicle.toolWidth * glm.m2ft, 2)).ToString() + " ft";
+            toolStripStatusLabelBoundaryArea.Text = boundary.areaAcre;
+            */
+        }
+
+        //lblDelta.Text = guidanceLineHeadingDelta.ToString();
+
+        //non metric or imp fields
+        /*TODO
+        stripHz.Text = NMEAHz+"Hz "+ (int)(frameTime);
+        lblHeading.Text = Heading;
+        btnABLine.Text = PassNumber;
+        lblSteerAngle.Text = Convert.ToString((double)(guidanceLineSteerAngle) / 10);
+
+        //stripRoll.Text = avgRoll + "\u00B0";
+        //stripPitch.Text = avgPitch + "\u00B0";
+        //stripAngularVel.Text = avgAngVel.ToString();
+        //lblIMUHeading.Text = Math.Round(modcom.imuHeading, 1) + "\u00B0";
+
+        //lblFix.Text = FixQuality;
+        //lblAgeDiff.Text = AgeDiff;
+
+        if (Math.Abs(userSquareMetersAlarm) < 0.1) stripAreaUser.BackColor = SystemColors.ControlLightLight;
+        else
+        {
+            stripAreaUser.BackColor = totalUserSquareMeters < userSquareMetersAlarm ? SystemColors.ControlLightLight
+                                                                                        : Color.OrangeRed;
+        }
+
+        //up in the menu a few pieces of info
+        if (isJobStarted)
+        {
+            lblEasting.Text = "E: "+ Math.Round(pn.easting, 1).ToString();
+            lblNorthing.Text = "N: " + Math.Round(pn.northing, 1).ToString();
+        }
+        else
+        {
+            lblEasting.Text = "E: " + ((int)pn.actualEasting).ToString();
+            lblNorthing.Text = "N: " + ((int)pn.actualNorthing).ToString();
+        }
+
+        lblZone.Text = pn.zone.ToString();
+
+        //grab the Valid sentence
+        //NMEASentence = recvSentenceSettings;// pn.currentNMEA_GGASentence + pn.currentNMEA_RMCSentence;
+
+        tboxSentence.Text = recvSentenceSettings;
+        //update the online indicator
+        if (recvCounter > 50)
+        {
+            stripOnlineGPS.Value = 1;
+            lblEasting.Text = "-";
+            lblNorthing.Text ="No GPS";
+            lblZone.Text = "-";
+            tboxSentence.Text = "** No Sentence Data **";
+        }
+        else  stripOnlineGPS.Value = 100;
+        */
+    }
+    //wait till timer fires again.
 }
