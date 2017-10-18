@@ -591,6 +591,8 @@ void FormGPS::openGLControlBack_Draw()
     gl->glReadPixels(vehicle->rpXPosition, 202, vehicle->rpWidth, (int)rpHeight,
                         GL_GREEN, GL_UNSIGNED_BYTE, grnPixels);
 
+    grnPix = QImage(grnPixels,vehicle->rpWidth,rpHeight,vehicle->rpWidth,QImage::Format_Grayscale8);
+
     //The remaining code from the original method in the C# code is
     //broken out into a callback in formgps.c called
     //processSectionLookahead().

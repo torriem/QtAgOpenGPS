@@ -15,6 +15,8 @@ public:
 
     void setPaintGLCallback(std::function<void ()> callback);
     void setInitializeGLCallback(std::function<void ()> callback);
+
+    void
 signals:
     void afterRender(); //signal emits after paintGL completes
 
@@ -26,6 +28,9 @@ private:
     //paintGL calls this (in the main form)
     std::function<void ()> paintGL_callback;
     std::function<void ()> initializeGL_callback;
+
+    bool isInitialized = false;
+    QOpenGLFramebufferObject fbo = nullptr;
 };
 
 #endif // GLWIDGET_H

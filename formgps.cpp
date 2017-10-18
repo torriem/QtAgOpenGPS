@@ -175,6 +175,7 @@ void FormGPS::manualBtnUpdate(int sectNumber)
 //been populated already by the rendering routine.
 void FormGPS::processSectionLookahead() {
 
+    ui->grnPixels->setPixmap(QPixmap::fromImage(grnPix));
     //determine farthest ahead lookahead - is the height of the readpixel line
     double rpHeight = 0;
 

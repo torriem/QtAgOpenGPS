@@ -332,6 +332,7 @@ public:
 
     //data buffer for pixels read from off screen buffer
     uchar grnPixels[80001];
+    QImage grnPix;
 
     /***********************
      * UDPComm.designer.cs *
