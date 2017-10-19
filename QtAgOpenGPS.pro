@@ -90,4 +90,5 @@ RESOURCES += \
 DISTFILES += \
     TODO.txt \
     shaders/color_vshader.vsh \
-    shaders/color_fshader.fsh
+    shaders/color_fshader.fsh \
+    README.md
