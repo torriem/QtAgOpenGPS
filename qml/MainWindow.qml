@@ -100,6 +100,8 @@ Item {
         IconButton {
             id: btnManualOffOn
             objectName: "btnManualOffOn"
+            checkable: true
+            state: "unchecked"
             icon: "qrc:/images/ManualOff.png"
         }
 

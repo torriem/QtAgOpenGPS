@@ -430,10 +430,6 @@ void FormGPS::openGLControl_Draw()
                 }
             }
         }
-
-        //draw the section control window off screen buffer
-        //openGLControlBack.DoRender();
-        //maybe call the openGLControlBack_Draw() directly from here???
     }
     else
     {

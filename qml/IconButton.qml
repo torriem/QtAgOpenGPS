@@ -14,21 +14,100 @@ Rectangle {
     property color color3: "#888888"
     property url icon: "/images/AutoSteerOn.png"
     property int bordersize: 0
+    property bool checkable: false
+    property color colorChecked1: "#ff4444"
+    property color colorChecked2: "#ff0000"
+    property color colorChecked3: "#888888"
+    property url iconChecked: "/images/AutoSteerOn.png"
+
+    state: "unchecked"
+
+    states: [
+        State {
+            when: mouseArea.pressed
+            name: "pressedUnchecked"
+            PropertyChanges {
+                target: gradientStop1
+                color: color3
+            }
+            PropertyChanges {
+                target: gradientStop2
+                color: color3
+            }
+            PropertyChanges {
+                target: gradientStop3
+                color: color1
+            }
+            PropertyChanges {
+                target: iconButton
+                bordersize: 1
+            }
+        },
+        State {
+            when: mouseArea.containsMouse
+            name: "hoverUnchecked"
+            PropertyChanges { target: iconButton; bordersize: 1}
+        }
+        /*
+        ,
+        State {
+            name: "unchecked"
+            PropertyChanges {
+                target: image
+                source: icon
+            }
+            PropertyChanges {
+                target: gradientStop1
+                color: color1
+            }
+            PropertyChanges {
+                target: gradientStop2
+                color: color2
+            }
+            PropertyChanges {
+                target: gradientStop2
+                color: color2
+            }
+        },
+
+        State {
+            name: "checked"
+            PropertyChanges {
+                target: image
+                source: iconChecked
+            }
+            PropertyChanges {
+                target: gradientStop1
+                color: colorChecked1
+            }
+            PropertyChanges {
+                target: gradientStop2
+                color: colorChecked2
+            }
+            PropertyChanges {
+                target: gradientStop3
+                color: colorChecked2
+            }
+        }*/
+    ]
 
     signal clicked
 
     gradient: Gradient {
         GradientStop {
+            id: gradientStop1
             position: 0
             color: iconButton.color1
         }
 
         GradientStop {
+            id: gradientStop2
             position: 0.5
             color: iconButton.color2
         }
 
         GradientStop {
+            id: gradientStop3
             position: 1
             color: iconButton.color3
         }
@@ -55,8 +134,17 @@ Rectangle {
         hoverEnabled: true
         anchors.fill: parent
 
-        onClicked: {
-            parent.clicked(mouse)
+        onClicked:{
+            /*
+            console.debug( "old state is " + iconButton.state);
+            if (iconButton.state == "checked" || iconButton.state == "hoverUnchecked" || iconButton.state == "hoverPressed")
+                iconButton.state = "unchecked";
+            else
+                iconButton.state = "checked";
+
+            console.debug ("new state is " + iconButton.state);
+            */
+            parent.clicked(mouse);
         }
     }
 
@@ -70,16 +158,4 @@ Rectangle {
         visible: !parent.enabled
     }
 
-    states: [
-        State {
-            when: mouseArea.pressed
-            name: "pressed"
-            PropertyChanges { target: iconButton; color1: "#888888"; color2: "#888888"; color3: "#ffffff"; bordersize: 1 }
-        },
-        State {
-            when: mouseArea.containsMouse
-            name: "hover"
-            PropertyChanges { target: iconButton; bordersize: 1}
-        }
-    ]
 }

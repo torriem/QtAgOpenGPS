@@ -57,6 +57,9 @@ FormGPS::FormGPS(QWidget *parent) :
 
     isGridOn = true;
 
+    //TODO: move all the settings loading/setting of defaults to a separate
+    //function.
+    minFixStepDist = s.value("position/minFixStep",1.0).toDouble(); //minimum distance between fixes.
     isAtanCam = s.value("camera/useCalculatedHeading", true).toBool();
 
     //fieldColor = QColor(s.value("display/fieldColor", "#82781E").toString());
@@ -80,6 +83,10 @@ FormGPS::FormGPS(QWidget *parent) :
 
     //hard wire this on for testing
     isJobStarted = true;
+    section[0].isAllowedOn = true;
+    section[1].isAllowedOn = true;
+    section[2].isAllowedOn = true;
+    section[3].isAllowedOn = true;
 
     if (isUDPServerOn) startUDPServer();
 
@@ -175,7 +182,7 @@ void FormGPS::manualBtnUpdate(int sectNumber)
 //been populated already by the rendering routine.
 void FormGPS::processSectionLookahead() {
 
-    ui->grnPixels->setPixmap(QPixmap::fromImage(grnPix));
+    ui->grnPixels->setPixmap(QPixmap::fromImage(grnPix.mirrored()));
     //determine farthest ahead lookahead - is the height of the readpixel line
     double rpHeight = 0;
 
@@ -470,7 +477,6 @@ GetMeOutaHere:
 
     //Determine if sections want to be on or off
     processSectionOnOffRequests();
-
     //send the byte out to section relays
     //TODO:buildSectionRelayByte();
     sectionControlOutToPort();

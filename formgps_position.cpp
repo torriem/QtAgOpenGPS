@@ -263,7 +263,26 @@ void FormGPS::updateFixPosition()
 
     //openGLControl_Draw routine triggered manually
     qmlview->update();
-    ui->openGLControlBack->update();
+
+    //go to our offscreen context and do the section lookahead
+    //drawing.
+    backOpenGLContext.makeCurrent(&backSurface);
+    if (!backFBO ) {
+        QOpenGLFramebufferObjectFormat format;
+        format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
+        //TODO: backFBO is leaking... delete it in the destructor?
+        //I think context has to be active to delete it...
+        backFBO = new QOpenGLFramebufferObject(QSize(400,400),format);
+    }
+    backFBO->bind();
+    backOpenGLContext.functions()->glViewport(0,0,400,400);
+    openGLControlBack_Draw();
+    backOpenGLContext.functions()->glFlush();
+    backFBO->bindDefault();
+    backOpenGLContext.doneCurrent();
+    //since we're in the main thread we can directly call processSectionLookahead()
+    processSectionLookahead();
+
 
 //end of UppdateFixPosition
 }
@@ -273,6 +292,7 @@ void FormGPS::calculatePositionHeading()
     //in radians
     fixHeading = atan2(pn->easting - stepFixPts[currentStepFix].easting, pn->northing - stepFixPts[currentStepFix].northing);
     if (fixHeading < 0) fixHeading += twoPI;
+    qDebug() << qSetRealNumberPrecision(15) << currentStepFix << pn->easting << stepFixPts[currentStepFix].easting << pn->northing << stepFixPts[currentStepFix].northing << fixHeading;
 
     //determine fix positions and heading
     fixEasting = (pn->easting);

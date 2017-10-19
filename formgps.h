@@ -8,6 +8,10 @@
 #include <QOpenGLTexture>
 #include <QUdpSocket>
 #include <QElapsedTimer>
+#include <QOffscreenSurface>
+#include <QOpenGLContext>
+#include <QSurfaceFormat>
+#include <QOpenGLFramebufferObject>
 
 #include "vec2.h"
 #include "vec3.h"
@@ -38,7 +42,6 @@ class CBoundary;
 
 class OpenGLControl;
 class OpenGLControlItem;
-class OpenGLContext;
 class QOpenGLFunctions_2_1;
 class QQuickView;
 
@@ -98,6 +101,12 @@ public:
     QObject *txtDistanceOffABLine;
 
     AOGSettings settings;
+
+    //offscreen GL objects:
+    QSurfaceFormat backSurfaceFormat;
+    QOpenGLContext backOpenGLContext;
+    QOffscreenSurface backSurface;
+    QOpenGLFramebufferObject *backFBO = 0;
 
     /*******************
      * from FormGPS.cs *

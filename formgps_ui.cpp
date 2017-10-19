@@ -12,6 +12,7 @@
 #include <QtOpenGL>
 #include <QOpenGLFunctions_2_1>
 #include <functional>
+#include <assert.h>
 
 void FormGPS::setupGui()
 {
@@ -31,10 +32,6 @@ void FormGPS::setupGui()
     qmlview->setClearBeforeRendering(false);
     connect(qmlview,SIGNAL(beforeRendering()), this, SLOT(openGLControl_Draw()),Qt::DirectConnection);
     connect(qmlview,SIGNAL(sceneGraphInitialized()), this, SLOT(openGLControl_Initialized()),Qt::DirectConnection);
-    //connect(qmlview,SIGNAL(beforeRendering()), this, SLOT(renderGL()),Qt::DirectConnection);
-    //connect(qmlview,SIGNAL(sceneGraphInitialized()), this, SLOT(openGLControl_Initialized()),Qt::DirectConnection);
-
-    //embed the view in a normal widget
 
     qmlcontainer = QWidget::createWindowContainer(qmlview);
 
@@ -164,10 +161,26 @@ void FormGPS::setupGui()
     txtDistanceOffABLine = qmlItem(qml_root,"txtDistanceOffABLine");
 
 
-    //ui->openGLControlBack->setPaintGLCallback(std::bind(&FormGPS::renderGL,this));
+    //this is for rendering to the hidden gl widget. Once the offscreen
+    //context stuff is working and we don't need to debug the lookahead
+    //graphics, we can remove the widget and comment out this stuff.
+    /*
     ui->openGLControlBack->setPaintGLCallback(std::bind(&FormGPS::openGLControlBack_Draw,this));
-
     connect(ui->openGLControlBack,SIGNAL(afterRender()),this,SLOT(processSectionLookahead()));
+    */
+
+    //set up off-screen openGL context for section lookahead
+    backSurfaceFormat.setMajorVersion(4);
+    backSurfaceFormat.setMinorVersion(3);
+
+    backOpenGLContext.setFormat(backSurfaceFormat);
+    backOpenGLContext.create();
+    assert(backOpenGLContext.isValid());
+
+    backSurface.setFormat(backSurfaceFormat);
+    backSurface.create();
+    assert(backSurface.isValid());
+
 
     tmrWatchdog = new QTimer(this);
     connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(tmrWatchdog_timeout()));
@@ -176,6 +189,7 @@ void FormGPS::setupGui()
     swFrame.start();
 
     stopwatch.start();
+
 }
 
 //not currently using this. TODO remove perhaps
@@ -284,7 +298,7 @@ void FormGPS::onBtnTiltDown_clicked(){
     camera.camPitch -= (camera.camPitch*0.03-1);
     if (camera.camPitch > 0) camera.camPitch = 0;
 
-    ui->openGLControlBack->update();
+    qmlview->update();
 }
 
 void FormGPS::onBtnTiltUp_clicked(){
@@ -292,7 +306,7 @@ void FormGPS::onBtnTiltUp_clicked(){
     camera.camPitch += (camera.camPitch*0.03-1);
     if (camera.camPitch < -80) camera.camPitch = -80;
 
-    ui->openGLControlBack->update();
+    qmlview->update();
 }
 
 void FormGPS::onBtnZoomIn_clicked(){
@@ -305,18 +319,18 @@ void FormGPS::onBtnZoomIn_clicked(){
 
     camera.camSetDistance = zoomValue * zoomValue * -1;
     setZoom();
+    qmlview->update();
 }
 
 void FormGPS::onBtnZoomOut_clicked(){
     qDebug() <<"ZoomOut button clicked.";
-    ui->openGLControlBack->update();
     if (zoomValue <= 20)
         zoomValue += zoomValue*0.1;
     else
         zoomValue += zoomValue*0.05;
     camera.camSetDistance = zoomValue * zoomValue * -1;
     setZoom();
-    ui->openGLControlBack->update();
+    qmlview->update();
 }
 
 void FormGPS::onBtnSnap_clicked(){
