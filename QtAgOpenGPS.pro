@@ -91,4 +91,5 @@ DISTFILES += \
     TODO.txt \
     shaders/color_vshader.vsh \
     shaders/color_fshader.fsh \
-    README.md
+    README.md \
+    qml/LICENSE
