@@ -393,7 +393,7 @@ public:
     /***********************
      * FormGPS.Designer.cs *
      ***********************/
-    //replaces ManualBtnUpdate since state logic is handled in onSectionButton_clicked
+    void manualAllBtnsUpdate();
     void manualBtnUpdate(int sectNumber);
     void lineUpManualBtns();
 

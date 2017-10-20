@@ -26,25 +26,28 @@ Item {
             icon: "qrc:/images/ArrowRight.png"
 
             //pseudo state
-            property bool menuin: false
+            property bool hideMenu: true
+
+            onHideMenuChanged: {
+                if (hideMenu == true) {
+                    icon="qrc:/images/ArrowRight.png"
+                    iconPalette.visible = false
+                } else {
+                    icon="qrc:/images/ArrowLeft.png"
+                    iconPalette.visible = true
+                }
+            }
 
             function toggle_menu() {
-                if (menuin == false) {
-                    menuin = true
-                    icon="qrc:/images/ArrowLeft.png"
+                if (hideMenu == true) {
+                    hideMenu = false
                 } else {
-                    menuin = false
-                    icon="qrc:/images/ArrowRight.png"
+                    hideMenu = true
                 }
             }
 
             onClicked: {
                 toggle_menu();
-                if (menuin) {
-                    iconPalette.visible = true
-                } else {
-                    iconPalette.visible = false
-                }
             }
         }
 
@@ -101,14 +104,16 @@ Item {
             id: btnManualOffOn
             objectName: "btnManualOffOn"
             checkable: true
-            state: "unchecked"
+            isChecked: false
             icon: "qrc:/images/ManualOff.png"
+            iconChecked: "qrc:/images/ManualOn.png"
         }
 
         IconButtonText {
             id: btnSectionOffAutoOn
             objectName: "btnSectionOffAutoOn"
             icon: "qrc:/images/SectionMasterOff.png"
+            iconChecked: "qrc:/images/SectionMasterOn.png"
             iconHeightScale: 1.0
         }
 

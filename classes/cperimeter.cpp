@@ -1,7 +1,7 @@
 #include "cperimeter.h"
 #include <math.h>
 #include <QOpenGLContext>
-#include <QOpenGLFunctions_1_1>
+#include <QOpenGLFunctions_2_1>
 
 CPerimeter::CPerimeter()
 {
@@ -9,7 +9,7 @@ CPerimeter::CPerimeter()
 
 void CPerimeter::drawPerimeterLine(QOpenGLContext *glContext)
 {
-    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
+    QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
     ////draw the perimeter line so far
     int ptCount = periPtList.size();

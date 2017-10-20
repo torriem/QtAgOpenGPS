@@ -5,8 +5,9 @@
 #include "cvehicle.h"
 #include "cnmea.h"
 
+//#include <QtOpenGL>
 #include <QOpenGLContext>
-#include <QOpenGLFunctions_1_1>
+#include <QOpenGLFunctions_2_1>
 
 CABLine::CABLine(FormGPS *mf)
     :mf(mf)
@@ -252,7 +253,8 @@ void CABLine::getCurrentABLine() {
 }
 
 void CABLine::drawABLines(QOpenGLContext *glContext) {
-    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
+    QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+
     //Draw AB Points
     gl->glPointSize(8.0f);
     gl->glBegin(GL_POINTS);

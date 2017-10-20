@@ -6,7 +6,7 @@
 #include <math.h>
 #include <limits>
 #include <QOpenGLContext>
-#include <QOpenGLFunctions_1_1>
+#include <QOpenGLFunctions_2_1>
 #include "glm.h"
 
 const double DOUBLE_EPSILON=std::numeric_limits<double>::epsilon();
@@ -472,7 +472,7 @@ void CContour::distanceFromContourLine()
 //draw the red follow me line
 void CContour::drawContourLine(QOpenGLContext *glContext)
 {
-    QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
+    QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
     //glColor3f(0.98f, 0.98f, 0.50f);
     //glBegin(GL_LINE_STRIP);

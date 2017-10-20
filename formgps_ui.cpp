@@ -39,7 +39,7 @@ void FormGPS::setupGui()
     ui->verticalLayout->addWidget(qmlcontainer);
 
     //hide the section control lookahead widget; it should still work
-    //ui->openGLControlBack->hide();
+    ui->grnPixels->hide(); //debugging widget, shows lookahead
 
     //get pointer to root QML object, which is the OpenGLControl,
     //store in a member variable for future use.
@@ -271,16 +271,94 @@ void FormGPS::onBtnContour_clicked(){
 
 void FormGPS::onBtnManualOffOn_clicked(){
     qDebug()<<"Manual off on button clicked." ;
+    switch (manualBtnState)
+    {
+    case btnStates::Off:
+        //roll to "on" state
+        manualBtnState = btnStates::On;
+        qmlItem(qml_root,"btnManualOffOn")->setProperty("isChecked",true);
+
+        autoBtnState = btnStates::Off;
+        qmlItem(qml_root,"btnSectionOffAutoOn")->setProperty("isChecked",false);
+
+        //turn all the sections allowed and update to ON!! Auto changes to ON
+        for (int j = 0; j < vehicle->numOfSections; j++)
+        {
+            section[j].isAllowedOn = true;
+            section[j].manBtnState = btnStates::Auto; //auto rolls over to on
+        }
+
+        manualAllBtnsUpdate();
+        break;
+
+    case btnStates::On:
+        manualBtnState = btnStates::Off;
+        qmlItem(qml_root,"btnManualOffOn")->setProperty("isChecked",false);
+
+        //turn section buttons all OFF or Auto if SectionAuto was on or off
+        for (int j = 0; j < vehicle->numOfSections; j++)
+        {
+            section[j].isAllowedOn = false;
+            section[j].manBtnState = btnStates::On;
+        }
+
+        //Update the button colors and text
+        manualAllBtnsUpdate();
+        break;
+    case btnStates::Auto:
+        //shouldn't ever happen!
+        assert(1 == 0);
+        break;
+    }
 }
 
 void FormGPS::onBtnSectionOffAutoOn_clicked(){
     qDebug()<<"Section off auto on button clicked." ;
+    switch (autoBtnState)
+    {
+        case btnStates::Off:
+            autoBtnState = btnStates::Auto;
+            qmlItem(qml_root,"btnSectionOffAutoOn")->setProperty("isChecked",true);
+
+            //turn off manual if on
+            manualBtnState = btnStates::Off;
+            qmlItem(qml_root,"btnManualOffOn")->setProperty("isChecked",false);
+
+            //turn all the sections allowed and update to ON!! Auto changes to ON
+            for (int j = 0; j < vehicle->numOfSections; j++)
+            {
+                section[j].isAllowedOn = true;
+                section[j].manBtnState = btnStates::Off;
+            }
+
+            manualAllBtnsUpdate();
+            break;
+
+        case btnStates::Auto:
+            autoBtnState = btnStates::Off;
+            qmlItem(qml_root,"btnSectionOffAutoOn")->setProperty("isChecked",false);
+
+            //turn section buttons all OFF or Auto if SectionAuto was on or off
+            for (int j = 0; j < vehicle->numOfSections; j++)
+            {
+                section[j].isAllowedOn = false;
+                section[j].manBtnState = btnStates::On;
+            }
+
+            //Update the button colors and text
+            manualAllBtnsUpdate();
+            break;
+
+        case btnStates::On:
+            //shouldn't ever happen
+            assert(1 == 0);
+
+    }
 }
 
 //individual buttons for section (called by actual
 //qt callback onSectionButton_clicked() SLOT
 void FormGPS::onBtnSectionMan_clicked(int sectNumber) {
-    /*
     if (autoBtnState != btnStates::Auto) {
         //if auto is off just have on-off for choices of section buttons
         if (section[sectNumber].manBtnState == btnStates::Off) {
@@ -288,7 +366,6 @@ void FormGPS::onBtnSectionMan_clicked(int sectNumber) {
             section[sectNumber].manBtnState = btnStates::Auto;
         }
     }
-    */
     //Roll over button to next state
     manualBtnUpdate(sectNumber);
 }

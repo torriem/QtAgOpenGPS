@@ -93,6 +93,12 @@ up. Most buttons do nothing.  The app will take NMEA data over UDP, and
 for testing purposes, it runs with an open job so you can drive around
 and turn on sections.
 
+The only buttons connected are the tilt, zoom, individual section
+buttons, manual off/on, and automatic section off on.  No other UI
+elements, including the menu do anything.  But the program is able to
+function and demonstrate section coverage mapping and control, using
+a UDP NMEA source.
+
 Configuration is currently done entirely through a config file that
 QtAOG creats automatically on first run. In Linux this is
 $HOME/.config/AgOpenGPS/QtAgOpenGPS.conf.

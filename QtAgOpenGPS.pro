@@ -92,4 +92,4 @@ DISTFILES += \
     shaders/color_vshader.vsh \
     shaders/color_fshader.fsh \
     README.md \
-    qml/LICENSE
+    LICENSE
