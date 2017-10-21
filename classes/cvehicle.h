@@ -1,8 +1,11 @@
 #ifndef CVEHICLE_H
 #define CVEHICLE_H
 
+#include <QMatrix4x4>
+
 class FormGPS;
 class QOpenGLContext;
+
 
 class CVehicle
 {
@@ -57,7 +60,7 @@ public:
 
 
     CVehicle(FormGPS *mf);
-    void drawVehicle(QOpenGLContext *c);
+    void drawVehicle(QOpenGLContext *c, QMatrix4x4 &modelview, const QMatrix4x4 &projection);
 
 };
 

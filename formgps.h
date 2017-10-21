@@ -364,6 +364,13 @@ public:
      * OpenGL.Designer.cs *
      **********************/
 
+    //Simple wrapper to draw primitives using lists of vec2s or QVector2Ds
+    void glDrawArraysWrapper(QOpenGLFunctions *gl, QMatrix4x4 mvp,
+                             GLenum operation, QColor &color,
+                             void *data, GLenum glType,
+                             int sizeoftuple, int count,
+                             float pointSize=1.0f);
+
 
     void drawLightBar(QOpenGLFunctions_2_1 *gl, double Width, double Height, double offlineDistance);
     //void calcFrustum(QOpenGLFunctions_2_1 *gl);

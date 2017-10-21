@@ -19,8 +19,62 @@
 #include <QOpenGLFunctions_2_1>
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
+#include <QOpenGLBuffer>
+
+#include <assert.h>
 
 #include <iostream>
+
+//Wrapper to draw individual primitives. Not very efficient but
+//if you need to just draw a few lines or points, this can be
+//used.  Data should a long list of 2 floats?
+void FormGPS::glDrawArraysWrapper(QOpenGLFunctions *gl,
+                                  QMatrix4x4 mvp,
+                                  GLenum operation,
+                                  QColor &color,
+                                  void *data,
+                                  GLenum GL_type,
+                                  int sizeoftuple,
+                                  int count,
+                                  float pointSize)
+{
+    QOpenGLBuffer vertexBuffer(QOpenGLBuffer::VertexBuffer);
+    //bind shader
+    assert(simpleColorShader->bind());
+    //set color
+    simpleColorShader->setUniformValue("color", color);
+    //set mvp matrix
+    simpleColorShader->setUniformValue("mvpMatrix", mvp);
+
+    simpleColorShader->setUniformValue("pointSize", pointSize);
+
+    //create buffer
+    vertexBuffer.create();
+    vertexBuffer.bind();
+
+    //allocate buffer with data
+    vertexBuffer.allocate(data,count*sizeoftuple);
+    //enable the vertex attribute array in shader
+    simpleColorShader->enableAttributeArray("vertex");
+    //use attribute array from buffer, using non-normalized vertices
+    gl->glVertexAttribPointer(simpleColorShader->attributeLocation("vertex"),
+                              2, //2D vertices
+                              GL_type, //type of data GL_FLAOT or GL_DOUBLE
+                              GL_FALSE, //not normalized vertices!
+                              0, //no spaceing between vertices in data
+                              0 //start at offset 0 in buffer
+                             );
+
+    //draw primitive
+    gl->glDrawArrays(operation,0,count);
+    //release buffer
+    vertexBuffer.release();
+    //destroy buffer
+    vertexBuffer.destroy();
+    //release shader
+    simpleColorShader->release();
+}
+
 
 void FormGPS::openGLControl_Draw()
 {
@@ -31,7 +85,6 @@ void FormGPS::openGLControl_Draw()
     int height = glContext->surface()->size().height();
     QMatrix4x4 projection;
     QMatrix4x4 modelview;
-
 
     //std::cout << "draw routine here." << std::endl;
 
@@ -252,7 +305,7 @@ void FormGPS::openGLControl_Draw()
         //glDrawText(40, 120, 1, 0.5, 1, "Courier", 12, " frame msec " + Convert.ToString((int)(frameTime)));
 
         //draw the vehicle/implement
-        vehicle->drawVehicle(glContext);
+        vehicle->drawVehicle(glContext,modelview, projection);
 
         //Back to normal
         gl->glColor3f(0.98f, 0.98f, 0.98f);
@@ -265,7 +318,6 @@ void FormGPS::openGLControl_Draw()
 
         //negative and positive on width, 0 at top to bottom ortho view
         //should this be the width of the opengl control?
-        //gl->glOrtho(-(double)ui->openGLControlBack->width() / 2, (double)ui->openGLControlBack->width() / 2, (double)ui->openGLControlBack->height(), 0, -1, 1);
         gl->glOrtho(-(double)width / 2, width / 2, (double)height, 0, -1, 1);
 
         //  Create the appropriate modelview matrix.
@@ -273,9 +325,7 @@ void FormGPS::openGLControl_Draw()
         gl->glPushMatrix();
         gl->glLoadIdentity();
 
-        if (ui->actionGrid_On->isChecked())
-
-                //skyToolStripMenu.Checked)
+        if (ui->actionSky_On->isChecked())
         {
             ////draw the background when in 3D
             if (camera.camPitch < -60)
