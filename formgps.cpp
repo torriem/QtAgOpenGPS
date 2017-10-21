@@ -7,7 +7,6 @@
 #include "ccontour.h"
 #include "cboundary.h"
 #include "cvehicle.h"
-#include "mainoverlay.h"
 #include "aogsettings.h"
 #include <QColor>
 #include <QRgb>

@@ -12,6 +12,9 @@
 #include <QOpenGLContext>
 #include <QSurfaceFormat>
 #include <QOpenGLFramebufferObject>
+#include <QOpenGLBuffer>
+
+#include "common.h"
 
 #include "vec2.h"
 #include "vec3.h"
@@ -45,8 +48,6 @@ class OpenGLControlItem;
 class QOpenGLShaderProgram;
 class QOpenGLFunctions_2_1;
 class QQuickView;
-
-const int MAXSECTIONS = 9;
 
 class FormGPS : public QMainWindow
 {
@@ -365,11 +366,20 @@ public:
      **********************/
 
     //Simple wrapper to draw primitives using lists of vec2s or QVector2Ds
-    void glDrawArraysWrapper(QOpenGLFunctions *gl, QMatrix4x4 mvp,
-                             GLenum operation, QColor &color,
-                             void *data, GLenum glType,
-                             int sizeoftuple, int count,
-                             float pointSize=1.0f);
+    //with a single color.
+    void glDrawArraysColor(QOpenGLFunctions *gl, QMatrix4x4 mvp,
+                           GLenum operation, QColor &color,
+                           QOpenGLBuffer &vertexBuffer, GLenum glType,
+                           int count,
+                           float pointSize=1.0f);
+    //Simple wrapper to draw primitives using lists of vec2s or QVector2Ds
+    //with a color per vertex. Buffer format is 6 floats per vertice:
+    //x,y,r,g,b,a
+    void glDrawArraysColors(QOpenGLFunctions *gl, QMatrix4x4 mvp,
+                           GLenum operation,
+                           QOpenGLBuffer &vertexBuffer, GLenum glType,
+                           int count,
+                           float pointSize=1.0f);
 
 
     void drawLightBar(QOpenGLFunctions_2_1 *gl, double Width, double Height, double offlineDistance);
