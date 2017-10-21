@@ -1,7 +1,10 @@
 #ifndef CVEHICLE_H
 #define CVEHICLE_H
 
+#include "common.h"
 #include <QMatrix4x4>
+
+#include <QOpenGLBuffer>
 
 class FormGPS;
 class QOpenGLContext;
@@ -11,6 +14,22 @@ class CVehicle
 {
 private:
     FormGPS *mf;
+
+    QOpenGLBuffer trailingTankHitchBuffer;
+    QOpenGLBuffer tankDotBuffer;
+    QOpenGLBuffer hitchBuffer;
+    QOpenGLBuffer toolHitchBuffer;
+    QOpenGLBuffer superSectionBuffer;
+    QOpenGLBuffer sectionBuffer[MAXSECTIONS-1];
+    QOpenGLBuffer sectionDotsBuffer;
+    QOpenGLBuffer vehicleBodyBuffer;
+    QOpenGLBuffer pinsAndMarkersBuffer;
+    QOpenGLBuffer pointerBuffer;
+
+    bool buffersCurrent = false;
+
+    void makeBuffers();
+
 public:
     double toolWidth;
     double toolFarLeftPosition = 0;
@@ -61,6 +80,7 @@ public:
 
     CVehicle(FormGPS *mf);
     void drawVehicle(QOpenGLContext *c, QMatrix4x4 &modelview, const QMatrix4x4 &projection);
+    void settingsChanged(); //notify us that settings changed so buffers need to be redone.
 
 };
 

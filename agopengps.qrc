@@ -114,5 +114,7 @@
         <file>shaders/color_vshader.vsh</file>
         <file>shaders/color_fshader.fsh</file>
         <file>shaders/worldgrid.vsh</file>
+        <file>shaders/colors_vshader.vsh</file>
+        <file>shaders/colors_fshader.fsh</file>
     </qresource>
 </RCC>

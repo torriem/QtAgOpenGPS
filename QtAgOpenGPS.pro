@@ -80,7 +80,8 @@ HEADERS  += formgps.h \
     openglcontrolitem.h \
     openglcontrol.h \
     qmlutil.h \
-    aogsettings.h 
+    aogsettings.h \ 
+    common.h
 
 FORMS    += formgps.ui
 

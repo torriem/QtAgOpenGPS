@@ -28,17 +28,15 @@
 //Wrapper to draw individual primitives. Not very efficient but
 //if you need to just draw a few lines or points, this can be
 //used.  Data should a long list of 2 floats?
-void FormGPS::glDrawArraysWrapper(QOpenGLFunctions *gl,
-                                  QMatrix4x4 mvp,
-                                  GLenum operation,
-                                  QColor &color,
-                                  void *data,
-                                  GLenum GL_type,
-                                  int sizeoftuple,
-                                  int count,
-                                  float pointSize)
+void FormGPS::glDrawArraysColor(QOpenGLFunctions *gl,
+                                QMatrix4x4 mvp,
+                                GLenum operation,
+                                QColor &color,
+                                QOpenGLBuffer &vertexBuffer,
+                                GLenum GL_type,
+                                int count,
+                                float pointSize)
 {
-    QOpenGLBuffer vertexBuffer(QOpenGLBuffer::VertexBuffer);
     //bind shader
     assert(simpleColorShader->bind());
     //set color
@@ -48,12 +46,9 @@ void FormGPS::glDrawArraysWrapper(QOpenGLFunctions *gl,
 
     simpleColorShader->setUniformValue("pointSize", pointSize);
 
-    //create buffer
-    vertexBuffer.create();
+
     vertexBuffer.bind();
 
-    //allocate buffer with data
-    vertexBuffer.allocate(data,count*sizeoftuple);
     //enable the vertex attribute array in shader
     simpleColorShader->enableAttributeArray("vertex");
     //use attribute array from buffer, using non-normalized vertices
@@ -69,8 +64,6 @@ void FormGPS::glDrawArraysWrapper(QOpenGLFunctions *gl,
     gl->glDrawArrays(operation,0,count);
     //release buffer
     vertexBuffer.release();
-    //destroy buffer
-    vertexBuffer.destroy();
     //release shader
     simpleColorShader->release();
 }
@@ -86,6 +79,8 @@ void FormGPS::openGLControl_Draw()
     QMatrix4x4 projection;
     QMatrix4x4 modelview;
 
+    gl->glEnable(GL_POINT_SPRITE);
+    gl->glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
     //std::cout << "draw routine here." << std::endl;
 
     //Do stuff that was in the initialized method, since Qt uses OpenGL and may

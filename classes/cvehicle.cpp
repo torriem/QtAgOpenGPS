@@ -77,13 +77,111 @@ CVehicle::CVehicle(FormGPS *mf)
                             DEFAULT_MAXSTEERINGANGLE).toDouble();
 }
 
+void CVehicle::makeBuffers()
+{
+    //requires a valid OpenGL context
+
+    QVector<QVector2D> v;
+    if (buffersCurrent) return;
+
+    double trailingTank, trailingTool;
+
+    //settings doesn't change trailing hitch length if set to rigid, so do it here
+    if (isToolTrailing)
+    {
+        trailingTank = tankTrailingHitchLength;
+        trailingTool = toolTrailingHitchLength;
+    }
+    else { trailingTank = 0; trailingTool = 0; }
+
+    //there is a trailing tow between hitch
+    if (tankTrailingHitchLength < -2.0 && isToolTrailing)
+    {
+        v.clear();
+        v.append(QVector2D(0,trailingTank));
+        v.append(QVector2D(0,0));
+
+        if (trailingTankHitchBuffer.isCreated() ){
+            trailingTankHitchBuffer.destroy();
+        }
+        trailingTankHitchBuffer.create();
+        trailingTankHitchBuffer.bind();
+        trailingTankHitchBuffer.allocate(v.data(),v.count() * sizeof(QVector2D));
+        trailingTankHitchBuffer.release();
+
+        v.clear();
+        v.append(QVector2D(0,trailingTank));
+        if (tankDotBuffer.isCreated())
+            tankDotBuffer.destroy();
+        tankDotBuffer.create();
+        tankDotBuffer.allocate(v.data(),v.count() * sizeof(QVector2D));
+        tankDotBuffer.release();
+    }
+
+    //draw the hitch if trailing
+    if (isToolTrailing)
+    {
+        v.clear();
+        v.append(QVector2D(0,trailingTool));
+        v.append(QVector2D(0,0));
+
+        if(toolHitchBuffer.isCreated())
+            toolHitchBuffer.destroy();
+        toolHitchBuffer.create();
+        toolHitchBuffer.bind();
+        toolHitchBuffer.allocate(v.data(),v.count() * sizeof(QVector2D));
+        toolHitchBuffer.release();
+    }
+
+    //super section
+    v.clear();
+    v.append(QVector2D(mf->section[numOfSections].positionLeft, trailingTool));
+    v.append(QVector2D(mf->section[numOfSections].positionRight, trailingTool));
+
+    if (superSectionBuffer.isCreated())
+        superSectionBuffer.destroy();
+    superSectionBuffer.create();
+    superSectionBuffer.bind();
+    superSectionBuffer.allocate(v.data(),v.count() * sizeof(QVector2D));
+    superSectionBuffer.release();
+
+    // individual sections
+    for (int j = 0; j < numOfSections; j++)
+    {
+        v.clear();
+        v.append(QVector2D(mf->section[j].positionLeft, trailingTool));
+        v.append(QVector2D(mf->section[j].positionRight, trailingTool));
+
+        if (sectionBuffer[j].isCreated())
+            sectionBuffer[j].destroy();
+        sectionBuffer[j].create();
+        sectionBuffer[j].bind();
+        sectionBuffer[j].allocate(v.data(), v.count() * sizeof(QVector2D));
+        sectionBuffer[j].release();
+    }
+
+    //section dots
+    v.clear();
+    for (int j = 0; j < numOfSections - 1; j++)
+        v.append(QVector2D(mf->section[j].positionRight, trailingTool));
+
+    if (sectionDotsBuffer.isCreated())
+        sectionDotsBuffer.destroy();
+    sectionDotsBuffer.create();
+    sectionDotsBuffer.bind();
+    sectionDotsBuffer.allocate(v.data(), v.count() * sizeof(QVector2D));
+    sectionDotsBuffer.release();
+
+    buffersCurrent = true;
+}
+
 void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
                            const QMatrix4x4 &projection) {
     QOpenGLFunctions *gl =glContext->functions();
     QOpenGLFunctions_2_1 *gl21 = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
-    QVector<QVector2D> v;
     QColor color;
+    makeBuffers(); //create openGL buffers if necessary.
 
     //translate and rotate at pivot axle
     //this will change the modelview for our caller, which is what
@@ -99,14 +197,14 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
     //                (cos(mf->fixHeading) * (hitchLength - antennaPivot)), 0);
     mvTool.translate((sin(mf->fixHeading) * (hitchLength - antennaPivot)),
                      (cos(mf->fixHeading) * (hitchLength - antennaPivot)), 0);
+
     //settings doesn't change trailing hitch length if set to rigid, so do it here
-    double trailingTank, trailingTool;
+    double trailingTank;
     if (isToolTrailing)
     {
         trailingTank = tankTrailingHitchLength;
-        trailingTool = toolTrailingHitchLength;
     }
-    else { trailingTank = 0; trailingTool = 0; }
+    else { trailingTank = 0;  }
 
     //there is a trailing tow between hitch
     if (tankTrailingHitchLength < -2.0 && isToolTrailing)
@@ -123,30 +221,23 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
         //gl->glVertex3d(0, trailingTank, 0);
         //gl->glVertex3d(0, 0, 0);
         //gl->glEnd();
-        v.clear();
-        v.append(QVector2D(0,trailingTank));
-        v.append(QVector2D(0,0));
-        mf->glDrawArraysWrapper(gl,projection*mvTool,
-                                GL_LINES, color,
-                                v.data(),GL_FLOAT,
-                                2*sizeof(QVector2D),
-                                2);
+        mf->glDrawArraysColor(gl,projection*mvTool,
+                              GL_LINES, color,
+                              trailingTankHitchBuffer,GL_FLOAT,
+                              2);
 
 
-        //section markers
         //gl->glColor3f(0.95f, 0.950f, 0.0f);
         color.setRgbF(0.95f, 0.950f, 0.0f);
         //gl->glPointSize(6.0f);
         //gl->glBegin(GL_POINTS);
         //gl->glVertex3d(0, trailingTank, 0);
         //gl->glEnd();
-        v.clear();
-        v.append(QVector2D(0,trailingTank));
-        mf->glDrawArraysWrapper(gl,projection*mvTool,
-                                GL_POINTS,color,
-                                v.data(),GL_FLOAT,
-                                2*sizeof(QVector2D),
-                                1);
+        mf->glDrawArraysColor(gl,projection*mvTool,
+                              GL_POINTS,color,
+                              tankDotBuffer, GL_FLOAT,
+                              1,
+                              6.0f);
 
 
 
@@ -175,14 +266,10 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
         //gl->glVertex3d(0, trailingTool, 0);
         //gl->glVertex3d(0, 0, 0);
         //gl->glEnd();
-        v.clear();
-        v.append(QVector2D(0,trailingTool));
-        v.append(QVector2D(0,0));
-        mf->glDrawArraysWrapper(gl,projection*mvTool,
-                                GL_LINES, color,
-                                v.data(),GL_FLOAT,
-                                2*sizeof(QVector2D),
-                                2);
+        mf->glDrawArraysColor(gl,projection*mvTool,
+                              GL_LINES, color,
+                              toolHitchBuffer,GL_FLOAT,
+                              2);
 
     }
 
@@ -202,14 +289,10 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
 
         //gl->glVertex3d(mf->section[numOfSections].positionLeft, trailingTool, 0);
         //gl->glVertex3d(mf->section[numOfSections].positionRight, trailingTool, 0);
-        v.clear();
-        v.append(QVector2D(mf->section[numOfSections].positionLeft, trailingTool));
-        v.append(QVector2D(mf->section[numOfSections].positionRight, trailingTool));
-        mf->glDrawArraysWrapper(gl,projection*mvTool,
-                                GL_LINES,color,
-                                v.data(),GL_FLOAT,
-                                2*sizeof(QVector2D),
-                                2);
+        mf->glDrawArraysColor(gl,projection*mvTool,
+                              GL_LINES,color,
+                              superSectionBuffer,GL_FLOAT,
+                              2);
     } else {
         for (int j = 0; j < numOfSections; j++)
         {
@@ -229,14 +312,10 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
             //draw section line
             //gl->glVertex3d(mf->section[j].positionLeft, trailingTool, 0);
             //gl->glVertex3d(mf->section[j].positionRight, trailingTool, 0);
-            v.clear();
-            v.append(QVector2D(mf->section[j].positionLeft, trailingTool));
-            v.append(QVector2D(mf->section[j].positionRight, trailingTool));
-            mf->glDrawArraysWrapper(gl,projection*mvTool,
-                                GL_LINES,color,
-                                v.data(),GL_FLOAT,
-                                2*sizeof(QVector2D),
-                                2);
+            mf->glDrawArraysColor(gl,projection*mvTool,
+                                  GL_LINES,color,
+                                  sectionBuffer[j],GL_FLOAT,
+                                  2);
         }
     }
     //gl->glEnd();
@@ -253,17 +332,11 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
         //gl->glPointSize(4.0f);
 
         //gl->glBegin(GL_POINTS);
-        v.clear();
-        for (int j = 0; j < numOfSections - 1; j++)
-            //gl->glVertex3d(mf->section[j].positionRight, trailingTool, 0);
-            v.append(QVector2D(mf->section[j].positionRight, trailingTool));
-
-        mf->glDrawArraysWrapper(gl,projection*mvTool,
-                            GL_POINTS,color,
-                            v.data(),GL_FLOAT,
-                            2*sizeof(QVector2D),
-                            numOfSections - 1,
-                            4.0f);
+        mf->glDrawArraysColor(gl,projection*mvTool,
+                              GL_POINTS,color,
+                              sectionDotsBuffer,GL_FLOAT,
+                              numOfSections - 1,
+                              4.0f);
         //gl->glEnd();
     }
 
