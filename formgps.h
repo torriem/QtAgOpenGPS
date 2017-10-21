@@ -42,6 +42,7 @@ class CBoundary;
 
 class OpenGLControl;
 class OpenGLControlItem;
+class QOpenGLShaderProgram;
 class QOpenGLFunctions_2_1;
 class QQuickView;
 
@@ -342,6 +343,10 @@ public:
     //data buffer for pixels read from off screen buffer
     uchar grnPixels[80001];
     QImage grnPix;
+
+    QOpenGLShaderProgram *simpleColorShader = 0;
+    QOpenGLShaderProgram *gridShader = 0;
+
 
     /***********************
      * UDPComm.designer.cs *

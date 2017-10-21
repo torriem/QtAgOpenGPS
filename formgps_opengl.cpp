@@ -1,4 +1,5 @@
 //#include <QtOpenGL>
+#include <assert.h>
 #include "ui_formgps.h"
 #include "formgps.h"
 #include "csection.h"
@@ -17,6 +18,7 @@
 //#include <QOpenGLFunctions_1_1>
 #include <QOpenGLFunctions_2_1>
 #include <QOpenGLFunctions>
+#include <QOpenGLShaderProgram>
 
 #include <iostream>
 
@@ -73,7 +75,6 @@ void FormGPS::openGLControl_Draw()
     gl->glMatrixMode(GL_MODELVIEW);
 
     //default MODELVIEW matrix is identity
-    modelview.setToIdentity();
 
 
     if (isGPSPositionInitialized)
@@ -82,6 +83,7 @@ void FormGPS::openGLControl_Draw()
         //  Clear the color and depth buffer.
         gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         gl->glLoadIdentity();
+        modelview.setToIdentity();
 
         //camera does translations and rotations
         camera.setWorldCam(gl, pivotAxlePos.easting, pivotAxlePos.northing, fixHeadingCam);
@@ -99,7 +101,7 @@ void FormGPS::openGLControl_Draw()
         gl->glDisable(GL_TEXTURE_2D);
 
         ////if grid is on draw it
-        if (isGridOn) worldGrid->drawWorldGrid(gl,gridZoom);
+        if (isGridOn) worldGrid->drawWorldGrid(gles,projection*modelview,gridZoom);
 
         //turn on blend for paths
         gl->glEnable(GL_BLEND);
@@ -451,6 +453,20 @@ void FormGPS::openGLControl_Initialized()
     loadGLTextures(gl);
     qDebug() << "textures loaded.";
 
+    //load shaders, memory managed by parent thread, which is in this case,
+    //the QML rendering thread, not the Qt main loop.
+    if (!simpleColorShader) {
+        simpleColorShader = new QOpenGLShaderProgram(QThread::currentThread()); //memory managed by Qt
+        assert(simpleColorShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/color_vshader.vsh"));
+        assert(simpleColorShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/color_fshader.fsh"));
+        assert(simpleColorShader->link());
+    }
+    if (!gridShader) {
+        gridShader = new QOpenGLShaderProgram(QThread::currentThread()); //memory managed by Qt
+        assert(gridShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/worldgrid.vsh"));
+        assert(gridShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/color_fshader.fsh"));
+        assert(gridShader->link());
+    }
     //now start the timer assuming no errors, otherwise the program will not stop on errors.
     //TODO:
     //tmrWatchdog.Enabled = true;

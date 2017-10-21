@@ -292,7 +292,9 @@ void FormGPS::calculatePositionHeading()
     //in radians
     fixHeading = atan2(pn->easting - stepFixPts[currentStepFix].easting, pn->northing - stepFixPts[currentStepFix].northing);
     if (fixHeading < 0) fixHeading += twoPI;
-    qDebug() << qSetRealNumberPrecision(15) << currentStepFix << pn->easting << stepFixPts[currentStepFix].easting << pn->northing << stepFixPts[currentStepFix].northing << fixHeading;
+
+    //qDebug() << qSetRealNumberPrecision(15) << currentStepFix << pn->easting << stepFixPts[currentStepFix].easting << pn->northing << stepFixPts[currentStepFix].northing << fixHeading;
+
 
     //determine fix positions and heading
     fixEasting = (pn->easting);

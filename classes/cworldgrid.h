@@ -1,9 +1,12 @@
 #ifndef CWORLDGRID_H
 #define CWORLDGRID_H
 
+#include <QMatrix4x4>
+
 class FormGPS;
 class QOpenGLContext;
 class QOpenGLFunctions_2_1;
+class QOpenGLFunctions;
 
 class CWorldGrid
 {
@@ -21,7 +24,7 @@ public:
 
     CWorldGrid(FormGPS *mf);
     void drawFieldSurface(QOpenGLFunctions_2_1 *gl);
-    void drawWorldGrid(QOpenGLFunctions_2_1 *gl, double _gridZoom);
+    void drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, double _gridZoom);
     void createWorldGrid(double northing, double easting);
     void checkZoomWorldGrid(double northing, double easting);
 

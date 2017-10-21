@@ -1,6 +1,10 @@
 #include "cworldgrid.h"
 #include <QOpenGLContext>
+#include <QOpenGLFunctions>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLBuffer>
 #include <QOpenGLFunctions_2_1>
+#include <assert.h>
 #include "formgps.h"
 #include "aogsettings.h"
 
@@ -44,28 +48,56 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions_2_1 *gl)
     gl->glDisable(GL_TEXTURE_2D);
 }
 
-void CWorldGrid::drawWorldGrid(QOpenGLFunctions_2_1 *gl, double _gridZoom)
+void CWorldGrid::drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, double _gridZoom)
 {
     //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
     //draw easting lines and westing lines to produce a grid
 
     QColor fieldColor = QColor(mf->settings.value("display/fieldColor", "#82781E").toString());
-    gl->glColor3ub(fieldColor.red(), fieldColor.green(), fieldColor.blue());
-    gl->glBegin(GL_LINES);
+    QOpenGLBuffer vertexBuffer(QOpenGLBuffer::VertexBuffer);
+    QVector<QVector2D> vertices;
+
+    //bind the shader we want to use (hard codes a z depth 0f 0.1)
+    assert(mf->gridShader->bind());
+    mf->gridShader->setUniformValue("color", fieldColor);
+    mf->gridShader->setUniformValue("mvpMatrix",mvp);
+
+    vertexBuffer.create();
+
+    //gl->glBegin(GL_LINES);
     for (double x = eastingMin; x < eastingMax; x += _gridZoom)
     {
         //the x lines
-        gl->glVertex3d(x, northingMax, 0.1 );
-        gl->glVertex3d(x, northingMin, 0.1);
+        //gl->glVertex3d(x, northingMax, 0.1 );
+        vertices.append(QVector2D(x,northingMax));
+
+        //gl->glVertex3d(x, northingMin, 0.1);
+        vertices.append(QVector2D(x,northingMin));
     }
 
     for (double x = northingMin; x < northingMax; x += _gridZoom)
     {
         //the z lines
-        gl->glVertex3d(eastingMax, x, 0.1 );
-        gl->glVertex3d(eastingMin, x, 0.1 );
+        //gl->glVertex3d(eastingMax, x, 0.1 );
+        vertices.append(QVector2D(eastingMax,x));
+
+        //gl->glVertex3d(eastingMin, x, 0.1 );
+        vertices.append(QVector2D(eastingMin,x));
     }
-    gl->glEnd();
+
+    //gl->glEnd();
+
+    vertexBuffer.bind();
+    vertexBuffer.allocate(vertices.data(),vertices.count()*sizeof(QVector2D));
+
+    mf->gridShader->enableAttributeArray("vertex");
+    gl->glVertexAttribPointer(mf->gridShader->attributeLocation("vertex"),2,GL_FLOAT,false,0,0);
+
+    gl->glDrawArrays(GL_LINES,0,vertices.count());
+    gl->glFlush();
+    vertexBuffer.release();
+    vertexBuffer.destroy(); //destructor will do this automatically?
+    mf->gridShader->release();
 }
 
 void CWorldGrid::createWorldGrid(double northing, double easting) {

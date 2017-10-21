@@ -111,5 +111,8 @@
         <file>images/Landscape.png</file>
         <file>qml/JobMenu.qml</file>
         <file>qml/PortLight.qml</file>
+        <file>shaders/color_vshader.vsh</file>
+        <file>shaders/color_fshader.fsh</file>
+        <file>shaders/worldgrid.vsh</file>
     </qresource>
 </RCC>

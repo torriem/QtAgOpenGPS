@@ -1,3 +1,4 @@
+#version 330
 /* A very simple fragment shader that paints everything a
  * single color, defined by the color attribute
  */
