@@ -25,6 +25,7 @@ private:
     QOpenGLBuffer vehicleBodyBuffer;
     QOpenGLBuffer pinsAndMarkersBuffer;
     QOpenGLBuffer pointerBuffer;
+    QOpenGLBuffer rigidHitchBuffer;
 
     bool buffersCurrent = false;
 

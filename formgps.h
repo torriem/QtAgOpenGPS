@@ -347,6 +347,7 @@ public:
 
     QOpenGLShaderProgram *simpleColorShader = 0;
     QOpenGLShaderProgram *gridShader = 0;
+    QOpenGLShaderProgram *interpColorShader = 0;
 
 
     /***********************

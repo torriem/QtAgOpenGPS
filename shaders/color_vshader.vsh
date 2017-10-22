@@ -2,8 +2,8 @@
 /* A very simple shader that doesn't use any textures
  */
 
-//pull in 2d vertices from buffer 0
-layout(location = 0) in vec2 vertex;
+//pull in 3d vertices from buffer 0
+layout(location = 0) in vec3 vertex;
 
 
 //attribute highp vec4 qt_Vertex;
@@ -20,6 +20,6 @@ void main(void)
 {
     gl_PointSize = pointSize;
     //compute position of vertex on screen
-    gl_Position = mvpMatrix * vec4(vertex,0,1.0);
+    gl_Position = mvpMatrix * vec4(vertex,1.0);
     //qt_TexCoord0 = qt_MultiTexCoord0;
 }

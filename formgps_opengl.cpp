@@ -53,7 +53,7 @@ void FormGPS::glDrawArraysColor(QOpenGLFunctions *gl,
     simpleColorShader->enableAttributeArray("vertex");
     //use attribute array from buffer, using non-normalized vertices
     gl->glVertexAttribPointer(simpleColorShader->attributeLocation("vertex"),
-                              2, //2D vertices
+                              3, //3D vertices
                               GL_type, //type of data GL_FLAOT or GL_DOUBLE
                               GL_FALSE, //not normalized vertices!
                               0, //no spaceing between vertices in data
@@ -66,6 +66,53 @@ void FormGPS::glDrawArraysColor(QOpenGLFunctions *gl,
     vertexBuffer.release();
     //release shader
     simpleColorShader->release();
+}
+
+void FormGPS::glDrawArraysColors(QOpenGLFunctions *gl,
+                                 QMatrix4x4 mvp,
+                                 GLenum operation,
+                                 QOpenGLBuffer &vertexBuffer,
+                                 GLenum GL_type,
+                                 int count,
+                                 float pointSize)
+{
+    //bind shader
+    assert(interpColorShader->bind());
+    //set mvp matrix
+    interpColorShader->setUniformValue("mvpMatrix", mvp);
+
+    interpColorShader->setUniformValue("pointSize", pointSize);
+
+
+    vertexBuffer.bind();
+
+    //enable the vertex attribute array in shader
+    interpColorShader->enableAttributeArray("vertex");
+    interpColorShader->enableAttributeArray("color");
+
+    //use attribute array from buffer, using non-normalized vertices
+    gl->glVertexAttribPointer(interpColorShader->attributeLocation("vertex"),
+                              3, //3D vertices
+                              GL_type, //type of data GL_FLAOT or GL_DOUBLE
+                              GL_FALSE, //not normalized vertices!
+                              7*sizeof(float), //vertex+color
+                              0 //start at offset 0 in buffer
+                             );
+
+    gl->glVertexAttribPointer(interpColorShader->attributeLocation("color"),
+                              4, //4D color
+                              GL_type, //type of data GL_FLAOT or GL_DOUBLE
+                              GL_FALSE, //not normalized vertices!
+                              7*sizeof(float), //vertex+color
+                              ((float *)0) + 3 //start at 3rd float in buffer
+                             );
+
+    //draw primitive
+    gl->glDrawArrays(operation,0,count);
+    //release buffer
+    vertexBuffer.release();
+    //release shader
+    interpColorShader->release();
 }
 
 
@@ -511,6 +558,12 @@ void FormGPS::openGLControl_Initialized()
         assert(gridShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/worldgrid.vsh"));
         assert(gridShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/color_fshader.fsh"));
         assert(gridShader->link());
+    }
+    if (!interpColorShader) {
+        interpColorShader = new QOpenGLShaderProgram(QThread::currentThread()); //memory managed by Qt
+        assert(interpColorShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/colors_vshader.vsh"));
+        assert(interpColorShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/colors_fshader.fsh"));
+        assert(interpColorShader->link());
     }
     //now start the timer assuming no errors, otherwise the program will not stop on errors.
     //TODO:

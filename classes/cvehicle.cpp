@@ -31,6 +31,12 @@
 #define DEFAULT_MAXANGULARVELOCITY 1.0
 #define DEFAULT_MAXSTEERINGANGLE 20.0
 
+struct ColorVertex {
+    QVector3D vertex;
+    QVector4D color;
+};
+
+
 
 CVehicle::CVehicle(FormGPS *mf)
     :mf(mf)
@@ -81,7 +87,7 @@ void CVehicle::makeBuffers()
 {
     //requires a valid OpenGL context
 
-    QVector<QVector2D> v;
+    QVector<QVector3D> v;
     if (buffersCurrent) return;
 
     double trailingTank, trailingTool;
@@ -98,23 +104,23 @@ void CVehicle::makeBuffers()
     if (tankTrailingHitchLength < -2.0 && isToolTrailing)
     {
         v.clear();
-        v.append(QVector2D(0,trailingTank));
-        v.append(QVector2D(0,0));
+        v.append(QVector3D(0,trailingTank,0));
+        v.append(QVector3D(0,0,0));
 
         if (trailingTankHitchBuffer.isCreated() ){
             trailingTankHitchBuffer.destroy();
         }
         trailingTankHitchBuffer.create();
         trailingTankHitchBuffer.bind();
-        trailingTankHitchBuffer.allocate(v.data(),v.count() * sizeof(QVector2D));
+        trailingTankHitchBuffer.allocate(v.data(),v.count() * sizeof(QVector3D));
         trailingTankHitchBuffer.release();
 
         v.clear();
-        v.append(QVector2D(0,trailingTank));
+        v.append(QVector3D(0,trailingTank,0));
         if (tankDotBuffer.isCreated())
             tankDotBuffer.destroy();
         tankDotBuffer.create();
-        tankDotBuffer.allocate(v.data(),v.count() * sizeof(QVector2D));
+        tankDotBuffer.allocate(v.data(),v.count() * sizeof(QVector3D));
         tankDotBuffer.release();
     }
 
@@ -122,55 +128,119 @@ void CVehicle::makeBuffers()
     if (isToolTrailing)
     {
         v.clear();
-        v.append(QVector2D(0,trailingTool));
-        v.append(QVector2D(0,0));
+        v.append(QVector3D(0,trailingTool,0));
+        v.append(QVector3D(0,0,0));
 
         if(toolHitchBuffer.isCreated())
             toolHitchBuffer.destroy();
         toolHitchBuffer.create();
         toolHitchBuffer.bind();
-        toolHitchBuffer.allocate(v.data(),v.count() * sizeof(QVector2D));
+        toolHitchBuffer.allocate(v.data(),v.count() * sizeof(QVector3D));
         toolHitchBuffer.release();
     }
 
     //super section
     v.clear();
-    v.append(QVector2D(mf->section[numOfSections].positionLeft, trailingTool));
-    v.append(QVector2D(mf->section[numOfSections].positionRight, trailingTool));
+    v.append(QVector3D(mf->section[numOfSections].positionLeft, trailingTool,0));
+    v.append(QVector3D(mf->section[numOfSections].positionRight, trailingTool,0));
 
     if (superSectionBuffer.isCreated())
         superSectionBuffer.destroy();
     superSectionBuffer.create();
     superSectionBuffer.bind();
-    superSectionBuffer.allocate(v.data(),v.count() * sizeof(QVector2D));
+    superSectionBuffer.allocate(v.data(),v.count() * sizeof(QVector3D));
     superSectionBuffer.release();
 
     // individual sections
     for (int j = 0; j < numOfSections; j++)
     {
         v.clear();
-        v.append(QVector2D(mf->section[j].positionLeft, trailingTool));
-        v.append(QVector2D(mf->section[j].positionRight, trailingTool));
+        v.append(QVector3D(mf->section[j].positionLeft, trailingTool,0));
+        v.append(QVector3D(mf->section[j].positionRight, trailingTool,0));
 
         if (sectionBuffer[j].isCreated())
             sectionBuffer[j].destroy();
         sectionBuffer[j].create();
         sectionBuffer[j].bind();
-        sectionBuffer[j].allocate(v.data(), v.count() * sizeof(QVector2D));
+        sectionBuffer[j].allocate(v.data(), v.count() * sizeof(QVector3D));
         sectionBuffer[j].release();
     }
 
     //section dots
     v.clear();
     for (int j = 0; j < numOfSections - 1; j++)
-        v.append(QVector2D(mf->section[j].positionRight, trailingTool));
+        v.append(QVector3D(mf->section[j].positionRight, trailingTool,0));
 
     if (sectionDotsBuffer.isCreated())
         sectionDotsBuffer.destroy();
     sectionDotsBuffer.create();
     sectionDotsBuffer.bind();
-    sectionDotsBuffer.allocate(v.data(), v.count() * sizeof(QVector2D));
+    sectionDotsBuffer.allocate(v.data(), v.count() * sizeof(QVector3D));
     sectionDotsBuffer.release();
+
+    //draw the vehicle Body
+    ColorVertex vb[] = {
+        { QVector3D(0,0,-0.2),                QVector4D(0.9, 0.5, 0.30, 1.0) },
+        { QVector3D(1.8, -antennaPivot, 0.0), QVector4D(0.9, 0.5, 0.30, 1.0) },
+        { QVector3D(0, -antennaPivot + wheelbase, 0.0), QVector4D(0.9, 0.5, 0.30, 1.0) },
+        { QVector3D(-1.8, -antennaPivot, 0.0), QVector4D(0.20, 0.0, 0.9, 1.0) },
+        { QVector3D(1.8, -antennaPivot, 0.0),  QVector4D(0.20, 0.0, 0.9, 1.0) }
+    };
+
+    if (vehicleBodyBuffer.isCreated())
+        vehicleBodyBuffer.destroy();
+    vehicleBodyBuffer.create();
+    vehicleBodyBuffer.bind();
+    vehicleBodyBuffer.allocate(vb,5 * sizeof(ColorVertex));
+    vehicleBodyBuffer.release();
+
+    //draw the area side marker, antenna, hitch pin ,etc
+    ColorVertex m[] = {
+        //area side marker
+        { QVector3D(), QVector4D(0.95f, 0.90f, 0.0f, 1.0) },
+        //antenna
+        { QVector3D(0,0,0), QVector4D(0.0f, 0.98f, 0.0f, 1.0) },
+        //hitch pin
+        { QVector3D(0, hitchLength - antennaPivot, 0), QVector4D(0.99f, 0.0f, 0.0f, 1.0) }
+    };
+    if (mf->isAreaOnRight)
+        m[0].vertex = QVector3D(2.0, -antennaPivot, 0);
+    else
+        m[0].vertex = QVector3D(-2.0, -antennaPivot, 0);
+
+    if (pinsAndMarkersBuffer.isCreated())
+        pinsAndMarkersBuffer.destroy();
+    pinsAndMarkersBuffer.create();
+    pinsAndMarkersBuffer.bind();
+    pinsAndMarkersBuffer.allocate(m,sizeof(ColorVertex)*3);
+    pinsAndMarkersBuffer.release();
+
+    //yellow pointer
+    v.clear();
+    v.append(QVector3D(1.2, -antennaPivot + wheelbase + 5, 0.0));
+    v.append(QVector3D(0, -antennaPivot + wheelbase + 10, 0.0));
+    v.append(QVector3D(-1.2, -antennaPivot + wheelbase + 5, 0.0));
+
+    if (pointerBuffer.isCreated())
+        pointerBuffer.destroy();
+    pointerBuffer.create();
+    pointerBuffer.bind();
+    pointerBuffer.allocate(v.data(),v.count()*sizeof(QVector3D));
+    pointerBuffer.release();
+
+    //draw the rigid hitch
+
+    v.clear();
+    v.append(QVector3D(0, hitchLength - antennaPivot, 0));
+    v.append(QVector3D(0, -antennaPivot, 0));
+
+    if (rigidHitchBuffer.isCreated())
+        rigidHitchBuffer.destroy();
+    rigidHitchBuffer.create();
+    rigidHitchBuffer.bind();
+    rigidHitchBuffer.allocate(v.data(),v.count()*sizeof(QVector3D));
+    rigidHitchBuffer.release();
+
 
     buffersCurrent = true;
 }
@@ -347,17 +417,23 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
     modelview.rotate(toDegrees(-mf->fixHeading), 0.0, 0.0, 1.0);
 
     //draw the vehicle Body
-    gl21->glColor3f(0.9, 0.5, 0.30);
-    gl21->glBegin(GL_TRIANGLE_FAN);
+    //gl21->glColor3f(0.9, 0.5, 0.30);
+    //gl21->glBegin(GL_TRIANGLE_FAN);
 
-    gl21->glVertex3d(0, 0, -0.2);
-    gl21->glVertex3d(1.8, -antennaPivot, 0.0);
-    gl21->glVertex3d(0, -antennaPivot + wheelbase, 0.0);
-    gl21->glColor3f(0.20, 0.0, 0.9);
-    gl21->glVertex3d(-1.8, -antennaPivot, 0.0);
-    gl21->glVertex3d(1.8, -antennaPivot, 0.0);
-    gl21->glEnd();
+    //gl21->glVertex3d(0, 0, -0.2);
+    //gl21->glVertex3d(1.8, -antennaPivot, 0.0);
+    //gl21->glVertex3d(0, -antennaPivot + wheelbase, 0.0);
+    //gl21->glColor3f(0.20, 0.0, 0.9);
+    //gl21->glVertex3d(-1.8, -antennaPivot, 0.0);
+    //gl21->glVertex3d(1.8, -antennaPivot, 0.0);
+    //gl21->glEnd();
+    mf->glDrawArraysColors(gl,projection*modelview,
+                           GL_TRIANGLE_FAN,
+                           vehicleBodyBuffer,
+                           GL_FLOAT,
+                           5); //5 vertices in body
 
+    /*
     //draw the area side marker
     gl21->glColor3f(0.95f, 0.90f, 0.0f);
     gl21->glPointSize(4.0f);
@@ -379,23 +455,49 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
     //glVertex3d(-1.8, 0, -antennaPivot);
     //glVertex3d(1.8, 0, -antennaPivot);
     gl21->glEnd();
+    */
+    //draw the area side marker, antenna, hitch pin ,etc
+    mf->glDrawArraysColors(gl,projection*modelview,
+                           GL_POINTS,
+                           pinsAndMarkersBuffer,
+                           GL_FLOAT,
+                           3,
+                           4.0f);
 
-    gl21->glLineWidth(1);
-    gl21->glColor3f(0.9, 0.95, 0.10);
-    gl21->glBegin(GL_LINE_STRIP);
-    {
-        gl21->glVertex3d(1.2, -antennaPivot + wheelbase + 5, 0.0);
-        gl21->glVertex3d(0, -antennaPivot + wheelbase + 10, 0.0);
-        gl21->glVertex3d(-1.2, -antennaPivot + wheelbase + 5, 0.0);
-    }
-    gl21->glEnd();
+    //gl21->glColor3f(0.9, 0.95, 0.10);
+    //gl21->glBegin(GL_LINE_STRIP);
+    //{
+    //    gl21->glVertex3d(1.2, -antennaPivot + wheelbase + 5, 0.0);
+    //    gl21->glVertex3d(0, -antennaPivot + wheelbase + 10, 0.0);
+    //    gl21->glVertex3d(-1.2, -antennaPivot + wheelbase + 5, 0.0);
+    //}
+    //gl21->glEnd();
+
+    gl->glLineWidth(1);
+    color.setRgbF(0.9, 0.95, 0.10);
+    mf->glDrawArraysColor(gl, projection * modelview,
+                          GL_LINE_STRIP, color,
+                          pointerBuffer,
+                          GL_FLOAT,
+                          3);
+
+
 
     //draw the rigid hitch
-    gl21->glColor3f(0.37f, 0.37f, 0.97f);
-    gl21->glBegin(GL_LINES);
-    gl21->glVertex3d(0, hitchLength - antennaPivot, 0);
-    gl21->glVertex3d(0, -antennaPivot, 0);
-    gl21->glEnd();
+    //gl21->glColor3f(0.37f, 0.37f, 0.97f);
+    //gl21->glBegin(GL_LINES);
+    //gl21->glVertex3d(0, hitchLength - antennaPivot, 0);
+    //gl21->glVertex3d(0, -antennaPivot, 0);
+    //gl21->glEnd();
+    color.setRgbF(0.37f, 0.37f, 0.97f);
+    mf->glDrawArraysColor(gl, projection * modelview,
+                          GL_LINES, color,
+                          rigidHitchBuffer,
+                          GL_FLOAT,
+                          2);
+
+
+
 }
 
 
