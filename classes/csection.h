@@ -6,7 +6,7 @@
 #include "vec2.h"
 #include "btnenum.h"
 
-typedef QVector<Vec2> TriangleList;
+typedef QVector<QVector3D> TriangleList;
 
 class FormGPS;
 

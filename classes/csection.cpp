@@ -35,12 +35,12 @@ void CSection::turnSectionOn() {
         patchList.append(triangleList);
 
         //left side of triangle
-        triangleList->append(Vec2((mf->cosSectionHeading * positionLeft) + mf->toolPos.easting,
-                                  (mf->sinSectionHeading * positionLeft) + mf->toolPos.northing));
+        triangleList->append(QVector3D((mf->cosSectionHeading * positionLeft) + mf->toolPos.easting,
+                                       (mf->sinSectionHeading * positionLeft) + mf->toolPos.northing, 0));
 
         //Right side of triangle
-        triangleList->append(Vec2((mf->cosSectionHeading * positionRight) + mf->toolPos.easting,
-                                  (mf->sinSectionHeading * positionRight) + mf->toolPos.northing));
+        triangleList->append(QVector3D((mf->cosSectionHeading * positionRight) + mf->toolPos.easting,
+                                       (mf->sinSectionHeading * positionRight) + mf->toolPos.northing, 0));
     }
 }
 
@@ -63,15 +63,17 @@ void CSection::addPathPoint(double northing, double easting, double cosHeading, 
     //add two triangles for next step.
     //left side and add the point to List
 
-    Vec2 point((cosHeading * positionLeft) + easting,
-               (sinHeading * positionLeft) + northing);
+    QVector3D point((cosHeading * positionLeft) + easting,
+                    (sinHeading * positionLeft) + northing,
+                    0 );
 
     triangleList->append(point);
 
     //Right side add the point to the list
 
-    Vec2 point2((cosHeading * positionRight) + easting,
-                (sinHeading * positionRight) + northing);
+    QVector3D point2((cosHeading * positionRight) + easting,
+                     (sinHeading * positionRight) + northing,
+                     0 );
     triangleList->append(point2);
 
     //count the triangle pairs
@@ -85,19 +87,20 @@ void CSection::addPathPoint(double northing, double easting, double cosHeading, 
     if (c >= 3)
     {
         //calculate area of these 2 new triangles - AbsoluteValue of (Ax(By-Cy) + Bx(Cy-Ay) + Cx(Ay-By)/2)
+        //easting = x, northing = y!
         {
-            double temp = ((*triangleList)[c].easting * ((*triangleList)[c - 1].northing - (*triangleList)[c - 2].northing)) +
-                          ((*triangleList)[c - 1].easting * ((*triangleList)[c - 2].northing - (*triangleList)[c].northing)) +
-                          ((*triangleList)[c - 2].easting * ((*triangleList)[c].northing - (*triangleList)[c - 1].northing));
+            double temp = ((*triangleList)[c].x() * ((*triangleList)[c - 1].y() - (*triangleList)[c - 2].y())) +
+                          ((*triangleList)[c - 1].x() * ((*triangleList)[c - 2].y() - (*triangleList)[c].y())) +
+                          ((*triangleList)[c - 2].x() * ((*triangleList)[c].y() - (*triangleList)[c - 1].y()));
 
             temp = fabs(temp / 2.0);
             mf->totalSquareMeters += temp;
             mf->totalUserSquareMeters += temp;
 
             //temp = 0;
-            temp = ((*triangleList)[c - 1].easting * ((*triangleList)[c - 2].northing - (*triangleList)[c - 3].northing)) +
-                   ((*triangleList)[c - 2].easting * ((*triangleList)[c - 3].northing - (*triangleList)[c - 1].northing)) +
-                   ((*triangleList)[c - 3].easting * ((*triangleList)[c - 1].northing - (*triangleList)[c - 2].northing));
+            temp = ((*triangleList)[c - 1].x() * ((*triangleList)[c - 2].y() - (*triangleList)[c - 3].y())) +
+                   ((*triangleList)[c - 2].x() * ((*triangleList)[c - 3].y() - (*triangleList)[c - 1].y())) +
+                   ((*triangleList)[c - 3].x() * ((*triangleList)[c - 1].y() - (*triangleList)[c - 2].y()));
 
             temp = fabs(temp / 2.0);
             mf->totalSquareMeters += temp;

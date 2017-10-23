@@ -326,7 +326,8 @@ public:
      * SaveOpen.Designer.cs *
      ************************/
     //list of the list of patch data individual triangles for field sections
-    QVector<QSharedPointer<QVector<Vec2>>> patchSaveList;
+    //QVector<QSharedPointer<QVector<Vec2>>> patchSaveList;
+    QVector<QSharedPointer<QVector<QVector3D>>> patchSaveList;
 
     //list of the list of patch data individual triangles for contour tracking
     QVector<QSharedPointer<QVector<Vec4>>> contourSaveList;

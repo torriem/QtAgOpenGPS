@@ -208,8 +208,13 @@ void FormGPS::openGLControl_Draw()
 
         //section patch color
         QColor sectionColor = QColor(settings.value("display/sectionColor", "#32DCC8").toString());
-        gl->glColor4ub(sectionColor.red(), sectionColor.green(), sectionColor.blue(),160);
-        if (isDrawPolygons) gl->glPolygonMode(GL_FRONT, GL_LINE);
+        sectionColor.setAlpha(160);
+        //gl->glColor4ub(sectionColor.red(), sectionColor.green(), sectionColor.blue(),160);
+
+        //OpenGL ES does not support wireframe in this way. If we want wireframe,
+        //we'll have to do it with LINES
+        //if (isDrawPolygons) gl->glPolygonMode(GL_FRONT, GL_LINE);
+
 
         //draw patches of sections
         for (int j = 0; j < vehicle->numSuperSection; j++)
@@ -232,24 +237,25 @@ void FormGPS::openGLControl_Draw()
                 //for every new chunk of patch
 
                 //foreach is a Qt macro that iterates over Qt containers
-                foreach (QSharedPointer<QVector<Vec2>> triList, section[j].patchList)
+                foreach (QSharedPointer<QVector<QVector3D>> triList, section[j].patchList)
                 {
                     isDraw = false;
                     int count2 = triList->size();
                     for (int i = 0; i < count2; i += 3)
                     {
                         //determine if point is in frustum or not, if < 0, its outside so abort, z always is 0
-                        if (frustum[0] * (*triList)[i].easting + frustum[1] * (*triList)[i].northing + frustum[3] <= 0)
+                        //x is easting, y is northing
+                        if (frustum[0] * (*triList)[i].x() + frustum[1] * (*triList)[i].y() + frustum[3] <= 0)
                             continue;//right
-                        if (frustum[4] * (*triList)[i].easting + frustum[5] * (*triList)[i].northing + frustum[7] <= 0)
+                        if (frustum[4] * (*triList)[i].x() + frustum[5] * (*triList)[i].y() + frustum[7] <= 0)
                             continue;//left
-                        if (frustum[16] * (*triList)[i].easting + frustum[17] * (*triList)[i].northing + frustum[19] <= 0)
+                        if (frustum[16] * (*triList)[i].x() + frustum[17] * (*triList)[i].y() + frustum[19] <= 0)
                             continue;//bottom
-                        if (frustum[20] * (*triList)[i].easting + frustum[21] * (*triList)[i].northing + frustum[23] <= 0)
+                        if (frustum[20] * (*triList)[i].x() + frustum[21] * (*triList)[i].y() + frustum[23] <= 0)
                             continue;//top
-                        if (frustum[8] * (*triList)[i].easting + frustum[9] * (*triList)[i].northing + frustum[11] <= 0)
+                        if (frustum[8] * (*triList)[i].x() + frustum[9] * (*triList)[i].y() + frustum[11] <= 0)
                             continue;//far
-                        if (frustum[12] * (*triList)[i].easting + frustum[13] * (*triList)[i].northing + frustum[15] <= 0)
+                        if (frustum[12] * (*triList)[i].x() + frustum[13] * (*triList)[i].y() + frustum[15] <= 0)
                             continue;//near
 
                         //point is in frustum so draw the entire patch. The downside of triangle strips.
@@ -259,27 +265,48 @@ void FormGPS::openGLControl_Draw()
 
                     if (isDraw)
                     {
-                        //draw the triangle in each triangle strip
-                        gl->glBegin(GL_TRIANGLE_STRIP);
-                        count2 = triList->size();
+                        //QVector<QVector3D> vertices;
+                        QOpenGLBuffer triBuffer;
 
+                        triBuffer.create();
+                        triBuffer.bind();
+
+                        //draw the triangle in each triangle strip
+                        //gl->glBegin(GL_TRIANGLE_STRIP);
+                        //count2 = triList->size();
+
+                        //triangle lists are now using QVector3D, so we can allocate buffers
+                        //directly from list data.
+
+                        triBuffer.allocate(triList->data(), count2 * sizeof(QVector3D));
+                        triBuffer.release();
+
+                        /*
                         //if large enough patch and camera zoomed out, fake mipmap the patches, skip triangles
                         if (count2 >= (mipmap + 2))
                         {
                             int step = mipmap;
                             for (int i = 0; i < count2; i += step)
                             {
-                                gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0); i++;
-                                gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0); i++;
+                                vertices.append(QVector3D((*triList)[i].easting, (*triList)[i].northing, 0)); i++;
+                                vertices.append(QVector3D((*triList)[i].easting, (*triList)[i].northing, 0)); i++;
+                                //gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0); i++;
+                                //gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0); i++;
 
                                 //too small to mipmap it
                                 if (count2 - i <= (mipmap + 2)) step = 0;
                             }
                         } else {
                             for (int i = 0; i < count2; i++)
-                                gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0);
+                                vertices.append(QVector3D((*triList)[i].easting, (*triList)[i].northing, 0));
+                                //gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0);
                         }
-                        gl->glEnd();
+                        triBuffer.allocate(vertices.data(),vertices.count()*sizeof(QVector3D));
+                        */
+                        glDrawArraysColor(gles,projection*modelview,
+                                          GL_TRIANGLE_STRIP, sectionColor,
+                                          triBuffer,GL_FLOAT,count2);
+                        //gl->glEnd();
                     }
                 }
             }
@@ -363,14 +390,22 @@ void FormGPS::openGLControl_Draw()
         gl->glPushMatrix();
         gl->glLoadIdentity();
 
+        projection.setToIdentity();
+
+
         //negative and positive on width, 0 at top to bottom ortho view
         //should this be the width of the opengl control?
         gl->glOrtho(-(double)width / 2, width / 2, (double)height, 0, -1, 1);
+
+        projection.ortho(-(double)width / 2, width / 2, (double)height, 0, -1, 1);
 
         //  Create the appropriate modelview matrix.
         gl->glMatrixMode(GL_MODELVIEW);
         gl->glPushMatrix();
         gl->glLoadIdentity();
+
+        modelview.setToIdentity();
+
 
         if (ui->actionSky_On->isChecked())
         {
@@ -651,20 +686,21 @@ void FormGPS::openGLControlBack_Draw()
         if (patchCount > 0)
         {
             //for every new chunk of patch
-            foreach (QSharedPointer<QVector<Vec2>> triList, section[j].patchList)
+            foreach (QSharedPointer<QVector<QVector3D>> triList, section[j].patchList)
             {
                 isDraw = false;
                 int count2 = triList->size();
                 for (int i = 0; i < count2; i+=3)
                 {
                     //determine if point is in frustum or not
-                    if (frustum[0] * (*triList)[i].easting + frustum[1] * (*triList)[i].northing + frustum[3] <= 0)
+                    //x is easting, y is northing
+                    if (frustum[0] * (*triList)[i].x() + frustum[1] * (*triList)[i].y() + frustum[3] <= 0)
                         continue;//right
-                    if (frustum[4] * (*triList)[i].easting + frustum[5] * (*triList)[i].northing + frustum[7] <= 0)
+                    if (frustum[4] * (*triList)[i].x() + frustum[5] * (*triList)[i].y() + frustum[7] <= 0)
                         continue;//left
-                   if (frustum[16] * (*triList)[i].easting + frustum[17] * (*triList)[i].northing + frustum[19] <= 0)
+                   if (frustum[16] * (*triList)[i].x() + frustum[17] * (*triList)[i].y() + frustum[19] <= 0)
                         continue;//bottom
-                    if (frustum[20] * (*triList)[i].easting + frustum[21] * (*triList)[i].northing + frustum[23] <= 0)
+                    if (frustum[20] * (*triList)[i].x() + frustum[21] * (*triList)[i].y() + frustum[23] <= 0)
                         continue;//top
 
                     //point is in frustum so draw the entire patch
@@ -677,7 +713,7 @@ void FormGPS::openGLControlBack_Draw()
                     //draw the triangles in each triangle strip
                     gl->glBegin(GL_TRIANGLE_STRIP);
                     for (int i = 0; i < count2; i++)
-                        gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0);
+                        gl->glVertex3d((*triList)[i].x(), (*triList)[i].y(), 0);
                     gl->glEnd();
                 }
             }
