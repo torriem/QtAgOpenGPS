@@ -189,7 +189,7 @@ void FormGPS::openGLControl_Draw()
         calcFrustum(projection, modelview);
 
         //draw the field ground images
-        worldGrid->drawFieldSurface(gl);
+        worldGrid->drawFieldSurface(gles, projection *modelview);
 
         ////Draw the world grid based on camera position
         gl->glDisable(GL_DEPTH_TEST);

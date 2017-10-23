@@ -210,6 +210,7 @@ void FormGPS::renderGL()
 
     //glViewport(0,0,400,400);
 
+    /*
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(-2.0, 2.0, -2.0, 2.0, -1.5, 1.5);
@@ -242,7 +243,7 @@ void FormGPS::renderGL()
 #   undef N
 
     glFlush();
-
+    */
 }
 
 void FormGPS::onBtnMinMaxZoom_clicked(){

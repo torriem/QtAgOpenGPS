@@ -1,4 +1,4 @@
-#version 330
+#version 120
 /* A very simple fragment shader that varies color by
  * interpolating between the vertices of the triangle
  * (each vertex has a color).
