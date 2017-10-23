@@ -16,5 +16,5 @@ void main(void)
 {
     //compute position of vertex on screen
     gl_Position = mvpMatrix * vec4(vertex,1.0);
-    //texcoord = texcoord_src;
+    texcoord = texcoord_src;
 }

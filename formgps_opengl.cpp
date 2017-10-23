@@ -159,12 +159,17 @@ void FormGPS::openGLControl_Draw()
 
     //  Create a perspective transformation.
     //gl.Perspective(fovy, openGLControl.Width / (double)openGLControl.Height, 1, camDistanceFactor * camera.camSetDistance);
-    double aspect = width / height;
+
+    projection.perspective(fovy, width / (double)height, 1, camDistanceFactor * camera.camSetDistance);
+
+
+    double aspect = width / (float)height;
     double fH = tan( fovy / 360 * M_PI);
     double fW = fH * aspect;
 
     gl->glFrustum(-fW, fW, -fH, fH, 1, camDistanceFactor * camera.camSetDistance );
-    projection.frustum(-fW,fW,-fH,fH, 1, camDistanceFactor * camera.camSetDistance);
+    //projection.frustum(-fW, fW, -fH, fH, 1, camDistanceFactor * camera.camSetDistance );
+
 
     //  Set the modelview matrix.
     gl->glMatrixMode(GL_MODELVIEW);
@@ -601,10 +606,11 @@ void FormGPS::openGLControlBack_Draw()
     // change these at your own peril!!!! Very critical
     //  Create a perspective transformation.
     //gl->glPerspective(6.0f, 1, 1, 6000);
+    projection.perspective(6.0f,1,1,6000);
+
     double fH = tan( 6.0 / 360 * M_PI);
     double fW = fH;
     gl->glFrustum(-fW, fW, -fH, fH, 1, 6000 );
-    projection.frustum(-fW, fW, -fH, fH, 1, 6000 );
 
     /* end set projection */
 
@@ -1006,9 +1012,9 @@ void FormGPS::loadGLTextures(QOpenGLFunctions_2_1 *gl)
 
     //  Floor
     t = new QOpenGLTexture(QImage(":/images/floor.png"));
-    //t->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
-    //t->setMagnificationFilter(QOpenGLTexture::Linear);
-    //t->setWrapMode(QOpenGLTexture::Repeat);
+    t->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+    t->setMagnificationFilter(QOpenGLTexture::Linear);
+    t->setWrapMode(QOpenGLTexture::Repeat);
 
     texture1.append(t); //position 1
     /*

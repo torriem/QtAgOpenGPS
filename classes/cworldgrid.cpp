@@ -54,18 +54,21 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
 
     if (!fieldShader) {
         //have to dynamically create it because we're in a different thread now
-        //than when the constructor ran.
+        //than when the constructor ran. QThread will destroy it for us when
+        //we're done.
         fieldShader = new QOpenGLShaderProgram(QThread::currentThread());
         assert(fieldShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/colortex_vshader.vsh"));
         assert(fieldShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/colortex_fshader.fsh"));
         assert(fieldShader->link());
     }
 
+    //bind field surface texture
     mf->texture1[1]->bind();
 
+    //bind and set up the shader
     fieldShader->bind();
     fieldShader->setUniformValue("color", fieldColor);
-    fieldShader->setUniformValue("texture", 0); //magic number texture 0
+    fieldShader->setUniformValue("texture", 0); //magic number texture 0?
     fieldShader->setUniformValue("mvpMatrix", mvp);
 
     fieldBuffer.bind();
@@ -85,30 +88,13 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
                               5 * sizeof(float),
                               ((float *)0) + 3 //comes after the vertex
                              );
-    gl->glEnable(GL_TEXTURE_2D);
 
     gl->glDrawArrays(GL_TRIANGLE_STRIP,0, 4); //A quad from triangles
 
-    /*
-    gl->glEnable(GL_BLEND);
-
-    gl->glBegin(GL_TRIANGLE_STRIP);				            // Build Quad From A Triangle Strip
-    gl->glTexCoord2d(0, 0);
-    gl->glVertex3d(eastingMin, northingMin, 0.0);                // Top Right
-    gl->glTexCoord2d(texZoom, 0);
-    gl->glVertex3d(eastingMax, northingMin, 0.0);               // Top Left
-    gl->glTexCoord2d(0, texZoom);
-    gl->glVertex3d(eastingMin, northingMax, 0.0);               // Bottom Right
-    gl->glTexCoord2d(texZoom, texZoom);
-    gl->glVertex3d(eastingMax, northingMax, 0.0);              // Bottom Left
-    gl->glEnd();						// Done Building Triangle Strip
-    //gl->glBindTexture(GL_TEXTURE_2D, 0);	// unbind texture
-    */
     mf->texture1[1]->release();
     fieldBuffer.release();
     fieldShader->release();
 
-    gl->glDisable(GL_TEXTURE_2D);
 }
 
 void CWorldGrid::drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, double _gridZoom)
