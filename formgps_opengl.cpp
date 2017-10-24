@@ -25,6 +25,11 @@
 
 #include <iostream>
 
+struct VertexTexcoord {
+    QVector3D vertex;
+    QVector2D texcoord;
+};
+
 //Wrapper to draw individual primitives. Not very efficient but
 //if you need to just draw a few lines or points, this can be
 //used.  Data should a long list of 2 floats?
@@ -115,12 +120,56 @@ void FormGPS::glDrawArraysColors(QOpenGLFunctions *gl,
     interpColorShader->release();
 }
 
+void FormGPS::glDrawArraysTexture(QOpenGLFunctions *gl,
+                                  QMatrix4x4 mvp,
+                                  GLenum operation,
+                                  QOpenGLBuffer &vertexBuffer,
+                                  GLenum GL_type,
+                                  int count)
+{
+    //bind shader
+    assert(texShader->bind());
+    //set mvp matrix
+    texShader->setUniformValue("mvpMatrix", mvp);
+    texShader->setUniformValue("texture", 0);
+    texShader->setUniformValue("useColor", false);
+
+
+    vertexBuffer.bind();
+
+    //enable the vertex attribute array in shader
+    texShader->enableAttributeArray("vertex");
+    texShader->enableAttributeArray("texcoord_src");
+
+    //use attribute array from buffer, using non-normalized vertices
+    gl->glVertexAttribPointer(interpColorShader->attributeLocation("vertex"),
+                              3, //3D vertices
+                              GL_type, //type of data GL_FLAOT or GL_DOUBLE
+                              GL_FALSE, //not normalized vertices!
+                              5*sizeof(float), //vertex+color
+                              0 //start at offset 0 in buffer
+                             );
+
+    gl->glVertexAttribPointer(interpColorShader->attributeLocation("texcoord_src"),
+                              2, //2D coordinate
+                              GL_type, //type of data GL_FLAOT or GL_DOUBLE
+                              GL_FALSE, //not normalized vertices!
+                              5*sizeof(float), //vertex+color
+                              ((float *)0) + 3 //start at 3rd float in buffer
+                             );
+
+    //draw primitive
+    gl->glDrawArrays(operation,0,count);
+    //release buffer
+    vertexBuffer.release();
+    //release shader
+    texShader->release();
+}
 
 void FormGPS::openGLControl_Draw()
 {
     QOpenGLContext *glContext = QOpenGLContext::currentContext();
-    QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
-    QOpenGLFunctions *gles = glContext->functions();
+    QOpenGLFunctions *gl = glContext->functions();
     int width = glContext->surface()->size().width();
     int height = glContext->surface()->size().height();
     QMatrix4x4 projection;
@@ -152,8 +201,9 @@ void FormGPS::openGLControl_Draw()
     //I had to move these functions here because if setZoom is called
     //from elsewhere in the GUI (say a button press), there's no GL
     //context to work with.
-    gl->glMatrixMode(GL_PROJECTION);
-    gl->glLoadIdentity();
+
+    //gl->glMatrixMode(GL_PROJECTION);
+    //gl->glLoadIdentity();
 
     projection.setToIdentity();
 
@@ -167,12 +217,12 @@ void FormGPS::openGLControl_Draw()
     double fH = tan( fovy / 360 * M_PI);
     double fW = fH * aspect;
 
-    gl->glFrustum(-fW, fW, -fH, fH, 1, camDistanceFactor * camera.camSetDistance );
+    ///gl->glFrustum(-fW, fW, -fH, fH, 1, camDistanceFactor * camera.camSetDistance );
     //projection.frustum(-fW, fW, -fH, fH, 1, camDistanceFactor * camera.camSetDistance );
 
 
     //  Set the modelview matrix.
-    gl->glMatrixMode(GL_MODELVIEW);
+    //gl->glMatrixMode(GL_MODELVIEW);
 
     //default MODELVIEW matrix is identity
 
@@ -182,11 +232,11 @@ void FormGPS::openGLControl_Draw()
 
         //  Clear the color and depth buffer.
         gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        gl->glLoadIdentity();
+        //gl->glLoadIdentity();
         modelview.setToIdentity();
 
         //camera does translations and rotations
-        camera.setWorldCam(gl, pivotAxlePos.easting, pivotAxlePos.northing, fixHeadingCam);
+        //camera.setWorldCam(gl, pivotAxlePos.easting, pivotAxlePos.northing, fixHeadingCam);
         //do our own matrices
         camera.setWorldCam(modelview, pivotAxlePos.easting, pivotAxlePos.northing, fixHeadingCam);
 
@@ -194,14 +244,14 @@ void FormGPS::openGLControl_Draw()
         calcFrustum(projection, modelview);
 
         //draw the field ground images
-        worldGrid->drawFieldSurface(gles, projection *modelview);
+        worldGrid->drawFieldSurface(gl, projection *modelview);
 
         ////Draw the world grid based on camera position
         gl->glDisable(GL_DEPTH_TEST);
         gl->glDisable(GL_TEXTURE_2D);
 
         ////if grid is on draw it
-        if (isGridOn) worldGrid->drawWorldGrid(gles,projection*modelview,gridZoom);
+        if (isGridOn) worldGrid->drawWorldGrid(gl,projection*modelview,gridZoom);
 
         //turn on blend for paths
         gl->glEnable(GL_BLEND);
@@ -281,6 +331,8 @@ void FormGPS::openGLControl_Draw()
                         triBuffer.allocate(triList->data(), count2 * sizeof(QVector3D));
                         triBuffer.release();
 
+                        //TODO: to skip triangles, we can use an index buffer and glDrawElements
+
                         /*
                         //if large enough patch and camera zoomed out, fake mipmap the patches, skip triangles
                         if (count2 >= (mipmap + 2))
@@ -288,24 +340,23 @@ void FormGPS::openGLControl_Draw()
                             int step = mipmap;
                             for (int i = 0; i < count2; i += step)
                             {
-                                vertices.append(QVector3D((*triList)[i].easting, (*triList)[i].northing, 0)); i++;
-                                vertices.append(QVector3D((*triList)[i].easting, (*triList)[i].northing, 0)); i++;
-                                //gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0); i++;
-                                //gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0); i++;
+                                gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0); i++;
+                                gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0); i++;
 
                                 //too small to mipmap it
                                 if (count2 - i <= (mipmap + 2)) step = 0;
                             }
                         } else {
                             for (int i = 0; i < count2; i++)
-                                vertices.append(QVector3D((*triList)[i].easting, (*triList)[i].northing, 0));
-                                //gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0);
+                                gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0);
                         }
                         triBuffer.allocate(vertices.data(),vertices.count()*sizeof(QVector3D));
                         */
-                        glDrawArraysColor(gles,projection*modelview,
+                        glDrawArraysColor(gl,projection*modelview,
                                           GL_TRIANGLE_STRIP, sectionColor,
                                           triBuffer,GL_FLOAT,count2);
+
+                        triBuffer.destroy();
                         //gl->glEnd();
                     }
                 }
@@ -313,8 +364,9 @@ void FormGPS::openGLControl_Draw()
         }
 
 
-        gl->glPolygonMode(GL_FRONT, GL_FILL);
-        gl->glColor3f(1, 1, 1);
+        //gl->glPolygonMode(GL_FRONT, GL_FILL);
+
+        //gl->glColor3f(1, 1, 1);
 
         //draw contour line if button on
         if (ct->isContourBtnOn) ct->drawContourLine(glContext);
@@ -323,6 +375,8 @@ void FormGPS::openGLControl_Draw()
         else { if (ABLine->isABLineSet || ABLine->isABLineBeingSet) ABLine->drawABLines(glContext); }
 
         //draw the flags if there are some
+
+        /* TODO: convert to VBO
         int flagCnt = flagPts.size();
         if (flagCnt > 0)
         {
@@ -377,10 +431,12 @@ void FormGPS::openGLControl_Draw()
         //glDrawText(40, 90, 1, 1, 1, "Courier", 12, " RadiusCT " + Convert.ToString(ct.radiusCT));
         //glDrawText(40, 105, 1, 0.5f, 1, "Courier", 12, " TrigSetDist(m) " + Convert.ToString(Math.Round(sectionTriggerStepDistance, 2)));
         //glDrawText(40, 120, 1, 0.5, 1, "Courier", 12, " frame msec " + Convert.ToString((int)(frameTime)));
+        */
 
         //draw the vehicle/implement
         vehicle->drawVehicle(glContext,modelview, projection);
 
+        /*
         //Back to normal
         gl->glColor3f(0.98f, 0.98f, 0.98f);
         gl->glDisable(GL_BLEND);
@@ -389,20 +445,20 @@ void FormGPS::openGLControl_Draw()
         gl->glMatrixMode(GL_PROJECTION);
         gl->glPushMatrix();
         gl->glLoadIdentity();
-
+        */
         projection.setToIdentity();
 
 
         //negative and positive on width, 0 at top to bottom ortho view
         //should this be the width of the opengl control?
-        gl->glOrtho(-(double)width / 2, width / 2, (double)height, 0, -1, 1);
+        //gl->glOrtho(-(double)width / 2, width / 2, (double)height, 0, -1, 1);
 
         projection.ortho(-(double)width / 2, width / 2, (double)height, 0, -1, 1);
 
         //  Create the appropriate modelview matrix.
-        gl->glMatrixMode(GL_MODELVIEW);
-        gl->glPushMatrix();
-        gl->glLoadIdentity();
+        //gl->glMatrixMode(GL_MODELVIEW);
+        //gl->glPushMatrix();
+        //gl->glLoadIdentity();
 
         modelview.setToIdentity();
 
@@ -412,28 +468,41 @@ void FormGPS::openGLControl_Draw()
             ////draw the background when in 3D
             if (camera.camPitch < -60)
             {
-                //-10 to -32 (top) is camera pitch range. Set skybox to line up with horizon
-                double hite = (camera.camPitch + 60) / -20 * 0.34;
-                //hite = 0.001;
+                if ( (lastWidth != width)  || (lastHeight != height)) {
+                    lastWidth = width;
+                    lastHeight = height;
 
-                //the background
-                double winLeftPos = -(double)width / 2;
-                double winRightPos = -winLeftPos;
-                gl->glEnable(GL_TEXTURE_2D);
+                    //-10 to -32 (top) is camera pitch range. Set skybox to line up with horizon
+                    double hite = (camera.camPitch + 60) / -20 * 0.34;
+                    //hite = 0.001;
+
+                    //the background
+                    double winLeftPos = -(double)width / 2;
+                    double winRightPos = -winLeftPos;
+
+                    //map texture coordinates to model coordinates
+                    VertexTexcoord vertices[] = {
+                        { QVector3D(winRightPos, 0.0, 0), QVector2D(0,1)}, //top right
+                        { QVector3D(winLeftPos, 0.0, 0), QVector2D(1,1)}, //top left
+                        { QVector3D(winRightPos, hite*height,0), QVector2D(0,0) }, //bottom right
+                        { QVector3D(winLeftPos, hite*height,0), QVector2D(1,0) } //bottom left
+                    };
+
+                    //rebuild sky buffer
+                    if (skyBuffer.isCreated())
+                        skyBuffer.destroy();
+                    skyBuffer.create();
+                    skyBuffer.bind();
+                    skyBuffer.allocate(vertices,4*sizeof(VertexTexcoord));
+                    skyBuffer.release();
+                }
+
                 texture1[0]->bind();
-                //gl->glBindTexture(GL_TEXTURE_2D, texture[0]);		// Select Our Texture
-
-                gl->glBegin(GL_TRIANGLE_STRIP);				// Build Quad From A Triangle Strip
-                gl->glTexCoord2i(0, 1); gl->glVertex2d(winRightPos, 0.0); // Top Right
-                gl->glTexCoord2i(1, 1); gl->glVertex2d(winLeftPos, 0.0); // Top Left
-                gl->glTexCoord2i(0, 0); gl->glVertex2d(winRightPos, hite * height); // Bottom Right
-                gl->glTexCoord2i(1, 0); gl->glVertex2d(winLeftPos, hite * height); // Bottom Left
-                gl->glEnd();						// Done Building Triangle Strip
-
-                //disable, straight color
-                //gl->glBindTexture(GL_TEXTURE_2D, 0); //unbind the texture
+                glDrawArraysTexture(gl,projection * modelview,
+                                    GL_TRIANGLE_STRIP, skyBuffer,
+                                    GL_FLOAT,
+                                    4);
                 texture1[0]->release();
-                gl->glDisable(GL_TEXTURE_2D);
             }
         }
 
@@ -442,106 +511,26 @@ void FormGPS::openGLControl_Draw()
         {
             if (ct->isContourBtnOn)
             {
-                QString dist;
-                //turn on distance widget
-                //TODO: tie into GUI
-                //txtDistanceOffABLine.Visible = true;
-                //lblDelta.Visible = true;
                 if (ct->distanceFromCurrentLine == 32000) ct->distanceFromCurrentLine = 0;
 
-                //drawLightBar(gl,openGLControl->viewportSize.width(), openGLControl->viewportSize.height(), ct->distanceFromCurrentLine * 0.1);
-                drawLightBar(gl,width, height, ct->distanceFromCurrentLine * 0.1);
-                if ((ct->distanceFromCurrentLine) < 0.0)
-                {
-                    txtDistanceOffABLine->setProperty("color","green");
-
-                    if (isMetric) dist = QString((int)fabs(ct->distanceFromCurrentLine * 0.1)) + " " + QChar(0x2192);
-                    else dist = QString((int)fabs(ct->distanceFromCurrentLine / 2.54 * 0.1)) + " " + QChar(0x2192);
-                    txtDistanceOffABLine->setProperty("text", dist);
-                }
-
-                else
-                {
-                    txtDistanceOffABLine->setProperty("color", "red");
-                    if (isMetric) dist = QString("") + QChar(0x2190) + " " + ((int)fabs(ct->distanceFromCurrentLine * 0.1));
-                    else dist = QString("") + QChar(0x2190)+ " " + ((int)fabs(ct->distanceFromCurrentLine / 2.54 * 0.1));
-                    txtDistanceOffABLine->setProperty("text", dist);
-                }
-
-                //if (guidanceLineHeadingDelta < 0) lblDelta.ForeColor = Color.Red;
-                //else lblDelta.ForeColor = Color.Green;
-
-                if (guidanceLineDistanceOff == 32020 || guidanceLineDistanceOff == 32000)
-                    btnAutoSteer->setProperty("buttonText", QChar(0x2715));
-                else
-                    btnAutoSteer->setProperty("buttonText", QChar(0x2713));
+                //drawLightBar(gl,width, height, ct->distanceFromCurrentLine * 0.1);
+            } else if (ABLine->isABLineSet || ABLine->isABLineBeingSet) {
+                //drawLightBar(gl, width, height,
+                //             ABLine->distanceFromCurrentLine * 0.1);
             }
 
-            else
-            {
-                if (ABLine->isABLineSet || ABLine->isABLineBeingSet)
-                {
-                    QString dist;
-
-                    txtDistanceOffABLine->setProperty("visible", "true");
-                    //lblDelta.Visible = true;
-                    drawLightBar(gl,
-                                 width,
-                                 height,
-                                 ABLine->distanceFromCurrentLine * 0.1);
-                    if ((ABLine->distanceFromCurrentLine) < 0.0)
-                    {
-                        // --->
-                        txtDistanceOffABLine->setProperty("color","green");
-                        if (isMetric) dist = QString((int)fabs(ABLine->distanceFromCurrentLine * 0.1)) + " \u21D2";
-                        else dist = QString((int)fabs(ABLine->distanceFromCurrentLine / 2.54 * 0.1)) + " \u21D2";
-                        txtDistanceOffABLine->setProperty("text", dist);
-                    }
-
-                    else
-                    {
-                        // <----
-                        txtDistanceOffABLine->setProperty("color", "red");
-                        if (isMetric) dist = QChar(0x21D0) + QString((int)fabs(ABLine->distanceFromCurrentLine * 0.1));
-                        else dist = QChar(0x21D0) + QString((int)fabs(ABLine->distanceFromCurrentLine / 2.54 * 0.1));
-                        txtDistanceOffABLine->setProperty("text", dist);
-                    }
-
-                    //if (guidanceLineHeadingDelta < 0) lblDelta.ForeColor = Color.Red;
-                    //else lblDelta.ForeColor = Color.Green;
-                    if (guidanceLineDistanceOff == 32020 || guidanceLineDistanceOff == 32000)
-                        btnAutoSteer->setProperty("buttonText", QChar(0x2715));
-                    else
-                        btnAutoSteer->setProperty("buttonText", QChar(0x2713));
-                }
-            }
-
-            //AB line is not set so turn off numbers
-            if (!ABLine->isABLineSet && !ABLine->isABLineBeingSet && !ct->isContourBtnOn)
-            {
-                //**txtDistanceOffABLine->setProperty("visible", "false");
-                //lblDelta.Visible = false;
-                //**btnAutoSteer->setProperty("buttonText","-");
-            }
-        }
-
-        else
-        {
-            txtDistanceOffABLine->setProperty("visible", "false");
-            //lblDelta.Visible = false;
-            btnAutoSteer->setProperty("buttonText","-");
         }
 
         gl->glFlush();//finish openGL commands
-        gl->glPopMatrix();//  Pop the modelview.
+        //gl->glPopMatrix();//  Pop the modelview.
 
         //  back to the projection and pop it, then back to the model view.
-        gl->glMatrixMode(GL_PROJECTION);
-        gl->glPopMatrix();
-        gl->glMatrixMode(GL_MODELVIEW);
+        //gl->glMatrixMode(GL_PROJECTION);
+        //gl->glPopMatrix();
+        //gl->glMatrixMode(GL_MODELVIEW);
 
         //reset point size
-        gl->glPointSize(1.0f);
+        //gl->glPointSize(1.0f);
         gl->glFlush();
 
         if (leftMouseDownOnOpenGL)
@@ -576,13 +565,12 @@ void FormGPS::openGLControl_Draw()
 void FormGPS::openGLControl_Initialized()
 {
     QOpenGLContext *glContext = QOpenGLContext::currentContext();
-    QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
     qmlview->resetOpenGLState();
 
     //Load all the textures
     qDebug() << "initializing Open GL.";
-    loadGLTextures(gl);
+    loadGLTextures();
     qDebug() << "textures loaded.";
 
     //load shaders, memory managed by parent thread, which is in this case,
@@ -593,11 +581,11 @@ void FormGPS::openGLControl_Initialized()
         assert(simpleColorShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/color_fshader.fsh"));
         assert(simpleColorShader->link());
     }
-    if (!gridShader) {
-        gridShader = new QOpenGLShaderProgram(QThread::currentThread()); //memory managed by Qt
-        assert(gridShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/worldgrid.vsh"));
-        assert(gridShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/color_fshader.fsh"));
-        assert(gridShader->link());
+    if (!texShader) {
+        texShader = new QOpenGLShaderProgram(QThread::currentThread()); //memory managed by Qt
+        assert(texShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/colortex_vshader.vsh"));
+        assert(texShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/colortex_fshader.fsh"));
+        assert(texShader->link());
     }
     if (!interpColorShader) {
         interpColorShader = new QOpenGLShaderProgram(QThread::currentThread()); //memory managed by Qt
@@ -611,6 +599,29 @@ void FormGPS::openGLControl_Initialized()
     qmlview->resetOpenGLState();
 }
 
+void FormGPS::openGLControl_Shutdown()
+{
+
+    qDebug() << "OpenGL shutting down... destroying buffers and shaders";
+    qDebug() << QOpenGLContext::currentContext();
+    //We should have a valid OpenGL context here so we can clean up shaders and buffers
+    delete simpleColorShader;
+    simpleColorShader = 0;
+
+    delete interpColorShader;
+    interpColorShader = 0;
+
+    //free textures
+    foreach(QOpenGLTexture *t, texture1)
+    {
+        t->destroy();
+    }
+
+    //destroy any openGL buffers.
+    worldGrid->destroyGLBuffers();
+    vehicle->destroyGLBuffers();
+
+}
 //main openGL draw function
 void FormGPS::openGLControlBack_Draw()
 {
@@ -1033,7 +1044,7 @@ void FormGPS::setZoom()
 
 }
 
-void FormGPS::loadGLTextures(QOpenGLFunctions_2_1 *gl)
+void FormGPS::loadGLTextures()
 {
     //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 

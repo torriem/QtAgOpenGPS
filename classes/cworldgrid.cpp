@@ -4,6 +4,7 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLBuffer>
 #include <QOpenGLFunctions_2_1>
+#include <QQuickView>
 #include <assert.h>
 #include "formgps.h"
 #include "aogsettings.h"
@@ -17,6 +18,13 @@ CWorldGrid::CWorldGrid(FormGPS *mf)
     :mf(mf)
 {
 
+}
+
+CWorldGrid::~CWorldGrid() {
+    //get opengl context for main qml view
+    //mf->qmlview->openglContext()->currentContext()->makeCurrent
+    //fieldBuffer.destroy();
+    //gridBuffer.destroy();
 }
 
 void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
@@ -169,4 +177,13 @@ void CWorldGrid::checkZoomWorldGrid(double northing, double easting) {
     if ((northing - northingMin) < 1500) { northingMin = northing - 2000; invalidateBuffers(); }
     if ((eastingMax - easting) < 1500)  { eastingMax = easting + 2000; invalidateBuffers(); }
     if ((easting - eastingMin) < 1500) { eastingMin = easting - 2000; invalidateBuffers(); }
+}
+
+void CWorldGrid::destroyGLBuffers() {
+    //assume valid OpenGL context
+    delete fieldShader;
+    fieldShader = 0;
+
+    fieldBuffer.destroy();
+    gridBuffer.destroy();
 }

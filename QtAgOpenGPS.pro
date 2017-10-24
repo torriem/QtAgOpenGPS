@@ -56,7 +56,8 @@ SOURCES += main.cpp\
     aogsettings.cpp \
     formgps_udpcomm.cpp \
     formgps_position.cpp \
-    formgps_serial.cpp
+    formgps_serial.cpp \
+    glutils.cpp
 
 HEADERS  += formgps.h \
     classes/cabline.h \
@@ -81,7 +82,8 @@ HEADERS  += formgps.h \
     openglcontrol.h \
     qmlutil.h \
     aogsettings.h \ 
-    common.h
+    common.h \
+    glutils.h
 
 FORMS    += formgps.ui
 

@@ -32,6 +32,7 @@ void FormGPS::setupGui()
     qmlview->setClearBeforeRendering(false);
     connect(qmlview,SIGNAL(beforeRendering()), this, SLOT(openGLControl_Draw()),Qt::DirectConnection);
     connect(qmlview,SIGNAL(sceneGraphInitialized()), this, SLOT(openGLControl_Initialized()),Qt::DirectConnection);
+    connect(qmlview,SIGNAL(sceneGraphInvalidated()), this, SLOT(openGLControl_Shutdown()),Qt::DirectConnection);
 
     qmlcontainer = QWidget::createWindowContainer(qmlview);
 
@@ -170,6 +171,7 @@ void FormGPS::setupGui()
     */
 
     //set up off-screen openGL context for section lookahead
+    backSurfaceFormat.setDepthBufferSize(24);
     backSurfaceFormat.setMajorVersion(4);
     backSurfaceFormat.setMinorVersion(3);
 

@@ -264,6 +264,79 @@ void FormGPS::updateFixPosition()
     //openGLControl_Draw routine triggered manually
     qmlview->update();
 
+    //LightBar if AB Line is set and turned on or contour
+    if (isLightbarOn)
+    {
+        if (ct->isContourBtnOn)
+        {
+            QString dist;
+            //turn on distance widget
+            //txtDistanceOffABLine.Visible = true;
+            //lblDelta.Visible = true;
+            if (ct->distanceFromCurrentLine == 32000) ct->distanceFromCurrentLine = 0;
+
+            if ((ct->distanceFromCurrentLine) < 0.0) {
+                txtDistanceOffABLine->setProperty("color","green");
+
+                if (isMetric) dist = QString((int)fabs(ct->distanceFromCurrentLine * 0.1)) + " " + QChar(0x2192);
+                else dist = QString((int)fabs(ct->distanceFromCurrentLine / 2.54 * 0.1)) + " " + QChar(0x2192);
+                txtDistanceOffABLine->setProperty("text", dist);
+            } else {
+                txtDistanceOffABLine->setProperty("color", "red");
+                if (isMetric) dist = QString("") + QChar(0x2190) + " " + ((int)fabs(ct->distanceFromCurrentLine * 0.1));
+                else dist = QString("") + QChar(0x2190)+ " " + ((int)fabs(ct->distanceFromCurrentLine / 2.54 * 0.1));
+                txtDistanceOffABLine->setProperty("text", dist);
+            }
+
+            //if (guidanceLineHeadingDelta < 0) lblDelta.ForeColor = Color.Red;
+            //else lblDelta.ForeColor = Color.Green;
+
+            if (guidanceLineDistanceOff == 32020 || guidanceLineDistanceOff == 32000)
+                btnAutoSteer->setProperty("buttonText", QChar(0x2715));
+            else
+                btnAutoSteer->setProperty("buttonText", QChar(0x2713));
+        } else if (ABLine->isABLineSet || ABLine->isABLineBeingSet) {
+            QString dist;
+
+            txtDistanceOffABLine->setProperty("visible", "true");
+            //lblDelta.Visible = true;
+            if ((ABLine->distanceFromCurrentLine) < 0.0) {
+                // --->
+                txtDistanceOffABLine->setProperty("color","green");
+                if (isMetric) dist = QString((int)fabs(ABLine->distanceFromCurrentLine * 0.1)) + " \u21D2";
+                else dist = QString((int)fabs(ABLine->distanceFromCurrentLine / 2.54 * 0.1)) + " \u21D2";
+                txtDistanceOffABLine->setProperty("text", dist);
+            } else {
+                // <----
+                txtDistanceOffABLine->setProperty("color", "red");
+                if (isMetric) dist = QChar(0x21D0) + QString((int)fabs(ABLine->distanceFromCurrentLine * 0.1));
+                else dist = QChar(0x21D0) + QString((int)fabs(ABLine->distanceFromCurrentLine / 2.54 * 0.1));
+                txtDistanceOffABLine->setProperty("text", dist);
+            }
+
+            //if (guidanceLineHeadingDelta < 0) lblDelta.ForeColor = Color.Red;
+            //else lblDelta.ForeColor = Color.Green;
+            if (guidanceLineDistanceOff == 32020 || guidanceLineDistanceOff == 32000)
+                btnAutoSteer->setProperty("buttonText", QChar(0x2715));
+            else
+                btnAutoSteer->setProperty("buttonText", QChar(0x2713));
+        }
+
+        //AB line is not set so turn off numbers
+        if (!ABLine->isABLineSet && !ABLine->isABLineBeingSet && !ct->isContourBtnOn)
+        {
+            txtDistanceOffABLine->setProperty("visible", "false");
+            //lblDelta.Visible = false;
+            btnAutoSteer->setProperty("buttonText","-");
+        }
+    } else {
+        txtDistanceOffABLine->setProperty("visible", "false");
+        //lblDelta.Visible = false;
+        btnAutoSteer->setProperty("buttonText","-");
+    }
+
+
+
     //go to our offscreen context and do the section lookahead
     //drawing.
     backOpenGLContext.makeCurrent(&backSurface);

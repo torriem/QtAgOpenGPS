@@ -40,10 +40,12 @@ public:
     const double texZoom = 20;
 
     CWorldGrid(FormGPS *mf);
+    ~CWorldGrid();
     void drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
     void drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, double _gridZoom);
     void createWorldGrid(double northing, double easting);
     void checkZoomWorldGrid(double northing, double easting);
+    void destroyGLBuffers();
 
 };
 

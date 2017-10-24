@@ -495,9 +495,30 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
                           rigidHitchBuffer,
                           GL_FLOAT,
                           2);
-
-
-
 }
 
+void CVehicle::destroyGLBuffers()
+{
+    //assume valid OpenGL context
+
+    trailingTankHitchBuffer.destroy();
+    tankDotBuffer.destroy();
+    toolHitchBuffer.destroy();
+    superSectionBuffer.destroy();
+
+    for (int j = 0; j <= MAXSECTIONS; j++)
+        sectionBuffer[j].destroy();
+
+    sectionDotsBuffer.destroy();
+    vehicleBodyBuffer.destroy();
+    pinsAndMarkersBuffer.destroy();
+    pointerBuffer.destroy();
+    rigidHitchBuffer.destroy();
+}
+
+void CVehicle::settingsChanged()
+{
+    //regenerate buffers since settings have changed.
+    buffersCurrent = false;
+}
 

@@ -20,7 +20,7 @@ private:
     QOpenGLBuffer hitchBuffer;
     QOpenGLBuffer toolHitchBuffer;
     QOpenGLBuffer superSectionBuffer;
-    QOpenGLBuffer sectionBuffer[MAXSECTIONS-1];
+    QOpenGLBuffer sectionBuffer[MAXSECTIONS+1];
     QOpenGLBuffer sectionDotsBuffer;
     QOpenGLBuffer vehicleBodyBuffer;
     QOpenGLBuffer pinsAndMarkersBuffer;
@@ -81,8 +81,10 @@ public:
 
     CVehicle(FormGPS *mf);
     void drawVehicle(QOpenGLContext *c, QMatrix4x4 &modelview, const QMatrix4x4 &projection);
-    void settingsChanged(); //notify us that settings changed so buffers need to be redone.
+    void destroyGLBuffers();
 
+public slots:
+    void settingsChanged(); //notify us that settings changed so buffers need to be redone.
 };
 
 #endif // CVEHICLE_H

@@ -341,14 +341,16 @@ public:
     double fovy = 45;
     double camDistanceFactor = -2;
     int mouseX = 0, mouseY = 0;
+    int lastWidth=-1, lastHeight=-1;
 
     //data buffer for pixels read from off screen buffer
     uchar grnPixels[80001];
     QImage grnPix;
 
     QOpenGLShaderProgram *simpleColorShader = 0;
-    QOpenGLShaderProgram *gridShader = 0;
+    QOpenGLShaderProgram *texShader = 0;
     QOpenGLShaderProgram *interpColorShader = 0;
+    QOpenGLBuffer skyBuffer;
 
 
     /***********************
@@ -383,6 +385,10 @@ public:
                            int count,
                            float pointSize=1.0f);
 
+    void glDrawArraysTexture(QOpenGLFunctions *gl, QMatrix4x4 mvp,
+                             GLenum operation,
+                             QOpenGLBuffer &vertexBuffer, GLenum glType,
+                             int count);
 
     void drawLightBar(QOpenGLFunctions_2_1 *gl, double Width, double Height, double offlineDistance);
     //void calcFrustum(QOpenGLFunctions_2_1 *gl);
@@ -390,7 +396,7 @@ public:
     void calcFrustum(const QMatrix4x4 &projection, const QMatrix4x4 &modelview);
 
     void setZoom();
-    void loadGLTextures(QOpenGLFunctions_2_1 *gl);
+    void loadGLTextures();
 
 private:
     Ui::FormGPS *ui;
@@ -468,6 +474,8 @@ public slots:
      ***************************/
     void openGLControl_Draw();
     void openGLControl_Initialized();
+    void openGLControl_Shutdown();
+    //void openGLControl_Resize();
 
     void openGLControlBack_Draw();
     void openGLControlBack_Initialized();
