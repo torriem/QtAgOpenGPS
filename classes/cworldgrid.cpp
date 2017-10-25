@@ -78,6 +78,7 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
     fieldShader->setUniformValue("color", fieldColor);
     fieldShader->setUniformValue("texture", 0); //magic number texture 0?
     fieldShader->setUniformValue("mvpMatrix", mvp);
+    fieldShader->setUniformValue("useColor", true);
 
     fieldBuffer.bind();
     fieldShader->enableAttributeArray("vertex");

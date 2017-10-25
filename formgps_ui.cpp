@@ -9,6 +9,9 @@
 #include "cvehicle.h"
 #include "csection.h"
 
+//#include <QGuiApplication>
+//#include <QtGui/private/qguiapplication_p.h>
+//#include <QtGui/qpa/qplatformintegration.h>
 #include <QtOpenGL>
 #include <QOpenGLFunctions_2_1>
 #include <functional>
@@ -27,7 +30,7 @@ void FormGPS::setupGui()
     qmlview->setSource(QUrl("qrc:/qml/MainWindow.qml"));
     qmlview->setColor(Qt::transparent);
     //qmlview->setGeometry(0,0,800,600);
-    qmlview->show();
+    //qmlview->show();
 
     qmlview->setClearBeforeRendering(false);
     connect(qmlview,SIGNAL(beforeRendering()), this, SLOT(openGLControl_Draw()),Qt::DirectConnection);
@@ -35,6 +38,7 @@ void FormGPS::setupGui()
     connect(qmlview,SIGNAL(sceneGraphInvalidated()), this, SLOT(openGLControl_Shutdown()),Qt::DirectConnection);
 
     qmlcontainer = QWidget::createWindowContainer(qmlview);
+
 
     //place the widget in our window's layout
     ui->verticalLayout->addWidget(qmlcontainer);
@@ -171,19 +175,24 @@ void FormGPS::setupGui()
     */
 
     //set up off-screen openGL context for section lookahead
-    backSurfaceFormat.setDepthBufferSize(24);
-    backSurfaceFormat.setMajorVersion(4);
-    backSurfaceFormat.setMinorVersion(3);
+    /*
+    if (QGuiApplicationPrivate::platform_integration->hasCapability(QPlatformIntegration::ThreadedOpenGL)) {
+        qDebug() << "We in a multithread environment?";
+        backSurfaceFormat.setDepthBufferSize(24);
+        backSurfaceFormat.setMajorVersion(4);
+        backSurfaceFormat.setMinorVersion(3);
 
-    backOpenGLContext.setFormat(backSurfaceFormat);
-    backOpenGLContext.create();
-    assert(backOpenGLContext.isValid());
+        backOpenGLContext.setFormat(backSurfaceFormat);
+        backOpenGLContext.create();
+        //if we're on a single-threaded opengl platform, this will fail
+        //we'll have to check for it when drawing to the back opengl
+        //surface and just reuse the QML context.
 
-    backSurface.setFormat(backSurfaceFormat);
-    backSurface.create();
-    assert(backSurface.isValid());
-
-
+        backSurface.setFormat(backSurfaceFormat);
+        backSurface.create();
+        assert(backSurface.isValid());
+    }
+    */
     tmrWatchdog = new QTimer(this);
     connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(tmrWatchdog_timeout()));
     tmrWatchdog->start(50); //fire every 50ms.

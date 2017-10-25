@@ -1,13 +1,12 @@
-#version 120
-//#ifdef GL_ES
-//precision highp int;
-//precision highp float;
-//#endif
+#ifdef GL_ES
+precision highp int;
+precision highp float;
+#endif
 /* A very simple fragment shader combines a texture color
  * with a solid color.
  */
-uniform vec4 color = vec4(1,1,1,1);
-uniform bool useColor = true;
+uniform vec4 color;
+uniform bool useColor;
 uniform sampler2D texture;
 varying vec2 texcoord;
 

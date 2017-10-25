@@ -54,6 +54,7 @@ void FormGPS::glDrawArraysColor(QOpenGLFunctions *gl,
 
     vertexBuffer.bind();
 
+    //TODO: these require a VBA to be bound; we need to create them I suppose.
     //enable the vertex attribute array in shader
     simpleColorShader->enableAttributeArray("vertex");
     //use attribute array from buffer, using non-normalized vertices
@@ -213,10 +214,9 @@ void FormGPS::openGLControl_Draw()
     projection.perspective(fovy, width / (double)height, 1, camDistanceFactor * camera.camSetDistance);
 
 
-    double aspect = width / (float)height;
-    double fH = tan( fovy / 360 * M_PI);
-    double fW = fH * aspect;
-
+    //double aspect = width / (float)height;
+    //double fH = tan( fovy / 360 * M_PI);
+    //double fW = fH * aspect;
     ///gl->glFrustum(-fW, fW, -fH, fH, 1, camDistanceFactor * camera.camSetDistance );
     //projection.frustum(-fW, fW, -fH, fH, 1, camDistanceFactor * camera.camSetDistance );
 
@@ -559,12 +559,15 @@ void FormGPS::openGLControl_Draw()
         gl->glClear(GL_COLOR_BUFFER_BIT);
     }
     qmlview->resetOpenGLState();
+
+    //directly call section lookahead GL stuff from here
+    openGLControlBack_Draw();
 }
 
 /// Handles the OpenGLInitialized event of the openGLControl control.
 void FormGPS::openGLControl_Initialized()
 {
-    QOpenGLContext *glContext = QOpenGLContext::currentContext();
+    //QOpenGLContext *glContext = QOpenGLContext::currentContext();
 
     qmlview->resetOpenGLState();
 
@@ -632,21 +635,35 @@ void FormGPS::openGLControlBack_Draw()
     //thread can then run the second part of this function, which I've
     //split out into its own function.
     QOpenGLContext *glContext = QOpenGLContext::currentContext();
-    QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+    QOpenGLFunctions *gl = glContext->functions();
     QMatrix4x4 projection;
     QMatrix4x4 modelview;
 
-    int width = glContext->surface()->size().width();
-    int height = glContext->surface()->size().height();
+    /* use the QML context with an offscreen surface to draw
+     * the lookahead triangles
+     */
+    if (!backFBO ) {
+        QOpenGLFramebufferObjectFormat format;
+        format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
+        //TODO: backFBO is leaking... delete it in the destructor?
+        //I think context has to be active to delete it...
+        backFBO = new QOpenGLFramebufferObject(QSize(400,400),format);
+    }
+
+    glContext->makeCurrent(&backSurface);
+    backFBO->bind();
+    glContext->functions()->glViewport(0,0,400,400);
+
+    //int width = glContext->surface()->size().width();
+    //int height = glContext->surface()->size().height();
 
     gl->glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
-
     /* set projection */
-    gl->glMatrixMode(GL_PROJECTION);
+    //gl->glMatrixMode(GL_PROJECTION);
 
     //  Load the identity.
-    gl->glLoadIdentity();
+    //gl->glLoadIdentity();
     projection.setToIdentity();
 
     // change these at your own peril!!!! Very critical
@@ -654,33 +671,36 @@ void FormGPS::openGLControlBack_Draw()
     //gl->glPerspective(6.0f, 1, 1, 6000);
     projection.perspective(6.0f,1,1,6000);
 
-    double fH = tan( 6.0 / 360 * M_PI);
-    double fW = fH;
-    gl->glFrustum(-fW, fW, -fH, fH, 1, 6000 );
+    //double fH = tan( 6.0 / 360 * M_PI);
+    //double fW = fH;
+    //gl->glFrustum(-fW, fW, -fH, fH, 1, 6000 );
 
     /* end set projection */
 
     //  Set the modelview matrix.
-    gl->glMatrixMode(GL_MODELVIEW);
+    //gl->glMatrixMode(GL_MODELVIEW);
 
+    gl->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
-    gl->glLoadIdentity();					// Reset The View
+    //gl->glLoadIdentity();					// Reset The View
     modelview.setToIdentity();
 
     //back the camera up
-    gl->glTranslated(0, 0, -390);
+    //gl->glTranslated(0, 0, -390);
     modelview.translate(0, 0, -390);
 
     //rotate camera so heading matched fix heading in the world
-    gl->glRotated(toDegrees(fixHeadingSection), 0, 0, 1);
+    //gl->glRotated(toDegrees(fixHeadingSection), 0, 0, 1);
     modelview.rotate(toDegrees(fixHeadingSection), 0, 0, 1);
 
     //translate to that spot in the world
-    gl->glTranslated(-toolPos.easting, -toolPos.northing, -fixZ);
+    //gl->glTranslated(-toolPos.easting, -toolPos.northing, -fixZ);
     modelview.translate(-toolPos.easting, -toolPos.northing, -fixZ);
 
     //patch color
-    gl->glColor3f(0.0f, 0.5f, 0.0f);
+    //QColor patchColor(0.0f, 0.5f, 0.0f);
+    QColor patchColor = QColor(0,128,0);
+    //gl->glColor3f(0.0f, 0.5f, 0.0f);
 
     //calculate the frustum for the section control window
     calcFrustum(projection, modelview);
@@ -721,18 +741,30 @@ void FormGPS::openGLControlBack_Draw()
 
                 if (isDraw)
                 {
+                    QOpenGLBuffer triBuffer;
+
+                    triBuffer.create();
+                    triBuffer.bind();
+
+                    //triangle lists are now using QVector3D, so we can allocate buffers
+                    //directly from list data.
+
+                    triBuffer.allocate(triList->data(), count2 * sizeof(QVector3D));
+                    triBuffer.release();
+
                     //draw the triangles in each triangle strip
-                    gl->glBegin(GL_TRIANGLE_STRIP);
-                    for (int i = 0; i < count2; i++)
-                        gl->glVertex3d((*triList)[i].x(), (*triList)[i].y(), 0);
-                    gl->glEnd();
+                    glDrawArraysColor(gl,projection*modelview,
+                                      GL_TRIANGLE_STRIP, patchColor,
+                                      triBuffer,GL_FLOAT,count2);
+
+                    triBuffer.destroy();
                 }
             }
         }
     }
 
     //draw boundary line
-    boundary->drawBoundaryLineOnBackBuffer(gl);
+    //TODO: boundary->drawBoundaryLineOnBackBuffer(gl);
 
     //determine farthest ahead lookahead - is the height of the readpixel line
     double rpHeight = 0;
@@ -754,13 +786,20 @@ void FormGPS::openGLControlBack_Draw()
     gl->glReadPixels(vehicle->rpXPosition, 202, vehicle->rpWidth, (int)rpHeight,
                         GL_GREEN, GL_UNSIGNED_BYTE, grnPixels);
 
-    grnPix = QImage(grnPixels,vehicle->rpWidth,rpHeight,vehicle->rpWidth,QImage::Format_Grayscale8);
+    //grnPix = QImage(grnPixels,vehicle->rpWidth,rpHeight,vehicle->rpWidth,QImage::Format_Grayscale8);
+    grnPix = backFBO->toImage().mirrored();
 
     //The remaining code from the original method in the C# code is
     //broken out into a callback in formgps.c called
     //processSectionLookahead().
 
-    gl->glFlush();
+    glContext->functions()->glFlush();
+
+    //restore QML's context
+    backFBO->bindDefault();
+    glContext->doneCurrent();
+    glContext->makeCurrent(qmlview);
+    qmlview->resetOpenGLState();
 }
 
 /*

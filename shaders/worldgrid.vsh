@@ -1,4 +1,7 @@
-#version 120
+#ifdef GL_ES
+precision highp int;
+precision highp float;
+#endif
 /* A very simple shader that doesn't use any textures
  */
 

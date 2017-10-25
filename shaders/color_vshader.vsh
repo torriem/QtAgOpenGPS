@@ -1,4 +1,7 @@
-#version 120
+#ifdef GL_ES
+precision highp int;
+precision highp float;
+#endif
 /* A very simple shader that doesn't use any textures
  */
 
@@ -10,7 +13,7 @@ attribute highp vec3 vertex;
 //the 4x4 MVP matix
 uniform highp mat4 mvpMatrix;
 //point size
-uniform highp float pointSize = 1.0;
+uniform highp float pointSize;
 
 //varying highp vec4 qt_TexCoord0;
 

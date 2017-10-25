@@ -248,7 +248,7 @@ void CVehicle::makeBuffers()
 void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
                            const QMatrix4x4 &projection) {
     QOpenGLFunctions *gl =glContext->functions();
-    QOpenGLFunctions_2_1 *gl21 = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+    //QOpenGLFunctions_2_1 *gl21 = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
     QColor color;
     makeBuffers(); //create openGL buffers if necessary.
@@ -256,7 +256,7 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
     //translate and rotate at pivot axle
     //this will change the modelview for our caller, which is what
     //was happening here.
-    gl21->glTranslated(mf->fixEasting, mf->fixNorthing, 0);
+    //gl21->glTranslated(mf->fixEasting, mf->fixNorthing, 0);
     modelview.translate(mf->fixEasting, mf->fixNorthing, 0);
 
     //gl->glPushMatrix();
@@ -413,7 +413,7 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
     //draw vehicle
     //gl21->glPopMatrix();
 
-    gl21->glRotated(toDegrees(-mf->fixHeading), 0.0, 0.0, 1.0);
+    //gl21->glRotated(toDegrees(-mf->fixHeading), 0.0, 0.0, 1.0);
     modelview.rotate(toDegrees(-mf->fixHeading), 0.0, 0.0, 1.0);
 
     //draw the vehicle Body

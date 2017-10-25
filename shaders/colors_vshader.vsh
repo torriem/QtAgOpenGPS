@@ -1,4 +1,7 @@
-#version 120
+#ifdef GL_ES
+precision highp int;
+precision highp float;
+#endif
 /* A very simple shader that doesn't use any textures
  */
 
@@ -18,7 +21,7 @@ uniform highp mat4 mvpMatrix;
 varying highp vec4 fColor;
 
 //point size
-uniform highp float pointSize = 1.0;
+uniform highp float pointSize;
 
 
 void main(void)

@@ -8,6 +8,7 @@
 #include "csection.h"
 #include "cboundary.h"
 #include <QQuickView>
+#include <QOpenGLContext>
 #include <QPair>
 #include "glm.h"
 #include <string>
@@ -336,23 +337,49 @@ void FormGPS::updateFixPosition()
     }
 
 
-
+    /*
     //go to our offscreen context and do the section lookahead
     //drawing.
-    backOpenGLContext.makeCurrent(&backSurface);
-    if (!backFBO ) {
-        QOpenGLFramebufferObjectFormat format;
-        format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
-        //TODO: backFBO is leaking... delete it in the destructor?
-        //I think context has to be active to delete it...
-        backFBO = new QOpenGLFramebufferObject(QSize(400,400),format);
+
+    if (!backOpenGLContext.isValid()) {
+        //we're on a single-threaded implementation, so we'll
+        //have to use the QML context for our rendering.
+        qmlview->resetOpenGLState();
+        QOpenGLContext *glContext = QOpenGLContext::currentContext();
+        if (!backFBO ) {
+            QOpenGLFramebufferObjectFormat format;
+            format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
+            //TODO: backFBO is leaking... delete it in the destructor?
+            //I think context has to be active to delete it...
+            backFBO = new QOpenGLFramebufferObject(QSize(400,400),format);
+        }
+        glContext->makeCurrent(&backSurface);
+        backFBO->bind();
+        glContext->functions()->glViewport(0,0,400,400);
+        //openGLControlBack_Draw();
+        glContext->functions()->glFlush();
+        backFBO->bindDefault();
+        glContext->doneCurrent();
+        qmlview->resetOpenGLState();
+    } else {
+        backOpenGLContext.makeCurrent(&backSurface);
+        if (!backFBO ) {
+            QOpenGLFramebufferObjectFormat format;
+            format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
+            //TODO: backFBO is leaking... delete it in the destructor?
+            //I think context has to be active to delete it...
+            backFBO = new QOpenGLFramebufferObject(QSize(400,400),format);
+        }
+
+        backFBO->bind();
+        backOpenGLContext.functions()->glViewport(0,0,400,400);
+        openGLControlBack_Draw();
+        backOpenGLContext.functions()->glFlush();
+        backFBO->bindDefault();
+        backOpenGLContext.doneCurrent();
     }
-    backFBO->bind();
-    backOpenGLContext.functions()->glViewport(0,0,400,400);
-    openGLControlBack_Draw();
-    backOpenGLContext.functions()->glFlush();
-    backFBO->bindDefault();
-    backOpenGLContext.doneCurrent();
+    */
+
     //since we're in the main thread we can directly call processSectionLookahead()
     processSectionLookahead();
 

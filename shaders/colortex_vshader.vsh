@@ -1,16 +1,19 @@
-#version 120
+#ifdef GL_ES
+precision highp int;
+precision highp float;
+#endif
 /* A very simple shader that doesn't use any textures
  */
 
 //the 4x4 MVP matix
-uniform highp mat4 mvpMatrix;
+uniform mat4 mvpMatrix;
 
 //pull in 3d vertices from buffer
-attribute highp vec3 vertex;
+attribute vec3 vertex;
 //texture coordinate to map to
-attribute highp vec2 texcoord_src;
+attribute vec2 texcoord_src;
 //transmit the interpolated coordinate to fragment shader
-varying highp vec2 texcoord;
+varying vec2 texcoord;
 
 void main(void)
 {
