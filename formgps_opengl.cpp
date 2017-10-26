@@ -783,11 +783,15 @@ void FormGPS::openGLControlBack_Draw()
     if (rpHeight < 8) rpHeight = 8;
 
     //read the whole block of pixels up to max lookahead, one read only
-    gl->glReadPixels(vehicle->rpXPosition, 202, vehicle->rpWidth, (int)rpHeight,
-                        GL_GREEN, GL_UNSIGNED_BYTE, grnPixels);
+    //OpenGL ES only can read complete RGB value, or alpha. so we'll
+    //try alpha.
+    //gl->glReadPixels(vehicle->rpXPosition, 202, vehicle->rpWidth, (int)rpHeight,
+    //                    GL_RGB, GL_UNSIGNED_BYTE, lookaheadPixels);
 
-    //grnPix = QImage(grnPixels,vehicle->rpWidth,rpHeight,vehicle->rpWidth,QImage::Format_Grayscale8);
-    grnPix = backFBO->toImage().mirrored();
+    //grnPix = QImage((uchar *)lookaheadPixels,vehicle->rpWidth,rpHeight,vehicle->rpWidth,QImage::Format_RGB888);
+    grnPix = backFBO->toImage().mirrored().convertToFormat(QImage::Format_RGB888);
+    grnPix = grnPix.copy(vehicle->rpXPosition, 202, vehicle->rpWidth, (int)rpHeight);
+    memcpy(lookaheadPixels, grnPix.constBits(), grnPix.size().width() * grnPix.size().height() * 3);
 
     //The remaining code from the original method in the C# code is
     //broken out into a callback in formgps.c called

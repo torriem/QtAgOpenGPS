@@ -37,7 +37,7 @@ FormGPS::FormGPS(QWidget *parent) :
     vehicle = new CVehicle(this);
     boundary = new CBoundary(this);
 
-    isUDPServerOn = s.value("port/udp_on", false).toBool();
+    isUDPServerOn = s.value("port/udp_on", true).toBool();
 
 
     /* test data to see if drawing routines are working. */
@@ -73,6 +73,8 @@ FormGPS::FormGPS(QWidget *parent) :
     section[2].positionRight = 4.0;
     section[3].positionLeft = 4.0;
     section[3].positionRight = 8.0;
+    vehicle->numOfSections = 4;
+    vehicle->toolTrailingHitchLength = -10; //30 foot hitch to see following action better
 
     sectionCalcWidths();
     //turn on the right number of section buttons.
@@ -136,7 +138,7 @@ void FormGPS::sectionCalcWidths()
 //This used to be part of openGLControlBack_Draw in the C# code, but
 //because openGL rendering can potentially be in another thread, it's
 //broken out here, and runs when the QOpenGLWidget that does the section
-//lookahead rendering has finished a frame.  So the grnPixels array has
+//lookahead rendering has finished a frame.  So the lookaheadPixels array has
 //been populated already by the rendering routine.
 void FormGPS::processSectionLookahead() {
 
@@ -167,7 +169,7 @@ void FormGPS::processSectionLookahead() {
     if (rpHeight > 195) rpHeight = 195;
     if (rpHeight < 8) rpHeight = 8;
 
-    //grnPixels was read in the OpenGL rendering routine.
+    //lookaheadPixels was read in the OpenGL rendering routine.
 
     //10 % min is required for overlap, otherwise it never would be on.
     int pixLimit = (int)((double)(vehicle->rpWidth * rpHeight)/(double)(vehicle->numOfSections*1.5));
@@ -179,7 +181,7 @@ void FormGPS::processSectionLookahead() {
         //look for anything applied coming up
         for (int a = 0; a < (vehicle->rpWidth * rpHeight); a++)
         {
-            if (grnPixels[a] != 0 )
+            if (lookaheadPixels[a].green != 0 )
             {
                 if (totalPixs++ > pixLimit)
                 {
@@ -188,7 +190,7 @@ void FormGPS::processSectionLookahead() {
                 }
 
                 //check for a boundary line
-                if (grnPixels[a] > 200)
+                if (lookaheadPixels[a].green > 200)
                 {
                     vehicle->isSuperSectionAllowedOn = false;
                     break;
@@ -256,7 +258,7 @@ void FormGPS::processSectionLookahead() {
                     {
                         for (int a = start; a < end; a++)
                         {
-                            if (grnPixels[a] == 0)
+                            if (lookaheadPixels[a].green == 0)
                             {
                                 if (tagged++ > vehicle->toolMinUnappliedPixels)
                                 {
@@ -284,7 +286,7 @@ GetMeOutaHere:
                     {
                         for (int a = start; a < end; a++)
                         {
-                            if (grnPixels[a] > 240) //&& )
+                            if (lookaheadPixels[a].green > 240) //&& )
                             {
                                 section[j].isSectionRequiredOn = false;
                                 section[j].sectionOffRequest = true;
@@ -330,7 +332,7 @@ GetMeOutaHere:
                     {
                         for (int a = start; a < end; a++)
                         {
-                            if (grnPixels[a] == 0)
+                            if (lookaheadPixels[a].green == 0)
                             {
                                 if (tagged++ > vehicle->toolMinUnappliedPixels)
                                 {

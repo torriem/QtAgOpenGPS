@@ -344,7 +344,8 @@ public:
     int lastWidth=-1, lastHeight=-1;
 
     //data buffer for pixels read from off screen buffer
-    uchar grnPixels[80001];
+    //uchar grnPixels[80001];
+    LookAheadPixels lookaheadPixels[80001];
     QImage grnPix;
 
     QOpenGLShaderProgram *simpleColorShader = 0;

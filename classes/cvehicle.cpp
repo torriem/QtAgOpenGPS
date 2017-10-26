@@ -1,3 +1,4 @@
+#include <QtGlobal>
 #include "cvehicle.h"
 #include "formgps.h"
 #include <QOpenGLContext>
