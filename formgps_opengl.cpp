@@ -482,10 +482,10 @@ void FormGPS::openGLControl_Draw()
 
                     //map texture coordinates to model coordinates
                     VertexTexcoord vertices[] = {
-                        { QVector3D(winRightPos, 0.0, 0), QVector2D(0,1)}, //top right
-                        { QVector3D(winLeftPos, 0.0, 0), QVector2D(1,1)}, //top left
-                        { QVector3D(winRightPos, hite*height,0), QVector2D(0,0) }, //bottom right
-                        { QVector3D(winLeftPos, hite*height,0), QVector2D(1,0) } //bottom left
+                        { QVector3D(winRightPos, 0.0, 0), QVector2D(0,0)}, //top right
+                        { QVector3D(winLeftPos, 0.0, 0), QVector2D(1,0)}, //top left
+                        { QVector3D(winRightPos, hite*height,0), QVector2D(0,1) }, //bottom right
+                        { QVector3D(winLeftPos, hite*height,0), QVector2D(1,1) } //bottom left
                     };
 
                     //rebuild sky buffer
