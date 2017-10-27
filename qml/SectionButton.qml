@@ -86,7 +86,7 @@ Rectangle {
 
             PropertyChanges {
                 target: rect
-                color: "green"
+                color: "lime"
             }
             PropertyChanges {
                 target: label
