@@ -74,6 +74,7 @@ FormGPS::FormGPS(QWidget *parent) :
     section[3].positionLeft = 4.0;
     section[3].positionRight = 8.0;
     vehicle->numOfSections = 4;
+    vehicle->numSuperSection = 5;
     vehicle->toolTrailingHitchLength = -10; //30 foot hitch to see following action better
 
     sectionCalcWidths();
