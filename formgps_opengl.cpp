@@ -23,8 +23,6 @@
 
 #include <assert.h>
 
-#include <iostream>
-
 struct VertexTexcoord {
     QVector3D vertex;
     QVector2D texcoord;
@@ -193,7 +191,8 @@ void FormGPS::openGLControl_Draw()
     gl->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //glDisable(GL_CULL_FACE);
-    gl->glCullFace(GL_BACK);
+    //gl->glCullFace(GL_BACK);
+    gl->glDisable(GL_CULL_FACE);
 
     //set the camera to right distance
     setZoom();
@@ -241,7 +240,7 @@ void FormGPS::openGLControl_Draw()
         camera.setWorldCam(modelview, pivotAxlePos.easting, pivotAxlePos.northing, fixHeadingCam);
 
         //calculate the frustum planes for culling
-        calcFrustum(projection, modelview);
+        calcFrustum(projection*modelview);
 
         //draw the field ground images
         worldGrid->drawFieldSurface(gl, projection *modelview);
@@ -484,20 +483,36 @@ void FormGPS::openGLControl_Draw()
                     VertexTexcoord vertices[] = {
                         { QVector3D(winRightPos, 0.0, 0), QVector2D(0,0)}, //top right
                         { QVector3D(winLeftPos, 0.0, 0), QVector2D(1,0)}, //top left
-                        { QVector3D(winRightPos, hite*height,0), QVector2D(0,1) }, //bottom right
-                        { QVector3D(winLeftPos, hite*height,0), QVector2D(1,1) } //bottom left
+                        { QVector3D(winRightPos, hite*(double)height,0), QVector2D(0,1) }, //bottom right
+                        { QVector3D(winLeftPos, hite*(double)height,0), QVector2D(1,1) }, //bottom left
                     };
-
+                    /*
+                    QVector3D vertices[] = {
+                        QVector3D(winRightPos, 0.0, 0), //top right
+                        QVector3D(winLeftPos, 0.0, 0), //top left
+                        QVector3D(winRightPos, hite*(double)height,0), //bottom right
+                        QVector3D(winLeftPos, hite*(double)height,0), //bottom left
+                    };
+                    */
                     //rebuild sky buffer
                     if (skyBuffer.isCreated())
                         skyBuffer.destroy();
                     skyBuffer.create();
                     skyBuffer.bind();
                     skyBuffer.allocate(vertices,4*sizeof(VertexTexcoord));
+                    //skyBuffer.allocate(vertices,4*sizeof(QVector3D));
                     skyBuffer.release();
                 }
 
+                //QColor blue("#0000FF");
                 texture1[0]->bind();
+                /*
+                glDrawArraysColor(gl,projection * modelview,
+                                    GL_TRIANGLE_STRIP, blue,
+                                    skyBuffer,
+                                    GL_FLOAT,
+                                    4);
+                */
                 glDrawArraysTexture(gl,projection * modelview,
                                     GL_TRIANGLE_STRIP, skyBuffer,
                                     GL_FLOAT,
@@ -703,7 +718,7 @@ void FormGPS::openGLControlBack_Draw()
     //gl->glColor3f(0.0f, 0.5f, 0.0f);
 
     //calculate the frustum for the section control window
-    calcFrustum(projection, modelview);
+    calcFrustum(projection* modelview);
 
     //to draw or not the triangle patch
     bool isDraw;
@@ -792,6 +807,7 @@ void FormGPS::openGLControlBack_Draw()
     grnPix = backFBO->toImage().mirrored().convertToFormat(QImage::Format_RGB888);
     grnPix = grnPix.copy(vehicle->rpXPosition, 202, vehicle->rpWidth, (int)rpHeight);
     memcpy(lookaheadPixels, grnPix.constBits(), grnPix.size().width() * grnPix.size().height() * 3);
+    grnPix = backFBO->toImage().mirrored().convertToFormat(QImage::Format_RGB888);
 
     //The remaining code from the original method in the C# code is
     //broken out into a callback in formgps.c called
@@ -944,127 +960,69 @@ void FormGPS::drawLightBar(QOpenGLFunctions_2_1 *gl, double Width, double Height
     }
 }
 
-//void FormGPS::calcFrustum(QOpenGLFunctions_2_1 *gl)
-void FormGPS::calcFrustum(const QMatrix4x4 &projection, const QMatrix4x4 &modelview)
+void FormGPS::calcFrustum(const QMatrix4x4 &mvp)
 {
-    //QOpenGLFunctions_1_1 *gl = glContext->versionFunctions<QOpenGLFunctions_1_1>();
-
-    //float proj[16];							// For Grabbing The PROJECTION Matrix
-    //float modl[16];							// For Grabbing The MODELVIEW Matrix
-    //float clip[16];							// Result Of Concatenating PROJECTION and MODELVIEW
-    //float t;											    // Temporary Work Variable
-
-    /*
-    gl->glGetFloatv (GL_PROJECTION_MATRIX, proj);		// Grab The Current PROJECTION Matrieprojection
-    gl->glGetFloatv(GL_MODELVIEW_MATRIX, modl);		// Grab The Current MODELVIEW Matrix
-
-
-    // Concatenate (Multiply) The Two Matricies
-    clip[0] = modl[0] * proj[0] + modl[1] * proj[4] + modl[2] * proj[8] + modl[3] * proj[12];
-    clip[1] = modl[0] * proj[1] + modl[1] * proj[5] + modl[2] * proj[9] + modl[3] * proj[13];
-    clip[2] = modl[0] * proj[2] + modl[1] * proj[6] + modl[2] * proj[10] + modl[3] * proj[14];
-    clip[3] = modl[0] * proj[3] + modl[1] * proj[7] + modl[2] * proj[11] + modl[3] * proj[15];
-
-    clip[4] = modl[4] * proj[0] + modl[5] * proj[4] + modl[6] * proj[8] + modl[7] * proj[12];
-    clip[5] = modl[4] * proj[1] + modl[5] * proj[5] + modl[6] * proj[9] + modl[7] * proj[13];
-    clip[6] = modl[4] * proj[2] + modl[5] * proj[6] + modl[6] * proj[10] + modl[7] * proj[14];
-    clip[7] = modl[4] * proj[3] + modl[5] * proj[7] + modl[6] * proj[11] + modl[7] * proj[15];
-
-    clip[8] = modl[8] * proj[0] + modl[9] * proj[4] + modl[10] * proj[8] + modl[11] * proj[12];
-    clip[9] = modl[8] * proj[1] + modl[9] * proj[5] + modl[10] * proj[9] + modl[11] * proj[13];
-    clip[10] = modl[8] * proj[2] + modl[9] * proj[6] + modl[10] * proj[10] + modl[11] * proj[14];
-    clip[11] = modl[8] * proj[3] + modl[9] * proj[7] + modl[10] * proj[11] + modl[11] * proj[15];
-
-    clip[12] = modl[12] * proj[0] + modl[13] * proj[4] + modl[14] * proj[8] + modl[15] * proj[12];
-    clip[13] = modl[12] * proj[1] + modl[13] * proj[5] + modl[14] * proj[9] + modl[15] * proj[13];
-    clip[14] = modl[12] * proj[2] + modl[13] * proj[6] + modl[14] * proj[10] + modl[15] * proj[14];
-    clip[15] = modl[12] * proj[3] + modl[13] * proj[7] + modl[14] * proj[11] + modl[15] * proj[15];
-    */
-
-    const float *clip;
-
-    clip = (projection * modelview).constData();
-
+    //const float *clip = mvp.constData(); //column major order
 
     // Extract the RIGHT clipping plane
-    frustum[0] = clip[3] - clip[0];
-    frustum[1] = clip[7] - clip[4];
-    frustum[2] = clip[11] - clip[8];
-    frustum[3] = clip[15] - clip[12];
-
-    // Normalize it
-    //t = (float)Math.Sqrt(frustum[0] * frustum[0] + frustum[1] * frustum[1] + frustum[2] * frustum[2]);
-    //frustum[0] /= t;
-    //frustum[1] /= t;
-    //frustum[2] /= t;
-    //frustum[3] /= t;
-
+    frustum[0] = mvp(3,0) - mvp(0,0);
+    frustum[1] = mvp(3,1) - mvp(0,1);
+    frustum[2] = mvp(3,2) - mvp(0,2);
+    frustum[3] = mvp(3,3) - mvp(0,3);
+    //frustum[0] = clip[3] - clip[0];
+    //frustum[1] = clip[7] - clip[4];
+    //frustum[2] = clip[11] - clip[8];
+    //frustum[3] = clip[15] - clip[12];
 
     // Extract the LEFT clipping plane
-    frustum[4] = clip[3] + clip[0];
-    frustum[5] = clip[7] + clip[4];
-    frustum[6] = clip[11] + clip[8];
-    frustum[7] = clip[15] + clip[12];
-
-    // Normalize it
-    //t = (float)Math.Sqrt(frustum[4] * frustum[4] + frustum[5] * frustum[5] + frustum[6] * frustum[6]);
-    //frustum[4] /= t;
-    //frustum[5] /= t;
-    //frustum[6] /= t;
-    //frustum[7] /= t;
+    frustum[4] = mvp(0,0) + mvp(3,0);
+    frustum[5] = mvp(0,1) + mvp(3,1);
+    frustum[6] = mvp(0,2) + mvp(3,2);
+    frustum[7] = mvp(0,3) + mvp(3,3);
+    //frustum[4] = clip[3] + clip[0];
+    //frustum[5] = clip[7] + clip[4];
+    //frustum[6] = clip[11] + clip[8];
+    //frustum[7] = clip[15] + clip[12];
 
     // Extract the FAR clipping plane
-    frustum[8] = clip[3] - clip[2];
-    frustum[9] = clip[7] - clip[6];
-    frustum[10] = clip[11] - clip[10];
-    frustum[11] = clip[15] - clip[14];
-
-    // Normalize it
-    //t = (float)Math.Sqrt(frustum[8] * frustum[8] + frustum[9] * frustum[9] + frustum[10] * frustum[10]);
-    //frustum[8] /= t;
-    //frustum[9] /= t;
-    //frustum[10] /= t;
-    //frustum[11] /= t;
+    frustum[8] = mvp(3,0) - mvp(2,0);
+    frustum[9] = mvp(3,1) - mvp(2,1);
+    frustum[10] = mvp(3,2) - mvp(2,2);
+    frustum[11] = mvp(3,3) - mvp(2,3);
+    //frustum[8] = clip[3] - clip[2];
+    //frustum[9] = clip[7] - clip[6];
+    //frustum[10] = clip[11] - clip[10];
+    //frustum[11] = clip[15] - clip[14];
 
     // Extract the NEAR clipping plane.  This is last on purpose (see pointinfrustum() for reason)
-    frustum[12] = clip[3] + clip[2];
-    frustum[13] = clip[7] + clip[6];
-    frustum[14] = clip[11] + clip[10];
-    frustum[15] = clip[15] + clip[14];
-
-    // Normalize it
-    //t = (float)Math.Sqrt(frustum[12] * frustum[12] + frustum[13] * frustum[13] + frustum[14] * frustum[14]);
-    //frustum[12] /= t;
-    //frustum[13] /= t;
-    //frustum[14] /= t;
-    //frustum[15] /= t;
+    frustum[12] = mvp(2,0) + mvp(3,0);
+    frustum[13] = mvp(2,1) + mvp(3,1);
+    frustum[14] = mvp(2,2) + mvp(3,2);
+    frustum[15] = mvp(2,3) + mvp(3,3);
+    //frustum[12] = clip[3] + clip[2];
+    //frustum[13] = clip[7] + clip[6];
+    //frustum[14] = clip[11] + clip[10];
+    //frustum[15] = clip[15] + clip[14];
 
     // Extract the BOTTOM clipping plane
-    frustum[16] = clip[3] + clip[1];
-    frustum[17] = clip[7] + clip[5];
-    frustum[18] = clip[11] + clip[9];
-    frustum[19] = clip[15] + clip[13];
-
-    // Normalize it
-    //t = (float)Math.Sqrt(frustum[16] * frustum[16] + frustum[17] * frustum[17] + frustum[18] * frustum[18]);
-    //frustum[16] /= t;
-    //frustum[17] /= t;
-    //frustum[18] /= t;
-    //frustum[19] /= t;
-
+    frustum[16] = mvp(1,0) + mvp(3,0);
+    frustum[17] = mvp(1,1) + mvp(3,1);
+    frustum[18] = mvp(1,2) + mvp(3,2);
+    frustum[19] = mvp(1,3) + mvp(3,3);
+    //frustum[16] = clip[3] + clip[1];
+    //frustum[17] = clip[7] + clip[5];
+    //frustum[18] = clip[11] + clip[9];
+    //frustum[19] = clip[15] + clip[13];
 
     // Extract the TOP clipping plane
-    frustum[20] = clip[3] - clip[1];
-    frustum[21] = clip[7] - clip[5];
-    frustum[22] = clip[11] - clip[9];
-    frustum[23] = clip[15] - clip[13];
-
-    // Normalize it
-    //t = (float)Math.Sqrt(frustum[20] * frustum[20] + frustum[21] * frustum[21] + frustum[22] * frustum[22]);
-    //frustum[20] /= t;
-    //frustum[21] /= t;
-    //frustum[22] /= t;
-    //frustum[23] /= t;
+    frustum[20] = mvp(3,0) - mvp(1,0);
+    frustum[21] = mvp(3,1) - mvp(1,1);
+    frustum[22] = mvp(3,2) - mvp(1,2);
+    frustum[23] = mvp(3,3) - mvp(1,3);
+    //frustum[20] = clip[3] - clip[1];
+    //frustum[21] = clip[7] - clip[5];
+    //frustum[22] = clip[11] - clip[9];
+    //frustum[23] = clip[15] - clip[13];
 }
 
 //take the distance from object and convert to camera data

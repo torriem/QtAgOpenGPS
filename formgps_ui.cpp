@@ -24,6 +24,7 @@ void FormGPS::setupGui()
 
     ui->statusBar->hide();
 
+    setWindowTitle(tr("QtAgOpenGPS"));
 
     //Load the QML into a view
     qmlview = new QQuickView();
