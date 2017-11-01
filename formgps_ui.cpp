@@ -387,6 +387,7 @@ void FormGPS::onBtnTiltDown_clicked(){
     qDebug()<<"TiltDown button clicked.";
     camera.camPitch -= (camera.camPitch*0.03-1);
     if (camera.camPitch > 0) camera.camPitch = 0;
+    lastHeight = -1; //redraw the sky
 
     qmlview->update();
 }
@@ -395,6 +396,7 @@ void FormGPS::onBtnTiltUp_clicked(){
     qDebug()<<"TiltUp button clicked.";
     camera.camPitch += (camera.camPitch*0.03-1);
     if (camera.camPitch < -80) camera.camPitch = -80;
+    lastHeight = -1; //redraw the sky
 
     qmlview->update();
 }
