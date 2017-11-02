@@ -30,10 +30,10 @@
 namespace Ui {
 class FormGPS;
 }
-
 //forward declare classes referred to below, to break circular
 //references in the code
-//class CCamera;
+class TopLineDisplay;
+
 class CWorldGrid;
 class CNMEA;
 class CSection;
@@ -391,7 +391,7 @@ public:
                              QOpenGLBuffer &vertexBuffer, GLenum glType,
                              int count);
 
-    void drawLightBar(QOpenGLFunctions_2_1 *gl, double Width, double Height, double offlineDistance);
+    void drawLightBar(double Width, double Height, double offlineDistance);
     //void calcFrustum(QOpenGLFunctions_2_1 *gl);
     //transitioning to OPenGL ES; use our own computed matrices
     void calcFrustum(const QMatrix4x4 &mvp);
@@ -401,6 +401,7 @@ public:
 
 private:
     Ui::FormGPS *ui;
+    TopLineDisplay *tlDisp;
 
     void setupGui();
 
@@ -409,6 +410,8 @@ private:
      * FormGPS.cs *
      **************/
 public:
+    QString speedMPH();
+    QString speedKPH();
     void sectionCalcWidths();
     void processSectionOnOffRequests();
     void scanForNMEA();

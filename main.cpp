@@ -8,6 +8,10 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    QFont f = a.font();
+    f.setPointSize(16);
+    a.setFont(f);
     //glutInit(&argc,argv);
     QCoreApplication::setOrganizationName("AgOpenGPS");
     QCoreApplication::setOrganizationDomain("agopengps");

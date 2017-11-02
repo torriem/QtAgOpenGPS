@@ -12,6 +12,9 @@
 #include <QRgb>
 #include "qmlutil.h"
 #include "glm.h"
+#include "toplinedisplay.h"
+#include <QLocale>
+#include <QLabel>
 
 FormGPS::FormGPS(QWidget *parent) :
     QMainWindow(parent),
@@ -54,7 +57,8 @@ FormGPS::FormGPS(QWidget *parent) :
     worldGrid->createWorldGrid(5005,5005);
     */
 
-    isGridOn = true;
+    isGridOn = s.value("display/showGrid",true).toBool();
+    isMetric = s.value("display/isMetric", true).toBool();
 
     //TODO: move all the settings loading/setting of defaults to a separate
     //function.
@@ -233,7 +237,7 @@ void FormGPS::processSectionLookahead() {
 
         //moved variable declarations here because compiler complained about how the goto
         //statements bypassed the initializers.
-        int start, end, skip;
+        int start, end; //, skip;
         int tagged;
 
         for (int j = 0; j < vehicle->numOfSections; j++)
@@ -247,11 +251,11 @@ void FormGPS::processSectionLookahead() {
                 if (boundary->isSet)
                 {
 
-                    start = 0, end = 0, skip = 0;
+                    start = 0, end = 0; //, skip = 0;
                     start = section[j].rpSectionPosition - section[0].rpSectionPosition;
                     end = section[j].rpSectionWidth - 1 + start;
                     if (end > vehicle->rpWidth - 1) end = vehicle->rpWidth - 1;
-                    skip = vehicle->rpWidth - (end - start);
+                    //skip = vehicle->rpWidth - (end - start);
 
 
                     tagged = 0;
@@ -276,11 +280,11 @@ void FormGPS::processSectionLookahead() {
                     //minimum apllied conditions met
 GetMeOutaHere:
 
-                    start = 0; end = 0; skip = 0;
+                    start = 0; end = 0; //skip = 0;
                     start = section[j].rpSectionPosition - section[0].rpSectionPosition;
                     end = section[j].rpSectionWidth - 1 + start;
                     if (end > vehicle->rpWidth - 1) end = vehicle->rpWidth - 1;
-                    skip = vehicle->rpWidth - (end - start);
+                    //skip = vehicle->rpWidth - (end - start);
 
                     //looking for boundary line color, bright green
                     for (int h = 0; h < (int)section[j].sectionLookAhead; h++)
@@ -321,11 +325,11 @@ GetMeOutaHere:
                 {
                     section[j].isSectionRequiredOn = false;
 
-                    int start = 0, end = 0, skip = 0;
+                    int start = 0, end = 0; //, skip = 0;
                     start = section[j].rpSectionPosition - section[0].rpSectionPosition;
                     end = section[j].rpSectionWidth - 1 + start;
                     if (end > vehicle->rpWidth - 1) end = vehicle->rpWidth - 1;
-                    skip = vehicle->rpWidth - (end - start);
+                    //skip = vehicle->rpWidth - (end - start);
 
 
                     int tagged = 0;
@@ -533,12 +537,14 @@ void FormGPS::tmrWatchdog_timeout()
             //Hectares on the master section soft control and sections
             btnSectionOffAutoOn->setProperty("buttonText",
                      (totalSquareMeters < 999900 ?
-                          QString::number(totalSquareMeters * 0.0001,'g',2) :
-                          QString::number(totalSquareMeters * 0.0001,'g',1)));
+                          locale.toString(totalSquareMeters * 0.0001,'f',2) :
+                          locale.toString(totalSquareMeters * 0.0001,'f',1))
+                                             + " " + tr("Ha"));
             btnPerimeter->setProperty("buttonText",
-                     QString::number(periArea.area * 0.0001,'g', 2));
+                     locale.toString(periArea.area * 0.0001,'f', 2) + " " + tr("Ha"));
 
             //status strip values
+
             /* TODO:
             stripDistance.Text = Convert.ToString((UInt16)(userDistance)) + " m";
             stripAreaUser.Text = HectaresUser;
@@ -547,16 +553,25 @@ void FormGPS::tmrWatchdog_timeout()
             stripEqWidth.Text = vehiclefileName + (Math.Round(vehicle.toolWidth,2)).ToString() + " m";
             toolStripStatusLabelBoundaryArea.Text = boundary.areaHectare;
             */
+            qmlItem(qml_root,"stripBoundaryArea")->setProperty("text",tr("Bounded area:")+ " " +locale.toString(boundary->areaHectare,'f',1) + " " + tr("Ha"));
+            qmlItem(qml_root,"stripAreaUser")->setProperty("text", locale.toString(totalUserSquareMeters * 0.0001,'f',1) + " " + tr("Ha"));
+            qmlItem(qml_root,"stripEqWidth")->setProperty("text", locale.toString(vehicle->toolWidth,'f',2) + " " + tr("M"));
+            qmlItem(qml_root,"stripDistance")->setProperty("text", locale.toString(userDistance,'f',0)+" "+tr("M"));
+            qmlItem(qml_root,"stripAreaRate")->setProperty("text", locale.toString(vehicle->toolWidth * pn->speed / 10,'f',1) + " " + tr("Ha/hr"));
+            tlDisp->lblSpeed->setText(speedKPH() + " "+tr("KPH"));
+
         }
         else
         {
             //acres on the master section soft control and sections
             btnSectionOffAutoOn->setProperty("buttonText",
                      (totalSquareMeters < 404645 ?
-                          QString::number(totalSquareMeters * 0.00024710499815078974633856493327535, 'g',2) :
-                          QString::number(totalSquareMeters * 0.00024710499815078974633856493327535, 'g',1)));
+                          QString::number(totalSquareMeters * 0.00024710499815078974633856493327535, 'f',2) :
+                          QString::number(totalSquareMeters * 0.00024710499815078974633856493327535, 'f',1))
+                                             + " " + tr("Ac"));
             btnPerimeter->setProperty("buttonText",
-                     QString::number(periArea.area * 0.00024710499815078974633856493327535, 'g',2));
+                     QString::number(periArea.area * 0.00024710499815078974633856493327535, 'f',2) +
+                                      " " + tr("Ac"));
 
             //status strip values
             /* TODO:
@@ -568,6 +583,12 @@ void FormGPS::tmrWatchdog_timeout()
             stripEqWidth.Text = vehiclefileName + (Math.Round(vehicle.toolWidth * glm.m2ft, 2)).ToString() + " ft";
             toolStripStatusLabelBoundaryArea.Text = boundary.areaAcre;
             */
+            qmlItem(qml_root,"stripBoundaryArea")->setProperty("text",tr("Bounded area:")+ " " +locale.toString(boundary->areaAcre,'f',1) + " " + tr("Ac"));
+            qmlItem(qml_root,"stripAreaUser")->setProperty("text", locale.toString(totalUserSquareMeters * 0.00024710499815078974633856493327535,'f',1) + " " + tr("Ac"));
+            qmlItem(qml_root,"stripEqWidth")->setProperty("text", locale.toString(vehicle->toolWidth * m2ft,'f',1) + " " + tr("ft"));
+            qmlItem(qml_root,"stripDistance")->setProperty("text", locale.toString(userDistance * 3.28084,'f',0)+" "+tr("ft"));
+            qmlItem(qml_root,"stripAreaRate")->setProperty("text", locale.toString(vehicle->toolWidth * pn->speed / 10 * 2.47,'f',1) + " " + tr("Ac/hr"));
+            tlDisp->lblSpeed->setText(speedMPH() + " "+tr("MPH"));
         }
 
         //lblDelta.Text = guidanceLineHeadingDelta.ToString();
@@ -586,6 +607,13 @@ void FormGPS::tmrWatchdog_timeout()
 
         //lblFix.Text = FixQuality;
         //lblAgeDiff.Text = AgeDiff;
+        */
+
+        qmlItem(qml_root,"stripHz")->setProperty("text",locale.toString(fixUpdateHz) + " " + tr("Hz"));
+        tlDisp->lblHeading->setText(locale.toString(toDegrees(fixHeading),'f',1));
+
+        /*
+         * TODO
 
         if (Math.Abs(userSquareMetersAlarm) < 0.1) stripAreaUser.BackColor = SystemColors.ControlLightLight;
         else
@@ -593,36 +621,39 @@ void FormGPS::tmrWatchdog_timeout()
             stripAreaUser.BackColor = totalUserSquareMeters < userSquareMetersAlarm ? SystemColors.ControlLightLight
                                                                                         : Color.OrangeRed;
         }
+        */
 
         //up in the menu a few pieces of info
         if (isJobStarted)
         {
-            lblEasting.Text = "E: "+ Math.Round(pn.easting, 1).ToString();
-            lblNorthing.Text = "N: " + Math.Round(pn.northing, 1).ToString();
+            tlDisp->lblEasting->setText(tr("E: ")+ locale.toString(pn->easting,'f', 1));
+            tlDisp->lblNorthing->setText(tr("N: ") + locale.toString(pn->northing, 'f', 1));
         }
         else
         {
-            lblEasting.Text = "E: " + ((int)pn.actualEasting).ToString();
-            lblNorthing.Text = "N: " + ((int)pn.actualNorthing).ToString();
+            tlDisp->lblEasting->setText(tr("E: ")+ locale.toString(pn->actualEasting,'f', 1));
+            tlDisp->lblNorthing->setText(tr("N: ") + locale.toString(pn->actualNorthing, 'f', 1));
         }
 
-        lblZone.Text = pn.zone.ToString();
+        tlDisp->lblZone->setText(locale.toString(pn->zone));
 
         //grab the Valid sentence
         //NMEASentence = recvSentenceSettings;// pn.currentNMEA_GGASentence + pn.currentNMEA_RMCSentence;
-
+        /* TODO
         tboxSentence.Text = recvSentenceSettings;
+        */
         //update the online indicator
         if (recvCounter > 50)
         {
-            stripOnlineGPS.Value = 1;
-            lblEasting.Text = "-";
-            lblNorthing.Text ="No GPS";
-            lblZone.Text = "-";
-            tboxSentence.Text = "** No Sentence Data **";
+            //stripOnlineGPS.Value = 1;
+            //TODO turn off port light
+            tlDisp->lblEasting->setText("-");
+            tlDisp->lblNorthing->setText(tr("No GPS"));
+            tlDisp->lblZone->setText("-");
+            //tboxSentence.Text = "** No Sentence Data **";
         }
-        else  stripOnlineGPS.Value = 100;
-        */
+        //else  stripOnlineGPS.Value = 100;
+        // turn on port light
     }
     //wait till timer fires again.
 }
@@ -681,4 +712,24 @@ void FormGPS::manualBtnUpdate(int sectNumber)
     }
 }
 
+QString FormGPS::speedKPH() {
+    double spd = 0;
+    for (int c = 0; c < 10; c++)
+        spd += avgSpeed[c];
 
+    //convert to kph
+    spd *= 0.1;
+
+    return locale.toString(spd,'f',1);
+}
+
+QString FormGPS::speedMPH() {
+    double spd = 0;
+    for (int c = 0; c < 10; c++)
+        spd += avgSpeed[c];
+
+    //convert to mph
+    spd *= 0.0621371;
+
+    return locale.toString(spd,'f',1);
+}

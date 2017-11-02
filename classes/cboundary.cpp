@@ -17,8 +17,8 @@ void CBoundary::resetBoundary()
     calcList.clear();
     ptList.clear();
     area = 0;
-    areaAcre = "";
-    areaHectare = "";
+    areaAcre = 0;
+    areaHectare = 0;
 
     isDrawRightSide = true;
     isSet = false;
@@ -51,8 +51,8 @@ void CBoundary::preCalcBoundaryLines()
         }
     }
 
-    areaHectare = mf->locale.toString((double)(area * 0.0001),'g',1) + " " + "Ha";
-    areaAcre = mf->locale.toString((double)(area * 0.000247105),'g', 1) + " " + "Ac";
+    areaHectare = area * 0.0001;
+    areaAcre = area * 0.000247105;
 }
 
 bool CBoundary::isPrePointInPolygon(Vec2 testPoint)

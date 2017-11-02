@@ -23,8 +23,8 @@ public:
 
     //area variable
     double area = 0 ;
-    QString areaHectare = "";
-    QString areaAcre = "";
+    double areaHectare = 0;
+    double areaAcre = 0;
 
     //boundary variables
     bool isOkToAddPoints = false;

@@ -97,7 +97,10 @@ Item {
         IconButton {
             id: btnContour
             objectName: "btnContour"
+            checkable: true
+            isChecked: false
             icon: "qrc:/images/ContourOff.png"
+            iconChecked: "qrc:/images/ContourOn.png"
         }
 
         IconButton {

@@ -8,6 +8,8 @@
 #include <QTimer>
 #include "cvehicle.h"
 #include "csection.h"
+#include "toplinedisplay.h"
+#include "ccontour.h"
 
 //#include <QGuiApplication>
 //#include <QtGui/private/qguiapplication_p.h>
@@ -23,6 +25,12 @@ void FormGPS::setupGui()
     ui->setupUi(this);
 
     ui->statusBar->hide();
+
+    tlDisp = new TopLineDisplay(this);
+    tlDisp->txtDistanceOffABLine->setFixedWidth(300);
+    ui->menuBar->setCornerWidget(tlDisp);
+    //tlDisp->setFixedWidth(400);
+    ui->menuBar->adjustSize();
 
     setWindowTitle(tr("QtAgOpenGPS"));
 
@@ -62,6 +70,7 @@ void FormGPS::setupGui()
     //connect qml button signals to callbacks (it's not automatic with qml)
     btnMinMaxZoom = qmlItem(qml_root,"btnMinMaxZoom");
     connect(btnMinMaxZoom,SIGNAL(clicked()),this,
+
             SLOT(onBtnMinMaxZoom_clicked()));
 
     btnPerimeter = qmlItem(qml_root,"btnPerimeter");
@@ -280,6 +289,13 @@ void FormGPS::onBtnABLine_clicked(){
 
 void FormGPS::onBtnContour_clicked(){
     qDebug()<<"contour button clicked." ;
+
+    ct->isContourBtnOn = !ct->isContourBtnOn;
+    if (ct->isContourBtnOn)
+        qmlItem(qml_root,"btnContour")->setProperty("isChecked",true);
+    else
+        qmlItem(qml_root,"btnContour")->setProperty("isChecked",false);
+
 }
 
 void FormGPS::onBtnManualOffOn_clicked(){

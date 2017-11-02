@@ -528,10 +528,10 @@ void FormGPS::openGLControl_Draw()
             {
                 if (ct->distanceFromCurrentLine == 32000) ct->distanceFromCurrentLine = 0;
 
-                //drawLightBar(gl,width, height, ct->distanceFromCurrentLine * 0.1);
+                drawLightBar(width, height, ct->distanceFromCurrentLine * 0.1);
             } else if (ABLine->isABLineSet || ABLine->isABLineBeingSet) {
-                //drawLightBar(gl, width, height,
-                //             ABLine->distanceFromCurrentLine * 0.1);
+                drawLightBar(width, height,
+                             ABLine->distanceFromCurrentLine * 0.1);
             }
 
         }
@@ -807,7 +807,7 @@ void FormGPS::openGLControlBack_Draw()
     grnPix = backFBO->toImage().mirrored().convertToFormat(QImage::Format_RGB888);
     grnPix = grnPix.copy(vehicle->rpXPosition, 202, vehicle->rpWidth, (int)rpHeight);
     memcpy(lookaheadPixels, grnPix.constBits(), grnPix.size().width() * grnPix.size().height() * 3);
-    grnPix = backFBO->toImage().mirrored().convertToFormat(QImage::Format_RGB888);
+    //grnPix = backFBO->toImage().mirrored().convertToFormat(QImage::Format_RGB888);
 
     //The remaining code from the original method in the C# code is
     //broken out into a callback in formgps.c called
@@ -848,9 +848,10 @@ void FormGPS::openGLControlBack_Initialized()
 {
 }
 
-void FormGPS::drawLightBar(QOpenGLFunctions_2_1 *gl, double Width, double Height, double offlineDistance)
+void FormGPS::drawLightBar(double Width, double Height, double offlineDistance)
 {
-    //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+    QOpenGLContext *glContext = QOpenGLContext::currentContext();
+    QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
     double down = 20;
 
     gl->glLineWidth(1);
