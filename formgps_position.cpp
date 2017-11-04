@@ -37,7 +37,6 @@ void FormGPS::scanForNMEA()
         recvCounter = 0;
         vehicle->avgSpeed[vehicle->ringCounter] = pn->speed;
         if (vehicle->ringCounter++ > 8) vehicle->ringCounter = 0;
-
         /*
         qDebug() << qSetRealNumberPrecision(15) <<
                     pn->headingTrue << ", " <<
@@ -406,7 +405,6 @@ void FormGPS::calculatePositionHeading()
     vehicle->speed = pn->speed;
     vehicle->altitude = pn->altitude;
 
-
    //in degrees for glRotate opengl methods.
     int camStep = currentStepFix*2;
     if (camStep > (totalFixSteps - 1)) camStep = (totalFixSteps - 1);
@@ -718,10 +716,15 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
         if (M_PI - fabs(fabs(head - vehicle->fixHeadingSection) - M_PI) > PIBy2) rightLook *= -1;
 
         //choose fastest speed
-        if (leftLook > rightLook)  vehicle->section[j].sectionLookAhead = leftLook;
-        else vehicle->section[j].sectionLookAhead = rightLook;
+        if (leftLook > 0 and rightLook > 0) {
+            if (leftLook > rightLook)  vehicle->section[j].sectionLookAhead = leftLook;
+            else vehicle->section[j].sectionLookAhead = rightLook;
 
-        if (vehicle->section[j].sectionLookAhead > 190) vehicle->section[j].sectionLookAhead = 190;
+            if (vehicle->section[j].sectionLookAhead > 190) vehicle->section[j].sectionLookAhead = 190;
+        }
+        //if (vehicle->section[j].sectionLookAhead == 0)
+        //    qDebug() << j << vehicle->section[j].sectionLookAhead;
+
 
         //Doing the slow mo, exceeding buffer so just set as minimum 0.5 meter
         if (currentStepFix >= totalFixSteps - 1) vehicle->section[j].sectionLookAhead = 5;

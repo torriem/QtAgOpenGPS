@@ -277,7 +277,7 @@ void CNMEA::parseRMC() {
         //Convert from knots to kph for speed
         speed = words[7].toDouble();
         //round it when displaying, not here
-        //speed = Math.Round(speed * 1.852, 1);
+        speed = speed * 1.852;
 
         //True heading
         headingTrue = words[8].toDouble();
@@ -303,8 +303,7 @@ void CNMEA::parseVTG() {
     if (words[1].size() && words[5].size()) {
         //kph for speed - knots read
         speed = words[5].toDouble();
-        //we'll round it when we display it.
-        //speed = Math.Round(speed * 1.852, 1);
+        speed = speed * 1.852;
 
         //True heading
         headingTrue = words[1].toDouble();

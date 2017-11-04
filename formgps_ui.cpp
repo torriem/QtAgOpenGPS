@@ -58,7 +58,7 @@ void FormGPS::setupGui()
     ui->verticalLayout->addWidget(qmlcontainer);
 
     //hide the section control lookahead widget; it should still work
-    ui->grnPixels->hide(); //debugging widget, shows lookahead
+    //ui->grnPixels->hide(); //debugging widget, shows lookahead
 
     //get pointer to root QML object, which is the OpenGLControl,
     //store in a member variable for future use.
@@ -319,6 +319,7 @@ void FormGPS::onBtnPerimeter_pressAndHeld() {
 
 void FormGPS::onBtnAreaSide_clicked() {
     isAreaOnRight = !isAreaOnRight;
+    settings.setValue("vehicle/isAreaOnRight", isAreaOnRight);
     qmlItem(qml_root, "contextArea")->setProperty("visible",false);
     vehicle->settingsChanged();
 }

@@ -69,14 +69,15 @@ FormGPS::FormGPS(QWidget *parent) :
     //sectionColor = QColor(s.value("display/sectionColor", "#32DCC8").toString());
 
 
-    vehicle->section[0].positionLeft = -8.0;
-    vehicle->section[0].positionRight = -4.0;
-    vehicle->section[1].positionLeft = -4.0;
+    //TODO: put section widths in settings file
+    vehicle->section[0].positionLeft = -18.288;
+    vehicle->section[0].positionRight = -9.144;
+    vehicle->section[1].positionLeft = -9.144;
     vehicle->section[1].positionRight = 0.0;
     vehicle->section[2].positionLeft = 0.0;
-    vehicle->section[2].positionRight = 4.0;
-    vehicle->section[3].positionLeft = 4.0;
-    vehicle->section[3].positionRight = 8.0;
+    vehicle->section[2].positionRight = 9.144;
+    vehicle->section[3].positionLeft = 9.144;
+    vehicle->section[3].positionRight = 18.288;
     vehicle->numOfSections = 4; //0-3
     vehicle->numSuperSection = 5;
     vehicle->toolTrailingHitchLength = -10; //30 foot hitch to see following action better
@@ -173,6 +174,7 @@ void FormGPS::processSectionLookahead() {
     rpHeight = fabs(rpHeight) * 2.0;
     if (rpHeight > 195) rpHeight = 195;
     if (rpHeight < 8) rpHeight = 8;
+    qDebug() << rpHeight;
 
     //lookaheadPixels was read in the OpenGL rendering routine.
 
@@ -186,8 +188,11 @@ void FormGPS::processSectionLookahead() {
         //look for anything applied coming up
         for (int a = 0; a < (vehicle->rpWidth * rpHeight); a++)
         {
-            if (lookaheadPixels[a].green != 0 )
+            if (lookaheadPixels[a].green != 0 && lookaheadPixels[a].red == 0 and lookaheadPixels[a].blue == 0)
             {
+                //if (lookaheadPixels[a].red != 0 || lookaheadPixels[a].blue != 0) {
+                //    qDebug() << "position " << a << "showed spurious pixel" << int(lookaheadPixels[a].green);
+                //}
                 if (totalPixs++ > pixLimit)
                 {
                     vehicle->isSuperSectionAllowedOn = false;
@@ -233,6 +238,7 @@ void FormGPS::processSectionLookahead() {
     //turn on indivdual sections as super section turn off
     else
     {
+        //qDebug() << "super section not allowed on.";
         //Read the pixels ahead of tool a normal section at a time. Each section can have its own lookahead manipulated.
 
         //moved variable declarations here because compiler complained about how the goto
@@ -383,6 +389,7 @@ GetMeOutaHere:
 
             else if (!vehicle->section[j].isSectionRequiredOn)
             {
+                //qDebug() << "requesting off for section " << j;
                 //global request to turn off section
                 vehicle->section[j].sectionOffRequest = true;
                 vehicle->section[j].sectionOnRequest = false;
@@ -405,6 +412,7 @@ GetMeOutaHere:
             //if going too slow turn off sections
             if (pn->speed < vehicle->slowSpeedCutoff)
             {
+                //qDebug() << "section speed too slow on "<< j;
                 vehicle->section[j].sectionOnRequest = false;
                 vehicle->section[j].sectionOffRequest = true;
             }

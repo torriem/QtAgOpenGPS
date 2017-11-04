@@ -805,9 +805,9 @@ void FormGPS::openGLControlBack_Draw()
     }
 
     //clamp the height after looking way ahead, this is for switching off super section only
-    rpHeight = fabs(rpHeight) * 2.0;
-    if (rpHeight > 195) rpHeight = 195;
-    if (rpHeight < 8) rpHeight = 8;
+    //rpHeight = fabs(rpHeight) * 2.0;
+    //if (rpHeight > 195) rpHeight = 195;
+    //if (rpHeight < 8) rpHeight = 8;
 
     //read the whole block of pixels up to max lookahead, one read only
     //OpenGL ES only can read complete RGB value, or alpha. so we'll
@@ -817,9 +817,10 @@ void FormGPS::openGLControlBack_Draw()
 
     //grnPix = QImage((uchar *)lookaheadPixels,vehicle->rpWidth,rpHeight,vehicle->rpWidth,QImage::Format_RGB888);
     grnPix = backFBO->toImage().mirrored().convertToFormat(QImage::Format_RGB888);
-    grnPix = grnPix.copy(vehicle->rpXPosition, 202, vehicle->rpWidth, (int)rpHeight);
-    memcpy(lookaheadPixels, grnPix.constBits(), grnPix.size().width() * grnPix.size().height() * 3);
+    QImage temp = grnPix.copy(vehicle->rpXPosition, 202, vehicle->rpWidth, 195 /*(int)rpHeight*/);
+    memcpy(lookaheadPixels, temp.constBits(), temp.size().width() * temp.size().height() * 3);
     //grnPix = backFBO->toImage().mirrored().convertToFormat(QImage::Format_RGB888);
+    grnPix = temp;
 
     //The remaining code from the original method in the C# code is
     //broken out into a callback in formgps.c called
