@@ -194,7 +194,7 @@ public:
 
     //create an array of sections, so far only 8 section + 1 fullWidth Section
     //QScopedArrayPointer<CSection> section;
-    CSection *section =NULL;
+    //CSection *section =NULL;
 
     //ABLine Instance
     //QScopedPointer<CABLine> ABLine;
@@ -227,7 +227,7 @@ public:
     bool isFirstFixPositionSet = false, isGPSPositionInitialized = false;
 
     // autosteer variables for sending serial
-    short int guidanceLineDistanceOff, guidanceLineSteerAngle;
+    //short int guidanceLineDistanceOff, guidanceLineSteerAngle;
 
     //how many fix updates per sec
     int fixUpdateHz = 5;
@@ -236,36 +236,32 @@ public:
     //for heading or Atan2 as camera
     bool isAtanCam = true;
 
+    /*
     //Current fix positions
     double fixEasting = 0.0;
     double fixNorthing = 3.0;
     double fixZ = 0.0;
+    */
 
     Vec2 fix;
-
+    /*
     double fixHeadingSection = 0.0, fixHeadingTank = 0.0;
     Vec2 pivotAxlePos;
     Vec2 toolPos;
     Vec2 tankPos;
-    Vec2 hitchPos;
+    Vec2 hitchPos;*/
+
     Vec2 prevFix;
 
     //headings
-    double fixHeading = 0.0, fixHeadingCam = 0.0;
+    //double fixHeading = 0.0;
+    double fixHeadingCam = 0.0;
 
     //storage for the cos and sin of heading
-    double cosSectionHeading = 1.0, sinSectionHeading = 0.0;
+    //double cosSectionHeading = 1.0, sinSectionHeading = 0.0;
 
     //a distance between previous and current fix
     double distance = 0.0, userDistance = 0;
-
-    //how far travelled since last section was added, section points
-    double sectionTriggerDistance = 0, sectionTriggerStepDistance = 0;
-    Vec2 prevSectionPos;
-
-    //step distances and positions for boundary, 6 meters before next point
-    double boundaryTriggerDistance = 6.0;
-    Vec2 prevBoundaryPos;
 
 
     //are we still getting valid data from GPS, resets to 0 in NMEA RMC block, watchdog
@@ -277,15 +273,14 @@ public:
     //individual points for the flags in a list
     QVector<CFlag> flagPts;
 
-    //tally counters for display
-    double totalSquareMeters = 0, totalUserSquareMeters = 0, userSquareMetersAlarm = 0;
-
     //used to determine NMEA sentence frequency
     int timerPn = 1;
     double et = 0, hzTime = 0;
 
+    /*
     double avgSpeed[10];//for average speed
     int ringCounter = 0;
+    */
 
     //IMU
     double rollDistance = 0;
@@ -309,7 +304,9 @@ public:
     double rollZero = 0, pitchZero = 0;
     double rollAngle = 0, pitchAngle = 0;
 
-
+    //step distances and positions for boundary, 6 meters before next point
+    double boundaryTriggerDistance = 6.0;
+    Vec2 prevBoundaryPos;
 
     void updateFixPosition(); //process a new position
     void calculatePositionHeading(); // compute all headings and fixes
@@ -325,12 +322,13 @@ public:
     /************************
      * SaveOpen.Designer.cs *
      ************************/
+    //moved to CVehicle
     //list of the list of patch data individual triangles for field sections
-    //QVector<QSharedPointer<QVector<Vec2>>> patchSaveList;
-    QVector<QSharedPointer<QVector<QVector3D>>> patchSaveList;
+    //QVector<QSharedPointer<QVector<QVector3D>>> patchSaveList;
 
+    //moved to CContour.
     //list of the list of patch data individual triangles for contour tracking
-    QVector<QSharedPointer<QVector<Vec4>>> contourSaveList;
+    //QVector<QSharedPointer<QVector<Vec4>>> contourSaveList;
 
     /**********************
      * OpenGL.Designer.cs *

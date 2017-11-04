@@ -9,11 +9,14 @@
 typedef QVector<QVector3D> TriangleList;
 
 class FormGPS;
+class CVehicle;
 
 class CSection
 {
 private:
     FormGPS *mf;
+    CVehicle *vehicle;
+
 public:
     //list of patch data individual triangles
     QSharedPointer<TriangleList> triangleList;
@@ -68,9 +71,8 @@ public:
     btnStates manBtnState=btnStates::Off; //default to Off (see enum in formgps.h)
 
     CSection();
-    CSection(FormGPS *mf);
 
-    void set_mainform(FormGPS *mf);
+    void set_vehicle(CVehicle *v);
 
     void turnSectionOn();
     void turnSectionOff();

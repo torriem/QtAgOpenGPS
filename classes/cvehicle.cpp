@@ -1,6 +1,5 @@
 #include <QtGlobal>
 #include "cvehicle.h"
-#include "formgps.h"
 #include <QOpenGLContext>
 #include <QOpenGLFunctions_2_1>
 #include <QOpenGLFunctions>
@@ -40,8 +39,7 @@ struct ColorVertex {
 
 
 
-CVehicle::CVehicle(FormGPS *mf)
-    :mf(mf)
+CVehicle::CVehicle()
 {
     AOGSettings s;
     //from settings grab the vehicle specifics
@@ -83,11 +81,19 @@ CVehicle::CVehicle(FormGPS *mf)
                                  DEFAULT_MAXANGULARVELOCITY).toDouble();
     maxSteerAngle = s.value("vehicle/maxSteerAngle",
                             DEFAULT_MAXSTEERINGANGLE).toDouble();
+
+    //hack to get around tight coupling for now.
+    //TODO, implement wrapper methods and pass in the
+    //variables the section methods need.
+    for (int i=0; i <= MAXSECTIONS; i++) {
+        section[i].set_vehicle(this);
+    }
 }
 
 void CVehicle::makeBuffers()
 {
     //requires a valid OpenGL context
+    QSettings settings;
 
     QVector<QVector3D> v;
     if (buffersCurrent) return;
@@ -143,8 +149,8 @@ void CVehicle::makeBuffers()
 
     //super section
     v.clear();
-    v.append(QVector3D(mf->section[numOfSections].positionLeft, trailingTool,0));
-    v.append(QVector3D(mf->section[numOfSections].positionRight, trailingTool,0));
+    v.append(QVector3D(section[numOfSections].positionLeft, trailingTool,0));
+    v.append(QVector3D(section[numOfSections].positionRight, trailingTool,0));
 
     if (superSectionBuffer.isCreated())
         superSectionBuffer.destroy();
@@ -157,8 +163,8 @@ void CVehicle::makeBuffers()
     for (int j = 0; j < numOfSections; j++)
     {
         v.clear();
-        v.append(QVector3D(mf->section[j].positionLeft, trailingTool,0));
-        v.append(QVector3D(mf->section[j].positionRight, trailingTool,0));
+        v.append(QVector3D(section[j].positionLeft, trailingTool,0));
+        v.append(QVector3D(section[j].positionRight, trailingTool,0));
 
         if (sectionBuffer[j].isCreated())
             sectionBuffer[j].destroy();
@@ -171,7 +177,7 @@ void CVehicle::makeBuffers()
     //section dots
     v.clear();
     for (int j = 0; j < numOfSections - 1; j++)
-        v.append(QVector3D(mf->section[j].positionRight, trailingTool,0));
+        v.append(QVector3D(section[j].positionRight, trailingTool,0));
 
     if (sectionDotsBuffer.isCreated())
         sectionDotsBuffer.destroy();
@@ -205,7 +211,7 @@ void CVehicle::makeBuffers()
         //hitch pin
         { QVector3D(0, hitchLength - antennaPivot, 0), QVector4D(0.99f, 0.0f, 0.0f, 1.0) }
     };
-    if (mf->isAreaOnRight)
+    if (settings.value("vehicle/isAreaOnRight",true).toBool())
         m[0].vertex = QVector3D(2.0, -antennaPivot, 0);
     else
         m[0].vertex = QVector3D(-2.0, -antennaPivot, 0);
@@ -248,7 +254,7 @@ void CVehicle::makeBuffers()
 }
 
 void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
-                           const QMatrix4x4 &projection) {
+                           const QMatrix4x4 &projection, bool drawSectionMarkers) {
     QOpenGLFunctions *gl =glContext->functions();
     //QOpenGLFunctions_2_1 *gl21 = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
@@ -259,7 +265,7 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
     //this will change the modelview for our caller, which is what
     //was happening here.
     //gl21->glTranslated(mf->fixEasting, mf->fixNorthing, 0);
-    modelview.translate(mf->fixEasting, mf->fixNorthing, 0);
+    modelview.translate(fixEasting, fixNorthing, 0);
 
     //gl->glPushMatrix();
     QMatrix4x4 mvTool = modelview;
@@ -267,8 +273,8 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
     //most complicated translate ever!
     //gl->glTranslated((sin(mf->fixHeading) * (hitchLength - antennaPivot)),
     //                (cos(mf->fixHeading) * (hitchLength - antennaPivot)), 0);
-    mvTool.translate((sin(mf->fixHeading) * (hitchLength - antennaPivot)),
-                     (cos(mf->fixHeading) * (hitchLength - antennaPivot)), 0);
+    mvTool.translate((sin(fixHeading) * (hitchLength - antennaPivot)),
+                     (cos(fixHeading) * (hitchLength - antennaPivot)), 0);
 
     //settings doesn't change trailing hitch length if set to rigid, so do it here
     double trailingTank;
@@ -282,7 +288,7 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
     if (tankTrailingHitchLength < -2.0 && isToolTrailing)
     {
         //gl->glRotated(toDegrees(-mf->fixHeadingTank), 0.0, 0.0, 1.0);
-        mvTool.rotate(toDegrees(-mf->fixHeadingTank), 0.0, 0.0, 1.0);
+        mvTool.rotate(toDegrees(-fixHeadingTank), 0.0, 0.0, 1.0);
 
         //draw the tank hitch
         gl->glLineWidth(2);
@@ -318,13 +324,13 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
         //gl->glRotated(toDegrees(-mf->fixHeadingSection), 0.0, 0.0, 1.0);
 
         mvTool.translate(0, trailingTank, 0);
-        mvTool.rotate(toDegrees(mf->fixHeadingTank), 0.0, 0.0, 1.0);
-        mvTool.rotate(toDegrees(-mf->fixHeadingSection), 0.0, 0.0, 1.0);
+        mvTool.rotate(toDegrees(fixHeadingTank), 0.0, 0.0, 1.0);
+        mvTool.rotate(toDegrees(-fixHeadingSection), 0.0, 0.0, 1.0);
     }
     //no tow between hitch
     else {
         //gl->glRotated(toDegrees(-mf->fixHeadingSection), 0.0, 0.0, 1.0);
-        mvTool.rotate(toDegrees(-mf->fixHeadingSection), 0.0, 0.0, 1.0);
+        mvTool.rotate(toDegrees(-fixHeadingSection), 0.0, 0.0, 1.0);
     }
 
     //draw the hitch if trailing
@@ -349,9 +355,9 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
 
     //gl->glBegin(GL_LINES);
     //draw section line.  This is the single big section
-    if (mf->section[numOfSections].isSectionOn)
+    if (section[numOfSections].isSectionOn)
     {
-        if (mf->section[0].manBtnState == btnStates::Auto)
+        if (section[0].manBtnState == btnStates::Auto)
             //gl->glColor3f(0.0f, 0.97f, 0.0f);
             color.setRgbF(0.0f,0.97f,0.0f);
         else
@@ -368,9 +374,9 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
         for (int j = 0; j < numOfSections; j++)
         {
             //if section is on, green, if off, red color
-            if (mf->section[j].isSectionOn)
+            if (section[j].isSectionOn)
             {
-                if (mf->section[j].manBtnState == btnStates::Auto)
+                if (section[j].manBtnState == btnStates::Auto)
                     //gl->glColor3f(0.0f, 0.97f, 0.0f);
                     color.setRgbF(0.0f, 0.97f, 0.0f);
                 else
@@ -393,7 +399,7 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
 
 
     //draw section markers if close enough
-    if (mf->camera.camSetDistance > -1500)
+    if (drawSectionMarkers)
     {
         //gl->glColor3f(0.0f, 0.0f, 0.0f);
         color.setRgbF(0.0f, 0.0f, 0.0f);
@@ -415,7 +421,7 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
     //gl21->glPopMatrix();
 
     //gl21->glRotated(toDegrees(-mf->fixHeading), 0.0, 0.0, 1.0);
-    modelview.rotate(toDegrees(-mf->fixHeading), 0.0, 0.0, 1.0);
+    modelview.rotate(toDegrees(-fixHeading), 0.0, 0.0, 1.0);
 
     //draw the vehicle Body
     //gl21->glColor3f(0.9, 0.5, 0.30);

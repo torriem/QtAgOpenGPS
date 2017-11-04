@@ -35,8 +35,8 @@ void FormGPS::scanForNMEA()
     if (pn->updatedGGA || pn->updatedRMC)
     {
         recvCounter = 0;
-        avgSpeed[ringCounter] = pn->speed;
-        if (ringCounter++ > 8) ringCounter = 0;
+        vehicle->avgSpeed[vehicle->ringCounter] = pn->speed;
+        if (vehicle->ringCounter++ > 8) vehicle->ringCounter = 0;
 
         /*
         qDebug() << qSetRealNumberPrecision(15) <<
@@ -187,14 +187,14 @@ void FormGPS::updateFixPosition()
         }
 
         //To prevent drawing high numbers of triangles, determine and test before drawing vertex
-        sectionTriggerDistance = pn->distance(pn->northing, pn->easting, prevSectionPos.northing, prevSectionPos.easting);
+        vehicle->sectionTriggerDistance = pn->distance(pn->northing, pn->easting, vehicle->prevSectionPos.northing, vehicle->prevSectionPos.easting);
         /*
         qDebug() << sectionTriggerDistance << "\t" << sectionTriggerStepDistance << "\t"
                  << pn->northing <<",\t"<< pn->easting << "\told: "
                  << prevSectionPos.northing << ", " << prevSectionPos.easting;
         */
         //section on off and points, contour points
-        if (sectionTriggerDistance > sectionTriggerStepDistance)
+        if (vehicle->sectionTriggerDistance > vehicle->sectionTriggerStepDistance)
                 addSectionContourPathPoints();
 
         //test if travelled far enough for new boundary point
@@ -217,7 +217,7 @@ void FormGPS::updateFixPosition()
 
     //region AutoSteer
     //preset the values
-    guidanceLineDistanceOff = 32000;
+    vehicle->guidanceLineDistanceOff = 32000;
 
     //do the distance from line calculations for contour and AB
     if (ct->isContourBtnOn) ct->distanceFromContourLine();
@@ -226,7 +226,7 @@ void FormGPS::updateFixPosition()
     // autosteer at full speed of updates
     if (!isAutoSteerBtnOn) //32020 means auto steer is off
     {
-        guidanceLineDistanceOff = 32020;
+        vehicle->guidanceLineDistanceOff = 32020;
     }
 
     if (!isInFreeDriveMode)
@@ -235,11 +235,11 @@ void FormGPS::updateFixPosition()
         //fill up0 the auto steer array with new values
         mc.autoSteerData[mc.sdSpeed] = (uchar)(pn->speed * 4.0);
 
-        mc.autoSteerData[mc.sdDistanceHi] = (uchar)(guidanceLineDistanceOff >> 8);
-        mc.autoSteerData[mc.sdDistanceLo] = (uchar)guidanceLineDistanceOff;
+        mc.autoSteerData[mc.sdDistanceHi] = (uchar)(vehicle->guidanceLineDistanceOff >> 8);
+        mc.autoSteerData[mc.sdDistanceLo] = (uchar)vehicle->guidanceLineDistanceOff;
 
-        mc.autoSteerData[mc.sdSteerAngleHi] = (uchar)(guidanceLineSteerAngle >> 8);
-        mc.autoSteerData[mc.sdSteerAngleLo] = (uchar)guidanceLineSteerAngle;
+        mc.autoSteerData[mc.sdSteerAngleHi] = (uchar)(vehicle->guidanceLineSteerAngle >> 8);
+        mc.autoSteerData[mc.sdSteerAngleLo] = (uchar)vehicle->guidanceLineSteerAngle;
 
         //out serial to autosteer module  //indivdual classes load the distance and heading deltas
         autoSteerDataOutToPort();
@@ -264,7 +264,7 @@ void FormGPS::updateFixPosition()
     }
 
     //calculate lookahead at full speed, no sentence misses
-    calculateSectionLookAhead(toolPos.northing, toolPos.easting, cosSectionHeading, sinSectionHeading);
+    calculateSectionLookAhead(vehicle->toolPos.northing, vehicle->toolPos.easting, vehicle->cosSectionHeading, vehicle->sinSectionHeading);
 
     //openGLControl_Draw routine triggered manually
     qmlview->update();
@@ -296,7 +296,7 @@ void FormGPS::updateFixPosition()
             //if (guidanceLineHeadingDelta < 0) lblDelta.ForeColor = Color.Red;
             //else lblDelta.ForeColor = Color.Green;
 
-            if (guidanceLineDistanceOff == 32020 || guidanceLineDistanceOff == 32000)
+            if (vehicle->guidanceLineDistanceOff == 32020 || vehicle->guidanceLineDistanceOff == 32000)
                 btnAutoSteer->setProperty("buttonText", QChar(0x2715));
             else
                 btnAutoSteer->setProperty("buttonText", QChar(0x2713));
@@ -321,7 +321,7 @@ void FormGPS::updateFixPosition()
 
             //if (guidanceLineHeadingDelta < 0) lblDelta.ForeColor = Color.Red;
             //else lblDelta.ForeColor = Color.Green;
-            if (guidanceLineDistanceOff == 32020 || guidanceLineDistanceOff == 32000)
+            if (vehicle->guidanceLineDistanceOff == 32020 || vehicle->guidanceLineDistanceOff == 32000)
                 btnAutoSteer->setProperty("buttonText", QChar(0x2715));
             else
                 btnAutoSteer->setProperty("buttonText", QChar(0x2713));
@@ -394,15 +394,15 @@ void FormGPS::updateFixPosition()
 void FormGPS::calculatePositionHeading()
 {
     //in radians
-    fixHeading = atan2(pn->easting - stepFixPts[currentStepFix].easting, pn->northing - stepFixPts[currentStepFix].northing);
-    if (fixHeading < 0) fixHeading += twoPI;
+    vehicle->fixHeading = atan2(pn->easting - stepFixPts[currentStepFix].easting, pn->northing - stepFixPts[currentStepFix].northing);
+    if (vehicle->fixHeading < 0) vehicle->fixHeading += twoPI;
 
     //qDebug() << qSetRealNumberPrecision(15) << currentStepFix << pn->easting << stepFixPts[currentStepFix].easting << pn->northing << stepFixPts[currentStepFix].northing << fixHeading;
 
 
     //determine fix positions and heading
-    fixEasting = (pn->easting);
-    fixNorthing = (pn->northing);
+    vehicle->fixEasting = (pn->easting);
+    vehicle->fixNorthing = (pn->northing);
 
 
    //in degrees for glRotate opengl methods.
@@ -441,12 +441,12 @@ void FormGPS::calculatePositionHeading()
     //#region pivot hitch trail
 
     //translate world to the pivot axle
-    pivotAxlePos.easting = pn->easting - (sin(fixHeading) * vehicle->antennaPivot);
-    pivotAxlePos.northing = pn->northing - (cos(fixHeading) * vehicle->antennaPivot);
+    vehicle->pivotAxlePos.easting = pn->easting - (sin(vehicle->fixHeading) * vehicle->antennaPivot);
+    vehicle->pivotAxlePos.northing = pn->northing - (cos(vehicle->fixHeading) * vehicle->antennaPivot);
 
     //determine where the rigid vehicle hitch ends
-    hitchPos.easting = pn->easting + (sin(fixHeading) * (vehicle->hitchLength - vehicle->antennaPivot));
-    hitchPos.northing = pn->northing + (cos(fixHeading) * (vehicle->hitchLength - vehicle->antennaPivot));
+    vehicle->hitchPos.easting = pn->easting + (sin(vehicle->fixHeading) * (vehicle->hitchLength - vehicle->antennaPivot));
+    vehicle->hitchPos.northing = pn->northing + (cos(vehicle->fixHeading) * (vehicle->hitchLength - vehicle->antennaPivot));
 
     //tool attached via a trailing hitch
     if (vehicle->isToolTrailing)
@@ -458,72 +458,72 @@ void FormGPS::calculatePositionHeading()
             if (distanceCurrentStepFix != 0)
             {
                 double t = (vehicle->tankTrailingHitchLength) / distanceCurrentStepFix;
-                tankPos.easting = hitchPos.easting + t * (hitchPos.easting - tankPos.easting);
-                tankPos.northing = hitchPos.northing + t * (hitchPos.northing - tankPos.northing);
-                fixHeadingTank = atan2(hitchPos.easting - tankPos.easting, hitchPos.northing - tankPos.northing);
+                vehicle->tankPos.easting = vehicle->hitchPos.easting + t * (vehicle->hitchPos.easting - vehicle->tankPos.easting);
+                vehicle->tankPos.northing = vehicle->hitchPos.northing + t * (vehicle->hitchPos.northing - vehicle->tankPos.northing);
+                vehicle->fixHeadingTank = atan2(vehicle->hitchPos.easting - vehicle->tankPos.easting, vehicle->hitchPos.northing - vehicle->tankPos.northing);
             }
 
 
             ////the tool is seriously jacknifed or just starting out so just spring it back.
-            over = fabs(M_PI - fabs(fabs(fixHeadingTank - fixHeading) - M_PI));
+            over = fabs(M_PI - fabs(fabs(vehicle->fixHeadingTank - vehicle->fixHeading) - M_PI));
 
             if (over < 2.0 && startCounter > 50)
             {
-                tankPos.easting = hitchPos.easting + (sin(fixHeadingTank) * (vehicle->tankTrailingHitchLength));
-                tankPos.northing = hitchPos.northing + (cos(fixHeadingTank) * (vehicle->tankTrailingHitchLength));
+                vehicle->tankPos.easting = vehicle->hitchPos.easting + (sin(vehicle->fixHeadingTank) * (vehicle->tankTrailingHitchLength));
+                vehicle->tankPos.northing = vehicle->hitchPos.northing + (cos(vehicle->fixHeadingTank) * (vehicle->tankTrailingHitchLength));
             }
 
             //criteria for a forced reset to put tool directly behind vehicle
             if (over > 2.0 || startCounter < 51 )
             {
-                fixHeadingTank = fixHeading;
-                tankPos.easting = hitchPos.easting + (sin(fixHeadingTank) * (vehicle->tankTrailingHitchLength));
-                tankPos.northing = hitchPos.northing + (cos(fixHeadingTank) * (vehicle->tankTrailingHitchLength));
+                vehicle->fixHeadingTank = vehicle->fixHeading;
+                vehicle->tankPos.easting = vehicle->hitchPos.easting + (sin(vehicle->fixHeadingTank) * (vehicle->tankTrailingHitchLength));
+                vehicle->tankPos.northing = vehicle->hitchPos.northing + (cos(vehicle->fixHeadingTank) * (vehicle->tankTrailingHitchLength));
             }
 
         }
 
         else
         {
-            fixHeadingTank = fixHeading;
-            tankPos.easting = hitchPos.easting;
-            tankPos.northing = hitchPos.northing;
+            vehicle->fixHeadingTank = vehicle->fixHeading;
+            vehicle->tankPos.easting = vehicle->hitchPos.easting;
+            vehicle->tankPos.northing = vehicle->hitchPos.northing;
         }
 
         //Torriem rules!!!!! Oh yes, this is all his. Thank-you
         if (distanceCurrentStepFix != 0)
         {
             double t = (vehicle->toolTrailingHitchLength) / distanceCurrentStepFix;
-            toolPos.easting = tankPos.easting + t * (tankPos.easting - toolPos.easting);
-            toolPos.northing = tankPos.northing + t * (tankPos.northing - toolPos.northing);
-            fixHeadingSection = atan2(tankPos.easting - toolPos.easting, tankPos.northing - toolPos.northing);
+            vehicle->toolPos.easting = vehicle->tankPos.easting + t * (vehicle->tankPos.easting - vehicle->toolPos.easting);
+            vehicle->toolPos.northing = vehicle->tankPos.northing + t * (vehicle->tankPos.northing - vehicle->toolPos.northing);
+            vehicle->fixHeadingSection = atan2(vehicle->tankPos.easting - vehicle->toolPos.easting, vehicle->tankPos.northing - vehicle->toolPos.northing);
         }
 
 
         ////the tool is seriously jacknifed or just starting out so just spring it back.
-        over = fabs(M_PI - fabs(fabs(fixHeadingSection - fixHeadingTank) - M_PI));
+        over = fabs(M_PI - fabs(fabs(vehicle->fixHeadingSection - vehicle->fixHeadingTank) - M_PI));
 
         if (over < 1.9 && startCounter > 50)
         {
-            toolPos.easting = tankPos.easting + (sin(fixHeadingSection) * (vehicle->toolTrailingHitchLength));
-            toolPos.northing = tankPos.northing + (cos(fixHeadingSection) * (vehicle->toolTrailingHitchLength));
+            vehicle->toolPos.easting = vehicle->tankPos.easting + (sin(vehicle->fixHeadingSection) * (vehicle->toolTrailingHitchLength));
+            vehicle->toolPos.northing = vehicle->tankPos.northing + (cos(vehicle->fixHeadingSection) * (vehicle->toolTrailingHitchLength));
         }
 
         //criteria for a forced reset to put tool directly behind vehicle
         if (over > 1.9 || startCounter < 51 )
         {
-            fixHeadingSection = fixHeadingTank;
-            toolPos.easting = tankPos.easting + (sin(fixHeadingSection) * (vehicle->toolTrailingHitchLength));
-            toolPos.northing = tankPos.northing + (cos(fixHeadingSection) * (vehicle->toolTrailingHitchLength));
+            vehicle->fixHeadingSection = vehicle->fixHeadingTank;
+            vehicle->toolPos.easting = vehicle->tankPos.easting + (sin(vehicle->fixHeadingSection) * (vehicle->toolTrailingHitchLength));
+            vehicle->toolPos.northing = vehicle->tankPos.northing + (cos(vehicle->fixHeadingSection) * (vehicle->toolTrailingHitchLength));
         }
     }
 
     //rigidly connected to vehicle
     else
     {
-        fixHeadingSection = fixHeading;
-        toolPos.easting = hitchPos.easting;
-        toolPos.northing = hitchPos.northing;
+        vehicle->fixHeadingSection = vehicle->fixHeading;
+        vehicle->toolPos.easting = vehicle->hitchPos.easting;
+        vehicle->toolPos.northing = vehicle->hitchPos.northing;
     }
 
     //#endregion
@@ -533,11 +533,11 @@ void FormGPS::calculatePositionHeading()
 
     //whichever is less
     if (vehicle->toolFarLeftSpeed < vehicle->toolFarRightSpeed)
-        sectionTriggerStepDistance = vehicle->toolFarLeftSpeed / metersPerSec;
-    else sectionTriggerStepDistance = vehicle->toolFarRightSpeed / metersPerSec;
+        vehicle->sectionTriggerStepDistance = vehicle->toolFarLeftSpeed / metersPerSec;
+    else vehicle->sectionTriggerStepDistance = vehicle->toolFarRightSpeed / metersPerSec;
 
     //finally determine distance
-    sectionTriggerStepDistance = sectionTriggerStepDistance * sectionTriggerStepDistance *
+    vehicle->sectionTriggerStepDistance = vehicle->sectionTriggerStepDistance * vehicle->sectionTriggerStepDistance *
         metersPerSec * triangleResolution*2.0 + 1.0;
     //qDebug() << metersPerSec << triangleResolution << sectionTriggerStepDistance;
 
@@ -557,8 +557,8 @@ void FormGPS::calculatePositionHeading()
     worldGrid->checkZoomWorldGrid(pn->northing, pn->easting);
 
     //precalc the sin and cos of heading * -1
-    sinSectionHeading = sin(-fixHeadingSection);
-    cosSectionHeading = cos(-fixHeadingSection);
+    vehicle->sinSectionHeading = sin(-vehicle->fixHeadingSection);
+    vehicle->cosSectionHeading = cos(-vehicle->fixHeadingSection);
 }
 
 void FormGPS::addBoundaryPoint()
@@ -574,8 +574,8 @@ void FormGPS::addBoundaryPoint()
         if (boundary->isDrawRightSide)
         {
             //Right side
-            point = Vec2(cosSectionHeading * (section[vehicle->numOfSections - 1].positionRight) + toolPos.easting,
-                sinSectionHeading * (section[vehicle->numOfSections - 1].positionRight) + toolPos.northing);
+            point = Vec2(vehicle->cosSectionHeading * (vehicle->section[vehicle->numOfSections - 1].positionRight) + vehicle->toolPos.easting,
+                vehicle->sinSectionHeading * (vehicle->section[vehicle->numOfSections - 1].positionRight) + vehicle->toolPos.northing);
             boundary->ptList.append(point);
         }
 
@@ -583,8 +583,8 @@ void FormGPS::addBoundaryPoint()
         else
         {
             //Right side
-            point = Vec2(cosSectionHeading * (section[0].positionLeft) + toolPos.easting,
-                sinSectionHeading * (section[0].positionLeft) + toolPos.northing);
+            point = Vec2(vehicle->cosSectionHeading * (vehicle->section[0].positionLeft) + vehicle->toolPos.easting,
+                vehicle->sinSectionHeading * (vehicle->section[0].positionLeft) + vehicle->toolPos.northing);
             boundary->ptList.append(point);
         }
 
@@ -596,8 +596,8 @@ void FormGPS::addBoundaryPoint()
         if (isAreaOnRight)
         {
             //Right side
-            point = Vec2(cosSectionHeading * (section[vehicle->numOfSections - 1].positionRight) + toolPos.easting,
-                sinSectionHeading * (section[vehicle->numOfSections - 1].positionRight) + toolPos.northing);
+            point = Vec2(vehicle->cosSectionHeading * (vehicle->section[vehicle->numOfSections - 1].positionRight) + vehicle->toolPos.easting,
+                vehicle->sinSectionHeading * (vehicle->section[vehicle->numOfSections - 1].positionRight) + vehicle->toolPos.northing);
             periArea.periPtList.append(point);
         }
 
@@ -605,8 +605,8 @@ void FormGPS::addBoundaryPoint()
         else
         {
             //Right side
-            point = Vec2(cosSectionHeading * (section[0].positionLeft) + toolPos.easting,
-                sinSectionHeading * (section[0].positionLeft) + toolPos.northing);
+            point = Vec2(vehicle->cosSectionHeading * (vehicle->section[0].positionLeft) + vehicle->toolPos.easting,
+                vehicle->sinSectionHeading * (vehicle->section[0].positionLeft) + vehicle->toolPos.northing);
             periArea.periPtList.append(point);
         }
 
@@ -617,8 +617,8 @@ void FormGPS::addBoundaryPoint()
 void FormGPS::addSectionContourPathPoints()
 {
     //save the north & east as previous
-    prevSectionPos.northing = pn->northing;
-    prevSectionPos.easting = pn->easting;
+    vehicle->prevSectionPos.northing = pn->northing;
+    vehicle->prevSectionPos.easting = pn->easting;
 
     if (isJobStarted)//add the pathpoint
     {
@@ -628,9 +628,9 @@ void FormGPS::addSectionContourPathPoints()
         //send the current and previous GPS fore/aft corrected fix to each section
         for (int j = 0; j < vehicle->numOfSections+1; j++)
         {
-            if (section[j].isSectionOn)
+            if (vehicle->section[j].isSectionOn)
             {
-                section[j].addPathPoint(toolPos.northing, toolPos.easting, cosSectionHeading, sinSectionHeading);
+                vehicle->section[j].addPathPoint(vehicle->toolPos.northing, vehicle->toolPos.easting, vehicle->cosSectionHeading, vehicle->sinSectionHeading);
                 sectionCounter++;
             }
         }
@@ -665,13 +665,13 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
         if (j == 0)
         {
             //only one first left point, the rest are all rights moved over to left
-            section[j].leftPoint = Vec2(cosHeading * (section[j].positionLeft) + easting,
-                               sinHeading * (section[j].positionLeft) + northing);
+            vehicle->section[j].leftPoint = Vec2(cosHeading * (vehicle->section[j].positionLeft) + easting,
+                               sinHeading * (vehicle->section[j].positionLeft) + northing);
 
-            left = section[j].leftPoint - section[j].lastLeftPoint;
+            left = vehicle->section[j].leftPoint - vehicle->section[j].lastLeftPoint;
 
             //save a copy for next time
-            section[j].lastLeftPoint = section[j].leftPoint;
+            vehicle->section[j].lastLeftPoint = vehicle->section[j].leftPoint;
 
             //get the speed for left side only once
             leftSpeed = left.getLength() / fixUpdateTime * 10;
@@ -685,24 +685,24 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
         else
         {
             //right point from last section becomes this left one
-            section[j].leftPoint = section[j-1].rightPoint;
-            left = section[j].leftPoint - section[j].lastLeftPoint;
+            vehicle->section[j].leftPoint = vehicle->section[j-1].rightPoint;
+            left = vehicle->section[j].leftPoint - vehicle->section[j].lastLeftPoint;
 
             //save a copy for next time
-            section[j].lastLeftPoint = section[j].leftPoint;
+            vehicle->section[j].lastLeftPoint = vehicle->section[j].leftPoint;
             leftSpeed = rightSpeed;
 
         }
 
 
-        section[j].rightPoint = Vec2(cosHeading * (section[j].positionRight) + easting,
-                            sinHeading * (section[j].positionRight) + northing);
+        vehicle->section[j].rightPoint = Vec2(cosHeading * (vehicle->section[j].positionRight) + easting,
+                            sinHeading * (vehicle->section[j].positionRight) + northing);
 
         //now we have left and right for this section
-        right = section[j].rightPoint - section[j].lastRightPoint;
+        right = vehicle->section[j].rightPoint - vehicle->section[j].lastRightPoint;
 
         //save a copy for next time
-        section[j].lastRightPoint = section[j].rightPoint;
+        vehicle->section[j].lastRightPoint = vehicle->section[j].rightPoint;
 
         //grab vector length and convert to meters/sec/10 pixels per meter
         rightSpeed = right.getLength() / fixUpdateTime * 10;
@@ -710,19 +710,19 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
 
         //Is section outer going forward or backward
         double head = left.headingXZ();
-        if (M_PI - fabs(fabs(head - fixHeadingSection) - M_PI) > PIBy2) leftLook *= -1;
+        if (M_PI - fabs(fabs(head - vehicle->fixHeadingSection) - M_PI) > PIBy2) leftLook *= -1;
 
         head = right.headingXZ();
-        if (M_PI - fabs(fabs(head - fixHeadingSection) - M_PI) > PIBy2) rightLook *= -1;
+        if (M_PI - fabs(fabs(head - vehicle->fixHeadingSection) - M_PI) > PIBy2) rightLook *= -1;
 
         //choose fastest speed
-        if (leftLook > rightLook)  section[j].sectionLookAhead = leftLook;
-        else section[j].sectionLookAhead = rightLook;
+        if (leftLook > rightLook)  vehicle->section[j].sectionLookAhead = leftLook;
+        else vehicle->section[j].sectionLookAhead = rightLook;
 
-        if (section[j].sectionLookAhead > 190) section[j].sectionLookAhead = 190;
+        if (vehicle->section[j].sectionLookAhead > 190) vehicle->section[j].sectionLookAhead = 190;
 
         //Doing the slow mo, exceeding buffer so just set as minimum 0.5 meter
-        if (currentStepFix >= totalFixSteps - 1) section[j].sectionLookAhead = 5;
+        if (currentStepFix >= totalFixSteps - 1) vehicle->section[j].sectionLookAhead = 5;
 
     }//endfor
 
@@ -736,34 +736,34 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
             if (j == 0)
             {
                 //only one first left point, the rest are all rights moved over to left
-                isLeftIn = boundary->isPrePointInPolygon(section[j].leftPoint);
-                isRightIn = boundary->isPrePointInPolygon(section[j].rightPoint);
+                isLeftIn = boundary->isPrePointInPolygon(vehicle->section[j].leftPoint);
+                isRightIn = boundary->isPrePointInPolygon(vehicle->section[j].rightPoint);
 
-                if (isLeftIn && isRightIn) section[j].isInsideBoundary = true;
-                else section[j].isInsideBoundary = false;
+                if (isLeftIn && isRightIn) vehicle->section[j].isInsideBoundary = true;
+                else vehicle->section[j].isInsideBoundary = false;
             }
 
             else
             {
                 //grab the right of previous section, its the left of this section
                 isLeftIn = isRightIn;
-                isRightIn = boundary->isPrePointInPolygon(section[j].rightPoint);
-                if (isLeftIn && isRightIn) section[j].isInsideBoundary = true;
-                else section[j].isInsideBoundary = false;
+                isRightIn = boundary->isPrePointInPolygon(vehicle->section[j].rightPoint);
+                if (isLeftIn && isRightIn) vehicle->section[j].isInsideBoundary = true;
+                else vehicle->section[j].isInsideBoundary = false;
             }
         }
 
         //no boundary created so always inside
-        else section[j].isInsideBoundary = true;
+        else vehicle->section[j].isInsideBoundary = true;
     }
 
     //with left and right tool velocity to determine rate of triangle generation, corners are more
     //save far right speed, 0 if going backwards, in meters/sec
-    if (section[vehicle->numOfSections - 1].sectionLookAhead > 0) vehicle->toolFarRightSpeed = rightSpeed * 0.05;
+    if (vehicle->section[vehicle->numOfSections - 1].sectionLookAhead > 0) vehicle->toolFarRightSpeed = rightSpeed * 0.05;
     else vehicle->toolFarRightSpeed = 0;
 
     //safe left side, 0 if going backwards, in meters/sec convert back from pixels/m
-    if (section[0].sectionLookAhead > 0) vehicle->toolFarLeftSpeed = vehicle->toolFarLeftSpeed * 0.05;
+    if (vehicle->section[0].sectionLookAhead > 0) vehicle->toolFarLeftSpeed = vehicle->toolFarLeftSpeed * 0.05;
     else vehicle->toolFarLeftSpeed = 0;
 }
 
@@ -818,9 +818,9 @@ void FormGPS::initializeFirstFewGPSPositions()
         if (startCounter > totalFixSteps) isGPSPositionInitialized = true;
 
         //in radians
-        fixHeading = atan2(pn->easting - stepFixPts[totalFixSteps - 1].easting, pn->northing - stepFixPts[totalFixSteps - 1].northing);
-        if (fixHeading < 0) fixHeading += twoPI;
-        fixHeadingSection = fixHeading;
+        vehicle->fixHeading = atan2(pn->easting - stepFixPts[totalFixSteps - 1].easting, pn->northing - stepFixPts[totalFixSteps - 1].northing);
+        if (vehicle->fixHeading < 0) vehicle->fixHeading += twoPI;
+        vehicle->fixHeadingSection = vehicle->fixHeading;
 
         //send out initial zero settings
         if (isGPSPositionInitialized) autoSteerSettingsOutToPort();

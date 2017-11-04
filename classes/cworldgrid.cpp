@@ -5,8 +5,8 @@
 #include <QOpenGLBuffer>
 #include <QOpenGLFunctions_2_1>
 #include <QQuickView>
+#include <QThread>
 #include <assert.h>
-#include "formgps.h"
 #include "aogsettings.h"
 #include "glutils.h"
 
@@ -15,8 +15,7 @@ struct SurfaceVertex {
     QVector2D textureCoord;
 };
 
-CWorldGrid::CWorldGrid(FormGPS *mf)
-    :mf(mf)
+CWorldGrid::CWorldGrid()
 {
 
 }
@@ -28,8 +27,9 @@ CWorldGrid::~CWorldGrid() {
     //gridBuffer.destroy();
 }
 
-void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
+void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, QOpenGLTexture &texture)
 {
+    QSettings settings;
     //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
     if (!fieldBufferCurrent) {
@@ -49,7 +49,7 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
 
         if (fieldBuffer.isCreated())
             fieldBuffer.destroy();
-        fieldBuffer.create();
+   fieldBuffer.create();
         fieldBuffer.bind();
         fieldBuffer.allocate(field, sizeof(SurfaceVertex) * 4);
         fieldBuffer.release();
@@ -59,7 +59,7 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
 
     // Enable Texture Mapping and set color to white
 
-    QColor fieldColor = QColor(mf->settings.value("display/fieldColor", "#82781E").toString());
+    QColor fieldColor = QColor(settings.value("display/fieldColor", "#82781E").toString());
 
     if (!fieldShader) {
         //have to dynamically create it because we're in a different thread now
@@ -72,7 +72,7 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
     }
 
     //bind field surface texture
-    mf->texture1[1]->bind();
+    texture.bind();
 
     //bind and set up the shader
     fieldShader->bind();
@@ -102,7 +102,7 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
 
     gl->glDrawArrays(GL_TRIANGLE_STRIP,0, 4); //A quad from triangles
 
-    mf->texture1[1]->release();
+    texture.release();
     fieldBuffer.release();
     fieldShader->release();
 
@@ -112,6 +112,7 @@ void CWorldGrid::drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, doub
 {
     //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
     //draw easting lines and westing lines to produce a grid
+    QSettings settings;
 
     if (_gridZoom != lastGridZoom) { //use epsilon here?
         QVector<QVector3D> vertices;
@@ -148,7 +149,7 @@ void CWorldGrid::drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, doub
 
     }
 
-    QColor fieldColor = QColor(mf->settings.value("display/fieldColor", "#82781E").toString());
+    QColor fieldColor = QColor(settings.value("display/fieldColor", "#82781E").toString());
 
     glDrawArraysColor(gl, mvp,
                       GL_LINES, fieldColor,

@@ -29,15 +29,15 @@ FormGPS::FormGPS(QWidget *parent) :
      * coupled!  So we have to create them here, since
      * the header file has only incomplete types.
      */
-    worldGrid = new CWorldGrid(this);
+    worldGrid = new CWorldGrid();
     pn = new CNMEA(); //can make this static now
-    section = new CSection[MAXSECTIONS];
-    for (int i = 0; i < MAXSECTIONS; i++)
-        section[i].set_mainform(this);
+    //section = new CSection[MAXSECTIONS];
+    //for (int i = 0; i < MAXSECTIONS; i++)
+    //    section[i].set_mainform(this);
 
     ABLine = new CABLine(this);
     ct = new CContour(this);
-    vehicle = new CVehicle(this);
+    vehicle = new CVehicle();
     boundary = new CBoundary(this);
 
     isUDPServerOn = s.value("port/udp_on", true).toBool();
@@ -69,14 +69,14 @@ FormGPS::FormGPS(QWidget *parent) :
     //sectionColor = QColor(s.value("display/sectionColor", "#32DCC8").toString());
 
 
-    section[0].positionLeft = -8.0;
-    section[0].positionRight = -4.0;
-    section[1].positionLeft = -4.0;
-    section[1].positionRight = 0.0;
-    section[2].positionLeft = 0.0;
-    section[2].positionRight = 4.0;
-    section[3].positionLeft = 4.0;
-    section[3].positionRight = 8.0;
+    vehicle->section[0].positionLeft = -8.0;
+    vehicle->section[0].positionRight = -4.0;
+    vehicle->section[1].positionLeft = -4.0;
+    vehicle->section[1].positionRight = 0.0;
+    vehicle->section[2].positionLeft = 0.0;
+    vehicle->section[2].positionRight = 4.0;
+    vehicle->section[3].positionLeft = 4.0;
+    vehicle->section[3].positionRight = 8.0;
     vehicle->numOfSections = 4;
     vehicle->numSuperSection = 5;
     vehicle->toolTrailingHitchLength = -10; //30 foot hitch to see following action better
@@ -89,10 +89,10 @@ FormGPS::FormGPS(QWidget *parent) :
 
     //hard wire this on for testing
     isJobStarted = true;
-    section[0].isAllowedOn = true;
-    section[1].isAllowedOn = true;
-    section[2].isAllowedOn = true;
-    section[3].isAllowedOn = true;
+    vehicle->section[0].isAllowedOn = true;
+    vehicle->section[1].isAllowedOn = true;
+    vehicle->section[2].isAllowedOn = true;
+    vehicle->section[3].isAllowedOn = true;
 
     if (isUDPServerOn) startUDPServer();
 
@@ -106,7 +106,7 @@ FormGPS::~FormGPS()
     delete ui;
     delete worldGrid;
     delete pn;
-    delete[] section;
+    //delete[] section;
     delete ABLine;
     delete ct;
     delete vehicle;
@@ -118,22 +118,22 @@ void FormGPS::sectionCalcWidths()
 {
     for (int j = 0; j < MAXSECTIONS; j++)
     {
-        section[j].sectionWidth = (section[j].positionRight - section[j].positionLeft);
-        section[j].rpSectionPosition = 200 + (int)(roundAwayFromZero(section[j].positionLeft * 10));
-        section[j].rpSectionWidth = (int)(roundAwayFromZero(section[j].sectionWidth * 10));
+        vehicle->section[j].sectionWidth = (vehicle->section[j].positionRight - vehicle->section[j].positionLeft);
+        vehicle->section[j].rpSectionPosition = 200 + (int)(roundAwayFromZero(vehicle->section[j].positionLeft * 10));
+        vehicle->section[j].rpSectionWidth = (int)(roundAwayFromZero(vehicle->section[j].sectionWidth * 10));
     }
 
     //calculate tool width based on extreme right and left values
-    vehicle->toolWidth = fabs(section[0].positionLeft) + fabs(section[vehicle->numOfSections - 1].positionRight);
+    vehicle->toolWidth = fabs(vehicle->section[0].positionLeft) + fabs(vehicle->section[vehicle->numOfSections - 1].positionRight);
 
     //left and right tool position
-    vehicle->toolFarLeftPosition = section[0].positionLeft;
-    vehicle->toolFarRightPosition = section[vehicle->numOfSections - 1].positionRight;
+    vehicle->toolFarLeftPosition = vehicle->section[0].positionLeft;
+    vehicle->toolFarRightPosition = vehicle->section[vehicle->numOfSections - 1].positionRight;
 
     //now do the full width section
-    section[vehicle->numOfSections].sectionWidth = vehicle->toolWidth;
-    section[vehicle->numOfSections].positionLeft = vehicle->toolFarLeftPosition;
-    section[vehicle->numOfSections].positionRight = vehicle->toolFarRightPosition;
+    vehicle->section[vehicle->numOfSections].sectionWidth = vehicle->toolWidth;
+    vehicle->section[vehicle->numOfSections].positionLeft = vehicle->toolFarLeftPosition;
+    vehicle->section[vehicle->numOfSections].positionRight = vehicle->toolFarRightPosition;
 
     //find the right side pixel position
     vehicle->rpXPosition = 200 + (int)(roundAwayFromZero(vehicle->toolFarLeftPosition * 10));
@@ -157,12 +157,12 @@ void FormGPS::processSectionLookahead() {
     //find any off buttons, any outside of boundary, going backwards, and the farthest lookahead
     for (int j = 0; j < vehicle->numOfSections; j++)
     {
-        if (section[j].sectionLookAhead > rpHeight) rpHeight = section[j].sectionLookAhead;
-        if (section[j].manBtnState == btnStates::Off) vehicle->isSuperSectionAllowedOn = false;
-        if (!section[j].isInsideBoundary) vehicle->isSuperSectionAllowedOn = false;
+        if (vehicle->section[j].sectionLookAhead > rpHeight) rpHeight = vehicle->section[j].sectionLookAhead;
+        if (vehicle->section[j].manBtnState == btnStates::Off) vehicle->isSuperSectionAllowedOn = false;
+        if (!vehicle->section[j].isInsideBoundary) vehicle->isSuperSectionAllowedOn = false;
 
         //check if any sections going backwards
-        if (section[j].sectionLookAhead < 0) vehicle->isSuperSectionAllowedOn = false;
+        if (vehicle->section[j].sectionLookAhead < 0) vehicle->isSuperSectionAllowedOn = false;
     }
 
     //if only one section, or going slow no need for super section
@@ -210,18 +210,18 @@ void FormGPS::processSectionLookahead() {
     {
         for (int j = 0; j < vehicle->numOfSections; j++)
         {
-            if (section[j].isSectionOn)
+            if (vehicle->section[j].isSectionOn)
             {
-                section[j].sectionOffRequest = true;
-                section[j].sectionOnRequest = false;
-                section[j].sectionOffTimer = 0;
-                section[j].sectionOnTimer = 0;
+                vehicle->section[j].sectionOffRequest = true;
+                vehicle->section[j].sectionOnRequest = false;
+                vehicle->section[j].sectionOffTimer = 0;
+                vehicle->section[j].sectionOnTimer = 0;
             }
         }
 
         //turn on super section
-        section[vehicle->numOfSections].sectionOnRequest = true;
-        section[vehicle->numOfSections].sectionOffRequest = false;
+        vehicle->section[vehicle->numOfSections].sectionOnRequest = true;
+        vehicle->section[vehicle->numOfSections].sectionOffRequest = false;
     }
 
     /* Below is priority based. The last if statement is the one that is
@@ -243,23 +243,23 @@ void FormGPS::processSectionLookahead() {
         for (int j = 0; j < vehicle->numOfSections; j++)
         {
             //is section going backwards?
-            if (section[j].sectionLookAhead > 0)
+            if (vehicle->section[j].sectionLookAhead > 0)
             {
                 //If any nowhere applied, send OnRequest, if its all green send an offRequest
-                section[j].isSectionRequiredOn = false;
+                vehicle->section[j].isSectionRequiredOn = false;
 
                 if (boundary->isSet)
                 {
 
                     start = 0, end = 0; //, skip = 0;
-                    start = section[j].rpSectionPosition - section[0].rpSectionPosition;
-                    end = section[j].rpSectionWidth - 1 + start;
+                    start = vehicle->section[j].rpSectionPosition - vehicle->section[0].rpSectionPosition;
+                    end = vehicle->section[j].rpSectionWidth - 1 + start;
                     if (end > vehicle->rpWidth - 1) end = vehicle->rpWidth - 1;
                     //skip = vehicle->rpWidth - (end - start);
 
 
                     tagged = 0;
-                    for (int h = 0; h < (int)section[j].sectionLookAhead; h++)
+                    for (int h = 0; h < (int)vehicle->section[j].sectionLookAhead; h++)
                     {
                         for (int a = start; a < end; a++)
                         {
@@ -267,7 +267,7 @@ void FormGPS::processSectionLookahead() {
                             {
                                 if (tagged++ > vehicle->toolMinUnappliedPixels)
                                 {
-                                    section[j].isSectionRequiredOn = true;
+                                    vehicle->section[j].isSectionRequiredOn = true;
                                     goto GetMeOutaHere;
                                 }
                             }
@@ -281,23 +281,23 @@ void FormGPS::processSectionLookahead() {
 GetMeOutaHere:
 
                     start = 0; end = 0; //skip = 0;
-                    start = section[j].rpSectionPosition - section[0].rpSectionPosition;
-                    end = section[j].rpSectionWidth - 1 + start;
+                    start = vehicle->section[j].rpSectionPosition - vehicle->section[0].rpSectionPosition;
+                    end = vehicle->section[j].rpSectionWidth - 1 + start;
                     if (end > vehicle->rpWidth - 1) end = vehicle->rpWidth - 1;
                     //skip = vehicle->rpWidth - (end - start);
 
                     //looking for boundary line color, bright green
-                    for (int h = 0; h < (int)section[j].sectionLookAhead; h++)
+                    for (int h = 0; h < (int)vehicle->section[j].sectionLookAhead; h++)
                     {
                         for (int a = start; a < end; a++)
                         {
                             if (lookaheadPixels[a].green > 240) //&& )
                             {
-                                section[j].isSectionRequiredOn = false;
-                                section[j].sectionOffRequest = true;
-                                section[j].sectionOnRequest = false;
-                                section[j].sectionOffTimer = 0;
-                                section[j].sectionOnTimer = 0;
+                                vehicle->section[j].isSectionRequiredOn = false;
+                                vehicle->section[j].sectionOffRequest = true;
+                                vehicle->section[j].sectionOnRequest = false;
+                                vehicle->section[j].sectionOffTimer = 0;
+                                vehicle->section[j].sectionOnTimer = 0;
 
                                 goto GetMeOutaHere1;
                             }
@@ -310,30 +310,30 @@ GetMeOutaHere:
                     GetMeOutaHere1:
 
                     //if out of boundary, turn it off
-                    if (!section[j].isInsideBoundary)
+                    if (!vehicle->section[j].isInsideBoundary)
                     {
-                        section[j].isSectionRequiredOn = false;
-                        section[j].sectionOffRequest = true;
-                        section[j].sectionOnRequest = false;
-                        section[j].sectionOffTimer = 0;
-                        section[j].sectionOnTimer = 0;
+                        vehicle->section[j].isSectionRequiredOn = false;
+                        vehicle->section[j].sectionOffRequest = true;
+                        vehicle->section[j].sectionOnRequest = false;
+                        vehicle->section[j].sectionOffTimer = 0;
+                        vehicle->section[j].sectionOnTimer = 0;
                     }
                 }
 
                 //no boundary set so ignore
                 else
                 {
-                    section[j].isSectionRequiredOn = false;
+                    vehicle->section[j].isSectionRequiredOn = false;
 
                     int start = 0, end = 0; //, skip = 0;
-                    start = section[j].rpSectionPosition - section[0].rpSectionPosition;
-                    end = section[j].rpSectionWidth - 1 + start;
+                    start = vehicle->section[j].rpSectionPosition - vehicle->section[0].rpSectionPosition;
+                    end = vehicle->section[j].rpSectionWidth - 1 + start;
                     if (end > vehicle->rpWidth - 1) end = vehicle->rpWidth - 1;
                     //skip = vehicle->rpWidth - (end - start);
 
 
                     int tagged = 0;
-                    for (int h = 0; h < (int)section[j].sectionLookAhead; h++)
+                    for (int h = 0; h < (int)vehicle->section[j].sectionLookAhead; h++)
                     {
                         for (int a = start; a < end; a++)
                         {
@@ -341,7 +341,7 @@ GetMeOutaHere:
                             {
                                 if (tagged++ > vehicle->toolMinUnappliedPixels)
                                 {
-                                    section[j].isSectionRequiredOn = true;
+                                    vehicle->section[j].isSectionRequiredOn = true;
                                     goto GetMeOutaHere2;
                                 }
                             }
@@ -358,55 +358,55 @@ GetMeOutaHere:
             }
 
             //if section going backwards turn it off
-            else section[j].isSectionRequiredOn = false;
+            else vehicle->section[j].isSectionRequiredOn = false;
 
         }
 
         //if the superSection is on, turn it off
-        if (section[vehicle->numOfSections].isSectionOn)
+        if (vehicle->section[vehicle->numOfSections].isSectionOn)
         {
-            section[vehicle->numOfSections].sectionOffRequest = true;
-            section[vehicle->numOfSections].sectionOnRequest = false;
-            section[vehicle->numOfSections].sectionOffTimer = 0;
-            section[vehicle->numOfSections].sectionOnTimer = 0;
+            vehicle->section[vehicle->numOfSections].sectionOffRequest = true;
+            vehicle->section[vehicle->numOfSections].sectionOnRequest = false;
+            vehicle->section[vehicle->numOfSections].sectionOffTimer = 0;
+            vehicle->section[vehicle->numOfSections].sectionOnTimer = 0;
         }
 
         //if Master Auto is on
         for (int j = 0; j < vehicle->numOfSections; j++)
         {
-            if (section[j].isSectionRequiredOn && section[j].isAllowedOn)
+            if (vehicle->section[j].isSectionRequiredOn && vehicle->section[j].isAllowedOn)
             {
                 //global request to turn on section
-                section[j].sectionOnRequest = true;
-                section[j].sectionOffRequest = false;
+                vehicle->section[j].sectionOnRequest = true;
+                vehicle->section[j].sectionOffRequest = false;
             }
 
-            else if (!section[j].isSectionRequiredOn)
+            else if (!vehicle->section[j].isSectionRequiredOn)
             {
                 //global request to turn off section
-                section[j].sectionOffRequest = true;
-                section[j].sectionOnRequest = false;
+                vehicle->section[j].sectionOffRequest = true;
+                vehicle->section[j].sectionOnRequest = false;
             }
 
             // Manual on, force the section On and exit loop so digital is also overidden
-            if (section[j].manBtnState == btnStates::On)
+            if (vehicle->section[j].manBtnState == btnStates::On)
             {
-                section[j].sectionOnRequest = true;
-                section[j].sectionOffRequest = false;
+                vehicle->section[j].sectionOnRequest = true;
+                vehicle->section[j].sectionOffRequest = false;
                 continue;
             }
 
-            if (section[j].manBtnState == btnStates::Off)
+            if (vehicle->section[j].manBtnState == btnStates::Off)
             {
-                section[j].sectionOnRequest = false;
-                section[j].sectionOffRequest = true;
+                vehicle->section[j].sectionOnRequest = false;
+                vehicle->section[j].sectionOffRequest = true;
             }
 
             //if going too slow turn off sections
             if (pn->speed < vehicle->slowSpeedCutoff)
             {
-                section[j].sectionOnRequest = false;
-                section[j].sectionOffRequest = true;
+                vehicle->section[j].sectionOnRequest = false;
+                vehicle->section[j].sectionOffRequest = true;
             }
 
             //digital input Master control (WorkSwitch)
@@ -416,14 +416,14 @@ GetMeOutaHere:
                 if (mc.isWorkSwitchActiveLow)
                 {
                     if (mc.workSwitchValue == 0)
-                        { section[j].sectionOnRequest = true; section[j].sectionOffRequest = false; }
-                    else { section[j].sectionOnRequest = false; section[j].sectionOffRequest = true; }
+                        { vehicle->section[j].sectionOnRequest = true; vehicle->section[j].sectionOffRequest = false; }
+                    else { vehicle->section[j].sectionOnRequest = false; vehicle->section[j].sectionOffRequest = true; }
                 }
                 else
                 {
                     if (mc.workSwitchValue == 1)
-                        { section[j].sectionOnRequest = true; section[j].sectionOffRequest = false; }
-                    else { section[j].sectionOnRequest = false; section[j].sectionOffRequest = true; }
+                        { vehicle->section[j].sectionOnRequest = true; vehicle->section[j].sectionOffRequest = false; }
+                    else { vehicle->section[j].sectionOnRequest = false; vehicle->section[j].sectionOffRequest = true; }
                 }
             }
         }
@@ -476,39 +476,39 @@ void FormGPS::processSectionOnOffRequests()
         {
             //Turn ON
             //if requested to be on, set the timer to Max 10 (1 seconds) = 10 frames per second
-            if (section[j].sectionOnRequest && !section[j].sectionOnOffCycle)
+            if (vehicle->section[j].sectionOnRequest && !vehicle->section[j].sectionOnOffCycle)
             {
-                section[j].sectionOnTimer = (int)(pn->speed * vehicle->toolLookAhead)+1;
-                if (section[j].sectionOnTimer > fixUpdateHz+3) section[j].sectionOnTimer = fixUpdateHz+3;
-                section[j].sectionOnOffCycle = true;
+                vehicle->section[j].sectionOnTimer = (int)(pn->speed * vehicle->toolLookAhead)+1;
+                if (vehicle->section[j].sectionOnTimer > fixUpdateHz+3) vehicle->section[j].sectionOnTimer = fixUpdateHz+3;
+                vehicle->section[j].sectionOnOffCycle = true;
             }
 
             //reset the ON request
-            section[j].sectionOnRequest = false;
+            vehicle->section[j].sectionOnRequest = false;
 
             //decrement the timer if not zero
-            if (section[j].sectionOnTimer > 0)
+            if (vehicle->section[j].sectionOnTimer > 0)
             {
                 //turn the section ON if not and decrement timer
-                section[j].sectionOnTimer--;
-                if (!section[j].isSectionOn) section[j].turnSectionOn();
+                vehicle->section[j].sectionOnTimer--;
+                if (!vehicle->section[j].isSectionOn) vehicle->section[j].turnSectionOn();
 
                 //keep resetting the section OFF timer while the ON is active
-                section[j].sectionOffTimer = (int)(fixUpdateHz * vehicle->toolTurnOffDelay);
+                vehicle->section[j].sectionOffTimer = (int)(fixUpdateHz * vehicle->toolTurnOffDelay);
             }
 
-            if (!section[j].sectionOffRequest) section[j].sectionOffTimer = (int)(fixUpdateHz * vehicle->toolTurnOffDelay);
+            if (!vehicle->section[j].sectionOffRequest) vehicle->section[j].sectionOffTimer = (int)(fixUpdateHz * vehicle->toolTurnOffDelay);
 
             //decrement the off timer
-            if (section[j].sectionOffTimer > 0) section[j].sectionOffTimer--;
+            if (vehicle->section[j].sectionOffTimer > 0) vehicle->section[j].sectionOffTimer--;
 
             //Turn OFF
             //if Off section timer is zero, turn off the section
-            if (section[j].sectionOffTimer == 0 && section[j].sectionOnTimer == 0 && section[j].sectionOffRequest)
+            if (vehicle->section[j].sectionOffTimer == 0 && vehicle->section[j].sectionOnTimer == 0 && vehicle->section[j].sectionOffRequest)
             {
-                if (section[j].isSectionOn) section[j].turnSectionOff();
-                section[j].sectionOnOffCycle = false;
-                section[j].sectionOffRequest = false;
+                if (vehicle->section[j].isSectionOn) vehicle->section[j].turnSectionOff();
+                vehicle->section[j].sectionOnOffCycle = false;
+                vehicle->section[j].sectionOffRequest = false;
             }
         }
     }
@@ -534,7 +534,7 @@ void FormGPS::tmrWatchdog_timeout()
 
         double spd = 0;
         for (int c = 0; c < 10; c++)
-            spd += avgSpeed[c];
+            spd += vehicle->avgSpeed[c];
 
         //convert to kph
         spd *= 0.1;
@@ -543,9 +543,9 @@ void FormGPS::tmrWatchdog_timeout()
         {
             //Hectares on the master section soft control and sections
             btnSectionOffAutoOn->setProperty("buttonText",
-                     (totalSquareMeters < 999900 ?
-                          locale.toString(totalSquareMeters * 0.0001,'f',2) :
-                          locale.toString(totalSquareMeters * 0.0001,'f',1))
+                     (vehicle->totalSquareMeters < 999900 ?
+                          locale.toString(vehicle->totalSquareMeters * 0.0001,'f',2) :
+                          locale.toString(vehicle->totalSquareMeters * 0.0001,'f',1))
                                              + " " + tr("Ha"));
             btnPerimeter->setProperty("buttonText",
                      locale.toString(periArea.area * 0.0001,'f', 2) + " " + tr("Ha"));
@@ -561,7 +561,7 @@ void FormGPS::tmrWatchdog_timeout()
             toolStripStatusLabelBoundaryArea.Text = boundary.areaHectare;
             */
             qmlItem(qml_root,"stripBoundaryArea")->setProperty("text",tr("Bounded area:")+ " " +locale.toString(boundary->areaHectare,'f',1) + " " + tr("Ha"));
-            qmlItem(qml_root,"stripAreaUser")->setProperty("text", locale.toString(totalUserSquareMeters * 0.0001,'f',1) + " " + tr("Ha"));
+            qmlItem(qml_root,"stripAreaUser")->setProperty("text", locale.toString(vehicle->totalUserSquareMeters * 0.0001,'f',1) + " " + tr("Ha"));
             qmlItem(qml_root,"stripEqWidth")->setProperty("text", locale.toString(vehicle->toolWidth,'f',2) + " " + tr("M"));
             qmlItem(qml_root,"stripDistance")->setProperty("text", locale.toString(userDistance,'f',0)+" "+tr("M"));
             qmlItem(qml_root,"stripAreaRate")->setProperty("text", locale.toString(vehicle->toolWidth * spd / 10,'f',1) + " " + tr("Ha/hr"));
@@ -572,9 +572,9 @@ void FormGPS::tmrWatchdog_timeout()
         {
             //acres on the master section soft control and sections
             btnSectionOffAutoOn->setProperty("buttonText",
-                     (totalSquareMeters < 404645 ?
-                          QString::number(totalSquareMeters * 0.00024710499815078974633856493327535, 'f',2) :
-                          QString::number(totalSquareMeters * 0.00024710499815078974633856493327535, 'f',1))
+                     (vehicle->totalSquareMeters < 404645 ?
+                          QString::number(vehicle->totalSquareMeters * 0.00024710499815078974633856493327535, 'f',2) :
+                          QString::number(vehicle->totalSquareMeters * 0.00024710499815078974633856493327535, 'f',1))
                                              + " " + tr("Ac"));
             btnPerimeter->setProperty("buttonText",
                      QString::number(periArea.area * 0.00024710499815078974633856493327535, 'f',2) +
@@ -591,7 +591,7 @@ void FormGPS::tmrWatchdog_timeout()
             toolStripStatusLabelBoundaryArea.Text = boundary.areaAcre;
             */
             qmlItem(qml_root,"stripBoundaryArea")->setProperty("text",tr("Bounded area:")+ " " +locale.toString(boundary->areaAcre,'f',1) + " " + tr("Ac"));
-            qmlItem(qml_root,"stripAreaUser")->setProperty("text", locale.toString(totalUserSquareMeters * 0.00024710499815078974633856493327535,'f',1) + " " + tr("Ac"));
+            qmlItem(qml_root,"stripAreaUser")->setProperty("text", locale.toString(vehicle->totalUserSquareMeters * 0.00024710499815078974633856493327535,'f',1) + " " + tr("Ac"));
             qmlItem(qml_root,"stripEqWidth")->setProperty("text", locale.toString(vehicle->toolWidth * m2ft,'f',1) + " " + tr("ft"));
             qmlItem(qml_root,"stripDistance")->setProperty("text", locale.toString(userDistance * 3.28084,'f',0)+" "+tr("ft"));
             qmlItem(qml_root,"stripAreaRate")->setProperty("text", locale.toString(vehicle->toolWidth * spd / 10 * 2.47,'f',1) + " " + tr("Ac/hr"));
@@ -617,7 +617,7 @@ void FormGPS::tmrWatchdog_timeout()
         */
 
         qmlItem(qml_root,"stripHz")->setProperty("text",locale.toString(fixUpdateHz) + " " + tr("Hz"));
-        tlDisp->lblHeading->setText(locale.toString(toDegrees(fixHeading),'f',1));
+        tlDisp->lblHeading->setText(locale.toString(toDegrees(vehicle->fixHeading),'f',1));
 
         /*
          * TODO
@@ -703,17 +703,17 @@ void FormGPS::manualBtnUpdate(int sectNumber)
 {
     QObject *button = qmlItem(qml_root,QString("section")+QString::number(sectNumber));
 
-    switch(section[sectNumber].manBtnState) {
+    switch(vehicle->section[sectNumber].manBtnState) {
     case btnStates::Off:
-        section[sectNumber].manBtnState = btnStates::Auto;
+        vehicle->section[sectNumber].manBtnState = btnStates::Auto;
         button->setProperty("state","auto");
         break;
     case btnStates::Auto:
-        section[sectNumber].manBtnState = btnStates::On;
+        vehicle->section[sectNumber].manBtnState = btnStates::On;
         button->setProperty("state","on");
         break;
     case btnStates::On:
-        section[sectNumber].manBtnState = btnStates::Off;
+        vehicle->section[sectNumber].manBtnState = btnStates::Off;
         button->setProperty("state","off");
         break;
     }
@@ -722,7 +722,7 @@ void FormGPS::manualBtnUpdate(int sectNumber)
 QString FormGPS::speedKPH() {
     double spd = 0;
     for (int c = 0; c < 10; c++)
-        spd += avgSpeed[c];
+        spd += vehicle->avgSpeed[c];
 
     //convert to kph
     spd *= 0.1;
@@ -733,7 +733,7 @@ QString FormGPS::speedKPH() {
 QString FormGPS::speedMPH() {
     double spd = 0;
     for (int c = 0; c < 10; c++)
-        spd += avgSpeed[c];
+        spd += vehicle->avgSpeed[c];
 
     //convert to mph
     spd *= 0.0621371;

@@ -242,13 +242,13 @@ void FormGPS::openGLControl_Draw()
         //camera does translations and rotations
         //camera.setWorldCam(gl, pivotAxlePos.easting, pivotAxlePos.northing, fixHeadingCam);
         //do our own matrices
-        camera.setWorldCam(modelview, pivotAxlePos.easting, pivotAxlePos.northing, fixHeadingCam);
+        camera.setWorldCam(modelview, vehicle->pivotAxlePos.easting, vehicle->pivotAxlePos.northing, fixHeadingCam);
 
         //calculate the frustum planes for culling
         calcFrustum(projection*modelview);
 
         //draw the field ground images
-        worldGrid->drawFieldSurface(gl, projection *modelview);
+        worldGrid->drawFieldSurface(gl, projection *modelview, *(texture1[1]));
 
         ////Draw the world grid based on camera position
         gl->glDisable(GL_DEPTH_TEST);
@@ -274,7 +274,7 @@ void FormGPS::openGLControl_Draw()
         for (int j = 0; j < vehicle->numSuperSection; j++)
         {
             //every time the section turns off and on is a new patch
-            int patchCount = section[j].patchList.size();
+            int patchCount = vehicle->section[j].patchList.size();
 
             //check if in frustum or not
             bool isDraw;
@@ -291,7 +291,7 @@ void FormGPS::openGLControl_Draw()
                 //for every new chunk of patch
 
                 //foreach is a Qt macro that iterates over Qt containers
-                foreach (QSharedPointer<QVector<QVector3D>> triList, section[j].patchList)
+                foreach (QSharedPointer<QVector<QVector3D>> triList, vehicle->section[j].patchList)
                 {
                     isDraw = false;
                     int count2 = triList->size();
@@ -438,7 +438,7 @@ void FormGPS::openGLControl_Draw()
         //glDrawText(40, 120, 1, 0.5, 1, "Courier", 12, " frame msec " + Convert.ToString((int)(frameTime)));
 
         //draw the vehicle/implement
-        vehicle->drawVehicle(glContext,modelview, projection);
+        vehicle->drawVehicle(glContext,modelview, projection, camera.camSetDistance > -1500);
 
         /*
         //Back to normal
@@ -718,11 +718,11 @@ void FormGPS::openGLControlBack_Draw()
 
     //rotate camera so heading matched fix heading in the world
     //gl->glRotated(toDegrees(fixHeadingSection), 0, 0, 1);
-    modelview.rotate(toDegrees(fixHeadingSection), 0, 0, 1);
+    modelview.rotate(toDegrees(vehicle->fixHeadingSection), 0, 0, 1);
 
     //translate to that spot in the world
     //gl->glTranslated(-toolPos.easting, -toolPos.northing, -fixZ);
-    modelview.translate(-toolPos.easting, -toolPos.northing, -fixZ);
+    modelview.translate(-vehicle->toolPos.easting, -vehicle->toolPos.northing, -vehicle->fixZ);
 
     //patch color
     //QColor patchColor(0.0f, 0.5f, 0.0f);
@@ -739,12 +739,12 @@ void FormGPS::openGLControlBack_Draw()
     for (int j = 0; j < vehicle->numSuperSection; j++)
     {
         //every time the section turns off and on is a new patch
-        int patchCount = section[j].patchList.size();
+        int patchCount = vehicle->section[j].patchList.size();
 
         if (patchCount > 0)
         {
             //for every new chunk of patch
-            foreach (QSharedPointer<QVector<QVector3D>> triList, section[j].patchList)
+            foreach (QSharedPointer<QVector<QVector3D>> triList, vehicle->section[j].patchList)
             {
                 isDraw = false;
                 int count2 = triList->size();
@@ -801,7 +801,7 @@ void FormGPS::openGLControlBack_Draw()
     //find the farthest lookahead
     for (int j = 0; j < vehicle->numOfSections; j++)
     {
-        if (section[j].sectionLookAhead > rpHeight) rpHeight = section[j].sectionLookAhead;
+        if (vehicle->section[j].sectionLookAhead > rpHeight) rpHeight = vehicle->section[j].sectionLookAhead;
     }
 
     //clamp the height after looking way ahead, this is for switching off super section only

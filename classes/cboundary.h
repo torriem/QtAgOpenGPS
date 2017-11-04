@@ -9,12 +9,10 @@
 
 class QOpenGLFunctions_2_1;
 class QOpenGLContext;
-class FormGPS;
 
 class CBoundary
 {
 private:
-    FormGPS *mf;
 public:
     //list of coordinates of boundary line
     QVector<Vec2> ptList;
@@ -31,7 +29,7 @@ public:
     bool isSet = false;
     bool isDrawRightSide = false;
 
-    CBoundary(FormGPS *mf);
+    CBoundary();
 
     void resetBoundary();
     void preCalcBoundaryLines();
@@ -40,7 +38,7 @@ public:
     void drawBoundaryLine(QOpenGLContext *glContext);
     void drawBoundaryLineOnBackBuffer(QOpenGLFunctions_2_1 *gl);
     void calculateBoundaryArea();
-    bool isPointInPolygon();
+    //bool isPointInPolygon();
 };
 
 #endif // CBOUNDARY_H

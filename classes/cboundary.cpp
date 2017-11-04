@@ -1,13 +1,11 @@
 #include "cboundary.h"
 #include "cnmea.h"
-#include "formgps.h"
 #include "math.h"
 #include <QLocale>
 #include <QOpenGLContext>
 #include <QOpenGLFunctions_2_1>
 
-CBoundary::CBoundary(FormGPS *mf)
-    :mf(mf)
+CBoundary::CBoundary()
 {
 
 }
@@ -60,7 +58,6 @@ bool CBoundary::isPrePointInPolygon(Vec2 testPoint)
     if (calcList.size() < 10) return false;
     int j = ptList.size() - 1;
     bool oddNodes = false;
-    //vec2 testPoint = new vec2(mf.toolPos.easting, mf.toolPos.northing);
 
     //test against the constant and multiples list the test point
     for (int i = 0; i < ptList.size(); j = i++)
@@ -135,6 +132,7 @@ void CBoundary::calculateBoundaryArea()
     area = fabs(area / 2);
 }
 
+/*
 //the non precalculated version
 bool CBoundary::isPointInPolygon()
 {
@@ -153,4 +151,4 @@ bool CBoundary::isPointInPolygon()
     }
     return result;
 }
-
+*/

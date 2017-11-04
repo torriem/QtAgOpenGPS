@@ -361,8 +361,8 @@ void FormGPS::onBtnManualOffOn_clicked(){
         //turn all the sections allowed and update to ON!! Auto changes to ON
         for (int j = 0; j < vehicle->numOfSections; j++)
         {
-            section[j].isAllowedOn = true;
-            section[j].manBtnState = btnStates::Auto; //auto rolls over to on
+            vehicle->section[j].isAllowedOn = true;
+            vehicle->section[j].manBtnState = btnStates::Auto; //auto rolls over to on
         }
 
         manualAllBtnsUpdate();
@@ -375,8 +375,8 @@ void FormGPS::onBtnManualOffOn_clicked(){
         //turn section buttons all OFF or Auto if SectionAuto was on or off
         for (int j = 0; j < vehicle->numOfSections; j++)
         {
-            section[j].isAllowedOn = false;
-            section[j].manBtnState = btnStates::On;
+            vehicle->section[j].isAllowedOn = false;
+            vehicle->section[j].manBtnState = btnStates::On;
         }
 
         //Update the button colors and text
@@ -404,8 +404,8 @@ void FormGPS::onBtnSectionOffAutoOn_clicked(){
             //turn all the sections allowed and update to ON!! Auto changes to ON
             for (int j = 0; j < vehicle->numOfSections; j++)
             {
-                section[j].isAllowedOn = true;
-                section[j].manBtnState = btnStates::Off;
+                vehicle->section[j].isAllowedOn = true;
+                vehicle->section[j].manBtnState = btnStates::Off;
             }
 
             manualAllBtnsUpdate();
@@ -418,8 +418,8 @@ void FormGPS::onBtnSectionOffAutoOn_clicked(){
             //turn section buttons all OFF or Auto if SectionAuto was on or off
             for (int j = 0; j < vehicle->numOfSections; j++)
             {
-                section[j].isAllowedOn = false;
-                section[j].manBtnState = btnStates::On;
+                vehicle->section[j].isAllowedOn = false;
+                vehicle->section[j].manBtnState = btnStates::On;
             }
 
             //Update the button colors and text
@@ -438,9 +438,9 @@ void FormGPS::onBtnSectionOffAutoOn_clicked(){
 void FormGPS::onBtnSectionMan_clicked(int sectNumber) {
     if (autoBtnState != btnStates::Auto) {
         //if auto is off just have on-off for choices of section buttons
-        if (section[sectNumber].manBtnState == btnStates::Off) {
+        if (vehicle->section[sectNumber].manBtnState == btnStates::Off) {
             ///set to auto so that manuBtnUpdate will roll it over to On
-            section[sectNumber].manBtnState = btnStates::Auto;
+            vehicle->section[sectNumber].manBtnState = btnStates::Auto;
         }
     }
     //Roll over button to next state

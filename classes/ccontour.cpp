@@ -1,5 +1,4 @@
 #include "ccontour.h"
-#include "formgps.h"
 #include "cnmea.h"
 #include "cvehicle.h"
 #include "cvec.h"
@@ -11,8 +10,8 @@
 
 const double DOUBLE_EPSILON=std::numeric_limits<double>::epsilon();
 
-CContour::CContour(FormGPS *mf)
-    :mf(mf), ptList(new QVector<Vec4>)
+CContour::CContour()
+    ptList(new QVector<Vec4>)
 {
 
 }
@@ -66,7 +65,7 @@ void CContour::stopContourLine()
         ptList->append(point);
 
         //add the point list to the save list for appending to contour file
-        mf->contourSaveList.append(ptList);
+        contourSaveList.append(ptList);
     }
 
     //delete ptList

@@ -7,13 +7,11 @@
 #include "vec4.h"
 #include "cvec.h"
 
-class FormGPS;
 class QOpenGLContext;
 
 class CContour
 {
 private:
-    FormGPS *mf;
 public:
     bool isContourOn=false, isContourBtnOn=false;
 
@@ -63,6 +61,9 @@ public:
 
     //list of the list of individual Lines for entire field
     QVector<QSharedPointer<QVector<Vec4>>> stripList;
+
+    //list of lists of completed patch contour tracking data to save to file
+    QVector<QSharedPointer<QVector<Vec4>>> contourSaveList;
 
     //list of points for the new contour line
     QVector<Vec4> ctList;
