@@ -174,7 +174,7 @@ void FormGPS::processSectionLookahead() {
     rpHeight = fabs(rpHeight) * 2.0;
     if (rpHeight > 195) rpHeight = 195;
     if (rpHeight < 8) rpHeight = 8;
-    qDebug() << rpHeight;
+    //qDebug() << rpHeight;
 
     //lookaheadPixels was read in the OpenGL rendering routine.
 
@@ -188,11 +188,11 @@ void FormGPS::processSectionLookahead() {
         //look for anything applied coming up
         for (int a = 0; a < (vehicle->rpWidth * rpHeight); a++)
         {
-            if (lookaheadPixels[a].green != 0 && lookaheadPixels[a].red == 0 and lookaheadPixels[a].blue == 0)
+            if (lookaheadPixels[a].green != 0) // && lookaheadPixels[a].red == 0 and lookaheadPixels[a].blue == 0)
             {
-                //if (lookaheadPixels[a].red != 0 || lookaheadPixels[a].blue != 0) {
-                //    qDebug() << "position " << a << "showed spurious pixel" << int(lookaheadPixels[a].green);
-                //}
+                if (lookaheadPixels[a].red != 0 || lookaheadPixels[a].blue != 0) {
+                    qDebug() << "position " << a << "showed spurious pixel" << int(lookaheadPixels[a].green);
+                }
                 if (totalPixs++ > pixLimit)
                 {
                     vehicle->isSuperSectionAllowedOn = false;

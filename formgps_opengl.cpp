@@ -793,32 +793,15 @@ void FormGPS::openGLControlBack_Draw()
     //draw boundary line
     //TODO: boundary->drawBoundaryLineOnBackBuffer(gl);
 
-    //determine farthest ahead lookahead - is the height of the readpixel line
-    double rpHeight = 0;
-
-    //section state stuff is moved to processSectionLookAhead().
-
-    //find the farthest lookahead
-    for (int j = 0; j < vehicle->numOfSections; j++)
-    {
-        if (vehicle->section[j].sectionLookAhead > rpHeight) rpHeight = vehicle->section[j].sectionLookAhead;
-    }
-
-    //clamp the height after looking way ahead, this is for switching off super section only
-    //rpHeight = fabs(rpHeight) * 2.0;
-    //if (rpHeight > 195) rpHeight = 195;
-    //if (rpHeight < 8) rpHeight = 8;
-
     //read the whole block of pixels up to max lookahead, one read only
     //OpenGL ES only can read complete RGB value, or alpha. so we'll
     //try alpha.
     //gl->glReadPixels(vehicle->rpXPosition, 202, vehicle->rpWidth, (int)rpHeight,
     //                    GL_RGB, GL_UNSIGNED_BYTE, lookaheadPixels);
 
-    //grnPix = QImage((uchar *)lookaheadPixels,vehicle->rpWidth,rpHeight,vehicle->rpWidth,QImage::Format_RGB888);
-    grnPix = backFBO->toImage().mirrored().convertToFormat(QImage::Format_RGB888);
+    grnPix = backFBO->toImage().mirrored().convertToFormat(QImage::Format_RGBX8888);
     QImage temp = grnPix.copy(vehicle->rpXPosition, 202, vehicle->rpWidth, 195 /*(int)rpHeight*/);
-    memcpy(lookaheadPixels, temp.constBits(), temp.size().width() * temp.size().height() * 3);
+    memcpy(lookaheadPixels, temp.constBits(), temp.size().width() * temp.size().height() * 4);
     //grnPix = backFBO->toImage().mirrored().convertToFormat(QImage::Format_RGB888);
     grnPix = temp;
 

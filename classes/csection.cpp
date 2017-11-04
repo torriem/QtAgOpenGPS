@@ -40,7 +40,7 @@ void CSection::turnSectionOn() {
 }
 
 void CSection::turnSectionOff() {
-    qDebug() << "section turned off";
+    //qDebug() << "section turned off";
     addPathPoint(vehicle->toolPos.northing, vehicle->toolPos.easting, vehicle->cosSectionHeading, vehicle->sinSectionHeading);
 
     isSectionOn = false;

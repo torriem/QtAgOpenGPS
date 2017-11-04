@@ -716,7 +716,7 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
         if (M_PI - fabs(fabs(head - vehicle->fixHeadingSection) - M_PI) > PIBy2) rightLook *= -1;
 
         //choose fastest speed
-        if (leftLook > 0 and rightLook > 0) {
+        if (fabs(leftLook) > 0.000001 and fabs(rightLook) > 0.000001) {
             if (leftLook > rightLook)  vehicle->section[j].sectionLookAhead = leftLook;
             else vehicle->section[j].sectionLookAhead = rightLook;
 
