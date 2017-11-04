@@ -6,7 +6,7 @@
 class QOpenGLContext;
 //namespace AgOpenGPS
 
-class FormGPS;
+class CVehicle;
 
 class CABLine
 {
@@ -60,12 +60,12 @@ public:
 
 private:
     //pointers to mainform controls
-    FormGPS *mf;
+    CVehicle *vehicle;
     //OpenGL gl;
 
 
 public:
-    CABLine(FormGPS *mf);
+    CABLine(CVehicle *mf);
     void deleteAB();
     void setABLineByPoint();
     void setABLineByHeading(); //do we need to pass in heading somewhere from the main form?

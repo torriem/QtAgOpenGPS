@@ -35,10 +35,10 @@ FormGPS::FormGPS(QWidget *parent) :
     //for (int i = 0; i < MAXSECTIONS; i++)
     //    section[i].set_mainform(this);
 
-    ABLine = new CABLine(this);
-    ct = new CContour(this);
     vehicle = new CVehicle();
-    boundary = new CBoundary(this);
+    boundary = new CBoundary();
+    ABLine = new CABLine(vehicle);
+    ct = new CContour(vehicle);
 
     isUDPServerOn = s.value("port/udp_on", true).toBool();
 
@@ -77,7 +77,7 @@ FormGPS::FormGPS(QWidget *parent) :
     vehicle->section[2].positionRight = 4.0;
     vehicle->section[3].positionLeft = 4.0;
     vehicle->section[3].positionRight = 8.0;
-    vehicle->numOfSections = 4;
+    vehicle->numOfSections = 4; //0-3
     vehicle->numSuperSection = 5;
     vehicle->toolTrailingHitchLength = -10; //30 foot hitch to see following action better
 

@@ -1,16 +1,16 @@
 #include "cabline.h"
-#include "formgps.h"
 #include "vec2.h"
 #include "glm.h"
 #include "cvehicle.h"
 #include "cnmea.h"
 
 //#include <QtOpenGL>
+#include <QSettings>
 #include <QOpenGLContext>
 #include <QOpenGLFunctions_2_1>
 
-CABLine::CABLine(FormGPS *mf)
-    :mf(mf)
+CABLine::CABLine(CVehicle *v)
+    :vehicle(v)
 {
 
 }
@@ -36,8 +36,8 @@ void CABLine::deleteAB() {
 
 void CABLine::setABLineByPoint()
 {
-    refPoint2.easting = mf->fixEasting;
-    refPoint2.northing = mf->fixNorthing;
+    refPoint2.easting = vehicle->fixEasting;
+    refPoint2.northing = vehicle->fixNorthing;
     //std::cout << refPoint2.easting << std::endl;
     //std::cout << refPoint2.northing << std::endl;
 
@@ -93,10 +93,10 @@ void CABLine::snapABLine()
 
 void CABLine::getCurrentABLine() {
     //grab a copy from main
-    pivotAxlePosAB = mf->pivotAxlePos;
+    pivotAxlePosAB = vehicle->pivotAxlePos;
 
     //move the ABLine over based on the overlap amount set in vehicle
-    double widthMinusOverlap = mf->vehicle->toolWidth - mf->vehicle->toolOverlap;
+    double widthMinusOverlap = vehicle->toolWidth - vehicle->toolOverlap;
 
      //x2-x1
     double dx = refABLineP2.easting - refABLineP1.easting;
@@ -124,7 +124,7 @@ void CABLine::getCurrentABLine() {
     passNumber = int((howManyPathsAway < 0) ? floor(howManyPathsAway) : ceil(howManyPathsAway));
 
     //calculate the new point that is number of implement widths over
-    double toolOffset = mf->vehicle->toolOffset;
+    double toolOffset = vehicle->toolOffset;
     Vec2 point1;
 
     //depending which way you are going, the offset can be either side
@@ -164,7 +164,7 @@ void CABLine::getCurrentABLine() {
     distanceFromCurrentLine = fabs(distanceFromCurrentLine);
 
     //Subtract the two headings, if > 1.57 its going the opposite heading as refAB
-    abFixHeadingDelta = (fabs(mf->fixHeading - abHeading));
+    abFixHeadingDelta = (fabs(vehicle->fixHeading - abHeading));
     if (abFixHeadingDelta >= M_PI) abFixHeadingDelta = fabs(abFixHeadingDelta - twoPI);
 
     // ** Pure pursuit ** - calc point on ABLine closest to current position
@@ -183,7 +183,7 @@ void CABLine::getCurrentABLine() {
 
     //how far should goal point be away  - speed * seconds * kmph -> m/s + min value
 
-    double goalPointDistance = (mf->pn->speed * mf->vehicle->goalPointLookAhead * 0.2777777777);
+    double goalPointDistance = (vehicle->speed * vehicle->goalPointLookAhead * 0.2777777777);
     if (goalPointDistance < 7.0) goalPointDistance = 7.0;
 
     if (abFixHeadingDelta >= PIBy2)
@@ -200,16 +200,16 @@ void CABLine::getCurrentABLine() {
     }
 
     //calc "D" the distance from pivot axle to lookahead point
-    double goalPointDistanceDSquared = mf->pn->distanceSquared(goalPointAB.northing, goalPointAB.easting, pivotAxlePosAB.northing, pivotAxlePosAB.easting);
+    double goalPointDistanceDSquared = CNMEA::distanceSquared(goalPointAB.northing, goalPointAB.easting, pivotAxlePosAB.northing, pivotAxlePosAB.easting);
 
     //calculate the the new x in local coordinates and steering angle degrees based on wheelbase
-    double localHeading = twoPI - mf->fixHeading;
+    double localHeading = twoPI - vehicle->fixHeading;
     ppRadiusAB = goalPointDistanceDSquared / (2 * (((goalPointAB.easting - pivotAxlePosAB.easting) * cos(localHeading)) + ((goalPointAB.northing - pivotAxlePosAB.northing) * sin(localHeading))));
 
     steerAngleAB = toDegrees(atan( 2 * (((goalPointAB.easting - pivotAxlePosAB.easting) * cos(localHeading)) +
-        ((goalPointAB.northing - pivotAxlePosAB.northing) * sin(localHeading))) * mf->vehicle->wheelbase / goalPointDistanceDSquared)) ;
-    if (steerAngleAB < -mf->vehicle->maxSteerAngle) steerAngleAB = -mf->vehicle->maxSteerAngle;
-    if (steerAngleAB > mf->vehicle->maxSteerAngle) steerAngleAB = mf->vehicle->maxSteerAngle;
+        ((goalPointAB.northing - pivotAxlePosAB.northing) * sin(localHeading))) * vehicle->wheelbase / goalPointDistanceDSquared)) ;
+    if (steerAngleAB < -vehicle->maxSteerAngle) steerAngleAB = -vehicle->maxSteerAngle;
+    if (steerAngleAB > vehicle->maxSteerAngle) steerAngleAB = vehicle->maxSteerAngle;
 
     //limit circle size for display purpose
     if (ppRadiusAB < -500) ppRadiusAB = -500;
@@ -224,13 +224,13 @@ void CABLine::getCurrentABLine() {
     //distanceFromCurrentLine = Math.Round(distanceFromCurrentLine * 1000.0, MidpointRounding.AwayFromZero);
 
     //angular velocity in rads/sec  = 2PI * m/sec * radians/meters
-    angVel = twoPI * 0.277777 * mf->pn->speed * (tan(toRadians(steerAngleAB)))/mf->vehicle->wheelbase;
+    angVel = twoPI * 0.277777 * vehicle->speed * (tan(toRadians(steerAngleAB)))/vehicle->wheelbase;
 
     //clamp the steering angle to not exceed safe angular velocity
-    if (fabs(angVel) > mf->vehicle->maxAngularVelocity)
+    if (fabs(angVel) > vehicle->maxAngularVelocity)
     {
-        steerAngleAB = toDegrees(steerAngleAB > 0 ? (atan((mf->vehicle->wheelbase * mf->vehicle->maxAngularVelocity) / (twoPI * mf->pn->speed * 0.277777)))
-            : (atan((mf->vehicle->wheelbase * -mf->vehicle->maxAngularVelocity) / (twoPI * mf->pn->speed * 0.277777))));
+        steerAngleAB = toDegrees(steerAngleAB > 0 ? (atan((vehicle->wheelbase * vehicle->maxAngularVelocity) / (twoPI * vehicle->speed * 0.277777)))
+            : (atan((vehicle->wheelbase * -vehicle->maxAngularVelocity) / (twoPI * vehicle->speed * 0.277777))));
     }
 
     //distance is negative if on left, positive if on right
@@ -248,11 +248,12 @@ void CABLine::getCurrentABLine() {
     }
 
     //mf->guidanceLineHeadingDelta = (Int16)((atan2(sin(temp - mf->fixHeading), cos(temp - mf->fixHeading))) * 10000);
-    mf->guidanceLineDistanceOff = int(distanceFromCurrentLine);
-    mf->guidanceLineSteerAngle = int(steerAngleAB * 10);
+    vehicle->guidanceLineDistanceOff = int(distanceFromCurrentLine);
+    vehicle->guidanceLineSteerAngle = int(steerAngleAB * 10);
 }
 
 void CABLine::drawABLines(QOpenGLContext *glContext) {
+    QSettings settings;
     QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
     //Draw AB Points
@@ -304,11 +305,11 @@ void CABLine::drawABLines(QOpenGLContext *glContext) {
         gl->glVertex3d(currentABLineP2.easting, currentABLineP2.northing, 0.0);
         gl->glEnd();
 
-        if (mf->isSideGuideLines)
+        if (settings.value("display/isSideGuideLines",true).toBool())
         {
             //get the tool offset and width
-            double toolOffset = mf->vehicle->toolOffset * 2;
-            double toolWidth = mf->vehicle->toolWidth - mf->vehicle->toolOverlap;
+            double toolOffset = vehicle->toolOffset * 2;
+            double toolWidth = vehicle->toolWidth - vehicle->toolOverlap;
 
             gl->glColor3f(0.0f, 0.90f, 0.50f);
             gl->glLineWidth(1);
@@ -347,7 +348,7 @@ void CABLine::drawABLines(QOpenGLContext *glContext) {
             gl->glEnd();
         }
 
-        if (mf->isPureOn)
+        if (settings.value("display/isPureOn",true).toBool())
         {
             //draw the guidance circle
             const int numSegments = 100;

@@ -57,9 +57,10 @@ public:
     void parseRMC();
     void parseVTG();
     bool validateChecksum(QByteArray sentence);
-    double distance(double northing1, double easting1,
+    //TODO move these to utility module
+    static double distance(double northing1, double easting1,
                     double northing2, double easting2);
-    double distanceSquared(double northing1, double easting1,
+    static double distanceSquared(double northing1, double easting1,
                            double northing2, double easting2);
     void decDeg2UTM();
     double arcLengthOfMeridian(double phi);

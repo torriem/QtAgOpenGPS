@@ -8,10 +8,12 @@
 #include "cvec.h"
 
 class QOpenGLContext;
+class CVehicle;
 
 class CContour
 {
 private:
+    CVehicle *vehicle;
 public:
     bool isContourOn=false, isContourBtnOn=false;
 
@@ -71,7 +73,7 @@ public:
     //list of points to determine position ofnew contour line
     QVector<CVec> conList;
 
-    CContour(FormGPS *mf);
+    CContour(CVehicle *vehicle);
     void startContourLine();
     void addPoint();
     void stopContourLine();

@@ -403,6 +403,8 @@ void FormGPS::calculatePositionHeading()
     //determine fix positions and heading
     vehicle->fixEasting = (pn->easting);
     vehicle->fixNorthing = (pn->northing);
+    vehicle->speed = pn->speed;
+    vehicle->altitude = pn->altitude;
 
 
    //in degrees for glRotate opengl methods.
