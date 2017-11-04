@@ -12,10 +12,10 @@
 #include "openglcontrol.h"
 #include "cnmea.h"
 #include "glm.h"
+#include "glutils.h"
 
 #include <QGLWidget>
 #include <QQuickView>
-//#include <QOpenGLFunctions_1_1>
 #include <QOpenGLFunctions_2_1>
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
@@ -28,9 +28,10 @@ struct VertexTexcoord {
     QVector2D texcoord;
 };
 
+/*
 //Wrapper to draw individual primitives. Not very efficient but
 //if you need to just draw a few lines or points, this can be
-//used.  Data should a long list of 2 floats?
+//used.  Buffer should be a list of 3D tuples
 void FormGPS::glDrawArraysColor(QOpenGLFunctions *gl,
                                 QMatrix4x4 mvp,
                                 GLenum operation,
@@ -72,6 +73,8 @@ void FormGPS::glDrawArraysColor(QOpenGLFunctions *gl,
     simpleColorShader->release();
 }
 
+//Buffer should be a list of 7D tuples.  3 values for x,y,z,
+//and 4 values for color: r,g,b,a.
 void FormGPS::glDrawArraysColors(QOpenGLFunctions *gl,
                                  QMatrix4x4 mvp,
                                  GLenum operation,
@@ -119,6 +122,8 @@ void FormGPS::glDrawArraysColors(QOpenGLFunctions *gl,
     interpColorShader->release();
 }
 
+//Buffer should consist of 5D values.  3D for x,y,z, and 2D for
+//texture x,y coordinate.
 void FormGPS::glDrawArraysTexture(QOpenGLFunctions *gl,
                                   QMatrix4x4 mvp,
                                   GLenum operation,
@@ -164,7 +169,7 @@ void FormGPS::glDrawArraysTexture(QOpenGLFunctions *gl,
     //release shader
     texShader->release();
 }
-
+*/
 void FormGPS::openGLControl_Draw()
 {
     QOpenGLContext *glContext = QOpenGLContext::currentContext();
@@ -414,12 +419,13 @@ void FormGPS::openGLControl_Draw()
                 gl->glEnd();
             }
         }
+        */
 
         //draw the perimter line, returns if no line to draw
-        periArea.drawPerimeterLine(glContext);
+        periArea.drawPerimeterLine(glContext,projection*modelview);
 
         //draw the boundary line
-        boundary->drawBoundaryLine(gl);
+        boundary->drawBoundaryLine(glContext);
 
         //screen text for debug
         //glDrawText(120, 10, 1, 1, 1, "Courier", 18, " camstep: " + testInt.ToString());
@@ -430,7 +436,6 @@ void FormGPS::openGLControl_Draw()
         //glDrawText(40, 90, 1, 1, 1, "Courier", 12, " RadiusCT " + Convert.ToString(ct.radiusCT));
         //glDrawText(40, 105, 1, 0.5f, 1, "Courier", 12, " TrigSetDist(m) " + Convert.ToString(Math.Round(sectionTriggerStepDistance, 2)));
         //glDrawText(40, 120, 1, 0.5, 1, "Courier", 12, " frame msec " + Convert.ToString((int)(frameTime)));
-        */
 
         //draw the vehicle/implement
         vehicle->drawVehicle(glContext,modelview, projection);
@@ -590,7 +595,10 @@ void FormGPS::openGLControl_Initialized()
     qDebug() << "initializing Open GL.";
     loadGLTextures();
     qDebug() << "textures loaded.";
+    initializeShaders();
+    qDebug() << "shaders loaded.";
 
+    /*
     //load shaders, memory managed by parent thread, which is in this case,
     //the QML rendering thread, not the Qt main loop.
     if (!simpleColorShader) {
@@ -611,6 +619,8 @@ void FormGPS::openGLControl_Initialized()
         assert(interpColorShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/colors_fshader.fsh"));
         assert(interpColorShader->link());
     }
+    */
+
     //now start the timer assuming no errors, otherwise the program will not stop on errors.
     //TODO:
     //tmrWatchdog.Enabled = true;
@@ -623,12 +633,14 @@ void FormGPS::openGLControl_Shutdown()
     qDebug() << "OpenGL shutting down... destroying buffers and shaders";
     qDebug() << QOpenGLContext::currentContext();
     //We should have a valid OpenGL context here so we can clean up shaders and buffers
+    destroyShaders();
+    /*
     delete simpleColorShader;
     simpleColorShader = 0;
 
     delete interpColorShader;
     interpColorShader = 0;
-
+    */
     //free textures
     foreach(QOpenGLTexture *t, texture1)
     {

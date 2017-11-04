@@ -1,5 +1,5 @@
+#include <QCoreApplication>
 #include "cnmea.h"
-#include "formgps.h"
 //#include "latlong-utm.h"
 
 //$GPGGA,123519,4807.038,N,01131.000,E,1,08,0.9,545.4,M,46.9,M ,  ,*47
@@ -66,8 +66,7 @@ const double UTMScaleFactor = 0.9996;
 //private double UTMScaleFactor2 = 1.0004001600640256102440976390556;
 
 
-CNMEA::CNMEA(FormGPS *mf)
-    :mf(mf)
+CNMEA::CNMEA()
 {
 
 }
@@ -243,7 +242,6 @@ void CNMEA::parseGGA() {
 
         theSent += nextNMEASentence;
         updatedGGA = true;
-        mf->recvCounter = 0;
     }
 }
 
@@ -292,11 +290,8 @@ void CNMEA::parseRMC() {
         }
 
         theSent += nextNMEASentence;
-        mf->recvCounter = 0;
         updatedRMC = true;
 
-        mf->avgSpeed[mf->ringCounter] = speed;
-        if (mf->ringCounter++ > 8) mf->ringCounter = 0;
     }
 
 }
@@ -316,9 +311,6 @@ void CNMEA::parseVTG() {
 
         updatedVTG = true;
         theSent += nextNMEASentence;
-
-        mf->avgSpeed[mf->ringCounter] = speed;
-        if (mf->ringCounter++ > 8) mf->ringCounter = 0;
     }
 }
 

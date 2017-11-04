@@ -37,7 +37,7 @@ public:
     void preCalcBoundaryLines();
     bool isPrePointInPolygon(Vec2 testPoint);
 
-    void drawBoundaryLine(QOpenGLFunctions_2_1 *gl);
+    void drawBoundaryLine(QOpenGLContext *glContext);
     void drawBoundaryLineOnBackBuffer(QOpenGLFunctions_2_1 *gl);
     void calculateBoundaryArea();
     bool isPointInPolygon();

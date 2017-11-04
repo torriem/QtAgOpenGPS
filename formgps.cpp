@@ -30,7 +30,7 @@ FormGPS::FormGPS(QWidget *parent) :
      * the header file has only incomplete types.
      */
     worldGrid = new CWorldGrid(this);
-    pn = new CNMEA(this);
+    pn = new CNMEA(); //can make this static now
     section = new CSection[MAXSECTIONS];
     for (int i = 0; i < MAXSECTIONS; i++)
         section[i].set_mainform(this);
@@ -532,6 +532,13 @@ void FormGPS::tmrWatchdog_timeout()
         //counter used for saving field in background
         saveCounter++;
 
+        double spd = 0;
+        for (int c = 0; c < 10; c++)
+            spd += avgSpeed[c];
+
+        //convert to kph
+        spd *= 0.1;
+
         if (isMetric)  //metric or imperial
         {
             //Hectares on the master section soft control and sections
@@ -557,8 +564,8 @@ void FormGPS::tmrWatchdog_timeout()
             qmlItem(qml_root,"stripAreaUser")->setProperty("text", locale.toString(totalUserSquareMeters * 0.0001,'f',1) + " " + tr("Ha"));
             qmlItem(qml_root,"stripEqWidth")->setProperty("text", locale.toString(vehicle->toolWidth,'f',2) + " " + tr("M"));
             qmlItem(qml_root,"stripDistance")->setProperty("text", locale.toString(userDistance,'f',0)+" "+tr("M"));
-            qmlItem(qml_root,"stripAreaRate")->setProperty("text", locale.toString(vehicle->toolWidth * pn->speed / 10,'f',1) + " " + tr("Ha/hr"));
-            tlDisp->lblSpeed->setText(speedKPH() + " "+tr("KPH"));
+            qmlItem(qml_root,"stripAreaRate")->setProperty("text", locale.toString(vehicle->toolWidth * spd / 10,'f',1) + " " + tr("Ha/hr"));
+            tlDisp->lblSpeed->setText(locale.toString(spd,'f',1) + " "+tr("KPH"));
 
         }
         else
@@ -587,8 +594,8 @@ void FormGPS::tmrWatchdog_timeout()
             qmlItem(qml_root,"stripAreaUser")->setProperty("text", locale.toString(totalUserSquareMeters * 0.00024710499815078974633856493327535,'f',1) + " " + tr("Ac"));
             qmlItem(qml_root,"stripEqWidth")->setProperty("text", locale.toString(vehicle->toolWidth * m2ft,'f',1) + " " + tr("ft"));
             qmlItem(qml_root,"stripDistance")->setProperty("text", locale.toString(userDistance * 3.28084,'f',0)+" "+tr("ft"));
-            qmlItem(qml_root,"stripAreaRate")->setProperty("text", locale.toString(vehicle->toolWidth * pn->speed / 10 * 2.47,'f',1) + " " + tr("Ac/hr"));
-            tlDisp->lblSpeed->setText(speedMPH() + " "+tr("MPH"));
+            qmlItem(qml_root,"stripAreaRate")->setProperty("text", locale.toString(vehicle->toolWidth * spd / 10 * 2.47,'f',1) + " " + tr("Ac/hr"));
+            tlDisp->lblSpeed->setText(locale.toString(spd * 0.621371,'f',1) + " "+tr("MPH"));
         }
 
         //lblDelta.Text = guidanceLineHeadingDelta.ToString();

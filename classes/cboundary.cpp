@@ -74,8 +74,9 @@ bool CBoundary::isPrePointInPolygon(Vec2 testPoint)
     return oddNodes; //true means inside.
 }
 
-void CBoundary::drawBoundaryLine(QOpenGLFunctions_2_1 *gl)
+void CBoundary::drawBoundaryLine(QOpenGLContext *glContext)
 {
+    QOpenGLFunctions_2_1 *gl=glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
     ////draw the perimeter line so far
     int ptCount = ptList.size();

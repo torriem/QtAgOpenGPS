@@ -11,6 +11,17 @@ Item {
     //height:600
     anchors.fill: parent
 
+    signal clicked(var mouse)
+
+    MouseArea {
+        id: mainMouseArea
+        anchors.fill: parent
+
+        onClicked: {
+            parent.clicked(mouse);
+        }
+    }
+
     Column {
         id: leftColumn
         anchors.top: parent.top
@@ -54,6 +65,7 @@ Item {
         IconButton{
             id: btnMinMaxZoom
             objectName: "btnMinMaxZoom"
+
             icon: "qrc:/images/Display.png"
         }
 
@@ -61,8 +73,10 @@ Item {
             id: btnPerimeter
             objectName: "btnPerimeter"
             buttonText: "000.00"
+            isChecked: false
             iconHeightScale: 1.0
             icon: "qrc:/images/PeriArea.png"
+            iconChecked: "qrc:/images/PeriDraw.png"
         }
 
         IconButtonText {
@@ -115,6 +129,7 @@ Item {
         IconButtonText {
             id: btnSectionOffAutoOn
             objectName: "btnSectionOffAutoOn"
+            isChecked: false
             icon: "qrc:/images/SectionMasterOff.png"
             iconChecked: "qrc:/images/SectionMasterOn.png"
             iconHeightScale: 1.0
@@ -235,6 +250,7 @@ Item {
 
     IconPalette {
         id: iconPalette
+        objectName: "slideoutMenu"
         anchors.top: parent.top
         anchors.topMargin: 20
         anchors.left: leftColumn.right
@@ -242,6 +258,39 @@ Item {
         visible: false
 
     }
+
+    Rectangle {
+        id: contextArea
+        objectName: "contextArea"
+        width: childrenRect.width+10
+        height: childrenRect.height + 10
+        color: "#bf163814"
+        visible: false
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.leftMargin: btnPerimeter.width + 10
+        anchors.topMargin: btnPerimeter.y
+        border.color: "#c3ecc0"
+
+        Grid {
+            id: contextAreaGrid
+            spacing: 5
+            anchors.top: parent.top
+            anchors.topMargin: 5
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+
+            width: childrenRect.width
+            height: childrenRect.height
+
+            IconButton {
+                id: areaSideBtn
+                objectName: "btnAreaSide"
+                icon: "qrc:/images/AreaSide.png";
+            }
+        }
+    }
+
 
     Text {
         id: txtDistanceOffABLine

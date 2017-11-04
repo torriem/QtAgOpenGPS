@@ -41,6 +41,7 @@ Rectangle {
     }
 
     signal clicked
+    signal pressAndHold
 
     gradient: Gradient {
         GradientStop {
@@ -106,6 +107,9 @@ Rectangle {
         anchors.fill: parent
         onClicked: {
             parent.clicked(mouse)
+        }
+        onPressAndHold: {
+            parent.pressAndHold();
         }
     }
     states: [

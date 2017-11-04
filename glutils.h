@@ -1,11 +1,41 @@
 #ifndef GLUTILS_H
 #define GLUTILS_H
 
-#include <QOpenGLShaderProgram>
+#include <QOpenGLFunctions>
+#include <QMatrix4x4>
+#include <QColor>
+#include <QOpenGLBuffer>
+
 
 //thinking about putting GL buffer drawing routines here
 //like Draw box, etc. Do I put the shaders as module globals here?
 
+void initializeShaders();
+
+void destroyShaders();
+
+//Simple wrapper to draw primitives using lists of Vec3 or QVector3Ds
+//with a single color.
+void glDrawArraysColor(QOpenGLFunctions *gl, QMatrix4x4 mvp,
+                       GLenum operation, QColor &color,
+                       QOpenGLBuffer &vertexBuffer, GLenum glType,
+                       int count,
+                       float pointSize=1.0f);
+//Simple wrapper to draw primitives using lists of vec3s or QVector3Ds
+//with a color per vertex. Buffer format is 7 values per vertice:
+//x,y,z,r,g,b,a
+void glDrawArraysColors(QOpenGLFunctions *gl, QMatrix4x4 mvp,
+                       GLenum operation,
+                       QOpenGLBuffer &vertexBuffer, GLenum glType,
+                       int count,
+                       float pointSize=1.0f);
+
+//Buffer format is 5 values per vertice:
+//x,y,z,texX,texY
+void glDrawArraysTexture(QOpenGLFunctions *gl, QMatrix4x4 mvp,
+                         GLenum operation,
+                         QOpenGLBuffer &vertexBuffer, GLenum glType,
+                         int count);
 //draw arrays
 
 #endif // GLUTILS_H

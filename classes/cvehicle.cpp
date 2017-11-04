@@ -8,6 +8,7 @@
 #include "aogsettings.h"
 #include "csection.h"
 #include "glm.h"
+#include "glutils.h"
 
 //TODO: move these to a central location
 #define DEFAULT_TOOLWIDTH 16.0
@@ -292,10 +293,10 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
         //gl->glVertex3d(0, trailingTank, 0);
         //gl->glVertex3d(0, 0, 0);
         //gl->glEnd();
-        mf->glDrawArraysColor(gl,projection*mvTool,
-                              GL_LINES, color,
-                              trailingTankHitchBuffer,GL_FLOAT,
-                              2);
+        glDrawArraysColor(gl,projection*mvTool,
+                          GL_LINES, color,
+                          trailingTankHitchBuffer,GL_FLOAT,
+                          2);
 
 
         //gl->glColor3f(0.95f, 0.950f, 0.0f);
@@ -304,11 +305,10 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
         //gl->glBegin(GL_POINTS);
         //gl->glVertex3d(0, trailingTank, 0);
         //gl->glEnd();
-        mf->glDrawArraysColor(gl,projection*mvTool,
-                              GL_POINTS,color,
-                              tankDotBuffer, GL_FLOAT,
-                              1,
-                              6.0f);
+        glDrawArraysColor(gl,projection*mvTool,
+                          GL_POINTS,color,
+                          tankDotBuffer, GL_FLOAT,
+                          1, 6.0f);
 
 
 
@@ -337,10 +337,10 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
         //gl->glVertex3d(0, trailingTool, 0);
         //gl->glVertex3d(0, 0, 0);
         //gl->glEnd();
-        mf->glDrawArraysColor(gl,projection*mvTool,
-                              GL_LINES, color,
-                              toolHitchBuffer,GL_FLOAT,
-                              2);
+        glDrawArraysColor(gl,projection*mvTool,
+                          GL_LINES, color,
+                          toolHitchBuffer,GL_FLOAT,
+                          2);
 
     }
 
@@ -360,10 +360,10 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
 
         //gl->glVertex3d(mf->section[numOfSections].positionLeft, trailingTool, 0);
         //gl->glVertex3d(mf->section[numOfSections].positionRight, trailingTool, 0);
-        mf->glDrawArraysColor(gl,projection*mvTool,
-                              GL_LINES,color,
-                              superSectionBuffer,GL_FLOAT,
-                              2);
+        glDrawArraysColor(gl,projection*mvTool,
+                          GL_LINES,color,
+                          superSectionBuffer,GL_FLOAT,
+                          2);
     } else {
         for (int j = 0; j < numOfSections; j++)
         {
@@ -383,10 +383,10 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
             //draw section line
             //gl->glVertex3d(mf->section[j].positionLeft, trailingTool, 0);
             //gl->glVertex3d(mf->section[j].positionRight, trailingTool, 0);
-            mf->glDrawArraysColor(gl,projection*mvTool,
-                                  GL_LINES,color,
-                                  sectionBuffer[j],GL_FLOAT,
-                                  2);
+            glDrawArraysColor(gl,projection*mvTool,
+                              GL_LINES,color,
+                              sectionBuffer[j],GL_FLOAT,
+                              2);
         }
     }
     //gl->glEnd();
@@ -403,11 +403,11 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
         //gl->glPointSize(4.0f);
 
         //gl->glBegin(GL_POINTS);
-        mf->glDrawArraysColor(gl,projection*mvTool,
-                              GL_POINTS,color,
-                              sectionDotsBuffer,GL_FLOAT,
-                              numOfSections - 1,
-                              4.0f);
+        glDrawArraysColor(gl,projection*mvTool,
+                          GL_POINTS,color,
+                          sectionDotsBuffer,GL_FLOAT,
+                          numOfSections - 1,
+                          4.0f);
         //gl->glEnd();
     }
 
@@ -428,11 +428,11 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
     //gl21->glVertex3d(-1.8, -antennaPivot, 0.0);
     //gl21->glVertex3d(1.8, -antennaPivot, 0.0);
     //gl21->glEnd();
-    mf->glDrawArraysColors(gl,projection*modelview,
-                           GL_TRIANGLE_FAN,
-                           vehicleBodyBuffer,
-                           GL_FLOAT,
-                           5); //5 vertices in body
+    glDrawArraysColors(gl,projection*modelview,
+                       GL_TRIANGLE_FAN,
+                       vehicleBodyBuffer,
+                       GL_FLOAT,
+                       5); //5 vertices in body
 
     /*
     //draw the area side marker
@@ -458,12 +458,12 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
     gl21->glEnd();
     */
     //draw the area side marker, antenna, hitch pin ,etc
-    mf->glDrawArraysColors(gl,projection*modelview,
-                           GL_POINTS,
-                           pinsAndMarkersBuffer,
-                           GL_FLOAT,
-                           3,
-                           4.0f);
+    glDrawArraysColors(gl,projection*modelview,
+                       GL_POINTS,
+                       pinsAndMarkersBuffer,
+                       GL_FLOAT,
+                       3,
+                       4.0f);
 
     //gl21->glColor3f(0.9, 0.95, 0.10);
     //gl21->glBegin(GL_LINE_STRIP);
@@ -476,11 +476,11 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
 
     gl->glLineWidth(1);
     color.setRgbF(0.9, 0.95, 0.10);
-    mf->glDrawArraysColor(gl, projection * modelview,
-                          GL_LINE_STRIP, color,
-                          pointerBuffer,
-                          GL_FLOAT,
-                          3);
+    glDrawArraysColor(gl, projection * modelview,
+                      GL_LINE_STRIP, color,
+                      pointerBuffer,
+                      GL_FLOAT,
+                      3);
 
 
 
@@ -491,11 +491,11 @@ void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
     //gl21->glVertex3d(0, -antennaPivot, 0);
     //gl21->glEnd();
     color.setRgbF(0.37f, 0.37f, 0.97f);
-    mf->glDrawArraysColor(gl, projection * modelview,
-                          GL_LINES, color,
-                          rigidHitchBuffer,
-                          GL_FLOAT,
-                          2);
+    glDrawArraysColor(gl, projection * modelview,
+                      GL_LINES, color,
+                      rigidHitchBuffer,
+                      GL_FLOAT,
+                      2);
 }
 
 void CVehicle::destroyGLBuffers()

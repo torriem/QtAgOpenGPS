@@ -7,8 +7,6 @@
 #include <QByteArray>
 #include <QBuffer>
 
-class FormGPS;
-
 struct XY {
     double x;
     double y;
@@ -52,9 +50,7 @@ public:
     QByteArray currentNMEASentenceRMC = "";
     QByteArray currentNMEASentenceVTG = "";
 
-    FormGPS *mf;
-
-    CNMEA(FormGPS *mf);
+    CNMEA();
     void parseNMEA();
     QByteArray parse();
     void parseGGA();

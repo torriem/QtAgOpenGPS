@@ -68,10 +68,17 @@
     <property name="title">
      <string>Options</string>
     </property>
+    <widget class="QMenu" name="menuUnits">
+     <property name="title">
+      <string>Units</string>
+     </property>
+     <addaction name="actionMetric"/>
+     <addaction name="actionImperial"/>
+    </widget>
     <addaction name="actionReset_All"/>
     <addaction name="separator"/>
     <addaction name="actionColors"/>
-    <addaction name="actionUnits"/>
+    <addaction name="menuUnits"/>
     <addaction name="actionGrid_On"/>
     <addaction name="actionLightBar_On"/>
     <addaction name="actionLog_NMEA"/>
@@ -115,11 +122,6 @@
   <action name="actionColors">
    <property name="text">
     <string>Colors</string>
-   </property>
-  </action>
-  <action name="actionUnits">
-   <property name="text">
-    <string>Units</string>
    </property>
   </action>
   <action name="actionGrid_On">
@@ -219,6 +221,25 @@
   <action name="actionStart_field">
    <property name="text">
     <string>Start field</string>
+   </property>
+  </action>
+  <action name="actionMetric">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Metric</string>
+   </property>
+  </action>
+  <action name="actionImperial">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Imperial</string>
    </property>
   </action>
  </widget>

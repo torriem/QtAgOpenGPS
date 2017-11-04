@@ -8,6 +8,7 @@
 #include <assert.h>
 #include "formgps.h"
 #include "aogsettings.h"
+#include "glutils.h"
 
 struct SurfaceVertex {
     QVector3D vertex;
@@ -84,6 +85,7 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
     fieldShader->enableAttributeArray("vertex");
     fieldShader->enableAttributeArray("texcoord_src");
 
+    //TODO move these shader and drawing routines to glutils
     gl->glVertexAttribPointer(fieldShader->attributeLocation("vertex"),
                               3, //3D vertices
                               GL_FLOAT, GL_FALSE,
@@ -148,10 +150,10 @@ void CWorldGrid::drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, doub
 
     QColor fieldColor = QColor(mf->settings.value("display/fieldColor", "#82781E").toString());
 
-    mf->glDrawArraysColor(gl, mvp,
-                          GL_LINES, fieldColor,
-                          gridBuffer,GL_FLOAT,
-                          gridBufferCount);
+    glDrawArraysColor(gl, mvp,
+                      GL_LINES, fieldColor,
+                      gridBuffer,GL_FLOAT,
+                      gridBufferCount);
 }
 
 void CWorldGrid::createWorldGrid(double northing, double easting) {

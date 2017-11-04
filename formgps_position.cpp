@@ -34,6 +34,10 @@ void FormGPS::scanForNMEA()
     //time for a frame update with new valid nmea data
     if (pn->updatedGGA || pn->updatedRMC)
     {
+        recvCounter = 0;
+        avgSpeed[ringCounter] = pn->speed;
+        if (ringCounter++ > 8) ringCounter = 0;
+
         /*
         qDebug() << qSetRealNumberPrecision(15) <<
                     pn->headingTrue << ", " <<
@@ -101,7 +105,7 @@ void FormGPS::scanForNMEA()
     }
 
     //Update the port connecition counter - is reset every time new sentence is valid and ready
-    recvCounter++;
+    if (recvCounter < 60) recvCounter++;
 }
 
 //call for position update after valid NMEA sentence

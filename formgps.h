@@ -348,9 +348,11 @@ public:
     LookAheadPixels lookaheadPixels[80001];
     QImage grnPix;
 
+    /*
     QOpenGLShaderProgram *simpleColorShader = 0;
     QOpenGLShaderProgram *texShader = 0;
     QOpenGLShaderProgram *interpColorShader = 0;
+    */
     QOpenGLBuffer skyBuffer;
 
 
@@ -369,28 +371,30 @@ public:
    /**********************
      * OpenGL.Designer.cs *
      **********************/
-
-    //Simple wrapper to draw primitives using lists of vec2s or QVector2Ds
+    /*
+    //Simple wrapper to draw primitives using lists of Vec3 or QVector3Ds
     //with a single color.
     void glDrawArraysColor(QOpenGLFunctions *gl, QMatrix4x4 mvp,
                            GLenum operation, QColor &color,
                            QOpenGLBuffer &vertexBuffer, GLenum glType,
                            int count,
                            float pointSize=1.0f);
-    //Simple wrapper to draw primitives using lists of vec2s or QVector2Ds
-    //with a color per vertex. Buffer format is 6 floats per vertice:
-    //x,y,r,g,b,a
+    //Simple wrapper to draw primitives using lists of vec3s or QVector3Ds
+    //with a color per vertex. Buffer format is 7 floats per vertice:
+    //x,y,z,r,g,b,a
     void glDrawArraysColors(QOpenGLFunctions *gl, QMatrix4x4 mvp,
                            GLenum operation,
                            QOpenGLBuffer &vertexBuffer, GLenum glType,
                            int count,
                            float pointSize=1.0f);
 
+    //Buffer format is 5 floats per vertice:
+    //x,y,z,texX,texY
     void glDrawArraysTexture(QOpenGLFunctions *gl, QMatrix4x4 mvp,
                              GLenum operation,
                              QOpenGLBuffer &vertexBuffer, GLenum glType,
                              int count);
-
+    */
     void drawLightBar(double Width, double Height, double offlineDistance);
     //void calcFrustum(QOpenGLFunctions_2_1 *gl);
     //transitioning to OPenGL ES; use our own computed matrices
@@ -441,8 +445,11 @@ public slots:
     /*******************
      * from FormGPS.cs *
      *******************/
+    void onGLControl_clicked(const QVariant &event);
+
     void onBtnMinMaxZoom_clicked();
     void onBtnPerimeter_clicked();
+    void onBtnPerimeter_pressAndHeld();
     void onBtnAutoSteer_clicked();
     void onBtnFlag_clicked();
     void onBtnABLine_clicked();
@@ -466,6 +473,8 @@ public slots:
     void onBtnUnits_clicked();
     void onBtnFileExplorer_clicked();
     void onBtnAutoSteerConfig_clicked();
+
+    void onBtnAreaSide_clicked();
 
     //was btnSection#Man_Click in c#
     void onBtnSectionMan_clicked(int sectNumber);

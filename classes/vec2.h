@@ -1,6 +1,7 @@
 #ifndef VEC2_H
 #define VEC2_H
 
+#include <QVector3D>
 
 class Vec2
 {
@@ -23,6 +24,8 @@ public:
 
     friend Vec2 operator+ (Vec2 lhs, Vec2 rhs);
     friend Vec2 operator- (Vec2 lhs, Vec2 rhs);
+
+    operator QVector3D() { return QVector3D(easting,northing,0); }
 };
 
 

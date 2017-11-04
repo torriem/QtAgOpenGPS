@@ -24,6 +24,11 @@ void FormGPS::setupGui()
     /* Load the QML UI and display it in the main area of the GUI */
     ui->setupUi(this);
 
+    //set up units group
+    QActionGroup *unitsGroup = new QActionGroup(this);
+    unitsGroup->addAction(ui->actionMetric);
+    unitsGroup->addAction(ui->actionImperial);
+
     ui->statusBar->hide();
 
     tlDisp = new TopLineDisplay(this);
@@ -58,6 +63,8 @@ void FormGPS::setupGui()
     //get pointer to root QML object, which is the OpenGLControl,
     //store in a member variable for future use.
     qml_root = qmlview->rootObject();
+
+    connect(qml_root,SIGNAL(clicked(QVariant)),this,SLOT(onGLControl_clicked(QVariant)));
     //attach callback to signal so we can interact with the control
     //once it is realized.
     //connect(qml_root,SIGNAL(controlSet(OpenGLControl *)),this,
@@ -76,6 +83,8 @@ void FormGPS::setupGui()
     btnPerimeter = qmlItem(qml_root,"btnPerimeter");
     connect(btnPerimeter,SIGNAL(clicked()),this,
             SLOT(onBtnPerimeter_clicked()));
+    connect(btnPerimeter,SIGNAL(pressAndHold()), this,
+            SLOT(onBtnPerimeter_pressAndHeld()));
 
     btnAutoSteer = qmlItem(qml_root,"btnAutoSteer");
     connect(btnAutoSteer,SIGNAL(clicked()),this,
@@ -175,6 +184,8 @@ void FormGPS::setupGui()
 
     txtDistanceOffABLine = qmlItem(qml_root,"txtDistanceOffABLine");
 
+    QObject *temp = qmlItem(qml_root,"btnAreaSide");
+    connect(temp,SIGNAL(clicked()), this, SLOT(onBtnAreaSide_clicked()));
 
     //this is for rendering to the hidden gl widget. Once the offscreen
     //context stuff is working and we don't need to debug the lookahead
@@ -215,8 +226,8 @@ void FormGPS::setupGui()
 
 //not currently using this. TODO remove perhaps
 void FormGPS::openGLControl_set(OpenGLControl *c){
-    openGLControl = c;
-    qDebug() << "Apparently the renderer is activated now." ;
+    //openGLControl = c;
+    //qDebug() << "Apparently the renderer is activated now." ;
 
     //tell the control to call our main form function for drawing.
     //c->registerInitCallback(std::bind(&FormGPS::openGLControl_Initialized, this, std::placeholders::_1));
@@ -226,45 +237,27 @@ void FormGPS::openGLControl_set(OpenGLControl *c){
 
 void FormGPS::renderGL()
 {
-    //QOpenGLContext *glContext = QOpenGLContext::currentContext();
-    //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+}
 
-    //glViewport(0,0,400,400);
+void FormGPS::onGLControl_clicked(const QVariant &event)
+{
+    QObject *m = event.value<QObject *>();
 
-    /*
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(-2.0, 2.0, -2.0, 2.0, -1.5, 1.5);
-    //glFrustum(-1.0, 1.0, -1.0, 1.0, 1.5, 20.0);
-    glMatrixMode(GL_MODELVIEW);
-
-    glClearColor(0.22f, 0.2858f, 0.16f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glLoadIdentity();
-
-    //gluLookAt(0.0, 0.0, -3.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-
-    glColor3f(1.0f, 1.0f, 1.0f);
-
-    double size = 2 * 0.5;
-
-#   define V(a,b,c) glVertex3d( a size, b size, c size );
-#   define N(a,b,c) glNormal3d( a, b, c );
-
-    glLineWidth(3);
-    // PWO: I dared to convert the code to use macros...
-    glBegin( GL_LINE_LOOP ); N( 1.0, 0.0, 0.0); V(+,-,+); V(+,-,-); V(+,+,-); V(+,+,+); glEnd();
-    glBegin( GL_LINE_LOOP ); N( 0.0, 1.0, 0.0); V(+,+,+); V(+,+,-); V(-,+,-); V(-,+,+); glEnd();
-    glBegin( GL_LINE_LOOP ); N( 0.0, 0.0, 1.0); V(+,+,+); V(-,+,+); V(-,-,+); V(+,-,+); glEnd();
-    glBegin( GL_LINE_LOOP ); N(-1.0, 0.0, 0.0); V(-,-,+); V(-,+,+); V(-,+,-); V(-,-,-); glEnd();
-    glBegin( GL_LINE_LOOP ); N( 0.0,-1.0, 0.0); V(-,-,+); V(-,-,-); V(+,-,-); V(+,-,+); glEnd();
-    glBegin( GL_LINE_LOOP ); N( 0.0, 0.0,-1.0); V(-,-,-); V(-,+,-); V(+,+,-); V(+,-,-); glEnd();
-
-#   undef V
-#   undef N
-
-    glFlush();
-    */
+    //TODO: move this to it's own method so we can close
+    //the various popup toolboxes and menus when user clicks on
+    //other buttons
+    QObject *t;
+    t=qmlItem(qml_root,"btnMenuDrawer");
+    if (!t->property("hideMenu").toBool()) {
+        t->setProperty("hideMenu",true);
+        return;
+    }
+    t = qmlItem(qml_root,"contextArea");
+    if (t->property("visible").toBool()) {
+        t->setProperty("visible",false);
+        return;
+    }
+    qDebug() << m->property("x").toInt() << m->property("y").toInt();
 }
 
 void FormGPS::onBtnMinMaxZoom_clicked(){
@@ -273,6 +266,61 @@ void FormGPS::onBtnMinMaxZoom_clicked(){
 
 void FormGPS::onBtnPerimeter_clicked(){
     qDebug()<<"Perimeter button clicked." ;
+
+    //If we were in the "drawing" state, go to the "done" state
+    if (periArea.isBtnPerimeterOn && periArea.periPtList.size() > 0) {
+        qDebug() << "draw -> done";
+        periArea.isBtnPerimeterOn = false;
+        qmlItem(qml_root,"btnPerimeter")->setProperty("icon","qrc:/images/PeriDone.png");
+        qmlItem(qml_root,"btnPerimeter")->setProperty("isChecked",false);
+        return;
+    }
+
+    if (periArea.isBtnPerimeterOn) {
+        //go to area; haven't recorded anything
+        qmlItem(qml_root,"btnPerimeter")->setProperty("icon","qrc:/images/PeriArea.png");
+        qmlItem(qml_root,"btnPerimeter")->setProperty("isChecked",true);
+        qmlItem(qml_root,"btnPerimeter")->setProperty("isChecked",false);
+        periArea.isBtnPerimeterOn = false;
+        return;
+    }
+
+
+    //if we are in the "done" state, go to the "area" state
+    if (!periArea.isBtnPerimeterOn && periArea.periPtList.size() > 0) {
+        qDebug() << "done -> area";
+
+        periArea.periPtList.clear();
+        //periArea.calcList.clear();
+        qmlItem(qml_root,"btnPerimeter")->setProperty("icon","qrc:/images/PeriArea.png");
+        qmlItem(qml_root,"btnPerimeter")->setProperty("isChecked",true);
+        qmlItem(qml_root,"btnPerimeter")->setProperty("isChecked",false);
+        return;
+    }
+
+    //if we are in the "area state" state, go to the "draw" state
+    if (!periArea.isBtnPerimeterOn && periArea.periPtList.size() == 0) {
+        periArea.isBtnPerimeterOn = true;
+        qDebug() << "area -> draw";
+        qmlItem(qml_root,"btnPerimeter")->setProperty("isChecked",true);
+
+    }
+}
+
+void FormGPS::onBtnPerimeter_pressAndHeld() {
+    qDebug() << "pressed and held!";
+    QObject *contextArea = qmlItem(qml_root, "contextArea");
+
+    if (contextArea->property("visible").toBool())
+        contextArea->setProperty("visible",false);
+    else
+        contextArea->setProperty("visible",true);
+}
+
+void FormGPS::onBtnAreaSide_clicked() {
+    isAreaOnRight = !isAreaOnRight;
+    qmlItem(qml_root, "contextArea")->setProperty("visible",false);
+    vehicle->settingsChanged();
 }
 
 void FormGPS::onBtnAutoSteer_clicked(){
