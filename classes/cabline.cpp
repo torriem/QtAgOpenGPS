@@ -252,9 +252,17 @@ void CABLine::getCurrentABLine() {
     vehicle->guidanceLineSteerAngle = int(steerAngleAB * 10);
 }
 
-void CABLine::drawABLines(QOpenGLContext *glContext) {
+void CABLine::drawABLines(QOpenGLContext *glContext, const QMatrix4x4 &modelview, const QMatrix4x4 &projection) {
     QSettings settings;
     QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+
+    gl->glMatrixMode(GL_MODELVIEW);
+    gl->glPushMatrix();
+    gl->glLoadMatrixf(modelview.constData());
+
+    gl->glMatrixMode(GL_PROJECTION);
+    gl->glPushMatrix();
+    gl->glLoadMatrixf(projection.constData());
 
     //Draw AB Points
     gl->glPointSize(8.0f);
@@ -388,6 +396,11 @@ void CABLine::drawABLines(QOpenGLContext *glContext) {
 
         gl->glLineWidth(1);
     }
+
+    gl->glPopMatrix();
+    gl->glMatrixMode(GL_MODELVIEW);
+    gl->glPopMatrix();
+
 }
 
 void CABLine::resetABLine()

@@ -20,6 +20,7 @@ CContour::CContour(CVehicle *v)
 
 //start stop and add points to list
 void CContour::startContourLine() {
+    qDebug() << "starting contour line.";
     isContourOn = true;
     if (!ptList.isNull() && ptList->size() == 1)
     {
@@ -53,6 +54,7 @@ void CContour::addPoint() {
 //End the strip
 void CContour::stopContourLine()
 {
+    qDebug() << ptList->size() << "Stopping contour line.";
     //make sure its long enough to bother
     if (ptList->size() > 10)
     {
@@ -471,10 +473,18 @@ void CContour::distanceFromContourLine()
 }
 
 //draw the red follow me line
-void CContour::drawContourLine(QOpenGLContext *glContext)
+void CContour::drawContourLine(QOpenGLContext *glContext, const QMatrix4x4 &modelview, const QMatrix4x4 &projection)
 {
     QSettings settings;
     QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+
+    gl->glMatrixMode(GL_MODELVIEW);
+    gl->glPushMatrix();
+    gl->glLoadMatrixf(modelview.constData());
+
+    gl->glMatrixMode(GL_PROJECTION);
+    gl->glPushMatrix();
+    gl->glLoadMatrixf(projection.constData());
 
     //glColor3f(0.98f, 0.98f, 0.50f);
     //glBegin(GL_LINE_STRIP);
@@ -577,6 +587,9 @@ void CContour::drawContourLine(QOpenGLContext *glContext)
             gl->glPointSize(1.0f);
         }
     }
+    gl->glPopMatrix();
+    gl->glMatrixMode(GL_MODELVIEW);
+    gl->glPopMatrix();
 }
 
 //Reset the contour to zip

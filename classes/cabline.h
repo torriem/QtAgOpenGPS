@@ -72,7 +72,7 @@ public:
     void snapABLine();
     void getCurrentABLine();
 
-    void drawABLines(QOpenGLContext *c);
+    void drawABLines(QOpenGLContext *c, const QMatrix4x4 &modelview, const QMatrix4x4 &projection);
 
     void resetABLine();
 };

@@ -70,6 +70,7 @@ FormGPS::FormGPS(QWidget *parent) :
 
 
     //TODO: put section widths in settings file
+    /*
     vehicle->section[0].positionLeft = -18.288;
     vehicle->section[0].positionRight = -9.144;
     vehicle->section[1].positionLeft = -9.144;
@@ -78,6 +79,15 @@ FormGPS::FormGPS(QWidget *parent) :
     vehicle->section[2].positionRight = 9.144;
     vehicle->section[3].positionLeft = 9.144;
     vehicle->section[3].positionRight = 18.288;
+    */
+    vehicle->section[0].positionLeft = -8;
+    vehicle->section[0].positionRight = -4;
+    vehicle->section[1].positionLeft = -4;
+    vehicle->section[1].positionRight = 0.0;
+    vehicle->section[2].positionLeft = 0.0;
+    vehicle->section[2].positionRight = 4;
+    vehicle->section[3].positionLeft = 4;
+    vehicle->section[3].positionRight = 8;
     vehicle->numOfSections = 4; //0-3
     vehicle->numSuperSection = 5;
     vehicle->toolTrailingHitchLength = -10; //30 foot hitch to see following action better

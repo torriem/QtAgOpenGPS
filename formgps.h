@@ -272,6 +272,7 @@ public:
 
     //individual points for the flags in a list
     QVector<CFlag> flagPts;
+    bool flagsBufferCurrent = false;
 
     //used to determine NMEA sentence frequency
     int timerPn = 1;
@@ -352,6 +353,7 @@ public:
     QOpenGLShaderProgram *interpColorShader = 0;
     */
     QOpenGLBuffer skyBuffer;
+    QOpenGLBuffer flagsBuffer;
 
 
     /***********************
@@ -393,7 +395,7 @@ public:
                              QOpenGLBuffer &vertexBuffer, GLenum glType,
                              int count);
     */
-    void drawLightBar(double Width, double Height, double offlineDistance);
+    void drawLightBar(double Width, double Height, double offlineDistance, const QMatrix4x4 &modelview, const QMatrix4x4 &projection);
     //void calcFrustum(QOpenGLFunctions_2_1 *gl);
     //transitioning to OPenGL ES; use our own computed matrices
     void calcFrustum(const QMatrix4x4 &mvp);

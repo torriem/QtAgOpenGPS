@@ -79,7 +79,7 @@ public:
     void stopContourLine();
     void buildContourGuidanceLine(double eastFix, double northFix);
     void distanceFromContourLine();
-    void drawContourLine(QOpenGLContext *c);
+    void drawContourLine(QOpenGLContext *c, const QMatrix4x4 &modelview, const QMatrix4x4 &projection);
     void resetContour();
 
 };

@@ -639,15 +639,21 @@ void FormGPS::addSectionContourPathPoints()
         if (sectionCounter != 0)
         {
             //keep the line going, everything is on for recording path
-            if (ct->isContourOn) ct->addPoint();
-            else { ct->startContourLine(); ct->addPoint(); }
+            if (ct->isContourOn)
+                ct->addPoint();
+            else {
+                ct->startContourLine();
+                ct->addPoint();
+            }
+        } else { //All sections OFF so if on, turn off
+            if (ct->isContourOn) {
+                ct->stopContourLine();
+            }
         }
 
-        //All sections OFF so if on, turn off
-        else { if (ct->isContourOn) { ct->stopContourLine(); }  }
-
         //Build contour line if close enough to a patch
-        if (ct->isContourBtnOn) ct->buildContourGuidanceLine(pn->easting, pn->northing);
+        if (ct->isContourBtnOn)
+            ct->buildContourGuidanceLine(pn->easting, pn->northing);
     }
 }
 

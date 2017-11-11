@@ -28,148 +28,11 @@ struct VertexTexcoord {
     QVector2D texcoord;
 };
 
-/*
-//Wrapper to draw individual primitives. Not very efficient but
-//if you need to just draw a few lines or points, this can be
-//used.  Buffer should be a list of 3D tuples
-void FormGPS::glDrawArraysColor(QOpenGLFunctions *gl,
-                                QMatrix4x4 mvp,
-                                GLenum operation,
-                                QColor &color,
-                                QOpenGLBuffer &vertexBuffer,
-                                GLenum GL_type,
-                                int count,
-                                float pointSize)
-{
-    //bind shader
-    assert(simpleColorShader->bind());
-    //set color
-    simpleColorShader->setUniformValue("color", color);
-    //set mvp matrix
-    simpleColorShader->setUniformValue("mvpMatrix", mvp);
+struct ColorVertex {
+    QVector3D vertex;
+    QVector4D color;
+};
 
-    simpleColorShader->setUniformValue("pointSize", pointSize);
-
-
-    vertexBuffer.bind();
-
-    //TODO: these require a VBA to be bound; we need to create them I suppose.
-    //enable the vertex attribute array in shader
-    simpleColorShader->enableAttributeArray("vertex");
-    //use attribute array from buffer, using non-normalized vertices
-    gl->glVertexAttribPointer(simpleColorShader->attributeLocation("vertex"),
-                              3, //3D vertices
-                              GL_type, //type of data GL_FLAOT or GL_DOUBLE
-                              GL_FALSE, //not normalized vertices!
-                              0, //no spaceing between vertices in data
-                              0 //start at offset 0 in buffer
-                             );
-
-    //draw primitive
-    gl->glDrawArrays(operation,0,count);
-    //release buffer
-    vertexBuffer.release();
-    //release shader
-    simpleColorShader->release();
-}
-
-//Buffer should be a list of 7D tuples.  3 values for x,y,z,
-//and 4 values for color: r,g,b,a.
-void FormGPS::glDrawArraysColors(QOpenGLFunctions *gl,
-                                 QMatrix4x4 mvp,
-                                 GLenum operation,
-                                 QOpenGLBuffer &vertexBuffer,
-                                 GLenum GL_type,
-                                 int count,
-                                 float pointSize)
-{
-    //bind shader
-    assert(interpColorShader->bind());
-    //set mvp matrix
-    interpColorShader->setUniformValue("mvpMatrix", mvp);
-
-    interpColorShader->setUniformValue("pointSize", pointSize);
-
-
-    vertexBuffer.bind();
-
-    //enable the vertex attribute array in shader
-    interpColorShader->enableAttributeArray("vertex");
-    interpColorShader->enableAttributeArray("color");
-
-    //use attribute array from buffer, using non-normalized vertices
-    gl->glVertexAttribPointer(interpColorShader->attributeLocation("vertex"),
-                              3, //3D vertices
-                              GL_type, //type of data GL_FLAOT or GL_DOUBLE
-                              GL_FALSE, //not normalized vertices!
-                              7*sizeof(float), //vertex+color
-                              0 //start at offset 0 in buffer
-                             );
-
-    gl->glVertexAttribPointer(interpColorShader->attributeLocation("color"),
-                              4, //4D color
-                              GL_type, //type of data GL_FLAOT or GL_DOUBLE
-                              GL_FALSE, //not normalized vertices!
-                              7*sizeof(float), //vertex+color
-                              ((float *)0) + 3 //start at 3rd float in buffer
-                             );
-
-    //draw primitive
-    gl->glDrawArrays(operation,0,count);
-    //release buffer
-    vertexBuffer.release();
-    //release shader
-    interpColorShader->release();
-}
-
-//Buffer should consist of 5D values.  3D for x,y,z, and 2D for
-//texture x,y coordinate.
-void FormGPS::glDrawArraysTexture(QOpenGLFunctions *gl,
-                                  QMatrix4x4 mvp,
-                                  GLenum operation,
-                                  QOpenGLBuffer &vertexBuffer,
-                                  GLenum GL_type,
-                                  int count)
-{
-    //bind shader
-    assert(texShader->bind());
-    //set mvp matrix
-    texShader->setUniformValue("mvpMatrix", mvp);
-    texShader->setUniformValue("texture", 0);
-    texShader->setUniformValue("useColor", false);
-
-
-    vertexBuffer.bind();
-
-    //enable the vertex attribute array in shader
-    texShader->enableAttributeArray("vertex");
-    texShader->enableAttributeArray("texcoord_src");
-
-    //use attribute array from buffer, using non-normalized vertices
-    gl->glVertexAttribPointer(interpColorShader->attributeLocation("vertex"),
-                              3, //3D vertices
-                              GL_type, //type of data GL_FLAOT or GL_DOUBLE
-                              GL_FALSE, //not normalized vertices!
-                              5*sizeof(float), //vertex+color
-                              0 //start at offset 0 in buffer
-                             );
-
-    gl->glVertexAttribPointer(interpColorShader->attributeLocation("texcoord_src"),
-                              2, //2D coordinate
-                              GL_type, //type of data GL_FLAOT or GL_DOUBLE
-                              GL_FALSE, //not normalized vertices!
-                              5*sizeof(float), //vertex+color
-                              ((float *)0) + 3 //start at 3rd float in buffer
-                             );
-
-    //draw primitive
-    gl->glDrawArrays(operation,0,count);
-    //release buffer
-    vertexBuffer.release();
-    //release shader
-    texShader->release();
-}
-*/
 void FormGPS::openGLControl_Draw()
 {
     QOpenGLContext *glContext = QOpenGLContext::currentContext();
@@ -206,42 +69,25 @@ void FormGPS::openGLControl_Draw()
     //I had to move these functions here because if setZoom is called
     //from elsewhere in the GUI (say a button press), there's no GL
     //context to work with.
-
-    //gl->glMatrixMode(GL_PROJECTION);
-    //gl->glLoadIdentity();
-
     projection.setToIdentity();
 
     //  Create a perspective transformation.
-    //gl.Perspective(fovy, openGLControl.Width / (double)openGLControl.Height, 1, camDistanceFactor * camera.camSetDistance);
-
     projection.perspective(fovy, width / (double)height, 1, camDistanceFactor * camera.camSetDistance);
 
 
     //double aspect = width / (float)height;
     //double fH = tan( fovy / 360 * M_PI);
     //double fW = fH * aspect;
-    ///gl->glFrustum(-fW, fW, -fH, fH, 1, camDistanceFactor * camera.camSetDistance );
     //projection.frustum(-fW, fW, -fH, fH, 1, camDistanceFactor * camera.camSetDistance );
-
-
-    //  Set the modelview matrix.
-    //gl->glMatrixMode(GL_MODELVIEW);
-
-    //default MODELVIEW matrix is identity
-
 
     if (isGPSPositionInitialized)
     {
 
         //  Clear the color and depth buffer.
         gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        //gl->glLoadIdentity();
         modelview.setToIdentity();
 
         //camera does translations and rotations
-        //camera.setWorldCam(gl, pivotAxlePos.easting, pivotAxlePos.northing, fixHeadingCam);
-        //do our own matrices
         camera.setWorldCam(modelview, vehicle->pivotAxlePos.easting, vehicle->pivotAxlePos.northing, fixHeadingCam);
 
         //calculate the frustum planes for culling
@@ -263,12 +109,10 @@ void FormGPS::openGLControl_Draw()
         //section patch color
         QColor sectionColor = QColor(settings.value("display/sectionColor", "#32DCC8").toString());
         sectionColor.setAlpha(160);
-        //gl->glColor4ub(sectionColor.red(), sectionColor.green(), sectionColor.blue(),160);
 
         //OpenGL ES does not support wireframe in this way. If we want wireframe,
         //we'll have to do it with LINES
         //if (isDrawPolygons) gl->glPolygonMode(GL_FRONT, GL_LINE);
-
 
         //draw patches of sections
         for (int j = 0; j < vehicle->numSuperSection; j++)
@@ -325,18 +169,12 @@ void FormGPS::openGLControl_Draw()
                         triBuffer.create();
                         triBuffer.bind();
 
-                        //draw the triangle in each triangle strip
-                        //gl->glBegin(GL_TRIANGLE_STRIP);
-                        //count2 = triList->size();
-
                         //triangle lists are now using QVector3D, so we can allocate buffers
                         //directly from list data.
-
                         triBuffer.allocate(triList->data(), count2 * sizeof(QVector3D));
                         triBuffer.release();
 
                         //TODO: to skip triangles, we can use an index buffer and glDrawElements
-
                         /*
                         //if large enough patch and camera zoomed out, fake mipmap the patches, skip triangles
                         if (count2 >= (mipmap + 2))
@@ -361,65 +199,91 @@ void FormGPS::openGLControl_Draw()
                                           triBuffer,GL_FLOAT,count2);
 
                         triBuffer.destroy();
-                        //gl->glEnd();
                     }
                 }
             }
         }
 
-
-        //gl->glPolygonMode(GL_FRONT, GL_FILL);
-
-        //gl->glColor3f(1, 1, 1);
-
         //draw contour line if button on
-        if (ct->isContourBtnOn) ct->drawContourLine(glContext);
+        if (ct->isContourBtnOn) ct->drawContourLine(glContext, modelview, projection);
 
         // draw the current and reference AB Lines
-        else { if (ABLine->isABLineSet || ABLine->isABLineBeingSet) ABLine->drawABLines(glContext); }
+        else { if (ABLine->isABLineSet || ABLine->isABLineBeingSet) ABLine->drawABLines(glContext, modelview, projection); }
 
         //draw the flags if there are some
 
-        /* TODO: convert to VBO
-        int flagCnt = flagPts.size();
-        if (flagCnt > 0)
-        {
-            for (int f = 0; f < flagCnt; f++)
+        if (!flagsBufferCurrent) {
+
+            if(flagsBuffer.isCreated())
+                flagsBuffer.destroy();
+            flagsBuffer.create();
+            flagsBuffer.bind();
+
+            QVector<ColorVertex> flagpoints;
+
+            for (int f = 0; f < flagPts.size(); f++)
             {
-                gl->glPointSize(8.0f);
-                gl->glBegin(GL_POINTS);
-                if (flagPts[f].color == 0) gl->glColor3ub(255, 0, flagPts[f].ID);
-                if (flagPts[f].color == 1) gl->glColor3ub(0, 255, flagPts[f].ID);
-                if (flagPts[f].color == 2) gl->glColor3ub(255, 255, flagPts[f].ID);
-                gl->glVertex3d(flagPts[f].easting, flagPts[f].northing, 0);
-                gl->glEnd();
+                QVector4D color;
+                if (flagPts[f].color == 0) color = QVector4D(1.0,0,flagPts[f].ID/255.0,1.0);
+                if (flagPts[f].color == 1) color = QVector4D(0,1.0,flagPts[f].ID/255.0,1.0);
+                if (flagPts[f].color == 2) color = QVector4D(1.0,1.0,flagPts[f].ID/255.0,1.0);
+                flagpoints.append( { QVector3D(flagPts[f].easting, flagPts[f].northing, 0),
+                                     color } );
             }
+            flagsBuffer.allocate(flagpoints.data(),flagPts.size() * sizeof(ColorVertex));
+            flagsBuffer.release();
 
-            if (flagNumberPicked != 0)
-            {
-                ////draw the box around flag
-                gl->glLineWidth(4);
-                gl->glColor3f(0.980f, 0.0f, 0.980f);
-                gl->glBegin(GL_LINE_STRIP);
-
-                double offSet = (zoomValue * zoomValue * 0.01);
-                gl->glVertex3d(flagPts[flagNumberPicked - 1].easting, flagPts[flagNumberPicked - 1].northing + offSet, 0);
-                gl->glVertex3d(flagPts[flagNumberPicked - 1].easting - offSet, flagPts[flagNumberPicked - 1].northing, 0);
-                gl->glVertex3d(flagPts[flagNumberPicked - 1].easting, flagPts[flagNumberPicked - 1].northing - offSet, 0);
-                gl->glVertex3d(flagPts[flagNumberPicked - 1].easting + offSet, flagPts[flagNumberPicked - 1].northing, 0);
-                gl->glVertex3d(flagPts[flagNumberPicked - 1].easting, flagPts[flagNumberPicked - 1].northing + offSet, 0);
-
-                gl->glEnd();
-
-                //draw the flag with a black dot inside
-                gl->glPointSize(4.0f);
-                gl->glColor3f(0, 0, 0);
-                gl->glBegin(GL_POINTS);
-                gl->glVertex3d(flagPts[flagNumberPicked - 1].easting, flagPts[flagNumberPicked - 1].northing, 0);
-                gl->glEnd();
-            }
+            flagsBufferCurrent = true;
         }
-        */
+
+        glDrawArraysColors(gl,projection * modelview,
+                           GL_POINTS, flagsBuffer,
+                           GL_FLOAT, flagPts.size(), 8.0f);
+
+        if (flagNumberPicked != 0)
+        {
+            QOpenGLBuffer pickedFlagBuffer;
+
+            pickedFlagBuffer.create();
+            pickedFlagBuffer.bind();
+
+
+            ////draw the box around flag
+            QVector4D color(0.980f, 0.0f, 0.980f, 1.0f);
+
+            double offSet = (zoomValue * zoomValue * 0.01);
+            ColorVertex boxCoords[5] = {
+                { QVector3D(flagPts[flagNumberPicked - 1].easting, flagPts[flagNumberPicked - 1].northing + offSet, 0), color },
+                { QVector3D(flagPts[flagNumberPicked - 1].easting - offSet, flagPts[flagNumberPicked - 1].northing, 0), color },
+                { QVector3D(flagPts[flagNumberPicked - 1].easting, flagPts[flagNumberPicked - 1].northing - offSet, 0), color },
+                { QVector3D(flagPts[flagNumberPicked - 1].easting + offSet, flagPts[flagNumberPicked - 1].northing, 0), color },
+                { QVector3D(flagPts[flagNumberPicked - 1].easting, flagPts[flagNumberPicked - 1].northing + offSet, 0), color },
+            };
+
+            pickedFlagBuffer.allocate(boxCoords, 5*sizeof(ColorVertex));
+            pickedFlagBuffer.release();
+
+            glDrawArraysColors(gl, projection*modelview,
+                               GL_LINE_STRIP, pickedFlagBuffer,
+                               GL_FLOAT, 5, 4.0f);
+
+            pickedFlagBuffer.destroy();
+            pickedFlagBuffer.create();
+            pickedFlagBuffer.bind();
+
+            ColorVertex blackDot[1] = {
+                { QVector3D(flagPts[flagNumberPicked - 1].easting, flagPts[flagNumberPicked - 1].northing, 0),
+                  QVector4D(0.0,0.0,0.0,1.0) } };
+
+            pickedFlagBuffer.allocate(blackDot, sizeof(ColorVertex));
+            pickedFlagBuffer.release();
+
+            //draw the flag with a black dot inside
+            glDrawArraysColors(gl, projection*modelview,
+                               GL_POINTS, pickedFlagBuffer,
+                               GL_FLOAT, 1, 4.0f);
+            pickedFlagBuffer.destroy();
+        }
 
         //draw the perimter line, returns if no line to draw
         periArea.drawPerimeterLine(glContext,projection*modelview);
@@ -440,32 +304,13 @@ void FormGPS::openGLControl_Draw()
         //draw the vehicle/implement
         vehicle->drawVehicle(glContext,modelview, projection, camera.camSetDistance > -1500);
 
-        /*
-        //Back to normal
-        gl->glColor3f(0.98f, 0.98f, 0.98f);
-        gl->glDisable(GL_BLEND);
-        gl->glEnable(GL_DEPTH_TEST);
         //// 2D Ortho --------------------------
-        gl->glMatrixMode(GL_PROJECTION);
-        gl->glPushMatrix();
-        gl->glLoadIdentity();
-        */
         projection.setToIdentity();
-
-
         //negative and positive on width, 0 at top to bottom ortho view
-        //should this be the width of the opengl control?
-        //gl->glOrtho(-(double)width / 2, width / 2, (double)height, 0, -1, 1);
-
         projection.ortho(-(double)width / 2, width / 2, (double)height, 0, -1, 1);
 
         //  Create the appropriate modelview matrix.
-        //gl->glMatrixMode(GL_MODELVIEW);
-        //gl->glPushMatrix();
-        //gl->glLoadIdentity();
-
         modelview.setToIdentity();
-
 
         if (ui->actionSky_On->isChecked())
         {
@@ -491,14 +336,6 @@ void FormGPS::openGLControl_Draw()
                         { QVector3D(winRightPos, hite*(double)height,0), QVector2D(0,1) }, //bottom right
                         { QVector3D(winLeftPos, hite*(double)height,0), QVector2D(1,1) }, //bottom left
                     };
-                    /*
-                    QVector3D vertices[] = {
-                        QVector3D(winRightPos, 0.0, 0), //top right
-                        QVector3D(winLeftPos, 0.0, 0), //top left
-                        QVector3D(winRightPos, hite*(double)height,0), //bottom right
-                        QVector3D(winLeftPos, hite*(double)height,0), //bottom left
-                    };
-                    */
                     //rebuild sky buffer
                     if (skyBuffer.isCreated())
                         skyBuffer.destroy();
@@ -509,15 +346,7 @@ void FormGPS::openGLControl_Draw()
                     skyBuffer.release();
                 }
 
-                //QColor blue("#0000FF");
                 texture1[0]->bind();
-                /*
-                glDrawArraysColor(gl,projection * modelview,
-                                    GL_TRIANGLE_STRIP, blue,
-                                    skyBuffer,
-                                    GL_FLOAT,
-                                    4);
-                */
                 glDrawArraysTexture(gl,projection * modelview,
                                     GL_TRIANGLE_STRIP, skyBuffer,
                                     GL_FLOAT,
@@ -533,10 +362,11 @@ void FormGPS::openGLControl_Draw()
             {
                 if (ct->distanceFromCurrentLine == 32000) ct->distanceFromCurrentLine = 0;
 
-                drawLightBar(width, height, ct->distanceFromCurrentLine * 0.1);
+                drawLightBar(width, height, ct->distanceFromCurrentLine * 0.1, modelview, projection);
             } else if (ABLine->isABLineSet || ABLine->isABLineBeingSet) {
                 drawLightBar(width, height,
-                             ABLine->distanceFromCurrentLine * 0.1);
+                             ABLine->distanceFromCurrentLine * 0.1,
+                             modelview, projection);
             }
 
         }
@@ -844,11 +674,21 @@ void FormGPS::openGLControlBack_Initialized()
 {
 }
 
-void FormGPS::drawLightBar(double Width, double Height, double offlineDistance)
+void FormGPS::drawLightBar(double Width, double Height, double offlineDistance,
+                           const QMatrix4x4 &modelview, const QMatrix4x4 &projection)
 {
     QOpenGLContext *glContext = QOpenGLContext::currentContext();
     QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
     double down = 20;
+
+
+    gl->glMatrixMode(GL_MODELVIEW);
+    gl->glPushMatrix();
+    gl->glLoadMatrixf(modelview.constData());
+
+    gl->glMatrixMode(GL_PROJECTION);
+    gl->glPushMatrix();
+    gl->glLoadMatrixf(projection.constData());
 
     gl->glLineWidth(1);
 
@@ -955,6 +795,10 @@ void FormGPS::drawLightBar(double Width, double Height, double offlineDistance)
         //gl->glVertex(0, down + 60);
         //gl->glEnd();
     }
+
+    gl->glPopMatrix();
+    gl->glMatrixMode(GL_MODELVIEW);
+    gl->glPopMatrix();
 }
 
 void FormGPS::calcFrustum(const QMatrix4x4 &mvp)
