@@ -190,7 +190,6 @@ void FormGPS::setupGui()
     //connnect section buttons to callbacks
     sectionButtonsSignalMapper = new QSignalMapper(this);
     for(int i=0; i < MAXSECTIONS-1; i++){
-        qDebug() << QString("section") <<i;
         sectionButton[i] = qmlItem(qml_root,QString("section")+QString::number(i));
         sectionButton[i]->setProperty("state","off");
         connect(sectionButton[i],SIGNAL(clicked()),
@@ -270,6 +269,7 @@ void FormGPS::onGLControl_clicked(const QVariant &event)
     mouseX = m->property("x").toInt();
     mouseY = qmlview->height() - m->property("y").toInt();
     leftMouseDownOnOpenGL = true;
+    qmlview->update();
 }
 
 void FormGPS::onBtnMinMaxZoom_clicked(){
@@ -592,6 +592,7 @@ void FormGPS::onBtnDeleteFlag_clicked()
 {
     //delete selected flag and set selected to none
     flagPts.remove(flagNumberPicked - 1);
+    flagsBufferCurrent = false;
     flagNumberPicked = 0;
 
     int flagCnt = flagPts.size();
@@ -606,6 +607,7 @@ void FormGPS::onBtnDeleteAllFlags_clicked()
 {
     contextFlag->setProperty("visible",false);
     flagPts.clear();
+    flagsBufferCurrent = false;
     flagNumberPicked = 0;
     //TODO: FileSaveFlags
 }
