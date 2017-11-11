@@ -86,7 +86,8 @@ public:
     QObject *btnZoomIn;
     QObject *btnZoomOut;
 
-    //icon palette -- do we need to keep these?
+    //menu button and icon palette -- do we need to keep all of these?
+    QObject *btnMenuDrawer;
     QObject *btnSnap;
     QObject *btnTripOdometer;
     QObject *btnGPSData;
@@ -98,6 +99,15 @@ public:
     QObject *btnFileExplorer;
     QObject *btnAutoSteerConfig;
 
+    //area context menu
+    QObject *contextArea;
+
+    //flag context menu and buttons
+    QObject *contextFlag;
+    QObject *btnDeleteFlag;
+    QObject *btnDeleteAllFlags;
+
+    //section buttons
     QObject *sectionButton[MAXSECTIONS-1]; //zero based array
 
     QObject *txtDistanceOffABLine;
@@ -435,6 +445,9 @@ public:
     void manualBtnUpdate(int sectNumber);
     void lineUpManualBtns();
 
+    // formgps_ui
+    bool closeAllMenus();
+
 
     /**************************
      * UI/Qt object callbacks *
@@ -449,7 +462,7 @@ public slots:
 
     void onBtnMinMaxZoom_clicked();
     void onBtnPerimeter_clicked();
-    void onBtnPerimeter_pressAndHeld();
+    //void onBtnPerimeter_pressAndHeld();
     void onBtnAutoSteer_clicked();
     void onBtnFlag_clicked();
     void onBtnABLine_clicked();
@@ -478,6 +491,13 @@ public slots:
 
     //was btnSection#Man_Click in c#
     void onBtnSectionMan_clicked(int sectNumber);
+
+    void onBtnRedFlag_clicked();
+    void onBtnGreenFlag_clicked();
+    void onBtnYellowFlag_clicked();
+    void onBtnDeleteFlag_clicked();
+    void onBtnDeleteAllFlags_clicked();
+
     void tmrWatchdog_timeout();
 
     void renderGL();

@@ -77,6 +77,13 @@ Item {
             iconHeightScale: 1.0
             icon: "qrc:/images/PeriArea.png"
             iconChecked: "qrc:/images/PeriDraw.png"
+            onPressAndHold: {
+                if (contextArea.visible) {
+                    contextArea.visible = false;
+                } else {
+                    contextArea.visible = true;
+                }
+            }
         }
 
         IconButtonText {
@@ -90,6 +97,13 @@ Item {
             id: btnFlag
             objectName: "btnFlag"
             icon: "qrc:/images/FlagRed.png"
+            onPressAndHold: {
+                if (contextFlag.visible) {
+                    contextFlag.visible = false;
+                } else {
+                    contextFlag.visible = true;
+                }
+            }
         }
     }
 
@@ -291,6 +305,62 @@ Item {
         }
     }
 
+    Rectangle {
+        id: contextFlag
+        objectName: "contextFlag"
+        width: childrenRect.width+10
+        height: childrenRect.height + 10
+        color: "#bf163814"
+        visible: false
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.leftMargin: btnFlag.width + 10
+        anchors.topMargin: btnFlag.y
+        border.color: "#c3ecc0"
+
+        Grid {
+            id: contextFlagGrid
+            spacing: 5
+            anchors.top: parent.top
+            anchors.topMargin: 5
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+
+            width: childrenRect.width
+            height: childrenRect.height
+
+            columns: 5
+            flow: Grid.LeftToRight
+
+            IconButton {
+                id: redFlag
+                objectName: "btnRedFlag"
+                icon: "qrc:/images/FlagRed.png";
+            }
+            IconButton {
+                id: greenFlag
+                objectName: "btnGreenFlag"
+                icon: "qrc:/images/FlagGrn.png";
+            }
+            IconButton {
+                id: yellowFlag
+                objectName: "btnYellowFlag"
+                icon: "qrc:/images/FlagYel.png";
+            }
+            IconButton {
+                id: deleteFlag
+                objectName: "btnDeleteFlag"
+                icon: "qrc:/images/FlagDelete.png"
+                enabled: false
+            }
+            IconButton {
+                id: deleteAllFlags
+                objectName: "btnDeleteAllFlags"
+                icon: "qrc:/images/FlagDeleteAll.png"
+                enabled: false
+            }
+        }
+    }
 
     Text {
         id: txtDistanceOffABLine

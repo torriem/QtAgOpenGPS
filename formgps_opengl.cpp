@@ -227,6 +227,7 @@ void FormGPS::openGLControl_Draw()
                 if (flagPts[f].color == 0) color = QVector4D(1.0,0,flagPts[f].ID/255.0,1.0);
                 if (flagPts[f].color == 1) color = QVector4D(0,1.0,flagPts[f].ID/255.0,1.0);
                 if (flagPts[f].color == 2) color = QVector4D(1.0,1.0,flagPts[f].ID/255.0,1.0);
+                qDebug() << color;
                 flagpoints.append( { QVector3D(flagPts[f].easting, flagPts[f].northing, 0),
                                      color } );
             }
@@ -396,6 +397,7 @@ void FormGPS::openGLControl_Draw()
 
             for (int ctr = 0; ctr < 192; ctr += 3)
             {
+                qDebug() << data1[ctr] << data1[ctr+1] << data1[ctr+2];
                 if ((data1[ctr] == 255) || (data1[ctr + 1] == 255))
                 {
                     flagNumberPicked = data1[ctr + 2];

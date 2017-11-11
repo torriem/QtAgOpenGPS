@@ -13,6 +13,7 @@
 #include "glm.h"
 #include <string>
 #include "ui_formgps.h"
+#include "qmlutil.h"
 
 /*
 static const double sm_a = 6378137.0;
@@ -339,6 +340,17 @@ void FormGPS::updateFixPosition()
         btnAutoSteer->setProperty("buttonText","-");
     }
 
+    if (flagPts.size()) {
+        btnDeleteAllFlags->setProperty("enabled",true);
+        if(flagNumberPicked) {
+            btnDeleteFlag->setProperty("enabled",true);
+        } else {
+            btnDeleteFlag->setProperty("enabled",false);
+        }
+    } else {
+        btnDeleteAllFlags->setProperty("enabled",false);
+        btnDeleteFlag->setProperty("enabled",false);
+    }
 
     /*
     //go to our offscreen context and do the section lookahead

@@ -6,6 +6,7 @@
 #include "openglcontrol.h"
 #include "qmlutil.h"
 #include <QTimer>
+#include "cnmea.h"
 #include "cvehicle.h"
 #include "csection.h"
 #include "toplinedisplay.h"
@@ -75,6 +76,8 @@ void FormGPS::setupGui()
     //openGLControl_item = qobject_cast<OpenGLControlItem *>(qml_root);
 
     //connect qml button signals to callbacks (it's not automatic with qml)
+    btnMenuDrawer = qmlItem(qml_root, "btnMenuDrawer");
+
     btnMinMaxZoom = qmlItem(qml_root,"btnMinMaxZoom");
     connect(btnMinMaxZoom,SIGNAL(clicked()),this,
 
@@ -83,8 +86,8 @@ void FormGPS::setupGui()
     btnPerimeter = qmlItem(qml_root,"btnPerimeter");
     connect(btnPerimeter,SIGNAL(clicked()),this,
             SLOT(onBtnPerimeter_clicked()));
-    connect(btnPerimeter,SIGNAL(pressAndHold()), this,
-            SLOT(onBtnPerimeter_pressAndHeld()));
+
+    contextArea = qmlItem(qml_root, "contextArea");
 
     btnAutoSteer = qmlItem(qml_root,"btnAutoSteer");
     connect(btnAutoSteer,SIGNAL(clicked()),this,
@@ -168,6 +171,22 @@ void FormGPS::setupGui()
     connect(btnAutoSteerConfig,SIGNAL(clicked()),this,
             SLOT(onBtnAutoSteerConfig_clicked()));
 
+    //Any objects we don't need to access later we can just store
+    //temporarily
+    QObject *temp;
+    temp = qmlItem(qml_root,"btnRedFlag");
+    connect(temp,SIGNAL(clicked()),this,SLOT(onBtnRedFlag_clicked()));
+    temp = qmlItem(qml_root,"btnGreenFlag");
+    connect(temp,SIGNAL(clicked()),this,SLOT(onBtnGreenFlag_clicked()));
+    temp = qmlItem(qml_root,"btnYellowFlag");
+    connect(temp,SIGNAL(clicked()),this,SLOT(onBtnYellowFlag_clicked()));
+
+    btnDeleteFlag = qmlItem(qml_root,"btnDeleteFlag");
+    connect(btnDeleteFlag,SIGNAL(clicked()),this,SLOT(onBtnDeleteFlag_clicked()));
+    btnDeleteAllFlags = qmlItem(qml_root,"btnDeleteAllFlags");
+    connect(btnDeleteAllFlags,SIGNAL(clicked()),this,SLOT(onBtnDeleteAllFlags_clicked()));
+    contextFlag = qmlItem(qml_root, "contextFlag");
+
     //connnect section buttons to callbacks
     sectionButtonsSignalMapper = new QSignalMapper(this);
     for(int i=0; i < MAXSECTIONS-1; i++){
@@ -184,7 +203,7 @@ void FormGPS::setupGui()
 
     txtDistanceOffABLine = qmlItem(qml_root,"txtDistanceOffABLine");
 
-    QObject *temp = qmlItem(qml_root,"btnAreaSide");
+    temp = qmlItem(qml_root,"btnAreaSide");
     connect(temp,SIGNAL(clicked()), this, SLOT(onBtnAreaSide_clicked()));
 
     //this is for rendering to the hidden gl widget. Once the offscreen
@@ -243,28 +262,23 @@ void FormGPS::onGLControl_clicked(const QVariant &event)
 {
     QObject *m = event.value<QObject *>();
 
-    //TODO: move this to it's own method so we can close
-    //the various popup toolboxes and menus when user clicks on
-    //other buttons
-    QObject *t;
-    t=qmlItem(qml_root,"btnMenuDrawer");
-    if (!t->property("hideMenu").toBool()) {
-        t->setProperty("hideMenu",true);
-        return;
-    }
-    t = qmlItem(qml_root,"contextArea");
-    if (t->property("visible").toBool()) {
-        t->setProperty("visible",false);
-        return;
-    }
-    qDebug() << m->property("x").toInt() << m->property("y").toInt();
+    //cancel click if there are menus to close
+    if (closeAllMenus()) return;
+
+    //Pass the click on to the rendering routine.
+    //make the bottom left be 0,0
+    mouseX = m->property("x").toInt();
+    mouseY = qmlview->height() - m->property("y").toInt();
+    leftMouseDownOnOpenGL = true;
 }
 
 void FormGPS::onBtnMinMaxZoom_clicked(){
+    if (closeAllMenus()) return;
     qDebug()<<"Min Max button clicked." ;
 }
 
 void FormGPS::onBtnPerimeter_clicked(){
+    if (closeAllMenus()) return;
     qDebug()<<"Perimeter button clicked." ;
 
     //If we were in the "drawing" state, go to the "done" state
@@ -307,6 +321,7 @@ void FormGPS::onBtnPerimeter_clicked(){
     }
 }
 
+/* moved this into qml javascript
 void FormGPS::onBtnPerimeter_pressAndHeld() {
     qDebug() << "pressed and held!";
     QObject *contextArea = qmlItem(qml_root, "contextArea");
@@ -316,27 +331,42 @@ void FormGPS::onBtnPerimeter_pressAndHeld() {
     else
         contextArea->setProperty("visible",true);
 }
+*/
 
 void FormGPS::onBtnAreaSide_clicked() {
     isAreaOnRight = !isAreaOnRight;
     settings.setValue("vehicle/isAreaOnRight", isAreaOnRight);
-    qmlItem(qml_root, "contextArea")->setProperty("visible",false);
+    contextArea->setProperty("visible",false);
     vehicle->settingsChanged();
 }
 
 void FormGPS::onBtnAutoSteer_clicked(){
+    if (closeAllMenus()) return;
     qDebug()<<"Autosteer button clicked." ;
 }
 
-void FormGPS::onBtnFlag_clicked(){
-    qDebug()<<"flag button clicked." ;
+void FormGPS::onBtnFlag_clicked() {
+    if (closeAllMenus()) return;
+
+    //TODO if this button is disabled until field is started, we won't
+    //need this check.
+
+    if(isGPSPositionInitialized) {
+        int nextflag = flagPts.size() + 1;
+        CFlag flagPt(pn->latitude, pn->longitude, pn->easting, pn->northing, flagColor, nextflag);
+        flagPts.append(flagPt);
+        flagsBufferCurrent = false;
+        //TODO: FileSaveFlags();
+    }
 }
 
 void FormGPS::onBtnABLine_clicked(){
+    if (closeAllMenus()) return;
     qDebug()<<"abline button clicked." ;
 }
 
 void FormGPS::onBtnContour_clicked(){
+    if (closeAllMenus()) return;
     qDebug()<<"contour button clicked." ;
 
     ct->isContourBtnOn = !ct->isContourBtnOn;
@@ -388,6 +418,7 @@ void FormGPS::onBtnManualOffOn_clicked(){
         assert(1 == 0);
         break;
     }
+    closeAllMenus();
 }
 
 void FormGPS::onBtnSectionOffAutoOn_clicked(){
@@ -432,6 +463,7 @@ void FormGPS::onBtnSectionOffAutoOn_clicked(){
             assert(1 == 0);
 
     }
+    closeAllMenus();
 }
 
 //individual buttons for section (called by actual
@@ -446,9 +478,11 @@ void FormGPS::onBtnSectionMan_clicked(int sectNumber) {
     }
     //Roll over button to next state
     manualBtnUpdate(sectNumber);
+    if (closeAllMenus()) return;
 }
 
 void FormGPS::onBtnTiltDown_clicked(){
+    if (closeAllMenus()) return;
     qDebug()<<"TiltDown button clicked.";
     camera.camPitch -= (camera.camPitch*0.03-1);
     if (camera.camPitch > 0) camera.camPitch = 0;
@@ -458,6 +492,7 @@ void FormGPS::onBtnTiltDown_clicked(){
 }
 
 void FormGPS::onBtnTiltUp_clicked(){
+    if (closeAllMenus()) return;
     qDebug()<<"TiltUp button clicked.";
     camera.camPitch += (camera.camPitch*0.03-1);
     if (camera.camPitch < -80) camera.camPitch = -80;
@@ -467,6 +502,7 @@ void FormGPS::onBtnTiltUp_clicked(){
 }
 
 void FormGPS::onBtnZoomIn_clicked(){
+    if (closeAllMenus()) return;
     qDebug() <<"ZoomIn button clicked.";
     if (zoomValue <= 20) {
         if ((zoomValue -= zoomValue * 0.1) < 6.0) zoomValue = 6.0;
@@ -480,6 +516,7 @@ void FormGPS::onBtnZoomIn_clicked(){
 }
 
 void FormGPS::onBtnZoomOut_clicked(){
+    if (closeAllMenus()) return;
     qDebug() <<"ZoomOut button clicked.";
     if (zoomValue <= 20)
         zoomValue += zoomValue*0.1;
@@ -530,3 +567,61 @@ void FormGPS::onBtnAutoSteerConfig_clicked(){
     qDebug()<<"AutoSteerConfig button clicked." ;
 }
 
+void FormGPS::onBtnRedFlag_clicked()
+{
+    flagColor = 0;
+    contextFlag->setProperty("visible",false);
+    btnFlag->setProperty("icon","/images/FlagRed.png");
+}
+
+void FormGPS::onBtnGreenFlag_clicked()
+{
+    flagColor = 1;
+    contextFlag->setProperty("visible",false);
+    btnFlag->setProperty("icon","/images/FlagGrn.png");
+}
+
+void FormGPS::onBtnYellowFlag_clicked()
+{
+    flagColor = 2;
+    contextFlag->setProperty("visible",false);
+    btnFlag->setProperty("icon","/images/FlagYel.png");
+}
+
+void FormGPS::onBtnDeleteFlag_clicked()
+{
+    //delete selected flag and set selected to none
+    flagPts.remove(flagNumberPicked - 1);
+    flagNumberPicked = 0;
+
+    int flagCnt = flagPts.size();
+    if (flagCnt > 0) {
+        for (int i = 0; i < flagCnt; i++)
+            flagPts[i].ID = i + 1;
+    }
+    contextFlag->setProperty("visible",false);
+}
+
+void FormGPS::onBtnDeleteAllFlags_clicked()
+{
+    contextFlag->setProperty("visible",false);
+    flagPts.clear();
+    flagNumberPicked = 0;
+    //TODO: FileSaveFlags
+}
+
+bool FormGPS::closeAllMenus()
+{
+    //If any of the popup menus are showing, close them,
+    //and cancel the click.
+    if (!btnMenuDrawer->property("hideMenu").toBool() ||
+        contextArea->property("visible").toBool() ||
+        contextFlag->property("visible").toBool()) {
+
+        btnMenuDrawer->setProperty("hideMenu",true);
+        contextArea->setProperty("visible",false);
+        contextFlag->setProperty("visible",false);
+        return true;
+    }
+    return false;
+}
