@@ -635,7 +635,8 @@ void FormGPS::tmrWatchdog_timeout()
         */
 
         qmlItem(qml_root,"stripHz")->setProperty("text",locale.toString(fixUpdateHz) + " " + tr("Hz"));
-        tlDisp->lblHeading->setText(locale.toString(toDegrees(vehicle->fixHeading),'f',1));
+        tlDisp->lblHeading->setText("<small>Hdg:</small>"+locale.toString(toDegrees(vehicle->fixHeading),'f',1) + QChar(0x00b0));
+        tlDisp->lblSteerAngle->setText("<small>Steer:</small>" + locale.toString((double)(vehicle->guidanceLineSteerAngle) / 10,'f',1) + QChar(0x00b0));
 
         /*
          * TODO
@@ -651,16 +652,16 @@ void FormGPS::tmrWatchdog_timeout()
         //up in the menu a few pieces of info
         if (isJobStarted)
         {
-            tlDisp->lblEasting->setText(tr("E: ")+ locale.toString(pn->easting,'f', 1));
-            tlDisp->lblNorthing->setText(tr("N: ") + locale.toString(pn->northing, 'f', 1));
+            tlDisp->lblEasting->setText(tr("<small>UTM E:</small>")+ locale.toString(pn->easting,'f', 1));
+            tlDisp->lblNorthing->setText(tr("<small>N:</small>") + locale.toString(pn->northing, 'f', 1));
         }
         else
         {
-            tlDisp->lblEasting->setText(tr("E: ")+ locale.toString(pn->actualEasting,'f', 1));
-            tlDisp->lblNorthing->setText(tr("N: ") + locale.toString(pn->actualNorthing, 'f', 1));
+            tlDisp->lblEasting->setText(tr("<small>UTM E:</small>")+ locale.toString(pn->actualEasting,'f', 1));
+            tlDisp->lblNorthing->setText(tr("<small>N:</small>") + locale.toString(pn->actualNorthing, 'f', 1));
         }
 
-        tlDisp->lblZone->setText(locale.toString(pn->zone));
+        tlDisp->lblZone->setText("<small>Zn:</small>"+locale.toString(pn->zone));
 
         //grab the Valid sentence
         //NMEASentence = recvSentenceSettings;// pn.currentNMEA_GGASentence + pn.currentNMEA_RMCSentence;
@@ -679,6 +680,91 @@ void FormGPS::tmrWatchdog_timeout()
         }
         //else  stripOnlineGPS.Value = 100;
         // turn on port light
+
+        //LightBar if AB Line is set and turned on or contour
+        if (isLightbarOn)
+        {
+            if (ct->isContourBtnOn)
+            {
+                QString dist;
+                //turn on distance widget
+                tlDisp->txtDistanceOffABLine->show();
+                btnAutoSteer->setProperty("enabled",true);
+                //lblDelta.Visible = true;
+                if (ct->distanceFromCurrentLine == 32000) ct->distanceFromCurrentLine = 0;
+
+                if ((ct->distanceFromCurrentLine) < 0.0) {
+                    if (isMetric) dist = locale.toString((int)fabs(ct->distanceFromCurrentLine * 0.1)) + " " + QChar(0x2192);
+                    else dist = locale.toString((int)fabs(ct->distanceFromCurrentLine / 2.54 * 0.1)) + " " + QChar(0x2192);
+                    tlDisp->txtDistanceOffABLine->setStyleSheet("QLabel { color: green; }");
+                    tlDisp->txtDistanceOffABLine->setText(dist);
+                } else {
+                    if (isMetric) dist = QString("") + QChar(0x2190) + " " + locale.toString((int)fabs(ct->distanceFromCurrentLine * 0.1));
+                    else dist = QString("") + QChar(0x2190)+ " " + locale.toString((int)fabs(ct->distanceFromCurrentLine / 2.54 * 0.1));
+                    tlDisp->txtDistanceOffABLine->setStyleSheet("QLabel { color: red; }");
+                    tlDisp->txtDistanceOffABLine->setText(dist);
+                }
+
+                //qDebug() << vehicle->guidanceLineDistanceOff;
+                if (vehicle->guidanceLineDistanceOff == 32020 || vehicle->guidanceLineDistanceOff == 32000) {
+                    btnAutoSteer->setProperty("buttonText", QChar(0x2715));
+                } else {
+                    btnAutoSteer->setProperty("buttonText", QChar(0x2713));
+                }
+            } else if (ABLine->isABLineSet || ABLine->isABLineBeingSet) {
+                QString dist;
+
+                tlDisp->txtDistanceOffABLine->show();
+                btnAutoSteer->setProperty("enabled",true);
+                if ((ABLine->distanceFromCurrentLine) < 0.0) {
+                    // --->
+                    if (isMetric) dist = locale.toString((int)fabs(ABLine->distanceFromCurrentLine * 0.1)) + QChar(0x21D2);
+                    else dist = locale.toString((int)fabs(ABLine->distanceFromCurrentLine / 2.54 * 0.1)) + QChar(0x21D2);
+                    tlDisp->txtDistanceOffABLine->setStyleSheet("QLabel { color: green; }");
+                    tlDisp->txtDistanceOffABLine->setText(dist);
+                } else {
+                    // <----
+                    if (isMetric) dist = QChar(0x21D0) + locale.toString((int)fabs(ABLine->distanceFromCurrentLine * 0.1));
+                    else dist = QChar(0x21D0) + locale.toString((int)fabs(ABLine->distanceFromCurrentLine / 2.54 * 0.1));
+                    tlDisp->txtDistanceOffABLine->setStyleSheet("QLabel { color: red; }");
+                    tlDisp->txtDistanceOffABLine->setText(dist);
+                }
+
+                if (vehicle->guidanceLineDistanceOff == 32020 || vehicle->guidanceLineDistanceOff == 32000) {
+                    btnAutoSteer->setProperty("buttonText", QChar(0x2715));
+                    //btnAutoSteer->setProperty("enabled",false);
+                } else {
+                    btnAutoSteer->setProperty("buttonText", QChar(0x2713));
+                    //btnAutoSteer->setProperty("enabled",true);
+                }
+            }
+
+            //AB line is not set so turn off numbers
+            if (!ABLine->isABLineSet && !ABLine->isABLineBeingSet && !ct->isContourBtnOn)
+            {
+                tlDisp->txtDistanceOffABLine->hide();
+                btnAutoSteer->setProperty("buttonText","-");
+                //btnAutoSteer->setProperty("enabled",false);
+            }
+        } else {
+            tlDisp->txtDistanceOffABLine->hide();
+            btnAutoSteer->setProperty("buttonText","-");
+            //btnAutoSteer->setProperty("enabled",false);
+        }
+
+        if (flagPts.size()) {
+            btnDeleteAllFlags->setProperty("enabled",true);
+            if(flagNumberPicked) {
+                btnDeleteFlag->setProperty("enabled",true);
+            } else {
+                btnDeleteFlag->setProperty("enabled",false);
+            }
+        } else {
+            btnDeleteAllFlags->setProperty("enabled",false);
+            btnDeleteFlag->setProperty("enabled",false);
+        }
+
+        ui->menuBar->adjustSize();
     }
     //wait till timer fires again.
 }

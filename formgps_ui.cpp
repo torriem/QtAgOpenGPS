@@ -11,6 +11,7 @@
 #include "csection.h"
 #include "toplinedisplay.h"
 #include "ccontour.h"
+#include "cabline.h"
 
 //#include <QGuiApplication>
 //#include <QtGui/private/qguiapplication_p.h>
@@ -321,18 +322,6 @@ void FormGPS::onBtnPerimeter_clicked(){
     }
 }
 
-/* moved this into qml javascript
-void FormGPS::onBtnPerimeter_pressAndHeld() {
-    qDebug() << "pressed and held!";
-    QObject *contextArea = qmlItem(qml_root, "contextArea");
-
-    if (contextArea->property("visible").toBool())
-        contextArea->setProperty("visible",false);
-    else
-        contextArea->setProperty("visible",true);
-}
-*/
-
 void FormGPS::onBtnAreaSide_clicked() {
     isAreaOnRight = !isAreaOnRight;
     settings.setValue("vehicle/isAreaOnRight", isAreaOnRight);
@@ -341,8 +330,20 @@ void FormGPS::onBtnAreaSide_clicked() {
 }
 
 void FormGPS::onBtnAutoSteer_clicked(){
-    if (closeAllMenus()) return;
-    qDebug()<<"Autosteer button clicked." ;
+    if (isAutoSteerBtnOn) {
+        isAutoSteerBtnOn = false;
+        btnAutoSteer->setProperty("icon","/images/AutoSteerOff.png");
+
+    } else {
+        if (ABLine->isABLineSet || ct->isContourBtnOn) {
+            isAutoSteerBtnOn = true;
+            btnAutoSteer->setProperty("icon","/images/AutoSteerOn.png");
+        } else {
+            //show a timed error message
+            //No Guidance Lines; turn on contour or set AB line"
+        }
+    }
+    closeAllMenus();
 }
 
 void FormGPS::onBtnFlag_clicked() {

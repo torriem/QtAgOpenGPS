@@ -25,7 +25,8 @@ TopLineDisplay::TopLineDisplay(QWidget *parent) : QWidget(parent)
     lblZone = new QLabel(thisWidget);
 
     box->addWidget(lblSpeed);
-    box->addWidget(txtDistanceOffABLine,1,Qt::AlignCenter);
+    //box->addWidget(txtDistanceOffABLine,1,Qt::AlignCenter);
+    box->addWidget(txtDistanceOffABLine);
     box->addWidget(lblSteerAngle);
     box->addWidget(lblHeading);
     box->addWidget(lblEasting);

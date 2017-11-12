@@ -89,8 +89,8 @@ Item {
         IconButtonText {
             id: btnAutoSteer
             objectName: "btnAutoSteer"
+            icon: "qrc:/images/AutoSteerOff.png"
             buttonText: "X"
-            enabled: false
         }
 
         IconButton {
@@ -369,6 +369,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         text: "Hi there"
         color: "white"
+        visible: false
     }
 
     Rectangle {
