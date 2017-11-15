@@ -5,10 +5,10 @@
 #include <math.h>
 #include <limits>
 #include <QOpenGLContext>
-#include <QOpenGLFunctions_2_1>
 #include "glm.h"
 #include "cvehicle.h"
 #include <QSettings>
+#include "glutils.h"
 
 const double DOUBLE_EPSILON=std::numeric_limits<double>::epsilon();
 
@@ -237,13 +237,16 @@ void CContour::buildContourGuidanceLine(double eastFix, double northFix)
 
     for (int i = start; i < stop; i++)
     {
-        Vec4 point = Vec4(
+        QVector3D point = QVector3D(
             (*stripList[strip])[i].x + (sin(piSide + (*stripList[strip])[i].y) * widthMinusOverlap),
             (*stripList[strip])[i].y,
-            (*stripList[strip])[i].z + (cos(piSide + (*stripList[strip])[i].y) * widthMinusOverlap),
-            0);
+            (*stripList[strip])[i].z + (cos(piSide + (*stripList[strip])[i].y) * widthMinusOverlap));
+
         ctList.append(point);
     }
+
+    //we'll have to rebuild the OpenGL buffer for the guidance line.
+    ctListBufferCurrent = false;
 }
 
 //determine distance from contour guidance line
@@ -260,8 +263,8 @@ void CContour::distanceFromContourLine()
         //find the closest 2 points to current fix
         for (int t = 0; t < ptCount; t++)
         {
-            double dist = ((vehicle->fixEasting - ctList[t].x) * (vehicle->fixEasting - ctList[t].x))
-                            + ((vehicle->fixNorthing - ctList[t].z) * (vehicle->fixNorthing - ctList[t].z));
+            double dist = ((vehicle->fixEasting - ctList[t].x()) * (vehicle->fixEasting - ctList[t].x()))
+                            + ((vehicle->fixNorthing - ctList[t].z()) * (vehicle->fixNorthing - ctList[t].z()));
             if (dist < minDistA)
             {
                 minDistB = minDistA;
@@ -281,18 +284,18 @@ void CContour::distanceFromContourLine()
 
         //get the distance from currently active AB line
         //x2-x1
-        double dx = ctList[B].x - ctList[A].x;
+        double dx = ctList[B].x() - ctList[A].x();
         //z2-z1
-        double dz = ctList[B].z - ctList[A].z;
+        double dz = ctList[B].z() - ctList[A].z();
 
         if (fabs(dx) < DOUBLE_EPSILON && fabs(dz) < DOUBLE_EPSILON) return;
 
         //abHeading = atan2(dz, dx);
-        abHeading = ctList[A].y;
+        abHeading = ctList[A].y();
 
         //how far from current AB Line is fix
-        distanceFromCurrentLine = ((dz * vehicle->fixEasting) - (dx * vehicle->fixNorthing) + (ctList[B].x
-                    * ctList[A].z) - (ctList[B].z * ctList[A].x))
+        distanceFromCurrentLine = ((dz * vehicle->fixEasting) - (dx * vehicle->fixNorthing) + (ctList[B].x()
+                    * ctList[A].z()) - (ctList[B].z() * ctList[A].x()))
                         / sqrt((dz * dz) + (dx * dx));
 
         //are we on the right side or not
@@ -302,12 +305,12 @@ void CContour::distanceFromContourLine()
         distanceFromCurrentLine = fabs(distanceFromCurrentLine);
 
         // ** Pure pursuit ** - calc point on ABLine closest to current position
-        double U = (((pivotAxlePosCT.easting - ctList[A].x) * (dx))
-                    + ((pivotAxlePosCT.northing - ctList[A].z) * (dz)))
+        double U = (((pivotAxlePosCT.easting - ctList[A].x()) * (dx))
+                    + ((pivotAxlePosCT.northing - ctList[A].z()) * (dz)))
                     / ((dx * dx) + (dz * dz));
 
-        rEastCT = ctList[A].x + (U * (dx));
-        rNorthCT = ctList[A].z + (U * (dz));
+        rEastCT = ctList[A].x() + (U * (dx));
+        rNorthCT = ctList[A].z() + (U * (dz));
 
         //Subtract the two headings, if > 1.57 its going the opposite heading as refAB
         abFixHeadingDelta = (fabs(vehicle->fixHeading - abHeading));
@@ -329,13 +332,13 @@ void CContour::distanceFromContourLine()
         {
             //counting down
             isABSameAsFixHeading = false;
-            distSoFar = CNMEA::distance(ctList[A].z, ctList[A].x, rNorthCT, rEastCT);
+            distSoFar = CNMEA::distance(ctList[A].z(), ctList[A].x(), rNorthCT, rEastCT);
             //Is this segment long enough to contain the full lookahead distance?
             if (distSoFar > goalPointDistance)
             {
                 //treat current segment like an AB Line
-                goalPointCT.easting = rEastCT - (sin(ctList[A].y) * goalPointDistance);
-                goalPointCT.northing = rNorthCT - (cos(ctList[A].y) * goalPointDistance);
+                goalPointCT.easting = rEastCT - (sin(ctList[A].y()) * goalPointDistance);
+                goalPointCT.northing = rNorthCT - (cos(ctList[A].y()) * goalPointDistance);
             }
 
             //multiple segments required
@@ -345,7 +348,7 @@ void CContour::distanceFromContourLine()
                 while (A > 0)
                 {
                     B--; A--;
-                    tempDist = CNMEA::distance(ctList[B].z, ctList[B].x, ctList[A].z, ctList[A].x);
+                    tempDist = CNMEA::distance(ctList[B].z(), ctList[B].x(), ctList[A].z(), ctList[A].x());
 
                     //will we go too far?
                     if ((tempDist + distSoFar) > goalPointDistance)
@@ -359,22 +362,22 @@ void CContour::distanceFromContourLine()
                 double t = (goalPointDistance - distSoFar); // the remainder to yet travel
                 t /= tempDist;
 
-                goalPointCT.easting = (((1 - t) * ctList[B].x) + (t * ctList[A].x));
-                goalPointCT.northing = (((1 - t) * ctList[B].z) + (t * ctList[A].z));
+                goalPointCT.easting = (((1 - t) * ctList[B].x()) + (t * ctList[A].x()));
+                goalPointCT.northing = (((1 - t) * ctList[B].z()) + (t * ctList[A].z()));
             }
         }
         else
         {
             //counting up
             isABSameAsFixHeading = true;
-            distSoFar = CNMEA::distance(ctList[B].z, ctList[B].x, rNorthCT, rEastCT);
+            distSoFar = CNMEA::distance(ctList[B].z(), ctList[B].x(), rNorthCT, rEastCT);
 
             //Is this segment long enough to contain the full lookahead distance?
             if (distSoFar > goalPointDistance)
             {
                 //treat current segment like an AB Line
-                goalPointCT.easting = rEastCT + (sin(ctList[A].y) * goalPointDistance);
-                goalPointCT.northing = rNorthCT + (cos(ctList[A].y) * goalPointDistance);
+                goalPointCT.easting = rEastCT + (sin(ctList[A].y()) * goalPointDistance);
+                goalPointCT.northing = rNorthCT + (cos(ctList[A].y()) * goalPointDistance);
             }
 
             //multiple segments required
@@ -385,7 +388,7 @@ void CContour::distanceFromContourLine()
                 while (B < ptCount - 1)
                 {
                     B++; A++;
-                    tempDist = CNMEA::distance(ctList[B].z, ctList[B].x, ctList[A].z, ctList[A].x);
+                    tempDist = CNMEA::distance(ctList[B].z(), ctList[B].x(), ctList[A].z(), ctList[A].x());
 
                     //will we go too far?
                     if ((tempDist + distSoFar) > goalPointDistance)
@@ -403,8 +406,8 @@ void CContour::distanceFromContourLine()
                 double t = (goalPointDistance - distSoFar); // the remainder to yet travel
                 t /= tempDist;
 
-                goalPointCT.easting = (((1 - t) * ctList[A].x) + (t * ctList[B].x));
-                goalPointCT.northing = (((1 - t) * ctList[A].z) + (t * ctList[B].z));
+                goalPointCT.easting = (((1 - t) * ctList[A].x()) + (t * ctList[B].x()));
+                goalPointCT.northing = (((1 - t) * ctList[A].z()) + (t * ctList[B].z()));
             }
         }
 
@@ -476,82 +479,47 @@ void CContour::distanceFromContourLine()
 void CContour::drawContourLine(QOpenGLContext *glContext, const QMatrix4x4 &modelview, const QMatrix4x4 &projection)
 {
     QSettings settings;
-    QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+    QOpenGLFunctions *gles = glContext->functions();
 
-    gl->glMatrixMode(GL_MODELVIEW);
-    gl->glPushMatrix();
-    gl->glLoadMatrixf(modelview.constData());
+    /* generate ctList OpenGL buffer */
+    if (! ctListBufferCurrent) {
+        if (ctListBuffer.isCreated())
+            ctListBuffer.destroy();
+        ctListBuffer.create();
+        ctListBuffer.bind();
 
-    gl->glMatrixMode(GL_PROJECTION);
-    gl->glPushMatrix();
-    gl->glLoadMatrixf(projection.constData());
+        QVector<QVector3D> temp;
+        foreach(QVector3D i, ctList) {
+            temp.append(QVector3D(i.x(), i.z(), 0));
+        }
 
-    //glColor3f(0.98f, 0.98f, 0.50f);
-    //glBegin(GL_LINE_STRIP);
-    ////for (int h = 0; h < ptCount; h++) glVertex3d(guideList[h].x, 0, guideList[h].z);
-    //glVertex3d(boxA.easting, boxA.northing, 0);
-    //glVertex3d(boxB.easting, boxB.northing, 0);
-    //glVertex3d(boxC.easting, boxC.northing, 0);
-    //glVertex3d(boxD.easting, boxD.northing, 0);
-    //glVertex3d(boxA.easting, boxA.northing, 0);
-    //glEnd();
+        ctListBuffer.allocate(temp.constData(), temp.size() * sizeof(QVector3D));
+        ctListBuffer.release();
+
+        ctListBufferCurrent = true;
+    }
 
     ////draw the guidance line
-    int ptCount = ctList.size();
-    gl->glLineWidth(2);
-    gl->glColor3f(0.98f, 0.2f, 0.0f);
-    gl->glBegin(GL_LINE_STRIP);
-    for (int h = 0; h < ptCount; h++) gl->glVertex3d(ctList[h].x, ctList[h].z, 0);
-    gl->glEnd();
+    QColor color = QColor::fromRgbF(0.98f, 0.2f, 0.0f);
+    glDrawArraysColor(gles, projection * modelview,
+                      GL_LINE_STRIP, color,
+                      ctListBuffer, GL_FLOAT,
+                      ctList.size(),2);
 
-    gl->glPointSize(2.0f);
-    gl->glBegin(GL_POINTS);
 
-    gl->glColor3f(0.7f, 0.7f, 0.25f);
-    for (int h = 0; h < ptCount; h++) gl->glVertex3d(ctList[h].x, ctList[h].z, 0);
+    //draw points on line
+    color = QColor::fromRgbF(0.7f, 0.7f, 0.25f);
+    glDrawArraysColor(gles, projection * modelview,
+                      GL_POINTS, color,
+                      ctListBuffer, GL_FLOAT,
+                      ctList.size(), 2);
 
-    gl->glEnd();
     gl->glPointSize(1.0f);
 
-    ////draw the reference line
-    //glPointSize(3.0f);
-    ////if (isContourBtnOn)
-    //{
-    //    ptCount = stripList.Count;
-    //    if (ptCount > 0)
-    //    {
-    //        ptCount = stripList[closestRefPatch].Count;
-    //        glBegin(GL_POINTS);
-    //        for (int i = 0; i < ptCount; i++)
-    //        {
-    //            glVertex3d(stripList[closestRefPatch][i].x, 0, stripList[closestRefPatch][i].z);
-    //        }
-    //        glEnd();
-    //    }
-    //}
-
-    //ptCount = conList.Count;
-    //if (ptCount > 0)
-    //{
-    ////draw closest point and side of line points
-    //glColor3f(0.5f, 0.900f, 0.90f);
-    //glPointSize(4.0f);
-    //glBegin(GL_POINTS);
-    //for (int i = 0; i < ptCount; i++)  glVertex3d(conList[i].x, conList[i].z, 0);
-    //glEnd();
-
-    //glColor3f(0.35f, 0.30f, 0.90f);
-    //glPointSize(6.0f);
-    //glBegin(GL_POINTS);
-    //glVertex3d(conList[closestRefPoint].x, conList[closestRefPoint].z, 0);
-    //glEnd();
-    //}
     if (settings.value("display/isPureOn",true).toBool())
     {
         const int numSegments = 100;
         {
-            gl->glColor3f(0.95f, 0.30f, 0.950f);
-
             double theta = twoPI / (numSegments);
             double c = cos(theta);//precalculate the sine and cosine
             double s = sin(theta);
@@ -559,37 +527,60 @@ void CContour::drawContourLine(QOpenGLContext *glContext, const QMatrix4x4 &mode
             double x = ppRadiusCT;//we start at angle = 0
             double y = 0;
 
-            gl->glLineWidth(1);
-            gl->glBegin(GL_LINE_LOOP);
+            QVector<QVector3D> circle;
+
             for (int ii = 0; ii < numSegments; ii++)
             {
-                //glVertex2f(x + cx, y + cy);//output vertex
-                gl->glVertex2d(x + radiusPointCT.easting, y + radiusPointCT.northing);//output vertex
-
+                circle.append(QVector3D(x + radiusPointCT.easting,
+                                        y + radiusPointCT.northing,
+                                        0));
                 //apply the rotation matrix
                 double t = x;
                 x = (c * x) - (s * y);
                 y = (s * t) + (c * y);
             }
-            gl->glEnd();
 
+            //Build or reload openGL buffer with points
+            if (purePursuitBuffer.isCreated()) {
+                purePursuitBuffer.bind();
+                purePursuitBuffer.write(0,circle.constData(),
+                                        numSegments * sizeof(QVector3D));
+                purePursuitBuffer.release();
+            } else {
+                purePursuitBuffer.create();
+                purePursuitBuffer.bind();
+                purePursuitBuffer.allocate(circle.constData(),
+                                           numSegments * sizeof(QVector3D));
+                purePursuitBuffer.release();
+            }
+            QColor color = QColor::fromRgbF(0.95f, 0.30f, 0.950f);
+            glDrawArraysColor(gles, projection * modelview,
+                              GL_LINE_LOOP, color,
+                              purePursuitBuffer, GL_FLOAT,
+                              numSegments);
+
+
+            QVector3D lookAheadPoint = QVector3D(goalPointCT.easting,
+                                                 goalPointCT.northing, 0.0);
+
+            if (lookAheadPointBuffer.isCreated()) {
+                lookAheadPointBuffer.bind();
+                lookAheadPointBuffer.write(0,&lookAheadPoint, sizeof(QVector3D));
+                lookAheadPointBuffer.release();
+            } else {
+                lookAheadPointBuffer.create();
+                lookAheadPointBuffer.bind();
+                lookAheadPointBuffer.allocate(&lookAheadPoint, sizeof(QVector3D));
+                lookAheadPointBuffer.release();
+            }
             //Draw lookahead Point
-            gl->glPointSize(4.0f);
-            gl->glBegin(GL_POINTS);
-
-            //glColor3f(1.0f, 1.0f, 0.25f);
-            //glVertex3d(rEast, rNorth, 0.0);
-
-            gl->glColor3f(1.0f, 0.5f, 0.95f);
-            gl->glVertex3d(goalPointCT.easting, goalPointCT.northing, 0.0);
-
-            gl->glEnd();
-            gl->glPointSize(1.0f);
+            color = QColor::fromRgbF(1.0f, 0.5f, 0.95f);
+            glDrawArraysColor(gles, projection * modelview,
+                              GL_POINTS, color,
+                              lookAheadPointBuffer, GL_FLOAT,
+                              1,4.0f);
         }
     }
-    gl->glPopMatrix();
-    gl->glMatrixMode(GL_MODELVIEW);
-    gl->glPopMatrix();
 }
 
 //Reset the contour to zip
@@ -599,4 +590,5 @@ void CContour::resetContour()
 
     if (!ptList.isNull()) ptList->clear();
     ctList.clear();
+    ctListBufferCurrent = false;
 }

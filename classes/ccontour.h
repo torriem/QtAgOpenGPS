@@ -6,6 +6,7 @@
 #include "vec2.h"
 #include "vec4.h"
 #include "cvec.h"
+#include <QOpenGLBuffer>
 
 class QOpenGLContext;
 class CVehicle;
@@ -14,6 +15,11 @@ class CContour
 {
 private:
     CVehicle *vehicle;
+
+    QOpenGLBuffer ctListBuffer;
+    QOpenGLBuffer purePursuitBuffer;
+    QOpenGLBuffer lookAheadPointBuffer;
+    bool ctListBufferCurrent = false;
 public:
     bool isContourOn=false, isContourBtnOn=false;
 
@@ -68,7 +74,7 @@ public:
     QVector<QSharedPointer<QVector<Vec4>>> contourSaveList;
 
     //list of points for the new contour line
-    QVector<Vec4> ctList;
+    QVector<QVector3D> ctList;
 
     //list of points to determine position ofnew contour line
     QVector<CVec> conList;
