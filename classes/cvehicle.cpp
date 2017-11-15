@@ -88,6 +88,8 @@ CVehicle::CVehicle()
     for (int i=0; i <= MAXSECTIONS; i++) {
         section[i].set_vehicle(this);
     }
+
+    memset(avgSpeed,0,sizeof(double)*10);
 }
 
 void CVehicle::makeBuffers()

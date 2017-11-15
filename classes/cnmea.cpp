@@ -1,4 +1,5 @@
 #include <QCoreApplication>
+#include <math.h>
 #include "cnmea.h"
 //#include "latlong-utm.h"
 
