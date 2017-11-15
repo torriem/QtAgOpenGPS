@@ -514,7 +514,6 @@ void CContour::drawContourLine(QOpenGLContext *glContext, const QMatrix4x4 &mode
                       ctListBuffer, GL_FLOAT,
                       ctList.size(), 2);
 
-    gl->glPointSize(1.0f);
 
     if (settings.value("display/isPureOn",true).toBool())
     {
@@ -558,7 +557,6 @@ void CContour::drawContourLine(QOpenGLContext *glContext, const QMatrix4x4 &mode
                               GL_LINE_LOOP, color,
                               purePursuitBuffer, GL_FLOAT,
                               numSegments);
-
 
             QVector3D lookAheadPoint = QVector3D(goalPointCT.easting,
                                                  goalPointCT.northing, 0.0);
