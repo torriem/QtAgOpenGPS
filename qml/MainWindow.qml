@@ -13,11 +13,34 @@ Item {
 
     signal clicked(var mouse)
 
+    SystemPalette {
+        id: systemPalette
+        colorGroup: SystemPalette.Active
+    }
+
+    Rectangle {
+        id: topLine
+        objectName: "topLine"
+        width: parent.width
+        height: screenPixelDensity * 0.3 //.3" tall
+        Text {
+            id: text1
+            text: "Top line stuff goes here"
+            color: systemPalette.windowText
+            anchors.horizontalCenter: parent.horizontalCenter
+
+        }
+        color: systemPalette.window
+        anchors.top: parent.top
+    }
+
+
+
     AOGRenderer {
         id: glcontrolrect
         objectName: "openglcontrol"
 
-        anchors.top: parent.top
+        anchors.top: topLine.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom:  statusBar.top
@@ -371,22 +394,12 @@ Item {
             }
         }
 
-        Text {
-            id: txtDistanceOffABLine
-            objectName: "txtDistanceOffABLine"
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: "Hi there"
-            color: "white"
-            visible: false
-        }
     }
 
     Rectangle {
         id: statusBar
-        y: 566
-        height: 25
-        color: "#ffffff"
+        height: screenPixelDensity * 0.3
+        color: systemPalette.window
         anchors.right: parent.right
         anchors.rightMargin: 0
         anchors.left: parent.left

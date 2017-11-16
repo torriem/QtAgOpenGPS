@@ -1,5 +1,7 @@
 #include <QQuickView>
 #include <QQuickWidget>
+#include <QQmlContext>
+#include <QScreen>
 #include "formgps.h"
 #include "ui_formgps.h" //moc-generated from ui file
 #include "qmlutil.h"
@@ -14,8 +16,7 @@
 //#include <QGuiApplication>
 //#include <QtGui/private/qguiapplication_p.h>
 //#include <QtGui/qpa/qplatformintegration.h>
-#include <QtOpenGL>
-#include <QOpenGLFunctions_2_1>
+
 #include <functional>
 #include <assert.h>
 #include "aogrenderer.h"
@@ -42,10 +43,9 @@ void FormGPS::setupGui()
 
     //Load the QML into a view
     qmlview = new QQuickView();
+    qmlview->rootContext()->setContextProperty("screenPixelDensity",QGuiApplication::primaryScreen()->physicalDotsPerInch() * QGuiApplication::primaryScreen()->devicePixelRatio());
     qmlview->setSource(QUrl("qrc:/qml/MainWindow.qml"));
     qmlview->setColor(Qt::transparent);
-    //qmlview->setGeometry(0,0,800,600);
-    //qmlview->show();
 
     qmlview->setClearBeforeRendering(false);
     //connect(qmlview,SIGNAL(beforeRendering()), this, SLOT(openGLControl_Draw()),Qt::DirectConnection);
@@ -66,14 +66,6 @@ void FormGPS::setupGui()
     qml_root = qmlview->rootObject();
 
     connect(qml_root,SIGNAL(clicked(QVariant)),this,SLOT(onGLControl_clicked(QVariant)));
-    //attach callback to signal so we can interact with the control
-    //once it is realized.
-    //connect(qml_root,SIGNAL(controlSet(OpenGLControl *)),this,
-    //        SLOT(openGLControl_set(OpenGLControl*)));
-
-    //save a copy of this item because we'll need it to request updates
-    //when GPS data comes in (or on a timer for FPS).
-    //openGLControl_item = qobject_cast<OpenGLControlItem *>(qml_root);
 
     //connect qml button signals to callbacks (it's not automatic with qml)
     btnMenuDrawer = qmlItem(qml_root, "btnMenuDrawer");

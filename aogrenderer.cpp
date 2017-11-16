@@ -111,11 +111,9 @@ AOGRendererInSG::AOGRendererInSG()
 
 QOpenGLFramebufferObject *AOGRenderer::createFramebufferObject(const QSize &size)
 {
-    qDebug() << "creating framebuffer to back this widget.";
-    qDebug() << size;
     QOpenGLFramebufferObjectFormat format;
     format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
-    format.setSamples(4);
+    format.setSamples(2);
     return new QOpenGLFramebufferObject(size,format);
 }
 
