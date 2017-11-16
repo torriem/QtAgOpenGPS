@@ -2,8 +2,6 @@
 #include <QQuickWidget>
 #include "formgps.h"
 #include "ui_formgps.h" //moc-generated from ui file
-#include "openglcontrolitem.h"
-#include "openglcontrol.h"
 #include "qmlutil.h"
 #include <QTimer>
 #include "cnmea.h"
@@ -20,6 +18,7 @@
 #include <QOpenGLFunctions_2_1>
 #include <functional>
 #include <assert.h>
+#include "aogrenderer.h"
 
 void FormGPS::setupGui()
 {
@@ -49,9 +48,9 @@ void FormGPS::setupGui()
     //qmlview->show();
 
     qmlview->setClearBeforeRendering(false);
-    connect(qmlview,SIGNAL(beforeRendering()), this, SLOT(openGLControl_Draw()),Qt::DirectConnection);
-    connect(qmlview,SIGNAL(sceneGraphInitialized()), this, SLOT(openGLControl_Initialized()),Qt::DirectConnection);
-    connect(qmlview,SIGNAL(sceneGraphInvalidated()), this, SLOT(openGLControl_Shutdown()),Qt::DirectConnection);
+    //connect(qmlview,SIGNAL(beforeRendering()), this, SLOT(openGLControl_Draw()),Qt::DirectConnection);
+    //connect(qmlview,SIGNAL(sceneGraphInitialized()), this, SLOT(openGLControl_Initialized()),Qt::DirectConnection);
+    //connect(qmlview,SIGNAL(sceneGraphInvalidated()), this, SLOT(openGLControl_Shutdown()),Qt::DirectConnection);
 
     qmlcontainer = QWidget::createWindowContainer(qmlview);
 
@@ -206,33 +205,12 @@ void FormGPS::setupGui()
     temp = qmlItem(qml_root,"btnAreaSide");
     connect(temp,SIGNAL(clicked()), this, SLOT(onBtnAreaSide_clicked()));
 
-    //this is for rendering to the hidden gl widget. Once the offscreen
-    //context stuff is working and we don't need to debug the lookahead
-    //graphics, we can remove the widget and comment out this stuff.
-    /*
-    ui->openGLControlBack->setPaintGLCallback(std::bind(&FormGPS::openGLControlBack_Draw,this));
-    connect(ui->openGLControlBack,SIGNAL(afterRender()),this,SLOT(processSectionLookahead()));
-    */
+    AOGRendererInSG *renderer = qml_root->findChild<AOGRendererInSG *>("openglcontrol");
+    //This is a bit hackish, but all rendering is done in this item, so
+    //we have to give it a way of calling our initialize and draw functions
+    renderer->setProperty("mainform",qVariantFromValue((void *) this));
+    renderer->setMirrorVertically(true);
 
-    //set up off-screen openGL context for section lookahead
-    /*
-    if (QGuiApplicationPrivate::platform_integration->hasCapability(QPlatformIntegration::ThreadedOpenGL)) {
-        qDebug() << "We in a multithread environment?";
-        backSurfaceFormat.setDepthBufferSize(24);
-        backSurfaceFormat.setMajorVersion(4);
-        backSurfaceFormat.setMinorVersion(3);
-
-        backOpenGLContext.setFormat(backSurfaceFormat);
-        backOpenGLContext.create();
-        //if we're on a single-threaded opengl platform, this will fail
-        //we'll have to check for it when drawing to the back opengl
-        //surface and just reuse the QML context.
-
-        backSurface.setFormat(backSurfaceFormat);
-        backSurface.create();
-        assert(backSurface.isValid());
-    }
-    */
     tmrWatchdog = new QTimer(this);
     connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(tmrWatchdog_timeout()));
     tmrWatchdog->start(50); //fire every 50ms.

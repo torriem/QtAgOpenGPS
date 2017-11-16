@@ -2,7 +2,7 @@
 #include <QApplication>
 #include <QCoreApplication>
 
-#include "openglcontrolitem.h"
+#include "aogrenderer.h"
 
 #ifndef TESTING
 int main(int argc, char *argv[])
@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("AgOpenGPS");
     QCoreApplication::setOrganizationDomain("agopengps");
     QCoreApplication::setApplicationName("QtAgOpenGPS");
-    qmlRegisterType<OpenGLControlItem>("AgOpenGPS",1,0,"OpenGLControl");
+    qmlRegisterType<AOGRendererInSG>("AgOpenGPS",1,0,"AOGRenderer");
     FormGPS w;
     w.show();
 

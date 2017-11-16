@@ -52,15 +52,14 @@ SOURCES += main.cpp\
     glwidget.cpp \
     formgps_opengl.cpp \
     classes/cboundary.cpp \
-    openglcontrolitem.cpp \
-    openglcontrol.cpp \
     formgps_ui.cpp \
     aogsettings.cpp \
     formgps_udpcomm.cpp \
     formgps_position.cpp \
     formgps_serial.cpp \
     glutils.cpp \
-    toplinedisplay.cpp
+    toplinedisplay.cpp \
+    aogrenderer.cpp
 
 HEADERS  += formgps.h \
     classes/cabline.h \
@@ -81,13 +80,12 @@ HEADERS  += formgps.h \
     glwidget.h \
     classes/cboundary.h \
     btnenum.h \
-    openglcontrolitem.h \
-    openglcontrol.h \
     qmlutil.h \
     aogsettings.h \ 
     common.h \
     glutils.h \
-    toplinedisplay.h
+    toplinedisplay.h \
+    aogrenderer.h
 
 FORMS    += formgps.ui
 

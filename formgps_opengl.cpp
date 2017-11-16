@@ -9,10 +9,11 @@
 #include "cabline.h"
 #include "cperimeter.h"
 #include "cboundary.h"
-#include "openglcontrol.h"
+#include "aogrenderer.h"
 #include "cnmea.h"
 #include "glm.h"
 #include "glutils.h"
+#include "qmlutil.h"
 
 #include <QGLWidget>
 #include <QQuickView>
@@ -37,10 +38,15 @@ void FormGPS::openGLControl_Draw()
 {
     QOpenGLContext *glContext = QOpenGLContext::currentContext();
     QOpenGLFunctions *gl = glContext->functions();
-    int width = glContext->surface()->size().width();
-    int height = glContext->surface()->size().height();
+    //int width = glContext->surface()->size().width();
+    //int height = glContext->surface()->size().height();
     QMatrix4x4 projection;
     QMatrix4x4 modelview;
+
+    int width = qmlItem(qml_root, "openglcontrol")->property("width").toReal();
+    int height = qmlItem(qml_root, "openglcontrol")->property("height").toReal();
+    gl->glViewport(0,0,width,height);
+    //qDebug() << width << height;
 
     gl->glEnable(GL_POINT_SPRITE);
     gl->glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
@@ -50,7 +56,7 @@ void FormGPS::openGLControl_Draw()
     //have messed with the matrix stuff and other defaults
 
     //qml has messed with the state variables; reset them to a sane state.
-    qmlview->resetOpenGLState();
+    //qmlview->resetOpenGLState();
     //  Set the clear color.
 
     //gl->glClearColor(0.22f, 0.2858f, 0.16f, 1.0f);
@@ -409,7 +415,7 @@ void FormGPS::openGLControl_Draw()
     {
         gl->glClear(GL_COLOR_BUFFER_BIT);
     }
-    qmlview->resetOpenGLState();
+    //qmlview->resetOpenGLState();
 
     //directly call section lookahead GL stuff from here
     openGLControlBack_Draw();
@@ -420,7 +426,7 @@ void FormGPS::openGLControl_Initialized()
 {
     //QOpenGLContext *glContext = QOpenGLContext::currentContext();
 
-    qmlview->resetOpenGLState();
+    //qmlview->resetOpenGLState();
 
     //Load all the textures
     qDebug() << "initializing Open GL.";
@@ -455,7 +461,7 @@ void FormGPS::openGLControl_Initialized()
     //now start the timer assuming no errors, otherwise the program will not stop on errors.
     //TODO:
     //tmrWatchdog.Enabled = true;
-    qmlview->resetOpenGLState();
+    //qmlview->resetOpenGLState();
 }
 
 void FormGPS::openGLControl_Shutdown()

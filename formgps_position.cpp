@@ -14,6 +14,7 @@
 #include <string>
 #include "ui_formgps.h"
 #include "qmlutil.h"
+#include "aogrenderer.h"
 
 /*
 static const double sm_a = 6378137.0;
@@ -268,6 +269,8 @@ void FormGPS::updateFixPosition()
 
     //openGLControl_Draw routine triggered manually
     qmlview->update();
+    AOGRendererInSG *renderer = qml_root->findChild<AOGRendererInSG *>("openglcontrol");
+    renderer->update();
 
     //since we're in the main thread we can directly call processSectionLookahead()
     processSectionLookahead();
