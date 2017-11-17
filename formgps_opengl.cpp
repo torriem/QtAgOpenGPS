@@ -631,11 +631,7 @@ void FormGPS::openGLControlBack_Draw()
     //TODO: boundary->drawBoundaryLineOnBackBuffer(gl);
 
     //read the whole block of pixels up to max lookahead, one read only
-    //OpenGL ES only can read complete RGB value, or alpha. so we'll
-    //try alpha.
-    //gl->glReadPixels(vehicle->rpXPosition, 202, vehicle->rpWidth, (int)rpHeight,
-    //                    GL_RGB, GL_UNSIGNED_BYTE, lookaheadPixels);
-
+    //we'll use Qt's QImage function to grab it.
     grnPix = backFBO->toImage().mirrored().convertToFormat(QImage::Format_RGBX8888);
     QImage temp = grnPix.copy(vehicle->rpXPosition, 202, vehicle->rpWidth, 195 /*(int)rpHeight*/);
     memcpy(lookaheadPixels, temp.constBits(), temp.size().width() * temp.size().height() * 4);
@@ -685,19 +681,15 @@ void FormGPS::drawLightBar(double Width, double Height, double offlineDistance,
                            const QMatrix4x4 &modelview, const QMatrix4x4 &projection)
 {
     QOpenGLContext *glContext = QOpenGLContext::currentContext();
-    QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
+    QOpenGLFunctions *gl = glContext->functions();
+    //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
     double down = 20;
 
+    QOpenGLBuffer dotbuffer;
+    QVector<ColorVertex> dots;
 
-    gl->glMatrixMode(GL_MODELVIEW);
-    gl->glPushMatrix();
-    gl->glLoadMatrixf(modelview.constData());
-
-    gl->glMatrixMode(GL_PROJECTION);
-    gl->glPushMatrix();
-    gl->glLoadMatrixf(projection.constData());
-
-    gl->glLineWidth(1);
+    //TODO: Light dots never change, except in size and color. Maybe we could
+    //use index buffers to choose which lights we want to draw.
 
     //  Dot distance is representation of how far from AB Line
     int dotDistance = (int)(offlineDistance);
@@ -708,104 +700,113 @@ void FormGPS::drawLightBar(double Width, double Height, double offlineDistance,
     if (dotDistance < -10) dotDistance -= 30;
     if (dotDistance > 10) dotDistance += 30;
 
-    // dot background
-    gl->glPointSize(8.0f);
-    gl->glColor3f(0.00f, 0.0f, 0.0f);
-    gl->glBegin(GL_POINTS);
-    for (int i = -10; i < 0; i++) gl->glVertex2d((i * 40), down);
-    for (int i = 1; i < 11; i++) gl->glVertex2d((i * 40), down);
-    gl->glEnd();
+    dotbuffer.create();
+    dotbuffer.bind();
 
-    gl->glPointSize(4.0f);
+    // dot background
+    for (int i = -10; i < 0; i++) dots.append({ QVector3D(i*40, down, 0),
+                                                QVector4D(0,0,0,1)} ); //gl->glVertex2d((i * 40), down);
+    for (int i = 1; i < 11; i++) dots.append({ QVector3D(i*40, down, 0),
+                                               QVector4D(0,0,0,1)} ); //gl->glVertex2d((i * 40), down);
+    dotbuffer.allocate(dots.constData(), dots.size() * sizeof(ColorVertex));
+    dotbuffer.release();
+    glDrawArraysColors(gl, projection * modelview,
+                      GL_POINTS, dotbuffer,GL_FLOAT,dots.size(), 8.0f);
+
+
+
+    dots.clear();
 
     //red left side
-    gl->glColor3f(0.9750f, 0.0f, 0.0f);
-    gl->glBegin(GL_POINTS);
-    for (int i = -10; i < 0; i++) gl->glVertex2d((i * 40), down);
+    for (int i = -10; i < 0; i++) dots.append({ QVector3D(i*40, down, 0),   //gl->glVertex2d((i * 40), down);
+                                                QVector4D(0.9750f, 0.0f, 0.0f, 1.0f) } );
 
     //green right side
-    gl->glColor3f(0.0f, 0.9750f, 0.0f);
-    for (int i = 1; i < 11; i++) gl->glVertex2d((i * 40), down);
-    gl->glEnd();
+    for (int i = 1; i < 11; i++) dots.append( { QVector3D(i*40, down, 0), //gl->glVertex2d((i * 40), down);
+                                                QVector4D(0.0f, 0.9750f, 0.0f, 1.0f) } );
 
-        //Are you on the right side of line? So its green.
-        if ((offlineDistance) < 0.0)
-        {
-            int dots = dotDistance * -1 / 32;
+    dotbuffer.bind();
+    dotbuffer.write(0, dots.constData(), dots.size() * sizeof(ColorVertex));
+    dotbuffer.release();
+    glDrawArraysColors(gl, projection * modelview,
+                       GL_POINTS, dotbuffer, GL_FLOAT,
+                       dots.size(), 4.0f);
 
-            gl->glPointSize(32.0f);
-            gl->glColor3f(0.0f, 0.0f, 0.0f);
-            gl->glBegin(GL_POINTS);
-            for (int i = 1; i < dots + 1; i++) gl->glVertex2d((i * 40), down);
-            gl->glEnd();
-
-            gl->glPointSize(24.0f);
-            gl->glColor3f(0.0f, 0.980f, 0.0f);
-            gl->glBegin(GL_POINTS);
-            for (int i = 0; i < dots; i++) gl->glVertex2d((i * 40 + 40), down);
-            gl->glEnd();
-            //return;
-        }
-
-        else
-        {
-            int dots = dotDistance / 32;
-
-            gl->glPointSize(32.0f);
-            gl->glColor3f(0.0f, 0.0f, 0.0f);
-            gl->glBegin(GL_POINTS);
-            for (int i = 1; i < dots + 1; i++) gl->glVertex2d((i * -40), down);
-            gl->glEnd();
-
-            gl->glPointSize(24.0f);
-            gl->glColor3f(0.980f, 0.30f, 0.0f);
-            gl->glBegin(GL_POINTS);
-            for (int i = 0; i < dots; i++) gl->glVertex2d((i * -40 - 40), down);
-            gl->glEnd();
-            //return;
-        }
-
-    //yellow center dot
-    if (dotDistance >= -10 && dotDistance <= 10)
+    //Are you on the right side of line? So its green.
+    if ((offlineDistance) < 0.0)
     {
-        gl->glPointSize(32.0f);
-        gl->glColor3f(0.0f, 0.0f, 0.0f);
-        gl->glBegin(GL_POINTS);
-        gl->glVertex2d(0, down);
-        //gl->glVertex(0, down + 50);
-        gl->glEnd();
+        int numDots = dotDistance * -1 / 32;
 
-        gl->glPointSize(24.0f);
-        gl->glColor3f(0.980f, 0.98f, 0.0f);
-        gl->glBegin(GL_POINTS);
-        gl->glVertex2d(0, down);
-        //gl->glVertex(0, down + 50);
-        gl->glEnd();
+        dots.clear();
+        for (int i = 1; i < numDots + 1; i++) dots.append({ QVector3D(i*40, down, 0), //gl->glVertex2d((i * 40), down);
+                                                            QVector4D(0,0,0,1) } );
+        dotbuffer.bind();
+        dotbuffer.write(0,dots.constData(),dots.size()*sizeof(ColorVertex));
+        dotbuffer.release();
+        glDrawArraysColors(gl, projection*modelview, GL_POINTS,
+                           dotbuffer, GL_FLOAT, dots.size(), 32.0f);
+
+        dots.clear();
+        for (int i = 0; i < numDots; i++) dots.append({ QVector3D(i*40+40, down, 0), //gl->glVertex2d((i * 40 + 40), down);
+                                                        QVector4D(0.0f, 0.980f, 0.0f,1)} );
+        dotbuffer.bind();
+        dotbuffer.write(0, dots.constData(), dots.size()*sizeof(ColorVertex));
+        dotbuffer.release();
+        glDrawArraysColors(gl, projection*modelview, GL_POINTS,
+                           dotbuffer, GL_FLOAT, dots.size(), 24.0f);
     }
 
     else
     {
+        int numDots = dotDistance / 32;
 
-        gl->glPointSize(8.0f);
-        gl->glColor3f(0.00f, 0.0f, 0.0f);
-        gl->glBegin(GL_POINTS);
-        gl->glVertex2d(-0, down);
-        //gl->glVertex(0, down + 30);
-        //gl->glVertex(0, down + 60);
-        gl->glEnd();
+        dots.clear();
+        for (int i = 1; i < numDots + 1; i++) dots.append({ QVector3D(i*-40, down, 0), //gl->glVertex2d((i * -40), down);
+                                                            QVector4D(0,0,0,1) } );
+        dotbuffer.bind();
+        dotbuffer.write(0,dots.constData(),dots.size()*sizeof(ColorVertex));
+        dotbuffer.release();
+        glDrawArraysColors(gl, projection*modelview, GL_POINTS,
+                           dotbuffer, GL_FLOAT, dots.size(), 32.0f);
 
-        //gl->glPointSize(4.0f);
-        //gl->glColor(0.9250f, 0.9250f, 0.250f);
-        //gl->glBegin(OpenGL.GL_POINTS);
-        //gl->glVertex(0, down);
-        //gl->glVertex(0, down + 30);
-        //gl->glVertex(0, down + 60);
-        //gl->glEnd();
+        dots.clear();
+        for (int i = 0; i < numDots; i++) dots.append({ QVector3D(i*-40-40, down, 0), //gl->glVertex2d((i * -40 - 40), down);
+                                                        QVector4D(0.980f, 0.30f, 0.0f,1)} );
+        dotbuffer.bind();
+        dotbuffer.write(0, dots.constData(), dots.size()*sizeof(ColorVertex));
+        dotbuffer.release();
+        glDrawArraysColors(gl, projection*modelview, GL_POINTS,
+                           dotbuffer, GL_FLOAT, dots.size(), 24.0f);
     }
 
-    gl->glPopMatrix();
-    gl->glMatrixMode(GL_MODELVIEW);
-    gl->glPopMatrix();
+    //yellow center dot
+    ColorVertex p = { QVector3D(0, down, 0),
+                      QVector4D(0,0,0,1) };
+    dotbuffer.bind();
+    dotbuffer.write(0,&p,sizeof(ColorVertex));
+    dotbuffer.release();
+
+    if (dotDistance >= -10 && dotDistance <= 10)
+    {
+       glDrawArraysColors(gl, projection * modelview, GL_POINTS,
+                           dotbuffer,GL_FLOAT,1,32.0f);
+
+        p.color = QVector4D(0.980f, 0.98f, 0.0f, 1.0f);
+        dotbuffer.bind();
+        dotbuffer.write(0,&p,sizeof(ColorVertex));
+        dotbuffer.release();
+        glDrawArraysColors(gl, projection * modelview, GL_POINTS,
+                           dotbuffer,GL_FLOAT,1,24.0f);
+
+    }
+
+    else
+    {
+        glDrawArraysColors(gl, projection * modelview, GL_POINTS,
+                           dotbuffer,GL_FLOAT,1,8.0f);
+    }
+
+    dotbuffer.destroy();
 }
 
 void FormGPS::calcFrustum(const QMatrix4x4 &mvp)
