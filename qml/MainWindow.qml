@@ -11,8 +11,6 @@ Item {
     //height:600
     anchors.fill: parent
 
-    signal clicked(var mouse)
-
     SystemPalette {
         id: systemPalette
         colorGroup: SystemPalette.Active
@@ -44,6 +42,8 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom:  statusBar.top
+
+        signal clicked(var mouse)
 
         MouseArea {
             id: mainMouseArea

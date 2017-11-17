@@ -43,11 +43,9 @@ class CVehicle;
 class CPerimeter;
 class CBoundary;
 
-class OpenGLControl;
-class OpenGLControlItem;
 class QOpenGLShaderProgram;
-class QOpenGLFunctions_2_1;
 class QQuickView;
+class AOGRendererInSG;
 
 class FormGPS : public QMainWindow
 {
@@ -69,8 +67,7 @@ public:
      ***************************/
     QQuickView *qmlview;
     QWidget *qmlcontainer;
-    OpenGLControlItem *openGLControl_item = NULL;
-    OpenGLControl *openGLControl = NULL;
+    AOGRendererInSG *openGLControl;
     QObject *btnMinMaxZoom;
     QObject *btnPerimeter;
     QObject *btnAutoSteer;
@@ -453,8 +450,6 @@ public:
      * UI/Qt object callbacks *
      **************************/
 public slots:
-    void openGLControl_set(OpenGLControl *);
-
     /*******************
      * from FormGPS.cs *
      *******************/
@@ -499,8 +494,6 @@ public slots:
     void onBtnDeleteAllFlags_clicked();
 
     void tmrWatchdog_timeout();
-
-    void renderGL();
 
     /***************************
      * from OpenGL.Designer.cs *

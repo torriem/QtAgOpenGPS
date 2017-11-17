@@ -57,6 +57,8 @@ FormGPS::FormGPS(QWidget *parent) :
     worldGrid->createWorldGrid(5005,5005);
     */
 
+    isAreaOnRight = s.value("vehicle/isAreaOnRight",false).toBool();
+
     isGridOn = s.value("display/showGrid",true).toBool();
     isMetric = s.value("display/isMetric", true).toBool();
 

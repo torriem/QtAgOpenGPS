@@ -47,7 +47,7 @@ void FormGPS::setupGui()
     qmlview->setSource(QUrl("qrc:/qml/MainWindow.qml"));
     qmlview->setColor(Qt::transparent);
 
-    qmlview->setClearBeforeRendering(false);
+    //qmlview->setClearBeforeRendering(false);
     //connect(qmlview,SIGNAL(beforeRendering()), this, SLOT(openGLControl_Draw()),Qt::DirectConnection);
     //connect(qmlview,SIGNAL(sceneGraphInitialized()), this, SLOT(openGLControl_Initialized()),Qt::DirectConnection);
     //connect(qmlview,SIGNAL(sceneGraphInvalidated()), this, SLOT(openGLControl_Shutdown()),Qt::DirectConnection);
@@ -65,7 +65,6 @@ void FormGPS::setupGui()
     //store in a member variable for future use.
     qml_root = qmlview->rootObject();
 
-    connect(qml_root,SIGNAL(clicked(QVariant)),this,SLOT(onGLControl_clicked(QVariant)));
 
     //connect qml button signals to callbacks (it's not automatic with qml)
     btnMenuDrawer = qmlItem(qml_root, "btnMenuDrawer");
@@ -197,11 +196,12 @@ void FormGPS::setupGui()
     temp = qmlItem(qml_root,"btnAreaSide");
     connect(temp,SIGNAL(clicked()), this, SLOT(onBtnAreaSide_clicked()));
 
-    AOGRendererInSG *renderer = qml_root->findChild<AOGRendererInSG *>("openglcontrol");
+    openGLControl = qml_root->findChild<AOGRendererInSG *>("openglcontrol");
     //This is a bit hackish, but all rendering is done in this item, so
     //we have to give it a way of calling our initialize and draw functions
-    renderer->setProperty("mainform",qVariantFromValue((void *) this));
-    renderer->setMirrorVertically(true);
+    openGLControl->setProperty("mainform",qVariantFromValue((void *) this));
+    openGLControl->setMirrorVertically(true);
+    connect(openGLControl,SIGNAL(clicked(QVariant)),this,SLOT(onGLControl_clicked(QVariant)));
 
     tmrWatchdog = new QTimer(this);
     connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(tmrWatchdog_timeout()));
@@ -211,21 +211,6 @@ void FormGPS::setupGui()
 
     stopwatch.start();
 
-}
-
-//not currently using this. TODO remove perhaps
-void FormGPS::openGLControl_set(OpenGLControl *c){
-    //openGLControl = c;
-    //qDebug() << "Apparently the renderer is activated now." ;
-
-    //tell the control to call our main form function for drawing.
-    //c->registerInitCallback(std::bind(&FormGPS::openGLControl_Initialized, this, std::placeholders::_1));
-    //c->registerPaintCallback(std::bind(&FormGPS::openGLControl_Draw, this, std::placeholders::_1));
-    //c->registerPaintCallback(std::bind(&gltest_draw,openGLControl,std::placeholders::_1));
-}
-
-void FormGPS::renderGL()
-{
 }
 
 void FormGPS::onGLControl_clicked(const QVariant &event)
@@ -240,7 +225,7 @@ void FormGPS::onGLControl_clicked(const QVariant &event)
     mouseX = m->property("x").toInt();
     mouseY = qmlview->height() - m->property("y").toInt();
     leftMouseDownOnOpenGL = true;
-    qmlview->update();
+    openGLControl->update();
 }
 
 void FormGPS::onBtnMinMaxZoom_clicked(){
@@ -458,8 +443,7 @@ void FormGPS::onBtnTiltDown_clicked(){
     camera.camPitch -= (camera.camPitch*0.03-1);
     if (camera.camPitch > 0) camera.camPitch = 0;
     lastHeight = -1; //redraw the sky
-
-    qmlview->update();
+    openGLControl->update();
 }
 
 void FormGPS::onBtnTiltUp_clicked(){
@@ -468,8 +452,7 @@ void FormGPS::onBtnTiltUp_clicked(){
     camera.camPitch += (camera.camPitch*0.03-1);
     if (camera.camPitch < -80) camera.camPitch = -80;
     lastHeight = -1; //redraw the sky
-
-    qmlview->update();
+    openGLControl->update();
 }
 
 void FormGPS::onBtnZoomIn_clicked(){
@@ -483,7 +466,7 @@ void FormGPS::onBtnZoomIn_clicked(){
 
     camera.camSetDistance = zoomValue * zoomValue * -1;
     setZoom();
-    qmlview->update();
+    openGLControl->update();
 }
 
 void FormGPS::onBtnZoomOut_clicked(){
@@ -495,7 +478,7 @@ void FormGPS::onBtnZoomOut_clicked(){
         zoomValue += zoomValue*0.05;
     camera.camSetDistance = zoomValue * zoomValue * -1;
     setZoom();
-    qmlview->update();
+    openGLControl->update();
 }
 
 void FormGPS::onBtnSnap_clicked(){
@@ -594,6 +577,7 @@ bool FormGPS::closeAllMenus()
         btnMenuDrawer->setProperty("hideMenu",true);
         contextArea->setProperty("visible",false);
         contextFlag->setProperty("visible",false);
+        openGLControl->update();
         return true;
     }
     return false;
