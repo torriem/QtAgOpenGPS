@@ -83,7 +83,7 @@ void AOGRenderer::render()
 }
 
 AOGRenderer::AOGRenderer():
-    win(0),isInitialized(false)
+    win(0),isInitialized(false),samples(0)
 {
     qDebug() << "AOGRenderer constructor here.";
 }
@@ -98,9 +98,14 @@ void AOGRenderer::synchronize(QQuickFramebufferObject *fbo)
     //get window
     win = fbo->window();
 
-    QVariant vmf = fbo->property("mainform");
-    if (vmf.isValid()) {
-        mf = (FormGPS *)vmf.value<void *>();
+    QVariant prop = fbo->property("mainform");
+    if (prop.isValid()) {
+        mf = (FormGPS *)prop.value<void *>();
+    }
+
+    prop = fbo->property("samples");
+    if (prop.isValid()) {
+        samples = prop.toInt();
     }
 }
 
@@ -113,7 +118,9 @@ QOpenGLFramebufferObject *AOGRenderer::createFramebufferObject(const QSize &size
 {
     QOpenGLFramebufferObjectFormat format;
     format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
-    format.setSamples(2);
+    if(samples) {
+        format.setSamples(samples);
+    }
     return new QOpenGLFramebufferObject(size,format);
 }
 

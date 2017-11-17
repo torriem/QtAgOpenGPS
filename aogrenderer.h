@@ -14,7 +14,6 @@ class AOGRenderer : public QQuickFramebufferObject::Renderer
 protected:
     virtual void synchronize(QQuickFramebufferObject *);
 
-    FormGPS *mf;
     bool isInitialized;
 
 public:
@@ -34,6 +33,8 @@ public:
 private:
     QQuickWindow *win;
     bool calledInit = false;
+    FormGPS *mf;
+    int samples;
 
     //callback in main form to do actual rendering
     /*
