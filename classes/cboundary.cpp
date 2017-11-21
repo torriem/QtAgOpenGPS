@@ -10,6 +10,66 @@ CBoundary::CBoundary()
 
 }
 
+void CBoundary::findClosestBoundaryPoint(vec2 fromPt)
+{
+    boxA.easting = fromPt.easting - (Math.Sin(mf.fixHeading + glm.PIBy2) *  mf.vehicle.toolWidth * 0.5);
+    boxA.northing = fromPt.northing - (Math.Cos(mf.fixHeading + glm.PIBy2)  * mf.vehicle.toolWidth * 0.5);
+
+    boxB.easting = fromPt.easting + (Math.Sin(mf.fixHeading + glm.PIBy2) *  mf.vehicle.toolWidth * 0.5);
+    boxB.northing = fromPt.northing + (Math.Cos(mf.fixHeading + glm.PIBy2)  * mf.vehicle.toolWidth * 0.5);
+
+    boxC.easting = boxB.easting + (Math.Sin(mf.fixHeading) * 2000.0);
+    boxC.northing = boxB.northing + (Math.Cos(mf.fixHeading) * 2000.0);
+
+    boxD.easting = boxA.easting + (Math.Sin(mf.fixHeading) * 2000.0);
+    boxD.northing = boxA.northing + (Math.Cos(mf.fixHeading) * 2000.0);
+
+    //determine if point is inside bounding box
+    bdList.clear();
+    int ptCount = ptList.size();
+    for (int p = 0; p < ptCount; p++) {
+        if ((((boxB.easting - boxA.easting) * (ptList[p].northing - boxA.northing))
+             - ((boxB.northing - boxA.northing) * (ptList[p].easting - boxA.easting))) < 0) {
+            continue;
+        }
+        if ((((boxD.easting - boxC.easting) * (ptList[p].northing - boxC.northing))
+             - ((boxD.northing - boxC.northing) * (ptList[p].easting - boxC.easting))) < 0) {
+            continue;
+        }
+        if ((((boxC.easting - boxB.easting) * (ptList[p].northing - boxB.northing))
+             - ((boxC.northing - boxB.northing) * (ptList[p].easting - boxB.easting))) < 0) {
+            continue;
+        }
+        if ((((boxA.easting - boxD.easting) * (ptList[p].northing - boxD.northing))
+             - ((boxA.northing - boxD.northing) * (ptList[p].easting - boxD.easting))) < 0) {
+            continue;
+        }
+
+        //it's in the box, so add to list
+        closestBoundaryPt.easting = ptList[p].easting;
+        closestBoundaryPt.northing = ptList[p].northing;
+        bdList.append(closestBoundaryPt);
+    }
+
+    //which of the points is closest
+    closestBoundaryPt.easting = -1; closestBoundaryPt.northing = -1;
+    ptCount = bdList.count();
+    if (ptCount == 0) {
+        return;
+    } else {
+        //determine closest point
+        double minDistance = 9999999;
+        for (int i = 0; i < ptCount; i++) {
+            double dist = ((fromPt.easting - bdList[i].easting) * (fromPt.easting - bdList[i].easting))
+                    + ((fromPt.northing - bdList[i].northing) * (fromPt.northing - bdList[i].northing));
+            if (minDistance >= dist) {
+                minDistance = dist;
+                closestBoundaryPt = bdList[i];
+            }
+        }
+    }
+}
+
 void CBoundary::resetBoundary()
 {
     calcList.clear();
@@ -41,9 +101,9 @@ void CBoundary::preCalcBoundaryLines()
         else
         {
             //determine constant and multiple and add to list
-            constantMultiple.easting = ptList[i].easting - (ptList[i].northing * ptList[j].easting) /
-                            (ptList[j].northing - ptList[i].northing) + (ptList[i].northing * ptList[i].easting) /
-                                (ptList[j].northing - ptList[i].northing);
+            constantMultiple.easting = ptList[i].easting - (ptList[i].northing * ptList[j].easting)
+                    / (ptList[j].northing - ptList[i].northing) + (ptList[i].northing * ptList[i].easting)
+                    / (ptList[j].northing - ptList[i].northing);
             constantMultiple.northing = (ptList[j].easting - ptList[i].easting) / (ptList[j].northing - ptList[i].northing);
             calcList.append(constantMultiple);
         }
@@ -62,8 +122,8 @@ bool CBoundary::isPrePointInPolygon(Vec2 testPoint)
     //test against the constant and multiples list the test point
     for (int i = 0; i < ptList.size(); j = i++)
     {
-        if ( (ptList[i].northing < testPoint.northing && ptList[j].northing >= testPoint.northing) ||
-             (ptList[j].northing < testPoint.northing && ptList[i].northing >= testPoint.northing) )
+        if ( ((ptList[i].northing < testPoint.northing) && (ptList[j].northing >= testPoint.northing)) ||
+             ((ptList[j].northing < testPoint.northing) && (ptList[i].northing >= testPoint.northing)) )
         {
             oddNodes ^= (testPoint.northing * calcList[i].northing + calcList[i].easting < testPoint.easting);
         }
@@ -78,7 +138,7 @@ void CBoundary::drawBoundaryLine(QOpenGLContext *glContext)
     ////draw the perimeter line so far
     int ptCount = ptList.size();
     if (ptCount < 1) return;
-    gl->glLineWidth(4);
+    gl->glLineWidth(2);
     gl->glColor3f(0.98f, 0.2f, 0.60f);
     gl->glBegin(GL_LINE_STRIP);
     for (int h = 0; h < ptCount; h++)
@@ -86,7 +146,7 @@ void CBoundary::drawBoundaryLine(QOpenGLContext *glContext)
     gl->glEnd();
 
     //the "close the loop" line
-    gl->glLineWidth(4);
+    gl->glLineWidth(2);
     gl->glColor3f(0.9f, 0.32f, 0.70f);
     gl->glBegin(GL_LINE_STRIP);
     gl->glVertex3d(ptList[ptCount - 1].easting, ptList[ptCount - 1].northing, 0);
@@ -127,7 +187,7 @@ void CBoundary::calculateBoundaryArea()
 
     for (int i = 0; i < ptCount; j = i++)
     {
-        area = area + (ptList[j].easting + ptList[i].easting) * (ptList[j].northing - ptList[i].northing);
+        area += (ptList[j].easting + ptList[i].easting) * (ptList[j].northing - ptList[i].northing);
     }
     area = fabs(area / 2);
 }
