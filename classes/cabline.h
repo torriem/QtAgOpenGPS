@@ -54,13 +54,14 @@ public:
     double steerAngleAB = 0;
     double rEastAB = 0, rNorthAB = 0;
     double ppRadiusAB = 0;
+    double minLookAheadDistance = 8.0;
 
     double angVel = 0;
+    CVehicle *vehicle;
 
 
 private:
     //pointers to mainform controls
-    CVehicle *vehicle;
     //OpenGL gl;
 
 
