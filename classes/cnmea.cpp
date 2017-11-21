@@ -102,8 +102,6 @@ void CNMEA::parseNMEA()
     if (cr == -1 || dollar == -1)
         return;
 
-    theSent = "";
-
     //now we have a complete sentence or more somewhere in the portData
     while (true)
     {
@@ -214,12 +212,12 @@ void CNMEA::parseGGA() {
                 latitude *= -1;
                 hemisphere = 'S';
             }
-            else hemisphere = 'N';
+            else { hemisphere = 'N'; }
 
             //get longitude and convert to decimal degrees
             longitude = words[4].mid(0,3).toDouble();
             temp = words[4].mid(3).toDouble();
-            longitude = longitude + temp * 0.01666666666666666666666666666667;
+            longitude += temp * 0.01666666666666666666666666666667;
 
          { if (words[5] == "W") longitude *= -1; }
 
@@ -241,7 +239,6 @@ void CNMEA::parseGGA() {
         //age of differential
         ageDiff = words[12].toDouble();
 
-        theSent += nextNMEASentence;
         updatedGGA = true;
     }
 }
@@ -290,7 +287,6 @@ void CNMEA::parseRMC() {
             status = "z";
         }
 
-        theSent += nextNMEASentence;
         updatedRMC = true;
 
     }
@@ -310,7 +306,6 @@ void CNMEA::parseVTG() {
         headingTrue = words[1].toDouble();
 
         updatedVTG = true;
-        theSent += nextNMEASentence;
     }
 }
 
@@ -341,8 +336,8 @@ void CNMEA::decDeg2UTM() {
 double CNMEA::arcLengthOfMeridian(double phi) {
     const double n = (sm_a - sm_b) / (sm_a + sm_b);
     double alpha = ((sm_a + sm_b) / 2.0) * (1.0 + (pow(n, 2.0) / 4.0) + (pow(n, 4.0) / 64.0));
-    double beta = (-3.0 * n / 2.0) + (9.0 * pow(n, 3.0) / 16.0) + (-3.0 * pow(n, 5.0) / 32.0);
-    double gamma = (15.0 * pow(n, 2.0) / 16.0) + (-15.0 * pow(n, 4.0) / 32.0);
+    double beta = (-3.0 * n / 2.0) + (9.0 * pow(n, 3.0) * 0.0625) + (-3.0 * pow(n, 5.0) / 32.0);
+    double gamma = (15.0 * pow(n, 2.0) * 0.0625) + (-15.0 * pow(n, 4.0) / 32.0);
     double delta = (-35.0 * pow(n, 3.0) / 48.0) + (105.0 * pow(n, 5.0) / 256.0);
     double epsilon = (315.0 * pow(n, 4.0) / 512.0);
     return alpha * (phi + (beta * sin(2.0 * phi))
@@ -389,7 +384,7 @@ void CNMEA::geoUTMConverterXY(double lat, double lon) {
     XY xy = mapLatLonToXY(lat, lon, (-183.0 + (zone * 6.0)) * 0.01745329251994329576923690766743);
 
     xy.x = xy.x * UTMScaleFactor + 500000.0;
-    xy.y = xy.y * UTMScaleFactor;
+    xy.y *= UTMScaleFactor;
     if (xy.y < 0.0)
         xy.y = xy.y + 10000000.0;
 
@@ -397,6 +392,7 @@ void CNMEA::geoUTMConverterXY(double lat, double lon) {
     actualEasting = xy.x;
     actualNorthing = xy.y;
 
+    //if a field is open, the real one is subtracted from the integer
     easting = xy.x - utmEast;
     northing = xy.y - utmNorth;
 }

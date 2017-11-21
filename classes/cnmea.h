@@ -22,7 +22,6 @@ public:
     bool updatedGGA=false, updatedVTG=false, updatedRMC=false;
 
     QByteArray rawBuffer = "";
-    QByteArray theSent = "";
     QList<QByteArray> words;
     QByteArray nextNMEASentence = "";
 
