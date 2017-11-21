@@ -59,7 +59,8 @@ SOURCES += main.cpp\
     formgps_serial.cpp \
     glutils.cpp \
     toplinedisplay.cpp \
-    aogrenderer.cpp
+    aogrenderer.cpp \
+    classes/cyouturn.cpp
 
 HEADERS  += formgps.h \
     classes/cabline.h \
@@ -85,7 +86,8 @@ HEADERS  += formgps.h \
     common.h \
     glutils.h \
     toplinedisplay.h \
-    aogrenderer.h
+    aogrenderer.h \
+    classes/cyouturn.h
 
 FORMS    += formgps.ui
 
