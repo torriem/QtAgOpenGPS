@@ -20,6 +20,8 @@ private:
     QOpenGLBuffer purePursuitBuffer;
     QOpenGLBuffer lookAheadPointBuffer;
     bool ctListBufferCurrent = false;
+    int A = 0, B = 0, C = 0;
+
 public:
     bool isContourOn=false, isContourBtnOn=false;
 
@@ -48,7 +50,6 @@ public:
     double distanceFromRefLine = 0;
     double distanceFromCurrentLine = 0;
 
-    int A = 0, B = 0, C = 0;
     double abFixHeadingDelta = 0, abHeading = 0;
 
     bool isABSameAsFixHeading = true;
@@ -61,8 +62,6 @@ public:
     double steerAngleCT = 0;
     double rEastCT = 0, rNorthCT = 0;
     double ppRadiusCT = 0;
-
-    double angVel = 0;
 
     //list of strip data individual points
     QSharedPointer<QVector<Vec4>> ptList;

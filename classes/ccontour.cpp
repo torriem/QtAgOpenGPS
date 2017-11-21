@@ -10,8 +10,6 @@
 #include <QSettings>
 #include "glutils.h"
 
-const double DOUBLE_EPSILON=std::numeric_limits<double>::epsilon();
-
 CContour::CContour(CVehicle *v)
     : vehicle(v), ptList(new QVector<Vec4>)
 {
@@ -263,8 +261,9 @@ void CContour::distanceFromContourLine()
         //find the closest 2 points to current fix
         for (int t = 0; t < ptCount; t++)
         {
-            double dist = ((vehicle->fixEasting - ctList[t].x()) * (vehicle->fixEasting - ctList[t].x()))
-                            + ((vehicle->fixNorthing - ctList[t].z()) * (vehicle->fixNorthing - ctList[t].z()));
+            double dist = ((pivotAxlePosCT.easting - ctList[t].x()) * (pivotAxlePosCT.easting - ctList[t].x()))
+                            + ((pivotAxlePosCT.northing - ctList[t].z()) * (pivotAxlePosCT.northing - ctList[t].z()));
+
             if (dist < minDistA)
             {
                 minDistB = minDistA;
@@ -294,7 +293,7 @@ void CContour::distanceFromContourLine()
         abHeading = ctList[A].y();
 
         //how far from current AB Line is fix
-        distanceFromCurrentLine = ((dz * vehicle->fixEasting) - (dx * vehicle->fixNorthing) + (ctList[B].x()
+        distanceFromCurrentLine = ((dz * pivotAxlePosCT.easting) - (dx * pivotAxlePosCT.northing) + (ctList[B].x()
                     * ctList[A].z()) - (ctList[B].z() * ctList[A].x()))
                         / sqrt((dz * dz) + (dx * dx));
 
@@ -355,8 +354,9 @@ void CContour::distanceFromContourLine()
                     {
                         //A++; B++;
                         break; //tempDist contains the full length of next segment
+                    } else {
+                        distSoFar += tempDist;
                     }
-                    else distSoFar += tempDist;
                 }
 
                 double t = (goalPointDistance - distSoFar); // the remainder to yet travel
@@ -431,7 +431,7 @@ void CContour::distanceFromContourLine()
         radiusPointCT.northing = pivotAxlePosCT.northing + (ppRadiusCT * sin(localHeading));
 
         //angular velocity in rads/sec  = 2PI * m/sec * radians/meters
-        angVel = twoPI * 0.277777 * vehicle->speed * (tan(toRadians(steerAngleCT))) / vehicle->wheelbase;
+        double angVel = twoPI * 0.277777 * vehicle->speed * (tan(toRadians(steerAngleCT))) / vehicle->wheelbase;
 
         //clamp the steering angle to not exceed safe angular velocity
         if (fabs(angVel) > vehicle->maxAngularVelocity)
@@ -515,7 +515,7 @@ void CContour::drawContourLine(QOpenGLContext *glContext, const QMatrix4x4 &mode
                       ctList.size(), 2);
 
 
-    if (settings.value("display/isPureOn",true).toBool())
+    if (settings.value("display/isPureDisplayOn",true).toBool())
     {
         const int numSegments = 100;
         {

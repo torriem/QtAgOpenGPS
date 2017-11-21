@@ -2,6 +2,9 @@
 #define GLM_H
 
 #include <math.h>
+#include <limits>
+
+static const double DOUBLE_EPSILON=std::numeric_limits<double>::epsilon();
 
 #ifndef M_PI
 #  ifndef PI
