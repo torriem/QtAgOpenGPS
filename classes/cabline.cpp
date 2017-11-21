@@ -2,6 +2,7 @@
 #include "vec2.h"
 #include "glm.h"
 #include "cvehicle.h"
+#include "cyouturn.h"
 #include "cnmea.h"
 
 //#include <QtOpenGL>
@@ -9,8 +10,8 @@
 #include <QOpenGLContext>
 #include <QOpenGLFunctions_2_1>
 
-CABLine::CABLine(CVehicle *v)
-    :vehicle(v)
+CABLine::CABLine(CVehicle *v, CYouTurn *t)
+    :vehicle(v), yt(t)
 {
 
 }
@@ -152,10 +153,17 @@ void CABLine::getCurrentABLine() {
     //z2-z1
     dy = currentABLineP2.northing - currentABLineP1.northing;
 
+    //save a copy of dx,dy in youTurn
+    //vehicle->yt->dxAB = dx;
+    //vehicle->yt->dyAB = dy;
+    this->dx = dx;
+    this->dy = dy;
+
     //how far from current AB Line is fix
-    distanceFromCurrentLine = ((dy * pivotAxlePosAB.easting) - (dx * pivotAxlePosAB.northing) + (currentABLineP2.easting *
-                currentABLineP1.northing) - (currentABLineP2.northing * currentABLineP1.easting)) /
-                    sqrt((dy * dy) + (dx * dx));
+    distanceFromCurrentLine = ((dy * pivotAxlePosAB.easting) - (dx * pivotAxlePosAB.northing)
+                               + (currentABLineP2.easting * currentABLineP1.northing)
+                               - (currentABLineP2.northing * currentABLineP1.easting))
+            / sqrt((dy * dy) + (dx * dx));
 
     //are we on the right side or not
     isOnRightSideCurrentLine = distanceFromCurrentLine > 0;
@@ -170,12 +178,9 @@ void CABLine::getCurrentABLine() {
     // ** Pure pursuit ** - calc point on ABLine closest to current position
     //if (currentABLineP1.easting == currentABLineP2.easting && currentABLineP1.northing == currentABLineP2.northing) currentABLineP1.easting -= 0.00001;
 
-    dx = currentABLineP2.easting - currentABLineP1.easting;
-    dy = currentABLineP2.northing - currentABLineP1.northing;
-
-    double U = (((pivotAxlePosAB.easting - currentABLineP1.easting) * (dx)) +
-                ((pivotAxlePosAB.northing - currentABLineP1.northing) * (dy)))
-                / ((dx * dx) + (dy * dy));
+    double U = (((pivotAxlePosAB.easting - currentABLineP1.easting) * (dx))
+                + ((pivotAxlePosAB.northing - currentABLineP1.northing) * (dy)))
+            / ((dx * dx) + (dy * dy));
 
     //point on AB line closest to pivot axle point
     rEastAB = currentABLineP1.easting + (U * dx );
@@ -184,7 +189,7 @@ void CABLine::getCurrentABLine() {
     //how far should goal point be away  - speed * seconds * kmph -> m/s + min value
 
     double goalPointDistance = (vehicle->speed * vehicle->goalPointLookAhead * 0.2777777777);
-    if (goalPointDistance < 7.0) goalPointDistance = 7.0;
+    if (goalPointDistance < minLookAheadDistance) goalPointDistance = minLookAheadDistance;
 
     if (abFixHeadingDelta >= PIBy2)
     {
@@ -206,8 +211,9 @@ void CABLine::getCurrentABLine() {
     double localHeading = twoPI - vehicle->fixHeading;
     ppRadiusAB = goalPointDistanceDSquared / (2 * (((goalPointAB.easting - pivotAxlePosAB.easting) * cos(localHeading)) + ((goalPointAB.northing - pivotAxlePosAB.northing) * sin(localHeading))));
 
-    steerAngleAB = toDegrees(atan( 2 * (((goalPointAB.easting - pivotAxlePosAB.easting) * cos(localHeading)) +
-        ((goalPointAB.northing - pivotAxlePosAB.northing) * sin(localHeading))) * vehicle->wheelbase / goalPointDistanceDSquared)) ;
+    steerAngleAB = toDegrees(atan( 2 * (((goalPointAB.easting - pivotAxlePosAB.easting) * cos(localHeading))
+                                        + ((goalPointAB.northing - pivotAxlePosAB.northing) * sin(localHeading)))
+                                   * vehicle->wheelbase / goalPointDistanceDSquared)) ;
     if (steerAngleAB < -vehicle->maxSteerAngle) steerAngleAB = -vehicle->maxSteerAngle;
     if (steerAngleAB > vehicle->maxSteerAngle) steerAngleAB = vehicle->maxSteerAngle;
 
@@ -250,6 +256,20 @@ void CABLine::getCurrentABLine() {
     //mf->guidanceLineHeadingDelta = (Int16)((atan2(sin(temp - mf->fixHeading), cos(temp - mf->fixHeading))) * 10000);
     vehicle->guidanceLineDistanceOff = int(distanceFromCurrentLine);
     vehicle->guidanceLineSteerAngle = int(steerAngleAB * 10);
+
+    if(yt->isYouTurnOn) {
+        //do the pure pursuit from youTurn
+        yt->distanceFromYouTurnLine(vehicle);
+
+        //now substitute what it thinks are AB line values with auto turn values
+        steerAngleAB = yt->steerAngleYT;
+        distanceFromCurrentLine = yt->distanceFromCurrentLine;
+
+        goalPointAB = yt->goalPointYT;
+        radiusPointAB.easting = yt->radiusPointYT.easting;
+        radiusPointAB.northing = yt->radiusPointYT.northing;
+        ppRadiusAB = yt->ppRadiusYT;
+    }
 }
 
 void CABLine::drawABLines(QOpenGLContext *glContext, const QMatrix4x4 &modelview, const QMatrix4x4 &projection) {
@@ -356,7 +376,7 @@ void CABLine::drawABLines(QOpenGLContext *glContext, const QMatrix4x4 &modelview
             gl->glEnd();
         }
 
-        if (settings.value("display/isPureOn",true).toBool())
+        if (settings.value("display/isPureDisplayOn",true).toBool())
         {
             //draw the guidance circle
             const int numSegments = 100;

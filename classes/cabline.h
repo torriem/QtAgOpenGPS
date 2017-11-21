@@ -7,6 +7,7 @@ class QOpenGLContext;
 //namespace AgOpenGPS
 
 class CVehicle;
+class CYouTurn;
 
 class CABLine
 {
@@ -55,9 +56,12 @@ public:
     double rEastAB = 0, rNorthAB = 0;
     double ppRadiusAB = 0;
     double minLookAheadDistance = 8.0;
+    double dx, dy;
 
     double angVel = 0;
+
     CVehicle *vehicle;
+    CYouTurn *yt;
 
 
 private:
@@ -66,7 +70,7 @@ private:
 
 
 public:
-    CABLine(CVehicle *mf);
+    CABLine(CVehicle *v, CYouTurn *t);
     void deleteAB();
     void setABLineByPoint();
     void setABLineByHeading(); //do we need to pass in heading somewhere from the main form?
