@@ -5,6 +5,13 @@
 #include <QMatrix4x4>
 #include <QColor>
 #include <QOpenGLBuffer>
+#include <QVector3D>
+#include <QVector4D>
+
+struct ColorVertex {
+    QVector3D vertex;
+    QVector4D color;
+};
 
 
 //thinking about putting GL buffer drawing routines here

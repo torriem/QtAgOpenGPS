@@ -465,7 +465,7 @@ void FormGPS::addBoundaryPoint()
             //Right side
             point = Vec2(vehicle->cosSectionHeading * (vehicle->section[vehicle->numOfSections - 1].positionRight) + vehicle->toolPos.easting,
                 vehicle->sinSectionHeading * (vehicle->section[vehicle->numOfSections - 1].positionRight) + vehicle->toolPos.northing);
-            boundary->ptList.append(point);
+            boundary->addPoint(point);
         }
 
             //draw on left side
@@ -474,7 +474,7 @@ void FormGPS::addBoundaryPoint()
             //Right side
             point = Vec2(vehicle->cosSectionHeading * (vehicle->section[0].positionLeft) + vehicle->toolPos.easting,
                 vehicle->sinSectionHeading * (vehicle->section[0].positionLeft) + vehicle->toolPos.northing);
-            boundary->ptList.append(point);
+            boundary->addPoint(point);
         }
 
     }

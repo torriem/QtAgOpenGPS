@@ -3,19 +3,27 @@
 
 #include "vec2.h"
 #include <QVector>
+#include <QVector3D>
 #include <QSharedPointer>
-#include <QString>
+#include <QOpenGLBuffer>
+#include <QMatrix4x4>
 
 
 class QOpenGLFunctions_2_1;
 class QOpenGLContext;
+class CVehicle;
 
 class CBoundary
 {
 private:
+    QOpenGLBuffer ptListBuffer;
+    QOpenGLBuffer ptListBackBuffer;
+    bool bufferCurrent = false;
+    bool backBufferCurrent = false;
+
 public:
     //list of coordinates of boundary line
-    QVector<Vec2> ptList;
+    QVector<QVector3D> ptList;
     //the list of constants and multiples of the boundary
     QVector<Vec2> calcList;
     //the list of possible bounds points
@@ -40,15 +48,16 @@ public:
 
     CBoundary();
 
-    void findClosestBoundaryPoint(Vec2 fromPt);
+    void findClosestBoundaryPoint(CVehicle *vehicle, Vec2 fromPt);
     void resetBoundary();
     void preCalcBoundaryLines();
     bool isPrePointInPolygon(Vec2 testPoint);
 
-    void drawBoundaryLine(QOpenGLContext *glContext);
-    void drawBoundaryLineOnBackBuffer(QOpenGLFunctions_2_1 *gl);
+    void drawBoundaryLine(QOpenGLContext *glContext, const QMatrix4x4 &modelview, const QMatrix4x4 &projection);
+    void drawBoundaryLineOnBackBuffer(QOpenGLContext *glContext, const QMatrix4x4 &modelview, const QMatrix4x4 &projection);
     void calculateBoundaryArea();
-    //bool isPointInPolygon();
+
+    void addPoint(Vec2 point);
 };
 
 #endif // CBOUNDARY_H
