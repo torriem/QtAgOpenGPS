@@ -38,25 +38,18 @@ void CPerimeter::drawPerimeterLine(QOpenGLContext *glContext, const QMatrix4x4 &
 
     QOpenGLFunctions *gl = glContext->functions();
 
-    perimBuffer.bind();
-    gl->glLineWidth(2);
-
     QColor perimColor = QColor(50,250,0);
 
     glDrawArraysColor(gl,mvp,
                       GL_LINE_STRIP, perimColor,
                       perimBuffer,GL_FLOAT,
-                      ptCount);
-    perimBuffer.release();
+                      ptCount,2.0f);
 
-    perimCloseLoopBuffer.bind();
-    gl->glLineWidth(1);
     perimColor = QColor(250,204,0);
     glDrawArraysColor(gl,mvp,
                       GL_LINE_STRIP, perimColor,
                       perimCloseLoopBuffer,GL_FLOAT,
-                      2);
-    perimCloseLoopBuffer.release();
+                      2, 1.0f);
 
     area = 0; //accumulates area in the loop;
 
