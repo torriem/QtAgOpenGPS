@@ -32,7 +32,7 @@ public:
 
 private:
     QQuickWindow *win;
-    bool calledInit = false;
+    bool calledInit;
     FormGPS *mf;
     int samples;
 

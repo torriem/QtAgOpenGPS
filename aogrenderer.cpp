@@ -83,7 +83,7 @@ void AOGRenderer::render()
 }
 
 AOGRenderer::AOGRenderer():
-    win(0),isInitialized(false),samples(0)
+    isInitialized(false),win(0),calledInit(false), samples(0)
 {
     qDebug() << "AOGRenderer constructor here.";
 }
