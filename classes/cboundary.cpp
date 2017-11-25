@@ -136,68 +136,67 @@ bool CBoundary::isPrePointInPolygon(Vec2 testPoint)
     return oddNodes; //true means inside.
 }
 
-void CBoundary::drawBoundaryLine(QOpenGLContext *glContext,
-                                 const QMatrix4x4 &modelview,
-                                 const QMatrix4x4 &projection)
+void CBoundary::drawBoundaryLine(QOpenGLFunctions *gl,
+                                 const QMatrix4x4 &mvp)
 {
-    if (!bufferCurrent) {
-        ColorVertex bline[ptList.size() + 1];
+    if (ptList.size() > 1) {
+        if (!bufferCurrent) {
+            ColorVertex bline[ptList.size() + 1];
 
-        for(int i=0; i < ptList.size(); i++) {
-            bline[i].vertex = ptList[i];
-            bline[i].color = QVector4D(0.98f, 0.2f, 0.60f, 1.0f);
+            for(int i=0; i < ptList.size(); i++) {
+                bline[i].vertex = ptList[i];
+                bline[i].color = QVector4D(0.98f, 0.2f, 0.60f, 1.0f);
+            }
+            //the "close the loop" line
+            //not sure how this will render, honestly.  Might end up
+            //being a blended color
+            bline[ptList.size()].vertex = ptList[0];
+            bline[ptList.size()].color = QVector4D(0.9f, 0.32f, 0.70f,1.0f);
+
+            if (ptListBuffer.isCreated())
+                ptListBuffer.destroy();
+            ptListBuffer.create();
+            ptListBuffer.bind();
+            ptListBuffer.allocate(bline, (ptList.size() + 1) * sizeof(ColorVertex));
+            ptListBuffer.release();
+
+            bufferCurrent = true;
         }
-        //the "close the loop" line
-        //not sure how this will render, honestly.  Might end up
-        //being a blended color
-        bline[ptList.size()].vertex = ptList[0];
-        bline[ptList.size()].color = QVector4D(0.9f, 0.32f, 0.70f,1.0f);
 
-        if (ptListBuffer.isCreated())
-            ptListBuffer.destroy();
-        ptListBuffer.create();
-        ptListBuffer.bind();
-        ptListBuffer.allocate(bline, (ptList.size() + 1) * sizeof(ColorVertex));
-        ptListBuffer.release();
-
-        bufferCurrent = true;
+        ////draw the perimeter line so far
+        glDrawArraysColors(gl, mvp,
+                           GL_LINE_STRIP, ptListBuffer,
+                           GL_FLOAT, ptList.size() + 1,
+                           2.0f);
     }
-
-    QOpenGLFunctions *gl=glContext->functions();
-
-    ////draw the perimeter line so far
-    glDrawArraysColors(gl, projection * modelview,
-                       GL_LINE_STRIP, ptListBuffer,
-                       GL_FLOAT, ptList.size() + 1,
-                       2.0f);
 }
 
 //draw a blue line in the back buffer for section control over boundary line
-void CBoundary::drawBoundaryLineOnBackBuffer(QOpenGLContext *glContext,
-                                             const QMatrix4x4 &modelview,
-                                             const QMatrix4x4 &projection)
+void CBoundary::drawBoundaryLineOnBackBuffer(QOpenGLFunctions *gl,
+                                             const QMatrix4x4 &mvp)
 {
-    if (!backBufferCurrent) {
-        if (ptListBackBuffer.isCreated())
-            ptListBackBuffer.destroy();
-        ptListBackBuffer.create();
-        ptListBackBuffer.bind();
-        ptListBackBuffer.allocate(ptList.size() + 1);
-        ptListBackBuffer.write(0,ptList.constData(),ptList.size() * sizeof(QVector3D));
+    if (ptList.size() > 1) {
+        if (!backBufferCurrent) {
+            if (ptListBackBuffer.isCreated())
+                ptListBackBuffer.destroy();
+            ptListBackBuffer.create();
+            ptListBackBuffer.bind();
+            ptListBackBuffer.allocate(ptList.size() + 1);
+            ptListBackBuffer.write(0,ptList.constData(),ptList.size() * sizeof(QVector3D));
 
-        //the "close the loop" line
-        ptListBackBuffer.write(ptList.size() * sizeof(QVector3D),&(ptList[0]), sizeof(QVector3D));
-        ptListBackBuffer.release();
+            //the "close the loop" line
+            ptListBackBuffer.write(ptList.size() * sizeof(QVector3D),&(ptList[0]), sizeof(QVector3D));
+            ptListBackBuffer.release();
+        }
+
+        QColor color = QColor::fromRgbF(0.0f, 0.99f, 0.0f);
+
+        ////draw the perimeter line so far
+        glDrawArraysColor(gl, mvp,
+                          GL_LINE_STRIP, color,
+                          ptListBackBuffer, GL_FLOAT,
+                          ptList.size() + 1, 4.0f);
     }
-
-    QOpenGLFunctions *gl=glContext->functions();
-    QColor color = QColor::fromRgbF(0.0f, 0.99f, 0.0f);
-
-    ////draw the perimeter line so far
-    glDrawArraysColor(gl, projection*modelview,
-                      GL_LINE_STRIP, color,
-                      ptListBackBuffer, GL_FLOAT,
-                      ptList.size() + 1, 4.0f);
 }
 
 void CBoundary::calculateBoundaryArea()

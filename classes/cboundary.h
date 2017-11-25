@@ -9,8 +9,7 @@
 #include <QMatrix4x4>
 
 
-class QOpenGLFunctions_2_1;
-class QOpenGLContext;
+class QOpenGLFunctions;
 class CVehicle;
 
 class CBoundary
@@ -53,8 +52,8 @@ public:
     void preCalcBoundaryLines();
     bool isPrePointInPolygon(Vec2 testPoint);
 
-    void drawBoundaryLine(QOpenGLContext *glContext, const QMatrix4x4 &modelview, const QMatrix4x4 &projection);
-    void drawBoundaryLineOnBackBuffer(QOpenGLContext *glContext, const QMatrix4x4 &modelview, const QMatrix4x4 &projection);
+    void drawBoundaryLine(QOpenGLFunctions *g, const QMatrix4x4 &mvp);
+    void drawBoundaryLineOnBackBuffer(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
     void calculateBoundaryArea();
 
     void addPoint(Vec2 point);
