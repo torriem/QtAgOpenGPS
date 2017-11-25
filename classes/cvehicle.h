@@ -117,6 +117,8 @@ public:
     void drawVehicle(QOpenGLContext *c, QMatrix4x4 &modelview, const QMatrix4x4 &projection, bool drawSectionMarkers = true);
     void destroyGLBuffers();
 
+    void sectionCalcWidths();
+
 public slots:
     void settingsChanged(); //notify us that settings changed so buffers need to be redone.
 };

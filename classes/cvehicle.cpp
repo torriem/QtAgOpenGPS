@@ -32,13 +32,6 @@
 #define DEFAULT_MAXANGULARVELOCITY 1.0
 #define DEFAULT_MAXSTEERINGANGLE 20.0
 
-struct ColorVertex {
-    QVector3D vertex;
-    QVector4D color;
-};
-
-
-
 CVehicle::CVehicle()
 {
     AOGSettings s;
@@ -531,3 +524,29 @@ void CVehicle::settingsChanged()
     buffersCurrent = false;
 }
 
+//function to calculate the width of each section and update
+void CVehicle::sectionCalcWidths()
+{
+    for (int j = 0; j < MAXSECTIONS; j++)
+    {
+        section[j].sectionWidth = (section[j].positionRight - section[j].positionLeft);
+        section[j].rpSectionPosition = 200 + (int)(roundAwayFromZero(section[j].positionLeft * 10));
+        section[j].rpSectionWidth = (int)(roundAwayFromZero(section[j].sectionWidth * 10));
+    }
+
+    //calculate tool width based on extreme right and left values
+    toolWidth = fabs(section[0].positionLeft) + fabs(section[numOfSections - 1].positionRight);
+
+    //left and right tool position
+    toolFarLeftPosition = section[0].positionLeft;
+    toolFarRightPosition = section[numOfSections - 1].positionRight;
+
+    //now do the full width section
+    section[numOfSections].sectionWidth = toolWidth;
+    section[numOfSections].positionLeft = toolFarLeftPosition;
+    section[numOfSections].positionRight = toolFarRightPosition;
+
+    //find the right side pixel position
+    rpXPosition = 200 + (int)(roundAwayFromZero(toolFarLeftPosition * 10));
+    rpWidth = (int)(roundAwayFromZero(toolWidth * 10));
+}

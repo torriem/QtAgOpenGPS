@@ -42,6 +42,8 @@ class CContour;
 class CVehicle;
 class CPerimeter;
 class CBoundary;
+class CRate;
+class CYouTurn;
 
 class QOpenGLShaderProgram;
 class QQuickView;
@@ -120,9 +122,6 @@ public:
     /*******************
      * from FormGPS.cs *
      *******************/
-    double testDouble = 0;
-    bool testBool = false;
-    int testInt = 0;
     //current directory of field;
     QString currentFieldDirectory = "";
     QString workingDirectory = "";
@@ -151,7 +150,7 @@ public:
 
     //Is it in 2D or 3D, metric, or imperial, display lightbar, display grid
     bool isIn3D = true, isMetric = true, isLightbarOn = true, isGridOn, isSideGuideLines = true;
-    bool isPureOn = true;
+    //bool isPureOn = true; //refer to QtSettings instead
 
     //bool for whether or not a job is active
     bool isJobStarted = false, isAreaOnRight = true, isAutoSteerBtnOn = false;
@@ -210,6 +209,12 @@ public:
     //Contour mode Instance
     //QScopedPointer<CContour> ct;
     CContour *ct =NULL;
+
+    //Auto headland instance
+    CYouTurn *yt = NULL;
+
+    //Rate control object
+    CRate *rc = NULL;
 
     //a brand new vehicle
     //QScopedPointer<CVehicle> vehicle;

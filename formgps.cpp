@@ -7,6 +7,8 @@
 #include "ccontour.h"
 #include "cboundary.h"
 #include "cvehicle.h"
+#include "cyouturn.h"
+#include "crate.h"
 #include "aogsettings.h"
 #include <QColor>
 #include <QRgb>
@@ -39,6 +41,8 @@ FormGPS::FormGPS(QWidget *parent) :
     boundary = new CBoundary();
     ABLine = new CABLine(vehicle);
     ct = new CContour(vehicle);
+    yt = new CYouTurn();
+    rc = new CRate();
 
     isUDPServerOn = s.value("port/udp_on", true).toBool();
 
@@ -94,7 +98,7 @@ FormGPS::FormGPS(QWidget *parent) :
     vehicle->numSuperSection = 5;
     vehicle->toolTrailingHitchLength = -10; //30 foot hitch to see following action better
 
-    sectionCalcWidths();
+    vehicle->sectionCalcWidths();
     //turn on the right number of section buttons.
     //we don't need to do this on resize, but we will need
     //to call it when settings change.
@@ -119,38 +123,12 @@ FormGPS::~FormGPS()
     delete ui;
     delete worldGrid;
     delete pn;
-    //delete[] section;
     delete ABLine;
     delete ct;
     delete vehicle;
+    delete yt;
+    delete rc;
 
-}
-
-//function to calculate teh width of each section and update
-void FormGPS::sectionCalcWidths()
-{
-    for (int j = 0; j < MAXSECTIONS; j++)
-    {
-        vehicle->section[j].sectionWidth = (vehicle->section[j].positionRight - vehicle->section[j].positionLeft);
-        vehicle->section[j].rpSectionPosition = 200 + (int)(roundAwayFromZero(vehicle->section[j].positionLeft * 10));
-        vehicle->section[j].rpSectionWidth = (int)(roundAwayFromZero(vehicle->section[j].sectionWidth * 10));
-    }
-
-    //calculate tool width based on extreme right and left values
-    vehicle->toolWidth = fabs(vehicle->section[0].positionLeft) + fabs(vehicle->section[vehicle->numOfSections - 1].positionRight);
-
-    //left and right tool position
-    vehicle->toolFarLeftPosition = vehicle->section[0].positionLeft;
-    vehicle->toolFarRightPosition = vehicle->section[vehicle->numOfSections - 1].positionRight;
-
-    //now do the full width section
-    vehicle->section[vehicle->numOfSections].sectionWidth = vehicle->toolWidth;
-    vehicle->section[vehicle->numOfSections].positionLeft = vehicle->toolFarLeftPosition;
-    vehicle->section[vehicle->numOfSections].positionRight = vehicle->toolFarRightPosition;
-
-    //find the right side pixel position
-    vehicle->rpXPosition = 200 + (int)(roundAwayFromZero(vehicle->toolFarLeftPosition * 10));
-    vehicle->rpWidth = (int)(roundAwayFromZero(vehicle->toolWidth * 10));
 }
 
 //This used to be part of openGLControlBack_Draw in the C# code, but
