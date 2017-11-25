@@ -60,7 +60,8 @@ SOURCES += main.cpp\
     glutils.cpp \
     toplinedisplay.cpp \
     aogrenderer.cpp \
-    classes/cyouturn.cpp
+    classes/cyouturn.cpp \
+    classes/crate.cpp
 
 HEADERS  += formgps.h \
     classes/cabline.h \
@@ -87,7 +88,8 @@ HEADERS  += formgps.h \
     glutils.h \
     toplinedisplay.h \
     aogrenderer.h \
-    classes/cyouturn.h
+    classes/cyouturn.h \
+    classes/crate.h
 
 FORMS    += formgps.ui
 
