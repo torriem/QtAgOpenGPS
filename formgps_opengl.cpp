@@ -24,16 +24,6 @@
 
 #include <assert.h>
 
-struct VertexTexcoord {
-    QVector3D vertex;
-    QVector2D texcoord;
-};
-
-struct ColorVertex {
-    QVector3D vertex;
-    QVector4D color;
-};
-
 void FormGPS::openGLControl_Draw()
 {
     QOpenGLContext *glContext = QOpenGLContext::currentContext();
@@ -295,7 +285,7 @@ void FormGPS::openGLControl_Draw()
         periArea.drawPerimeterLine(glContext,projection*modelview);
 
         //draw the boundary line
-        boundary->drawBoundaryLine(glContext);
+        boundary->drawBoundaryLine(gl, projection*modelview);
 
         //screen text for debug
         //glDrawText(120, 10, 1, 1, 1, "Courier", 18, " camstep: " + testInt.ToString());
@@ -628,7 +618,7 @@ void FormGPS::openGLControlBack_Draw()
     }
 
     //draw boundary line
-    //TODO: boundary->drawBoundaryLineOnBackBuffer(gl);
+    boundary->drawBoundaryLineOnBackBuffer(gl, projection*modelview);
 
     //read the whole block of pixels up to max lookahead, one read only
     //we'll use Qt's QImage function to grab it.

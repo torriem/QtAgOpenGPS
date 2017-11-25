@@ -85,22 +85,9 @@ void FormGPS::scanForNMEA()
     {
         if (!isGPSPositionInitialized)
         {
-            //relay port
-            mc.relaySectionControl[0] = (uchar)0;
-            //TODO: not implemented yet
+            mc.resetAllModuleCommValues();
+
             sectionControlOutToPort();
-
-            //autosteer port
-            mc.autoSteerData[mc.sdHeaderHi] = (uchar)127; //32766
-            mc.autoSteerData[mc.sdHeaderLo] = (uchar)(254);
-            mc.autoSteerData[mc.sdRelay] = (uchar)0;
-            mc.autoSteerData[mc.sdSpeed] = (uchar)(0);
-            mc.autoSteerData[mc.sdDistanceHi] = (uchar)(125); //32020
-            mc.autoSteerData[mc.sdDistanceLo] = (uchar)20;
-            mc.autoSteerData[mc.sdSteerAngleHi] = (uchar)(125); //32020
-            mc.autoSteerData[mc.sdSteerAngleLo] = (uchar)20;
-
-
             autoSteerDataOutToPort();
         }
     }

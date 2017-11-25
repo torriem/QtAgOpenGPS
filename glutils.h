@@ -7,12 +7,17 @@
 #include <QOpenGLBuffer>
 #include <QVector3D>
 #include <QVector4D>
+#include <QVector2D>
 
 struct ColorVertex {
     QVector3D vertex;
     QVector4D color;
 };
 
+struct VertexTexcoord {
+    QVector3D vertex;
+    QVector2D texcoord;
+};
 
 //thinking about putting GL buffer drawing routines here
 //like Draw box, etc. Do I put the shaders as module globals here?

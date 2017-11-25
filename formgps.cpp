@@ -39,9 +39,9 @@ FormGPS::FormGPS(QWidget *parent) :
 
     vehicle = new CVehicle();
     boundary = new CBoundary();
-    ABLine = new CABLine(vehicle);
-    ct = new CContour(vehicle);
     yt = new CYouTurn();
+    ABLine = new CABLine(vehicle,yt);
+    ct = new CContour(vehicle);
     rc = new CRate();
 
     isUDPServerOn = s.value("port/udp_on", true).toBool();
