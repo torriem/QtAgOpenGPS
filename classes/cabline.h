@@ -3,7 +3,7 @@
 
 #include "vec2.h"
 
-class QOpenGLContext;
+class QOpenGLFunctions;
 //namespace AgOpenGPS
 
 class CVehicle;
@@ -11,6 +11,8 @@ class CYouTurn;
 
 class CABLine
 {
+private:
+
 public:
     double abHeading = 0.0;
     double abFixHeadingDelta = 0;
@@ -77,7 +79,7 @@ public:
     void snapABLine();
     void getCurrentABLine();
 
-    void drawABLines(QOpenGLContext *c, const QMatrix4x4 &modelview, const QMatrix4x4 &projection);
+    void drawABLines(QOpenGLFunctions *g, const QMatrix4x4 &mvp);
 
     void resetABLine();
 };

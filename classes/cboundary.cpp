@@ -181,12 +181,17 @@ void CBoundary::drawBoundaryLineOnBackBuffer(QOpenGLFunctions *gl,
                 ptListBackBuffer.destroy();
             ptListBackBuffer.create();
             ptListBackBuffer.bind();
+	    //Here we copy the vector data rather than using it directly
+	    //because we need to close the loop by adding the first point
+	    //at the end
             ptListBackBuffer.allocate(ptList.size() + 1);
             ptListBackBuffer.write(0,ptList.constData(),ptList.size() * sizeof(QVector3D));
-
             //the "close the loop" line
             ptListBackBuffer.write(ptList.size() * sizeof(QVector3D),&(ptList[0]), sizeof(QVector3D));
             ptListBackBuffer.release();
+	    //TODO: convert this to use GL_LINE_LOOP instead of GL_LINE_STRIP
+	    //that we we don't need to do all this copying and replicate
+	    //the first point at the end.
         }
 
         QColor color = QColor::fromRgbF(0.0f, 0.99f, 0.0f);

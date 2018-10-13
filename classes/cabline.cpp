@@ -7,8 +7,9 @@
 
 //#include <QtOpenGL>
 #include <QSettings>
-#include <QOpenGLContext>
-#include <QOpenGLFunctions_2_1>
+#include <QOpenGLFunctions>
+#include <QColor>
+#include "glutils.h"
 
 CABLine::CABLine(CVehicle *v, CYouTurn *t)
     :vehicle(v), yt(t)
@@ -272,10 +273,14 @@ void CABLine::getCurrentABLine() {
     }
 }
 
-void CABLine::drawABLines(QOpenGLContext *glContext, const QMatrix4x4 &modelview, const QMatrix4x4 &projection) {
+void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp) {
     QSettings settings;
-    QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
+	QOpenGLBuffer abBuffer;
+	QColor color;
+
+
+    /*
     gl->glMatrixMode(GL_MODELVIEW);
     gl->glPushMatrix();
     gl->glLoadMatrixf(modelview.constData());
@@ -283,8 +288,25 @@ void CABLine::drawABLines(QOpenGLContext *glContext, const QMatrix4x4 &modelview
     gl->glMatrixMode(GL_PROJECTION);
     gl->glPushMatrix();
     gl->glLoadMatrixf(projection.constData());
+    */
 
     //Draw AB Points
+    ColorVertex abpoints[2] = { { QVector3D(refPoint1.easting, refPoint1.northing, 0.0), 
+                                  QVector4D(0.5f, 0.0f, 0.0f, 1.0f) },
+
+				{ QVector3D(refPoint2.easting, refPoint2.northing, 0.0),
+				  QVector4D(0.0f, 0.0f, 0.5f, 1.0f) } };
+
+    abBuffer.create();
+    abBuffer.bind();
+    abBuffer.allocate(abpoints, 2 * sizeof(ColorVertex));
+    abBuffer.release();
+
+    glDrawArraysColors(gl, mvp,
+                       GL_POINTS, abBuffer,
+		       GL_FLOAT, 2, 8.0f);
+	
+    /*
     gl->glPointSize(8.0f);
     gl->glBegin(GL_POINTS);
 
@@ -297,41 +319,73 @@ void CABLine::drawABLines(QOpenGLContext *glContext, const QMatrix4x4 &modelview
     //gl.Vertex(radiusPointAB.easting, radiusPointAB.northing, 0.0);
 
     gl->glEnd();
+
     gl->glPointSize(1.0f);
+    */
 
     if (isABLineSet)
     {
         //Draw reference AB line
+
+        QVector3D abline[2] = { QVector3D(refABLineP1.easting, refABLineP1.northing, 0),
+	                        QVector3D(refABLineP2.easting, refABLineP2.northing, 0) };
+	
+		if (abBuffer.isCreated())
+			abBuffer.destroy();
+		abBuffer.create();
+		abBuffer.bind();
+		abBuffer.allocate(abline, 2 * sizeof(QVector3D));
+		abBuffer.release();
+
+
+		//TODO: make a dotted line in OpenGL ES
+        //gl->glLineStipple(1, 0x07F0);
+        //gl->glEnable(GL_LINE_STIPPLE);
+		color = QColor::fromRgbF(0.9f, 0.5f, 0.7f, 1.0f);
+		glDrawArraysColor(gl,mvp,
+		                  GL_LINES, color, abBuffer,
+						  GL_FLOAT, 2, 2.0f);
+		/*
         gl->glLineWidth(2);
-        gl->glEnable(GL_LINE_STIPPLE);
-        gl->glLineStipple(1, 0x07F0);
         gl->glBegin(GL_LINES);
         gl->glColor3f(0.9f, 0.5f, 0.7f);
         gl->glVertex3d(refABLineP1.easting, refABLineP1.northing, 0);
         gl->glVertex3d(refABLineP2.easting, refABLineP2.northing, 0);
 
         gl->glEnd();
-        gl->glDisable(GL_LINE_STIPPLE);
+		*/
+        //gl->glDisable(GL_LINE_STIPPLE);
 
         //draw current AB Line
+		/*
         gl->glLineWidth(3);
         gl->glBegin(GL_LINES);
         gl->glColor3f(0.9f, 0.0f, 0.0f);
+		*/
 
         //calculate if tram line is here
         if (tramPassEvery != 0)
         {
             int pass = (int)passNumber + (tramPassEvery*300) - passBasedOn;
-            if (pass % tramPassEvery != 0) gl->glColor3f(0.9f, 0.0f, 0.0f);
-            else gl->glColor3f(0, 0.9, 0);
+            if (pass % tramPassEvery != 0) color = QColor::fromRgbF(0.9f, 0.0f, 0.0f, 1.0f);
+            else color = QColor::fromRgbF(0, 0.9, 0, 1.0f);
         }
 
         //based on line pass, make ref purple
-        if (fabs(passBasedOn - passNumber) < 0.0000000001 && tramPassEvery != 0) gl->glColor3f(0.990f, 0.190f, 0.990f);
+        if (fabs(passBasedOn - passNumber) < 0.0000000001 && tramPassEvery != 0) 
+		    color = QColor::fromRgbF(0.990f, 0.190f, 0.990f, 1.0f);
 
-        gl->glVertex3d(currentABLineP1.easting, currentABLineP1.northing, 0.0);
-        gl->glVertex3d(currentABLineP2.easting, currentABLineP2.northing, 0.0);
-        gl->glEnd();
+		abline[0] = QVector3D(currentABLineP1.easting, currentABLineP1.northing, 0.0);
+		abline[1] = QVector3D(currentABLineP2.easting, currentABLineP2.northing, 0.0);
+		//buffer should still be active and pointing to this data structure so
+		//we won't bother re-initializing it.
+		glDrawArraysColor(gl,mvp,
+		                  GL_LINES, color, abBuffer,
+						  GL_FLOAT, 2, 3.0f);
+	
+
+
+        //gl->glEnd();
 
         if (settings.value("display/isSideGuideLines",true).toBool())
         {
@@ -339,49 +393,66 @@ void CABLine::drawABLines(QOpenGLContext *glContext, const QMatrix4x4 &modelview
             double toolOffset = vehicle->toolOffset * 2;
             double toolWidth = vehicle->toolWidth - vehicle->toolOverlap;
 
+			/*
             gl->glColor3f(0.0f, 0.90f, 0.50f);
             gl->glLineWidth(1);
             gl->glBegin(GL_LINES);
+			*/
 
             //precalculate sin cos
             double cosHeading = cos(-abHeading);
             double sinHeading = sin(-abHeading);
 
+			QVector<QVector3D> vertexList;
+
             if (isABSameAsFixHeading)
             {
-                gl->glVertex3d((cosHeading * (toolWidth + toolOffset)) + currentABLineP1.easting, (sinHeading * (toolWidth + toolOffset)) + currentABLineP1.northing, 0);
-                gl->glVertex3d((cosHeading * (toolWidth + toolOffset)) + currentABLineP2.easting, (sinHeading * (toolWidth + toolOffset)) + currentABLineP2.northing, 0);
-                gl->glVertex3d((cosHeading * (-toolWidth + toolOffset)) + currentABLineP1.easting, (sinHeading * (-toolWidth + toolOffset)) + currentABLineP1.northing, 0);
-                gl->glVertex3d((cosHeading * (-toolWidth + toolOffset)) + currentABLineP2.easting, (sinHeading * (-toolWidth + toolOffset)) + currentABLineP2.northing, 0);
+				vertexList.append(QVector3D((cosHeading * (toolWidth + toolOffset)) + currentABLineP1.easting, (sinHeading * (toolWidth + toolOffset)) + currentABLineP1.northing, 0));
+				vertexList.append(QVector3D((cosHeading * (toolWidth + toolOffset)) + currentABLineP2.easting, (sinHeading * (toolWidth + toolOffset)) + currentABLineP2.northing, 0));
+				vertexList.append(QVector3D((cosHeading * (-toolWidth + toolOffset)) + currentABLineP1.easting, (sinHeading * (-toolWidth + toolOffset)) + currentABLineP1.northing, 0));
+				vertexList.append(QVector3D((cosHeading * (-toolWidth + toolOffset)) + currentABLineP2.easting, (sinHeading * (-toolWidth + toolOffset)) + currentABLineP2.northing, 0));
 
                 toolWidth *= 2;
-                gl->glVertex3d((cosHeading * (toolWidth)) + currentABLineP1.easting, (sinHeading * (toolWidth)) + currentABLineP1.northing, 0);
-                gl->glVertex3d((cosHeading * (toolWidth)) + currentABLineP2.easting, (sinHeading * (toolWidth)) + currentABLineP2.northing, 0);
-                gl->glVertex3d((cosHeading * (-toolWidth)) + currentABLineP1.easting, (sinHeading * (-toolWidth)) + currentABLineP1.northing, 0);
-                gl->glVertex3d((cosHeading * (-toolWidth)) + currentABLineP2.easting, (sinHeading * (-toolWidth)) + currentABLineP2.northing, 0);
+				vertexList.append(QVector3D((cosHeading * (toolWidth)) + currentABLineP1.easting, (sinHeading * (toolWidth)) + currentABLineP1.northing, 0));
+				vertexList.append(QVector3D((cosHeading * (toolWidth)) + currentABLineP2.easting, (sinHeading * (toolWidth)) + currentABLineP2.northing, 0));
+				vertexList.append(QVector3D((cosHeading * (-toolWidth)) + currentABLineP1.easting, (sinHeading * (-toolWidth)) + currentABLineP1.northing, 0));
+				vertexList.append(QVector3D((cosHeading * (-toolWidth)) + currentABLineP2.easting, (sinHeading * (-toolWidth)) + currentABLineP2.northing, 0));
             }
             else
             {
-                gl->glVertex3d((cosHeading * (toolWidth - toolOffset)) + currentABLineP1.easting, (sinHeading * (toolWidth - toolOffset)) + currentABLineP1.northing, 0);
-                gl->glVertex3d((cosHeading * (toolWidth - toolOffset)) + currentABLineP2.easting, (sinHeading * (toolWidth - toolOffset)) + currentABLineP2.northing, 0);
-                gl->glVertex3d((cosHeading * (-toolWidth - toolOffset)) + currentABLineP1.easting, (sinHeading * (-toolWidth - toolOffset)) + currentABLineP1.northing, 0);
-                gl->glVertex3d((cosHeading * (-toolWidth - toolOffset)) + currentABLineP2.easting, (sinHeading * (-toolWidth - toolOffset)) + currentABLineP2.northing, 0);
+				vertexList.append(QVector3D((cosHeading * (toolWidth - toolOffset)) + currentABLineP1.easting, (sinHeading * (toolWidth - toolOffset)) + currentABLineP1.northing, 0));
+				vertexList.append(QVector3D((cosHeading * (toolWidth - toolOffset)) + currentABLineP2.easting, (sinHeading * (toolWidth - toolOffset)) + currentABLineP2.northing, 0));
+				vertexList.append(QVector3D((cosHeading * (-toolWidth - toolOffset)) + currentABLineP1.easting, (sinHeading * (-toolWidth - toolOffset)) + currentABLineP1.northing, 0));
+				vertexList.append(QVector3D((cosHeading * (-toolWidth - toolOffset)) + currentABLineP2.easting, (sinHeading * (-toolWidth - toolOffset)) + currentABLineP2.northing, 0));
 
                 toolWidth *= 2;
-                gl->glVertex3d((cosHeading * (toolWidth)) + currentABLineP1.easting, (sinHeading * (toolWidth)) + currentABLineP1.northing, 0);
-                gl->glVertex3d((cosHeading * (toolWidth)) + currentABLineP2.easting, (sinHeading * (toolWidth)) + currentABLineP2.northing, 0);
-                gl->glVertex3d((cosHeading * (-toolWidth)) + currentABLineP1.easting, (sinHeading * (-toolWidth)) + currentABLineP1.northing, 0);
-                gl->glVertex3d((cosHeading * (-toolWidth)) + currentABLineP2.easting, (sinHeading * (-toolWidth)) + currentABLineP2.northing, 0);
+				vertexList.append(QVector3D((cosHeading * (toolWidth)) + currentABLineP1.easting, (sinHeading * (toolWidth)) + currentABLineP1.northing, 0));
+				vertexList.append(QVector3D((cosHeading * (toolWidth)) + currentABLineP2.easting, (sinHeading * (toolWidth)) + currentABLineP2.northing, 0));
+				vertexList.append(QVector3D((cosHeading * (-toolWidth)) + currentABLineP1.easting, (sinHeading * (-toolWidth)) + currentABLineP1.northing, 0));
+				vertexList.append(QVector3D((cosHeading * (-toolWidth)) + currentABLineP2.easting, (sinHeading * (-toolWidth)) + currentABLineP2.northing, 0));
             }
-            gl->glEnd();
+
+			if (abBuffer.isCreated())
+				abBuffer.destroy();
+			abBuffer.create();
+			abBuffer.bind();
+			abBuffer.allocate(vertexList.constData(), vertexList.size() * sizeof(QVector3D));
+			abBuffer.release();
+
+			glDrawArraysColor(gl,mvp,
+							  GL_LINES, color, abBuffer,
+							  GL_FLOAT, vertexList.size(), 1.0f);
+            //gl->glEnd();
         }
 
         if (settings.value("display/isPureDisplayOn",true).toBool())
         {
             //draw the guidance circle
+			QVector<QVector3D> pointsList;
+
             const int numSegments = 100;
             {
-                gl->glColor3f(0.95f, 0.30f, 0.950f);
+				color = QColor::fromRgbF(0.95f, 0.30f, 0.950f, 1.0f);
                 double theta = twoPI / numSegments;
                 double c = cos(theta);//precalculate the sine and cosine
                 double s = sin(theta);
@@ -389,21 +460,46 @@ void CABLine::drawABLines(QOpenGLContext *glContext, const QMatrix4x4 &modelview
                 double x = ppRadiusAB;//we start at angle = 0
                 double y = 0;
 
-                gl->glLineWidth(1);
-                gl->glBegin(GL_LINE_LOOP);
+                //gl->glLineWidth(1);
+                //gl->glBegin(GL_LINE_LOOP);
                 for (int ii = 0; ii < numSegments; ii++)
                 {
                     //output vertex
-                    gl->glVertex2d(x + radiusPointAB.easting, y + radiusPointAB.northing);
+					pointsList.append(QVector3D(x + radiusPointAB.easting, y + radiusPointAB.northing, 0.0));
 
                     //apply the rotation matrix
                     double t = x;
                     x = (c * x) - (s * y);
                     y = (s * t) + (c * y);
                 }
-                gl->glEnd();
+				if (abBuffer.isCreated())
+					abBuffer.destroy();
+				abBuffer.create();
+				abBuffer.bind();
+				abBuffer.allocate(pointsList.constData(), pointsList.size() * sizeof(QVector3D));
+				abBuffer.release();
+
+				glDrawArraysColor(gl,mvp,
+								  GL_LINE_LOOP, color, abBuffer,
+								  GL_FLOAT, pointsList.size(), 1.0f);
+
+                //gl->glEnd();
             }
             //Draw lookahead Point
+			QVector3D goalPoint = QVector3D(goalPointAB.easting, goalPointAB.northing, 0.0);
+			if (abBuffer.isCreated())
+				abBuffer.destroy();
+			abBuffer.create();
+			abBuffer.bind();
+			abBuffer.allocate(&goalPoint, sizeof(QVector3D));
+			abBuffer.release();
+
+			color = QColor::fromRgbF(1.0f, 0.5f, 0.95f, 1.0f);
+			glDrawArraysColor(gl,mvp,
+							  GL_POINTS, color, abBuffer,
+							  GL_FLOAT, 1, 4.0f);
+
+			/*
             gl->glPointSize(4.0f);
             gl->glBegin(GL_POINTS);
             gl->glColor3f(1.0f, 0.5f, 0.95f);
@@ -412,14 +508,15 @@ void CABLine::drawABLines(QOpenGLContext *glContext, const QMatrix4x4 &modelview
             //gl->glVertex3d(radiusPointAB.easting, radiusPointAB.northing, 0.0);
             gl->glEnd();
             gl->glPointSize(1.0f);
+			*/
         }
 
-        gl->glLineWidth(1);
+        //gl->glLineWidth(1);
     }
 
-    gl->glPopMatrix();
-    gl->glMatrixMode(GL_MODELVIEW);
-    gl->glPopMatrix();
+    //gl->glPopMatrix();
+    //gl->glMatrixMode(GL_MODELVIEW);
+    //gl->glPopMatrix();
 
 }
 

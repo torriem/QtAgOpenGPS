@@ -204,7 +204,10 @@ void FormGPS::openGLControl_Draw()
         if (ct->isContourBtnOn) ct->drawContourLine(glContext, modelview, projection);
 
         // draw the current and reference AB Lines
-        else { if (ABLine->isABLineSet || ABLine->isABLineBeingSet) ABLine->drawABLines(glContext, modelview, projection); }
+        else { 
+	    if (ABLine->isABLineSet || ABLine->isABLineBeingSet) 
+	        ABLine->drawABLines(gl, projection * modelview); 
+        }
 
         //draw the flags if there are some
 

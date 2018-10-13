@@ -49,7 +49,6 @@ SOURCES += main.cpp\
     classes/cvehicle.cpp \
     testnmea.cpp \
     classes/ccontour.cpp \
-    glwidget.cpp \
     formgps_opengl.cpp \
     classes/cboundary.cpp \
     formgps_ui.cpp \
@@ -79,7 +78,6 @@ HEADERS  += formgps.h \
     classes/cnmea.h \
     classes/cvehicle.h \
     classes/ccontour.h \
-    glwidget.h \
     classes/cboundary.h \
     btnenum.h \
     qmlutil.h \
