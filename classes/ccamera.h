@@ -21,7 +21,6 @@ public:
     //double camDelta = 0;
 
     CCamera();
-    void setWorldCam(QOpenGLFunctions_2_1 *c, double _fixPosX, double _fixPosY, double _fixHeading);
     void setWorldCam(QMatrix4x4 &mvp, double _fixPosX, double _fixPosY, double _fixHeading);
 
 };
