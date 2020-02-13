@@ -60,7 +60,8 @@ SOURCES += main.cpp\
     toplinedisplay.cpp \
     aogrenderer.cpp \
     classes/cyouturn.cpp \
-    classes/crate.cpp
+    classes/crate.cpp \
+    classes/csim.cpp
 
 HEADERS  += formgps.h \
     classes/cabline.h \
@@ -87,7 +88,8 @@ HEADERS  += formgps.h \
     toplinedisplay.h \
     aogrenderer.h \
     classes/cyouturn.h \
-    classes/crate.h
+    classes/crate.h \
+    classes/csim.h
 
 FORMS    += formgps.ui
 

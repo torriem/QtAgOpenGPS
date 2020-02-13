@@ -19,7 +19,7 @@
 #include <QLabel>
 
 FormGPS::FormGPS(QWidget *parent) :
-    QMainWindow(parent),
+    QMainWindow(parent),timerFor200ms(0),
     ui(new Ui::FormGPS)
 {
     setupGui();
@@ -36,6 +36,7 @@ FormGPS::FormGPS(QWidget *parent) :
     //section = new CSection[MAXSECTIONS];
     //for (int i = 0; i < MAXSECTIONS; i++)
     //    section[i].set_mainform(this);
+    sim = new CSim();
 
     vehicle = new CVehicle();
     boundary = new CBoundary();
@@ -112,6 +113,8 @@ FormGPS::FormGPS(QWidget *parent) :
     vehicle->section[3].isAllowedOn = true;
 
     if (isUDPServerOn) startUDPServer();
+
+    connect(sim, SIGNAL(new_position(QByteArray)), this, SLOT(on_csim_new_position(QByteArray)));
 
 }
 
@@ -465,6 +468,11 @@ GetMeOutaHere:
     //this is the end of the "frame". Now we wait for next NMEA sentence.
 }
 
+void FormGPS::on_csim_new_position(QByteArray new_nmea_data)
+{
+    pn->rawBuffer.append(new_nmea_data);
+}
+
 //Does the logic to process section on off requests
 void FormGPS::processSectionOnOffRequests()
 {
@@ -514,9 +522,17 @@ void FormGPS::processSectionOnOffRequests()
 
 void FormGPS::tmrWatchdog_timeout()
 {
-    //tmrWatchdog->stop();
+    // Avoiding lots timer that might be affects to target device
+
+    timerFor200ms++;
+
+    if(timerFor200ms == 4)
+    {
+        sim->DoSimTick( 5 * 0.01);
+        timerFor200ms = 0;
+    }
+
     scanForNMEA();
-    //tmrWatchdog->start();
     statusUpdateCounter++;
 
     /* menu panel taken care of by qml */

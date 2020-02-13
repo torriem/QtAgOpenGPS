@@ -13,6 +13,7 @@
 #include <QSurfaceFormat>
 #include <QOpenGLFramebufferObject>
 #include <QOpenGLBuffer>
+#include <QObject>
 
 #include "common.h"
 
@@ -25,6 +26,8 @@
 #include "ccamera.h"
 #include "btnenum.h"
 #include "aogsettings.h"
+#include "csim.h"
+
 
 
 namespace Ui {
@@ -196,7 +199,7 @@ public:
 
     //Parsing object of NMEA sentences
     //QScopedPointer<CNMEA> pn;
-    CNMEA *pn =NULL;
+    CNMEA *pn;
 
     //create an array of sections, so far only 8 section + 1 fullWidth Section
     //QScopedArrayPointer<CSection> section;
@@ -204,21 +207,21 @@ public:
 
     //ABLine Instance
     //QScopedPointer<CABLine> ABLine;
-    CABLine *ABLine =NULL;
+    CABLine *ABLine;
 
     //Contour mode Instance
     //QScopedPointer<CContour> ct;
-    CContour *ct =NULL;
+    CContour *ct;
 
     //Auto headland instance
-    CYouTurn *yt = NULL;
+    CYouTurn *yt;
 
     //Rate control object
-    CRate *rc = NULL;
+    CRate *rc;
 
     //a brand new vehicle
     //QScopedPointer<CVehicle> vehicle;
-    CVehicle *vehicle =NULL;
+    CVehicle *vehicle;
 
     //module communication object
     CModuleComm mc;
@@ -228,6 +231,8 @@ public:
 
     //boundary instance
     CBoundary *boundary;
+
+
 
     /*************************
      *  Position.designer.cs *
@@ -373,6 +378,9 @@ public:
      ***********************/
 private:
     QUdpSocket *udpSocket = NULL;
+    // Simulation object when GPS hasn't be in QtAoG
+
+    CSim *sim;
 
 public:
     bool isUDPServerOn = false;
@@ -418,6 +426,8 @@ public:
 private:
     Ui::FormGPS *ui;
     TopLineDisplay *tlDisp;
+    // GPS for 5Hz
+    int timerFor200ms;
 
     void setupGui();
 
@@ -522,6 +532,10 @@ public slots:
      */
     void processSectionLookahead(); //called when section lookahead GL stuff is rendered
 
+    /*
+     * Slot for receive nmea data, which is generated from CSim class
+     */
+    void on_csim_new_position(QByteArray new_nmea_data);
 
 };
 
