@@ -118,5 +118,6 @@
         <file>shaders/colors_fshader.fsh</file>
         <file>shaders/colortex_fshader.fsh</file>
         <file>shaders/colortex_vshader.vsh</file>
+        <file>qml/CSimForm.qml</file>
     </qresource>
 </RCC>

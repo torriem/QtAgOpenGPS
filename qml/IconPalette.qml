@@ -8,6 +8,8 @@ Rectangle {
     visible: true
     border.color: "#c3ecc0"
 
+    signal btnGPSDataBtnClicked
+
     Grid {
         id: grid
         width: childrenRect.width
@@ -40,6 +42,10 @@ Rectangle {
             objectName: "btnGPSData"
             buttonText: qsTr("GPS Data")
             icon: "qrc:/images/Satellite64.png"
+            onClicked: {
+                console.log("GPS Data button clicked  on QML....")
+                btnGPSDataBtnClicked();
+            }
         }
 
         IconButtonText {

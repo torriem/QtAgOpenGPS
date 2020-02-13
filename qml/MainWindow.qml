@@ -7,9 +7,6 @@ Item {
     id: item1
     width: 900
     height: 600
-    //objectName: "openGLControl"
-    //width:800
-    //height:600
     anchors.fill: parent
 
     SystemPalette {
@@ -32,8 +29,6 @@ Item {
         color: systemPalette.window
         anchors.top: parent.top
     }
-
-
 
     AOGRenderer {
         id: glcontrolrect
@@ -89,8 +84,10 @@ Item {
                         }
                     }
 
-                    function toggle_menu() {
-                        if (hideMenu == true) {
+                    function toggle_menu()
+                    {
+                        if (hideMenu == true)
+                        {
                             hideMenu = false
                         } else {
                             hideMenu = true
@@ -324,6 +321,7 @@ Item {
                 anchors.leftMargin: btnPerimeter.width + 10
                 anchors.topMargin: btnPerimeter.y
                 border.color: "#c3ecc0"
+
 
                 Grid {
                     id: contextAreaGrid

@@ -31,7 +31,9 @@ void CSim::DoSimTick(double _st)
 
     sbSendText.append(sbVTG);
 
-    cout << sbSendText.data();
+    // if you want to see the generated data, uncomment it
+
+//    cout << sbSendText.data();
 
     emit new_position(sbSendText);
 

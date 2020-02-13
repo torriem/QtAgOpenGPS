@@ -12,11 +12,6 @@
 #include "toplinedisplay.h"
 #include "ccontour.h"
 #include "cabline.h"
-
-//#include <QGuiApplication>
-//#include <QtGui/private/qguiapplication_p.h>
-//#include <QtGui/qpa/qplatformintegration.h>
-
 #include <functional>
 #include <assert.h>
 #include "aogrenderer.h"
@@ -46,11 +41,6 @@ void FormGPS::setupGui()
     qmlview->rootContext()->setContextProperty("screenPixelDensity",QGuiApplication::primaryScreen()->physicalDotsPerInch() * QGuiApplication::primaryScreen()->devicePixelRatio());
     qmlview->setSource(QUrl("qrc:/qml/MainWindow.qml"));
     qmlview->setColor(Qt::transparent);
-
-    //qmlview->setClearBeforeRendering(false);
-    //connect(qmlview,SIGNAL(beforeRendering()), this, SLOT(openGLControl_Draw()),Qt::DirectConnection);
-    //connect(qmlview,SIGNAL(sceneGraphInitialized()), this, SLOT(openGLControl_Initialized()),Qt::DirectConnection);
-    //connect(qmlview,SIGNAL(sceneGraphInvalidated()), this, SLOT(openGLControl_Shutdown()),Qt::DirectConnection);
 
     qmlcontainer = QWidget::createWindowContainer(qmlview);
 
