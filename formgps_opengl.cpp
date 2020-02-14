@@ -1,6 +1,5 @@
 //#include <QtOpenGL>
 #include <assert.h>
-#include "ui_formgps.h"
 #include "formgps.h"
 #include "csection.h"
 #include "cvehicle.h"
@@ -17,7 +16,6 @@
 
 #include <QGLWidget>
 #include <QQuickView>
-#include <QOpenGLFunctions_2_1>
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLBuffer>
@@ -677,7 +675,6 @@ void FormGPS::drawLightBar(double Width, double Height, double offlineDistance,
 {
     QOpenGLContext *glContext = QOpenGLContext::currentContext();
     QOpenGLFunctions *gl = glContext->functions();
-    //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
     double down = 20;
 
     QOpenGLBuffer dotbuffer;
@@ -891,8 +888,6 @@ void FormGPS::setZoom()
 
 void FormGPS::loadGLTextures()
 {
-    //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
-
     QOpenGLTexture *t;
 
     //  Background

@@ -12,7 +12,6 @@
 #include <QPair>
 #include "glm.h"
 #include <string>
-#include "ui_formgps.h"
 #include "qmlutil.h"
 #include "aogrenderer.h"
 

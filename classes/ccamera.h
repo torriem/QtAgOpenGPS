@@ -4,7 +4,6 @@
 #include <QMatrix4x4>
 
 class QOpenGLContext;
-class QOpenGLFunctions_2_1;
 class CCamera
 {
 private:

@@ -1,7 +1,6 @@
 #include <QtGlobal>
 #include "cvehicle.h"
 #include <QOpenGLContext>
-#include <QOpenGLFunctions_2_1>
 #include <QOpenGLFunctions>
 #include <QRgb>
 #include "aogsettings.h"
@@ -251,7 +250,6 @@ void CVehicle::makeBuffers()
 void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
                            const QMatrix4x4 &projection, bool drawSectionMarkers) {
     QOpenGLFunctions *gl =glContext->functions();
-    //QOpenGLFunctions_2_1 *gl21 = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
     QColor color;
     makeBuffers(); //create openGL buffers if necessary.

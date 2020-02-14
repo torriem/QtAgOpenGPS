@@ -3,7 +3,6 @@
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLBuffer>
-#include <QOpenGLFunctions_2_1>
 #include <QQuickView>
 #include <QThread>
 #include <assert.h>
@@ -30,7 +29,6 @@ CWorldGrid::~CWorldGrid() {
 void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, QOpenGLTexture &texture)
 {
     QSettings settings;
-    //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
 
     if (!fieldBufferCurrent) {
         //regenerate the field surface VBO
@@ -110,7 +108,6 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, Q
 
 void CWorldGrid::drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, double _gridZoom)
 {
-    //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
     //draw easting lines and westing lines to produce a grid
     QSettings settings;
 

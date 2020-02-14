@@ -7,7 +7,6 @@
 //#include <QOpenGLShaderProgram>
 
 class QOpenGLContext;
-class QOpenGLFunctions_2_1;
 class QOpenGLFunctions;
 class QOpenGLShaderProgram;
 

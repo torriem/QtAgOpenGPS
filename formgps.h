@@ -405,8 +405,6 @@ public:
                              int count);
     */
     void drawLightBar(double Width, double Height, double offlineDistance, const QMatrix4x4 &modelview, const QMatrix4x4 &projection);
-    //void calcFrustum(QOpenGLFunctions_2_1 *gl);
-    //transitioning to OPenGL ES; use our own computed matrices
     void calcFrustum(const QMatrix4x4 &mvp);
 
     void setZoom();
