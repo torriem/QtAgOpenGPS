@@ -7,7 +7,7 @@
 #include <QByteArray>
 #include <QBuffer>
 #include <QObject>
-
+#include "formgps.h"
 
 struct XY {
     double x;
@@ -19,6 +19,7 @@ class CNMEA : public QObject
 {
     Q_OBJECT
 public:
+    CNMEA(FormGPS *mainForm);
     //WGS84 Lat Long
     double latitude = 0, longitude = 0;
 
@@ -52,7 +53,6 @@ public:
     QByteArray currentNMEASentenceRMC = "";
     QByteArray currentNMEASentenceVTG = "";
 
-    CNMEA();
     void parseNMEA();
     QByteArray parse();
     void parseGGA();
@@ -68,6 +68,8 @@ public:
     double arcLengthOfMeridian(double phi);
     XY mapLatLonToXY(double phi, double lambda, double lambda0);
     void geoUTMConverterXY(double lat, double lon);
+private:
+    FormGPS *mf;
 
 };
 

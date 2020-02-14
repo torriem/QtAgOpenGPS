@@ -30,7 +30,7 @@ FormGPS::FormGPS(QWidget *parent) :
      * the header file has only incomplete types.
      */
     worldGrid = new CWorldGrid();
-    pn = new CNMEA(); //can make this static now
+    pn = new CNMEA(this); //can make this static now
     //section = new CSection[MAXSECTIONS];
     //for (int i = 0; i < MAXSECTIONS; i++)
     //    section[i].set_mainform(this);

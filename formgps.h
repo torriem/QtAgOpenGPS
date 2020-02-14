@@ -30,9 +30,6 @@
 #include "cnmea.h"
 #include "cabline.h"
 
-
-
-
 namespace Ui {
 class FormGPS;
 }
@@ -314,6 +311,10 @@ public:
     //public int ringCounterTiltPitch = 0;
     //public double[] avgAngularVelocity = new double[30];//for angular velocity
     //public int ringCounterAngularVelocity = 0;
+
+    double avgSpeed[10]; // for average speed
+    double avgXTE[20]; // for average corss track error
+    int ringCounter = 0, avgXTECntr, crossTrackError;
 
     int totalFixSteps = 10, currentStepFix = 0;
     Vec3 vHold;

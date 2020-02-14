@@ -73,8 +73,6 @@ QString FormGPS::FixQuality () const
     else if (pn->fixQuality == 8) return "Sim: ";
     else return "Unknown ";
 
-
-
 }
 QString FormGPS::GyroInDegrees () const
 {
@@ -122,15 +120,21 @@ QString FormGPS::AgeDiff () const
 }
 QString FormGPS::SpeedMPH () const
 {
-    return "0";
+    double spd = 0;
+    for (int c =0; c < 10; c++) spd += avgSpeed[c];
+    spd *= 0.0621371;
+    return QString::number(qRound(spd));
 }
 QString FormGPS::SpeedKPH () const
 {
-    return "0";
+    double spd = 0;
+    for (int c =0; c < 10; c++) spd += avgSpeed[c];
+    spd *= 0.1;
+    return QString::number(qRound(spd));
 }
 QString FormGPS::XTE () const
 {
-    return "0";
+
 }
 QString FormGPS::inchXTE () const
 {

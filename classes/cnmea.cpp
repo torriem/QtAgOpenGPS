@@ -67,9 +67,9 @@ const double UTMScaleFactor = 0.9996;
 //private double UTMScaleFactor2 = 1.0004001600640256102440976390556;
 
 
-CNMEA::CNMEA()
+CNMEA::CNMEA(FormGPS *mainForm)
 {
-
+    mf = mainForm;
 }
 
 void CNMEA::parseNMEA()
@@ -304,7 +304,9 @@ void CNMEA::parseVTG() {
 
         //True heading
         headingTrue = words[1].toDouble();
-
+        // average the speeds for display, not calcs
+        mf->avgSpeed[mf->ringCounter] = speed;
+        if (mf->ringCounter++ > 8 ) mf->ringCounter = 0;
         updatedVTG = true;
     }
 }

@@ -7,3 +7,5 @@ To do
 For 1 and 2, do we need some way of synchronization so we know for sure
 that the data that gets processed in the timer loop has now been rendered?
 Does it matter?
+
+3. Should we add Localization resource on the QtAoG? Brian's project has gStr.resx file. 

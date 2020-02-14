@@ -64,7 +64,6 @@ SOURCES += main.cpp\
     classes/crate.cpp \
     classes/csim.cpp \
     formgps_ntrip.cpp \
-    objecthelper.cpp \
     formgps_guidesigner.cpp
 
 HEADERS  += formgps.h \
@@ -93,8 +92,7 @@ HEADERS  += formgps.h \
     aogrenderer.h \
     classes/cyouturn.h \
     classes/crate.h \
-    classes/csim.h \
-    objecthelper.h
+    classes/csim.h
 
 FORMS    += formgps.ui
 
