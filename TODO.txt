@@ -9,3 +9,6 @@ that the data that gets processed in the timer loop has now been rendered?
 Does it matter?
 
 3. Should we add Localization resource on the QtAoG? Brian's project has gStr.resx file. 
+
+4. Also, we should talk about method, which is used to passing data to QML from C++.
+
