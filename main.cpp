@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("QtAgOpenGPS");
     qmlRegisterType<AOGRendererInSG>("AgOpenGPS",1,0,"AOGRenderer");
     FormGPS w;
+
     w.show();
 
     return a.exec();

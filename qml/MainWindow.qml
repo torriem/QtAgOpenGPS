@@ -5,7 +5,7 @@ import AgOpenGPS 1.0
 Item {
     //We draw native opengl to this root object
     id: item1
-    width: 900
+    width: 1024
     height: 600
     anchors.fill: parent
 
@@ -47,7 +47,9 @@ Item {
 
             onClicked: {
                 parent.clicked(mouse);
+                cSimForm.visible = false
             }
+
         }
 
         Item {
@@ -65,7 +67,8 @@ Item {
                 anchors.leftMargin: 6
                 spacing: 3
 
-                IconButtonText{
+                IconButtonText
+                {
                     id: btnMenuDrawer
                     objectName: "btnMenuDrawer"
                     buttonText: qsTr("Menu")
@@ -297,7 +300,6 @@ Item {
                 }
             }
 
-
             IconPalette {
                 id: iconPalette
                 objectName: "slideoutMenu"
@@ -306,7 +308,25 @@ Item {
                 anchors.left: leftColumn.right
                 anchors.leftMargin: 15
                 visible: false
+                onBtnGPSDataBtnClicked: {
+                    if (!cSimForm.visible){
+                        cSimForm.visible = true
+                    }else{
+                        cSimForm.visible = false
+                    }
+                }
+            }
 
+            CSimForm {
+                id: cSimForm
+                anchors.top: parent.top
+                anchors.topMargin: 20
+                anchors.left: leftColumn.right
+                anchors.leftMargin: iconPalette.width + 20
+                MouseArea {
+                    id: cSimMouseArea
+                    anchors.fill: parent
+                }
             }
 
             Rectangle {

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
+    <width>1024</width>
     <height>700</height>
    </rect>
   </property>
@@ -57,8 +57,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1000</width>
-     <height>20</height>
+     <width>1024</width>
+     <height>22</height>
     </rect>
    </property>
    <property name="nativeMenuBar">

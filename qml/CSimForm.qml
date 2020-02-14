@@ -2,17 +2,18 @@ import QtQuick 2.8
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 
-Page {
+Rectangle {
+
     id: cSim
     width: 380
-    height: 460
-    background: Rectangle {
-        border.color: "transparent"
-        color: "transparent"
-    }
+    height: 420
+    visible: false
+    color: "#8cf5f5f5"
+    radius: 20
     ColumnLayout {
         x: 8
         y: 15
+        spacing: 3
         Grid {
 
             Text {
@@ -178,10 +179,12 @@ Page {
 
         ColumnLayout {
             id: columnLayout
+            spacing: 3
 
             Label {
                 id: label
                 text: qsTr("Serial To Relay")
+                font.pointSize: 10
             }
 
             TextArea {
@@ -196,6 +199,7 @@ Page {
             Label {
                 id: label1
                 text: qsTr("RelayLo, Spd, Dist, SteerAngle, UTurn")
+                font.pointSize: 10
             }
 
             TextArea {
@@ -211,6 +215,7 @@ Page {
             Label {
                 id: label2
                 text: qsTr("Serial From Relay")
+                font.pointSize: 10
             }
 
             TextArea {
@@ -226,6 +231,7 @@ Page {
             Label {
                 id: label3
                 text: qsTr("Steer Actual, Set Point, Heading, Roll, Sw")
+                font.pointSize: 10
             }
 
             TextArea {
@@ -240,6 +246,7 @@ Page {
             TextField {
                 id: textField
                 text: qsTr("No Data")
+                antialiasing: false
                 Layout.preferredHeight: 79
                 Layout.preferredWidth: 364
             }

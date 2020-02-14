@@ -2,12 +2,11 @@
 #define CABLINE_H
 
 #include "vec2.h"
+#include "cvehicle.h"
+#include "cyouturn.h"
 
 class QOpenGLFunctions;
 //namespace AgOpenGPS
-
-class CVehicle;
-class CYouTurn;
 
 class CABLine
 {

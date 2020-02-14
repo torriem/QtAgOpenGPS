@@ -1,0 +1,162 @@
+#include "formgps.h"
+
+QString FormGPS::Zone () const
+{
+    return QString::number(pn->zone);
+}
+QString FormGPS::FixNorthing () const
+{
+    //New update of AoG has just only one vec3 struct. So should we fix QtAoG same with AoG ?
+}
+QString FormGPS::FixEasting () const
+{
+    //New update of AoG has just only one vec3 struct. So should we fix QtAoG same with AoG ?
+}
+QString FormGPS::Latitude () const
+{
+    return QString::number(pn->latitude);
+}
+QString FormGPS::Longitude () const
+{
+    return QString::number(pn->longitude);
+}
+QString FormGPS::SatsTracked () const
+{
+    return QString::number(pn->satellitesTracked);
+}
+QString FormGPS::HDOP () const
+{
+    return QString::number(pn->hdop);
+}
+QString FormGPS::NMEAHz () const
+{
+    return QString::number(fixUpdateHz);
+}
+QString FormGPS::PassNumber () const
+{
+    return QString::number(ABLine->passNumber);
+}
+QString FormGPS::CurveNumber () const
+{
+    return "0";
+}
+QString FormGPS::Heading () const
+{
+    return "0";
+}
+QString FormGPS::GPSHeading () const
+{
+    return "0";
+}
+QString FormGPS::Status () const
+{
+    if (pn->status == "A") return "Active";
+    else
+        return "Void";
+
+}
+QString FormGPS::FixQuality () const
+{
+    // TODO: if timerSim enabled, this function must be return "Sim"
+    // I think, we have to seperate timer for simulation and GPS data receiver function.
+    // GPS data function might be slot and then it should controlled by signal which is activated when data is coming.
+
+    if (tmrWatchdog->isActive()) return "Sim";
+    else if (pn->fixQuality == 0) return "Invalid: ";
+    else if (pn->fixQuality == 1) return "GPS single: ";
+    else if (pn->fixQuality == 2) return "DGPS: ";
+    else if (pn->fixQuality == 3) return "PPS: ";
+    else if (pn->fixQuality == 4) return "RTK fix: ";
+    else if (pn->fixQuality == 5) return "Float: ";
+    else if (pn->fixQuality == 6) return "Estimate: ";
+    else if (pn->fixQuality == 7) return "Man IP: ";
+    else if (pn->fixQuality == 8) return "Sim: ";
+    else return "Unknown ";
+
+
+
+}
+QString FormGPS::GyroInDegrees () const
+{
+    return "0";
+}
+QString FormGPS::RollInDegrees () const
+{
+    return "0";
+}
+QString FormGPS::SetSteerAngle() const
+{
+    return "0";
+}
+QString FormGPS::ActualSteerAngle() const
+{
+    return "0";
+}
+QString FormGPS::FixHeading () const
+{
+    return "0";
+}
+QString FormGPS::LookAhead () const
+{
+    return "0";
+}
+QString FormGPS::StepFixNum () const
+{
+    return "0";
+}
+QString FormGPS::CurrentStepDistance () const
+{
+    return "0";
+}
+QString FormGPS::TotalStepDistance () const
+{
+    return "0";
+}
+QString FormGPS::WorkSwitchValue () const
+{
+    return "0";
+}
+QString FormGPS::AgeDiff () const
+{
+    return "0";
+}
+QString FormGPS::SpeedMPH () const
+{
+    return "0";
+}
+QString FormGPS::SpeedKPH () const
+{
+    return "0";
+}
+QString FormGPS::XTE () const
+{
+    return "0";
+}
+QString FormGPS::inchXTE () const
+{
+    return "0";
+}
+QString FormGPS::FixOffset () const
+{
+    return "0";
+}
+QString FormGPS::FixOffSetInch() const
+{
+    return "0";
+}
+QString FormGPS::Altitude () const
+{
+    return "0";
+}
+QString FormGPS::AltitudeFeet () const
+{
+    return "0";
+}
+QString FormGPS::DistPivotM() const
+{
+    return "0";
+}
+QString FormGPS::DistPivotFt() const
+{
+    return "0";
+}

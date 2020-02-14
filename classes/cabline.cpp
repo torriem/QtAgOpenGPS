@@ -1,8 +1,6 @@
 #include "cabline.h"
 #include "vec2.h"
 #include "glm.h"
-#include "cvehicle.h"
-#include "cyouturn.h"
 #include "cnmea.h"
 
 //#include <QtOpenGL>

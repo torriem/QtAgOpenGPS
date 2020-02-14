@@ -7,6 +7,7 @@ Rectangle {
     color: "#bf163814"
     visible: true
     border.color: "#c3ecc0"
+    radius: 20
 
     signal btnGPSDataBtnClicked
 

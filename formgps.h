@@ -27,6 +27,9 @@
 #include "btnenum.h"
 #include "aogsettings.h"
 #include "csim.h"
+#include "cnmea.h"
+#include "cabline.h"
+
 
 
 
@@ -38,9 +41,7 @@ class FormGPS;
 class TopLineDisplay;
 
 class CWorldGrid;
-class CNMEA;
 class CSection;
-class CABLine;
 class CContour;
 class CVehicle;
 class CPerimeter;
@@ -55,6 +56,7 @@ class AOGRendererInSG;
 class FormGPS : public QMainWindow
 {
     Q_OBJECT
+
 public:
     explicit FormGPS(QWidget *parent = 0);
     ~FormGPS();
@@ -451,7 +453,7 @@ public:
     void sectionControlOutToPort();
 
     /***********************
-     * FormGPS.Designer.cs *
+     * GUI.Designer.cs *
      ***********************/
     void manualAllBtnsUpdate();
     void manualBtnUpdate(int sectNumber);
@@ -460,6 +462,43 @@ public:
     // formgps_ui
     bool closeAllMenus();
 
+    // return data to QML
+
+    Q_INVOKABLE QString Zone () const;
+    Q_INVOKABLE QString FixNorthing () const;
+    Q_INVOKABLE QString FixEasting () const;
+    Q_INVOKABLE QString Latitude () const;
+    Q_INVOKABLE QString Longitude () const;
+    Q_INVOKABLE QString SatsTracked () const;
+    Q_INVOKABLE QString HDOP () const;
+    Q_INVOKABLE QString NMEAHz () const;
+    Q_INVOKABLE QString PassNumber () const;
+    Q_INVOKABLE QString CurveNumber () const;
+    Q_INVOKABLE QString Heading () const;
+    Q_INVOKABLE QString GPSHeading () const;
+    Q_INVOKABLE QString Status () const;
+    Q_INVOKABLE QString FixQuality () const;
+    Q_INVOKABLE QString GyroInDegrees () const;
+    Q_INVOKABLE QString RollInDegrees () const;
+    Q_INVOKABLE QString SetSteerAngle() const;
+    Q_INVOKABLE QString ActualSteerAngle() const;
+    Q_INVOKABLE QString FixHeading () const;
+    Q_INVOKABLE QString LookAhead () const;
+    Q_INVOKABLE QString StepFixNum () const;
+    Q_INVOKABLE QString CurrentStepDistance () const;
+    Q_INVOKABLE QString TotalStepDistance () const;
+    Q_INVOKABLE QString WorkSwitchValue () const;
+    Q_INVOKABLE QString AgeDiff () const;
+    Q_INVOKABLE QString SpeedMPH () const;
+    Q_INVOKABLE QString SpeedKPH () const;
+    Q_INVOKABLE QString XTE () const;
+    Q_INVOKABLE QString inchXTE () const;
+    Q_INVOKABLE QString FixOffset () const;
+    Q_INVOKABLE QString FixOffSetInch() const;
+    Q_INVOKABLE QString Altitude () const;
+    Q_INVOKABLE QString AltitudeFeet () const;
+    Q_INVOKABLE QString DistPivotM() const;
+    Q_INVOKABLE QString DistPivotFt() const;
 
     /**************************
      * UI/Qt object callbacks *

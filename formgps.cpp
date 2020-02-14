@@ -1,9 +1,7 @@
 #include "formgps.h"
 #include "ui_formgps.h"
 #include "cworldgrid.h"
-#include "cnmea.h"
 #include "csection.h"
-#include "cabline.h"
 #include "ccontour.h"
 #include "cboundary.h"
 #include "cvehicle.h"
@@ -522,14 +520,16 @@ void FormGPS::processSectionOnOffRequests()
 
 void FormGPS::tmrWatchdog_timeout()
 {
-    // Avoiding lots timer that might be affects to target device
 
+
+    // Avoiding lots timer that might be affects to target device
     timerFor200ms++;
 
     if(timerFor200ms == 4)
     {
         sim->DoSimTick( 5 * 0.01);
         timerFor200ms = 0;
+
     }
 
     scanForNMEA();

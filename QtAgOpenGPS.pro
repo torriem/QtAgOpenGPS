@@ -12,6 +12,7 @@ equals(QT_MAJOR_VERSION,5):lessThan(QT_MINOR_VERSION,8):error("requires Qt 5.8 o
 
 TARGET = QtAgOpenGPS
 TEMPLATE = app
+CONFIG += c++11
 
 RC_ICONS = images/AppIcon.ico
 
@@ -61,7 +62,10 @@ SOURCES += main.cpp\
     aogrenderer.cpp \
     classes/cyouturn.cpp \
     classes/crate.cpp \
-    classes/csim.cpp
+    classes/csim.cpp \
+    formgps_ntrip.cpp \
+    objecthelper.cpp \
+    formgps_guidesigner.cpp
 
 HEADERS  += formgps.h \
     classes/cabline.h \
@@ -89,7 +93,8 @@ HEADERS  += formgps.h \
     aogrenderer.h \
     classes/cyouturn.h \
     classes/crate.h \
-    classes/csim.h
+    classes/csim.h \
+    objecthelper.h
 
 FORMS    += formgps.ui
 

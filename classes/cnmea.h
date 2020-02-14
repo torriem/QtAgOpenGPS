@@ -6,6 +6,8 @@
 #include <QDateTime>
 #include <QByteArray>
 #include <QBuffer>
+#include <QObject>
+
 
 struct XY {
     double x;
@@ -13,8 +15,9 @@ struct XY {
 };
 
 
-class CNMEA
+class CNMEA : public QObject
 {
+    Q_OBJECT
 public:
     //WGS84 Lat Long
     double latitude = 0, longitude = 0;
