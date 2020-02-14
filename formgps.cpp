@@ -1,5 +1,5 @@
 #include "formgps.h"
-#include "ui_formgps.h"
+//#include "ui_formgps.h"
 #include "cworldgrid.h"
 #include "cnmea.h"
 #include "csection.h"
@@ -19,8 +19,7 @@
 #include <QLabel>
 
 FormGPS::FormGPS(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::FormGPS)
+    QQuickView(qobject_cast<QWindow *>(parent))
 {
     setupGui();
     AOGSettings s;
@@ -120,7 +119,7 @@ FormGPS::~FormGPS()
     /* clean up our dynamically-allocated
      * objects.
      */
-    delete ui;
+    //delete ui;
     delete worldGrid;
     delete pn;
     delete ABLine;
@@ -138,7 +137,10 @@ FormGPS::~FormGPS()
 //been populated already by the rendering routine.
 void FormGPS::processSectionLookahead() {
 
-    ui->grnPixels->setPixmap(QPixmap::fromImage(grnPix.mirrored()));
+    //not using regular Qt Widgets in the main window anymore.  For
+    //debugging purposes, this could go in another popup window
+    //ui->grnPixels->setPixmap(QPixmap::fromImage(grnPix.mirrored()));
+
     //determine farthest ahead lookahead - is the height of the readpixel line
     double rpHeight = 0;
 
@@ -563,7 +565,8 @@ void FormGPS::tmrWatchdog_timeout()
             qmlItem(qml_root,"stripEqWidth")->setProperty("text", locale.toString(vehicle->toolWidth,'f',2) + " " + tr("M"));
             qmlItem(qml_root,"stripDistance")->setProperty("text", locale.toString(userDistance,'f',0)+" "+tr("M"));
             qmlItem(qml_root,"stripAreaRate")->setProperty("text", locale.toString(vehicle->toolWidth * spd / 10,'f',1) + " " + tr("Ha/hr"));
-            tlDisp->lblSpeed->setText(locale.toString(spd,'f',1) + " "+tr("KPH"));
+            //topline widget removed; convert to qml?
+            //tlDisp->lblSpeed->setText(locale.toString(spd,'f',1) + " "+tr("KPH"));
 
         }
         else
@@ -593,7 +596,8 @@ void FormGPS::tmrWatchdog_timeout()
             qmlItem(qml_root,"stripEqWidth")->setProperty("text", locale.toString(vehicle->toolWidth * m2ft,'f',1) + " " + tr("ft"));
             qmlItem(qml_root,"stripDistance")->setProperty("text", locale.toString(userDistance * 3.28084,'f',0)+" "+tr("ft"));
             qmlItem(qml_root,"stripAreaRate")->setProperty("text", locale.toString(vehicle->toolWidth * spd / 10 * 2.47,'f',1) + " " + tr("Ac/hr"));
-            tlDisp->lblSpeed->setText(locale.toString(spd * 0.621371,'f',1) + " "+tr("MPH"));
+            //topline widget removed; convert to qml?
+            //tlDisp->lblSpeed->setText(locale.toString(spd * 0.621371,'f',1) + " "+tr("MPH"));
         }
 
         //lblDelta.Text = guidanceLineHeadingDelta.ToString();
@@ -615,8 +619,9 @@ void FormGPS::tmrWatchdog_timeout()
         */
 
         qmlItem(qml_root,"stripHz")->setProperty("text",locale.toString(fixUpdateHz) + " " + tr("Hz"));
-        tlDisp->lblHeading->setText("<small>Hdg:</small>"+locale.toString(toDegrees(vehicle->fixHeading),'f',1) + QChar(0x00b0));
-        tlDisp->lblSteerAngle->setText("<small>Steer:</small>" + locale.toString((double)(vehicle->guidanceLineSteerAngle) / 10,'f',1) + QChar(0x00b0));
+        //topline widget removed; convert to qml?
+        //tlDisp->lblHeading->setText("<small>Hdg:</small>"+locale.toString(toDegrees(vehicle->fixHeading),'f',1) + QChar(0x00b0));
+        //tlDisp->lblSteerAngle->setText("<small>Steer:</small>" + locale.toString((double)(vehicle->guidanceLineSteerAngle) / 10,'f',1) + QChar(0x00b0));
 
         /*
          * TODO
@@ -632,16 +637,19 @@ void FormGPS::tmrWatchdog_timeout()
         //up in the menu a few pieces of info
         if (isJobStarted)
         {
-            tlDisp->lblEasting->setText(tr("<small>UTM E:</small>")+ locale.toString(pn->easting,'f', 1));
-            tlDisp->lblNorthing->setText(tr("<small>N:</small>") + locale.toString(pn->northing, 'f', 1));
+            //topline widget removed; convert to qml?
+            //tlDisp->lblEasting->setText(tr("<small>UTM E:</small>")+ locale.toString(pn->easting,'f', 1));
+            //tlDisp->lblNorthing->setText(tr("<small>N:</small>") + locale.toString(pn->northing, 'f', 1));
         }
         else
         {
-            tlDisp->lblEasting->setText(tr("<small>UTM E:</small>")+ locale.toString(pn->actualEasting,'f', 1));
-            tlDisp->lblNorthing->setText(tr("<small>N:</small>") + locale.toString(pn->actualNorthing, 'f', 1));
+            //topline widget removed; convert to qml?
+            //tlDisp->lblEasting->setText(tr("<small>UTM E:</small>")+ locale.toString(pn->actualEasting,'f', 1));
+            //tlDisp->lblNorthing->setText(tr("<small>N:</small>") + locale.toString(pn->actualNorthing, 'f', 1));
         }
 
-        tlDisp->lblZone->setText("<small>Zn:</small>"+locale.toString(pn->zone));
+        //topline widget removed; convert to qml?
+        //tlDisp->lblZone->setText("<small>Zn:</small>"+locale.toString(pn->zone));
 
         //grab the Valid sentence
         //NMEASentence = recvSentenceSettings;// pn.currentNMEA_GGASentence + pn.currentNMEA_RMCSentence;
@@ -653,9 +661,10 @@ void FormGPS::tmrWatchdog_timeout()
         {
             //stripOnlineGPS.Value = 1;
             //TODO turn off port light
-            tlDisp->lblEasting->setText("-");
-            tlDisp->lblNorthing->setText(tr("No GPS"));
-            tlDisp->lblZone->setText("-");
+            //topline widget removed; convert to qml?
+            //tlDisp->lblEasting->setText("-");
+            //tlDisp->lblNorthing->setText(tr("No GPS"));
+            //tlDisp->lblZone->setText("-");
             //tboxSentence.Text = "** No Sentence Data **";
         }
         //else  stripOnlineGPS.Value = 100;
@@ -668,7 +677,8 @@ void FormGPS::tmrWatchdog_timeout()
             {
                 QString dist;
                 //turn on distance widget
-                tlDisp->txtDistanceOffABLine->show();
+                //topline widget removed; convert to qml?
+                //tlDisp->txtDistanceOffABLine->show();
                 btnAutoSteer->setProperty("enabled",true);
                 //lblDelta.Visible = true;
                 if (ct->distanceFromCurrentLine == 32000) ct->distanceFromCurrentLine = 0;
@@ -676,13 +686,15 @@ void FormGPS::tmrWatchdog_timeout()
                 if ((ct->distanceFromCurrentLine) < 0.0) {
                     if (isMetric) dist = locale.toString((int)fabs(ct->distanceFromCurrentLine * 0.1)) + " " + QChar(0x2192);
                     else dist = locale.toString((int)fabs(ct->distanceFromCurrentLine / 2.54 * 0.1)) + " " + QChar(0x2192);
-                    tlDisp->txtDistanceOffABLine->setStyleSheet("QLabel { color: green; }");
-                    tlDisp->txtDistanceOffABLine->setText(dist);
+                    //topline widget removed; convert to qml?
+                    //tlDisp->txtDistanceOffABLine->setStyleSheet("QLabel { color: green; }");
+                    //tlDisp->txtDistanceOffABLine->setText(dist);
                 } else {
                     if (isMetric) dist = QString("") + QChar(0x2190) + " " + locale.toString((int)fabs(ct->distanceFromCurrentLine * 0.1));
                     else dist = QString("") + QChar(0x2190)+ " " + locale.toString((int)fabs(ct->distanceFromCurrentLine / 2.54 * 0.1));
-                    tlDisp->txtDistanceOffABLine->setStyleSheet("QLabel { color: red; }");
-                    tlDisp->txtDistanceOffABLine->setText(dist);
+                    //topline widget removed; convert to qml?
+                    //tlDisp->txtDistanceOffABLine->setStyleSheet("QLabel { color: red; }");
+                    //tlDisp->txtDistanceOffABLine->setText(dist);
                 }
 
                 //qDebug() << vehicle->guidanceLineDistanceOff;
@@ -694,20 +706,23 @@ void FormGPS::tmrWatchdog_timeout()
             } else if (ABLine->isABLineSet || ABLine->isABLineBeingSet) {
                 QString dist;
 
-                tlDisp->txtDistanceOffABLine->show();
+                //topline widget removed; convert to qml?
+                //tlDisp->txtDistanceOffABLine->show();
                 btnAutoSteer->setProperty("enabled",true);
                 if ((ABLine->distanceFromCurrentLine) < 0.0) {
                     // --->
                     if (isMetric) dist = locale.toString((int)fabs(ABLine->distanceFromCurrentLine * 0.1)) + QChar(0x21D2);
                     else dist = locale.toString((int)fabs(ABLine->distanceFromCurrentLine / 2.54 * 0.1)) + QChar(0x21D2);
-                    tlDisp->txtDistanceOffABLine->setStyleSheet("QLabel { color: green; }");
-                    tlDisp->txtDistanceOffABLine->setText(dist);
+                    //topline widget removed; convert to qml?
+                    //tlDisp->txtDistanceOffABLine->setStyleSheet("QLabel { color: green; }");
+                    //tlDisp->txtDistanceOffABLine->setText(dist);
                 } else {
                     // <----
                     if (isMetric) dist = QChar(0x21D0) + locale.toString((int)fabs(ABLine->distanceFromCurrentLine * 0.1));
                     else dist = QChar(0x21D0) + locale.toString((int)fabs(ABLine->distanceFromCurrentLine / 2.54 * 0.1));
-                    tlDisp->txtDistanceOffABLine->setStyleSheet("QLabel { color: red; }");
-                    tlDisp->txtDistanceOffABLine->setText(dist);
+                    //topline widget removed; convert to qml?
+                    //tlDisp->txtDistanceOffABLine->setStyleSheet("QLabel { color: red; }");
+                    //tlDisp->txtDistanceOffABLine->setText(dist);
                 }
 
                 if (vehicle->guidanceLineDistanceOff == 32020 || vehicle->guidanceLineDistanceOff == 32000) {
@@ -722,12 +737,14 @@ void FormGPS::tmrWatchdog_timeout()
             //AB line is not set so turn off numbers
             if (!ABLine->isABLineSet && !ABLine->isABLineBeingSet && !ct->isContourBtnOn)
             {
-                tlDisp->txtDistanceOffABLine->hide();
+                //topline widget removed; convert to qml?
+                //tlDisp->txtDistanceOffABLine->hide();
                 btnAutoSteer->setProperty("buttonText","-");
                 //btnAutoSteer->setProperty("enabled",false);
             }
         } else {
-            tlDisp->txtDistanceOffABLine->hide();
+            //topline widget removed; convert to qml?
+            //tlDisp->txtDistanceOffABLine->hide();
             btnAutoSteer->setProperty("buttonText","-");
             //btnAutoSteer->setProperty("enabled",false);
         }
@@ -744,7 +761,7 @@ void FormGPS::tmrWatchdog_timeout()
             btnDeleteFlag->setProperty("enabled",false);
         }
 
-        ui->menuBar->adjustSize();
+        //ui->menuBar->adjustSize();
     }
     //wait till timer fires again.
 }

@@ -3,7 +3,7 @@
 #include <QQmlContext>
 #include <QScreen>
 #include "formgps.h"
-#include "ui_formgps.h" //moc-generated from ui file
+//#include "ui_formgps.h" //moc-generated from ui file
 #include "qmlutil.h"
 #include <QTimer>
 #include "cnmea.h"
@@ -13,7 +13,9 @@
 #include "ccontour.h"
 #include "cabline.h"
 
-//#include <QGuiApplication>
+#include <QGuiApplication>
+#include <QQmlEngine>
+
 //#include <QtGui/private/qguiapplication_p.h>
 //#include <QtGui/qpa/qplatformintegration.h>
 
@@ -24,34 +26,19 @@
 void FormGPS::setupGui()
 {
     /* Load the QML UI and display it in the main area of the GUI */
-    ui->setupUi(this);
-
-    //set up units group
-    QActionGroup *unitsGroup = new QActionGroup(this);
-    unitsGroup->addAction(ui->actionMetric);
-    unitsGroup->addAction(ui->actionImperial);
-
-    ui->statusBar->hide();
-
-    tlDisp = new TopLineDisplay(this);
-    tlDisp->txtDistanceOffABLine->setFixedWidth(300);
-    ui->menuBar->setCornerWidget(tlDisp);
-    //tlDisp->setFixedWidth(400);
-    ui->menuBar->adjustSize();
-
-    setWindowTitle(tr("QtAgOpenGPS"));
+    setTitle(tr("QtAgOpenGPS"));
 
     //Load the QML into a view
-    qmlview = new QQuickView();
-    qmlview->rootContext()->setContextProperty("screenPixelDensity",QGuiApplication::primaryScreen()->physicalDotsPerInch() * QGuiApplication::primaryScreen()->devicePixelRatio());
-    qmlview->setSource(QUrl("qrc:/qml/MainWindow.qml"));
-    qmlview->setColor(Qt::transparent);
+    engine()->rootContext()->setContextProperty("screenPixelDensity",QGuiApplication::primaryScreen()->physicalDotsPerInch() * QGuiApplication::primaryScreen()->devicePixelRatio());
+    setSource(QUrl("qrc:/qml/MainWindow.qml"));
+    setColor(Qt::transparent);
 
     //qmlview->setClearBeforeRendering(false);
     //connect(qmlview,SIGNAL(beforeRendering()), this, SLOT(openGLControl_Draw()),Qt::DirectConnection);
     //connect(qmlview,SIGNAL(sceneGraphInitialized()), this, SLOT(openGLControl_Initialized()),Qt::DirectConnection);
     //connect(qmlview,SIGNAL(sceneGraphInvalidated()), this, SLOT(openGLControl_Shutdown()),Qt::DirectConnection);
 
+    /*
     qmlcontainer = QWidget::createWindowContainer(qmlview);
 
 
@@ -60,10 +47,10 @@ void FormGPS::setupGui()
 
     //hide the section control lookahead widget; it should still work
     ui->grnPixels->hide(); //debugging widget, shows lookahead
-
+    */
     //get pointer to root QML object, which is the OpenGLControl,
     //store in a member variable for future use.
-    qml_root = qmlview->rootObject();
+    qml_root = this->rootObject();
 
 
     //connect qml button signals to callbacks (it's not automatic with qml)
@@ -205,6 +192,10 @@ void FormGPS::setupGui()
     openGLControl->setMirrorVertically(true);
     connect(openGLControl,SIGNAL(clicked(QVariant)),this,SLOT(onGLControl_clicked(QVariant)));
 
+    //TODO: save and restore these numbers from settings
+    setWidth(1000);
+    setHeight(700);
+
     tmrWatchdog = new QTimer(this);
     connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(tmrWatchdog_timeout()));
     tmrWatchdog->start(50); //fire every 50ms.
@@ -225,7 +216,7 @@ void FormGPS::onGLControl_clicked(const QVariant &event)
     //Pass the click on to the rendering routine.
     //make the bottom left be 0,0
     mouseX = m->property("x").toInt();
-    mouseY = qmlview->height() - m->property("y").toInt();
+    mouseY = height() - m->property("y").toInt();
     leftMouseDownOnOpenGL = true;
     openGLControl->update();
 }

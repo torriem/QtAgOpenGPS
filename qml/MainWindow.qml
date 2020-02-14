@@ -33,6 +33,23 @@ Item {
         anchors.top: parent.top
     }
 
+    Rectangle {
+        id: background
+        objectName: "background"
+        anchors.top: topLine.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom:  statusBar.top
+
+        color: "black"
+        Text {
+            id: text2
+            text: qsTr("No GPS")
+            color: "white"
+            font.pointSize: 24
+            anchors.centerIn: parent
+        }
+    }
 
 
     AOGRenderer {

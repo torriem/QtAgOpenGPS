@@ -311,7 +311,9 @@ void FormGPS::openGLControl_Draw()
         //  Create the appropriate modelview matrix.
         modelview.setToIdentity();
 
-        if (ui->actionSky_On->isChecked())
+        //TODO: sky on checkbox from qml
+        //if (ui->actionSky_On->isChecked())
+        if (1)
         {
             ////draw the background when in 3D
             if (camera.camPitch < -60)
@@ -640,8 +642,8 @@ void FormGPS::openGLControlBack_Draw()
     //restore QML's context
     backFBO->bindDefault();
     glContext->doneCurrent();
-    glContext->makeCurrent(qmlview);
-    qmlview->resetOpenGLState();
+    glContext->makeCurrent(this);
+    resetOpenGLState();
 }
 
 /*

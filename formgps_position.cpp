@@ -255,7 +255,7 @@ void FormGPS::updateFixPosition()
     calculateSectionLookAhead(vehicle->toolPos.northing, vehicle->toolPos.easting, vehicle->cosSectionHeading, vehicle->sinSectionHeading);
 
     //openGLControl_Draw routine triggered manually
-    qmlview->update();
+    update();
     AOGRendererInSG *renderer = qml_root->findChild<AOGRendererInSG *>("openglcontrol");
     renderer->update();
 

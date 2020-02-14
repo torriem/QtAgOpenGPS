@@ -13,6 +13,7 @@
 #include <QSurfaceFormat>
 #include <QOpenGLFramebufferObject>
 #include <QOpenGLBuffer>
+#include <QQuickView>
 
 #include "common.h"
 
@@ -27,9 +28,6 @@
 #include "aogsettings.h"
 
 
-namespace Ui {
-class FormGPS;
-}
 //forward declare classes referred to below, to break circular
 //references in the code
 class TopLineDisplay;
@@ -46,10 +44,9 @@ class CRate;
 class CYouTurn;
 
 class QOpenGLShaderProgram;
-class QQuickView;
 class AOGRendererInSG;
 
-class FormGPS : public QMainWindow
+class FormGPS : public QQuickView
 {
     Q_OBJECT
 public:
@@ -67,7 +64,7 @@ public:
     /***************************
      * Qt and QML GUI elements *
      ***************************/
-    QQuickView *qmlview;
+    //QQuickView *qmlview;
     QWidget *qmlcontainer;
     AOGRendererInSG *openGLControl;
     QObject *btnMinMaxZoom;
@@ -416,9 +413,6 @@ public:
     void loadGLTextures();
 
 private:
-    Ui::FormGPS *ui;
-    TopLineDisplay *tlDisp;
-
     void setupGui();
 
 
