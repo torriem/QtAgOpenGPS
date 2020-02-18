@@ -58,7 +58,7 @@ SOURCES += main.cpp\
     formgps_position.cpp \
     formgps_serial.cpp \
     glutils.cpp \
-    toplinedisplay.cpp \
+#    toplinedisplay.cpp \
     aogrenderer.cpp \
     classes/cyouturn.cpp \
     classes/crate.cpp \
@@ -88,13 +88,13 @@ HEADERS  += formgps.h \
     aogsettings.h \ 
     common.h \
     glutils.h \
-    toplinedisplay.h \
+#    toplinedisplay.h \
     aogrenderer.h \
     classes/cyouturn.h \
     classes/crate.h \
     classes/csim.h
 
-FORMS    += formgps.ui
+#FORMS    += formgps.ui
 
 RESOURCES += \
     agopengps.qrc

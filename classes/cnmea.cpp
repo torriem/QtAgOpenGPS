@@ -1,6 +1,8 @@
 #include <QCoreApplication>
 #include <math.h>
 #include "cnmea.h"
+#include "formgps.h"
+
 //#include "latlong-utm.h"
 
 //$GPGGA,123519,4807.038,N,01131.000,E,1,08,0.9,545.4,M,46.9,M ,  ,*47
@@ -70,6 +72,8 @@ const double UTMScaleFactor = 0.9996;
 CNMEA::CNMEA(FormGPS *mainForm)
 {
     mf = mainForm;
+    fix = new Vec2(0,0);
+    fixOffset = new Vec2(0,0);
 }
 
 void CNMEA::parseNMEA()
@@ -397,4 +401,7 @@ void CNMEA::geoUTMConverterXY(double lat, double lon) {
     //if a field is open, the real one is subtracted from the integer
     easting = xy.x - utmEast;
     northing = xy.y - utmNorth;
+}
+void CNMEA::UpdateNorthingEasting() {
+
 }

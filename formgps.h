@@ -29,6 +29,8 @@
 #include "csim.h"
 #include "cnmea.h"
 #include "cabline.h"
+#include <QQuickView>
+
 
 namespace Ui {
 class FormGPS;
@@ -50,7 +52,7 @@ class QOpenGLShaderProgram;
 class QQuickView;
 class AOGRendererInSG;
 
-class FormGPS : public QMainWindow
+class FormGPS : public QQuickView
 {
     Q_OBJECT
 
@@ -69,10 +71,9 @@ public:
     /***************************
      * Qt and QML GUI elements *
      ***************************/
-    QQuickView *qmlview;
     QWidget *qmlcontainer;
     AOGRendererInSG *openGLControl;
-    QObject *btnMinMaxZoom;
+    QObject *btnDisplayDrag;
     QObject *btnPerimeter;
     QObject *btnAutoSteer;
     QObject *btnFlag;
@@ -86,6 +87,9 @@ public:
 
     QObject *btnZoomIn;
     QObject *btnZoomOut;
+
+    QObject *btnThreeD;
+    QObject *btnTwoD;
 
     //menu button and icon palette -- do we need to keep all of these?
     QObject *btnMenuDrawer;
@@ -293,11 +297,9 @@ public:
     //used to determine NMEA sentence frequency
     int timerPn = 1;
     double et = 0, hzTime = 0;
-
-    /*
-    double avgSpeed[10];//for average speed
-    int ringCounter = 0;
-    */
+    //youturn
+    double distancePivotToTurnLine = -2222;
+    double distanceToolToTurnLine = -2222;
 
     //IMU
     double rollDistance = 0;
@@ -394,30 +396,6 @@ public:
    /**********************
      * OpenGL.Designer.cs *
      **********************/
-    /*
-    //Simple wrapper to draw primitives using lists of Vec3 or QVector3Ds
-    //with a single color.
-    void glDrawArraysColor(QOpenGLFunctions *gl, QMatrix4x4 mvp,
-                           GLenum operation, QColor &color,
-                           QOpenGLBuffer &vertexBuffer, GLenum glType,
-                           int count,
-                           float pointSize=1.0f);
-    //Simple wrapper to draw primitives using lists of vec3s or QVector3Ds
-    //with a color per vertex. Buffer format is 7 floats per vertice:
-    //x,y,z,r,g,b,a
-    void glDrawArraysColors(QOpenGLFunctions *gl, QMatrix4x4 mvp,
-                           GLenum operation,
-                           QOpenGLBuffer &vertexBuffer, GLenum glType,
-                           int count,
-                           float pointSize=1.0f);
-
-    //Buffer format is 5 floats per vertice:
-    //x,y,z,texX,texY
-    void glDrawArraysTexture(QOpenGLFunctions *gl, QMatrix4x4 mvp,
-                             GLenum operation,
-                             QOpenGLBuffer &vertexBuffer, GLenum glType,
-                             int count);
-    */
     void drawLightBar(double Width, double Height, double offlineDistance, const QMatrix4x4 &modelview, const QMatrix4x4 &projection);
     //void calcFrustum(QOpenGLFunctions_2_1 *gl);
     //transitioning to OPenGL ES; use our own computed matrices
@@ -427,8 +405,6 @@ public:
     void loadGLTextures();
 
 private:
-    Ui::FormGPS *ui;
-    TopLineDisplay *tlDisp;
     // GPS for 5Hz
     int timerFor200ms;
 
@@ -510,8 +486,10 @@ public slots:
      *******************/
     void onGLControl_clicked(const QVariant &event);
 
-    void onBtnMinMaxZoom_clicked();
+    void onBtnDisplayDrag_clicked();
     void onBtnPerimeter_clicked();
+
+
     //void onBtnPerimeter_pressAndHeld();
     void onBtnAutoSteer_clicked();
     void onBtnFlag_clicked();
@@ -525,6 +503,9 @@ public slots:
 
     void onBtnZoomIn_clicked();
     void onBtnZoomOut_clicked();
+
+    void onBtnTwoD_clicked();
+    void onBtnThreeD_clicked();
 
     void onBtnSnap_clicked();
     void onBtnTripOdometer_clicked();

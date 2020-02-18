@@ -251,7 +251,8 @@ void FormGPS::openGLControl_Draw()
             QVector4D color(0.980f, 0.0f, 0.980f, 1.0f);
 
             double offSet = (zoomValue * zoomValue * 0.01);
-            ColorVertex boxCoords[5] = {
+            ColorVertex boxCoords[5] =
+            {
                 { QVector3D(flagPts[flagNumberPicked - 1].easting, flagPts[flagNumberPicked - 1].northing + offSet, 0), color },
                 { QVector3D(flagPts[flagNumberPicked - 1].easting - offSet, flagPts[flagNumberPicked - 1].northing, 0), color },
                 { QVector3D(flagPts[flagNumberPicked - 1].easting, flagPts[flagNumberPicked - 1].northing - offSet, 0), color },
@@ -311,7 +312,8 @@ void FormGPS::openGLControl_Draw()
         //  Create the appropriate modelview matrix.
         modelview.setToIdentity();
 
-        if (ui->actionSky_On->isChecked())
+//        if (ui->actionSky_On->isChecked())
+        if(1)
         {
             ////draw the background when in 3D
             if (camera.camPitch < -60)
@@ -640,8 +642,8 @@ void FormGPS::openGLControlBack_Draw()
     //restore QML's context
     backFBO->bindDefault();
     glContext->doneCurrent();
-    glContext->makeCurrent(qmlview);
-    qmlview->resetOpenGLState();
+    glContext->makeCurrent(this);
+    resetOpenGLState();
 }
 
 /*

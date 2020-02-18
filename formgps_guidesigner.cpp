@@ -1,4 +1,5 @@
 #include "formgps.h"
+#include "glm.h"
 
 QString FormGPS::Zone () const
 {
@@ -134,11 +135,11 @@ QString FormGPS::SpeedKPH () const
 }
 QString FormGPS::XTE () const
 {
-
+    return QString::number(crossTrackError/10) + "cm"; // Localization might be need later
 }
 QString FormGPS::inchXTE () const
 {
-    return "0";
+    return QString::number(crossTrackError/25.54) + "cm";
 }
 QString FormGPS::FixOffset () const
 {
@@ -150,17 +151,21 @@ QString FormGPS::FixOffSetInch() const
 }
 QString FormGPS::Altitude () const
 {
-    return "0";
+    return QString::number(qRound(pn->altitude));
 }
 QString FormGPS::AltitudeFeet () const
 {
-    return "0";
+    return QString::number(qRound(pn->altitude * 3.28084));
 }
 QString FormGPS::DistPivotM() const
 {
-    return "0";
+    if (distancePivotToTurnLine > 0)
+        return QString::number((int)distancePivotToTurnLine) + "m";
+    else
+        return "--";
 }
 QString FormGPS::DistPivotFt() const
 {
-    return "0";
+    if (distancePivotToTurnLine > 0) return QString::number((int)(m2ft * (distancePivotToTurnLine))) + "ft";
+    else return "--";
 }

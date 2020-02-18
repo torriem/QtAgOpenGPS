@@ -303,23 +303,6 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp) {
     glDrawArraysColors(gl, mvp,
                        GL_POINTS, abBuffer,
 		       GL_FLOAT, 2, 8.0f);
-	
-    /*
-    gl->glPointSize(8.0f);
-    gl->glBegin(GL_POINTS);
-
-    gl->glColor3f(0.5f, 0.0f, 0.0f);
-    gl->glVertex3d(refPoint1.easting, refPoint1.northing, 0.0);
-    gl->glColor3f(0.0f, 0.0f, 0.5f);
-    gl->glVertex3d(refPoint2.easting, refPoint2.northing, 0.0);
-
-    //gl.Color(0.6f, 0.95f, 0.95f);
-    //gl.Vertex(radiusPointAB.easting, radiusPointAB.northing, 0.0);
-
-    gl->glEnd();
-
-    gl->glPointSize(1.0f);
-    */
 
     if (isABLineSet)
     {
@@ -343,24 +326,6 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp) {
 		glDrawArraysColor(gl,mvp,
 		                  GL_LINES, color, abBuffer,
 						  GL_FLOAT, 2, 2.0f);
-		/*
-        gl->glLineWidth(2);
-        gl->glBegin(GL_LINES);
-        gl->glColor3f(0.9f, 0.5f, 0.7f);
-        gl->glVertex3d(refABLineP1.easting, refABLineP1.northing, 0);
-        gl->glVertex3d(refABLineP2.easting, refABLineP2.northing, 0);
-
-        gl->glEnd();
-		*/
-        //gl->glDisable(GL_LINE_STIPPLE);
-
-        //draw current AB Line
-		/*
-        gl->glLineWidth(3);
-        gl->glBegin(GL_LINES);
-        gl->glColor3f(0.9f, 0.0f, 0.0f);
-		*/
-
         //calculate if tram line is here
         if (tramPassEvery != 0)
         {

@@ -30,10 +30,27 @@ Item {
         anchors.top: parent.top
     }
 
+    Rectangle {
+        id :background
+        objectName: "background"
+        anchors.top: topLine.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom:  statusBar.top
+
+        color: "black"
+        Text {
+            id: text2
+            text: qsTr("No GPS")
+            color: "white"
+            font.pointSize: 24
+            anchors.centerIn: parent
+        }
+    }
+
     AOGRenderer {
         id: glcontrolrect
         objectName: "openglcontrol"
-
         anchors.top: topLine.bottom
         anchors.left: parent.left
         anchors.right: parent.right
@@ -77,11 +94,14 @@ Item {
                     //pseudo state
                     property bool hideMenu: true
 
-                    onHideMenuChanged: {
-                        if (hideMenu == true) {
+                    onHideMenuChanged:
+                    {
+                        if (hideMenu == true)
+                        {
                             icon="qrc:/images/ArrowRight.png"
                             iconPalette.visible = false
-                        } else {
+                        } else
+                        {
                             icon="qrc:/images/ArrowLeft.png"
                             iconPalette.visible = true
                         }
@@ -89,7 +109,7 @@ Item {
 
                     function toggle_menu()
                     {
-                        if (hideMenu == true)
+                        if (hideMenu)
                         {
                             hideMenu = false
                         } else {
@@ -99,14 +119,35 @@ Item {
 
                     onClicked: {
                         toggle_menu();
+                        btnMinMaxZoom.hideMenuDrag = true
                     }
                 }
 
-                IconButton{
-                    id: btnMinMaxZoom
-                    objectName: "btnMinMaxZoom"
+                IconButton {
+                    id: btnDisplayDrag
+                    objectName: "btnDisplayDrag"
+                    icon: "qrc:/images/DisplayDrag.png"
+                    property bool hideMenuDrag: true
 
-                    icon: "qrc:/images/Display.png"
+                    onHideMenuDragChanged: {
+                        if (hideMenuDrag){
+                            iconDragMenu.visible = false
+                        }else{
+                            iconDragMenu.visible = true
+                        }
+                    }
+
+                    function toggle_menu() {
+                        if (hideMenuDrag == true) {
+                            hideMenuDrag = false
+
+                        }else {
+                            hideMenuDrag = true
+                        }
+                    }
+                    onClicked: {
+                        toggle_menu()
+                    }
                 }
 
                 IconButtonText {
@@ -246,61 +287,8 @@ Item {
                 }
             }
 
-            Column {
-                id: tiltButtons
-                spacing: 6
-                anchors.left: leftColumn.right
-                anchors.leftMargin: 20
-                anchors.top: parent.top
-                anchors.topMargin: 20
 
-                IconButton {
-                    id: btnTiltDown
-                    objectName: "btnTiltDown"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon: "qrc:/images/TiltDown.png"
-                }
-
-                IconButton {
-                    id: btnTiltUp
-                    objectName: "btnTiltUp"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon: "qrc:/images/TiltUp.png"
-                }
-            }
-
-            Column {
-                id: zoomButtons
-                spacing: 6
-                anchors.right: rightColumn.left
-                anchors.rightMargin: 20
-                anchors.top: parent.top
-                anchors.topMargin: 20
-
-                IconButton {
-                    id: btnZoomIn
-                    objectName: "btnZoomIn"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon: "qrc:/images/ZoomIn48.png"
-                }
-
-                IconButton {
-                    id: btnZoomOut
-                    objectName: "btnZoomOut"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon: "qrc:/images/ZoomOut48.png"
-                }
-            }
-
-            IconPalette {
+            IconPaletteSlideOutMenu {
                 id: iconPalette
                 objectName: "slideoutMenu"
                 anchors.top: parent.top
@@ -315,6 +303,15 @@ Item {
                         cSimForm.visible = false
                     }
                 }
+            }
+            IconPaletteDragMenu {
+                id: iconDragMenu
+                objectName: "dragMenu"
+                anchors.top: parent.top
+                anchors.topMargin: 20
+                anchors.left: leftColumn.right
+                anchors.leftMargin: 15
+                visible: false
             }
 
             CSimForm {
@@ -563,5 +560,4 @@ Item {
             }
         }
     }
-
 }

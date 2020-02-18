@@ -7,13 +7,14 @@
 #include <QByteArray>
 #include <QBuffer>
 #include <QObject>
-#include "formgps.h"
+#include "vec2.h"
+
 
 struct XY {
     double x;
     double y;
 };
-
+class FormGPS;
 
 class CNMEA : public QObject
 {
@@ -24,6 +25,8 @@ public:
     double latitude = 0, longitude = 0;
 
     bool updatedGGA=false, updatedVTG=false, updatedRMC=false;
+    double centralMeridian, convergenceAngle;
+    QString fixForm;
 
     QByteArray rawBuffer = "";
     QList<QByteArray> words;
@@ -33,6 +36,10 @@ public:
     double northing=0, easting=0;
     double actualEasting=0, actualNorthing=0;
     double zone=0;
+
+    Vec2 *fix;
+    //used to offset the antenna position to compensate for drift
+    Vec2 *fixOffset;
 
     //other GIS Info
     double altitude, speed;
@@ -68,6 +75,7 @@ public:
     double arcLengthOfMeridian(double phi);
     XY mapLatLonToXY(double phi, double lambda, double lambda0);
     void geoUTMConverterXY(double lat, double lon);
+    void UpdateNorthingEasting();
 private:
     FormGPS *mf;
 

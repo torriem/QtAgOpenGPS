@@ -5,8 +5,8 @@ Rectangle {
     id: iconButton
     x: 0
     y: 0
-    width: 100
-    height: 100
+    width: 80
+    height: 80
     radius: 10
 
     property color color1: "#ffffff"

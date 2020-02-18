@@ -101,7 +101,11 @@ void FormGPS::updateFixPosition()
 {
     startCounter++;
     totalFixSteps = fixUpdateHz * 4;
-    if (!isGPSPositionInitialized) {  initializeFirstFewGPSPositions();   return;  }
+    if (!isGPSPositionInitialized)
+    {
+        initializeFirstFewGPSPositions();
+        return;
+    }
 
     //TILT stuff
 
@@ -255,7 +259,8 @@ void FormGPS::updateFixPosition()
     calculateSectionLookAhead(vehicle->toolPos.northing, vehicle->toolPos.easting, vehicle->cosSectionHeading, vehicle->sinSectionHeading);
 
     //openGLControl_Draw routine triggered manually
-    qmlview->update();
+
+    update();
     AOGRendererInSG *renderer = qml_root->findChild<AOGRendererInSG *>("openglcontrol");
     renderer->update();
 

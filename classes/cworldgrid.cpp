@@ -39,17 +39,21 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, Q
         SurfaceVertex field[] = {
             { QVector3D(eastingMin, northingMin, 0.0),
               QVector2D(0,0) },
+
             { QVector3D(eastingMax, northingMin, 0.0),
-              QVector2D(texZoom, 0) },
+              QVector2D(texZoomE, 0) },
+
             { QVector3D(eastingMin, northingMax, 0.0),
-              QVector2D(0,texZoom) },
+              QVector2D(0,texZoomN) },
+
             { QVector3D(eastingMax, northingMax, 0.0),
-              QVector2D(texZoom, texZoom) }
+              QVector2D(texZoomE, texZoomN) }
         };
 
         if (fieldBuffer.isCreated())
             fieldBuffer.destroy();
-   fieldBuffer.create();
+
+        fieldBuffer.create();
         fieldBuffer.bind();
         fieldBuffer.allocate(field, sizeof(SurfaceVertex) * 4);
         fieldBuffer.release();
@@ -61,7 +65,8 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, Q
 
     QColor fieldColor = QColor(settings.value("display/fieldColor", "#82781E").toString());
 
-    if (!fieldShader) {
+    if (!fieldShader)
+    {
         //have to dynamically create it because we're in a different thread now
         //than when the constructor ran. QThread will destroy it for us when
         //we're done.
@@ -110,11 +115,10 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, Q
 
 void CWorldGrid::drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, double _gridZoom)
 {
-    //QOpenGLFunctions_2_1 *gl = glContext->versionFunctions<QOpenGLFunctions_2_1>();
-    //draw easting lines and westing lines to produce a grid
     QSettings settings;
 
-    if (_gridZoom != lastGridZoom) { //use epsilon here?
+    if (_gridZoom != lastGridZoom)
+    { //use epsilon here?
         QVector<QVector3D> vertices;
         lastGridZoom = _gridZoom;
 
@@ -171,16 +175,38 @@ void CWorldGrid::createWorldGrid(double northing, double easting) {
 }
 
 
-void CWorldGrid::checkZoomWorldGrid(double northing, double easting) {
+void CWorldGrid::checkZoomWorldGrid(double northing, double easting)
+{
     //make sure the grid extends far enough away as you move along
     //just keep it growing as you continue to move in a direction - forever.
 
     //hmm, buffers are still redone a lot.
 
-    if ((northingMax - northing) < 1500) { northingMax = northing + 2000; invalidateBuffers(); }
-    if ((northing - northingMin) < 1500) { northingMin = northing - 2000; invalidateBuffers(); }
-    if ((eastingMax - easting) < 1500)  { eastingMax = easting + 2000; invalidateBuffers(); }
-    if ((easting - eastingMin) < 1500) { eastingMin = easting - 2000; invalidateBuffers(); }
+    if ((northingMax - northing) < 1500)
+    {
+        northingMax = northing + 2000;
+        texZoomN = (double)(int) ((northingMax - northingMin) / 500.0);
+        invalidateBuffers();
+
+    }
+    if ((northing - northingMin) < 1500)
+    {
+        northingMin = northing - 2000;
+        texZoomN = (double)(int) ((northingMax - northingMin) / 500.0);
+        invalidateBuffers();
+    }
+    if ((eastingMax - easting) < 1500)
+    {
+        eastingMax = easting + 2000;
+        texZoomE = (double)(int) ((eastingMax - eastingMin) / 500.0);
+        invalidateBuffers();
+    }
+    if ((easting - eastingMin) < 1500)
+    {
+        eastingMin = easting - 2000;
+        texZoomE = (double)(int) ((eastingMax - eastingMin) / 500.0);
+        invalidateBuffers();
+    }
 }
 
 void CWorldGrid::destroyGLBuffers() {

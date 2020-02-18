@@ -109,7 +109,5 @@ Rectangle {
             buttonText: qsTr("Autosteer Config")
             icon: "qrc:/images/AutoSteerConfig.png"
         }
-
-
     }
 }

@@ -3,7 +3,7 @@
 #include <QQmlContext>
 #include <QScreen>
 #include "formgps.h"
-#include "ui_formgps.h" //moc-generated from ui file
+//#include "ui_formgps.h" //moc-generated from ui file
 #include "qmlutil.h"
 #include <QTimer>
 #include "cnmea.h"
@@ -15,54 +15,25 @@
 #include <functional>
 #include <assert.h>
 #include "aogrenderer.h"
+#include <QGuiApplication>
+#include <QQmlEngine>
+
 
 void FormGPS::setupGui()
 {
-    /* Load the QML UI and display it in the main area of the GUI */
-    ui->setupUi(this);
+    setTitle("QtAgOpenGPS");
 
-    //set up units group
-    QActionGroup *unitsGroup = new QActionGroup(this);
-    unitsGroup->addAction(ui->actionMetric);
-    unitsGroup->addAction(ui->actionImperial);
-
-    ui->statusBar->hide();
-
-    tlDisp = new TopLineDisplay(this);
-    tlDisp->txtDistanceOffABLine->setFixedWidth(300);
-    ui->menuBar->setCornerWidget(tlDisp);
-    //tlDisp->setFixedWidth(400);
-    ui->menuBar->adjustSize();
-
-    setWindowTitle(tr("QtAgOpenGPS"));
-
-    //Load the QML into a view
-    qmlview = new QQuickView();
-    qmlview->rootContext()->setContextProperty("screenPixelDensity",QGuiApplication::primaryScreen()->physicalDotsPerInch() * QGuiApplication::primaryScreen()->devicePixelRatio());
-    qmlview->setSource(QUrl("qrc:/qml/MainWindow.qml"));
-    qmlview->setColor(Qt::transparent);
-
-    qmlcontainer = QWidget::createWindowContainer(qmlview);
-
-
-    //place the widget in our window's layout
-    ui->verticalLayout->addWidget(qmlcontainer);
-
-    //hide the section control lookahead widget; it should still work
-    ui->grnPixels->hide(); //debugging widget, shows lookahead
-
-    //get pointer to root QML object, which is the OpenGLControl,
-    //store in a member variable for future use.
-    qml_root = qmlview->rootObject();
-
-
+    engine()->rootContext()->setContextProperty("screenPixelDensity",QGuiApplication::primaryScreen()->physicalDotsPerInch() * QGuiApplication::primaryScreen()->devicePixelRatio());
+    setSource(QUrl("qrc:/qml/MainWindow.qml"));
+    setColor(Qt::transparent);
+    qml_root = this->rootObject();
     //connect qml button signals to callbacks (it's not automatic with qml)
     btnMenuDrawer = qmlItem(qml_root, "btnMenuDrawer");
 
-    btnMinMaxZoom = qmlItem(qml_root,"btnMinMaxZoom");
-    connect(btnMinMaxZoom,SIGNAL(clicked()),this,
+    btnDisplayDrag = qmlItem(qml_root,"btnDisplayDrag");
+    connect(btnDisplayDrag,SIGNAL(clicked()),this,
 
-            SLOT(onBtnMinMaxZoom_clicked()));
+            SLOT(onBtnDisplayDrag_clicked()));
 
     btnPerimeter = qmlItem(qml_root,"btnPerimeter");
     connect(btnPerimeter,SIGNAL(clicked()),this,
@@ -94,7 +65,6 @@ void FormGPS::setupGui()
     connect(btnSectionOffAutoOn,SIGNAL(clicked()),this,
             SLOT(onBtnSectionOffAutoOn_clicked()));
 
-
     btnTiltDown = qmlItem(qml_root,"btnTiltDown");
     connect(btnTiltDown,SIGNAL(clicked()),this,
             SLOT(onBtnTiltDown_clicked()));
@@ -110,6 +80,12 @@ void FormGPS::setupGui()
     btnZoomOut = qmlItem(qml_root,"btnZoomOut");
     connect(btnZoomOut,SIGNAL(clicked()),this,
             SLOT(onBtnZoomOut_clicked()));
+
+    btnTwoD = qmlItem(qml_root, "btnTwoD");
+    connect(btnTwoD, SIGNAL(clicked()), this, SLOT(onBtnTwoD_clicked()));
+    btnThreeD = qmlItem(qml_root, "btnThreeD");
+    connect(btnThreeD, SIGNAL(clicked()), this, SLOT(onBtnThreeD_clicked()));
+
 
     //icon palette
     btnSnap = qmlItem(qml_root,"btnSnap");
@@ -195,6 +171,9 @@ void FormGPS::setupGui()
     openGLControl->setMirrorVertically(true);
     connect(openGLControl,SIGNAL(clicked(QVariant)),this,SLOT(onGLControl_clicked(QVariant)));
 
+    setWidth(1000);
+    setHeight(700);
+
     tmrWatchdog = new QTimer(this);
     connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(tmrWatchdog_timeout()));
     tmrWatchdog->start(50); //fire every 50ms.
@@ -215,14 +194,14 @@ void FormGPS::onGLControl_clicked(const QVariant &event)
     //Pass the click on to the rendering routine.
     //make the bottom left be 0,0
     mouseX = m->property("x").toInt();
-    mouseY = qmlview->height() - m->property("y").toInt();
+    mouseY = height()- m->property("y").toInt();
     leftMouseDownOnOpenGL = true;
     openGLControl->update();
 }
 
-void FormGPS::onBtnMinMaxZoom_clicked(){
-    if (closeAllMenus()) return;
-    qDebug()<<"Min Max button clicked." ;
+void FormGPS::onBtnDisplayDrag_clicked(){
+//    if (closeAllMenus()) return;
+    qDebug()<<"Display Drag button clicked." ;
 }
 
 void FormGPS::onBtnPerimeter_clicked(){
@@ -450,7 +429,8 @@ void FormGPS::onBtnTiltUp_clicked(){
 void FormGPS::onBtnZoomIn_clicked(){
     if (closeAllMenus()) return;
     qDebug() <<"ZoomIn button clicked.";
-    if (zoomValue <= 20) {
+    if (zoomValue <= 20)
+    {
         if ((zoomValue -= zoomValue * 0.1) < 6.0) zoomValue = 6.0;
     } else {
         if ((zoomValue -= zoomValue*0.05) < 6.0) zoomValue = 6.0;
@@ -470,6 +450,20 @@ void FormGPS::onBtnZoomOut_clicked(){
         zoomValue += zoomValue*0.05;
     camera.camSetDistance = zoomValue * zoomValue * -1;
     setZoom();
+    openGLControl->update();
+}
+
+void FormGPS::onBtnTwoD_clicked()
+{
+    qDebug()<<"Button 2D clicked." ;
+    camera.camPitch = 0;
+    openGLControl->update();
+}
+
+void FormGPS::onBtnThreeD_clicked()
+{
+    qDebug()<<"Button 3D clicked." ;
+    camera.camPitch = -70;
     openGLControl->update();
 }
 
@@ -564,7 +558,8 @@ bool FormGPS::closeAllMenus()
     //and cancel the click.
     if (!btnMenuDrawer->property("hideMenu").toBool() ||
         contextArea->property("visible").toBool() ||
-        contextFlag->property("visible").toBool()) {
+        contextFlag->property("visible").toBool())
+    {
 
         btnMenuDrawer->setProperty("hideMenu",true);
         contextArea->setProperty("visible",false);

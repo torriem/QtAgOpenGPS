@@ -105,7 +105,6 @@
         <file>qml/IconButton.qml</file>
         <file>qml/SectionButton.qml</file>
         <file>qml/IconMenu.qml</file>
-        <file>qml/IconPalette.qml</file>
         <file>qml/MainWindowTest.qml</file>
         <file>images/floor.png</file>
         <file>images/Landscape.png</file>
@@ -119,5 +118,14 @@
         <file>shaders/colortex_fshader.fsh</file>
         <file>shaders/colortex_vshader.vsh</file>
         <file>qml/CSimForm.qml</file>
+        <file>images/Camera2D64.png</file>
+        <file>images/Camera3D64.png</file>
+        <file>images/Camera54.png</file>
+        <file>images/CameraNorth2D.png</file>
+        <file>images/CameraNorth64.png</file>
+        <file>images/CANLogo.png</file>
+        <file>images/DisplayDrag.png</file>
+        <file>qml/IconPaletteSlideOutMenu.qml</file>
+        <file>qml/IconPaletteDragMenu.qml</file>
     </qresource>
 </RCC>

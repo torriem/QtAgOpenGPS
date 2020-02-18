@@ -16,5 +16,5 @@ uniform highp mat4 mvpMatrix;
 void main(void)
 {
     //compute position of vertex on screen
-    gl_Position = mvpMatrix * vec4(vertex,0.1,1.0);
+    gl_Position = mvpMatrix * vec4(vertex, 0.1, 1.0);
 }
