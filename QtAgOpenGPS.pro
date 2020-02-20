@@ -64,7 +64,8 @@ SOURCES += main.cpp\
     classes/ctram.cpp \
     classes/cturnlines.cpp \
     classes/cturn.cpp \
-    classes/cboundarylines.cpp
+    classes/cboundarylines.cpp \
+    classes/cheadlines.cpp
 
 HEADERS  += formgps.h \
     classes/cabline.h \
@@ -95,7 +96,8 @@ HEADERS  += formgps.h \
     classes/ctram.h \
     classes/cturnlines.h \
     classes/cturn.h \
-    classes/cboundarylines.h
+    classes/cboundarylines.h \
+    classes/cheadlines.h
 
 RESOURCES += \
     agopengps.qrc
