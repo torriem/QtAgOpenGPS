@@ -4,547 +4,253 @@
 #include <QOpenGLFunctions>
 #include <QRgb>
 #include "aogsettings.h"
-#include "csection.h"
+#include "ccamera.h"
+#include "ctool.h"
+#include "cboundary.h"
 #include "glm.h"
 #include "glutils.h"
 
-//TODO: move these to a central location
-#define DEFAULT_TOOLWIDTH 16.0
-#define DEFAULT_TOOLOVERLAP 0.1
-#define DEFAULT_TOOLTRAILINGHITCHLENGTH -2.0
-#define DEFAULT_TANKTRAILINGHITCHLENGTH -1.5
-#define DEFAULT_TOOLOFFSET 0.0
-#define DEFAULT_ISTOOLBEHINDPIVOT true
-#define DEFAULT_ISTOOLTRAILING true
-#define DEFAULT_ISPIVOTBEHINDANTENNA true
-#define DEFAULT_ANTENNAHEIGHT 3.0
-#define DEFAULT_ANTENNAPIVOT 1.1
-#define DEFAULT_HITCHLENGTH -0.5
-#define DEFAULT_WHEELBASE 5.0
-#define DEFAULT_ISSTEERINGAXLEAHEAD true
-#define DEFAULT_LOOKAHEAD 2.0
-#define DEFAULT_TURNOFFDELAY 1.0
-#define DEFAULT_NUMSECTIONS 3
-#define DEFAULT_SLOWSPEEDCUTOFF 2.0
-#define DEFAULT_MINAPPLIED 30
-#define DEFAULT_GOALPOINTLOOKAHEAD 3.0
-#define DEFAULT_MAXANGULARVELOCITY 1.0
-#define DEFAULT_MAXSTEERINGANGLE 20.0
-
 CVehicle::CVehicle()
 {
-    AOGSettings s;
-    //from settings grab the vehicle specifics
-    toolWidth = s.value("vehicle/toolWidth", DEFAULT_TOOLWIDTH).toDouble();
-    toolOverlap = s.value("vehicle/toolOverlap", DEFAULT_TOOLOVERLAP).toDouble();
-    toolTrailingHitchLength = s.value("vehicle/toolTrailingHitchLength",
-                                      DEFAULT_TOOLTRAILINGHITCHLENGTH).toDouble();
-    tankTrailingHitchLength = s.value("vehicle/tankTrailingHitchLength",
-                                      DEFAULT_TANKTRAILINGHITCHLENGTH).toDouble();
-    toolOffset = s.value("vehicle/toolOffset",DEFAULT_TOOLOFFSET).toDouble();
+    USE_SETTINGS;
 
-    isToolBehindPivot = s.value("vehicle/isToolBehindPivot",
-                                DEFAULT_ISTOOLBEHINDPIVOT).toBool();
-    isToolTrailing = s.value("vehicle/isToolTrailing",
-                             DEFAULT_ISTOOLTRAILING).toBool();
+    isPivotBehindAntenna = SETTINGS_VEHICLE_ISPIVOTBEHINDANTENNA;
+    antennaHeight = SETTINGS_VEHICLE_ANTENNAHEIGHT;
+    antennaPivot = SETTINGS_VEHICLE_ANTENNAPIVOT;
+    antennaOffset = SETTINGS_VEHICLE_ANTENNAOFFSET;
 
-    isPivotBehindAntenna = s.value("vehicle/isPivotBehindAntenna",
-                                   DEFAULT_ISPIVOTBEHINDANTENNA).toBool();
-    antennaHeight = s.value("vehicle/antennaHeight",DEFAULT_ANTENNAHEIGHT).toDouble();
-    antennaPivot = s.value("vehicle/antennaPivot",DEFAULT_ANTENNAPIVOT).toDouble();
-    hitchLength = s.value("vehicle/hitchLength",DEFAULT_HITCHLENGTH).toDouble();
+    wheelbase = SETTINGS_VEHICLE_WHEELBASE;
+    minTurningRadius = SETTINGS_VEHICLE_MINTURNINGRADIUS;
+    isSteerAxleAhead = SETTINGS_VEHICLE_ISSTEERAXLEAHEAD;
 
-    wheelbase = s.value("vehicle/wheelbase",DEFAULT_WHEELBASE).toDouble();
-    isSteerAxleAhead = s.value("vehicle/isSteerAxleAhead",
-                               DEFAULT_ISSTEERINGAXLEAHEAD).toBool();
+    slowSpeedCutoff = SETTINGS_VEHICLE_SLOWSPEEDCUTOFF;
 
-    toolLookAhead = s.value("vehicle/lookAhead",DEFAULT_LOOKAHEAD).toDouble();
-    toolTurnOffDelay = s.value("vehicle/turnOffDelay",DEFAULT_TURNOFFDELAY).toDouble();
+    goalPointLookAheadSeconds = SETTINGS_VEHICLE_LOOKAHEAD;
+    goalPointLookAheadMinimumDistance = SETTINGS_VEHICLE_LOOKAHEADMINIMUM;
+    goalPointDistanceMultiplier = SETTINGS_VEHICLE_DISTANCEMULTIPLIER;
+    goalPointLookAheadUturnMult = SETTINGS_VEHICLE_LOOKAHEADUTURNMULT;
 
-    numOfSections = s.value("vehicle/numSections",DEFAULT_NUMSECTIONS).toInt();
-    numSuperSection = numOfSections+1;
+    isStanleyUsed = SETTINGS_VEHICLE_ISSTANLEYUSED;
+    stanleyGain = SETTINGS_VEHICLE_STANLEY_GAIN;
+    stanleyHeadingErrorGain = SETTINGS_VEHICLE_STANLEYHEADINGERRORGAIN;
 
-    slowSpeedCutoff = s.value("vehicle/slowSpeedCutoff",DEFAULT_SLOWSPEEDCUTOFF).toDouble();
-    toolMinUnappliedPixels = s.value("vehicle/minApplied",DEFAULT_MINAPPLIED).toInt();
+    maxAngularVelocity = SETTINGS_VEHICLE_MAXANGULARVELOCITY;
+    maxSteerAngle = SETTINGS_VEHICLE_MAXSTEERANGLE;
 
-    goalPointLookAhead = s.value("vehicle/goalPointLookAhead",
-                                 DEFAULT_GOALPOINTLOOKAHEAD).toDouble();
-    maxAngularVelocity = s.value("vehicle/maxAngularVelocity",
-                                 DEFAULT_MAXANGULARVELOCITY).toDouble();
-    maxSteerAngle = s.value("vehicle/maxSteerAngle",
-                            DEFAULT_MAXSTEERINGANGLE).toDouble();
+    isHydLiftOn = SETTINGS_VEHICLE_ISHYDLIFTON;
 
-    //hack to get around tight coupling for now.
-    //TODO, implement wrapper methods and pass in the
-    //variables the section methods need.
-    for (int i=0; i <= MAXSECTIONS; i++) {
-        section[i].set_vehicle(this);
-    }
+    //treeSpacing = Properties.Settings.Default.setDistance_TreeSpacing;
+    treeSpacing = 0;
 
+    vehicleType = SETTINGS_VEHICLE_VEHICLETYPE;
+
+    hydLiftLookAhead = SETTINGS_VEHICLE_HYDLIFTLOOKAHEAD;
+
+    //zero out all ten slots of avgSpeed[]
     memset(avgSpeed,0,sizeof(double)*10);
 }
 
-void CVehicle::makeBuffers()
+//called from various Classes, always needs current speed
+double CVehicle::updateGoalPointDistance(double distanceFromCurrentLine)
 {
-    //requires a valid OpenGL context
-    QSettings settings;
+    //how far should goal point be away  - speed * seconds * kmph -> m/s then limit min value
+    double goalPointDistance = mf.pn.speed * goalPointLookAheadSeconds * 0.27777777;
 
-    QVector<QVector3D> v;
-    if (buffersCurrent) return;
-
-    double trailingTank, trailingTool;
-
-    //settings doesn't change trailing hitch length if set to rigid, so do it here
-    if (isToolTrailing)
-    {
-        trailingTank = tankTrailingHitchLength;
-        trailingTool = toolTrailingHitchLength;
-    }
-    else { trailingTank = 0; trailingTool = 0; }
-
-    //there is a trailing tow between hitch
-    if (tankTrailingHitchLength < -2.0 && isToolTrailing)
-    {
-        v.clear();
-        v.append(QVector3D(0,trailingTank,0));
-        v.append(QVector3D(0,0,0));
-
-        if (trailingTankHitchBuffer.isCreated() ){
-            trailingTankHitchBuffer.destroy();
-        }
-        trailingTankHitchBuffer.create();
-        trailingTankHitchBuffer.bind();
-        trailingTankHitchBuffer.allocate(v.data(),v.count() * sizeof(QVector3D));
-        trailingTankHitchBuffer.release();
-
-        v.clear();
-        v.append(QVector3D(0,trailingTank,0));
-        if (tankDotBuffer.isCreated())
-            tankDotBuffer.destroy();
-        tankDotBuffer.create();
-        tankDotBuffer.allocate(v.data(),v.count() * sizeof(QVector3D));
-        tankDotBuffer.release();
-    }
-
-    //draw the hitch if trailing
-    if (isToolTrailing)
-    {
-        v.clear();
-        v.append(QVector3D(0,trailingTool,0));
-        v.append(QVector3D(0,0,0));
-
-        if(toolHitchBuffer.isCreated())
-            toolHitchBuffer.destroy();
-        toolHitchBuffer.create();
-        toolHitchBuffer.bind();
-        toolHitchBuffer.allocate(v.data(),v.count() * sizeof(QVector3D));
-        toolHitchBuffer.release();
-    }
-
-    //super section
-    v.clear();
-    v.append(QVector3D(section[numOfSections].positionLeft, trailingTool,0));
-    v.append(QVector3D(section[numOfSections].positionRight, trailingTool,0));
-
-    if (superSectionBuffer.isCreated())
-        superSectionBuffer.destroy();
-    superSectionBuffer.create();
-    superSectionBuffer.bind();
-    superSectionBuffer.allocate(v.data(),v.count() * sizeof(QVector3D));
-    superSectionBuffer.release();
-
-    // individual sections
-    for (int j = 0; j < numOfSections; j++)
-    {
-        v.clear();
-        v.append(QVector3D(section[j].positionLeft, trailingTool,0));
-        v.append(QVector3D(section[j].positionRight, trailingTool,0));
-
-        if (sectionBuffer[j].isCreated())
-            sectionBuffer[j].destroy();
-        sectionBuffer[j].create();
-        sectionBuffer[j].bind();
-        sectionBuffer[j].allocate(v.data(), v.count() * sizeof(QVector3D));
-        sectionBuffer[j].release();
-    }
-
-    //section dots
-    v.clear();
-    for (int j = 0; j < numOfSections - 1; j++)
-        v.append(QVector3D(section[j].positionRight, trailingTool,0));
-
-    if (sectionDotsBuffer.isCreated())
-        sectionDotsBuffer.destroy();
-    sectionDotsBuffer.create();
-    sectionDotsBuffer.bind();
-    sectionDotsBuffer.allocate(v.data(), v.count() * sizeof(QVector3D));
-    sectionDotsBuffer.release();
-
-    //draw the vehicle Body
-    ColorVertex vb[] = {
-        { QVector3D(0,0,-0.2),                QVector4D(0.9, 0.5, 0.30, 1.0) },
-        { QVector3D(1.8, -antennaPivot, 0.0), QVector4D(0.9, 0.5, 0.30, 1.0) },
-        { QVector3D(0, -antennaPivot + wheelbase, 0.0), QVector4D(0.9, 0.5, 0.30, 1.0) },
-        { QVector3D(-1.8, -antennaPivot, 0.0), QVector4D(0.20, 0.0, 0.9, 1.0) },
-        { QVector3D(1.8, -antennaPivot, 0.0),  QVector4D(0.20, 0.0, 0.9, 1.0) }
-    };
-
-    if (vehicleBodyBuffer.isCreated())
-        vehicleBodyBuffer.destroy();
-    vehicleBodyBuffer.create();
-    vehicleBodyBuffer.bind();
-    vehicleBodyBuffer.allocate(vb,5 * sizeof(ColorVertex));
-    vehicleBodyBuffer.release();
-
-    //draw the area side marker, antenna, hitch pin ,etc
-    ColorVertex m[] = {
-        //area side marker
-        { QVector3D(), QVector4D(0.95f, 0.90f, 0.0f, 1.0) },
-        //antenna
-        { QVector3D(0,0,0), QVector4D(0.0f, 0.98f, 0.0f, 1.0) },
-        //hitch pin
-        { QVector3D(0, hitchLength - antennaPivot, 0), QVector4D(0.99f, 0.0f, 0.0f, 1.0) }
-    };
-    if (settings.value("vehicle/isAreaOnRight",true).toBool())
-        m[0].vertex = QVector3D(2.0, -antennaPivot, 0);
+    if (distanceFromCurrentLine < 1.0)
+        goalPointDistance += distanceFromCurrentLine * goalPointDistance * goalPointDistanceMultiplier;
     else
-        m[0].vertex = QVector3D(-2.0, -antennaPivot, 0);
+        goalPointDistance += goalPointDistance * goalPointDistanceMultiplier;
 
-    if (pinsAndMarkersBuffer.isCreated())
-        pinsAndMarkersBuffer.destroy();
-    pinsAndMarkersBuffer.create();
-    pinsAndMarkersBuffer.bind();
-    pinsAndMarkersBuffer.allocate(m,sizeof(ColorVertex)*3);
-    pinsAndMarkersBuffer.release();
+    if (goalPointDistance < goalPointLookAheadMinimumDistance) goalPointDistance = goalPointLookAheadMinimumDistance;
 
-    //yellow pointer
-    v.clear();
-    v.append(QVector3D(1.2, -antennaPivot + wheelbase + 5, 0.0));
-    v.append(QVector3D(0, -antennaPivot + wheelbase + 10, 0.0));
-    v.append(QVector3D(-1.2, -antennaPivot + wheelbase + 5, 0.0));
+    mf.lookaheadActual = goalPointDistance;
 
-    if (pointerBuffer.isCreated())
-        pointerBuffer.destroy();
-    pointerBuffer.create();
-    pointerBuffer.bind();
-    pointerBuffer.allocate(v.data(),v.count()*sizeof(QVector3D));
-    pointerBuffer.release();
+    return goalPointDistance;
 
-    //draw the rigid hitch
-
-    v.clear();
-    v.append(QVector3D(0, hitchLength - antennaPivot, 0));
-    v.append(QVector3D(0, -antennaPivot, 0));
-
-    if (rigidHitchBuffer.isCreated())
-        rigidHitchBuffer.destroy();
-    rigidHitchBuffer.create();
-    rigidHitchBuffer.bind();
-    rigidHitchBuffer.allocate(v.data(),v.count()*sizeof(QVector3D));
-    rigidHitchBuffer.release();
-
-
-    buffersCurrent = true;
 }
 
-void CVehicle::drawVehicle(QOpenGLContext *glContext, QMatrix4x4 &modelview,
-                           const QMatrix4x4 &projection, bool drawSectionMarkers) {
-    QOpenGLFunctions *gl =glContext->functions();
-
-    QColor color;
-    makeBuffers(); //create openGL buffers if necessary.
-
-    //translate and rotate at pivot axle
-    //this will change the modelview for our caller, which is what
-    //was happening here.
-    //gl21->glTranslated(mf->fixEasting, mf->fixNorthing, 0);
-    modelview.translate(fixEasting, fixNorthing, 0);
-
-    //gl->glPushMatrix();
-    QMatrix4x4 mvTool = modelview;
-
-    //most complicated translate ever!
-    //gl->glTranslated((sin(mf->fixHeading) * (hitchLength - antennaPivot)),
-    //                (cos(mf->fixHeading) * (hitchLength - antennaPivot)), 0);
-    mvTool.translate((sin(fixHeading) * (hitchLength - antennaPivot)),
-                     (cos(fixHeading) * (hitchLength - antennaPivot)), 0);
-
-    //settings doesn't change trailing hitch length if set to rigid, so do it here
-    double trailingTank;
-    if (isToolTrailing)
-    {
-        trailingTank = tankTrailingHitchLength;
-    }
-    else { trailingTank = 0;  }
-
-    //there is a trailing tow between hitch
-    if (tankTrailingHitchLength < -2.0 && isToolTrailing)
-    {
-        //gl->glRotated(toDegrees(-mf->fixHeadingTank), 0.0, 0.0, 1.0);
-        mvTool.rotate(toDegrees(-fixHeadingTank), 0.0, 0.0, 1.0);
-
-        //draw the tank hitch
-        gl->glLineWidth(2);
-
-        //gl->glColor3f(0.7f, 0.7f, 0.97f);
-        color.setRgbF(0.7f,0.7f, 0.97f);
-        //gl->glBegin(GL_LINES);
-        //gl->glVertex3d(0, trailingTank, 0);
-        //gl->glVertex3d(0, 0, 0);
-        //gl->glEnd();
-        glDrawArraysColor(gl,projection*mvTool,
-                          GL_LINES, color,
-                          trailingTankHitchBuffer,GL_FLOAT,
-                          2);
-
-
-        //gl->glColor3f(0.95f, 0.950f, 0.0f);
-        color.setRgbF(0.95f, 0.950f, 0.0f);
-        //gl->glPointSize(6.0f);
-        //gl->glBegin(GL_POINTS);
-        //gl->glVertex3d(0, trailingTank, 0);
-        //gl->glEnd();
-        glDrawArraysColor(gl,projection*mvTool,
-                          GL_POINTS,color,
-                          tankDotBuffer, GL_FLOAT,
-                          1, 6.0f);
-
-
-
-        //move down the tank hitch, unwind, rotate to section heading
-        //gl->glTranslated(0, trailingTank, 0);
-        //gl->glRotated(toDegrees(mf->fixHeadingTank), 0.0, 0.0, 1.0);
-        //gl->glRotated(toDegrees(-mf->fixHeadingSection), 0.0, 0.0, 1.0);
-
-        mvTool.translate(0, trailingTank, 0);
-        mvTool.rotate(toDegrees(fixHeadingTank), 0.0, 0.0, 1.0);
-        mvTool.rotate(toDegrees(-fixHeadingSection), 0.0, 0.0, 1.0);
-    }
-    //no tow between hitch
-    else {
-        //gl->glRotated(toDegrees(-mf->fixHeadingSection), 0.0, 0.0, 1.0);
-        mvTool.rotate(toDegrees(-fixHeadingSection), 0.0, 0.0, 1.0);
-    }
-
-    //draw the hitch if trailing
-    if (isToolTrailing)
-    {
-        gl->glLineWidth(2);
-        //gl->glColor3f(0.7f, 0.7f, 0.97f);
-        color.setRgbF(0.7f, 0.7f, 0.97f);
-        //gl->glBegin(GL_LINES);
-        //gl->glVertex3d(0, trailingTool, 0);
-        //gl->glVertex3d(0, 0, 0);
-        //gl->glEnd();
-        glDrawArraysColor(gl,projection*mvTool,
-                          GL_LINES, color,
-                          toolHitchBuffer,GL_FLOAT,
-                          2);
-
-    }
-
-    //draw the sections
-    gl->glLineWidth(8);
-
-    //gl->glBegin(GL_LINES);
-    //draw section line.  This is the single big section
-    if (section[numOfSections].isSectionOn)
-    {
-        if (section[0].manBtnState == btnStates::Auto)
-            //gl->glColor3f(0.0f, 0.97f, 0.0f);
-            color.setRgbF(0.0f,0.97f,0.0f);
-        else
-            //gl->glColor3f(0.99, 0.99, 0);
-            color.setRgbF(0.99f, 0.99f, 0.0f);
-
-        //gl->glVertex3d(mf->section[numOfSections].positionLeft, trailingTool, 0);
-        //gl->glVertex3d(mf->section[numOfSections].positionRight, trailingTool, 0);
-        glDrawArraysColor(gl,projection*mvTool,
-                          GL_LINES,color,
-                          superSectionBuffer,GL_FLOAT,
-                          2);
-    } else {
-        for (int j = 0; j < numOfSections; j++)
-        {
-            //if section is on, green, if off, red color
-            if (section[j].isSectionOn)
-            {
-                if (section[j].manBtnState == btnStates::Auto)
-                    //gl->glColor3f(0.0f, 0.97f, 0.0f);
-                    color.setRgbF(0.0f, 0.97f, 0.0f);
-                else
-                    //gl->glColor3f(0.97, 0.97, 0);
-                    color.setRgbF(0.97f, 0.97f, 0.0f);
-            } else
-                //gl->glColor3f(0.97f, 0.2f, 0.2f);
-                color.setRgbF(0.97f, 0.2f, 0.2f);
-
-            //draw section line
-            //gl->glVertex3d(mf->section[j].positionLeft, trailingTool, 0);
-            //gl->glVertex3d(mf->section[j].positionRight, trailingTool, 0);
-            glDrawArraysColor(gl,projection*mvTool,
-                              GL_LINES,color,
-                              sectionBuffer[j],GL_FLOAT,
-                              2);
-        }
-    }
-    //gl->glEnd();
-
-
-    //draw section markers if close enough
-    if (drawSectionMarkers)
-    {
-        //gl->glColor3f(0.0f, 0.0f, 0.0f);
-        color.setRgbF(0.0f, 0.0f, 0.0f);
-
-        //section markers
-        //TODO: this needs to go in the shder
-        //gl->glPointSize(4.0f);
-
-        //gl->glBegin(GL_POINTS);
-        glDrawArraysColor(gl,projection*mvTool,
-                          GL_POINTS,color,
-                          sectionDotsBuffer,GL_FLOAT,
-                          numOfSections - 1,
-                          4.0f);
-        //gl->glEnd();
-    }
-
+void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 &mvp,
+                           CCamera &camera, CTool &tool,
+                           CBoundary &bnd)
+{
     //draw vehicle
-    //gl21->glPopMatrix();
+    mvp.rotate(glm::toDegrees(-fixHeading), 0.0, 0.0, 1.0);
 
-    //gl21->glRotated(toDegrees(-mf->fixHeading), 0.0, 0.0, 1.0);
-    modelview.rotate(toDegrees(-fixHeading), 0.0, 0.0, 1.0);
+    GLHelperColors glcolors;
+    GLHelperOneColor gldraw;
+    ColorVertex cv;
 
-    //draw the vehicle Body
-    //gl21->glColor3f(0.9, 0.5, 0.30);
-    //gl21->glBegin(GL_TRIANGLE_FAN);
-
-    //gl21->glVertex3d(0, 0, -0.2);
-    //gl21->glVertex3d(1.8, -antennaPivot, 0.0);
-    //gl21->glVertex3d(0, -antennaPivot + wheelbase, 0.0);
-    //gl21->glColor3f(0.20, 0.0, 0.9);
-    //gl21->glVertex3d(-1.8, -antennaPivot, 0.0);
-    //gl21->glVertex3d(1.8, -antennaPivot, 0.0);
-    //gl21->glEnd();
-    glDrawArraysColors(gl,projection*modelview,
-                       GL_TRIANGLE_FAN,
-                       vehicleBodyBuffer,
-                       GL_FLOAT,
-                       5); //5 vertices in body
-
-    /*
-    //draw the area side marker
-    gl21->glColor3f(0.95f, 0.90f, 0.0f);
-    gl21->glPointSize(4.0f);
-    gl21->glBegin(GL_POINTS);
-    if (mf->isAreaOnRight) gl21->glVertex3d(2.0, -antennaPivot, 0);
-    else gl21->glVertex3d(-2.0, -antennaPivot, 0);
 
     //antenna
-    gl21->glColor3f(0.0f, 0.98f, 0.0f);
-    gl21->glVertex3d(0, 0, 0);
+    cv.color = QVector4D(0.0f, 0.95f, 0.95f, 1.0f);
+    cv.vertex = QVector3D(0, antennaPivot, 0);
+    glcolors.append(cv);
 
     //hitch pin
-    gl21->glColor3f(0.99f, 0.0f, 0.0f);
-    gl21->glVertex3d(0, hitchLength - antennaPivot, 0);
+    cv.color = QVector4D(0.95f, 0.0f, 0.0f, 1.0f);
+    cv.vertex = QVector3D(0, tool.hitchLength, 0);
+    glcolors.append(cv);
 
-    ////rear Tires
-    //glPointSize(12.0f);
-    //glColor3f(0, 0, 0);
-    //glVertex3d(-1.8, 0, -antennaPivot);
-    //glVertex3d(1.8, 0, -antennaPivot);
-    gl21->glEnd();
-    */
-    //draw the area side marker, antenna, hitch pin ,etc
-    glDrawArraysColors(gl,projection*modelview,
-                       GL_POINTS,
-                       pinsAndMarkersBuffer,
-                       GL_FLOAT,
-                       3,
-                       4.0f);
+    glcolors.draw(gl,mvp, GL_POINTS, 6.0f);
 
-    //gl21->glColor3f(0.9, 0.95, 0.10);
-    //gl21->glBegin(GL_LINE_STRIP);
-    //{
-    //    gl21->glVertex3d(1.2, -antennaPivot + wheelbase + 5, 0.0);
-    //    gl21->glVertex3d(0, -antennaPivot + wheelbase + 10, 0.0);
-    //    gl21->glVertex3d(-1.2, -antennaPivot + wheelbase + 5, 0.0);
-    //}
-    //gl21->glEnd();
+    ////draw the vehicle Body
 
-    gl->glLineWidth(1);
-    color.setRgbF(0.9, 0.95, 0.10);
-    glDrawArraysColor(gl, projection * modelview,
-                      GL_LINE_STRIP, color,
-                      pointerBuffer,
-                      GL_FLOAT,
-                      3);
-
-
-
-    //draw the rigid hitch
-    //gl21->glColor3f(0.37f, 0.37f, 0.97f);
-    //gl21->glBegin(GL_LINES);
-    //gl21->glVertex3d(0, hitchLength - antennaPivot, 0);
-    //gl21->glVertex3d(0, -antennaPivot, 0);
-    //gl21->glEnd();
-    color.setRgbF(0.37f, 0.37f, 0.97f);
-    glDrawArraysColor(gl, projection * modelview,
-                      GL_LINES, color,
-                      rigidHitchBuffer,
-                      GL_FLOAT,
-                      2);
-}
-
-void CVehicle::destroyGLBuffers()
-{
-    //assume valid OpenGL context
-
-    trailingTankHitchBuffer.destroy();
-    tankDotBuffer.destroy();
-    toolHitchBuffer.destroy();
-    superSectionBuffer.destroy();
-
-    for (int j = 0; j <= MAXSECTIONS; j++)
-        sectionBuffer[j].destroy();
-
-    sectionDotsBuffer.destroy();
-    vehicleBodyBuffer.destroy();
-    pinsAndMarkersBuffer.destroy();
-    pointerBuffer.destroy();
-    rigidHitchBuffer.destroy();
-}
-
-void CVehicle::settingsChanged()
-{
-    //regenerate buffers since settings have changed.
-    buffersCurrent = false;
-}
-
-//function to calculate the width of each section and update
-void CVehicle::sectionCalcWidths()
-{
-    for (int j = 0; j < MAXSECTIONS; j++)
+    if (!mf.hd.isOn)
     {
-        section[j].sectionWidth = (section[j].positionRight - section[j].positionLeft);
-        section[j].rpSectionPosition = 200 + (int)(roundAwayFromZero(section[j].positionLeft * 10));
-        section[j].rpSectionWidth = (int)(roundAwayFromZero(section[j].sectionWidth * 10));
+        glcolors.clear();
+
+        //GL.Begin(PrimitiveType.TriangleFan);
+        cv.color = QVector4D(0.9, 0.90, 0.0,1.0f);
+        cv.vertex = QVector3D(0, antennaPivot, -0.0);
+        glcolors.append(cv);
+        cv.vertex = QVector3D(1.0, -0, 0.0);
+        glcolors.append(cv);
+        cv.color = QVector4D(0.0, 0.90, 0.92, 1.0f);
+        cv.vertex = QVector3D(0, wheelbase, 0.0);
+        glcolors.append(cv);
+        cv.color = QVector4D(0.920, 0.0, 0.9, 1.0f);
+        cv.vertex = QVector3D(-1.0, -0, 0.0);
+        glcolors.append(cv);
+        cv.vertex = QVector3D(1.0, -0, 0.0);
+        glcolors.append(cv);
+        glcolors.draw(gl,mvp,GL_TRIANGLE_FAN,1.0f);
+    }
+    else
+    {
+        if (mf.hd.isToolUp)
+        {
+            gldraw.append(QVector3D(0, antennaPivot, -0.0));
+            gldraw.append(QVector3D(1.0, -0, 0.0));
+            gldraw.append(QVector3D(0, wheelbase, 0.0));
+            gldraw.append(QVector3D(-1.0, -0, 0.0));
+            gldraw.append(QVector3D(1.0, -0, 0.0));
+            gldraw.draw(gl,mvp,QColor::fromRgbF(0.95, 0.0, 0.0),
+                        GL_TRIANGLE_FAN,1.0f);
+        }
+        else
+        {
+            gldraw.append(QVector3D(0, antennaPivot, -0.0));
+            gldraw.append(QVector3D(1.0, -0, 0.0));
+            gldraw.append(QVector3D(0, wheelbase, 0.0));
+            gldraw.append(QVector3D(-1.0, -0, 0.0));
+            gldraw.append(QVector3D(1.0, -0, 0.0));
+            gldraw.draw(gl,mvp,QColor::fromRgbF(0.0, 0.950, 0.0),
+                        GL_TRIANGLE_FAN,1.0f);
+        }
     }
 
-    //calculate tool width based on extreme right and left values
-    toolWidth = fabs(section[0].positionLeft) + fabs(section[numOfSections - 1].positionRight);
+    gl->glLineWidth(3);
+    gldraw.clear();
 
-    //left and right tool position
-    toolFarLeftPosition = section[0].positionLeft;
-    toolFarRightPosition = section[numOfSections - 1].positionRight;
+    gldraw.append(QVector3D(-1.0, 0, 0));
+    gldraw.append(QVector3D(1.0, 0, 0));
+    gldraw.append(QVector3D(0, wheelbase, 0));
 
-    //now do the full width section
-    section[numOfSections].sectionWidth = toolWidth;
-    section[numOfSections].positionLeft = toolFarLeftPosition;
-    section[numOfSections].positionRight = toolFarRightPosition;
+    gldraw.draw(gl,mvp,QColor::fromRgbF(0,0,0),GL_LINE_LOOP,3);
 
-    //find the right side pixel position
-    rpXPosition = 200 + (int)(roundAwayFromZero(toolFarLeftPosition * 10));
-    rpWidth = (int)(roundAwayFromZero(toolWidth * 10));
+    if (bnd.isBndBeingMade)
+    {
+        glcolors.clear();
+
+        gl->glLineWidth(2);
+        cv.color = QVector4D(0.0, 0.970, 0.0, 1.0);
+
+        if (bnd.isDrawRightSide)
+        {
+            cv.vertex = QVector3D(0.0, 0, 0);
+            glcolors.append(cv);
+
+            cv.color = QVector4D(0.970, 0.920, 0.0, 1.0);
+            cv.vertex = QVector3D(bnd.createBndOffset, 0, 0);
+            glcolors.append(cv);
+
+            cv.vertex = QVector3D(bnd.createBndOffset*0.75, 0.25, 0);
+            glcolors.append(cv);
+
+            glcolors.draw(gl,mvp,GL_LINE_STRIP, 2);
+        }
+
+        //draw on left side
+        else
+        {
+            cv.vertex = QVector3D(0.0, 0, 0);
+            glcolors.append(cv);
+
+            cv.color = QVector4D(0.970, 0.920, 0.0, 1.0);
+            cv.vertex = QVector3D(-bnd.createBndOffset, 0, 0);
+            glcolors.append(cv);
+
+            cv.vertex = QVector3D(-bnd.createBndOffset*0.75, 0.25, 0);
+            glcolors.append(cv);
+
+            glcolors.draw(gl,mvp,GL_LINE_STRIP, 2);
+        }
+    }
+
+    /* TODO: implement font  texture and subroutines for text
+    if (mf.curve.isBtnCurveOn && !mf.ct.isContourBtnOn)
+    {
+        GL.Color4(0.969, 0.95, 0.9510, 0.87);
+        mf.font.DrawTextVehicle(0, wheelbase, mf.curve.curveNumber.ToString(), 1.5);
+    }
+    else if (mf.ABLine.isBtnABLineOn && !mf.ct.isContourBtnOn)
+    {
+        GL.Color4(0.96, 0.95, 0.9510, 0.87);
+        mf.font.DrawTextVehicle(0, wheelbase, mf.ABLine.passNumber.ToString(), 1.5);
+    }
+    */
+
+    //draw the rigid hitch
+    gldraw.clear();
+    gldraw.append(QVector3D(0, tool.hitchLength, 0));
+    gldraw.append(QVector3D(0, 0, 0));
+    gldraw.draw(gl,mvp,QColor::fromRgbF(0.37f, 0.37f, 0.97f),
+                GL_LINES, 2);
+
+    gl->glLineWidth(1);
+
+    if (camera.camSetDistance < -1000)
+    {
+        double theta = glm::twoPI / 20;
+        double c = cos(theta);//precalculate the sine and cosine
+        double s = sin(theta);
+
+        double x = camera.camSetDistance * -.015;//we start at angle = 0
+        double y = 0;
+
+        gldraw.clear();
+        gldraw.append(QVector3D(x, y, 0.0));
+        for (int ii = 0; ii < 20; ii++)
+        {
+            //output vertex
+            gldraw.append(QVector3D(x, y, 0.0));
+
+            //apply the rotation matrix
+            double t = x;
+            x = (c * x) - (s * y);
+            y = (s * t) + (c * y);
+            // GL.Vertex3(x, y, 0.0);
+        }
+        gldraw.draw(gl,mvp,QColor::fromRgbF(0.5f, 0.5f, 0.9f, 0.20),
+                    GL_TRIANGLE_FAN, 1);
+
+        gldraw.clear();
+
+        gl->glLineWidth(1);
+
+        for (int ii = 0; ii < 20; ii++)
+        {
+            //output vertex
+            gldraw.append(QVector3D(x, y, 0.0));
+
+            //apply the rotation matrix
+            double t = x;
+            x = (c * x) - (s * y);
+            y = (s * t) + (c * y);
+            // GL.Vertex3(x, y, 0.0);
+        }
+        gldraw.draw(gl, mvp, QColor::fromRgbF(0.5f, 0.9f, 0.2f),
+                    GL_LINE_LOOP, 1);
+    }
 }
+

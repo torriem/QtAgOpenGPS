@@ -3,12 +3,17 @@
 
 #include "csection.h"
 #include "vec2.h"
+#include "vec3.h"
 #include "common.h"
 #include <QMatrix4x4>
 
 #include <QOpenGLBuffer>
 
-class QOpenGLContext;
+class QOpenGLFunctions;
+class CCamera;
+class CYouTurn;
+class CTool;
+class CBoundary;
 
 
 class CVehicle
@@ -30,38 +35,44 @@ private:
 
     void makeBuffers();
 
+
 public:
-    double toolWidth;
-    double toolFarLeftPosition = 0;
-    double toolFarLeftSpeed = 0;
-    double toolFarRightPosition = 0;
-    double toolFarRightSpeed = 0;
-
-    double toolOverlap;
-    double toolTrailingHitchLength, tankTrailingHitchLength;
-    double toolOffset;
-
-    double toolTurnOffDelay;
-    double toolLookAhead;
-
-    bool isToolTrailing;
-    bool isToolBehindPivot;
     bool isSteerAxleAhead;
-
-    //vehicle specific
     bool isPivotBehindAntenna;
-
     double antennaHeight;
     double antennaPivot;
     double wheelbase;
-    double hitchLength;
+    double minTurningRadius;
+    double antennaOffset;
+    double slowSpeedCutoff = 0;
+    int vehicleType;
+
+    //autosteer values
+    double  goalPointLookAheadSeconds, goalPointLookAheadMinimumDistance, goalPointDistanceMultiplier, goalPointLookAheadUturnMult;
+
+    bool isStanleyUsed;
+    double stanleyGain, stanleyHeadingErrorGain;
+    double minLookAheadDistance = 2.0;
+    double maxSteerAngle;
+    double maxAngularVelocity;
+    double treeSpacing;
+    double hydLiftLookAhead;
+    bool isHydLiftOn;
+
+    //autosteer values
+    double goalPointLookAhead;
+    int youTurnDistance;
+    int youTurnToolWidths;
+
+    bool youTurnUseDubins;
+
+    double youTurnTriggerDistance;
 
     //how many individual sections
     int numOfSections;
     int numSuperSection;
 
     //used for super section off on
-    int toolMinUnappliedPixels;
     bool isSuperSectionAllowedOn;
     bool areAllSectionBtnsOn = true;
 
@@ -69,13 +80,6 @@ public:
     int rpXPosition;
     int rpWidth;
 
-    //min vehicle speed allowed before turning shit off
-    double slowSpeedCutoff = 0;
-
-    //autosteer values
-    double goalPointLookAhead;
-    double maxSteerAngle;
-    double maxAngularVelocity;
 
     double avgSpeed[10];//for average speed
     int ringCounter = 0;
@@ -86,10 +90,10 @@ public:
     //storage for the cos and sin of heading
     double cosSectionHeading = 1.0, sinSectionHeading = 0.0;
     double fixHeadingSection = 0.0, fixHeadingTank = 0.0;
-    Vec2 pivotAxlePos;
-    Vec2 toolPos;
-    Vec2 tankPos;
-    Vec2 hitchPos;
+    Vec3 pivotAxlePos;
+    Vec3 toolPos;
+    Vec3 tankPos;
+    Vec3 hitchPos;
 
     //Current fix positions
     double fixEasting = 0.0;
@@ -105,7 +109,6 @@ public:
     double sectionTriggerDistance = 0, sectionTriggerStepDistance = 0;
     Vec2 prevSectionPos;
 
-    CSection section[MAXSECTIONS+1];
 
     //tally counters for display
     double totalSquareMeters = 0, totalUserSquareMeters = 0, userSquareMetersAlarm = 0;
@@ -114,13 +117,12 @@ public:
     QVector<QSharedPointer<QVector<QVector3D>>> patchSaveList;
 
     CVehicle();
-    void drawVehicle(QOpenGLContext *c, QMatrix4x4 &modelview, const QMatrix4x4 &projection, bool drawSectionMarkers = true);
-    void destroyGLBuffers();
+    double updateGoalPointDistance(double distanceFromCurrentLine);
+    void drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 &mvp, CCamera &camera, CTool &tool, CBoundary &bnd);
 
-    void sectionCalcWidths();
 
 public slots:
-    void settingsChanged(); //notify us that settings changed so buffers need to be redone.
+    //void settingsChanged(); //notify us that settings changed so buffers need to be redone.
 };
 
 #endif // CVEHICLE_H
