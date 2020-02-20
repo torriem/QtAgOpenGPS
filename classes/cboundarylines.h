@@ -25,7 +25,7 @@ public:
     void preCalcBoundaryLines();
     bool isPointInsideBoundary(Vec3 testPointv3);
     bool isPointInsideBoundary(Vec2 testPointv2);
-    void drawBoundaryLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
+    void drawBoundaryLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, QColor color);
     void calculateBoundaryArea();
 
 };

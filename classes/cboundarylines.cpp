@@ -210,7 +210,7 @@ bool CBoundaryLines::isPointInsideBoundary(Vec2 testPointv2)
     return oddNodes; //true means inside.
 }
 
-void CBoundaryLines::drawBoundaryLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
+void CBoundaryLines::drawBoundaryLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, QColor color)
 {
     ////draw the perimeter line so far
     if (bndLine.size() < 1) return;
@@ -224,7 +224,7 @@ void CBoundaryLines::drawBoundaryLine(QOpenGLFunctions *gl, const QMatrix4x4 &mv
     for (int h = 0; h < ptCount; h++)
         gldraw.append(QVector3D(bndLine[h].easting, bndLine[h].northing, 0));
 
-    gldraw.draw(gl,mvp,QColor::fromRgbF(1,1,1),
+    gldraw.draw(gl,mvp,color,
                 GL_LINES, 2.0);
 }
 
