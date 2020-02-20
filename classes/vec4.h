@@ -5,13 +5,13 @@
 class Vec4
 {
 public:
-    double x;
-    double y;
-    double z;
-    double k;
+    double easting;
+    double heading;
+    double northing;
+    int index;
 
     Vec4();
-    Vec4(double x, double y, double z, double k);
+    Vec4(double _easting, double _northing, double _heading, int _index);
     Vec4(const Vec4& src);
 };
 
