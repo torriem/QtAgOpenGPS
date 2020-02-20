@@ -12,13 +12,13 @@
 #include <QColor>
 #include "glutils.h"
 #include "ctool.h"
-#include "runstate.h"
+#include "aogsettings.h"
 
 CABLine::CABLine(CVehicle *v, CYouTurn *t)
     :vehicle(v), yt(t)
 {
-    //TODO: properties.Settings.Default.setDisplay_lineWidth
-    lineWidth = 4;
+    USE_SETTINGS;
+    lineWidth = SETTINGS_DISPLAY_LINEWIDTH;
 
 }
 
@@ -47,7 +47,7 @@ void CABLine::setABLineByPoint()
 
     //calculate the AB Heading
     abHeading = atan2(refPoint2.easting - refPoint1.easting, refPoint2.northing - refPoint1.northing);
-    if (abHeading < 0) abHeading += twoPI;
+    if (abHeading < 0) abHeading += glm::twoPI;
 
     //sin x cos z for endpoints, opposite for additional lines
     refABLineP1.easting = refPoint1.easting - (sin(abHeading) * 4000.0);
@@ -80,8 +80,8 @@ void CABLine::snapABLine()
 {
     double headingCalc;
     //calculate the heading 90 degrees to ref ABLine heading
-    if (isOnRightSideCurrentLine) headingCalc = abHeading + PIBy2;
-    else headingCalc = abHeading - PIBy2;
+    if (isOnRightSideCurrentLine) headingCalc = abHeading + glm::PIBy2;
+    else headingCalc = abHeading - glm::PIBy2;
 
     if (isABSameAsVehicleHeading)
         moveDistance += (distanceFromCurrentLine * 0.001);
@@ -102,11 +102,7 @@ void CABLine::snapABLine()
     refPoint2.northing = refABLineP2.northing;
 }
 
-void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CTool tool) {
-    //TODO: tool is an instance of CTool, pass it in?
-    //TODO: isStanley used put in vehicle? get from settings?
-    AOGSettings a;
-
+void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CTool &tool) {
     if (vehicle->isStanleyUsed) {
         //move the ABLine over based on the overlap amount set in vehicle
         double widthMinusOverlap = tool.toolWidth - tool.toolOverlap;
@@ -129,7 +125,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CTool tool) {
         distanceFromRefLine = fabs(distanceFromRefLine);
 
         //Which ABLine is the vehicle on, negative is left and positive is right side
-        howManyPathsAway = roundAwayFromZero(distanceFromRefLine / widthMinusOverlap);
+        howManyPathsAway = glm::roundAwayFromZero(distanceFromRefLine / widthMinusOverlap);
 
         //generate that pass number as signed integer
         passNumber = int(refLineSide * howManyPathsAway);
@@ -151,11 +147,11 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CTool tool) {
         }
 
         //create the new line extent points for current ABLine based on original heading of AB line
-        currentABLineP1.easting = point1.easting - (Math.Sin(abHeading) *   1600.0);
-        currentABLineP1.northing = point1.northing - (Math.Cos(abHeading) * 1600.0);
+        currentABLineP1.easting = point1.easting - (sin(abHeading) *   1600.0);
+        currentABLineP1.northing = point1.northing - (cos(abHeading) * 1600.0);
 
-        currentABLineP2.easting = point1.easting + (Math.Sin(abHeading) *   1600.0);
-        currentABLineP2.northing = point1.northing + (Math.Cos(abHeading) * 1600.0);
+        currentABLineP2.easting = point1.easting + (sin(abHeading) *   1600.0);
+        currentABLineP2.northing = point1.northing + (cos(abHeading) * 1600.0);
 
         //get the distance from currently active AB line
         //x2-x1
@@ -179,9 +175,9 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CTool tool) {
 
         //Subtract the two headings, if > 1.57 its going the opposite heading as refAB
         abFixHeadingDelta = (fabs(vehicle->fixHeading - abHeading));
-        if (abFixHeadingDelta >= M_PI) abFixHeadingDelta = fabs(abFixHeadingDelta - twoPI);
+        if (abFixHeadingDelta >= M_PI) abFixHeadingDelta = fabs(abFixHeadingDelta - glm::twoPI);
 
-        isABSameAsVehicleHeading = abFixHeadingDelta < PIBy2;
+        isABSameAsVehicleHeading = abFixHeadingDelta < glm::PIBy2;
 
         // **Stanley Point ** - calc point on ABLine closest to current steer position
         double U = (((steer.easting - currentABLineP1.easting) * dx)
@@ -209,32 +205,32 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CTool tool) {
             {
                 distanceFromCurrentLine *= -1.0;
             }
-            abFixHeadingDelta = (steer.heading - abHeading + Math.PI);
+            abFixHeadingDelta = (steer.heading - abHeading + M_PI);
         }
 
         //Fix the circular error
-        if (abFixHeadingDelta > Math.PI) abFixHeadingDelta -= Math.PI;
-        else if (abFixHeadingDelta < Math.PI) abFixHeadingDelta += Math.PI;
-n
-        if (abFixHeadingDelta > glm.PIBy2) abFixHeadingDelta -= Math.PI;
-        else if (abFixHeadingDelta < -glm.PIBy2) abFixHeadingDelta += Math.PI;
+        if (abFixHeadingDelta > M_PI) abFixHeadingDelta -= M_PI;
+        else if (abFixHeadingDelta < M_PI) abFixHeadingDelta += M_PI;
+
+        if (abFixHeadingDelta > glm::PIBy2) abFixHeadingDelta -= M_PI;
+        else if (abFixHeadingDelta < -glm::PIBy2) abFixHeadingDelta += M_PI;
 
         abFixHeadingDelta *= vehicle->stanleyHeadingErrorGain;
         if (abFixHeadingDelta > 0.4) abFixHeadingDelta = 0.4;
         if (abFixHeadingDelta < -0.4) abFixHeadingDelta = -0.4;
 
-        steerAngleAB = Math.Atan((distanceFromCurrentLine * vehicle->stanleyGain) / ((mf.pn.speed * 0.277777) + 1));
+        steerAngleAB = atan((distanceFromCurrentLine * vehicle->stanleyGain) / ((mf.pn.speed * 0.277777) + 1));
 
         if (steerAngleAB > 0.4) steerAngleAB = 0.4;
         if (steerAngleAB < -0.4) steerAngleAB = -0.4;
 
-        steerAngleAB = glm.toDegrees((steerAngleAB + abFixHeadingDelta) * -1.0);
+        steerAngleAB = glm::toDegrees((steerAngleAB + abFixHeadingDelta) * -1.0);
 
         if (steerAngleAB < -vehicle->maxSteerAngle) steerAngleAB = -vehicle->maxSteerAngle;
         if (steerAngleAB > vehicle->maxSteerAngle) steerAngleAB = vehicle->maxSteerAngle;
 
         //Convert to millimeters
-        distanceFromCurrentLine = roundAwayFromZero(distanceFromCurrentLine * 1000.0);
+        distanceFromCurrentLine = glm::roundAwayFromZero(distanceFromCurrentLine * 1000.0);
     }
     else
     {
@@ -269,7 +265,7 @@ n
         Vec2 point1;
 
         //depending which way you are going, the offset can be either side
-        if (isABSameAsFixHeading)
+        if (isABSameAsVehicleHeading)
         {
             point1 = Vec2((cos(-abHeading) * ((widthMinusOverlap * howManyPathsAway * refLineSide) - toolOffset)) + refPoint1.easting,
                           (sin(-abHeading) * ((widthMinusOverlap * howManyPathsAway * refLineSide) - toolOffset)) + refPoint1.northing);
@@ -316,7 +312,7 @@ n
 
         //Subtract the two headings, if > 1.57 its going the opposite heading as refAB
         abFixHeadingDelta = (fabs(vehicle->fixHeading - abHeading));
-        if (abFixHeadingDelta >= M_PI) abFixHeadingDelta = fabs(abFixHeadingDelta - twoPI);
+        if (abFixHeadingDelta >= M_PI) abFixHeadingDelta = fabs(abFixHeadingDelta - glm::twoPI);
 
         // ** Pure pursuit ** - calc point on ABLine closest to current position
         double U = (((pivot.easting - currentABLineP1.easting) * (dx))
@@ -327,28 +323,28 @@ n
         rEastAB = currentABLineP1.easting + (U * dx );
         rNorthAB = currentABLineP1.northing + (U * dy );
 
-        if (abFixHeadingDelta >= PIBy2)
+        if (abFixHeadingDelta >= glm::PIBy2)
         {
-            isABSameAsFixHeading = false;
+            isABSameAsVehicleHeading = false;
             goalPointAB.easting = rEastAB - (sin(abHeading) * goalPointDistance);
             goalPointAB.northing = rNorthAB - (cos(abHeading) * goalPointDistance);
         }
         else
         {
-            isABSameAsFixHeading = true;
+            isABSameAsVehicleHeading = true;
             goalPointAB.easting = rEastAB + (sin(abHeading) * goalPointDistance);
             goalPointAB.northing = rNorthAB + (cos(abHeading) * goalPointDistance);
         }
 
         //calc "D" the distance from pivot axle to lookahead point
-        double goalPointDistanceDSquared = CNMEA::distanceSquared(goalPointAB.northing, goalPointAB.easting, pivot.northing, pivot.easting);
+        double goalPointDistanceDSquared = glm::distanceSquared(goalPointAB.northing, goalPointAB.easting, pivot.northing, pivot.easting);
 
         //calculate the the new x in local coordinates and steering angle degrees based on wheelbase
-        double localHeading = twoPI - vehicle->fixHeading;
+        double localHeading = glm::twoPI - vehicle->fixHeading;
         ppRadiusAB = goalPointDistanceDSquared / (2 * (((goalPointAB.easting - pivot.easting) * cos(localHeading)) +
                                                        ((goalPointAB.northing - pivot.northing) * sin(localHeading))));
 
-        steerAngleAB = toDegrees(atan( 2 * (((goalPointAB.easting - pivot.easting) * cos(localHeading))
+        steerAngleAB = glm::toDegrees(atan( 2 * (((goalPointAB.easting - pivot.easting) * cos(localHeading))
                                             + ((goalPointAB.northing - pivot.northing) * sin(localHeading)))
                                        * vehicle->wheelbase / goalPointDistanceDSquared)) ;
         if (steerAngleAB < -vehicle->maxSteerAngle) steerAngleAB = -vehicle->maxSteerAngle;
@@ -362,20 +358,20 @@ n
         radiusPointAB.northing = pivot.northing + (ppRadiusAB * sin(localHeading));
 
         //Convert to millimeters
-        distanceFromCurrentLine = roundAwayFromZero(distanceFromCurrentLine * 1000.0);
+        distanceFromCurrentLine = glm::roundAwayFromZero(distanceFromCurrentLine * 1000.0);
 
         //angular velocity in rads/sec  = 2PI * m/sec * radians/meters
-        angVel = twoPI * 0.277777 * vehicle->speed * (tan(toRadians(steerAngleAB)))/vehicle->wheelbase;
+        angVel = glm::twoPI * 0.277777 * vehicle->speed * (tan(glm::toRadians(steerAngleAB)))/vehicle->wheelbase;
 
         //clamp the steering angle to not exceed safe angular velocity
         if (fabs(angVel) > vehicle->maxAngularVelocity)
         {
-            steerAngleAB = toDegrees(steerAngleAB > 0 ? (atan((vehicle->wheelbase * vehicle->maxAngularVelocity) / (twoPI * vehicle->speed * 0.277777)))
-                : (atan((vehicle->wheelbase * -vehicle->maxAngularVelocity) / (twoPI * vehicle->speed * 0.277777))));
+            steerAngleAB = glm::toDegrees(steerAngleAB > 0 ? (atan((vehicle->wheelbase * vehicle->maxAngularVelocity) / (glm::twoPI * vehicle->speed * 0.277777)))
+                : (atan((vehicle->wheelbase * -vehicle->maxAngularVelocity) / (glm::twoPI * vehicle->speed * 0.277777))));
         }
 
         //distance is negative if on left, positive if on right
-        if (isABSameAsFixHeading)
+        if (isABSameAsVehicleHeading)
         {
             if (!isOnRightSideCurrentLine) distanceFromCurrentLine *= -1.0;
         }
@@ -388,7 +384,7 @@ n
 
         //TODO: make these emitted with a signal?
         vehicle->guidanceLineDistanceOff = int(distanceFromCurrentLine);
-        vehicle->guidanceLineSteerAngle = int(steerAngleAB * 10);
+        vehicle->guidanceLineSteerAngle = int(steerAngleAB * 100);
 
         if(yt->isYouTurnTriggered) {
             //do the pure pursuit from youTurn
@@ -508,7 +504,7 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp) {
                 abBuffer.destroy();
             abBuffer.create();
             abBuffer.bind();
-            abBuffer.allocate(verticies, vertices.length() * sizeof(QVector3D));
+            abBuffer.allocate(vertices.data(), vertices.length() * sizeof(QVector3D));
             abBuffer.release();
 
             color = QColor::fromRgbF(0.56f, 0.65f, 0.65f, 1.0f);
@@ -519,8 +515,8 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp) {
     }
     if(isEditing) {
         double toolWidth2 = tool.toolWidth - tool.toolOverlap;
-        double cosHeading2 = Math.Cos(-mf.ABLine.abHeading);
-        double sinHeading2 = Math.Sin(-mf.ABLine.abHeading);
+        double cosHeading2 = cos(-mf.ABLine.abHeading);
+        double sinHeading2 = sin(-mf.ABLine.abHeading);
 
         if (mf.camera.camSetDistance > -200)
         {
@@ -538,7 +534,7 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp) {
                 abBuffer.destroy();
             abBuffer.create();
             abBuffer.bind();
-            abBuffer.allocate(verticies, vertices.length() * sizeof(QVector3D));
+            abBuffer.allocate(vertices.data(), vertices.length() * sizeof(QVector3D));
             abBuffer.release();
 
             color = QColor::fromRgbF(0.9630f, 0.2f, 0.2f, 1.0f);
@@ -551,7 +547,7 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp) {
 
     }
 
-    if (mf.isPureDisplayOn && !mf.isStanleyUsed) {
+    if (mf.isPureDisplayOn && !vehicle->isStanleyUsed) {
         //Draw lookahead Point
         abline[0] = QVector3D( goalPointAB.easting, goalPointAB.northing, 0.0 );
 
@@ -577,7 +573,7 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp) {
         int ptCount = yt->youFileList.length();
         if (ptCount > 1)
         {
-            QVector<QVector3d> points;
+            QVector<QVector3D> points;
             for (int i = 1; i < ptCount; i++)
             {
                 points.append(QVector3D(mf.yt.youFileList[i].easting + mf.yt.youFileList[0].easting, mf.yt.youFileList[i].northing + mf.yt.youFileList[0].northing, 0));
@@ -588,7 +584,7 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp) {
                 abBuffer.destroy();
             abBuffer.create();
             abBuffer.bind();
-            abBuffer.allocate(points, points.length() * sizeof(QVector3D));
+            abBuffer.allocate(points.data(), points.length() * sizeof(QVector3D));
             abBuffer.release();
 
             color = QColor::fromRgbF(0.05f, 0.05f, 0.95f, 1.0f);
@@ -613,18 +609,18 @@ void CABLine::drawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
     QVector<QVector3D> vertices;
     QOpenGLBuffer tramBuffer;
 
-    for (int i = 0; i < tramList.Count; i++)
+    for (int i = 0; i < tramList.size(); i++)
     {
         vertices.clear();
-        for (int h = 0; h < tramList[i].Count; h++)
+        for (int h = 0; h < tramList[i].size(); h++)
             vertices.append(QVector3D(tramList[i][h].easting, tramList[i][h].northing, 0));
 
         if (tramBuffer.isCreated())
             tramBuffer.destroy();
         tramBuffer.create();
         tramBuffer.bind();
-        tramBuffer.allocate(vertices, vertices.length() * sizeof(QVector3D));
-        abBuffer.release();
+        tramBuffer.allocate(vertices.data(), vertices.length() * sizeof(QVector3D));
+        tramBuffer.release();
 
         color = QColor::fromRgbF(0.8630f, 0.93692f, 0.3260f, 0.22f);
         glDrawArraysColor(gl, mvp,
@@ -638,11 +634,10 @@ void CABLine::drawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
         //TODO: not implemented yet
         qDebug() << "Font rendering not implemented yet.";
 
-        for (int i = 0; i < tramList.Count; i++)
+        for (int i = 0; i < tramList.size(); i++)
         {
             int middle = 0;
-            /*
-            GL.Color4(0.8630f, 0.93692f, 0.8260f, 0.752);
+            //GL.Color4(0.8630f, 0.93692f, 0.8260f, 0.752);
             if (tramList[i].Count > 1)
             {
                 middle = tramList[i].Count - 1;
@@ -650,7 +645,6 @@ void CABLine::drawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
                 mf.font.DrawText3D(tramList[i][0].easting, tramList[i][0].northing, (i + 1).ToString());
 
             }
-            */
         }
     }
 }

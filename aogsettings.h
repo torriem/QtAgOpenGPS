@@ -127,5 +127,9 @@ public:
 #define SETTINGS_VEHICLE_NAME			settings.   value("vehicle/name", "unnamed").toQString()
 #define SETTINGS_SET_VEHICLE_NAME(VAL)	settings.setValue("vehicle/name",VAL)
 
+//CABLINE
+#define SETTINGS_DISPLAY_LINEWIDTH			settings.   value("display/lineWidth", 2).toInt()
+#define SETTINGS_SET_DISPLAY_LINEWIDTH(VAL)	settings.setValue("display/lineWidth",VAL)
+
 #endif // AOGSETTINGS_H
 
