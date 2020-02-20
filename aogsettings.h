@@ -135,5 +135,23 @@ public:
 #define SETTINGS_DISPLAY_ISFONTON			settings.   value("display/isFontOn", true).toBool()
 #define SETTINGS_SET_DISPLAY_ISFONTON(VAL)	settings.setValue("display/isFontOn",VAL)
 
+//CYOUTURN
+#define SETTINGS_VEHICLE_YOUTURNTRIGGERDISTANCE			settings.   value("vehicle/youTriggerDistance", 8).toDouble()
+#define SETTINGS_SET_VEHICLE_YOUTURNTRIGGERDISTANCE(VAL)	settings.setValue("vehicle/youTriggerDistance",VAL)
+
+#define SETTINGS_VEHICLE_GEOFENCEDIST			settings.   value("vehicle/geoFenceDistance", 0).toDouble()
+#define SETTINGS_SET_VEHICLE_GEOFENCEDIST(VAL)	settings.setValue("vehicle/geoFenceDistance",VAL)
+
+#define SETTINGS_VEHICLE_YOUTURNDISTANCE			settings.   value("vehicle/youTurnDistance", 5).toDouble()
+#define SETTINGS_SET_VEHICLE_YOUTURNDISTANCE(VAL)	settings.setValue("vehicleyouTurnDistance",VAL)
+
+#define SETTINGS_VEHICLE_YOUSKIPWIDTH			settings.   value("vehicle/youSkipWidth", 1).toInt()
+#define SETTINGS_SET_VEHICLE_YOUSKIPWIDTH(VAL)	settings.setValue("vehicle/youSkipWidth",VAL)
+
+#define SETTINGS_VEHICLE_ISUSINGDUBINSTURN			settings.   value("vehicle/isUsingDubins", true).toBool()
+#define SETTINGS_SET_VEHICLE_ISUSINGDUBINSTURN(VAL)	settings.setValue("vehicle/isUsingDubins",VAL)
+
+
+
 #endif // AOGSETTINGS_H
 
