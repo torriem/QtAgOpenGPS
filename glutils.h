@@ -50,4 +50,19 @@ void glDrawArraysTexture(QOpenGLFunctions *gl, QMatrix4x4 mvp,
                          int count);
 //draw arrays
 
+
+class GLHelperOneColor: public QVector<QVector3D>
+{
+public:
+    GLHelperOneColor();
+    void draw(QOpenGLFunctions *gl, QMatrix4x4 mvp, QColor color, GLenum operation, float point_size);
+};
+
+class GLHelperColors: public QVector<ColorVertex>
+{
+public:
+    GLHelperColors();
+    void draw(QOpenGLFunctions *gl, QMatrix4x4 mvp, GLenum operation, float point_size);
+};
+
 #endif // GLUTILS_H

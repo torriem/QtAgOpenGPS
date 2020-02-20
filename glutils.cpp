@@ -189,3 +189,39 @@ void glDrawArraysTexture(QOpenGLFunctions *gl,
     //release shader
     texShader->release();
 }
+
+GLHelperOneColor::GLHelperOneColor() {
+}
+
+void GLHelperOneColor::draw(QOpenGLFunctions *gl, QMatrix4x4 mvp, QColor color, GLenum operation, float point_size) {
+    QOpenGLBuffer vertexBuffer;
+
+    vertexBuffer.create();
+    vertexBuffer.bind();
+    vertexBuffer.allocate(this, size()*sizeof(QVector3D));
+    vertexBuffer.release();
+
+
+    glDrawArraysColor(gl, mvp,operation,
+                      color, vertexBuffer, GL_FLOAT,
+                      size(),point_size);
+
+}
+
+GLHelperColors::GLHelperColors() {
+}
+
+void GLHelperColors::draw(QOpenGLFunctions *gl, QMatrix4x4 mvp, GLenum operation, float point_size) {
+    QOpenGLBuffer vertexBuffer;
+
+    vertexBuffer.create();
+    vertexBuffer.bind();
+    vertexBuffer.allocate(this, size()*sizeof(ColorVertex));
+    vertexBuffer.release();
+
+
+    glDrawArraysColors(gl, mvp,operation,
+                       vertexBuffer, GL_FLOAT,
+                       size(),point_size);
+
+}
