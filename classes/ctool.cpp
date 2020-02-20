@@ -29,6 +29,13 @@ CTool::CTool()
     numSuperSection = numOfSections + 1;
 
     toolMinUnappliedPixels = SETTINGS_TOOLMINAPPLIED;
+
+    //hack to get around tight coupling for now.
+    //TODO, implement wrapper methods and pass in the
+    //variables the section methods need.
+    //for (int i=0; i <= MAXSECTIONS; i++) {
+    //    section[i].set_vehicle(vehicle);
+    //}
 }
 
 void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 &mvp)
@@ -95,16 +102,16 @@ void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix
     QColor color;
 
     //draw section line
-    if (v.section[numOfSections].isSectionOn)
+    if (section[numOfSections].isSectionOn)
     {
         ColorVertex cv;
-        if (v.section[0].manBtnState == btnStates::Auto) cv.color=QVector4D(0.0f, 0.97f, 0.0f, 1.0);
+        if (section[0].manBtnState == btnStates::Auto) cv.color=QVector4D(0.0f, 0.97f, 0.0f, 1.0);
         else cv.color = QVector4D(0.99, 0.99, 0, 1.0);
 
-        cv.vertex = QVector3D( v.section[numOfSections].positionLeft, trailingTool, 0);
+        cv.vertex = QVector3D( section[numOfSections].positionLeft, trailingTool, 0);
         gldrawcolors.append(cv);
 
-        cv.vertex = QVector3D( v.section[numOfSections].positionRight, trailingTool, 0);
+        cv.vertex = QVector3D( section[numOfSections].positionRight, trailingTool, 0);
         gldrawcolors.append(cv);
     }
     else
@@ -114,9 +121,9 @@ void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix
             ColorVertex cv;
 
             //if section is on, green, if off, red color
-            if (v.section[j].isSectionOn)
+            if (section[j].isSectionOn)
             {
-                if (v.section[j].manBtnState == btnStates::Auto) cv.color = QVector4D(0.0f, 0.97f, 0.0f, 1.0f);
+                if (section[j].manBtnState == btnStates::Auto) cv.color = QVector4D(0.0f, 0.97f, 0.0f, 1.0f);
                 else cv.color = QVector4D(0.97, 0.97, 0, 1.0f);
             }
             else
@@ -125,9 +132,9 @@ void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix
             }
 
             //draw section line
-            cv.vertex = QVector3D(v.section[j].positionLeft, trailingTool, 0);
+            cv.vertex = QVector3D(section[j].positionLeft, trailingTool, 0);
             gldrawcolors.append(cv);
-            cv.vertex = QVector3D(v.section[j].positionRight, trailingTool, 0);
+            cv.vertex = QVector3D(section[j].positionRight, trailingTool, 0);
             gldrawcolors.append(cv);
         }
     }
@@ -140,7 +147,7 @@ void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix
         gldraw.clear();
         //section markers
         for (int j = 0; j < numOfSections - 1; j++)
-            gldraw.append(QVector3D(v.section[j].positionRight, trailingTool, 0));
+            gldraw.append(QVector3D(section[j].positionRight, trailingTool, 0));
 
         gldraw.draw(gl,mvp1,QColor::fromRgbF(0,0,0),GL_POINTS,3.0f);
     }
@@ -148,3 +155,29 @@ void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix
     //GL.PopMatrix();
 }
 
+//function to calculate the width of each section and update
+void CTool::sectionCalcWidths()
+{
+    for (int j = 0; j < MAXSECTIONS; j++)
+    {
+        section[j].sectionWidth = (section[j].positionRight - section[j].positionLeft);
+        section[j].rpSectionPosition = 200 + (int)(glm::roundAwayFromZero(section[j].positionLeft * 10));
+        section[j].rpSectionWidth = (int)(glm::roundAwayFromZero(section[j].sectionWidth * 10));
+    }
+
+    //calculate tool width based on extreme right and left values
+    toolWidth = fabs(section[0].positionLeft) + fabs(section[numOfSections - 1].positionRight);
+
+    //left and right tool position
+    toolFarLeftPosition = section[0].positionLeft;
+    toolFarRightPosition = section[numOfSections - 1].positionRight;
+
+    //now do the full width section
+    section[numOfSections].sectionWidth = toolWidth;
+    section[numOfSections].positionLeft = toolFarLeftPosition;
+    section[numOfSections].positionRight = toolFarRightPosition;
+
+    //find the right side pixel position
+    rpXPosition = 200 + (int)(glm::roundAwayFromZero(toolFarLeftPosition * 10));
+    rpWidth = (int)(glm::roundAwayFromZero(toolWidth * 10));
+}

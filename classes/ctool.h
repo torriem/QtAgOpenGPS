@@ -2,6 +2,8 @@
 #define CTOOL_H
 
 #include <QString>
+#include "csection.h"
+#include "common.h"
 
 class QOpenGLFunctions;
 class QMatrix4x4;
@@ -46,6 +48,9 @@ public:
     //read pixel values
     int rpXPosition;
     int rpWidth;
+
+    CSection section[MAXSECTIONS+1];
+    void sectionCalcWidths();
 
     CTool();
     void drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 &mvp);
