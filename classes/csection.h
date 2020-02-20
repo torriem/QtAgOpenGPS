@@ -8,13 +8,11 @@
 
 typedef QVector<QVector3D> TriangleList;
 
-class FormGPS;
 class CVehicle;
 
 class CSection
 {
 private:
-    FormGPS *mf;
     CVehicle *vehicle;
 
 public:
@@ -72,11 +70,9 @@ public:
 
     CSection();
 
-    void set_vehicle(CVehicle *v);
-
-    void turnSectionOn();
-    void turnSectionOff();
-    void addPathPoint(double northing, double easting,
+    void turnSectionOn(const CVehicle &vehicle );
+    void turnSectionOff(CVehicle &vehicle );
+    void addPathPoint(CVehicle &vehicle, double northing, double easting,
                       double cosHeading, double sinHeading);
 
 };

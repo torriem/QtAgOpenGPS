@@ -8,12 +8,7 @@ CSection::CSection()
     triangleList = QSharedPointer<TriangleList>( new TriangleList);
 }
 
-void CSection::set_vehicle(CVehicle *v)
-{
-    vehicle = v;
-}
-
-void CSection::turnSectionOn() {
+void CSection::turnSectionOn(const CVehicle &vehicle) {
     numTriangles = 0;
 
     //do not tally square meters on inital point, that would be silly
@@ -30,31 +25,31 @@ void CSection::turnSectionOn() {
         patchList.append(triangleList);
 
         //left side of triangle
-        triangleList->append(QVector3D((vehicle->cosSectionHeading * positionLeft) + vehicle->toolPos.easting,
-                                       (vehicle->sinSectionHeading * positionLeft) + vehicle->toolPos.northing, 0));
+        triangleList->append(QVector3D((vehicle.cosSectionHeading * positionLeft) + vehicle.toolPos.easting,
+                                       (vehicle.sinSectionHeading * positionLeft) + vehicle.toolPos.northing, 0));
 
         //Right side of triangle
-        triangleList->append(QVector3D((vehicle->cosSectionHeading * positionRight) + vehicle->toolPos.easting,
-                                       (vehicle->sinSectionHeading * positionRight) + vehicle->toolPos.northing, 0));
+        triangleList->append(QVector3D((vehicle.cosSectionHeading * positionRight) + vehicle.toolPos.easting,
+                                       (vehicle.sinSectionHeading * positionRight) + vehicle.toolPos.northing, 0));
     }
 }
 
-void CSection::turnSectionOff() {
+void CSection::turnSectionOff(CVehicle &vehicle) {
     //qDebug() << "section turned off";
-    addPathPoint(vehicle->toolPos.northing, vehicle->toolPos.easting, vehicle->cosSectionHeading, vehicle->sinSectionHeading);
+    addPathPoint(vehicle, vehicle.toolPos.northing, vehicle.toolPos.easting, vehicle.cosSectionHeading, vehicle.sinSectionHeading);
 
     isSectionOn = false;
     numTriangles = 0;
 
     //save the triangle list in a patch list to add to saving file
-    vehicle->patchSaveList.append(triangleList);
+    vehicle.patchSaveList.append(triangleList);
 }
 
 
 //every time a new fix, a new patch point from last point to this point
 //only need prev point on the first points of triangle strip that makes a box (2 triangles)
 
-void CSection::addPathPoint(double northing, double easting, double cosHeading, double sinHeading)
+void CSection::addPathPoint(CVehicle &vehicle, double northing, double easting, double cosHeading, double sinHeading)
 {
     //add two triangles for next step.
     //left side and add the point to List
@@ -90,8 +85,8 @@ void CSection::addPathPoint(double northing, double easting, double cosHeading, 
                           ((*triangleList)[c - 2].x() * ((*triangleList)[c].y() - (*triangleList)[c - 1].y()));
 
             temp = fabs(temp / 2.0);
-            vehicle->totalSquareMeters += temp;
-            vehicle->totalUserSquareMeters += temp;
+            vehicle.totalSquareMeters += temp;
+            vehicle.totalUserSquareMeters += temp;
 
             //temp = 0;
             temp = ((*triangleList)[c - 1].x() * ((*triangleList)[c - 2].y() - (*triangleList)[c - 3].y())) +
@@ -99,8 +94,8 @@ void CSection::addPathPoint(double northing, double easting, double cosHeading, 
                    ((*triangleList)[c - 3].x() * ((*triangleList)[c - 1].y() - (*triangleList)[c - 2].y()));
 
             temp = fabs(temp / 2.0);
-            vehicle->totalSquareMeters += temp;
-            vehicle->totalUserSquareMeters += temp;
+            vehicle.totalSquareMeters += temp;
+            vehicle.totalUserSquareMeters += temp;
         }
     }
 
@@ -109,7 +104,7 @@ void CSection::addPathPoint(double northing, double easting, double cosHeading, 
         numTriangles = 0;
 
         //save the cutoff patch to be saved later
-        vehicle->patchSaveList.append(triangleList);
+        vehicle.patchSaveList.append(triangleList);
 
         triangleList = QSharedPointer<TriangleList>( new TriangleList);
         patchList.append(triangleList);
