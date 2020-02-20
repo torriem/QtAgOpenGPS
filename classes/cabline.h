@@ -1,6 +1,7 @@
 #ifndef CABLINE_H
 #define CABLINE_H
 
+#include <QObject>
 #include <QVector>
 #include "vec2.h"
 #include "vec3.h"
@@ -13,6 +14,7 @@ class CYouTurn;
 class CTool;
 class CNMEA;
 class CTram;
+class CCamera;
 
 class CABLines
 {
@@ -26,6 +28,7 @@ public:
 
 class CABLine
 {
+    Q_OBJECT
 private:
 
 public:
@@ -79,31 +82,28 @@ public:
     //Color tramColor = Color.YellowGreen;
     int tramPassEvery = 0;
 
-    CVehicle *vehicle;
-    CYouTurn *yt;
-
-
 private:
     //pointers to mainform controls
     //OpenGL gl;
 
 
 public:
-    CABLine(CVehicle *v, CYouTurn *t);
+    CABLine();
     void deleteAB();
-    void setABLineByPoint();
+    void setABLineByBPoint(const CVehicle &vehicle);
     void setABLineByHeading(); //do we need to pass in heading somewhere from the main form?
     void snapABLine();
-    void getCurrentABLine(Vec3 pivot, Vec3 steer, CTool &tool, double speed);
-
-    void drawABLines(QOpenGLFunctions *g, const QMatrix4x4 &mvp, CTram &tram);
+    void getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTurn &yt, const CTool &tool, double speed);
+    void drawABLines(QOpenGLFunctions *g, const QMatrix4x4 &mvp, const CVehicle &vehicle, const CTool &tool, CYouTurn &yt, CTram &tram, const CCamera &camera, bool isSideGuideLines);
     void drawTram(QOpenGLFunctions *g, const QMatrix4x4 &mvp);
     void buildTram();
     void moveABLine(double dist);
-
-
-
     void resetABLine();
+
+signals:
+    void newLookAhead(double);
+    void doSequence();
+
 };
 
 #endif // CABLINE_H

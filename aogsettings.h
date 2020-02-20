@@ -151,6 +151,9 @@ public:
 #define SETTINGS_VEHICLE_ISUSINGDUBINSTURN			settings.   value("vehicle/isUsingDubins", true).toBool()
 #define SETTINGS_SET_VEHICLE_ISUSINGDUBINSTURN(VAL)	settings.setValue("vehicle/isUsingDubins",VAL)
 
+//DISPLAY/GUI/MENU
+#define SETTINGS_DISPLAY_ISPUREON			settings.   value("display/isPureOn", true).toBool()
+#define SETTINGS_SET_DISPLAY_ISPUREON(VAL)	settings.setValue("display/isPureOn",VAL)
 
 
 #endif // AOGSETTINGS_H
