@@ -55,7 +55,7 @@ void destroyShaders() {
 void glDrawArraysColor(QOpenGLFunctions *gl,
                        QMatrix4x4 mvp,
                        GLenum operation,
-                       QColor &color,
+                       QColor color,
                        QOpenGLBuffer &vertexBuffer,
                        GLenum GL_type,
                        int count,

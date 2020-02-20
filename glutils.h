@@ -29,7 +29,7 @@ void destroyShaders();
 //Simple wrapper to draw primitives using lists of Vec3 or QVector3Ds
 //with a single color.
 void glDrawArraysColor(QOpenGLFunctions *gl, QMatrix4x4 mvp,
-                       GLenum operation, QColor &color,
+                       GLenum operation, QColor color,
                        QOpenGLBuffer &vertexBuffer, GLenum glType,
                        int count,
                        float pointSize=1.0f);
