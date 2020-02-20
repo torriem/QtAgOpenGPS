@@ -3,7 +3,7 @@
 #include "glm.h"
 #include "cvehicle.h"
 #include "cyouturn.h"
-#include "cnmea.h"
+#include "ctram.h"
 #include "aogsettings.h"
 
 //#include <QtOpenGL>
@@ -13,6 +13,11 @@
 #include "glutils.h"
 #include "ctool.h"
 #include "aogsettings.h"
+
+//??? why does CABLine refer to mf.ABLine? Isn't there only one instance and
+//thus was can just use "this."  If this is wrong, we'll remove this and fix it.
+#define mf_ABLine (*this)
+//#define mf_ABLine mf.ABLine //original
 
 CABLine::CABLine(CVehicle *v, CYouTurn *t)
     :vehicle(v), yt(t)
@@ -102,7 +107,7 @@ void CABLine::snapABLine()
     refPoint2.northing = refABLineP2.northing;
 }
 
-void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CTool &tool) {
+void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CTool &tool, double speed) {
     if (vehicle->isStanleyUsed) {
         //move the ABLine over based on the overlap amount set in vehicle
         double widthMinusOverlap = tool.toolWidth - tool.toolOverlap;
@@ -219,7 +224,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CTool &tool) {
         if (abFixHeadingDelta > 0.4) abFixHeadingDelta = 0.4;
         if (abFixHeadingDelta < -0.4) abFixHeadingDelta = -0.4;
 
-        steerAngleAB = atan((distanceFromCurrentLine * vehicle->stanleyGain) / ((mf.pn.speed * 0.277777) + 1));
+        steerAngleAB = atan((distanceFromCurrentLine * vehicle->stanleyGain) / ((speed * 0.277777) + 1));
 
         if (steerAngleAB > 0.4) steerAngleAB = 0.4;
         if (steerAngleAB < -0.4) steerAngleAB = -0.4;
@@ -403,7 +408,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CTool &tool) {
     }
 }
 
-void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp) {
+void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, CTram &tram) {
     QSettings settings;
 
 	QOpenGLBuffer abBuffer;
@@ -515,8 +520,8 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp) {
     }
     if(isEditing) {
         double toolWidth2 = tool.toolWidth - tool.toolOverlap;
-        double cosHeading2 = cos(-mf.ABLine.abHeading);
-        double sinHeading2 = sin(-mf.ABLine.abHeading);
+        double cosHeading2 = cos(-mf_ABLine.abHeading);
+        double sinHeading2 = sin(-mf_ABLine.abHeading);
 
         if (mf.camera.camSetDistance > -200)
         {
@@ -524,8 +529,8 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp) {
 
             for (int i = 1; i <= 6; i++)
             {
-                vertices.append(QVector3D((cosHeading2 * toolWidth2) + mf.ABLine.refABLineP1.easting, (sinHeading2 * toolWidth2) + mf.ABLine.refABLineP1.northing, 0));
-                vertices.append(QVector3D((cosHeading2 * toolWidth2) + mf.ABLine.refABLineP2.easting, (sinHeading2 * toolWidth2) + mf.ABLine.refABLineP2.northing, 0));
+                vertices.append(QVector3D((cosHeading2 * toolWidth2) + mf_ABLine.refABLineP1.easting, (sinHeading2 * toolWidth2) + mf.ABLine.refABLineP1.northing, 0));
+                vertices.append(QVector3D((cosHeading2 * toolWidth2) + mf_ABLine.refABLineP2.easting, (sinHeading2 * toolWidth2) + mf.ABLine.refABLineP2.northing, 0));
                 toolWidth2 = toolWidth2 + tool.toolWidth - tool.toolOverlap;
             }
 
@@ -542,7 +547,7 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp) {
             //GL.Enable(EnableCap.LineStipple);
             glDrawArraysColor(gl,mvp,
                               GL_LINES, color, abBuffer,
-                              GL_FLOAT, vertices.length(), mf.ABLine.lineWidth); //master instance of CABLine in main form
+                              GL_FLOAT, vertices.length(), mf_ABLine.lineWidth); //master instance of CABLine in main form
         }
 
     }
@@ -576,7 +581,7 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp) {
             QVector<QVector3D> points;
             for (int i = 1; i < ptCount; i++)
             {
-                points.append(QVector3D(mf.yt.youFileList[i].easting + mf.yt.youFileList[0].easting, mf.yt.youFileList[i].northing + mf.yt.youFileList[0].northing, 0));
+                points.append(QVector3D(yt->youFileList[i].easting + yt->youFileList[0].easting, yt->youFileList[i].northing + yt->youFileList[0].northing, 0));
             }
 
             //reuse abBuffer
@@ -595,11 +600,11 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp) {
         }
     }
 
-    if (mf.tram.displayMode == 1 || mf.tram.displayMode == 2 )
+    if (tram.displayMode == 1 || tram.displayMode == 2 )
         //draw normal tram line
         drawTram(gl, mvp);
-    if (mf.tram.displayMode == 1 || mf.tram.displayMode == 3)
-        mf.tram.DrawTramBnd();
+    if (tram.displayMode == 1 || tram.displayMode == 3)
+        tram.drawTramBnd(gl,mvp);
 
 
 }
@@ -608,6 +613,8 @@ void CABLine::drawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
 {
     QVector<QVector3D> vertices;
     QOpenGLBuffer tramBuffer;
+    QColor color;
+    USE_SETTINGS;
 
     for (int i = 0; i < tramList.size(); i++)
     {
@@ -624,28 +631,31 @@ void CABLine::drawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
 
         color = QColor::fromRgbF(0.8630f, 0.93692f, 0.3260f, 0.22f);
         glDrawArraysColor(gl, mvp,
-                          GL_TRIANGLE_STRIP, tramBuffer,
+                          GL_TRIANGLE_STRIP, color,
+                          tramBuffer,
                           GL_FLOAT, vertices.length(), 1.0f);
     }
 
     //draw tram numbers at end and beggining of line
-    if (mf.font.isFontOn)
+    if (SETTINGS_DISPLAY_ISFONTON)
     {
         //TODO: not implemented yet
         qDebug() << "Font rendering not implemented yet.";
 
+        /*
         for (int i = 0; i < tramList.size(); i++)
         {
             int middle = 0;
             //GL.Color4(0.8630f, 0.93692f, 0.8260f, 0.752);
-            if (tramList[i].Count > 1)
+            if (tramList[i].size() > 1)
             {
-                middle = tramList[i].Count - 1;
-                mf.font.DrawText3D(tramList[i][middle].easting, tramList[i][middle].northing, (i + 1).ToString());
-                mf.font.DrawText3D(tramList[i][0].easting, tramList[i][0].northing, (i + 1).ToString());
+                middle = tramList[i].size() - 1;
+                mf.font.DrawText3D(tramList[i][middle].easting, tramList[i][middle].northing, QString(i + 1));
+                mf.font.DrawText3D(tramList[i][0].easting, tramList[i][0].northing, QString(i + 1));
 
             }
         }
+        */
     }
 }
 

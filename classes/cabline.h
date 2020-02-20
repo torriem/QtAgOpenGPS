@@ -11,6 +11,8 @@ class QOpenGLFunctions;
 class CVehicle;
 class CYouTurn;
 class CTool;
+class CNMEA;
+class CTram;
 
 class CABLines
 {
@@ -92,9 +94,9 @@ public:
     void setABLineByPoint();
     void setABLineByHeading(); //do we need to pass in heading somewhere from the main form?
     void snapABLine();
-    void getCurrentABLine(Vec3 pivot, Vec3 steer, CTool &tool);
+    void getCurrentABLine(Vec3 pivot, Vec3 steer, CTool &tool, double speed);
 
-    void drawABLines(QOpenGLFunctions *g, const QMatrix4x4 &mvp);
+    void drawABLines(QOpenGLFunctions *g, const QMatrix4x4 &mvp, CTram &tram);
     void drawTram(QOpenGLFunctions *g, const QMatrix4x4 &mvp);
     void buildTram();
     void moveABLine(double dist);
