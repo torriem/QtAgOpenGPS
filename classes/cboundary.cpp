@@ -10,167 +10,169 @@
 
 CBoundary::CBoundary()
 {
-
+    boundarySelected = 0;
 }
 
-void CBoundary::findClosestBoundaryPoint(CVehicle *vehicle, Vec2 fromPt)
+
+void CBoundary::findClosestBoundaryPoint(Vec2 fromPt, double headAB)
 {
-    boxA.easting = fromPt.easting - (sin(vehicle->fixHeading + PIBy2) *  vehicle->toolWidth * 0.5);
-    boxA.northing = fromPt.northing - (cos(vehicle->fixHeading + PIBy2)  * vehicle->toolWidth * 0.5);
+    //heading is based on ABLine, average Curve, and going same direction as AB or not
+    //Draw a bounding box to determine if points are in it
+    boxA.easting = fromPt.easting + (sin(headAB + glm::PIBy2) * (scanWidth - 2));
+    boxA.northing = fromPt.northing + (cos(headAB + glm::PIBy2) * (scanWidth - 2));
 
-    boxB.easting = fromPt.easting + (sin(vehicle->fixHeading + PIBy2) *  vehicle->toolWidth * 0.5);
-    boxB.northing = fromPt.northing + (cos(vehicle->fixHeading + PIBy2)  * vehicle->toolWidth * 0.5);
+    boxB.easting = fromPt.easting + (sin(headAB + glm::PIBy2) * scanWidth);
+    boxB.northing = fromPt.northing + (cos(headAB + glm::PIBy2) * scanWidth);
 
-    boxC.easting = boxB.easting + (sin(vehicle->fixHeading) * 2000.0);
-    boxC.northing = boxB.northing + (cos(vehicle->fixHeading) * 2000.0);
+    boxC.easting = boxB.easting + (sin(headAB) * boxLength);
+    boxC.northing = boxB.northing + (cos(headAB) * boxLength);
 
-    boxD.easting = boxA.easting + (sin(vehicle->fixHeading) * 2000.0);
-    boxD.northing = boxA.northing + (cos(vehicle->fixHeading) * 2000.0);
+    boxD.easting = boxA.easting + (sin(headAB) * boxLength);
+    boxD.northing = boxA.northing + (cos(headAB) * boxLength);
+
+    int ptCount;
 
     //determine if point is inside bounding box
-    bdList.clear();
-    int ptCount = ptList.size();
-    for (int p = 0; p < ptCount; p++) {
-        if ((((boxB.easting - boxA.easting) * (ptList[p].y() - boxA.northing))
-             - ((boxB.northing - boxA.northing) * (ptList[p].x() - boxA.easting))) < 0) {
-            continue;
-        }
-        if ((((boxD.easting - boxC.easting) * (ptList[p].y() - boxC.northing))
-             - ((boxD.northing - boxC.northing) * (ptList[p].x() - boxC.easting))) < 0) {
-            continue;
-        }
-        if ((((boxC.easting - boxB.easting) * (ptList[p].y() - boxB.northing))
-             - ((boxC.northing - boxB.northing) * (ptList[p].x() - boxB.easting))) < 0) {
-            continue;
-        }
-        if ((((boxA.easting - boxD.easting) * (ptList[p].y() - boxD.northing))
-             - ((boxA.northing - boxD.northing) * (ptList[p].x() - boxD.easting))) < 0) {
-            continue;
-        }
+    bndClosestList.clear();
+    Vec4 inBox;
+    for (int i = 0; i < bndArr.size(); i++)
+    {
+        //skip the drive thru
+        if (bndArr[i].isDriveThru) continue;
 
-        //it's in the box, so add to list
-        closestBoundaryPt.easting = ptList[p].x();
-        closestBoundaryPt.northing = ptList[p].y();
-        bdList.append(closestBoundaryPt);
+        ptCount = bndArr[i].bndLine.size();
+        for (int p = 0; p < ptCount; p++)
+        {
+            if ((((boxB.easting - boxA.easting) * (bndArr[i].bndLine[p].northing - boxA.northing))
+                    - ((boxB.northing - boxA.northing) * (bndArr[i].bndLine[p].easting - boxA.easting))) < 0) { continue; }
+
+            if ((((boxD.easting - boxC.easting) * (bndArr[i].bndLine[p].northing - boxC.northing))
+                    - ((boxD.northing - boxC.northing) * (bndArr[i].bndLine[p].easting - boxC.easting))) < 0) { continue; }
+
+            if ((((boxC.easting - boxB.easting) * (bndArr[i].bndLine[p].northing - boxB.northing))
+                    - ((boxC.northing - boxB.northing) * (bndArr[i].bndLine[p].easting - boxB.easting))) < 0) { continue; }
+
+            if ((((boxA.easting - boxD.easting) * (bndArr[i].bndLine[p].northing - boxD.northing))
+                    - ((boxA.northing - boxD.northing) * (bndArr[i].bndLine[p].easting - boxD.easting))) < 0) { continue; }
+
+            //it's in the box, so add to list
+            inBox.easting = bndArr[i].bndLine[p].easting;
+            inBox.northing = bndArr[i].bndLine[p].northing;
+            inBox.heading = bndArr[i].bndLine[p].heading;
+            inBox.index = i;
+
+            //which boundary/headland is it from
+            bndClosestList.append(inBox);
+        }
     }
 
     //which of the points is closest
-    closestBoundaryPt.easting = -1; closestBoundaryPt.northing = -1;
-    ptCount = bdList.count();
-    if (ptCount == 0) {
-        return;
-    } else {
+    closestBoundaryPt.easting = -20000; closestBoundaryPt.northing = -20000;
+    ptCount = bndClosestList.size();
+    if (ptCount != 0)
+    {
         //determine closest point
         double minDistance = 9999999;
-        for (int i = 0; i < ptCount; i++) {
-            double dist = ((fromPt.easting - bdList[i].easting) * (fromPt.easting - bdList[i].easting))
-                    + ((fromPt.northing - bdList[i].northing) * (fromPt.northing - bdList[i].northing));
-            if (minDistance >= dist) {
+        for (int i = 0; i < ptCount; i++)
+        {
+            double dist = ((fromPt.easting - bndClosestList[i].easting) * (fromPt.easting - bndClosestList[i].easting))
+                            + ((fromPt.northing - bndClosestList[i].northing) * (fromPt.northing - bndClosestList[i].northing));
+            if (minDistance >= dist)
+            {
                 minDistance = dist;
-                closestBoundaryPt = bdList[i];
+
+                closestBoundaryPt.easting = bndClosestList[i].easting;
+                closestBoundaryPt.northing = bndClosestList[i].northing;
+                closestBoundaryPt.heading = bndClosestList[i].heading;
+                closestBoundaryNum = bndClosestList[i].index;
             }
         }
+        if (closestBoundaryPt.heading < 0) closestBoundaryPt.heading += glm::twoPI;
     }
 }
 
-void CBoundary::resetBoundary()
+void CBoundary::resetBoundaries()
 {
-    calcList.clear();
-    ptList.clear();
-    area = 0;
-    areaAcre = 0;
-    areaHectare = 0;
-
-    isDrawRightSide = true;
-    isSet = false;
-    isOkToAddPoints = false;
-
-    bufferCurrent = false;
+    bndArr.clear();
 }
 
-void CBoundary::preCalcBoundaryLines()
+void CBoundary::drawBoundaryLines(const CVehicle &v, QOpenGLFunctions *gl,
+                                 const QMatrix4x4 &mvp)
 {
-    int j = ptList.size() - 1;
-    //clear the list, constant is easting, multiple is northing
-    calcList.clear();
-    Vec2 constantMultiple(0, 0);
+    //draw the boundaries
+    QColor color;
+    color.setRgbF(0.95f, 0.5f, 0.250f);
 
-    for (int i = 0; i < ptList.size(); j = i++)
+    for (int i = 0; i < bndArr.size(); i++)
     {
-        //check for divide by zero
-        if (fabs(ptList[i].y() - ptList[j].y()) < 0.00000000001)
+        bndArr[i].drawBoundaryLine(gl,mvp,color);
+    }
+
+    if (bndBeingMadePts.size() > 0)
+    {
+        //the boundary so far
+        Vec3 pivot = v.pivotAxlePos;
+        gl->glLineWidth(1);
+
+        GLHelperColors gldraw;
+
+        ColorVertex cv;
+
+        cv.color = QVector4D(0.825f, 0.22f, 0.90f, 1.0f);
+
+        for (int h = 0; h < bndBeingMadePts.size(); h++) {
+            cv.vertex = QVector3D(bndBeingMadePts[h].easting, bndBeingMadePts[h].northing, 0);
+            gldraw.append(cv);
+        }
+
+        cv.color = QVector4D(0.295f, 0.972f, 0.290f, 1.0f);
+        cv.vertex = QVector3D(bndBeingMadePts[0].easting, bndBeingMadePts[0].northing, 0);
+        gldraw.append(cv);
+
+        gldraw.draw(gl,mvp, GL_LINE_STRIP, 1.0f);
+
+        //line from last point to pivot marker
+
+        GLHelperOneColor gldraw1;
+
+        //GL.Enable(EnableCap.LineStipple);
+        //GL.LineStipple(1, 0x0700);
+        //TODO: implement stippled line with shader
+        if (isDrawRightSide)
         {
-            constantMultiple.easting = ptList[i].x();
-            constantMultiple.northing = 0;
+            gldraw1.append(QVector3D(bndBeingMadePts[0].easting, bndBeingMadePts[0].northing, 0));
+            gldraw1.append(QVector3D(pivot.easting + (sin(pivot.heading - glm::PIBy2) *
+                                                      -createBndOffset),
+                                     pivot.northing + (cos(pivot.heading - glm::PIBy2) *
+                                                       -createBndOffset), 0));
+            gldraw1.append(QVector3D(bndBeingMadePts[bndBeingMadePts.size() - 1].easting, bndBeingMadePts[bndBeingMadePts.size() - 1].northing, 0));
         }
         else
         {
-            //determine constant and multiple and add to list
-            constantMultiple.easting = ptList[i].x() - (ptList[i].y() * ptList[j].x())
-                    / (ptList[j].y() - ptList[i].y()) + (ptList[i].y() * ptList[i].x())
-                    / (ptList[j].y() - ptList[i].y());
-            constantMultiple.northing = (ptList[j].x() - ptList[i].x()) / (ptList[j].y() - ptList[i].y());
-            calcList.append(constantMultiple);
-        }
-    }
-
-    areaHectare = area * 0.0001;
-    areaAcre = area * 0.000247105;
-}
-
-bool CBoundary::isPrePointInPolygon(Vec2 testPoint)
-{
-    if (calcList.size() < 10) return false;
-    int j = ptList.size() - 1;
-    bool oddNodes = false;
-
-    //test against the constant and multiples list the test point
-    for (int i = 0; i < ptList.size(); j = i++)
-    {
-        if ( ((ptList[i].y() < testPoint.northing) && (ptList[j].y() >= testPoint.northing)) ||
-             ((ptList[j].y() < testPoint.northing) && (ptList[i].y() >= testPoint.northing)) )
-        {
-            oddNodes ^= (testPoint.northing * calcList[i].northing + calcList[i].easting < testPoint.easting);
-        }
-    }
-    return oddNodes; //true means inside.
-}
-
-void CBoundary::drawBoundaryLine(QOpenGLFunctions *gl,
-                                 const QMatrix4x4 &mvp)
-{
-    if (ptList.size() > 1) {
-        if (!bufferCurrent) {
-            ColorVertex bline[ptList.size() + 1];
-
-            for(int i=0; i < ptList.size(); i++) {
-                bline[i].vertex = ptList[i];
-                bline[i].color = QVector4D(0.98f, 0.2f, 0.60f, 1.0f);
-            }
-            //the "close the loop" line
-            //not sure how this will render, honestly.  Might end up
-            //being a blended color
-            bline[ptList.size()].vertex = ptList[0];
-            bline[ptList.size()].color = QVector4D(0.9f, 0.32f, 0.70f,1.0f);
-
-            if (ptListBuffer.isCreated())
-                ptListBuffer.destroy();
-            ptListBuffer.create();
-            ptListBuffer.bind();
-            ptListBuffer.allocate(bline, (ptList.size() + 1) * sizeof(ColorVertex));
-            ptListBuffer.release();
-
-            bufferCurrent = true;
+            gldraw1.append(QVector3D(bndBeingMadePts[0].easting, bndBeingMadePts[0].northing, 0));
+            gldraw1.append(QVector3D(pivot.easting + (sin(pivot.heading - glm::PIBy2) *
+                                                      createBndOffset),
+                                     pivot.northing + (cos(pivot.heading - glm::PIBy2) *
+                                                       createBndOffset), 0));
+            gldraw1.append(QVector3D(bndBeingMadePts[bndBeingMadePts.size() - 1].easting, bndBeingMadePts[bndBeingMadePts.size() - 1].northing, 0));
         }
 
-        ////draw the perimeter line so far
-        glDrawArraysColors(gl, mvp,
-                           GL_LINE_STRIP, ptListBuffer,
-                           GL_FLOAT, ptList.size() + 1,
-                           2.0f);
+        gldraw1.draw(gl,mvp,QColor::fromRgbF(0.825f, 0.842f, 0.0f),
+                     GL_LINE_STRIP,1.0f);
+
+        //boundary points
+
+        gldraw1.clear();
+        for (int h = 0; h < bndBeingMadePts.size(); h++)
+            gldraw1.append(QVector3D(bndBeingMadePts[h].easting, bndBeingMadePts[h].northing, 0));
+
+        gldraw1.draw(gl,mvp,QColor::fromRgbF(0.0f, 0.95f, 0.95f),
+                     GL_POINTS, 6.0f);
     }
+
 }
 
+/*
 //draw a blue line in the back buffer for section control over boundary line
 void CBoundary::drawBoundaryLineOnBackBuffer(QOpenGLFunctions *gl,
                                              const QMatrix4x4 &mvp)
@@ -203,25 +205,4 @@ void CBoundary::drawBoundaryLineOnBackBuffer(QOpenGLFunctions *gl,
                           ptList.size() + 1, 4.0f);
     }
 }
-
-void CBoundary::calculateBoundaryArea()
-{
-    int ptCount = ptList.size();
-    if (ptCount < 1) return;
-
-    area = 0;         // Accumulates area in the loop
-    int j = ptCount - 1;  // The last vertex is the 'previous' one to the first
-
-    for (int i = 0; i < ptCount; j = i++)
-    {
-        area += (ptList[j].x() + ptList[i].x()) * (ptList[j].y() - ptList[i].y());
-    }
-    area = fabs(area / 2);
-}
-
-void CBoundary::addPoint(Vec2 point)
-{
-    ptList.append(QVector3D(point.easting, point.northing, 0));
-    bufferCurrent = false;
-    backBufferCurrent = false;
-}
+*/
