@@ -11,6 +11,10 @@ struct LookAheadPixels {
     uchar blue;
     uchar alpha;
 };
+
+enum hydStates {
+    down=0, up=1
+};
 #pragma pack(pop)
 
 #endif // COMMON_H
