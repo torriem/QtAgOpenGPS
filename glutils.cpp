@@ -198,7 +198,7 @@ void GLHelperOneColor::draw(QOpenGLFunctions *gl, QMatrix4x4 mvp, QColor color, 
 
     vertexBuffer.create();
     vertexBuffer.bind();
-    vertexBuffer.allocate(this, size()*sizeof(QVector3D));
+    vertexBuffer.allocate(data(), size()*sizeof(QVector3D));
     vertexBuffer.release();
 
 
@@ -216,7 +216,7 @@ void GLHelperColors::draw(QOpenGLFunctions *gl, QMatrix4x4 mvp, GLenum operation
 
     vertexBuffer.create();
     vertexBuffer.bind();
-    vertexBuffer.allocate(this, size()*sizeof(ColorVertex));
+    vertexBuffer.allocate(data(), size()*sizeof(ColorVertex));
     vertexBuffer.release();
 
 
