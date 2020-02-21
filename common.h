@@ -11,10 +11,17 @@ struct LookAheadPixels {
     uchar blue;
     uchar alpha;
 };
+#pragma pack(pop)
 
 enum hydStates {
     down=0, up=1
 };
-#pragma pack(pop)
+
+enum messageBox {
+    info=0,
+    warning=1,
+    error=2,
+    ackerror=3
+};
 
 #endif // COMMON_H
