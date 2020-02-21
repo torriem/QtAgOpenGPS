@@ -103,8 +103,7 @@ public:
 
 signals:
     void doSequence();
-    void showMessage(QString);
-
+    void showMessage(int,QString,QString);
 };
 
 #endif // CABLINE_H
