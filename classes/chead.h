@@ -12,7 +12,7 @@ class QMatrix4x4;
 
 
 
-class CHead
+class CHead: public QObject
 {
     Q_OBJECT
 private:
