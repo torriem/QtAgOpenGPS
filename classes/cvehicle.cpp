@@ -9,6 +9,8 @@
 #include "cboundary.h"
 #include "glm.h"
 #include "glutils.h"
+#include "cnmea.h"
+#include "chead.h"
 
 CVehicle::CVehicle()
 {
@@ -51,10 +53,10 @@ CVehicle::CVehicle()
 }
 
 //called from various Classes, always needs current speed
-double CVehicle::updateGoalPointDistance(double distanceFromCurrentLine)
+double CVehicle::updateGoalPointDistance(CNMEA &pn, double distanceFromCurrentLine)
 {
     //how far should goal point be away  - speed * seconds * kmph -> m/s then limit min value
-    double goalPointDistance = mf.pn.speed * goalPointLookAheadSeconds * 0.27777777;
+    double goalPointDistance = pn.speed * goalPointLookAheadSeconds * 0.27777777;
 
     if (distanceFromCurrentLine < 1.0)
         goalPointDistance += distanceFromCurrentLine * goalPointDistance * goalPointDistanceMultiplier;
@@ -63,7 +65,8 @@ double CVehicle::updateGoalPointDistance(double distanceFromCurrentLine)
 
     if (goalPointDistance < goalPointLookAheadMinimumDistance) goalPointDistance = goalPointLookAheadMinimumDistance;
 
-    mf.lookaheadActual = goalPointDistance;
+    emit lookaheadGoal(goalPointDistance);
+    //mf.lookaheadActual = goalPointDistance;
 
     return goalPointDistance;
 
@@ -71,7 +74,7 @@ double CVehicle::updateGoalPointDistance(double distanceFromCurrentLine)
 
 void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 &mvp,
                            CCamera &camera, CTool &tool,
-                           CBoundary &bnd)
+                           CBoundary &bnd, CHead &hd)
 {
     //draw vehicle
     mvp.rotate(glm::toDegrees(-fixHeading), 0.0, 0.0, 1.0);
@@ -95,7 +98,7 @@ void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 &mvp,
 
     ////draw the vehicle Body
 
-    if (!mf.hd.isOn)
+    if (!hd.isOn)
     {
         glcolors.clear();
 
@@ -117,7 +120,7 @@ void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 &mvp,
     }
     else
     {
-        if (mf.hd.isToolUp)
+        if (hd.isToolUp)
         {
             gldraw.append(QVector3D(0, antennaPivot, -0.0));
             gldraw.append(QVector3D(1.0, -0, 0.0));

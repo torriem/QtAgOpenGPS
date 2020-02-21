@@ -5,6 +5,7 @@
 #include "vec2.h"
 #include "vec3.h"
 #include "common.h"
+#include <QObject>
 #include <QMatrix4x4>
 
 #include <QOpenGLBuffer>
@@ -14,27 +15,14 @@ class CCamera;
 class CYouTurn;
 class CTool;
 class CBoundary;
+class CNMEA;
+class CHead;
 
 
-class CVehicle
+class CVehicle: QObject
 {
+    Q_OBJECT
 private:
-    QOpenGLBuffer trailingTankHitchBuffer;
-    QOpenGLBuffer tankDotBuffer;
-    QOpenGLBuffer hitchBuffer;
-    QOpenGLBuffer toolHitchBuffer;
-    QOpenGLBuffer superSectionBuffer;
-    QOpenGLBuffer sectionBuffer[MAXSECTIONS+1];
-    QOpenGLBuffer sectionDotsBuffer;
-    QOpenGLBuffer vehicleBodyBuffer;
-    QOpenGLBuffer pinsAndMarkersBuffer;
-    QOpenGLBuffer pointerBuffer;
-    QOpenGLBuffer rigidHitchBuffer;
-
-    bool buffersCurrent = false;
-
-    void makeBuffers();
-
 
 public:
     bool isSteerAxleAhead;
@@ -117,9 +105,11 @@ public:
     QVector<QSharedPointer<QVector<QVector3D>>> patchSaveList;
 
     CVehicle();
-    double updateGoalPointDistance(double distanceFromCurrentLine);
-    void drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 &mvp, CCamera &camera, CTool &tool, CBoundary &bnd);
+    double updateGoalPointDistance(CNMEA &pn, double distanceFromCurrentLine);
+    void drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 &mvp, CCamera &camera, CTool &tool, CBoundary &bnd, CHead &hd);
 
+signals:
+    void lookaheadGoal(double);
 
 public slots:
     //void settingsChanged(); //notify us that settings changed so buffers need to be redone.
