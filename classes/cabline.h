@@ -5,6 +5,7 @@
 #include <QVector>
 #include "vec2.h"
 #include "vec3.h"
+#include <QString>
 
 class QOpenGLFunctions;
 //namespace AgOpenGPS
@@ -26,7 +27,7 @@ public:
     QString Name = "aa";
 };
 
-class CABLine
+class CABLine: public QObject
 {
     Q_OBJECT
 private:
@@ -93,7 +94,7 @@ public:
     void setABLineByBPoint(const CVehicle &vehicle);
     void setABLineByHeading(); //do we need to pass in heading somewhere from the main form?
     void snapABLine();
-    void getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTurn &yt, const CTool &tool, double speed);
+    void getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTurn &yt, const CTool &tool, CNMEA &pn, double speed);
     void drawABLines(QOpenGLFunctions *g, const QMatrix4x4 &mvp, const CVehicle &vehicle, const CTool &tool, CYouTurn &yt, CTram &tram, const CCamera &camera, bool isSideGuideLines);
     void drawTram(QOpenGLFunctions *g, const QMatrix4x4 &mvp);
     void buildTram();
@@ -101,8 +102,8 @@ public:
     void resetABLine();
 
 signals:
-    void newLookAhead(double);
     void doSequence();
+    void showMessage(QString);
 
 };
 

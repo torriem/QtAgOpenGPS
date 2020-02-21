@@ -6,14 +6,11 @@
 #include "ctram.h"
 #include "ccamera.h"
 #include "aogsettings.h"
-
-//#include <QtOpenGL>
-#include <QSettings>
 #include <QOpenGLFunctions>
 #include <QColor>
 #include "glutils.h"
 #include "ctool.h"
-#include "aogsettings.h"
+#include "cnmea.h"
 
 //??? why does CABLine refer to mf.ABLine? Isn't there only one instance and
 //thus was can just use "this."  If this is wrong, we'll remove this and fix it.
@@ -107,7 +104,7 @@ void CABLine::snapABLine()
 }
 
 //called from main form
-void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTurn &yt, const CTool &tool, double speed)
+void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTurn &yt, const CTool &tool, CNMEA &pn, double speed)
 {
     if (vehicle.isStanleyUsed) {
         //move the ABLine over based on the overlap amount set in vehicle
@@ -312,10 +309,10 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
         distanceFromCurrentLine = fabs(distanceFromCurrentLine);
 
         //update base on autosteer settings and distance from line
-        double goalPointDistance = vehicle.updateGoalPointDistance(distanceFromCurrentLine);
+        double goalPointDistance = vehicle.updateGoalPointDistance(pn, distanceFromCurrentLine);
 
         //mf.lookaheadActual = goalPointDistance;
-        emit newLookAhead(goalPointDistance);
+        //not needed; vehicle.updateGoalPointDistance does this for us
 
         //Subtract the two headings, if > 1.57 its going the opposite heading as refAB
         abFixHeadingDelta = (fabs(vehicle.fixHeading - abHeading));
