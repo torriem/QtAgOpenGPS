@@ -1,23 +1,27 @@
 #include "ccontour.h"
-#include "cnmea.h"
 #include "cvehicle.h"
 #include "cvec.h"
 #include <math.h>
 #include <limits>
-#include <QOpenGLContext>
+#include <QOpenGLFunctions>
 #include "glm.h"
 #include "cvehicle.h"
 #include <QSettings>
 #include "glutils.h"
+#include "cboundary.h"
+#include "ctool.h"
+#include "aogsettings.h"
+#include "cnmea.h"
+#include "common.h"
 
-CContour::CContour(CVehicle *v)
-    : vehicle(v), ptList(new QVector<Vec4>)
+CContour::CContour()
+    : ptList(new QVector<Vec3>)
 {
 
 }
 
 //start stop and add points to list
-void CContour::startContourLine() {
+void CContour::startContourLine(Vec3 pivot) {
     qDebug() << "starting contour line.";
     isContourOn = true;
     if (!ptList.isNull() && ptList->size() == 1)
@@ -28,43 +32,26 @@ void CContour::startContourLine() {
     else
     {
         //make new ptList
-        ptList = QSharedPointer<QVector<Vec4>>(new QVector<Vec4>);
+        ptList = QSharedPointer<QVector<Vec3>>(new QVector<Vec3>);
         stripList.append(ptList);
     }
-    //grab a copy from main
-    pivotAxlePosCT = vehicle->pivotAxlePos;
 
-    pivotAxlePosCT.easting -= (sin(vehicle->fixHeading) * 5.0);
-    pivotAxlePosCT.northing -= (cos(vehicle->fixHeading) * 5.0);
-
-    Vec4 point = Vec4(pivotAxlePosCT.easting, vehicle->fixHeading,
-                      pivotAxlePosCT.northing, vehicle->altitude);
-    ptList->append(point);
+    ptList->append(pivot);
 }
 
 //Add current position to stripList
-void CContour::addPoint() {
-    Vec4 point = Vec4(vehicle->pivotAxlePos.easting, vehicle->fixHeading,
-                      vehicle->pivotAxlePos.northing, vehicle->altitude);
-    ptList->append(point);
+void CContour::addPoint(Vec3 pivot) {
+    ptList->append(pivot);
 }
 
 //End the strip
-void CContour::stopContourLine()
+void CContour::stopContourLine(Vec3 pivot, QVector<QSharedPointer<QVector<Vec3>>> &contourSaveList)
 {
     qDebug() << ptList->size() << "Stopping contour line.";
     //make sure its long enough to bother
     if (ptList->size() > 10)
     {
-        //grab a copy from main
-        pivotAxlePosCT = vehicle->pivotAxlePos;
-
-        pivotAxlePosCT.easting += (sin(vehicle->fixHeading) * 5.0);
-        pivotAxlePosCT.northing += (cos(vehicle->fixHeading) * 5.0);
-
-        Vec4 point = Vec4(pivotAxlePosCT.easting, vehicle->fixHeading,
-                          pivotAxlePosCT.northing, vehicle->altitude);
-        ptList->append(point);
+        ptList->append(pivot);
 
         //add the point list to the save list for appending to contour file
         contourSaveList.append(ptList);
@@ -81,24 +68,166 @@ void CContour::stopContourLine()
     isContourOn = false;
 }
 
-//determine closest point on applied
-void CContour::buildContourGuidanceLine(double eastFix, double northFix)
+void CContour::buildBoundaryContours(CTool &tool, CBoundary &bnd, int pass, int spacingInt)
 {
+    if (bnd.bndArr.size() == 0)
+    {
+        qDebug() << "Boundary Contour Error, No Boundaries Made";
+        //emit signal
+        //mf.TimedMessageBox(1500, "Boundary Contour Error", "No Boundaries Made");
+        emit showMessage(messageBox::error, tr("Boundary Contour Error"), tr("No Boundaries Made"));
+        return;
+    }
+
+    //convert to meters
+    double spacing = spacingInt;
+    spacing *= 0.01;
+
+    Vec3 point;
+    double totalHeadWidth = 0;
+    int signPass = -1;
+
+    if (pass == 1)
+    {
+        signPass = -1;
+        //determine how wide a headland space
+        totalHeadWidth = ((tool.toolWidth - tool.toolOverlap) * 0.5) - spacing;
+    }
+
+    else
+    {
+        signPass = 1;
+        totalHeadWidth = ((tool.toolWidth - tool.toolOverlap) * pass) + spacing +
+            ((tool.toolWidth - tool.toolOverlap) * 0.5);
+    }
+
+    //outside boundary
+
+    //count the points from the boundary
+    int ptCount = bnd.bndArr[0].bndLine.size();
+
+    ptList = QSharedPointer<QVector<Vec3>>(new QVector<Vec3>);
+    stripList.append(ptList);
+
+    for (int i = ptCount - 1; i >= 0; i--)
+    {
+        //calculate the point inside the boundary
+        point.easting = bnd.bndArr[0].bndLine[i].easting - (signPass * sin(glm::PIBy2 + bnd.bndArr[0].bndLine[i].heading) * totalHeadWidth);
+        point.northing = bnd.bndArr[0].bndLine[i].northing - (signPass * cos(glm::PIBy2 + bnd.bndArr[0].bndLine[i].heading) * totalHeadWidth);
+        point.heading = bnd.bndArr[0].bndLine[i].heading - M_PI;
+        if (point.heading < -glm::twoPI) point.heading += glm::twoPI;
+        ptList->append(point);
+    }
+
+    //totalHeadWidth = (tool.toolWidth - tool.toolOverlap) * 0.5 + 0.2 + (tool.toolWidth - tool.toolOverlap);
+
+    for (int j = 1; j < bnd.bndArr.size(); j++)
+    {
+        if (!bnd.bndArr[j].isSet) continue;
+
+        //count the points from the boundary
+        ptCount = bnd.bndArr[j].bndLine.size();
+
+        ptList = QSharedPointer<QVector<Vec3>>(new QVector<Vec3>);
+        stripList.append(ptList);
+
+        for (int i = ptCount - 1; i >= 0; i--)
+        {
+            //calculate the point inside the boundary
+            point.easting = bnd.bndArr[j].bndLine[i].easting - (signPass * sin(glm::PIBy2 + bnd.bndArr[j].bndLine[i].heading) * totalHeadWidth);
+            point.northing = bnd.bndArr[j].bndLine[i].northing - (signPass * cos(glm::PIBy2 + bnd.bndArr[j].bndLine[i].heading) * totalHeadWidth);
+            point.heading = bnd.bndArr[j].bndLine[i].heading - M_PI;
+            if (point.heading < -glm::twoPI) point.heading += glm::twoPI;
+
+            //only add if inside actual field boundary
+            ptList->append(point);
+        }
+
+        //add the point list to the save list for appending to contour file
+        //mf.contourSaveList.append(ptList);
+    }
+
+    qDebug() << "Boundary Contour Contour Path Created";
+
+    //emit signal
+    //mf.TimedMessageBox(1500, "Boundary Contour", "Contour Path Created");
+    emit showMessage(messageBox::info, tr("Boundary Contour"),tr("Contour Path Created"));
+
+}
+
+//determine closest point on applied
+void CContour::buildContourGuidanceLine(CVehicle &vehicle, CTool& tool, CNMEA &pn, Vec3 pivot)
+{
+    double toolWid = tool.toolWidth;
+
+    double sinH = sin(pivot.heading) * 2.0 * toolWid;
+    double cosH = cos(pivot.heading) * 2.0 * toolWid;
+
+    double sin2HL = 0;
+    double cos2HL = 0;
+    double sin2HR = 0;
+    double cos2HR = 0;
+
+    if (tool.toolOffset < 0)
+    {
+        //sticks out more left
+        sin2HL = sin(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool.toolOffset * 2)));
+        cos2HL = cos(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool.toolOffset * 2)));
+
+        sin2HR = sin(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool.toolOffset)));
+        cos2HR = cos(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool.toolOffset)));
+    }
+    else
+    {
+        //sticks out more right
+        sin2HL = sin(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool.toolOffset)));
+        cos2HL = cos(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool.toolOffset)));
+
+        sin2HR = sin(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool.toolOffset * 2)));
+        cos2HR = cos(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool.toolOffset * 2)));
+    }
+
+    //narrow equipment needs bigger bounding box.
+    if (tool.toolWidth < 6)
+    {
+        sinH = sin(pivot.heading) * 4 * toolWid;
+        cosH = cos(pivot.heading) * 4 * toolWid;
+    }
+
+    double sin3H = sin(pivot.heading + glm::PIBy2) * 0.5;
+    double cos3H = cos(pivot.heading + glm::PIBy2) * 0.5;
+
     //build a frustum box ahead of fix to find adjacent paths and points
-    //double startX = eastFix + sin(mf->fixHeading)* 0;
-    //double startY = northFix + cos(mf->fixHeading) * 0;
 
-    boxA.easting = eastFix - (sin(vehicle->fixHeading + PIBy2) *  2.0 * vehicle->toolWidth);
-    boxA.northing = northFix - (cos(vehicle->fixHeading + PIBy2) * 2.0 * vehicle->toolWidth);
+    //left
+    boxA.easting = pivot.easting - sin2HL;
+    boxA.northing = pivot.northing - cos2HL;
+    boxA.easting -= (sinH * 0.25); //bottom left outside
+    boxA.northing -= (cosH * 0.25);
 
-    boxB.easting = eastFix + (sin(vehicle->fixHeading + PIBy2) *  2.0 * vehicle->toolWidth);
-    boxB.northing = northFix + (cos(vehicle->fixHeading + PIBy2) * 2.0 * vehicle->toolWidth);
+    boxD.easting = boxA.easting + sinH; //top left outside
+    boxD.northing = boxA.northing + cosH;
 
-    boxC.easting = boxB.easting + (sin(vehicle->fixHeading) * 13.0);
-    boxC.northing = boxB.northing + (cos(vehicle->fixHeading) * 13.0);
+    boxE.easting = pivot.easting - sin3H; // inside bottom
+    boxE.northing = pivot.northing - cos3H;
 
-    boxD.easting = boxA.easting + (sin(vehicle->fixHeading) * 13.0);
-    boxD.northing = boxA.northing + (cos(vehicle->fixHeading) * 13.0);
+    boxG.easting = boxE.easting + (sinH * 0.3); //inside top
+    boxG.northing = boxE.northing + (cosH * 0.3);
+
+    //right
+    boxB.easting = pivot.easting + sin2HR;
+    boxB.northing = pivot.northing + cos2HR;
+    boxB.easting -= (sinH * 0.25);
+    boxB.northing -= (cosH * 0.25);
+
+    boxC.easting = boxB.easting + sinH;
+    boxC.northing = boxB.northing + cosH;
+
+    boxF.easting = pivot.easting + sin3H;
+    boxF.northing = pivot.northing + cos3H;
+
+    boxH.easting = boxF.easting + (sinH * 0.3); //inside top
+    boxH.northing = boxF.northing + (cosH * 0.3);
 
     conList.clear();
     ctList.clear();
@@ -109,36 +238,147 @@ void CContour::buildContourGuidanceLine(double eastFix, double northFix)
     if (stripCount == 0) return;
 
     CVec pointC;
-
-    //determine if points are in frustum box
-    for (int s = 0; s < stripCount; s++)
+    if (isRightPriority)
     {
-        ptCount = stripList[s]->size();
-        for (int p = 0; p < ptCount; p++)
+        //determine if points are in right side frustum box
+        for (int s = 0; s < stripCount; s++)
         {
-            if ((((boxB.easting - boxA.easting) * ((*stripList[s])[p].z - boxA.northing))
-                    - ((boxB.northing - boxA.northing) * ((*stripList[s])[p].x - boxA.easting))) < 0) { continue; }
-
-            if ((((boxD.easting - boxC.easting) * ((*stripList[s])[p].z - boxC.northing))
-                    - ((boxD.northing - boxC.northing) * ((*stripList[s])[p].x - boxC.easting))) < 0) { continue; }
-
-            if ((((boxC.easting - boxB.easting) * ((*stripList[s])[p].z - boxB.northing))
-                    - ((boxC.northing - boxB.northing) * ((*stripList[s])[p].x - boxB.easting))) < 0) { continue; }
-
-            if ((((boxA.easting - boxD.easting) * ((*stripList[s])[p].z - boxD.northing))
-                    - ((boxA.northing - boxD.northing) * ((*stripList[s])[p].x - boxD.easting))) < 0) { continue; }
-
-            //in the box so is it parallelish or perpedicularish to current heading
-            ref2 = M_PI - fabs(fabs(vehicle->fixHeading - (*stripList[s])[p].y) - M_PI);
-            if (ref2 < 1.2 || ref2 > 1.9)
+            ptCount = stripList[s]->size();
+            for (int p = 0; p < ptCount; p++)
             {
-                //it's in the box and parallelish so add to list
-                pointC.x = (*stripList[s])[p].x;
-                pointC.z = (*stripList[s])[p].z;
-                pointC.h = (*stripList[s])[p].y;
-                pointC.strip = s;
-                pointC.pt = p;
-                conList.append(pointC);
+                //FHCBF
+                if ((((boxH.easting - boxC.easting) * ((*stripList[s])[p].northing - boxC.northing))
+                        - ((boxH.northing - boxC.northing) * ((*stripList[s])[p].easting - boxC.easting))) < 0) { continue; }
+
+                if ((((boxC.easting - boxB.easting) * ((*stripList[s])[p].northing - boxB.northing))
+                        - ((boxC.northing - boxB.northing) * ((*stripList[s])[p].easting - boxB.easting))) < 0) { continue; }
+
+                if ((((boxB.easting - boxF.easting) * ((*stripList[s])[p].northing - boxF.northing))
+                        - ((boxB.northing - boxF.northing) * ((*stripList[s])[p].easting - boxF.easting))) < 0) { continue; }
+
+                if ((((boxF.easting - boxH.easting) * ((*stripList[s])[p].northing - boxH.northing))
+                        - ((boxF.northing - boxH.northing) * ((*stripList[s])[p].easting - boxH.easting))) < 0) { continue; }
+
+                //in the box so is it parallelish or perpedicularish to current heading
+                ref2 = M_PI - fabs(fabs(vehicle.fixHeading - (*stripList[s])[p].heading) - M_PI);
+                if (ref2 < 1.2 || ref2 > 1.9)
+                {
+                    //it's in the box and parallelish so add to list
+                    pointC.x = (*stripList[s])[p].easting;
+                    pointC.z = (*stripList[s])[p].northing;
+                    pointC.h = (*stripList[s])[p].heading;
+                    pointC.strip = s;
+                    pointC.pt = p;
+                    conList.append(pointC);
+                }
+            }
+        }
+
+        if (conList.size() == 0)
+        {
+            //determine if points are in frustum box
+            for (int s = 0; s < stripCount; s++)
+            {
+                ptCount = stripList[s]->size();
+                for (int p = 0; p < ptCount; p++)
+                {
+                    //EADGE
+                    if ((((boxG.easting - boxE.easting) * ((*stripList[s])[p].northing - boxE.northing))
+                            - ((boxG.northing - boxE.northing) * ((*stripList[s])[p].easting - boxE.easting))) < 0) { continue; }
+
+                    if ((((boxE.easting - boxA.easting) * ((*stripList[s])[p].northing - boxA.northing))
+                            - ((boxE.northing - boxA.northing) * ((*stripList[s])[p].easting - boxA.easting))) < 0) { continue; }
+
+                    if ((((boxA.easting - boxD.easting) * ((*stripList[s])[p].northing - boxD.northing))
+                            - ((boxA.northing - boxD.northing) * ((*stripList[s])[p].easting - boxD.easting))) < 0) { continue; }
+
+                    if ((((boxD.easting - boxG.easting) * ((*stripList[s])[p].northing - boxG.northing))
+                            - ((boxD.northing - boxG.northing) * ((*stripList[s])[p].easting - boxG.easting))) < 0) { continue; }
+
+                    //in the box so is it parallelish or perpedicularish to current heading
+                    ref2 = M_PI - fabs(fabs(vehicle.fixHeading - (*stripList[s])[p].heading) - M_PI);
+                    if (ref2 < 1.2 || ref2 > 1.9)
+                    {
+                        //it's in the box and parallelish so add to list
+                        pointC.x = (*stripList[s])[p].easting;
+                        pointC.z = (*stripList[s])[p].northing;
+                        pointC.h = (*stripList[s])[p].heading;
+                        pointC.strip = s;
+                        pointC.pt = p;
+                        conList.append(pointC);
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        for (int s = 0; s < stripCount; s++)
+        {
+            ptCount = stripList[s]->size();
+            for (int p = 0; p < ptCount; p++)
+            {
+                //EADGE
+                if ((((boxG.easting - boxE.easting) * ((*stripList[s])[p].northing - boxE.northing))
+                        - ((boxG.northing - boxE.northing) * ((*stripList[s])[p].easting - boxE.easting))) < 0) { continue; }
+
+                if ((((boxE.easting - boxA.easting) * ((*stripList[s])[p].northing - boxA.northing))
+                        - ((boxE.northing - boxA.northing) * ((*stripList[s])[p].easting - boxA.easting))) < 0) { continue; }
+
+                if ((((boxA.easting - boxD.easting) * ((*stripList[s])[p].northing - boxD.northing))
+                        - ((boxA.northing - boxD.northing) * ((*stripList[s])[p].easting - boxD.easting))) < 0) { continue; }
+
+                if ((((boxD.easting - boxG.easting) * ((*stripList[s])[p].northing - boxG.northing))
+                        - ((boxD.northing - boxG.northing) * ((*stripList[s])[p].easting - boxG.easting))) < 0) { continue; }
+
+                //in the box so is it parallelish or perpedicularish to current heading
+                ref2 = M_PI - fabs(fabs(vehicle.fixHeading - (*stripList[s])[p].heading) - M_PI);
+                if (ref2 < 1.2 || ref2 > 1.9)
+                {
+                    //it's in the box and parallelish so add to list
+                    pointC.x = (*stripList[s])[p].easting;
+                    pointC.z = (*stripList[s])[p].northing;
+                    pointC.h = (*stripList[s])[p].heading;
+                    pointC.strip = s;
+                    pointC.pt = p;
+                    conList.append(pointC);
+                }
+            }
+        }
+
+        if (conList.size() == 0)
+        {
+            //determine if points are in frustum box
+            for (int s = 0; s < stripCount; s++)
+            {
+                ptCount = stripList[s]->size();
+                for (int p = 0; p < ptCount; p++)
+                {
+                    if ((((boxH.easting - boxC.easting) * ((*stripList[s])[p].northing - boxC.northing))
+                            - ((boxH.northing - boxC.northing) * ((*stripList[s])[p].easting - boxC.easting))) < 0) { continue; }
+
+                    if ((((boxC.easting - boxB.easting) * ((*stripList[s])[p].northing - boxB.northing))
+                            - ((boxC.northing - boxB.northing) * ((*stripList[s])[p].easting - boxB.easting))) < 0) { continue; }
+
+                    if ((((boxB.easting - boxF.easting) * ((*stripList[s])[p].northing - boxF.northing))
+                            - ((boxB.northing - boxF.northing) * ((*stripList[s])[p].easting - boxF.easting))) < 0) { continue; }
+
+                    if ((((boxF.easting - boxH.easting) * ((*stripList[s])[p].northing - boxH.northing))
+                            - ((boxF.northing - boxH.northing) * ((*stripList[s])[p].easting - boxH.easting))) < 0) { continue; }
+
+                    //in the box so is it parallelish or perpedicularish to current heading
+                    ref2 = M_PI - fabs(fabs(vehicle.fixHeading - (*stripList[s])[p].heading) - M_PI);
+                    if (ref2 < 1.2 || ref2 > 1.9)
+                    {
+                        //it's in the box and parallelish so add to list
+                        pointC.x = (*stripList[s])[p].easting;
+                        pointC.z = (*stripList[s])[p].northing;
+                        pointC.h = (*stripList[s])[p].heading;
+                        pointC.strip = s;
+                        pointC.pt = p;
+                        conList.append(pointC);
+                    }
+                }
             }
         }
     }
@@ -148,6 +388,9 @@ void CContour::buildContourGuidanceLine(double eastFix, double northFix)
     if (ptCount == 0)
     {
         distanceFromCurrentLine = 9999;
+        distanceFromCurrentLine = 32000;
+        emit guidanceLineDistanceOff(32000);
+        //mf.guidanceLineDistanceOff = 32000;
         return;
     }
 
@@ -155,8 +398,8 @@ void CContour::buildContourGuidanceLine(double eastFix, double northFix)
     minDistance = 99999;
     for (int i = 0; i < ptCount; i++)
     {
-        double dist = ((eastFix - conList[i].x) * (eastFix - conList[i].x))
-                        + ((northFix - conList[i].z) * (northFix - conList[i].z));
+        double dist = ((pivot.easting - conList[i].x) * (pivot.easting - conList[i].x))
+                        + ((pivot.northing - conList[i].z) * (pivot.northing - conList[i].z));
         if (minDistance >= dist)
         {
             minDistance = dist;
@@ -167,12 +410,12 @@ void CContour::buildContourGuidanceLine(double eastFix, double northFix)
     //now we have closest point, the distance squared from it, and which patch and point its from
     int strip = conList[closestRefPoint].strip;
     int pt = conList[closestRefPoint].pt;
-    refX = (*stripList[strip])[pt].x;
-    refZ = (*stripList[strip])[pt].z;
-    refHeading = (*stripList[strip])[pt].y;
+    refX = (*stripList[strip])[pt].easting;
+    refZ = (*stripList[strip])[pt].northing;
+    refHeading = (*stripList[strip])[pt].heading;
 
     //are we going same direction as stripList was created?
-    bool isSameWay = M_PI - fabs(fabs(vehicle->fixHeading - refHeading) - M_PI) < 1.4;
+    bool isSameWay = M_PI - fabs(fabs(vehicle.fixHeading - refHeading) - M_PI) < 1.4;
 
     //which side of the patch are we on is next
     //calculate endpoints of reference line based on closest point
@@ -188,7 +431,7 @@ void CContour::buildContourGuidanceLine(double eastFix, double northFix)
     double dz = refPoint2.northing - refPoint1.northing;
 
     //how far are we away from the reference line at 90 degrees - 2D cross product and distance
-    distanceFromRefLine = ((dz * vehicle->fixEasting) - (dx * vehicle->fixNorthing) + (refPoint2.easting
+    distanceFromRefLine = ((dz * pn.fix.easting) - (dx * pn.fix.northing) + (refPoint2.easting
                             * refPoint1.northing) - (refPoint2.northing * refPoint1.easting))
                                 / sqrt((dz * dz) + (dx * dx));
 
@@ -196,12 +439,15 @@ void CContour::buildContourGuidanceLine(double eastFix, double northFix)
     double piSide;
 
     //sign of distance determines which side of line we are on
-    if (distanceFromRefLine > 0) piSide = PIBy2;
-    else piSide = -PIBy2;
+    if (distanceFromRefLine > 0) piSide = glm::PIBy2;
+    else piSide = -glm::PIBy2;
 
     //offset calcs
-    double toolOffset = vehicle->toolOffset;
-    if (isSameWay) toolOffset = 0.0;
+    double toolOffset = tool.toolOffset;
+    if (isSameWay)
+    {
+        toolOffset = 0.0;
+    }
     else
     {
         if (distanceFromRefLine > 0) toolOffset *= 2.0;
@@ -209,375 +455,482 @@ void CContour::buildContourGuidanceLine(double eastFix, double northFix)
     }
 
     //move the Guidance Line over based on the overlap, width, and offset amount set in vehicle
-    double widthMinusOverlap = vehicle->toolWidth - vehicle->toolOverlap + toolOffset;
+    double widthMinusOverlap = tool.toolWidth - tool.toolOverlap + toolOffset;
 
     //absolute the distance
     distanceFromRefLine = fabs(distanceFromRefLine);
 
     //make the new guidance line list called guideList
-    ptCount = stripList[strip]->size()-1;
+    ptCount = stripList[strip]->size() - 1;
     int start, stop;
 
-    if (isSameWay)
-    {
-        start = pt - 25;
-        if (start < 0) start = 0;
-        stop = pt + 60;
-        if (stop > ptCount) stop = ptCount+1;
-    }
-    else
-    {
-        start = pt - 60;
-        if (start < 0) start = 0;
-        stop = pt + 25;
-        if (stop > ptCount) stop = ptCount+1;
-    }
+    start = pt - 35; if (start < 0) start = 0;
+    stop = pt + 35; if (stop > ptCount) stop = ptCount + 1;
+
+    double distSq = widthMinusOverlap * widthMinusOverlap * 0.95;
+    bool fail = false;
 
     for (int i = start; i < stop; i++)
     {
-        QVector3D point = QVector3D(
-            (*stripList[strip])[i].x + (sin(piSide + (*stripList[strip])[i].y) * widthMinusOverlap),
-            (*stripList[strip])[i].y,
-            (*stripList[strip])[i].z + (cos(piSide + (*stripList[strip])[i].y) * widthMinusOverlap));
+        //var point = new vec3(
+        //    (*stripList[strip])[i].easting + (sin(piSide + (*stripList[strip])[i].heading) * widthMinusOverlap),
+        //    (*stripList[strip])[i].northing + (cos(piSide + (*stripList[strip])[i].heading) * widthMinusOverlap),
+        //    (*stripList[strip])[i].heading);
+        //ctList.append(point);
 
-        ctList.append(point);
+        Vec3 point = Vec3(
+            (*stripList[strip])[i].easting + (sin(piSide + (*stripList[strip])[i].heading) * widthMinusOverlap),
+            (*stripList[strip])[i].northing + (cos(piSide + (*stripList[strip])[i].heading) * widthMinusOverlap),
+            (*stripList[strip])[i].heading);
+        //ctList.append(point);
+
+        //make sure its not closer then 1 eq width
+        for (int j = start; j < stop; j++)
+        {
+            double check = glm::distanceSquared(point.northing, point.easting, (*stripList[strip])[j].northing, (*stripList[strip])[j].easting);
+            if (check < distSq)
+            {
+                fail = true;
+                break;
+            }
+        }
+
+        if (!fail) ctList.append(point);
+        fail = false;
     }
 
-    //we'll have to rebuild the OpenGL buffer for the guidance line.
-    ctListBufferCurrent = false;
+    int ctCount = ctList.size();
+    if (ctCount < 6) return;
+
+    const double spacing = 1.0;
+    double distance;
+    for (int i = 0; i < ctCount - 1; i++)
+    {
+        distance = glm::distance(ctList[i], ctList[i + 1]);
+        if (distance < spacing)
+        {
+            ctList.removeAt(i + 1);
+            ctCount = ctList.size();
+            i--;
+        }
+    }
 }
 
 //determine distance from contour guidance line
-void CContour::distanceFromContourLine()
+void CContour::distanceFromContourLine(CVehicle &vehicle, CNMEA &pn, Vec3 pivot, Vec3 steer)
 {
-    //grab a copy from main
-    pivotAxlePosCT = vehicle->pivotAxlePos;
-
+    isValid = false;
     double minDistA = 1000000, minDistB = 1000000;
     int ptCount = ctList.size();
     //distanceFromCurrentLine = 9999;
-    if (ptCount > 0)
+    if (ptCount > 8)
     {
-        //find the closest 2 points to current fix
-        for (int t = 0; t < ptCount; t++)
+        if (vehicle.isStanleyUsed)
         {
-            double dist = ((pivotAxlePosCT.easting - ctList[t].x()) * (pivotAxlePosCT.easting - ctList[t].x()))
-                            + ((pivotAxlePosCT.northing - ctList[t].z()) * (pivotAxlePosCT.northing - ctList[t].z()));
-
-            if (dist < minDistA)
+            //find the closest 2 points to current fix
+            for (int t = 0; t < ptCount; t++)
             {
-                minDistB = minDistA;
-                B = A;
-                minDistA = dist;
-                A = t;
-            }
-            else if (dist < minDistB)
-            {
-                minDistB = dist;
-                B = t;
-            }
-        }
-
-        //just need to make sure the points continue ascending or heading switches all over the place
-        if (A > B) { C = A; A = B; B = C; }
-
-        //get the distance from currently active AB line
-        //x2-x1
-        double dx = ctList[B].x() - ctList[A].x();
-        //z2-z1
-        double dz = ctList[B].z() - ctList[A].z();
-
-        if (fabs(dx) < DOUBLE_EPSILON && fabs(dz) < DOUBLE_EPSILON) return;
-
-        //abHeading = atan2(dz, dx);
-        abHeading = ctList[A].y();
-
-        //how far from current AB Line is fix
-        distanceFromCurrentLine = ((dz * pivotAxlePosCT.easting) - (dx * pivotAxlePosCT.northing) + (ctList[B].x()
-                    * ctList[A].z()) - (ctList[B].z() * ctList[A].x()))
-                        / sqrt((dz * dz) + (dx * dx));
-
-        //are we on the right side or not
-        isOnRightSideCurrentLine = distanceFromCurrentLine > 0;
-
-        //absolute the distance
-        distanceFromCurrentLine = fabs(distanceFromCurrentLine);
-
-        // ** Pure pursuit ** - calc point on ABLine closest to current position
-        double U = (((pivotAxlePosCT.easting - ctList[A].x()) * (dx))
-                    + ((pivotAxlePosCT.northing - ctList[A].z()) * (dz)))
-                    / ((dx * dx) + (dz * dz));
-
-        rEastCT = ctList[A].x() + (U * (dx));
-        rNorthCT = ctList[A].z() + (U * (dz));
-
-        //Subtract the two headings, if > 1.57 its going the opposite heading as refAB
-        abFixHeadingDelta = (fabs(vehicle->fixHeading - abHeading));
-        if (abFixHeadingDelta >= M_PI) abFixHeadingDelta = fabs(abFixHeadingDelta - twoPI);
-
-        //used for accumulating distance to find goal point
-        double distSoFar;
-
-        //how far should goal point be away  - speed * seconds * kmph -> m/s + min value
-        double goalPointDistance = vehicle->speed * vehicle->goalPointLookAhead * 0.27777777;
-
-        //minimum of 4.0 meters look ahead
-        if (goalPointDistance < 3.0) goalPointDistance = 3.0;
-
-        // used for calculating the length squared of next segment.
-        double tempDist = 0.0;
-
-        if (abFixHeadingDelta >= PIBy2)
-        {
-            //counting down
-            isABSameAsFixHeading = false;
-            distSoFar = CNMEA::distance(ctList[A].z(), ctList[A].x(), rNorthCT, rEastCT);
-            //Is this segment long enough to contain the full lookahead distance?
-            if (distSoFar > goalPointDistance)
-            {
-                //treat current segment like an AB Line
-                goalPointCT.easting = rEastCT - (sin(ctList[A].y()) * goalPointDistance);
-                goalPointCT.northing = rNorthCT - (cos(ctList[A].y()) * goalPointDistance);
+                double dist = ((steer.easting - ctList[t].easting) * (steer.easting - ctList[t].easting))
+                                + ((steer.northing - ctList[t].northing) * (steer.northing - ctList[t].northing));
+                if (dist < minDistA)
+                {
+                    minDistB = minDistA;
+                    B = A;
+                    minDistA = dist;
+                    A = t;
+                }
+                else if (dist < minDistB)
+                {
+                    minDistB = dist;
+                    B = t;
+                }
             }
 
-            //multiple segments required
+            //just need to make sure the points continue ascending in list order or heading switches all over the place
+            if (A > B) { C = A; A = B; B = C; }
+
+            //get the distance from currently active AB line
+            //x2-x1
+            double dx = ctList[B].easting - ctList[A].easting;
+            //z2-z1
+            double dy = ctList[B].northing - ctList[A].northing;
+
+            if (fabs(dx) < glm::DOUBLE_EPSILON && fabs(dy) < glm::DOUBLE_EPSILON) return;
+
+            abHeading = atan2(dx, dy);
+            if (abHeading < 0) abHeading += glm::twoPI;
+            //if (abHeading > M_PI) abHeading -= glm::twoPI;
+
+            //abHeading = ctList[A].heading;
+
+            //how far from current AB Line is fix
+            distanceFromCurrentLine = ((dy * steer.easting) - (dx * steer.northing) + (ctList[B].easting
+                        * ctList[A].northing) - (ctList[B].northing * ctList[A].easting))
+                            / sqrt((dy * dy) + (dx * dx));
+
+            //are we on the right side or not
+            isOnRightSideCurrentLine = distanceFromCurrentLine > 0;
+
+            //absolute the distance
+            distanceFromCurrentLine = fabs(distanceFromCurrentLine);
+
+            //Subtract the two headings, if > 1.57 its going the opposite heading as refAB
+            abFixHeadingDelta = (fabs(vehicle.fixHeading - abHeading));
+            if (abFixHeadingDelta >= M_PI) abFixHeadingDelta = fabs(abFixHeadingDelta - glm::twoPI);
+
+            isABSameAsVehicleHeading = abFixHeadingDelta < glm::PIBy2;
+
+            // calc point on ABLine closest to current position
+            double U = (((steer.easting - ctList[A].easting) * dx) + ((steer.northing - ctList[A].northing) * dy))
+                        / ((dx * dx) + (dy * dy));
+
+            rEastCT = ctList[A].easting + (U * dx);
+            rNorthCT = ctList[A].northing + (U * dy);
+
+            ////find closest point to goal to get heading.
+            //minDistA = 99999;
+            //for (int t = 0; t < ptCount; t++)
+            //{
+            //    double dist = ((rEastCT - ctList[t].easting) * (rEastCT - ctList[t].easting))
+            //                    + ((rNorthCT - ctList[t].northing) * (rNorthCT - ctList[t].northing));
+            //    if (dist < minDistA)
+            //    {
+            //        A = t;
+            //    }
+            //}
+
+            //abHeading = ctList[A].heading;
+
+            //distance is negative if on left, positive if on right
+            if (isABSameAsVehicleHeading)
+            {
+                if (!isOnRightSideCurrentLine)
+                {
+                    distanceFromCurrentLine *= -1.0;
+                }
+                abFixHeadingDelta = (steer.heading - abHeading);
+            }
+
+            //opposite way so right is left
             else
             {
-                //cycle thru segments and keep adding lengths. check if start and break if so.
-                while (A > 0)
+                if (isOnRightSideCurrentLine)
                 {
-                    B--; A--;
-                    tempDist = CNMEA::distance(ctList[B].z(), ctList[B].x(), ctList[A].z(), ctList[A].x());
+                    distanceFromCurrentLine *= -1.0;
+                }
+                abFixHeadingDelta = (steer.heading - abHeading + M_PI);
+            }
 
-                    //will we go too far?
-                    if ((tempDist + distSoFar) > goalPointDistance)
+            //Fix the circular error
+            if (abFixHeadingDelta > M_PI) abFixHeadingDelta -= M_PI;
+            else if (abFixHeadingDelta < M_PI) abFixHeadingDelta += M_PI;
+
+            if (abFixHeadingDelta > glm::PIBy2) abFixHeadingDelta -= M_PI;
+            else if (abFixHeadingDelta < -glm::PIBy2) abFixHeadingDelta += M_PI;
+
+            abFixHeadingDelta *= vehicle.stanleyHeadingErrorGain;
+            if (abFixHeadingDelta > 0.74) abFixHeadingDelta = 0.74;
+            if (abFixHeadingDelta < -0.74) abFixHeadingDelta = -0.74;
+
+            steerAngleCT = atan((distanceFromCurrentLine * vehicle.stanleyGain) / ((pn.speed * 0.277777) + 1));
+
+            if (steerAngleCT > 0.74) steerAngleCT = 0.74;
+            if (steerAngleCT < -0.74) steerAngleCT = -0.74;
+
+            steerAngleCT = glm::toDegrees((steerAngleCT + abFixHeadingDelta) * -1.0);
+
+            if (steerAngleCT < -vehicle.maxSteerAngle) steerAngleCT = -vehicle.maxSteerAngle;
+            if (steerAngleCT > vehicle.maxSteerAngle) steerAngleCT = vehicle.maxSteerAngle;
+
+            //Convert to millimeters
+            distanceFromCurrentLine = glm::roundAwayFromZero(distanceFromCurrentLine * 1000.0);
+        }
+        else
+        {
+            //find the closest 2 points to current fix
+            for (int t = 0; t < ptCount; t++)
+            {
+                double dist = ((pivot.easting - ctList[t].easting) * (pivot.easting - ctList[t].easting))
+                                + ((pivot.northing - ctList[t].northing) * (pivot.northing - ctList[t].northing));
+                if (dist < minDistA)
+                {
+                    minDistB = minDistA;
+                    B = A;
+                    minDistA = dist;
+                    A = t;
+                }
+                else if (dist < minDistB)
+                {
+                    minDistB = dist;
+                    B = t;
+                }
+            }
+
+            //just need to make sure the points continue ascending in list order or heading switches all over the place
+            if (A > B) { C = A; A = B; B = C; }
+
+            //get the distance from currently active AB line
+            //x2-x1
+            double dx = ctList[B].easting - ctList[A].easting;
+            //z2-z1
+            double dy = ctList[B].northing - ctList[A].northing;
+
+            if (fabs(dx) < glm::DOUBLE_EPSILON && fabs(dy) < glm::DOUBLE_EPSILON) return;
+
+            //abHeading = atan2(dz, dx);
+            abHeading = ctList[A].heading;
+
+            //how far from current AB Line is fix
+            distanceFromCurrentLine = ((dy * pn.fix.easting) - (dx * pn.fix.northing) + (ctList[B].easting
+                        * ctList[A].northing) - (ctList[B].northing * ctList[A].easting))
+                            / sqrt((dy * dy) + (dx * dx));
+
+            //are we on the right side or not
+            isOnRightSideCurrentLine = distanceFromCurrentLine > 0;
+
+            //absolute the distance
+            distanceFromCurrentLine = fabs(distanceFromCurrentLine);
+
+            // ** Pure pursuit ** - calc point on ABLine closest to current position
+            double U = (((pivot.easting - ctList[A].easting) * dx) + ((pivot.northing - ctList[A].northing) * dy))
+                        / ((dx * dx) + (dy * dy));
+
+            rEastCT = ctList[A].easting + (U * dx);
+            rNorthCT = ctList[A].northing + (U * dy);
+
+            ////determine if the point is between 2 points initially determined
+            //double minx, maxx, miny, maxy;
+
+            //minx = Math.Min(ctList[A].northing, ctList[B].northing);
+            //maxx = Math.Max(ctList[A].northing, ctList[B].northing);
+
+            //miny = Math.Min(ctList[A].easting, ctList[B].easting);
+            //maxy = Math.Max(ctList[A].easting, ctList[B].easting);
+
+            //isValid = (rNorthCT >= minx && rNorthCT <= maxx) && (rEastCT >= miny && rEastCT <= maxy);
+            //if (!isValid)
+            //{
+            //    //invalid distance so tell AS module
+            //    distanceFromCurrentLine = 32000;
+            //    mf.guidanceLineDistanceOff = 32000;
+            //    return;
+            //}
+
+            //Subtract the two headings, if > 1.57 its going the opposite heading as refAB
+            abFixHeadingDelta = (fabs(vehicle.fixHeading - abHeading));
+            if (abFixHeadingDelta >= M_PI) abFixHeadingDelta = fabs(abFixHeadingDelta - glm::twoPI);
+
+            //used for accumulating distance to find goal point
+            double distSoFar;
+
+            //update base on autosteer settings and distance from line
+            double goalPointDistance = vehicle.updateGoalPointDistance(pn, distanceFromCurrentLine);
+            //not needed; vehicle.updateGoalPointDistance does this for us.
+            //mf.lookaheadActual = goalPointDistance;
+
+            // used for calculating the length squared of next segment.
+            double tempDist = 0.0;
+
+            if (abFixHeadingDelta >= glm::PIBy2)
+            {
+                //counting down
+                isABSameAsVehicleHeading = false;
+                distSoFar = glm::distance(ctList[A], rEastCT, rNorthCT);
+                //Is this segment long enough to contain the full lookahead distance?
+                if (distSoFar > goalPointDistance)
+                {
+                    //treat current segment like an AB Line
+                    goalPointCT.easting = rEastCT - (sin(ctList[A].heading) * goalPointDistance);
+                    goalPointCT.northing = rNorthCT - (cos(ctList[A].heading) * goalPointDistance);
+                }
+
+                //multiple segments required
+                else
+                {
+                    //cycle thru segments and keep adding lengths. check if start and break if so.
+                    while (A > 0)
                     {
-                        //A++; B++;
-                        break; //tempDist contains the full length of next segment
-                    } else {
+                        B--; A--;
+                        tempDist = glm::distance(ctList[B], ctList[A]);
+
+                        //will we go too far?
+                        if ((tempDist + distSoFar) > goalPointDistance)
+                        {
+                            //A++; B++;
+                            break; //tempDist contains the full length of next segment
+                        }
+                        else
+                        {
+                            distSoFar += tempDist;
+                        }
+                    }
+
+                    double t = (goalPointDistance - distSoFar); // the remainder to yet travel
+                    t /= tempDist;
+
+                    goalPointCT.easting = (((1 - t) * ctList[B].easting) + (t * ctList[A].easting));
+                    goalPointCT.northing = (((1 - t) * ctList[B].northing) + (t * ctList[A].northing));
+                }
+            }
+            else
+            {
+                //counting up
+                isABSameAsVehicleHeading = true;
+                distSoFar = glm::distance(ctList[B], rEastCT, rNorthCT);
+
+                //Is this segment long enough to contain the full lookahead distance?
+                if (distSoFar > goalPointDistance)
+                {
+                    //treat current segment like an AB Line
+                    goalPointCT.easting = rEastCT + (sin(ctList[A].heading) * goalPointDistance);
+                    goalPointCT.northing = rNorthCT + (cos(ctList[A].heading) * goalPointDistance);
+                }
+
+                //multiple segments required
+                else
+                {
+                    //cycle thru segments and keep adding lengths. check if end and break if so.
+                    // ReSharper disable once LoopVariableIsNeverChangedInsideLoop
+                    while (B < ptCount - 1)
+                    {
+                        B++; A++;
+                        tempDist = glm::distance(ctList[B], ctList[A]);
+
+                        //will we go too far?
+                        if ((tempDist + distSoFar) > goalPointDistance)
+                        {
+                            //A--; B--;
+                            break; //tempDist contains the full length of next segment
+                        }
+
                         distSoFar += tempDist;
                     }
+
+                    //xt = (((1 - t) * x0 + t * x1)
+                    //yt = ((1 - t) * y0 + t * y1))
+
+                    double t = (goalPointDistance - distSoFar); // the remainder to yet travel
+                    t /= tempDist;
+
+                    goalPointCT.easting = (((1 - t) * ctList[A].easting) + (t * ctList[B].easting));
+                    goalPointCT.northing = (((1 - t) * ctList[A].northing) + (t * ctList[B].northing));
                 }
-
-                double t = (goalPointDistance - distSoFar); // the remainder to yet travel
-                t /= tempDist;
-
-                goalPointCT.easting = (((1 - t) * ctList[B].x()) + (t * ctList[A].x()));
-                goalPointCT.northing = (((1 - t) * ctList[B].z()) + (t * ctList[A].z()));
             }
-        }
-        else
-        {
-            //counting up
-            isABSameAsFixHeading = true;
-            distSoFar = CNMEA::distance(ctList[B].z(), ctList[B].x(), rNorthCT, rEastCT);
 
-            //Is this segment long enough to contain the full lookahead distance?
-            if (distSoFar > goalPointDistance)
+            //calc "D" the distance from pivot axle to lookahead point
+            double goalPointDistanceSquared = glm::distanceSquared(goalPointCT.northing, goalPointCT.easting, pivot.northing, pivot.easting);
+
+            //calculate the the delta x in local coordinates and steering angle degrees based on wheelbase
+            double localHeading = glm::twoPI - vehicle.fixHeading;
+            ppRadiusCT = goalPointDistanceSquared / (2 * (((goalPointCT.easting - pivot.easting) * cos(localHeading)) + ((goalPointCT.northing - pivot.northing) * sin(localHeading))));
+
+            steerAngleCT = glm::toDegrees(atan(2 * (((goalPointCT.easting - pivot.easting) * cos(localHeading))
+                + ((goalPointCT.northing - pivot.northing) * sin(localHeading))) * vehicle.wheelbase / goalPointDistanceSquared));
+
+            if (steerAngleCT < -vehicle.maxSteerAngle) steerAngleCT = -vehicle.maxSteerAngle;
+            if (steerAngleCT > vehicle.maxSteerAngle) steerAngleCT = vehicle.maxSteerAngle;
+
+            if (ppRadiusCT < -500) ppRadiusCT = -500;
+            if (ppRadiusCT > 500) ppRadiusCT = 500;
+
+            radiusPointCT.easting = pivot.easting + (ppRadiusCT * cos(localHeading));
+            radiusPointCT.northing = pivot.northing + (ppRadiusCT * sin(localHeading));
+
+            //angular velocity in rads/sec  = 2PI * m/sec * radians/meters
+            double angVel = glm::twoPI * 0.277777 * pn.speed * (tan(glm::toRadians(steerAngleCT))) / vehicle.wheelbase;
+
+            //clamp the steering angle to not exceed safe angular velocity
+            if (fabs(angVel) > vehicle.maxAngularVelocity)
             {
-                //treat current segment like an AB Line
-                goalPointCT.easting = rEastCT + (sin(ctList[A].y()) * goalPointDistance);
-                goalPointCT.northing = rNorthCT + (cos(ctList[A].y()) * goalPointDistance);
+                steerAngleCT = glm::toDegrees(steerAngleCT > 0 ?
+                        (atan((vehicle.wheelbase * vehicle.maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777)))
+                    : (atan((vehicle.wheelbase * -vehicle.maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777))));
             }
+            //Convert to centimeters
+            distanceFromCurrentLine = glm::roundAwayFromZero(distanceFromCurrentLine * 1000.0);
 
-            //multiple segments required
-            else
+            //distance is negative if on left, positive if on right
+            //if you're going the opposite direction left is right and right is left
+            //double temp;
+            if (isABSameAsVehicleHeading)
             {
-                //cycle thru segments and keep adding lengths. check if end and break if so.
-                // ReSharper disable once LoopVariableIsNeverChangedInsideLoop
-                while (B < ptCount - 1)
-                {
-                    B++; A++;
-                    tempDist = CNMEA::distance(ctList[B].z(), ctList[B].x(), ctList[A].z(), ctList[A].x());
+                if (!isOnRightSideCurrentLine) distanceFromCurrentLine *= -1.0;
+            }
 
-                    //will we go too far?
-                    if ((tempDist + distSoFar) > goalPointDistance)
-                    {
-                        //A--; B--;
-                        break; //tempDist contains the full length of next segment
-                    }
-
-                    distSoFar += tempDist;
-                }
-
-                //xt = (((1 - t) * x0 + t * x1)
-                //yt = ((1 - t) * y0 + t * y1))
-
-                double t = (goalPointDistance - distSoFar); // the remainder to yet travel
-                t /= tempDist;
-
-                goalPointCT.easting = (((1 - t) * ctList[A].x()) + (t * ctList[B].x()));
-                goalPointCT.northing = (((1 - t) * ctList[A].z()) + (t * ctList[B].z()));
+            //opposite way so right is left
+            else if (isOnRightSideCurrentLine)
+            {
+                distanceFromCurrentLine *= -1.0;
             }
         }
 
-        //calc "D" the distance from pivot axle to lookahead point
-        double goalPointDistanceSquared = CNMEA::distanceSquared(goalPointCT.northing, goalPointCT.easting, pivotAxlePosCT.northing, pivotAxlePosCT.easting);
-
-        //calculate the the delta x in local coordinates and steering angle degrees based on wheelbase
-        double localHeading = twoPI - vehicle->fixHeading;
-        ppRadiusCT = goalPointDistanceSquared / (2 * (((goalPointCT.easting - pivotAxlePosCT.easting) * cos(localHeading)) + ((goalPointCT.northing - pivotAxlePosCT.northing) * sin(localHeading))));
-
-        steerAngleCT = toDegrees(atan(2 * (((goalPointCT.easting - pivotAxlePosCT.easting) * cos(localHeading))
-            + ((goalPointCT.northing - pivotAxlePosCT.northing) * sin(localHeading))) * vehicle->wheelbase / goalPointDistanceSquared));
-
-        if (steerAngleCT < -vehicle->maxSteerAngle) steerAngleCT = -vehicle->maxSteerAngle;
-        if (steerAngleCT > vehicle->maxSteerAngle) steerAngleCT = vehicle->maxSteerAngle;
-
-        if (ppRadiusCT < -500) ppRadiusCT = -500;
-        if (ppRadiusCT > 500) ppRadiusCT = 500;
-
-        radiusPointCT.easting = pivotAxlePosCT.easting + (ppRadiusCT * cos(localHeading));
-        radiusPointCT.northing = pivotAxlePosCT.northing + (ppRadiusCT * sin(localHeading));
-
-        //angular velocity in rads/sec  = 2PI * m/sec * radians/meters
-        double angVel = twoPI * 0.277777 * vehicle->speed * (tan(toRadians(steerAngleCT))) / vehicle->wheelbase;
-
-        //clamp the steering angle to not exceed safe angular velocity
-        if (fabs(angVel) > vehicle->maxAngularVelocity)
-        {
-            steerAngleCT = toDegrees(steerAngleCT > 0 ?
-                    (atan((vehicle->wheelbase * vehicle->maxAngularVelocity) / (twoPI * vehicle->speed * 0.277777)))
-                : (atan((vehicle->wheelbase * -vehicle->maxAngularVelocity) / (twoPI * vehicle->speed * 0.277777))));
-        }
-        //Convert to centimeters
-        distanceFromCurrentLine = distanceFromCurrentLine * 1000.0;
-        distanceFromCurrentLine = (distanceFromCurrentLine < 0) ? floor(distanceFromCurrentLine) : ceil(distanceFromCurrentLine);
-
-        //distance is negative if on left, positive if on right
-        //if you're going the opposite direction left is right and right is left
-        //double temp;
-        if (isABSameAsFixHeading)
-        {
-            //temp = (abHeading);
-            if (!isOnRightSideCurrentLine) distanceFromCurrentLine *= -1.0;
-        }
-
-        //opposite way so right is left
-        else
-        {
-            //temp = (abHeading - M_PI);
-            //if (temp < 0) temp = (temp + twoPI);
-            //temp = toDegrees(temp);
-            if (isOnRightSideCurrentLine) distanceFromCurrentLine *= -1.0;
-        }
-
-        vehicle->guidanceLineDistanceOff = int(distanceFromCurrentLine);
-        vehicle->guidanceLineSteerAngle = int(steerAngleCT*10);
-        //mf->guidanceLineHeadingDelta = (Int16)((atan2(sin(temp - mf->fixHeading),
-        //                                    cos(temp - mf->fixHeading))) * 10000);
-   }
+        //fill in the autosteer variables
+        emit guidanceLineDistanceOff(distanceFromCurrentLine);
+        emit distanceDisplay(distanceFromCurrentLine);
+        emit guidanceLineSteerAngle(steerAngleCT * 100);
+        //mf.guidanceLineDistanceOff = mf.distanceDisplay = (int)distanceFromCurrentLine;
+        //mf.guidanceLineSteerAngle = (int)(steerAngleCT * 100);
+    }
     else
     {
         //invalid distance so tell AS module
         distanceFromCurrentLine = 32000;
-        vehicle->guidanceLineDistanceOff = 32000;
+        //emit signal
+        emit guidanceLineDistanceOff(32000);
+    }
+}
+
+void CContour::calculateContourHeadings()
+{
+    //to calc heading based on next and previous points to give an average heading.
+    int cnt = ctList.size();
+    QVector<Vec3> arr = ctList;
+    cnt--;
+    ctList.clear();
+
+    //middle points
+    for (int i = 1; i < cnt; i++)
+    {
+        Vec3 pt3 = arr[i];
+        pt3.heading = atan2(arr[i + 1].easting - arr[i - 1].easting, arr[i + 1].northing - arr[i - 1].northing);
+        if (pt3.heading < 0) pt3.heading += glm::twoPI;
+        ctList.append(pt3);
     }
 }
 
 //draw the red follow me line
-void CContour::drawContourLine(QOpenGLContext *glContext, const QMatrix4x4 &modelview, const QMatrix4x4 &projection)
+void CContour::drawContourLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, CVehicle &vehicle)
 {
-    QSettings settings;
-    QOpenGLFunctions *gles = glContext->functions();
-
-    /* generate ctList OpenGL buffer */
-    if (! ctListBufferCurrent) {
-        if (ctListBuffer.isCreated())
-            ctListBuffer.destroy();
-        ctListBuffer.create();
-        ctListBuffer.bind();
-
-        QVector<QVector3D> temp;
-        foreach(QVector3D i, ctList) {
-            temp.append(QVector3D(i.x(), i.z(), 0));
-        }
-
-        ctListBuffer.allocate(temp.constData(), temp.size() * sizeof(QVector3D));
-        ctListBuffer.release();
-
-        ctListBufferCurrent = true;
-    }
-
+    USE_SETTINGS;
     ////draw the guidance line
-    QColor color = QColor::fromRgbF(0.98f, 0.2f, 0.0f);
-    glDrawArraysColor(gles, projection * modelview,
-                      GL_LINE_STRIP, color,
-                      ctListBuffer, GL_FLOAT,
-                      ctList.size(),2);
+    int ptCount = ctList.size();
+    if (ptCount < 2) return;
 
 
-    //draw points on line
-    color = QColor::fromRgbF(0.7f, 0.7f, 0.25f);
-    glDrawArraysColor(gles, projection * modelview,
-                      GL_POINTS, color,
-                      ctListBuffer, GL_FLOAT,
-                      ctList.size(), 2);
+    gl->glLineWidth(SETTINGS_DISPLAY_LINEWIDTH);
 
+    GLHelperOneColor gldraw;
 
-    if (settings.value("display/isPureDisplayOn",true).toBool())
+    for (int h = 0; h < ptCount; h++)
+        gldraw.append(QVector3D(ctList[h].easting, ctList[h].northing, 0));
+
+    gldraw.draw(gl,mvp, QColor::fromRgbF(0.98f, 0.2f, 0.980f),
+                GL_LINE_STRIP, SETTINGS_DISPLAY_LINEWIDTH);
+
+    gldraw.clear();
+
+    for (int h = 0; h < ptCount; h++)
+        gldraw.append(QVector3D(ctList[h].easting, ctList[h].northing, 0));
+
+    gldraw.draw(gl,mvp,QColor::fromRgbF(0.87f, 08.7f, 0.25f),
+                GL_POINTS, SETTINGS_DISPLAY_LINEWIDTH);
+
+    if (SETTINGS_DISPLAY_ISPUREON && distanceFromCurrentLine != 32000 && !vehicle.isStanleyUsed)
     {
-        const int numSegments = 100;
-        {
-            double theta = twoPI / (numSegments);
-            double c = cos(theta);//precalculate the sine and cosine
-            double s = sin(theta);
-
-            double x = ppRadiusCT;//we start at angle = 0
-            double y = 0;
-
-            QVector<QVector3D> circle;
-
-            for (int ii = 0; ii < numSegments; ii++)
-            {
-                circle.append(QVector3D(x + radiusPointCT.easting,
-                                        y + radiusPointCT.northing,
-                                        0));
-                //apply the rotation matrix
-                double t = x;
-                x = (c * x) - (s * y);
-                y = (s * t) + (c * y);
-            }
-
-            //Build or reload openGL buffer with points
-            if (purePursuitBuffer.isCreated()) {
-                purePursuitBuffer.bind();
-                purePursuitBuffer.write(0,circle.constData(),
-                                        numSegments * sizeof(QVector3D));
-                purePursuitBuffer.release();
-            } else {
-                purePursuitBuffer.create();
-                purePursuitBuffer.bind();
-                purePursuitBuffer.allocate(circle.constData(),
-                                           numSegments * sizeof(QVector3D));
-                purePursuitBuffer.release();
-            }
-            QColor color = QColor::fromRgbF(0.95f, 0.30f, 0.950f);
-            glDrawArraysColor(gles, projection * modelview,
-                              GL_LINE_LOOP, color,
-                              purePursuitBuffer, GL_FLOAT,
-                              numSegments);
-
-            QVector3D lookAheadPoint = QVector3D(goalPointCT.easting,
-                                                 goalPointCT.northing, 0.0);
-
-            if (lookAheadPointBuffer.isCreated()) {
-                lookAheadPointBuffer.bind();
-                lookAheadPointBuffer.write(0,&lookAheadPoint, sizeof(QVector3D));
-                lookAheadPointBuffer.release();
-            } else {
-                lookAheadPointBuffer.create();
-                lookAheadPointBuffer.bind();
-                lookAheadPointBuffer.allocate(&lookAheadPoint, sizeof(QVector3D));
-                lookAheadPointBuffer.release();
-            }
-            //Draw lookahead Point
-            color = QColor::fromRgbF(1.0f, 0.5f, 0.95f);
-            glDrawArraysColor(gles, projection * modelview,
-                              GL_POINTS, color,
-                              lookAheadPointBuffer, GL_FLOAT,
-                              1,4.0f);
-        }
+        gldraw.clear();
+        gldraw.append(QVector3D(goalPointCT.easting, goalPointCT.northing, 0.0));
+        gldraw.draw(gl, mvp, QColor::fromRgbF(1.0f, 0.95f, 0.095f),
+                    GL_POINTS, 6.0f);
     }
 }
 
