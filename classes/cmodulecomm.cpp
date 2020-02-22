@@ -11,7 +11,7 @@
 #define DEFAULT_SETAS_MAXINTEGRAL 20
 #define DEFAULT_SETAS_COUNTSPERDEGREE 40
 
-CModuleComm::CModuleComm()
+CModuleComm::CModuleComm(QObject *parent) : QObject(parent)
 {
     USE_SETTINGS;
     serialRecvAutoSteerStr = "Oops NC";

@@ -69,7 +69,7 @@ const double UTMScaleFactor = 0.9996;
 //private double UTMScaleFactor2 = 1.0004001600640256102440976390556;
 
 
-CNMEA::CNMEA()
+CNMEA::CNMEA(QObject *parent) : QObject(parent)
 {
     USE_SETTINGS;
 

@@ -78,7 +78,7 @@ public:
     //list of points to determine position ofnew contour line
     QVector<CVec> conList;
 
-    CContour();
+    explicit CContour(QObject *parent = 0);
     void startContourLine(Vec3 pivot);
     void addPoint(Vec3 pivot);
     void stopContourLine(Vec3 pivot, QVector<QSharedPointer<QVector<Vec3>>> &contourSaveList);

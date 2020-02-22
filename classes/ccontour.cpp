@@ -14,8 +14,8 @@
 #include "cnmea.h"
 #include "common.h"
 
-CContour::CContour()
-    : ptList(new QVector<Vec3>)
+CContour::CContour(QObject *parent)
+    : QObject(parent), ptList(new QVector<Vec3>)
 {
 
 }

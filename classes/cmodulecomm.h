@@ -7,7 +7,7 @@
 
 const int pgnSentenceLength = 10;
 
-class CModuleComm
+class CModuleComm: public QObject
 {
     Q_OBJECT
 private:
@@ -69,7 +69,7 @@ public:
     bool isWorkSwitchActiveLow=false, isWorkSwitchEnabled=false, isWorkSwitchManual = false;
     int workSwitchValue = 1, steerSwitchValue ;
 
-    CModuleComm();
+    explicit CModuleComm(QObject *parent = 0);
     void resetAllModuleCommValues();
 signals:
     void sendRelayOutToPort(uchar *, int);

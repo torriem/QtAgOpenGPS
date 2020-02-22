@@ -15,7 +15,7 @@
 //??? why does CABLine refer to mf.ABLine? Isn't there only one instance and
 //thus was can just use "this."  If this is wrong, we'll remove this and fix it.
 
-CABLine::CABLine()
+CABLine::CABLine(QObject *parent) : QObject(parent)
 {
     USE_SETTINGS;
     lineWidth = SETTINGS_DISPLAY_LINEWIDTH;

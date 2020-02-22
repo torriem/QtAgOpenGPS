@@ -31,7 +31,7 @@ public:
     // array of turns
     QVector<CHeadLines> headArr;
 
-    CHead();
+    explicit CHead(QObject *parent = 0);
     bool findHeadlandDistance(const CVehicle &vehicle, const CTool &tool);
     void drawHeadLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
     bool isPointInsideHeadLine(Vec2 pt);

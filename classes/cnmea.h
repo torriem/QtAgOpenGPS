@@ -18,7 +18,7 @@ class Vec2;
 */
 
 
-class CNMEA
+class CNMEA : public QObject
 {
     Q_OBJECT
 private:
@@ -71,7 +71,7 @@ public:
     int utmNorth = 0, utmEast = 0;
     QByteArray logNMEASentence = "";
 
-    CNMEA();
+    explicit CNMEA(QObject *parent = 0);
     void updateNorthingEasting();
     void parseNMEA();
     void parseAVR();

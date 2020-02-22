@@ -104,7 +104,7 @@ public:
     //list of the list of patch data individual triangles for field sections
     QVector<QSharedPointer<QVector<QVector3D>>> patchSaveList;
 
-    CVehicle();
+    explicit CVehicle(QObject *parent = 0);
     double updateGoalPointDistance(CNMEA &pn, double distanceFromCurrentLine);
     void drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 &mvp, CCamera &camera, CTool &tool, CBoundary &bnd, CHead &hd);
 

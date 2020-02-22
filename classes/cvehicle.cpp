@@ -12,7 +12,7 @@
 #include "cnmea.h"
 #include "chead.h"
 
-CVehicle::CVehicle()
+CVehicle::CVehicle(QObject *parent) : QObject(parent)
 {
     USE_SETTINGS;
 

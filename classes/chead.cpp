@@ -10,7 +10,7 @@
 #include "cheadlines.h"
 #include "common.h"
 
-CHead::CHead()
+CHead::CHead(QObject *parent) : QObject(parent)
 {
     singleSpaceHeadlandDistance = 18;
     isOn = false;

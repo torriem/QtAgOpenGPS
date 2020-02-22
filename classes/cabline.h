@@ -89,7 +89,7 @@ private:
 
 
 public:
-    CABLine();
+    explicit CABLine(QObject *parent = 0);
     void deleteAB();
     void setABLineByBPoint(const CVehicle &vehicle);
     void setABLineByHeading(); //do we need to pass in heading somewhere from the main form?
