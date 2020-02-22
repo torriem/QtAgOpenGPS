@@ -11,15 +11,21 @@ private:
     double camPosY = 0;
     const double camPosZ; //readonly in C# code
 public:
-    double fixHeading = 0;
     double camYaw = 0;
 
     double camPitch = 0;
     double offset = 0;
     double camSetDistance = -100; //put in setttings?
     //double camDelta = 0;
+    double gridZoom;
+    double zoomValue = 15;
+    double previousZoom = 25;
+
+    bool camFollowing;
+    int camMode = 0;
 
     CCamera();
+
     void setWorldCam(QMatrix4x4 &mvp, double _fixPosX, double _fixPosY, double _fixHeading);
 
 };

@@ -165,6 +165,9 @@ public:
 #define SETTINGS_DISPLAY_ISPUREON			settings.   value("display/isPureOn", true).toBool()
 #define SETTINGS_SET_DISPLAY_ISPUREON(VAL)	settings.setValue("display/isPureOn",VAL)
 
+#define SETTINGS_DISPLAY_CAMPITCH	settings.   value("display/camPitch", -32).toDouble()
+#define SETTINGS_SET_CAMPITCH(VAL)	settings.setValue("display/camPitch",VAL)
+
 
 #endif // AOGSETTINGS_H
 
