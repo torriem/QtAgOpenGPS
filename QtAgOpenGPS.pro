@@ -59,7 +59,6 @@ SOURCES += main.cpp\
     glutils.cpp \
     aogrenderer.cpp \
     classes/cyouturn.cpp \
-    classes/crate.cpp \
     classes/ctool.cpp \
     classes/ctram.cpp \
     classes/cturnlines.cpp \
@@ -92,7 +91,6 @@ HEADERS  += formgps.h \
     glutils.h \
     aogrenderer.h \
     classes/cyouturn.h \
-    classes/crate.h \
     classes/ctool.h \
     classes/ctram.h \
     classes/cturnlines.h \
