@@ -1,53 +1,80 @@
 #ifndef CMODULECOMM_H
 #define CMODULECOMM_H
 
-#include <QString>
+#include <QObject>
 #include <QtCore>
+#include <QString>
 
+const int pgnSentenceLength = 10;
 
 class CModuleComm
 {
+    Q_OBJECT
+private:
+    bool isOutOfBounds = true;
+
 public:
     //receive string for RateRelay
-    QString serialRecvRelayRateStr;
-
-    //properties for rate control of sections and input lines, 8 bit bytes
-    static const int numRelayRateControls = 6;
-    uchar relayRateControl[numRelayRateControls];
-    enum relayRatecontrolItemsIndex {
-        rcHeaderHi = 0, rcHeaderLo = 1, rcSectionControlByte = 2, rcSpeedXFour = 3,
-        rcRateSetPointHi = 4, rcRateSetPointLo = 5
-    };
-
-
-    //recv for the AutoSteer module
     QString serialRecvAutoSteerStr;
-    static const int numSteerDataItems = 8;
-    uchar autoSteerData[numSteerDataItems];
-    enum steerDataItemsIndex {
-        sdHeaderHi = 0, sdHeaderLo=1, sdRelay=2, sdSpeed=3, sdDistanceHi=4,
-        sdDistanceLo=5, sdSteerAngleHi=6, sdSteerAngleLo=7
+    QString serialRecvRelayStr;
+
+    QByteArray pgn;
+
+    //RateRelay
+    enum relayRateItemsIndex {
+        azSteerData = 0,
+        azSteerSettings = 1,
+        azRelayData = 2,
+        azRelaySettings = 3,
+        azMachineControl = 4
     };
 
-    static const int numSteerSettingItems = 10;
-    uchar autoSteerSettings[numSteerSettingItems];
+    //AutoSteer
+
+    // PGN - 32766 - 127.254 0x7FFD
+    uchar autoSteerData[pgnSentenceLength];
+    enum steerDataItemsIndex {
+        sdHeaderHi = 0, sdHeaderLo=1, sdRelayLo=2, sdSpeed=3, sdDistanceHi=4,
+        sdDistanceLo=5, sdSteerAngleHi=6, sdSteerAngleLo=7, sdYouTurnByte = 8, sd8 = 9
+    };
+
+    // PGN - 32764 - 127.252 0x7FFC
+    uchar autoSteerSettings[pgnSentenceLength];
     enum steerSettingItemsIndex { ssHeaderHi = 0, ssHeaderLo = 1,
                                   ssKp = 2, ssKi = 3, ssKd = 4,
                                   ssKo = 5, ssSteerOffset = 6, ssMinPWM = 7,
                                   ssMaxIntegral = 8, ssCountsPerDegree = 9 };
 
+    // PGN - 32762 - 127.250 0x7FFA
+    uchar relayData[pgnSentenceLength];
+    enum relayItemsIndex {
+        rdHeaderHi=0, rdHeaderLo = 1, rdSectionControlByteHi = 2, rdSectionControlByteLo = 3,
+        rdSpeedXFour = 4, rdTramLine = 5, rdTree = 6, rdUTurn = 7, rdHydLift = 8, rd9 = 9
+    };
+
+    //Machine control
+    //PGN 32758 - 127.246 0x7FF6
+    uchar machineControlData[pgnSentenceLength];
+    enum machnineControlDataItems {
+        cnHeaderHi, cnHeaderLo = 1, cnPedalControl = 2, cnSpeed = 3, cnRelayLo = 4, cnYouTurn = 5
+    };
+
+    //LIDAR
+    //UDP sentence just rec'd
+    QString recvUDPSentence = "Initial UDP";
+
+    int lidarDistance;
+
     //for the workswitch
-    bool isWorkSwitchOn=false, isWorkSwitchActiveLow=false, isWorkSwitchEnabled=false;
-    int workSwitchValue = 0;
-
-    //from autosteer module the a/d conversion of inclinometer
-    //imu and roll inclinometer
-    int steerSwitchValue, gyroHeading=9999, prevGyroHeading = 9999;
-    int rollRaw = 9999; //inclinometer ?
-
+    bool isWorkSwitchActiveLow=false, isWorkSwitchEnabled=false, isWorkSwitchManual = false;
+    int workSwitchValue = 1, steerSwitchValue ;
 
     CModuleComm();
     void resetAllModuleCommValues();
+signals:
+    void sendRelayOutToPort(uchar *, int);
+    void sendAutoSteerDataOutToPort();
+    void sendAutoSteerSettingsOutToPort();
 };
 
 #endif // CMODULECOMM_H

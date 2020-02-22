@@ -13,57 +13,121 @@
 
 CModuleComm::CModuleComm()
 {
-    serialRecvAutoSteerStr = "Oops";
-    serialRecvRelayRateStr = "Oops";
+    USE_SETTINGS;
+    serialRecvAutoSteerStr = "Oops NC";
+    serialRecvRelayStr = "Oops NC";
+
+    pgn.clear();
 
     //WorkSwitch logic
     isWorkSwitchEnabled = false;
-    isWorkSwitchOn = false;
 
     //does a low, grounded out, mean on
     isWorkSwitchActiveLow = true;
+
+    autoSteerData[sdHeaderHi] = 127; // PGN - 32766
+    autoSteerData[sdHeaderLo] = 254;
+    autoSteerData[sdRelayLo] = 0;
+    autoSteerData[sdSpeed] = 0;
+    autoSteerData[sdDistanceHi] = 125; // PGN - 32020
+    autoSteerData[sdDistanceLo] = 20;
+    autoSteerData[sdSteerAngleHi] = 125; // PGN - 32020
+    autoSteerData[sdSteerAngleLo] = 20;
+    autoSteerData[sdYouTurnByte] = 0;
+    pgn.append((const char *)autoSteerData, pgnSentenceLength);
+
+    autoSteerSettings[ssHeaderHi] = 127;// PGN - 32764 as header
+    autoSteerSettings[ssHeaderLo] = 252;
+    autoSteerSettings[ssKp] = SETTINGS_AUTOSTEER_KP;
+    autoSteerSettings[ssKi] = SETTINGS_AUTOSTEER_KI;
+    autoSteerSettings[ssKd] = SETTINGS_AUTOSTEER_KD;
+    autoSteerSettings[ssKo] = SETTINGS_AUTOSTEER_KO;
+    autoSteerSettings[ssSteerOffset] = SETTINGS_AUTOSTEER_STEERINGANGLEOFFSET;
+    autoSteerSettings[ssMinPWM] = SETTINGS_AUTOSTEER_MINSTEERPWM;
+    autoSteerSettings[ssMaxIntegral] = SETTINGS_AUTOSTEER_MAXINTEGRAL;
+    autoSteerSettings[ssCountsPerDegree] = SETTINGS_AUTOSTEER_COUNTSPERDEGREE;
+    pgn.append((const char*)autoSteerSettings, pgnSentenceLength);
+
+    relayData[rdHeaderHi] = 127; // PGN - 32762
+    relayData[rdHeaderLo] = 250;
+    relayData[rdSectionControlByteHi] = 0;
+    relayData[rdSectionControlByteLo] = 0;
+    relayData[rdSpeedXFour] = 0;
+    relayData[rdTramLine] = 0;
+    relayData[rdTree] = 0;
+    relayData[rdUTurn] = 0;
+    relayData[rdHydLift] = 0;
+    relayData[rd9] = 0;
+    pgn.append((const char*)relayData, pgnSentenceLength);
+
+    machineControlData[cnHeaderHi] = 127; // PGN - 32758
+    machineControlData[cnHeaderLo] = 246;
+    machineControlData[cnPedalControl] = 0;
+    machineControlData[cnSpeed] = 0;
+    machineControlData[cnRelayLo] = 0;
+    machineControlData[cnYouTurn] = 0;
+    machineControlData[6] = 0;
+    machineControlData[7] = 0;
+    machineControlData[8] = 0;
+    machineControlData[9] = 0;
+    pgn.append((const char*)machineControlData,pgnSentenceLength);
+
 
 }
 
 void CModuleComm::resetAllModuleCommValues()
 {
-    //set up relayRate array
-    relayRateControl[rcHeaderHi] = 127; //32762
-    relayRateControl[rcHeaderLo] = 250;
-    relayRateControl[rcSectionControlByte] = 0;
-    relayRateControl[rcRateSetPointHi] = 0;
-    relayRateControl[rcRateSetPointLo] = 0;
-    relayRateControl[rcSpeedXFour] = 0;
+    USE_SETTINGS;
+
+    relayData[rdHeaderHi] = 127; // PGN - 32762
+    relayData[rdHeaderLo] = 250;
+    relayData[rdSectionControlByteHi] = 0;
+    relayData[rdSectionControlByteLo] = 0;
+    relayData[rdSpeedXFour] = 0;
+    relayData[rdTramLine] = 0;
+    relayData[rdTree] = 0;
+    relayData[rdUTurn] = 0;
+    relayData[rdHydLift] = 0;
+    relayData[rd9] = 0;
+
+    emit sendRelayOutToPort(relayData, pgnSentenceLength);
 
     //prefill the autosteer data
-    autoSteerData[sdHeaderHi] = 127; //32766
-    autoSteerData[sdHeaderLo] = (254);
-    autoSteerData[sdRelay] = 0;
-    autoSteerData[sdSpeed] = (0);
-    autoSteerData[sdDistanceHi] = (125); //32020
+    autoSteerData[sdHeaderHi] = 127; //PGN - 32766
+    autoSteerData[sdHeaderLo] = 254;
+    autoSteerData[sdRelayLo] = 0;
+    autoSteerData[sdSpeed] = 0;
+    autoSteerData[sdDistanceHi] = 25; //PGN - 32020
     autoSteerData[sdDistanceLo] = 20;
-    autoSteerData[sdSteerAngleHi] = (125); //32020
+    autoSteerData[sdSteerAngleHi] = 125; //PGN - 32020
     autoSteerData[sdSteerAngleLo] = 20;
+    autoSteerData[sdYouTurnByte] = 0;
+
+    emit sendAutoSteerDataOutToPort();
 
     //prefill the autosteer settings from settings xml
-    AOGSettings s;
     autoSteerSettings[ssHeaderHi] = 127;
-    autoSteerSettings[ssHeaderLo] = 252; //32764 as header
-    autoSteerSettings[ssKp] = s.value("autosteer/Kp", DEFAULT_SETAS_KP).toInt();
-    autoSteerSettings[ssKi] = s.value("autosteer/Ki", DEFAULT_SETAS_KI).toInt();
-    autoSteerSettings[ssKd] = s.value("autosteer/Kd", DEFAULT_SETAS_KD).toInt();
-    autoSteerSettings[ssKo] = s.value("autosteer/Ko", DEFAULT_SETAS_KO).toInt();
-    autoSteerSettings[ssSteerOffset] = s.value("autosteer/steerAngleOffset", DEFAULT_SETAS_STEERINGANGLEOFFSET).toInt();
-    autoSteerSettings[ssMinPWM] = s.value("autosteer/minSteerPWM", DEFAULT_SETAS_MINSTEERPWM).toInt();
-    autoSteerSettings[ssMaxIntegral] = s.value("autosteer/maxIntegral", DEFAULT_SETAS_MAXINTEGRAL).toInt();
-    autoSteerSettings[ssCountsPerDegree] = s.value("autosteer/countsPerDegree", DEFAULT_SETAS_COUNTSPERDEGREE).toInt();
+    autoSteerSettings[ssHeaderLo] = 252; //PGN - 32764 as header
+    autoSteerSettings[ssKp] = SETTINGS_AUTOSTEER_KP;
+    autoSteerSettings[ssKi] = SETTINGS_AUTOSTEER_KI;
+    autoSteerSettings[ssKd] = SETTINGS_AUTOSTEER_KD;
+    autoSteerSettings[ssKo] = SETTINGS_AUTOSTEER_KO;
+    autoSteerSettings[ssSteerOffset] = SETTINGS_AUTOSTEER_STEERINGANGLEOFFSET;
+    autoSteerSettings[ssMinPWM] = SETTINGS_AUTOSTEER_MINSTEERPWM;
+    autoSteerSettings[ssMaxIntegral] = SETTINGS_AUTOSTEER_MAXINTEGRAL;
+    autoSteerSettings[ssCountsPerDegree] = SETTINGS_AUTOSTEER_COUNTSPERDEGREE;
 
-    //For now, caller must call these routines as we don't know
-    //about the main form here, in order to avoid circular dependencies
+    emit sendAutoSteerSettingsOutToPort();
 
-    //spit out to rate/relay module
-    //mf.RateRelayControlOutToPort();
+    machineControlData[cnHeaderHi] = 127; // PGN - 32758
+    machineControlData[cnHeaderLo] = 246;
+    machineControlData[cnPedalControl] = 0;
+    machineControlData[cnSpeed] = 0;
+    machineControlData[cnRelayLo] = 0;
+    machineControlData[cnYouTurn] = 0;
+    machineControlData[6] = 0;
+    machineControlData[7] = 0;
+    machineControlData[8] = 0;
+    machineControlData[9] = 0;
 
-    //out serial to autosteer module  //indivdual classes load the distance and heading deltas
-    //mf.AutoSteerDataOutToPort();
 }
