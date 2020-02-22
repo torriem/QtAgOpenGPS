@@ -39,7 +39,6 @@ SOURCES += main.cpp\
     classes/vec4.cpp \
     classes/cvec.cpp \
     classes/cflag.cpp \
-    classes/cperimeter.cpp \
     classes/ccamera.cpp \
     classes/cworldgrid.cpp \
     classes/cmodulecomm.cpp \
@@ -65,7 +64,8 @@ SOURCES += main.cpp\
     classes/cturn.cpp \
     classes/cboundarylines.cpp \
     classes/cheadlines.cpp \
-    classes/chead.cpp
+    classes/chead.cpp \
+    classes/cahrs.cpp
 
 HEADERS  += formgps.h \
     classes/cabline.h \
@@ -74,7 +74,6 @@ HEADERS  += formgps.h \
     classes/vec4.h \
     classes/cvec.h \
     classes/cflag.h \
-    classes/cperimeter.h \
     classes/ccamera.h \
     classes/glm.h \
     classes/cworldgrid.h \
@@ -97,7 +96,8 @@ HEADERS  += formgps.h \
     classes/cturn.h \
     classes/cboundarylines.h \
     classes/cheadlines.h \
-    classes/chead.h
+    classes/chead.h \
+    classes/cahrs.h
 
 RESOURCES += \
     agopengps.qrc

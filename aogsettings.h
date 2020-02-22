@@ -103,7 +103,7 @@ public:
 #define SETTINGS_VEHICLE_ISSTANLEYUSED			settings.   value("vehicle/isStanleyUsed", true).toBool()
 #define SETTINGS_SET_VEHICLE_ISSTANLEYUSED(VAL)	settings.setValue("vehicle/isStanleyUsed",VAL)
 
-#define SETTINGS_VEHICLE_STANLEY_GAIN		settings.   value("vehicle/stanleyGain", 1).toDouble()
+#define SETTINGS_VEHICLE_STANLEY_GAIN			settings.   value("vehicle/stanleyGain", 1).toDouble()
 #define SETTINGS_SET_VEHICLE_STANLEY_GAIN(VAL)	settings.setValue("vehicle/stanleyGain",VAL)
 
 #define SETTINGS_VEHICLE_STANLEYHEADINGERRORGAIN			settings.   value("vehicle/stanleyHeadingErrorGain", 1).toDouble()
@@ -143,7 +143,7 @@ public:
 #define SETTINGS_SET_VEHICLE_GEOFENCEDIST(VAL)	settings.setValue("vehicle/geoFenceDistance",VAL)
 
 #define SETTINGS_VEHICLE_YOUTURNDISTANCE			settings.   value("vehicle/youTurnDistance", 5).toDouble()
-#define SETTINGS_SET_VEHICLE_YOUTURNDISTANCE(VAL)	settings.setValue("vehicleyouTurnDistance",VAL)
+#define SETTINGS_SET_VEHICLE_YOUTURNDISTANCE(VAL)	settings.setValue("vehicle/youTurnDistance",VAL)
 
 #define SETTINGS_VEHICLE_YOUSKIPWIDTH			settings.   value("vehicle/youSkipWidth", 1).toInt()
 #define SETTINGS_SET_VEHICLE_YOUSKIPWIDTH(VAL)	settings.setValue("vehicle/youSkipWidth",VAL)
@@ -161,6 +161,33 @@ public:
 #define SETTINGS_GPS_ISHEADINGFROMPAOGI			settings.   value("gps/isHeadingFromPAOGI", false).toBool()
 #define SETTINGS_SET_GPS_HEADINGFROMPAOGI(VAL)	settings.setValue("gps/isHeadingFromPAOGI",VAL)
 
+#define SETTINGS_GPS_BRICKUID			settings.   value("gps/brickUID", QString("68wESU")).toString()
+#define SETTINGS_SET_GPS_BRICKUID(VAL)	settings.setValue("gps/brickUID",VAL)
+
+#define SETTINGS_GPS_ISROLLFROMAUTOSTEER			settings.   value("gps/isRollFromAutosteer", false).toBool()
+#define SETTINGS_SET_GPS_ISROLLFROMAUTOSTEER(VAL)	settings.setValue("gps/isRollFromAutosteer",VAL)
+
+#define SETTINGS_GPS_ISHEADINGFROMBRICK			settings.   value("gps/isHeadingFromBrick", false).toBool();
+#define SETTINGS_SET_GPS_ISHEADINGFROMBRICK(VAL)	settings.setValue("gps/isHeadingFromBrick",VAL)
+
+#define SETTINGS_GPS_ISHEADINGFROMAUTOSTEER			settings.   value("gps/isHeadingFromAutoSteer", false).toBool();
+#define SETTINGS_SET_GPS_ISHEADINGFROMAUTOSTEER(VAL)	settings.setValue("gps/isHeadingFromAutoSteer",VAL)
+
+#define SETTINGS_GPS_ISROLLFROMBRICK			settings.   value("gps/isRollFromBrick", false).toBool();
+#define SETTINGS_SET_GPS_ISROLLFROMBRICK(VAL)	settings.setValue("gps/isRollFromBrick",VAL)
+
+#define SETTINGS_GPS_ISHEADINGFROMEXTUDP			settings.   value("gps/isHeadingFromExtUdp", false).toBool();
+#define SETTINGS_SET_GPS_ISHEADINGFROMEXTUDP(VAL)	settings.setValue("gps/isHeadingFromExtUdp",VAL)
+
+#define SETTINGS_GPS_ISROLLFROMEXTUDP			settings.   value("gps/isRollFromExtUdp", false).toBool();
+#define SETTINGS_SET_GPS_ISROLLFROMEXTUDP(VAL)	settings.setValue("gps/isRollFromExtUdp",VAL)
+
+#define SETTINGS_GPS_IMUPITCHZEROX16			settings.   value("gps/IMUPitchZeroX16", 0).toInt();
+#define SETTINGS_SET_GPS_IMUPITCHZEROX16(VAL)	settings.setValue("gps/IMUPitchZeroX16",VAL)
+
+#define SETTINGS_GPS_IMUROLLZEROX16				settings.   value("gps/IMURollZeroX16", 0).toInt();
+#define SETTINGS_SET_GPS_IMUROLLZEROX16(VAL)	settings.setValue("gps/IMURollZeroX16",VAL)
+
 //DISPLAY/GUI/MENU
 #define SETTINGS_DISPLAY_ISPUREON			settings.   value("display/isPureOn", true).toBool()
 #define SETTINGS_SET_DISPLAY_ISPUREON(VAL)	settings.setValue("display/isPureOn",VAL)
@@ -169,5 +196,41 @@ public:
 #define SETTINGS_SET_CAMPITCH(VAL)	settings.setValue("display/camPitch",VAL)
 
 
+//AUTOSTEER
+#define SETTINGS_AUTOSTEER_KO			settings.   value("autosteer/Ko", 5).toInt()
+#define SETTINGS_SET_AUTOSTEER_KO(VAL)	settings.setValue("autosteer/Ko",VAL)
+
+#define SETTINGS_AUTOSTEER_KP			settings.   value("autosteer/Kp", 5).toInt()
+#define SETTINGS_SET_AUTOSTEER_KP(VAL)	settings.setValue("autosteer/Kp",VAL)
+
+#define SETTINGS_AUTOSTEER_KI			settings.   value("autosteer/Ki", 0).toInt()
+#define SETTINGS_SET_AUTOSTEER_KI(VAL)	settings.setValue("autosteer/Ki",VAL)
+
+#define SETTINGS_AUTOSTEER_KD			settings.   value("autosteer/Kd", 0).toInt()
+#define SETTINGS_SET_AUTOSTEER_KD(VAL)	settings.setValue("autosteer/Kd",VAL)
+
+#define SETTINGS_AUTOSTEER_STEERINGANGLEOFFSET			settings.   value("autosteer/steeringAngleOffset", 127).toInt()
+#define SETTINGS_SET_AUTOSTEER_STEERINGANGLEOFFSET(VAL)	settings.setValue("autosteer/steeringAngleOffset",VAL)
+
+#define SETTINGS_AUTOSTEER_MINSTEERPWM			settings.   value("autosteer/minSteerPWM", 10).toInt()
+#define SETTINGS_SET_AUTOSTEER_MINSTEERPWM(VAL)	settings.setValue("autosteer/minSteerPWM",VAL)
+
+#define SETTINGS_AUTOSTEER_MAXINTEGRAL			settings.   value("autosteer/maxIntegral", 20).toInt()
+#define SETTINGS_SET_AUTOSTEER_MAXINTEGRAL(VAL)	settings.setValue("autosteer/maxIntegral",VAL)
+
+#define SETTINGS_AUTOSTEER_COUNTSPERDEGREE			settings.   value("autosteer/countsPerDegree", 10).toInt()
+#define SETTINGS_SET_AUTOSTEER_COUNTSPERDEGREE(VAL)	settings.setValue("autosteer/countsPerDegree",VAL)
+
+#define SETTINGS_AUTOSTEER_YOUTURNSHAPEFILE			settings.   value("autosteer/youTurnShape", QString("keyhold.txt")).toString()
+#define SETTINGS_SET_AUTOSTEER_YOUTURNSHAPEFILE(VAL)	settings.setValue("autosteer/youTurnShape",VAL)
+
+#define SETTINGS_AUTOSTEER_SNAPDISTANCE				settings.   value("autosteer/snapDistance", 40).toInt()
+#define SETTINGS_SET_AUTOSTEER_SNAPDISTANCE(VAL)	settings.setValue("autosteer/snapDistance",VAL)
+
+#define SETTINGS_AUTOSTEER_AUTOON			settings.   value("autosteer/autoOn", false).toBool()
+#define SETTINGS_SET_AUTOSTEER_AUTOON(VAL)	settings.setValue("autosteer/autoOn",VAL)
+
+#define SETTINGS_AUTOSTEER_ISJRK			settings.   value("autosteer/isJRK", false).toBool()
+#define SETTINGS_SET_AUTOSTEER_ISJRK(VAL)	settings.setValue("autosteer/isJRK",VAL)
 #endif // AOGSETTINGS_H
 
