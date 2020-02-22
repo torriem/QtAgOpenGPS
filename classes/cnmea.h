@@ -1,70 +1,98 @@
 #ifndef CNMEA_H
 #define CNMEA_H
 
+#include <QObject>
 #include <sstream>
 #include <QString>
 #include <QDateTime>
 #include <QByteArray>
 #include <QBuffer>
+#include "vec2.h"
 
-struct XY {
-    double x;
-    double y;
+class Vec2;
+
+/*struct XY {
+    double easting;
+    double northing;
 };
+*/
 
 
 class CNMEA
 {
+    Q_OBJECT
+private:
+    QList<QByteArray> words;
+    QByteArray nextNMEASentence = "";
+    int nmeaCntr = 0;
+
+    double rollK, Pc, G, Xp, Zp, XeRoll;
+    double P = 1.0;
+    const double varRoll = 0.1; // variance, smaller, more faster filtering
+    const double varProcess = 0.0003;
+
 public:
     //WGS84 Lat Long
     double latitude = 0, longitude = 0;
 
-    bool updatedGGA=false, updatedVTG=false, updatedRMC=false;
-
-    QByteArray rawBuffer = "";
-    QList<QByteArray> words;
-    QByteArray nextNMEASentence = "";
-
-    //UTM coordinates
-    double northing=0, easting=0;
+    double latStart, lonStart;
     double actualEasting=0, actualNorthing=0;
     double zone=0;
+    double centralMeridian, convergenceAngle;
+
+    bool updatedGGA=false, updatedOGI=false, updatedRMC=false;
+
+    bool isFirstFixPositionSet = false;
+
+    QByteArray rawBuffer = "";
+    QString fixFrom;
+
+    //UTM coordinates
+    Vec2 fix = Vec2(0,0);
+
+    //used to offset the antenna position to compensate for drift
+    Vec2 fixOffset = Vec2(0,0);
 
     //other GIS Info
     double altitude, speed;
-    double headingTrue, hdop, ageDiff;
+    double headingTrue, headingHDT, hdop, ageDiff;
 
+    //imu
+    double nRoll, nPitch, nYaw, nAngularVelocity;
+
+    bool isValidIMU;
     int fixQuality;
     int satellitesTracked;
     QByteArray status = "q";
     QDateTime utcDateTime;
-
     char hemisphere = 'N';
 
     //UTM numbers are huge, these cut them way down.
     int utmNorth = 0, utmEast = 0;
     QByteArray logNMEASentence = "";
 
-    QByteArray currentNMEASentenceGGA = "";
-    QByteArray currentNMEASentenceRMC = "";
-    QByteArray currentNMEASentenceVTG = "";
-
     CNMEA();
+    void updateNorthingEasting();
     void parseNMEA();
+    void parseAVR();
     QByteArray parse();
+
     void parseGGA();
-    void parseRMC();
+    void parseOGI();
     void parseVTG();
+    void parseHDT();
+    void parseTRA();
+    void parseRMC();
     bool validateChecksum(QByteArray sentence);
-    //TODO move these to utility module
-    static double distance(double northing1, double easting1,
-                    double northing2, double easting2);
-    static double distanceSquared(double northing1, double easting1,
-                           double northing2, double easting2);
-    void decDeg2UTM();
-    double arcLengthOfMeridian(double phi);
-    XY mapLatLonToXY(double phi, double lambda, double lambda0);
-    void geoUTMConverterXY(double lat, double lon);
+
+    Vec2 decDeg2UTM(double latitude, double longitude);
+    static double arcLengthOfMeridian(double phi);
+    static Vec2 mapLatLonToXY(double phi, double lambda, double lambda0);
+signals:
+    void setRollX16(int); //set mf.ahrs.rollX16
+    void setCorrectionHeadingX16(int); //set mf.ahrs.correctionHeadingX16
+    void clearRecvCounter(); //tell watchdog to reset it's counter
+    void newSpeed(double); //so display can average this into it's speed
 
 };
 

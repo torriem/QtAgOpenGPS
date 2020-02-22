@@ -1,6 +1,8 @@
 #include <QCoreApplication>
 #include <math.h>
+#include "aogsettings.h"
 #include "cnmea.h"
+#include "vec2.h"
 //#include "latlong-utm.h"
 
 //$GPGGA,123519,4807.038,N,01131.000,E,1,08,0.9,545.4,M,46.9,M ,  ,*47
@@ -69,7 +71,31 @@ const double UTMScaleFactor = 0.9996;
 
 CNMEA::CNMEA()
 {
+    USE_SETTINGS;
 
+    fixFrom = SETTINGS_GPS_FIXFROMWHICH;
+    latStart = 0;
+    lonStart = 0;
+}
+
+void CNMEA::updateNorthingEasting()
+{
+    Vec2 xy = CNMEA::decDeg2UTM(latitude, longitude);
+
+    //keep a copy of actual easting and northings
+    actualEasting = xy.easting;
+    actualNorthing = xy.northing;
+
+    //if a field is open, the real one is subtracted from the integer
+    fix.easting = xy.easting - utmEast + fixOffset.easting;
+    fix.northing = xy.northing - utmNorth + fixOffset.northing;
+
+    double east = fix.easting;
+    double nort = fix.northing;
+
+    //compensate for the fact the zones lines are a grid and the world is round
+    fix.easting = (cos(-convergenceAngle) * east) - (sin(-convergenceAngle) * nort);
+    fix.northing = (sin(-convergenceAngle) * east) + (cos(-convergenceAngle) * nort);
 }
 
 void CNMEA::parseNMEA()
@@ -116,12 +142,69 @@ void CNMEA::parseNMEA()
 
         if ((words[0] == "$GPGGA") || (words[0] == "$GNGGA")) parseGGA();
         if ((words[0] == "$GPVTG") || (words[0] == "$GNVTG")) parseVTG();
-        if ((words[0] == "$GPRMC") || (words[0] == "$GNRMC"))
-            parseRMC();
+        if ((words[0] == "$GPRMC") || (words[0] == "$GNRMC")) parseRMC();
+        if ((words[0] == "$GPHDT") || (words[0] == "$GNHDT")) parseHDT();
+        if (words[0] == "$PAOGI") parseOGI();
+        if (words[0] == "$PTNL") parseAVR();
+        if (words[0] == "$GNTRA") parseTRA();
+
         //pump the main loop in case UDP, Serial, or TCP data comes in.
         QCoreApplication::processEvents();
     }// while still data
+}
 
+void CNMEA::parseAVR()
+{
+    USE_SETTINGS;
+
+    if (! (words[1] == "") && words[1].size())
+    {
+        //True heading
+        // 0 1 2 3 4 5 6 7 8 9
+        // $PTNL,AVR,145331.50,+35.9990,Yaw,-7.8209,Tilt,-0.4305,Roll,444.232,3,1.2,17 * 03
+        //Field
+        // Meaning
+        //0 Message ID $PTNL,AVR
+        //1 UTC of vector fix
+        //2 Yaw angle, in degrees
+        //3 Yaw
+        //4 Tilt angle, in degrees
+        //5 Tilt
+        //6 Roll angle, in degrees
+        //7 Roll
+        //8 Range, in meters
+        //9 GPS quality indicator:
+        // 0: Fix not available or invalid
+        // 1: Autonomous GPS fix
+        // 2: Differential carrier phase solution RTK(Float)
+        // 3: Differential carrier phase solution RTK(Fix)
+        // 4: Differential code-based solution, DGPS
+        //10 PDOP
+        //11 Number of satellites used in solution
+        //12 The checksum data, always begins with *
+
+        if (words[8] == "Roll")
+            nRoll = words[7].toDouble(); //always parsed using C locale regardless of language set
+        else
+            nRoll = words[5].toDouble(); //always parsed using C locale regardless of language set
+
+        if (SETTINGS_GPS_ISROLLFROMGPS)
+        //input to the kalman filter
+        {
+            //added by Andreas Ortner
+            rollK = nRoll;
+
+            //Kalman filter
+            Pc = P + varProcess;
+            G = Pc / (Pc + varRoll);
+            P = (1 - G) * Pc;
+            Xp = XeRoll;
+            Zp = Xp;
+            XeRoll = (G * (rollK - Zp)) + Xp;
+
+            emit setRollX16(XeRoll * 16);
+        }
+    }
 
 }
 
@@ -144,7 +227,6 @@ QByteArray CNMEA::parse() {
 
         //the NMEA sentence to be parsed
         sentence = rawBuffer.mid(0, end + 2);
-
         //remove the processed sentence from the rawBuffer
         rawBuffer = rawBuffer.mid(end + 2);
     }
@@ -200,6 +282,7 @@ void CNMEA::parseGGA() {
     //qDebug() << "Parse GGA.";
     if (words[2].size() && words[3].size() &&
         words[4].size() && words[4].size() ) {
+        if (fixFrom == "GGA") {
             //get latitude and convert to decimal degrees
 
             //TODO: check error status from toDouble()
@@ -219,10 +302,11 @@ void CNMEA::parseGGA() {
             temp = words[4].mid(3).toDouble();
             longitude += temp * 0.01666666666666666666666666666667;
 
-         { if (words[5] == "W") longitude *= -1; }
+            if (words[5] == "W") longitude *= -1;
 
-        //calculate zone and UTM coords
-        decDeg2UTM();
+            //calculate zone and UTM coords
+            updateNorthingEasting();
+        }
 
         //fixQuality
         fixQuality = words[6].toInt();
@@ -237,10 +321,96 @@ void CNMEA::parseGGA() {
         altitude = words[9].toDouble();
 
         //age of differential
-        ageDiff = words[12].toDouble();
+        ageDiff = words[11].toDouble();
 
         updatedGGA = true;
+        emit clearRecvCounter();
     }
+}
+
+void CNMEA::parseOGI()
+{
+    USE_SETTINGS;
+    //PAOGI parsing of the sentence
+    //make sure there aren't missing coords in sentence
+    if (words[2].size() && words[3].size() &&
+        words[4].size() && words[5].size())
+    {
+        if (fixFrom == "OGI")
+        {
+            //TODO: check error status from toDouble()
+            latitude = words[2].mid(0,2).toDouble();
+            double temp = words[2].mid(2).toDouble();
+            temp *= 0.01666666666666666666666666666667;
+            latitude += temp;
+            if (words[3] == "S")
+            {
+                latitude *= -1;
+                hemisphere = 'S';
+            }
+            else { hemisphere = 'N'; }
+
+            //get longitude and convert to decimal degrees
+            longitude = words[4].mid(0,3).toDouble();
+            temp = words[4].mid(3).toDouble();
+            longitude += temp * 0.01666666666666666666666666666667;
+
+            if (words[5] == "W") longitude *= -1;
+
+            //calculate zone and UTM coords
+            updateNorthingEasting();
+        }
+
+        //fixQuality
+        fixQuality = words[6].toInt();
+
+        //satellites tracked
+        satellitesTracked = words[7].toInt();
+
+        //hdop
+        hdop = words[8].toDouble();
+
+        //altitude
+        altitude = words[9].toDouble();
+
+        //age of differential
+        ageDiff = words[11].toDouble();
+
+        //kph for speed - knots read
+        speed = words[12].toDouble() * 1.852;
+
+        //True heading
+        headingTrue = words[13].toDouble();
+
+        //roll
+        nRoll = words[14].toDouble();
+
+        if(SETTINGS_GPS_ISROLLFROMGPS)
+            //TODO: emit this signal always, and move logic to
+            //handler
+            emit setRollX16(nRoll * 16);
+
+        //pitch
+        nPitch = words[15].toDouble();
+
+        //yaw
+        nYaw = words[16].toDouble();
+        if (SETTINGS_GPS_ISHEADINGFROMPAOGI)
+                //TODO: emit this signal always, and move logic to
+                //handler
+            emit setCorrectionHeadingX16(nYaw * 16);
+
+        //angular velocity (yaw rate)
+        nAngularVelocity = words[17].toDouble();
+
+        //is imu valid fusion?
+        isValidIMU = words[18] == "T";
+
+        //update the watchdog
+        emit clearRecvCounter();
+        updatedOGI = true;
+    }
+
 }
 
 void CNMEA::parseRMC() {
@@ -249,33 +419,37 @@ void CNMEA::parseRMC() {
     //qDebug() << "Parse RMC.";
     if (words[3].size() && words[4].size() &&
         words[5].size() && words[6].size()) {
-        //get latitude and convert to decimal degrees
-        latitude = words[3].mid(0,2).toDouble();
-        double temp;
-        temp = words[3].mid(2).toDouble();
-        latitude = latitude + temp * 0.01666666666666666666666666666667;
+        if (fixFrom == "RMC") {
+            //get latitude and convert to decimal degrees
+            latitude = words[3].mid(0,2).toDouble();
+            double temp;
+            temp = words[3].mid(2).toDouble();
+            latitude = latitude + temp * 0.01666666666666666666666666666667;
 
-        if (words[4] == "S")
-        {
-                latitude *= -1;
-                hemisphere = 'S';
+            if (words[4] == "S")
+            {
+                    latitude *= -1;
+                    hemisphere = 'S';
+            }
+                else hemisphere = 'N';
+
+            //get longitude and convert to decimal degrees
+            longitude = words[5].mid(0,3).toDouble();
+            temp = words[5].mid(3).toDouble();
+            longitude = longitude + temp * 0.01666666666666666666666666666667;
+
+            if (words[6] == "W") longitude *= -1;
+
+            //calculate zone and UTM coords
+            updateNorthingEasting();
         }
-            else hemisphere = 'N';
-
-        //get longitude and convert to decimal degrees
-        longitude = words[5].mid(0,3).toDouble();
-        temp = words[5].mid(3).toDouble();
-        longitude = longitude + temp * 0.01666666666666666666666666666667;
-
-        if (words[6] == "W") longitude *= -1;
-
-        //calculate zone and UTM coords
-        decDeg2UTM();
 
         //Convert from knots to kph for speed
         speed = words[7].toDouble();
         //round it when displaying, not here
         speed = speed * 1.852;
+
+        emit newSpeed(speed);
 
         //True heading
         headingTrue = words[8].toDouble();
@@ -288,9 +462,8 @@ void CNMEA::parseRMC() {
         }
 
         updatedRMC = true;
-
+        emit clearRecvCounter();
     }
-
 }
 
 void CNMEA::parseVTG() {
@@ -305,32 +478,75 @@ void CNMEA::parseVTG() {
         //True heading
         headingTrue = words[1].toDouble();
 
-        updatedVTG = true;
+        emit newSpeed(speed);
     }
 }
 
-double CNMEA::distance(double northing1, double easting1, double northing2, double easting2) {
-    return sqrt( (easting1 - easting2) * (easting1 - easting2) +
-                 (northing1 - northing2) * (northing1 - northing2));
+void CNMEA::parseHDT()
+{
+    /* $GNHDT,123.456,T * 00
+
+    Field Meaning
+    0   Message ID $GNHDT
+    1   Heading in degrees
+    2   T: Indicates heading relative to True North
+    3   The checksum data, always begins with *
+        */
+
+    if (words[1].size())
+    {
+        //True heading
+        headingHDT = words[1].toDouble();
+    }
 }
 
-double CNMEA::distanceSquared(double northing1, double easting1, double northing2, double easting2) {
-    return (easting1 - easting2) * (easting1 - easting2) +
-           (northing1 - northing2) * (northing1 - northing2);
+void CNMEA::parseTRA()
+{
+    USE_SETTINGS;
+    if (words[1].size())
+    {
+        headingHDT = words[2].toDouble();
+        nRoll = words[3].toDouble();
+
+        int trasolution;
+
+        trasolution = words[5].toInt();
+        if (trasolution != 4) nRoll = 0;
+        // Console.WriteLine(trasolution);
+        if (SETTINGS_GPS_ISROLLFROMGPS)
+        //input to the kalman filter
+        {
+            ////added by Andreas Ortner
+            //rollK = nRoll;
+
+            ////Kalman filter
+            //Pc = P + varProcess;
+            //G = Pc / (Pc + varRoll);
+            //P = (1 - G) * Pc;
+            //Xp = XeRoll;
+            //Zp = Xp;
+            //XeRoll = (G * (rollK - Zp)) + Xp;
+
+            //mf.ahrs.rollX16 = (int)(XeRoll * 16);
+            emit setRollX16(nRoll * 16);
+        }
+    }
 }
 
-void CNMEA::decDeg2UTM() {
-    zone = floor( (longitude + 180.0) / 6) + 1;
-    geoUTMConverterXY(latitude * 0.01745329251994329576923690766743,
-                      longitude * 0.01745329251994329576923690766743);
+Vec2 CNMEA::decDeg2UTM(double latitude, double longitude) {
+    if(!isFirstFixPositionSet)
+        zone = floor( (longitude + 180.0) / 6) + 1;
 
-    /*
-    qDebug ()<< qSetRealNumberPrecision(10) <<
-              latitude << ", " <<
-              longitude << "=> " <<
-              actualNorthing << ", " <<
-              actualEasting << ", zone: " << zone;
-    */
+    Vec2 xy = CNMEA::mapLatLonToXY(latitude * 0.01745329251994329576923690766743,
+                                   longitude * 0.01745329251994329576923690766743,
+                                   (-183.0 + (zone * 6.0)) * 0.01745329251994329576923690766743);
+
+    xy.easting = (xy.easting * UTMScaleFactor) + 500000.0;
+    xy.northing *= UTMScaleFactor;
+    if (xy.northing < 0.0)
+        xy.northing += 10000000.0;
+
+    return xy;
 }
 
 double CNMEA::arcLengthOfMeridian(double phi) {
@@ -347,8 +563,8 @@ double CNMEA::arcLengthOfMeridian(double phi) {
 
 }
 
-XY CNMEA::mapLatLonToXY(double phi, double lambda, double lambda0) {
-    XY xy;
+Vec2 CNMEA::mapLatLonToXY(double phi, double lambda, double lambda0) {
+    Vec2 xy;
     //double tmp;
     double ep2 = (pow(sm_a, 2.0) - pow(sm_b, 2.0)) / pow(sm_b, 2.0);
     double nu2 = ep2 * pow(cos(phi), 2.0);
@@ -365,34 +581,17 @@ XY CNMEA::mapLatLonToXY(double phi, double lambda, double lambda0) {
     double l8Coef = 1385.0 - 3111.0 * t2 + 543.0 * (t2 * t2) - (t2 * t2 * t2);
 
     /* Calculate easting (x) */
-    xy.x = n * cos(phi) * l
+    xy.easting = n * cos(phi) * l
         + (n / 6.0 * pow(cos(phi), 3.0) * l3Coef * pow(l, 3.0))
         + (n / 120.0 * pow(cos(phi), 5.0) * l5Coef * pow(l, 5.0))
         + (n / 5040.0 * pow(cos(phi), 7.0) * l7Coef * pow(l, 7.0));
 
     /* Calculate northing (y) */
-    xy.y = arcLengthOfMeridian(phi)
+    xy.northing = arcLengthOfMeridian(phi)
         + (t / 2.0 * n * pow(cos(phi), 2.0) * pow(l, 2.0))
         + (t / 24.0 * n * pow(cos(phi), 4.0) * l4Coef * pow(l, 4.0))
         + (t / 720.0 * n * pow(cos(phi), 6.0) * l6Coef * pow(l, 6.0))
         + (t / 40320.0 * n * pow(cos(phi), 8.0) * l8Coef * pow(l, 8.0));
 
     return xy;
-}
-
-void CNMEA::geoUTMConverterXY(double lat, double lon) {
-    XY xy = mapLatLonToXY(lat, lon, (-183.0 + (zone * 6.0)) * 0.01745329251994329576923690766743);
-
-    xy.x = xy.x * UTMScaleFactor + 500000.0;
-    xy.y *= UTMScaleFactor;
-    if (xy.y < 0.0)
-        xy.y = xy.y + 10000000.0;
-
-    //keep a copy of actual easting and northings
-    actualEasting = xy.x;
-    actualNorthing = xy.y;
-
-    //if a field is open, the real one is subtracted from the integer
-    easting = xy.x - utmEast;
-    northing = xy.y - utmNorth;
 }

@@ -151,6 +151,16 @@ public:
 #define SETTINGS_VEHICLE_ISUSINGDUBINSTURN			settings.   value("vehicle/isUsingDubins", true).toBool()
 #define SETTINGS_SET_VEHICLE_ISUSINGDUBINSTURN(VAL)	settings.setValue("vehicle/isUsingDubins",VAL)
 
+//CNMEA / GPS / IMU
+#define SETTINGS_GPS_FIXFROMWHICH			settings.   value("gps/fixFromWhichSentence", QString("GGA")).toString()
+#define SETTINGS_SET_GPS_FIXFROMWHICH(VAL)	settings.setValue("gps/fixFromWhichSentence",VAL)
+
+#define SETTINGS_GPS_ISROLLFROMGPS			settings.   value("gps/isRollFromGPS", false).toBool()
+#define SETTINGS_SET_GPS_ISROLLFROMGPS(VAL)	settings.setValue("gps/isRollFromGPS",VAL)
+
+#define SETTINGS_GPS_ISHEADINGFROMPAOGI			settings.   value("gps/isHeadingFromPAOGI", false).toBool()
+#define SETTINGS_SET_GPS_HEADINGFROMPAOGI(VAL)	settings.setValue("gps/isHeadingFromPAOGI",VAL)
+
 //DISPLAY/GUI/MENU
 #define SETTINGS_DISPLAY_ISPUREON			settings.   value("display/isPureOn", true).toBool()
 #define SETTINGS_SET_DISPLAY_ISPUREON(VAL)	settings.setValue("display/isPureOn",VAL)
