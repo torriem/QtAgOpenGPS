@@ -68,7 +68,9 @@ SOURCES += main.cpp\
     classes/cahrs.cpp \
     classes/cfielddata.cpp \
     classes/cgeofencelines.cpp \
-    classes/cmazepath.cpp
+    classes/cmazepath.cpp \
+    classes/cmazegrid.cpp \
+    classes/cgeofence.cpp
 
 HEADERS  += formgps.h \
     classes/cabline.h \
@@ -103,7 +105,9 @@ HEADERS  += formgps.h \
     classes/cahrs.h \
     classes/cfielddata.h \
     classes/cgeofencelines.h \
-    classes/cmazepath.h
+    classes/cmazepath.h \
+    classes/cmazegrid.h \
+    classes/cgeofence.h
 
 RESOURCES += \
     agopengps.qrc
