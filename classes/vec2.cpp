@@ -48,6 +48,14 @@ Vec2 operator- (Vec2 lhs, Vec2 rhs) {
                 lhs.northing-rhs.northing);
 }
 
+Vec2 Vec2::operator *= (double rhs) {
+    Vec2 temp = *this;
+    temp.easting *= rhs;
+    temp.northing *= rhs;
+    return temp;
+}
+
+
 double Vec2::headingXZ() {
     return atan2(easting,northing);
 }

@@ -24,6 +24,7 @@ public:
 
     friend Vec2 operator+ (Vec2 lhs, Vec2 rhs);
     friend Vec2 operator- (Vec2 lhs, Vec2 rhs);
+    Vec2 operator*= (double rhs);
 
     operator QVector3D() { return QVector3D(easting,northing,0); }
 };
