@@ -72,7 +72,10 @@ SOURCES += main.cpp\
     classes/cmazegrid.cpp \
     classes/cgeofence.cpp \
     classes/cabcurve.cpp \
-    classes/csim.cpp
+    classes/csim.cpp \
+    classes/cpointdata.cpp \
+    classes/crecordedpath.cpp \
+    classes/cdubins.cpp
 
 HEADERS  += formgps.h \
     classes/cabline.h \
@@ -111,7 +114,10 @@ HEADERS  += formgps.h \
     classes/cmazegrid.h \
     classes/cgeofence.h \
     classes/cabcurve.h \
-    classes/csim.h
+    classes/csim.h \
+    classes/cpointdata.h \
+    classes/crecordedpath.h \
+    classes/cdubins.h
 
 RESOURCES += \
     agopengps.qrc
