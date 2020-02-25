@@ -12,6 +12,7 @@
 #include "cturn.h"
 #include "cmazegrid.h"
 #include "glm.h"
+#include "cdubins.h"
 #include "glutils.h"
 #include "ctool.h"
 #include "common.h"
@@ -256,9 +257,8 @@ bool CYouTurn::buildDriveAround(const CVehicle &vehicle,
     QVector<Vec3> shortestDubinsList;
 
     //Dubins at the start and stop of mazePath
-    fixme;
-    CDubins.turningRadius = vehicle.minTurningRadius * 1.0;
-    CDubins dubPath = new CDubins();
+    CDubins::turningRadius = vehicle.minTurningRadius * 1.0;
+    CDubins dubPath;
 
     //start is navigateable - maybe
     int cnt = mazeList.size();
@@ -271,7 +271,7 @@ bool CYouTurn::buildDriveAround(const CVehicle &vehicle,
         pt2.northing = start.northing - (cosHead * vehicle.minTurningRadius * 1.5);
         pt2.heading = headAB;
 
-        shortestDubinsList = dubPath.generateDubins(pt2, mazeList[cut - 1], gf);
+        shortestDubinsList = dubPath.GenerateDubins(pt2, mazeList[cut - 1], bnd, gf);
         for (int i = 1; i < shortestDubinsList.size(); i++)
         {
             Vec3 pt(shortestDubinsList[i].easting, shortestDubinsList[i].northing, shortestDubinsList[i].heading);
@@ -288,7 +288,7 @@ bool CYouTurn::buildDriveAround(const CVehicle &vehicle,
         pt2.northing = stop.northing + (cosHead * vehicle.minTurningRadius * 1.5);
         pt2.heading = headAB;
 
-        shortestDubinsList = dubPath.GenerateDubins(mazeList[cnt - cut], pt2, gf);
+        shortestDubinsList = dubPath.GenerateDubins(mazeList[cnt - cut], pt2, bnd, gf);
 
         for (int i = 1; i < shortestDubinsList.size(); i++)
         {
@@ -398,8 +398,8 @@ bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
 
         //used for distance calc for other part of turn
 
-        CDubins dubYouTurnPath = new CDubins();
-        CDubins.turningRadius = vehicle.minTurningRadius;
+        CDubins dubYouTurnPath;
+        CDubins::turningRadius = vehicle.minTurningRadius;
 
         //point on AB line closest to pivot axle point from ABLine PurePursuit
         rEastYT = ABLine.rEastAB;
@@ -1085,8 +1085,8 @@ bool CYouTurn::buildCurveDubinsYouTurn(const CVehicle &vehicle,
             distanceTurnBeforeLine = (2 * vehicle.minTurningRadius);
         }
 
-        CDubins dubYouTurnPath = new CDubins();
-        CDubins.turningRadius = vehicle.minTurningRadius;
+        CDubins dubYouTurnPath;
+        CDubins::turningRadius = vehicle.minTurningRadius;
 
         //grab the vehicle widths and offsets
         double widthMinusOverlap = tool.toolWidth - tool.toolOverlap;
@@ -1426,8 +1426,8 @@ void CYouTurn::buildManualYouTurn(const CVehicle &vehicle, CTool &tool,
     //if using dubins to calculate youturn
     //if (isUsingDubinsTurn)
     {
-        CDubins dubYouTurnPath = new CDubins();
-        CDubins.turningRadius = vehicle.minTurningRadius;
+        CDubins dubYouTurnPath;
+        CDubins::turningRadius = vehicle.minTurningRadius;
 
         //if its straight across it makes 2 loops instead so goal is a little lower then start
         if (!isABSameAsFixHeading) head += 3.14;
@@ -1670,7 +1670,7 @@ void CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
             if (fabs(dx) < glm::DOUBLE_EPSILON && fabs(dz) < glm::DOUBLE_EPSILON) return;
 
             //abHeading = atan2(dz, dx);
-            double abHeading = ytList[A].heading;
+            //double abHeading = ytList[A].heading;
 
             //how far from current AB Line is fix
             distanceFromCurrentLine = ((dz * pivot.easting) - (dx * pivot.northing) + (ytList[B].easting
