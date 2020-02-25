@@ -79,6 +79,7 @@ public:
     double cosSectionHeading = 1.0, sinSectionHeading = 0.0;
     double fixHeadingSection = 0.0, fixHeadingTank = 0.0;
     Vec3 pivotAxlePos;
+    Vec3 steerAxlePos;
     Vec3 toolPos;
     Vec3 tankPos;
     Vec3 hitchPos;
@@ -109,7 +110,7 @@ public:
     void drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 &mvp, CCamera &camera, CTool &tool, CBoundary &bnd, CHead &hd);
 
 signals:
-    void lookaheadGoal(double);
+    void setLookAheadGoal(double);
 
 public slots:
     //void settingsChanged(); //notify us that settings changed so buffers need to be redone.

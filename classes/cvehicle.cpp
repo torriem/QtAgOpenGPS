@@ -65,7 +65,7 @@ double CVehicle::updateGoalPointDistance(CNMEA &pn, double distanceFromCurrentLi
 
     if (goalPointDistance < goalPointLookAheadMinimumDistance) goalPointDistance = goalPointLookAheadMinimumDistance;
 
-    emit lookaheadGoal(goalPointDistance);
+    emit setLookAheadGoal(goalPointDistance);
     //mf.lookaheadActual = goalPointDistance;
 
     return goalPointDistance;
