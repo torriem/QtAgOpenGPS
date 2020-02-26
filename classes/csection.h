@@ -13,7 +13,6 @@ class CVehicle;
 class CSection
 {
 private:
-    CVehicle *vehicle;
 
 public:
     //list of patch data individual triangles
