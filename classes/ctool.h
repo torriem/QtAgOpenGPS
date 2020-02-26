@@ -27,6 +27,8 @@ public:
     double toolTurnOffDelay;
     double toolLookAhead;
 
+    double slowSpeedCutoff = 0;
+
     bool isToolTrailing, isToolTBT;
     bool isToolBehindPivot;
     QString toolAttachType;
@@ -36,7 +38,6 @@ public:
 
     //how many individual sections
     int numOfSections;
-
     int numSuperSection;
 
     //used for super section off on

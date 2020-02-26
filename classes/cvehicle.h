@@ -32,7 +32,6 @@ public:
     double wheelbase;
     double minTurningRadius;
     double antennaOffset;
-    double slowSpeedCutoff = 0;
     int vehicleType;
 
     //autosteer values
@@ -55,10 +54,6 @@ public:
     bool youTurnUseDubins;
 
     double youTurnTriggerDistance;
-
-    //how many individual sections
-    int numOfSections;
-    int numSuperSection;
 
     //used for super section off on
     bool isSuperSectionAllowedOn;
@@ -97,6 +92,8 @@ public:
     //how far travelled since last section was added, section points
     double sectionTriggerDistance = 0, sectionTriggerStepDistance = 0;
     Vec2 prevSectionPos;
+
+    CSection sections[MAXSECTIONS];
 
 
     //tally counters for display

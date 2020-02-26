@@ -25,7 +25,6 @@ CVehicle::CVehicle(QObject *parent) : QObject(parent)
     minTurningRadius = SETTINGS_VEHICLE_MINTURNINGRADIUS;
     isSteerAxleAhead = SETTINGS_VEHICLE_ISSTEERAXLEAHEAD;
 
-    slowSpeedCutoff = SETTINGS_VEHICLE_SLOWSPEEDCUTOFF;
 
     goalPointLookAheadSeconds = SETTINGS_VEHICLE_LOOKAHEAD;
     goalPointLookAheadMinimumDistance = SETTINGS_VEHICLE_LOOKAHEADMINIMUM;
