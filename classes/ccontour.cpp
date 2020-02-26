@@ -389,8 +389,7 @@ void CContour::buildContourGuidanceLine(CVehicle &vehicle, CTool& tool, CNMEA &p
     {
         distanceFromCurrentLine = 9999;
         distanceFromCurrentLine = 32000;
-        emit guidanceLineDistanceOff(32000);
-        //mf.guidanceLineDistanceOff = 32000;
+        vehicle.guidanceLineDistanceOff = 32000;
         return;
     }
 
@@ -865,18 +864,14 @@ void CContour::distanceFromContourLine(CVehicle &vehicle, CNMEA &pn, Vec3 pivot,
         }
 
         //fill in the autosteer variables
-        emit guidanceLineDistanceOff(distanceFromCurrentLine);
-        emit distanceDisplay(distanceFromCurrentLine);
-        emit guidanceLineSteerAngle(steerAngleCT * 100);
-        //mf.guidanceLineDistanceOff = mf.distanceDisplay = (int)distanceFromCurrentLine;
-        //mf.guidanceLineSteerAngle = (int)(steerAngleCT * 100);
+        vehicle.guidanceLineDistanceOff = vehicle.distanceDisplay = (int)distanceFromCurrentLine;
+        vehicle.guidanceLineSteerAngle = (int)(steerAngleCT * 100);
     }
     else
     {
         //invalid distance so tell AS module
         distanceFromCurrentLine = 32000;
-        //emit signal
-        emit guidanceLineDistanceOff(32000);
+        vehicle.guidanceLineDistanceOff = 32000;
     }
 }
 

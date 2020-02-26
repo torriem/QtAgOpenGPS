@@ -54,8 +54,8 @@ private:
                        double minFieldX,
                        double minFieldY,
                        Vec3 goal);
-    void StanleyRecPath(const CVehicle &vehicle, const CNMEA &pn, int ptCount);
-    void StanleyDubinsPath(const CVehicle &vehicle, const CNMEA &pn, int ptCount);
+    void StanleyRecPath(CVehicle &vehicle, const CNMEA &pn, int ptCount);
+    void StanleyDubinsPath(CVehicle &vehicle, const CNMEA &pn, int ptCount);
 
 
 public:
@@ -104,7 +104,7 @@ public:
                                   CGeoFence &gf,
                                   CMazeGrid &mazeGrid,
                                   double minFieldX, double minFieldY);
-    void UpdatePosition(const CVehicle &vehicle,
+    void UpdatePosition(CVehicle &vehicle,
                         const CBoundary &bnd,
                         const CNMEA &pn,
                         CGeoFence &gf,
@@ -118,8 +118,8 @@ public:
 signals:
     void setSimStepDistance(double speed);
     void stoppedDriving();
-    void guidanceLineDistanceOff(int);
-    void guidanceLineSteerAngle(int);
+    //void guidanceLineDistanceOff(int);
+    //void guidanceLineSteerAngle(int);
     void btnSectionSet(btnStates);
 
 public slots:

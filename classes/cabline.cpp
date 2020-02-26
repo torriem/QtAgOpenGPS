@@ -392,7 +392,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
 
         if(yt.isYouTurnTriggered) {
             //do the pure pursuit from youTurn
-            yt.distanceFromYouTurnLine(vehicle);
+            yt.distanceFromYouTurnLine(vehicle,pn);
             //mf.seq.doSequenceEvent(); //TODO:?
             emit doSequence();
 

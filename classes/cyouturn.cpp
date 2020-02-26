@@ -1604,10 +1604,8 @@ void CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
             distanceFromCurrentLine = glm::roundAwayFromZero(distanceFromCurrentLine * 1000.0);
 
             //every guidance method dumps into these that are used and sent everywhere, last one wins
-            emit guidanceLineDistanceOff((int)distanceFromCurrentLine);
-            //mf.guidanceLineDistanceOff = mf.distanceDisplay = (Int16)distanceFromCurrentLine;
-            emit guidanceLineSteerAngle((int)(steerAngleYT * 100));
-            //mf.guidanceLineSteerAngle = (Int16)(steerAngleYT * 100);
+            vehicle.guidanceLineDistanceOff = vehicle.distanceDisplay = (int)distanceFromCurrentLine;
+            vehicle.guidanceLineSteerAngle = (int)(steerAngleYT * 100);
         }
         else
         {
@@ -1779,10 +1777,8 @@ void CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
                 if (isOnRightSideCurrentLine) distanceFromCurrentLine *= -1.0;
             }
 
-            emit guidanceLineDistanceOff((int)distanceFromCurrentLine);
-            //mf.guidanceLineDistanceOff = mf.distanceDisplay = ()Int16)distanceFromCurrentLine;
-            emit guidanceLineSteerAngle((int)(steerAngleYT * 100));
-            //mf.guidanceLineSteerAngle = (Int16)(steerAngleYT * 100);
+            vehicle.guidanceLineDistanceOff = vehicle.distanceDisplay = (int)distanceFromCurrentLine;
+            vehicle.guidanceLineSteerAngle = (int)(steerAngleYT * 100);
         }
     }
     else

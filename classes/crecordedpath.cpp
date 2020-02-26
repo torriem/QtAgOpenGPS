@@ -50,7 +50,7 @@ bool CRecordedPath::StartDrivingRecordedPath(const CVehicle &vehicle,
     return true;
 }
 
-void CRecordedPath::UpdatePosition(const CVehicle &vehicle,
+void CRecordedPath::UpdatePosition(CVehicle &vehicle,
                                    const CBoundary &bnd,
                                    const CNMEA &pn,
                                    CGeoFence &gf,
@@ -252,7 +252,7 @@ void CRecordedPath::GetDubinsPath(const CVehicle &vehicle, const CBoundary &bnd,
     }
 }
 
-void CRecordedPath::StanleyRecPath(const CVehicle &vehicle, const CNMEA &pn, int ptCount)
+void CRecordedPath::StanleyRecPath(CVehicle &vehicle, const CNMEA &pn, int ptCount)
 {
     //find the closest 2 points to current fix
     double minDistA = 9999999999;
@@ -345,13 +345,11 @@ void CRecordedPath::StanleyRecPath(const CVehicle &vehicle, const CNMEA &pn, int
     distanceFromCurrentLine = glm::roundAwayFromZero(distanceFromCurrentLine * 1000.0);
 
     //every guidance method dumps into these that are used and sent everywhere, last one wins
-    emit guidanceLineDistanceOff((int)distanceFromCurrentLine);
-    //mf.guidanceLineDistanceOff = mf.distanceDisplay = (Int16)distanceFromCurrentLine;
-    emit guidanceLineSteerAngle( (int) (steerAngleRP * 100));
-    //mf.guidanceLineSteerAngle = (Int16)(steerAngleRP * 100);
+    vehicle.guidanceLineDistanceOff = vehicle.distanceDisplay = (int)distanceFromCurrentLine;
+    vehicle.guidanceLineSteerAngle = (int)(steerAngleRP * 100);
 }
 
-void CRecordedPath::StanleyDubinsPath(const CVehicle &vehicle, const CNMEA &pn, int ptCount)
+void CRecordedPath::StanleyDubinsPath(CVehicle &vehicle, const CNMEA &pn, int ptCount)
 {
     //distanceFromCurrentLine = 9999;
     //find the closest 2 points to current fix
@@ -431,10 +429,8 @@ void CRecordedPath::StanleyDubinsPath(const CVehicle &vehicle, const CNMEA &pn, 
     distanceFromCurrentLine = glm::roundAwayFromZero(distanceFromCurrentLine * 1000.0);
 
     //every guidance method dumps into these that are used and sent everywhere, last one wins
-    emit guidanceLineDistanceOff((int)distanceFromCurrentLine);
-    //mf.guidanceLineDistanceOff = mf.distanceDisplay = (Int16)distanceFromCurrentLine;
-    emit guidanceLineSteerAngle((int)(steerAngleRP * 100));
-    //mf.guidanceLineSteerAngle = (Int16)(steerAngleRP * 100);
+    vehicle.guidanceLineDistanceOff = vehicle.distanceDisplay = (int)distanceFromCurrentLine;
+    vehicle.guidanceLineSteerAngle = (int)(steerAngleRP * 100);
 }
 
 void CRecordedPath::drawRecordedLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)

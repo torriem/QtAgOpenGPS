@@ -173,8 +173,8 @@ signals:
     void triggerSequence();
     void resetSequence();
     void turnOffBoundingAlarm();
-    void guidanceLineDistanceOff(int);
-    void guidanceLineSteerAngle(int);
+    //void guidanceLineDistanceOff(int);
+    //void guidanceLineSteerAngle(int);
     void setLookaheadGoal(double);
 };
 

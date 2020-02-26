@@ -88,6 +88,7 @@ public:
 
     // autosteer variables for sending serial
     short int guidanceLineDistanceOff, guidanceLineSteerAngle;
+    short int distanceDisplay;
 
     //how far travelled since last section was added, section points
     double sectionTriggerDistance = 0, sectionTriggerStepDistance = 0;

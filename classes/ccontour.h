@@ -89,9 +89,9 @@ public:
     void drawContourLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, CVehicle &vehicle);
     void resetContour();
 signals:
-    void guidanceLineDistanceOff(int);
-    void distanceDisplay(int);
-    void guidanceLineSteerAngle(int);
+    //void guidanceLineDistanceOff(int);
+    //void distanceDisplay(int);
+    //void guidanceLineSteerAngle(int);
     void showMessage(int,QString,QString);
 };
 
