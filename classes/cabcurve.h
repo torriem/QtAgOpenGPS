@@ -101,7 +101,7 @@ public:
 
 
 signals:
-    void doSequence();
+    void doSequence(CVehicle &vehicle);
 
 public slots:
 };

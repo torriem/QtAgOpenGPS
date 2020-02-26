@@ -238,7 +238,7 @@ void CABCurve::drawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
 
 void CABCurve::buildTram(CBoundary &bnd, CTram &tram)
 {
-    tram.buildTramBnd();
+    tram.buildTramBnd(bnd);
     tramList.clear();
 
     Vec2 tramLineP1;
@@ -806,8 +806,8 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot, Vec3 steer,
         if (yt.isYouTurnTriggered)
         {
             //do the pure pursuit from youTurn
-            yt.distanceFromYouTurnLine(vehicle);
-            emit doSequence();
+            yt.distanceFromYouTurnLine(vehicle, pn);
+            emit doSequence(vehicle);
             //mf.seq.DoSequenceEvent();
 
             //now substitute what it thinks are AB line values with auto turn values

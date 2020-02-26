@@ -102,7 +102,7 @@ public:
     void resetABLine();
 
 signals:
-    void doSequence();
+    void doSequence(CVehicle &vehicle);
     void showMessage(int,QString,QString);
 };
 
