@@ -3,8 +3,8 @@
 #include <QObject>
 #include "vec2.h"
 #include <QVector>
+#include "cheadlines.h"
 
-class CHeadLines;
 class CTool;
 class CVehicle;
 class QOpenGLFunctions;
