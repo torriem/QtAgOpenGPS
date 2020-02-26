@@ -6,8 +6,8 @@ class Vec4
 {
 public:
     double easting;
-    double heading;
     double northing;
+    double heading;
     int index;
 
     Vec4();

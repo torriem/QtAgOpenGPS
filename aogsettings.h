@@ -232,5 +232,33 @@ public:
 
 #define SETTINGS_AUTOSTEER_ISJRK			settings.   value("autosteer/isJRK", false).toBool()
 #define SETTINGS_SET_AUTOSTEER_ISJRK(VAL)	settings.setValue("autosteer/isJRK",VAL)
+
+//CSEQUENCE
+#define SETTINGS_VEHICLE_SEQFUNCTIONENTER			settings.   value("vehicle/seqFunctionEnter", "0,0,0,0,0,0,0,0").toString()
+#define SETTINGS_SET_VEHICLE_SEQFUNCTIONENTER(VAL)	settings.setValue("vehicle/seqFunctionEnter",VAL)
+
+#define SETTINGS_VEHICLE_SEQFUNCTIONEXIT			settings.   value("vehicle/seqFunctionExit", "0,0,0,0,0,0,0,0").toString()
+#define SETTINGS_SET_VEHICLE_SEQFUNCTIONEXIT(VAL)	settings.setValue("vehicle/seqFunctionExit",VAL)
+
+#define SETTINGS_VEHICLE_SEQACTIONENTER			settings.   value("vehicle/seqActionEnter", "0,0,0,0,0,0,0,0").toString()
+#define SETTINGS_SET_VEHICLE_SEQACTIONENTER(VAL)	settings.setValue("vehicle/seqActionEnter",VAL)
+
+#define SETTINGS_VEHICLE_SEQACTIONEXIT			settings.   value("vehicle/seqActionExit", "0,0,0,0,0,0,0,0").toString()
+#define SETTINGS_SET_VEHICLE_SEQACTIONEXIT(VAL)	settings.setValue("vehicle/seqActionExit",VAL)
+
+#define SETTINGS_VEHICLE_SEQDISTANCEENTER			settings.   value("vehicle/seqDistanceEnter", "0,0,0,0,0,0,0,0").toString()
+#define SETTINGS_SET_VEHICLE_SEQDISTANCEENTER(VAL)	settings.setValue("vehicle/seqDistanceEnter",VAL)
+
+#define SETTINGS_VEHICLE_SEQDISTANCEEXIT			settings.   value("vehicle/seqDistanceExit", "0,0,0,0,0,0,0,0").toString()
+#define SETTINGS_SET_VEHICLE_SEQDISTANCEEXIT(VAL)	settings.setValue("vehicle/seqDistanceExit",VAL)
+
+#define SETTINGS_VEHICLE_SEQFUNCTIONLIST			settings.   value("vehicle/seqFunctionList", "Relay 1,Relay 2,Relay 3,Relay 4,Relay 5,Relay 6").toString()
+#define SETTINGS_SET_VEHICLE_SEQFUNCTIONLIST(VAL)	settings.setValue("vehicle/seqFunctionList",VAL)
+
+#define SETTINGS_VEHICLE_SEQACTIONLIST			settings.   value("vehicle/seqActionList", "Turn Off,Turn On")).toString()
+#define SETTINGS_SET_VEHICLE_SEQACTIONLIST(VAL)	settings.setValue("vehicle/seqActionList",VAL)
+
+
+
 #endif // AOGSETTINGS_H
 

@@ -3,6 +3,7 @@
 
 // we'll put common constants etc in here.
 const int MAXSECTIONS = 17;
+const int MAXFUNCTIONS = 8;
 
 #pragma pack(push,1)
 struct LookAheadPixels {
