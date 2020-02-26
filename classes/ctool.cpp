@@ -30,12 +30,9 @@ CTool::CTool()
 
     toolMinUnappliedPixels = SETTINGS_TOOLMINAPPLIED;
 
-    //hack to get around tight coupling for now.
-    //TODO, implement wrapper methods and pass in the
-    //variables the section methods need.
-    //for (int i=0; i <= MAXSECTIONS; i++) {
-    //    section[i].set_vehicle(vehicle);
-    //}
+    slowSpeedCutoff = SETTINGS_VEHICLE_SLOWSPEEDCUTOFF;
+
+    //TOOD: section settings
 }
 
 void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 &mvp)
