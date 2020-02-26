@@ -13,11 +13,9 @@ class QOpenGLFunctions;
 class CTram
 {
 private:
-    CTool *tool;
-    CBoundary *bnd;
 
 public:
-    CTram(CTool *tool, CBoundary *bnd);
+    CTram();
 
     //the list of constants and multiples of the boundary
     QVector<Vec2> calcList;
@@ -38,8 +36,8 @@ public:
     int displayMode;
 
     void drawTramBnd(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
-    void buildTramBnd();
-    void createBndTramRef();
+    void buildTramBnd(const CBoundary &bnd);
+    void createBndTramRef(const CBoundary &bnd);
     void createOuterTram();
     bool isPointInTramBndArea(Vec2 testPointv2);
     void preCalcTurnLines();

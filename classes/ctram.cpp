@@ -12,7 +12,7 @@
 //      to refer to settings
 #define DEFAULT_EQWIDTH 24
 
-CTram::CTram(CTool *tool, CBoundary *bnd) : tool(tool), bnd(bnd)
+CTram::CTram()
 {
     USE_SETTINGS;
     tramWidth = SETTINGS_TRAM_EQWIDTH;
@@ -20,7 +20,8 @@ CTram::CTram(CTool *tool, CBoundary *bnd) : tool(tool), bnd(bnd)
     halfWheelTrack = wheelTrack * 0.5;
 
     passes = SETTINGS_TRAM_PASSES;
-    abOffset = (tool->toolWidth - tool->toolOverlap) / 2.0;
+    //abOffset = (tool->toolWidth - tool->toolOverlap) / 2.0;
+    abOffset = 0;
     displayMode = 0;
 }
 
@@ -43,13 +44,13 @@ void CTram::drawTramBnd(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
     }
 }
 
-void CTram::buildTramBnd()
+void CTram::buildTramBnd(const CBoundary &bnd)
 {
-    bool isBndExist = bnd->bndArr.size() != 0;
+    bool isBndExist = bnd.bndArr.size() != 0;
 
     if (isBndExist)
     {
-        createBndTramRef();
+        createBndTramRef(bnd);
         createOuterTram();
         preCalcTurnLines();
     }
@@ -60,10 +61,10 @@ void CTram::buildTramBnd()
     }
 }
 
-void CTram::createBndTramRef()
+void CTram::createBndTramRef(const CBoundary &bnd)
 {
     //count the points from the boundary
-    int ptCount = bnd->bndArr[0].bndLine.size();
+    int ptCount = bnd.bndArr[0].bndLine.size();
     outArr.clear();
 
     //outside point
@@ -76,16 +77,16 @@ void CTram::createBndTramRef()
     for (int i = 0; i < ptCount; i++)
     {
         //calculate the point inside the boundary
-        pt3.easting = bnd->bndArr[0].bndLine[i].easting -
-            (sin(glm::PIBy2 + bnd->bndArr[0].bndLine[i].heading) * (tramWidth * 0.5 - halfWheelTrack));
+        pt3.easting = bnd.bndArr[0].bndLine[i].easting -
+            (sin(glm::PIBy2 + bnd.bndArr[0].bndLine[i].heading) * (tramWidth * 0.5 - halfWheelTrack));
 
-        pt3.northing = bnd->bndArr[0].bndLine[i].northing -
-            (cos(glm::PIBy2 + bnd->bndArr[0].bndLine[i].heading) * (tramWidth * 0.5 - halfWheelTrack));
+        pt3.northing = bnd.bndArr[0].bndLine[i].northing -
+            (cos(glm::PIBy2 + bnd.bndArr[0].bndLine[i].heading) * (tramWidth * 0.5 - halfWheelTrack));
 
         for (int j = 0; j < ptCount; j++)
         {
             double check = glm::distanceSquared(pt3.northing, pt3.easting,
-                                bnd->bndArr[0].bndLine[j].northing, bnd->bndArr[0].bndLine[j].easting);
+                                bnd.bndArr[0].bndLine[j].northing, bnd.bndArr[0].bndLine[j].easting);
             if (check < distSq)
             {
                 fail = true;
@@ -95,7 +96,7 @@ void CTram::createBndTramRef()
 
         if (!fail)
         {
-            pt3.heading = bnd->bndArr[0].bndLine[i].heading;
+            pt3.heading = bnd.bndArr[0].bndLine[i].heading;
             outArr.append(pt3);
         }
         fail = false;
@@ -138,10 +139,10 @@ void CTram::createOuterTram()
             tramBndArr.append(pt);
 
             pt2.easting = outArr[i].easting -
-                (sin(glm::PIBy2 + mf.tram.outArr[i].heading) * mf.tram.wheelTrack);
+                (sin(glm::PIBy2 + outArr[i].heading) * wheelTrack);
 
             pt2.northing = outArr[i].northing -
-                (cos(glm::PIBy2 + mf.tram.outArr[i].heading) * mf.tram.wheelTrack);
+                (cos(glm::PIBy2 + outArr[i].heading) * wheelTrack);
             tramBndArr.append(pt2);
         }
     }
