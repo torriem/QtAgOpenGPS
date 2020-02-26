@@ -9,10 +9,12 @@
 #include "aogsettings.h"
 #include "cboundary.h"
 #include "ctool.h"
+#include "cfielddata.h"
+#include "common.h"
 
-CTurn::CTurn()
+CTurn::CTurn(QObject *parent) : QObject(parent)
 {
-    //box for finding closest point
+   //box for finding closest point
     boxA = Vec2(9000, 9000);
     boxB = Vec2(9000, 9002);
     boxC = Vec2(9001, 9001);
@@ -26,7 +28,6 @@ CTurn::CTurn()
 }
 
 //called only by CYouTurn
-//requires mf.bnd (CBoundary), mf.turn?, CTool
 void CTurn::findClosestTurnPoint(const CBoundary &bnd, const CTool &tool, bool isYouTurnRight, Vec3 fromPt, double headAB)
 {
     //initial scan is straight ahead of pivot point of vehicle to find the right turnLine/boundary
@@ -51,7 +52,7 @@ void CTurn::findClosestTurnPoint(const CBoundary &bnd, const CTool &tool, bool i
                 if (!bnd.bndArr[t].isSet) continue;
                 if (bnd.bndArr[t].isDriveThru) continue;
                 if (bnd.bndArr[t].isDriveAround) continue;
-                if (mf.turn.turnArr[t].isPointInTurnWorkArea(pt))
+                if (turnArr[t].isPointInTurnWorkArea(pt))
                 {
                     isFound = true;
                     closestTurnNum = t;
@@ -100,9 +101,7 @@ void CTurn::findClosestTurnPoint(const CBoundary &bnd, const CTool &tool, bool i
     //determine if point is inside bounding box of the 1 turn chosen above
     turnClosestList.clear();
 
-    //I can only find one instance of CTurn in AOG.  So isn't
-    //mf.turn always this?
-    mf.turn.closestTurnNum = closestTurnNum;
+    closestTurnNum = closestTurnNum;
     Vec4 inBox;
 
     int ptCount = turnArr[closestTurnNum].turnLine.size();
@@ -159,7 +158,7 @@ void CTurn::findClosestTurnPoint(const CBoundary &bnd, const CTool &tool, bool i
         //determine if point is inside bounding box of the 1 turn chosen above
         turnClosestList.clear();
 
-        mf.turn.closestTurnNum = closestTurnNum;
+        closestTurnNum = closestTurnNum;
 
         ptCount = turnArr[closestTurnNum].turnLine.size();
         for (int p = 0; p < ptCount; p++)
@@ -247,14 +246,14 @@ void CTurn::resetTurnLines()
 }
 
 //called by main forms
-void CTurn::buildTurnLines(const CBoundary &bnd, const CTool &tool)
+void CTurn::buildTurnLines(const CBoundary &bnd, const CTool &tool, CFieldData &fd, double youTurnTriggerDistanceOffset)
 {
     //update the GUI values for boundaries
-    mf.fd.UpdateFieldBoundaryGUIAreas();
+    fd.updateFieldBoundaryGUIAreas(bnd);
 
     if (bnd.bndArr.size() == 0)
     {
-        mf.TimedMessageBox(1500, " No Boundaries", "No Turn Lines Made");
+        emit showMessage(messageBox::warning, tr("No Boundaries"), tr("No turn lines made."));
         return;
     }
 
@@ -262,7 +261,7 @@ void CTurn::buildTurnLines(const CBoundary &bnd, const CTool &tool)
     Vec3 point;
 
     //determine how wide a headland space
-    double totalHeadWidth = mf.yt.triggerDistanceOffset;
+    double totalHeadWidth = youTurnTriggerDistanceOffset;
 
     //outside boundary - count the points from the boundary
     turnArr[0].turnLine.clear();
@@ -326,14 +325,14 @@ void CTurn::drawTurnLines(const CBoundary &bnd, QOpenGLFunctions *gl, const QMat
         //turnArr[i].DrawTurnLine();
         {
             ////draw the turn line oject
-            int ptCount = mf.turn.turnArr[i].turnLine.size();
+            int ptCount = turnArr[i].turnLine.size();
             if (ptCount < 1) continue;
 
             GLHelperOneColor gldraw;
             for (int h = 0; h < ptCount; h++)
-                gldraw.append(QVector3D(mf.turn.turnArr[i].turnLine[h].easting, mf.turn.turnArr[i].turnLine[h].northing, 0));
+                gldraw.append(QVector3D(turnArr[i].turnLine[h].easting, turnArr[i].turnLine[h].northing, 0));
 
-            gldraw.append(QVector3D(mf.turn.turnArr[i].turnLine[0].easting, mf.turn.turnArr[i].turnLine[0].northing, 0));
+            gldraw.append(QVector3D(turnArr[i].turnLine[0].easting, turnArr[i].turnLine[0].northing, 0));
 
             gldraw.draw(gl,mvp,QColor::fromRgbF(0.3555f, 0.6232f, 0.20f),GL_LINE_STRIP,
                         SETTINGS_DISPLAY_LINEWIDTH);
