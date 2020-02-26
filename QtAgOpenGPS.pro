@@ -75,7 +75,8 @@ SOURCES += main.cpp\
     classes/csim.cpp \
     classes/cpointdata.cpp \
     classes/crecordedpath.cpp \
-    classes/cdubins.cpp
+    classes/cdubins.cpp \
+    classes/csequence.cpp
 
 HEADERS  += formgps.h \
     classes/cabline.h \
@@ -117,7 +118,8 @@ HEADERS  += formgps.h \
     classes/csim.h \
     classes/cpointdata.h \
     classes/crecordedpath.h \
-    classes/cdubins.h
+    classes/cdubins.h \
+    classes/csequence.h
 
 RESOURCES += \
     agopengps.qrc
