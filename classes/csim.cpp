@@ -131,3 +131,7 @@ void CSim::BuildVTG()
     sbVTG.append("\r\n");
 }
 
+void CSim::setSimStepDistance(double _stepDistance)
+{
+    stepDistance = _stepDistance;
+}

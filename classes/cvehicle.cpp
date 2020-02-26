@@ -64,8 +64,8 @@ double CVehicle::updateGoalPointDistance(CNMEA &pn, double distanceFromCurrentLi
 
     if (goalPointDistance < goalPointLookAheadMinimumDistance) goalPointDistance = goalPointLookAheadMinimumDistance;
 
-    emit setLookAheadGoal(goalPointDistance);
-    //mf.lookaheadActual = goalPointDistance;
+    //emit setLookAheadGoal(goalPointDistance);
+    //mf.lookaheadActual = goalPointDistance; //mf.lookaheadActual is unused
 
     return goalPointDistance;
 
@@ -256,3 +256,20 @@ void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 &mvp,
     }
 }
 
+void CVehicle::onNewSpeed(double _speed)
+{
+    avgSpeed[ringCounter] = _speed;
+    if(ringCounter++ > 10) ringCounter = 0;
+}
+
+double CVehicle::getAvgSpeed(bool metric)
+{
+    double spd = 0;
+    for (int c=0; c<10; c++) spd +=avgSpeed[c];
+    spd *= 0.1;
+
+    if (metric)
+        return spd; //kph
+    else
+        return spd * 0.621371; //mph
+}

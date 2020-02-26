@@ -1694,8 +1694,8 @@ void CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
 
             //sharp turns on you turn.
             goalPointDistance = vehicle.goalPointLookAheadUturnMult * goalPointDistance;
-            emit setLookaheadGoal(goalPointDistance);
-            //mf.lookaheadActual = goalPointDistance;
+            //emit setLookaheadGoal(goalPointDistance);
+            //mf.lookaheadActual = goalPointDistance; //unused
 
             //used for accumulating distance to find goal point
             double distSoFar;

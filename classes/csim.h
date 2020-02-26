@@ -57,6 +57,9 @@ private:
 signals:
     void new_position(QByteArray nmea_data);
 
+public slots:
+    void setSimStepDistance(double);
+
 };
 
 #endif // CSIM_H

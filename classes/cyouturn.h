@@ -175,7 +175,7 @@ signals:
     void turnOffBoundingAlarm();
     //void guidanceLineDistanceOff(int);
     //void guidanceLineSteerAngle(int);
-    void setLookaheadGoal(double);
+    //void setLookaheadGoal(double);
 };
 
 #endif // YOUTURN_H

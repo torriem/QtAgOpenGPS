@@ -19,7 +19,7 @@ class CNMEA;
 class CHead;
 
 
-class CVehicle: QObject
+class CVehicle: public QObject
 {
     Q_OBJECT
 private:
@@ -107,10 +107,13 @@ public:
     double updateGoalPointDistance(CNMEA &pn, double distanceFromCurrentLine);
     void drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 &mvp, CCamera &camera, CTool &tool, CBoundary &bnd, CHead &hd);
 
+    double getAvgSpeed(bool metric = true);
+
 signals:
-    void setLookAheadGoal(double);
+    //void setLookAheadGoal(double);
 
 public slots:
+    void onNewSpeed(double);
     //void settingsChanged(); //notify us that settings changed so buffers need to be redone.
 };
 
