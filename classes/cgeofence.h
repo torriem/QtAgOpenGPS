@@ -4,8 +4,8 @@
 #include <QVector>
 #include "vec3.h"
 #include "vec2.h"
+#include "cgeofencelines.h"
 
-class CGeoFenceLines;
 class CBoundary;
 class CTurn;
 class CMazeGrid;
