@@ -174,7 +174,7 @@ void CBoundaryLines::preCalcBoundaryLines()
     }
 }
 
-bool CBoundaryLines::isPointInsideBoundary(Vec3 testPointv3)
+bool CBoundaryLines::isPointInsideBoundary(Vec3 testPointv3) const
 {
     if (calcList.size() < 3) return false;
     int j = bndLine.size() - 1;
@@ -192,7 +192,7 @@ bool CBoundaryLines::isPointInsideBoundary(Vec3 testPointv3)
     return oddNodes; //true means inside.
 }
 
-bool CBoundaryLines::isPointInsideBoundary(Vec2 testPointv2)
+bool CBoundaryLines::isPointInsideBoundary(Vec2 testPointv2) const
 {
     if (calcList.size() < 3) return false;
     int j = bndLine.size() - 1;

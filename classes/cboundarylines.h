@@ -23,8 +23,8 @@ public:
     void fixBoundaryLine(int bndNum, double spacing);
     void reverseWinding();
     void preCalcBoundaryLines();
-    bool isPointInsideBoundary(Vec3 testPointv3);
-    bool isPointInsideBoundary(Vec2 testPointv2);
+    bool isPointInsideBoundary(Vec3 testPointv3) const;
+    bool isPointInsideBoundary(Vec2 testPointv2) const;
     void drawBoundaryLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, QColor color);
     void calculateBoundaryArea();
 
