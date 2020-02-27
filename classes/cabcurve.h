@@ -91,8 +91,7 @@ public:
     void saveSmoothAsRefList();
     void getCurrentCurveLine(Vec3 pivot, Vec3 steer,
                              CVehicle &vehicle, CYouTurn &yt,
-                             const CTool &tool, CNMEA &pn,
-                             double speed);
+                             const CTool &tool, CNMEA &pn);
     void snapABCurve();
     void moveABCurve(double dist);
     bool pointOnLine(Vec3 pt1, Vec3 pt2, Vec3 pt);

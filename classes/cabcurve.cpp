@@ -375,8 +375,7 @@ void CABCurve::saveSmoothAsRefList()
 
 void CABCurve::getCurrentCurveLine(Vec3 pivot, Vec3 steer,
                                    CVehicle &vehicle, CYouTurn &yt,
-                                   const CTool &tool, CNMEA &pn,
-                                   double speed)
+                                   const CTool &tool, CNMEA &pn)
 {
     int ptCount = refList.size();
     int ptCnt = ptCount - 1;
@@ -575,7 +574,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot, Vec3 steer,
             if (abFixHeadingDelta > 0.74) abFixHeadingDelta = 0.74;
             if (abFixHeadingDelta < -0.74) abFixHeadingDelta = -0.74;
 
-            steerAngleCu = atan((distanceFromCurrentLine * vehicle.stanleyGain) / ((speed * 0.277777) + 1));
+            steerAngleCu = atan((distanceFromCurrentLine * vehicle.stanleyGain) / ((pn.speed * 0.277777) + 1));
 
             if (steerAngleCu > 0.74) steerAngleCu = 0.74;
             if (steerAngleCu < -0.74) steerAngleCu = -0.74;
@@ -768,14 +767,14 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot, Vec3 steer,
             radiusPointCu.northing = pivot.northing + (ppRadiusCu * sin(localHeading));
 
             //angular velocity in rads/sec  = 2PI * m/sec * radians/meters
-            double angVel = glm::twoPI * 0.277777 * speed * (tan(glm::toRadians(steerAngleCu))) / vehicle.wheelbase;
+            double angVel = glm::twoPI * 0.277777 * pn.speed * (tan(glm::toRadians(steerAngleCu))) / vehicle.wheelbase;
 
             //clamp the steering angle to not exceed safe angular velocity
             if (fabs(angVel) > vehicle.maxAngularVelocity)
             {
                 steerAngleCu = glm::toDegrees(steerAngleCu > 0 ?
-                        (atan((vehicle.wheelbase * vehicle.maxAngularVelocity) / (glm::twoPI * speed * 0.277777)))
-                    : (atan((vehicle.wheelbase * -vehicle.maxAngularVelocity) / (glm::twoPI * speed * 0.277777))));
+                        (atan((vehicle.wheelbase * vehicle.maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777)))
+                    : (atan((vehicle.wheelbase * -vehicle.maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777))));
             }
             //Convert to centimeters
             distanceFromCurrentLine = glm::roundAwayFromZero(distanceFromCurrentLine * 1000.0);

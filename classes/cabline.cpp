@@ -104,7 +104,7 @@ void CABLine::snapABLine()
 }
 
 //called from main form
-void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTurn &yt, const CTool &tool, CNMEA &pn, double speed)
+void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTurn &yt, const CTool &tool, CNMEA &pn)
 {
     if (vehicle.isStanleyUsed) {
         //move the ABLine over based on the overlap amount set in vehicle
@@ -222,7 +222,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
         if (abFixHeadingDelta > 0.4) abFixHeadingDelta = 0.4;
         if (abFixHeadingDelta < -0.4) abFixHeadingDelta = -0.4;
 
-        steerAngleAB = atan((distanceFromCurrentLine * vehicle.stanleyGain) / ((speed * 0.277777) + 1));
+        steerAngleAB = atan((distanceFromCurrentLine * vehicle.stanleyGain) / ((pn.speed * 0.277777) + 1));
 
         if (steerAngleAB > 0.4) steerAngleAB = 0.4;
         if (steerAngleAB < -0.4) steerAngleAB = -0.4;
@@ -365,13 +365,13 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
         distanceFromCurrentLine = glm::roundAwayFromZero(distanceFromCurrentLine * 1000.0);
 
         //angular velocity in rads/sec  = 2PI * m/sec * radians/meters
-        angVel = glm::twoPI * 0.277777 * vehicle.speed * (tan(glm::toRadians(steerAngleAB)))/vehicle.wheelbase;
+        angVel = glm::twoPI * 0.277777 * pn.speed * (tan(glm::toRadians(steerAngleAB)))/vehicle.wheelbase;
 
         //clamp the steering angle to not exceed safe angular velocity
         if (fabs(angVel) > vehicle.maxAngularVelocity)
         {
-            steerAngleAB = glm::toDegrees(steerAngleAB > 0 ? (atan((vehicle.wheelbase * vehicle.maxAngularVelocity) / (glm::twoPI * vehicle.speed * 0.277777)))
-                : (atan((vehicle.wheelbase * -vehicle.maxAngularVelocity) / (glm::twoPI * vehicle.speed * 0.277777))));
+            steerAngleAB = glm::toDegrees(steerAngleAB > 0 ? (atan((vehicle.wheelbase * vehicle.maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777)))
+                : (atan((vehicle.wheelbase * -vehicle.maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777))));
         }
 
         //distance is negative if on left, positive if on right
