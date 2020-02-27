@@ -807,7 +807,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot, Vec3 steer,
         {
             //do the pure pursuit from youTurn
             yt.distanceFromYouTurnLine(vehicle, pn);
-            emit doSequence(vehicle);
+            emit doSequence(yt);
             //mf.seq.DoSequenceEvent();
 
             //now substitute what it thinks are AB line values with auto turn values

@@ -386,7 +386,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
             if (isOnRightSideCurrentLine) distanceFromCurrentLine *= -1.0;
         }
 
-        //TODO: make these emitted with a signal?
+        //TODO: make these CYouTurn &ytignal?
         vehicle.guidanceLineDistanceOff = int(distanceFromCurrentLine);
         vehicle.guidanceLineSteerAngle = int(steerAngleAB * 100);
 
@@ -394,7 +394,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
             //do the pure pursuit from youTurn
             yt.distanceFromYouTurnLine(vehicle,pn);
             //mf.seq.doSequenceEvent(); //TODO:?
-            emit doSequence(vehicle);
+            emit doSequence(yt);
 
             //now substitute what it thinks are AB line values with auto turn values
             steerAngleAB = yt.steerAngleYT;

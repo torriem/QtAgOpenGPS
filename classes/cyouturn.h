@@ -170,9 +170,9 @@ signals:
     void showMessage(int,QString,QString);
     void outOfBounds();
     void swapDirection();
-    void triggerSequence();
-    void resetSequence();
-    void turnOffBoundingAlarm();
+    void setTriggerSequence(bool);
+    void resetSequenceEventTriggers();
+    void turnOffBoundAlarm();
     //void guidanceLineDistanceOff(int);
     //void guidanceLineSteerAngle(int);
     //void setLookaheadGoal(double);

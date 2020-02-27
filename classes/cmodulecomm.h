@@ -75,6 +75,10 @@ signals:
     void sendRelayOutToPort(uchar *, int);
     void sendAutoSteerDataOutToPort();
     void sendAutoSteerSettingsOutToPort();
+public slots:
+    void setOutOfBounds() {
+        isOutOfBounds = true;
+    }
 };
 
 #endif // CMODULECOMM_H

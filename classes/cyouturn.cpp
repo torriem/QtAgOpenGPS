@@ -1289,7 +1289,7 @@ void CYouTurn::youTurnTrigger()
     //trigger pulled
     isYouTurnTriggered = true;
 
-    emit triggerSequence();
+    emit setTriggerSequence(true);
     //mf.seq.isSequenceTriggered = true;
 
     //just do the opposite of last turn
@@ -1302,11 +1302,12 @@ void CYouTurn::completeYouTurn()
 {
     isYouTurnTriggered = false;
     resetCreatedYouTurn();
-    emit resetSequence();
-    emit turnOffBoundingAlarm();
     //mf.seq.ResetSequenceEventTriggers();
+    emit resetSequenceEventTriggers();
     //mf.seq.isSequenceTriggered = false;
+    emit setTriggerSequence(false);
     //mf.isBoundAlarming = false;
+    emit turnOffBoundAlarm();
 }
 
 //something went seriously wrong so reset everything
@@ -1318,14 +1319,15 @@ void CYouTurn::resetYouTurn()
     resetCreatedYouTurn();
     turnDistanceAdjuster = 0;
     //mf.isBoundAlarming = false;
-    emit turnOffBoundingAlarm();
+    emit turnOffBoundAlarm();
 
     isTurnCreationTooClose = false;
     isTurnCreationNotCrossingError = false;
 
     //reset sequence
-    emit resetSequence();
+    emit resetSequenceEventTriggers();
     //mf.seq.ResetSequenceEventTriggers();
+    emit setTriggerSequence(false);
     //mf.seq.isSequenceTriggered = false;
 }
 

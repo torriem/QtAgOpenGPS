@@ -41,7 +41,6 @@ public:
 
     explicit CSequence(QObject *parent = 0);
     void DisableSeqEvent(int index, bool isEnter);
-    void ResetSequenceEventTriggers();
     void DoManualEntrySequence();
     void DoManualExitSequence();
 
@@ -55,6 +54,7 @@ signals:
 
 public slots:
     void setIsSequenceTriggered(bool);
+    void ResetSequenceEventTriggers();
     void ResetAllSequences();
     void DoSequenceEvent(CYouTurn &yt);
 };
