@@ -200,6 +200,9 @@ void FormGPS::setupGui()
     connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(tmrWatchdog_timeout()));
     tmrWatchdog->start(50); //fire every 50ms.
 
+    connect(&simTimer, SIGNAL(timeout()),this,SLOT(onSimTimerTimeout()));
+    simTimer.start(200); //fire simulator every 200 ms.
+
     swFrame.start();
 
     stopwatch.start();
@@ -229,52 +232,13 @@ void FormGPS::onBtnMinMaxZoom_clicked(){
 void FormGPS::onBtnPerimeter_clicked(){
     if (closeAllMenus()) return;
     qDebug()<<"Perimeter button clicked." ;
-
-    //If we were in the "drawing" state, go to the "done" state
-    if (periArea.isBtnPerimeterOn && periArea.periPtList.size() > 0) {
-        qDebug() << "draw -> done";
-        periArea.isBtnPerimeterOn = false;
-        qmlItem(qml_root,"btnPerimeter")->setProperty("icon","qrc:/images/PeriDone.png");
-        qmlItem(qml_root,"btnPerimeter")->setProperty("isChecked",false);
-        return;
-    }
-
-    if (periArea.isBtnPerimeterOn) {
-        //go to area; haven't recorded anything
-        qmlItem(qml_root,"btnPerimeter")->setProperty("icon","qrc:/images/PeriArea.png");
-        qmlItem(qml_root,"btnPerimeter")->setProperty("isChecked",true);
-        qmlItem(qml_root,"btnPerimeter")->setProperty("isChecked",false);
-        periArea.isBtnPerimeterOn = false;
-        return;
-    }
-
-
-    //if we are in the "done" state, go to the "area" state
-    if (!periArea.isBtnPerimeterOn && periArea.periPtList.size() > 0) {
-        qDebug() << "done -> area";
-
-        periArea.periPtList.clear();
-        //periArea.calcList.clear();
-        qmlItem(qml_root,"btnPerimeter")->setProperty("icon","qrc:/images/PeriArea.png");
-        qmlItem(qml_root,"btnPerimeter")->setProperty("isChecked",true);
-        qmlItem(qml_root,"btnPerimeter")->setProperty("isChecked",false);
-        return;
-    }
-
-    //if we are in the "area state" state, go to the "draw" state
-    if (!periArea.isBtnPerimeterOn && periArea.periPtList.size() == 0) {
-        periArea.isBtnPerimeterOn = true;
-        qDebug() << "area -> draw";
-        qmlItem(qml_root,"btnPerimeter")->setProperty("isChecked",true);
-
-    }
 }
 
 void FormGPS::onBtnAreaSide_clicked() {
     isAreaOnRight = !isAreaOnRight;
     settings.setValue("vehicle/isAreaOnRight", isAreaOnRight);
     contextArea->setProperty("visible",false);
-    vehicle->settingsChanged();
+    //vehicle->settingsChanged();
 }
 
 void FormGPS::onBtnAutoSteer_clicked(){
@@ -283,7 +247,7 @@ void FormGPS::onBtnAutoSteer_clicked(){
         btnAutoSteer->setProperty("icon","/images/AutoSteerOff.png");
 
     } else {
-        if (ABLine->isABLineSet || ct->isContourBtnOn) {
+        if (ABLine.isABLineSet || ct.isContourBtnOn) {
             isAutoSteerBtnOn = true;
             btnAutoSteer->setProperty("icon","/images/AutoSteerOn.png");
         } else {
@@ -302,8 +266,8 @@ void FormGPS::onBtnFlag_clicked() {
 
     if(isGPSPositionInitialized) {
         int nextflag = flagPts.size() + 1;
-        CFlag flagPt(pn->latitude, pn->longitude, pn->easting, pn->northing, flagColor, nextflag);
-        flagPts.append(flagPt);
+        //CFlag flagPt(pn.latitude, pn.longitude, pn.easting, pn.northing, flagColor, nextflag);
+        //flagPts.append(flagPt);
         flagsBufferCurrent = false;
         //TODO: FileSaveFlags();
     }
@@ -318,8 +282,8 @@ void FormGPS::onBtnContour_clicked(){
     if (closeAllMenus()) return;
     qDebug()<<"contour button clicked." ;
 
-    ct->isContourBtnOn = !ct->isContourBtnOn;
-    if (ct->isContourBtnOn)
+    ct.isContourBtnOn = !ct.isContourBtnOn;
+    if (ct.isContourBtnOn)
         qmlItem(qml_root,"btnContour")->setProperty("isChecked",true);
     else
         qmlItem(qml_root,"btnContour")->setProperty("isChecked",false);
@@ -339,10 +303,10 @@ void FormGPS::onBtnManualOffOn_clicked(){
         qmlItem(qml_root,"btnSectionOffAutoOn")->setProperty("isChecked",false);
 
         //turn all the sections allowed and update to ON!! Auto changes to ON
-        for (int j = 0; j < vehicle->numOfSections; j++)
+        for (int j = 0; j < tool.numOfSections; j++)
         {
-            vehicle->section[j].isAllowedOn = true;
-            vehicle->section[j].manBtnState = btnStates::Auto; //auto rolls over to on
+            tool.section[j].isAllowedOn = true;
+            tool.section[j].manBtnState = btnStates::Auto; //auto rolls over to on
         }
 
         manualAllBtnsUpdate();
@@ -353,10 +317,10 @@ void FormGPS::onBtnManualOffOn_clicked(){
         qmlItem(qml_root,"btnManualOffOn")->setProperty("isChecked",false);
 
         //turn section buttons all OFF or Auto if SectionAuto was on or off
-        for (int j = 0; j < vehicle->numOfSections; j++)
+        for (int j = 0; j < tool.numOfSections; j++)
         {
-            vehicle->section[j].isAllowedOn = false;
-            vehicle->section[j].manBtnState = btnStates::On;
+            tool.section[j].isAllowedOn = false;
+            tool.section[j].manBtnState = btnStates::On;
         }
 
         //Update the button colors and text
@@ -383,10 +347,10 @@ void FormGPS::onBtnSectionOffAutoOn_clicked(){
             qmlItem(qml_root,"btnManualOffOn")->setProperty("isChecked",false);
 
             //turn all the sections allowed and update to ON!! Auto changes to ON
-            for (int j = 0; j < vehicle->numOfSections; j++)
+            for (int j = 0; j < tool.numOfSections; j++)
             {
-                vehicle->section[j].isAllowedOn = true;
-                vehicle->section[j].manBtnState = btnStates::Off;
+                tool.section[j].isAllowedOn = true;
+                tool.section[j].manBtnState = btnStates::Off;
             }
 
             manualAllBtnsUpdate();
@@ -397,10 +361,10 @@ void FormGPS::onBtnSectionOffAutoOn_clicked(){
             qmlItem(qml_root,"btnSectionOffAutoOn")->setProperty("isChecked",false);
 
             //turn section buttons all OFF or Auto if SectionAuto was on or off
-            for (int j = 0; j < vehicle->numOfSections; j++)
+            for (int j = 0; j < tool.numOfSections; j++)
             {
-                vehicle->section[j].isAllowedOn = false;
-                vehicle->section[j].manBtnState = btnStates::On;
+                tool.section[j].isAllowedOn = false;
+                tool.section[j].manBtnState = btnStates::On;
             }
 
             //Update the button colors and text
@@ -420,9 +384,9 @@ void FormGPS::onBtnSectionOffAutoOn_clicked(){
 void FormGPS::onBtnSectionMan_clicked(int sectNumber) {
     if (autoBtnState != btnStates::Auto) {
         //if auto is off just have on-off for choices of section buttons
-        if (vehicle->section[sectNumber].manBtnState == btnStates::Off) {
+        if (tool.section[sectNumber].manBtnState == btnStates::Off) {
             ///set to auto so that manuBtnUpdate will roll it over to On
-            vehicle->section[sectNumber].manBtnState = btnStates::Auto;
+            tool.section[sectNumber].manBtnState = btnStates::Auto;
         }
     }
     //Roll over button to next state

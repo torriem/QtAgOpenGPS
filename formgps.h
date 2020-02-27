@@ -22,26 +22,33 @@
 #include "vec4.h"
 #include "cflag.h"
 #include "cmodulecomm.h"
-#include "cperimeter.h"
 #include "ccamera.h"
 #include "btnenum.h"
 #include "aogsettings.h"
 
+#include "cworldgrid.h"
+#include "cnmea.h"
+#include "cvehicle.h"
+#include "ctool.h"
+#include "cboundary.h"
+#include "cturn.h"
+#include "cabline.h"
+#include "ctram.h"
+#include "cmazegrid.h"
+#include "ccontour.h"
+#include "cabcurve.h"
+#include "cyouturn.h"
+#include "chead.h"
+#include "csequence.h"
+#include "cfielddata.h"
+#include "csim.h"
+#include "cahrs.h"
+#include "crecordedpath.h"
+#include "cgeofence.h"
 
 //forward declare classes referred to below, to break circular
 //references in the code
 class TopLineDisplay;
-
-class CWorldGrid;
-class CNMEA;
-class CSection;
-class CABLine;
-class CContour;
-class CVehicle;
-class CPerimeter;
-class CBoundary;
-class CRate;
-class CYouTurn;
 
 class QOpenGLShaderProgram;
 class AOGRendererInSG;
@@ -60,6 +67,7 @@ public:
     QQuickItem *qml_root;
     QSignalMapper *sectionButtonsSignalMapper;
     QTimer *tmrWatchdog;
+    QTimer simTimer;
 
     /***************************
      * Qt and QML GUI elements *
@@ -170,13 +178,6 @@ public:
     GLuint texture[3];
     QVector<QOpenGLTexture *> texture1;
 
-    //create the scene camera
-    CCamera camera;
-
-    //create world grid
-    //QScopedPointer <CWorldGrid> worldGrid;
-    CWorldGrid *worldGrid;
-
     //create instance of a stopwatch for timing of frames and NMEA hz determination
     QElapsedTimer swFrame;
     QElapsedTimer stopwatch; //general stopwatch for debugging purposes.
@@ -188,43 +189,72 @@ public:
     //For field saving in background
     int saveCounter = 1;
 
+    //Time to do fix position update and draw routine
+    double HzTime = 5;
+
+private:
+    //for the NTRIP CLient counting
+    int ntripCounter = 10;
+
+    //used to update the screen status bar etc
+     int displayUpdateHalfSecondCounter = 0, displayUpdateOneSecondCounter = 0, displayUpdateOneFifthCounter = 0, displayUpdateThreeSecondCounter = 0;
+
+     int threeSecondCounter = 0, threeSeconds = 0;
+     int oneSecondCounter = 0, oneSecond = 0;
+     int oneHalfSecondCounter = 0, oneHalfSecond = 0;
+     int oneFifthSecondCounter = 0, oneFifthSecond = 0;
+public:
+     int pbarSteer, pbarRelay, pbarUDP;
+     double nudNumber = 0;
+
+
     //used to update the screen status bar etc
     int statusUpdateCounter = 1;
 
+    //create the scene camera
+    CCamera camera;
+
+    //create world grid
+    //QScopedPointer <CWorldGrid> worldGrid;
+    CWorldGrid worldGrid;
+
     //Parsing object of NMEA sentences
     //QScopedPointer<CNMEA> pn;
-    CNMEA *pn =NULL;
-
-    //create an array of sections, so far only 8 section + 1 fullWidth Section
-    //QScopedArrayPointer<CSection> section;
-    //CSection *section =NULL;
+    CNMEA pn;
 
     //ABLine Instance
     //QScopedPointer<CABLine> ABLine;
-    CABLine *ABLine =NULL;
+    CABLine ABLine;
+    CABCurve curve;
+
+
+    CTram tram;
+
+    CMazeGrid mazeGrid;
 
     //Contour mode Instance
     //QScopedPointer<CContour> ct;
-    CContour *ct =NULL;
+    CContour ct;
+    CYouTurn yt;
 
-    //Auto headland instance
-    CYouTurn *yt = NULL;
-
-    //Rate control object
-    CRate *rc = NULL;
-
-    //a brand new vehicle
-    //QScopedPointer<CVehicle> vehicle;
-    CVehicle *vehicle =NULL;
+    CVehicle vehicle;
+    CTool tool;
 
     //module communication object
     CModuleComm mc;
 
-    //perimeter object for area calc
-    CPerimeter periArea;
-
     //boundary instance
-    CBoundary *boundary;
+    CBoundary bnd;
+
+    CTurn turn;
+    CHead hd;
+    CSequence seq;
+    CSim sim;
+    CAHRS ahrs;
+    CRecordedPath recPath;
+    CFieldData fd;
+    CGeoFence gf;
+
 
     /*************************
      *  Position.designer.cs *
@@ -235,7 +265,7 @@ public:
     //very first fix to setup grid etc
     bool isFirstFixPositionSet = false, isGPSPositionInitialized = false;
 
-    // autosteer variables for sending serial
+    // autosteer variables for sending serial moved to CVehicle
     //short int guidanceLineDistanceOff, guidanceLineSteerAngle;
 
     //how many fix updates per sec
@@ -318,13 +348,14 @@ public:
     double boundaryTriggerDistance = 6.0;
     Vec2 prevBoundaryPos;
 
+    bool isBoundAlarming = false;
+
     void updateFixPosition(); //process a new position
     void calculatePositionHeading(); // compute all headings and fixes
     void addBoundaryPoint();
     void addSectionContourPathPoints();
     void calculateSectionLookAhead(double northing, double easting, double cosHeading, double sinHeading);
     void initializeFirstFewGPSPositions();
-
 
 
 
@@ -420,9 +451,8 @@ private:
 public:
     QString speedMPH();
     QString speedKPH();
-    void sectionCalcWidths();
     void processSectionOnOffRequests();
-    void scanForNMEA();
+    bool scanForNMEA();
 
     /**************************
      * SerialComm.Designer.cs *
@@ -492,6 +522,11 @@ public slots:
 
     void tmrWatchdog_timeout();
 
+    void swapDirection();
+    void turnOffBoundAlarm() {
+        isBoundAlarming = false;
+    }
+
     /***************************
      * from OpenGL.Designer.cs *
      ***************************/
@@ -513,6 +548,17 @@ public slots:
      * From Position.Designer.cs
      */
     void processSectionLookahead(); //called when section lookahead GL stuff is rendered
+
+    /*
+     * simulator
+     */
+    void onSimNewPosition(QByteArray nmea_data);
+    void onSimTimerTimeout();
+
+    /*
+     * misc
+     */
+    void onClearRecvCounter();
 
 
 };
