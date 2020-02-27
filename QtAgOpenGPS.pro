@@ -55,6 +55,7 @@ SOURCES += main.cpp\
     formgps_udpcomm.cpp \
     formgps_position.cpp \
     formgps_serial.cpp \
+    formgps_sim.cpp \
     glutils.cpp \
     aogrenderer.cpp \
     classes/cyouturn.cpp \
