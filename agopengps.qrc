@@ -107,8 +107,8 @@
         <file>qml/IconMenu.qml</file>
         <file>qml/IconPalette.qml</file>
         <file>qml/MainWindowTest.qml</file>
-        <file>images/floor.png</file>
-        <file>images/Landscape.png</file>
+        <file>images/textures/floor.png</file>
+        <file>images/textures/Landscape.png</file>
         <file>qml/JobMenu.qml</file>
         <file>qml/PortLight.qml</file>
         <file>shaders/color_vshader.vsh</file>
