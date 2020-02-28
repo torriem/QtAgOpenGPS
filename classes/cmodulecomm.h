@@ -10,10 +10,9 @@ const int pgnSentenceLength = 10;
 class CModuleComm: public QObject
 {
     Q_OBJECT
-private:
-    bool isOutOfBounds = true;
 
 public:
+    bool isOutOfBounds = true;
     //receive string for RateRelay
     QString serialRecvAutoSteerStr;
     QString serialRecvRelayStr;
