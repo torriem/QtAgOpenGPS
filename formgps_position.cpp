@@ -435,12 +435,12 @@ void FormGPS::calculatePositionHeading()
 {
     if  (headingFromSource == "GPS") {
         vehicle.fixHeading = glm::toRadians(pn.headingTrue);
-        camHeading = pn.headingTrue;
+        camera.camHeading = pn.headingTrue;
         gpsHeading = glm::toRadians(pn.headingTrue);
     } else if (headingFromSource == "HDT") {
             //use NMEA headings for camera and tractor graphic
             vehicle.fixHeading = glm::toRadians(pn.headingHDT);
-            camHeading = pn.headingHDT;
+            camera.camHeading = pn.headingHDT;
             gpsHeading = glm::toRadians(pn.headingHDT);
     } else {
         //default to using "Fix"
@@ -451,9 +451,9 @@ void FormGPS::calculatePositionHeading()
         //determine fix positions and heading in degrees for glRotate opengl methods.
         int camStep = currentStepFix * 4;
         if (camStep > (totalFixSteps - 1)) camStep = (totalFixSteps - 1);
-        camHeading = atan2(pn.fix.easting - stepFixPts[camStep].easting, pn.fix.northing - stepFixPts[camStep].northing);
-        if (camHeading < 0) camHeading += glm::twoPI;
-        camHeading = glm::toDegrees(camHeading);
+        camera.camHeading = atan2(pn.fix.easting - stepFixPts[camStep].easting, pn.fix.northing - stepFixPts[camStep].northing);
+        if (camera.camHeading < 0) camera.camHeading += glm::twoPI;
+        camera.camHeading = glm::toDegrees(camera.camHeading);
     }
 
     //an IMU with heading correction, add the correction

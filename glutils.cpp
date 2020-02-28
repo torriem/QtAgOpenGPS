@@ -1,12 +1,30 @@
 #include "glutils.h"
 #include <QThread>
+#include <QOpenGLTexture>
 #include <QOpenGLShaderProgram>
+#include "ccamera.h"
 #include <assert.h>
 
 //module-level symbols
 QOpenGLShaderProgram *simpleColorShader = 0;
 QOpenGLShaderProgram *texShader = 0;
 QOpenGLShaderProgram *interpColorShader = 0;
+
+QVector<QOpenGLTexture *> texture;
+
+static int GlyphsPerLine = 16;
+static int GlyphLineCount = 16;
+static int GlyphWidth = 16;
+static int GlyphHeight = 32;
+static int CharXSpacing = 14;
+
+int textureWidth;
+int textureHeight;
+
+
+
+
+bool texturesLoaded = false;
 
 void initializeShaders() {
     //GL context must be bound by caller, and this must be called from
@@ -33,6 +51,33 @@ void initializeShaders() {
     }
 }
 
+void initializeTextures() {
+    QOpenGLTexture *t;
+
+    //  Background
+    t = new QOpenGLTexture(QImage(":/images/textures/Landscape.png").mirrored());
+    texture.append(t); //position 0
+    t = new QOpenGLTexture(QImage(":/images/textures/floor.png").mirrored());
+    texture.append(t); //position 1
+    t = new QOpenGLTexture(QImage(":/images/textures/Font.png").mirrored());
+    QImage q(":/images/textures/Font.png");
+    textureWidth = q.width();
+    textureHeight= q.height();
+    texture.append(t); //position 2
+    t = new QOpenGLTexture(QImage(":/images/textures/Turn.png").mirrored());
+    texture.append(t); //position 3
+    t = new QOpenGLTexture(QImage(":/images/textures/TurnCancel.png").mirrored());
+    texture.append(t); //position 4
+    t = new QOpenGLTexture(QImage(":/images/textures/TurnManual.png").mirrored());
+    texture.append(t); //position 5
+    t = new QOpenGLTexture(QImage(":/images/textures/Compass.png").mirrored());
+    texture.append(t); //position 6
+    t = new QOpenGLTexture(QImage(":/images/textures/speedo.png").mirrored());
+    texture.append(t); //position 7
+    t = new QOpenGLTexture(QImage(":/images/textures/SpeedoNedle.png").mirrored());
+    texture.append(t); //position 8
+}
+
 void destroyShaders() {
     //OpenGL context must be bound by caller.
 
@@ -50,6 +95,14 @@ void destroyShaders() {
         delete interpColorShader;
         interpColorShader = 0;
     }
+}
+
+void destroyTextures() {
+
+    foreach(const QOpenGLTexture *t, texture) {
+        delete t;
+    }
+    texture.clear();
 }
 
 void glDrawArraysColor(QOpenGLFunctions *gl,
@@ -149,14 +202,17 @@ void glDrawArraysTexture(QOpenGLFunctions *gl,
                          GLenum operation,
                          QOpenGLBuffer &vertexBuffer,
                          GLenum GL_type,
-                         int count)
+                         int count,
+                         bool useColor = false,
+                         QColor color = QColor::fromRgbF(1,1,1))
 {
     //bind shader
     assert(texShader->bind());
     //set mvp matrix
     texShader->setUniformValue("mvpMatrix", mvp);
     texShader->setUniformValue("texture", 0);
-    texShader->setUniformValue("useColor", false);
+    texShader->setUniformValue("useColor", useColor);
+    simpleColorShader->setUniformValue("color", color);
 
 
     vertexBuffer.bind();
@@ -188,6 +244,174 @@ void glDrawArraysTexture(QOpenGLFunctions *gl,
     vertexBuffer.release();
     //release shader
     texShader->release();
+}
+
+void drawText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString text, double size)
+{
+    //GL.Color3(0.95f, 0.95f, 0.40f);
+
+    GLHelperTexture gldraw;
+    VertexTexcoord vt;
+
+    double u_step = (double)GlyphWidth / (double)textureWidth;
+    double v_step = (double)GlyphHeight / (double)textureHeight;
+
+    for (int n = 0; n < text.length(); n++)
+    {
+        char idx = text.at(n).toLatin1();
+        double u = (double)(idx % GlyphsPerLine) * u_step;
+        double v = (double)(idx / GlyphsPerLine) * v_step;
+
+        vt.texcoord = QVector2D(u, v);
+        vt.vertex = QVector3D(x, y, 0);
+        gldraw.append(vt);
+
+        vt.texcoord = QVector2D(u + u_step, v);
+        vt.vertex = QVector3D(x + GlyphWidth * size, y, 0);
+        gldraw.append(vt);
+
+        vt.texcoord = QVector2D(u + u_step, v + v_step);
+        vt.vertex = QVector3D(x + GlyphWidth * size, y + GlyphHeight * size, 0);
+        gldraw.append(vt);
+
+        vt.texcoord = QVector2D(u, v + v_step);
+        vt.vertex = QVector3D(x, y + GlyphHeight * size, 0);
+        gldraw.append(vt);
+
+        x += CharXSpacing * size;
+    }
+
+    gldraw.draw(gl, mvp, Textures::FONT, GL_QUADS, false);
+}
+
+void drawText3D(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp,
+                double x1, double y1, QString text, double size) {
+
+    GLHelperTexture gldraw;
+    VertexTexcoord vt;
+
+    double x = 0, y = 0;
+
+    mvp.translate(x1, y1, 0);
+
+    if (camera.camPitch < -45)
+    {
+        mvp.rotate(90, 1, 0, 0);
+        if (camera.camFollowing) mvp.rotate(-camera.camHeading, 0, 1, 0);
+        size = -camera.camSetDistance;
+        size = pow(size, 0.8);
+        size /= 800;
+    }
+
+    else
+    {
+        if (camera.camFollowing) mvp.rotate(-camera.camHeading, 0, 0, 1);
+        size = -camera.camSetDistance;
+        size = pow(size, 0.85);
+        size /= 1000;
+    }
+
+    double u_step = (double)GlyphWidth / (double)textureWidth;
+    double v_step = (double)GlyphHeight / (double)textureHeight;
+
+
+    for (int n = 0; n < text.length(); n++)
+    {
+        char idx = text.at(n).toLatin1();
+        double u = (double)(idx % GlyphsPerLine) * u_step;
+        double v = (double)(idx / GlyphsPerLine) * v_step;
+
+        vt.texcoord = QVector2D(u, v + v_step);
+        vt.vertex = QVector3D(x, y, 0);
+        gldraw.append(vt);
+
+        vt.texcoord = QVector2D(u + u_step, v + v_step);
+        vt.vertex = QVector3D(x + GlyphWidth * size, y, 0);
+        gldraw.append(vt);
+
+        vt.texcoord = QVector2D(u + u_step, v);
+        vt.vertex = QVector3D(x + GlyphWidth * size, y + GlyphHeight * size, 0);
+        gldraw.append(vt);
+
+        vt.texcoord = QVector2D(u, v);
+        vt.vertex = QVector3D(x, y + GlyphHeight * size, 0);
+        gldraw.append(vt);
+
+        x += CharXSpacing * size;
+    }
+
+    gldraw.draw(gl, mvp, Textures::FONT, GL_QUADS, false);
+}
+
+void drawTextVehicle(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp,
+                     double x, double y, QString text, double size)
+{
+    GLHelperTexture gldraw;
+    VertexTexcoord vt;
+
+    size *= -camera.camSetDistance;
+    size = pow(size, 0.8)/800;
+
+    //2d
+    if (camera.camPitch > -58)
+    {
+        if (!camera.camFollowing)
+        {
+            mvp.rotate(camera.camHeading, 0, 0, 1);
+            y *= 1.2;
+        }
+        else
+        {
+            y *= 1.2;
+            mvp.translate(x, y, 0);
+            x = y = 0;
+        }
+    }
+    //3d
+    else
+    {
+        if (!camera.camFollowing)
+        {
+            mvp.rotate(90, 1, 0, 0);
+            mvp.rotate(camera.camHeading, 0, 1, 0);
+            y *= 0.3;
+        }
+        else
+        {
+            mvp.rotate(-camera.camPitch, 1, 0, 0);
+            y *= 0.3;
+        }
+    }
+
+    double u_step = (double)GlyphWidth / (double)textureWidth;
+    double v_step = (double)GlyphHeight / (double)textureHeight;
+
+
+    for (int n = 0; n < text.length(); n++)
+    {
+        char idx = text.at(n).toLatin1();
+        double u = (double)(idx % GlyphsPerLine) * u_step;
+        double v = (double)(idx / GlyphsPerLine) * v_step;
+
+        vt.texcoord = QVector2D(u, v + v_step);
+        vt.vertex = QVector3D(x, y, 0);
+        gldraw.append(vt);
+
+        vt.texcoord = QVector2D(u + u_step, v + v_step);
+        vt.vertex = QVector3D(x + GlyphWidth * size, y, 0);
+        gldraw.append(vt);
+
+        vt.texcoord = QVector2D(u + u_step, v);
+        vt.vertex = QVector3D(x + GlyphWidth * size, y + GlyphHeight * size, 0);
+        gldraw.append(vt);
+
+        vt.texcoord = QVector2D(u, v);
+        vt.vertex = QVector3D(x, y + GlyphHeight * size, 0);
+        gldraw.append(vt);
+
+        x += CharXSpacing * size;
+    }
+    gldraw.draw(gl, mvp, Textures::FONT, GL_QUADS, false);
 }
 
 GLHelperOneColor::GLHelperOneColor() {
@@ -224,4 +448,22 @@ void GLHelperColors::draw(QOpenGLFunctions *gl, QMatrix4x4 mvp, GLenum operation
                        vertexBuffer, GL_FLOAT,
                        size(),point_size);
 
+}
+
+GLHelperTexture::GLHelperTexture() {
+
+}
+
+void GLHelperTexture::draw(QOpenGLFunctions *gl, QMatrix4x4 mvp, Textures textureno, GLenum operation, bool colorize, QColor color)
+{
+    QOpenGLBuffer vertexBuffer;
+    vertexBuffer.create();
+    vertexBuffer.bind();
+    vertexBuffer.allocate(data(),size() * sizeof(VertexTexcoord));
+    vertexBuffer.release();
+
+    texture[textureno]->bind();
+    glDrawArraysTexture(gl, mvp, operation, vertexBuffer, GL_FLOAT,size(),
+                        colorize, color);
+    texture[textureno]->release();
 }

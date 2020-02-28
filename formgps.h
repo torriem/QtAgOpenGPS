@@ -282,7 +282,7 @@ public:
     Vec2 prevFix;
 
     //headings
-    double camHeading = 0.0, gpsHeading = 0.0, prevGPSHeading = 0.0;
+    double gpsHeading = 0.0, prevGPSHeading = 0.0;
 
 
     //a distance between previous and current fix
@@ -465,8 +465,21 @@ public:
                              QOpenGLBuffer &vertexBuffer, GLenum glType,
                              int count);
     */
+    void drawManUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
+    void drawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
+    void drawFlags(QOpenGLFunctions *gl, QMatrix4x4 mvp);
+
     void drawLightBar(double Width, double Height, double offlineDistance, const QMatrix4x4 &modelview, const QMatrix4x4 &projection);
+    void drawLightBarText();
+    void drawRollBar();
+    void drawSky();
+    void drawCompassText();
+    void drawCompass();
+    void drawSpeedo();
+    void drawFieldText();
     void calcFrustum(const QMatrix4x4 &mvp);
+    void calculateMinMax();
+
 
     void setZoom();
     void loadGLTextures();
@@ -567,6 +580,8 @@ public slots:
 
     void openGLControlBack_Draw();
     void openGLControlBack_Initialized();
+
+
 
     /*
      * from UDPComm.Designer.cs

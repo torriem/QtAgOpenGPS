@@ -21,6 +21,8 @@ public:
     double zoomValue = 15;
     double previousZoom = 25;
 
+    double camHeading = 0.0; //moved from main form to here
+
     bool camFollowing;
     int camMode = 0;
 

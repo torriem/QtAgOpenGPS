@@ -9,6 +9,8 @@
 #include <QVector4D>
 #include <QVector2D>
 
+class CCamera;
+
 struct ColorVertex {
     QVector3D vertex;
     QVector4D color;
@@ -19,12 +21,26 @@ struct VertexTexcoord {
     QVector2D texcoord;
 };
 
+enum Textures {
+    SKY=0,
+    FLOOR=1,
+    FONT=2,
+    TURN=3,
+    TURNCANCEL=4,
+    TURNMANUAL=5,
+    COMPASS=6,
+    SPEEDO=7,
+    SPEEDONEDLE=8
+};
+
 //thinking about putting GL buffer drawing routines here
 //like Draw box, etc. Do I put the shaders as module globals here?
 
 void initializeShaders();
+void initializeTextures();
 
 void destroyShaders();
+void destroyTextures();
 
 //Simple wrapper to draw primitives using lists of Vec3 or QVector3Ds
 //with a single color.
@@ -47,9 +63,12 @@ void glDrawArraysColors(QOpenGLFunctions *gl, QMatrix4x4 mvp,
 void glDrawArraysTexture(QOpenGLFunctions *gl, QMatrix4x4 mvp,
                          GLenum operation,
                          QOpenGLBuffer &vertexBuffer, GLenum glType,
-                         int count);
+                         int count, bool useColor, QColor color);
 //draw arrays
 
+void drawText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString text, double size = 1.0);
+void drawText3D(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString text, double size = 1.0);
+void drawTextVehicle(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString text, double size = 1.0);
 
 class GLHelperOneColor: public QVector<QVector3D>
 {
@@ -63,6 +82,14 @@ class GLHelperColors: public QVector<ColorVertex>
 public:
     GLHelperColors();
     void draw(QOpenGLFunctions *gl, QMatrix4x4 mvp, GLenum operation, float point_size);
+};
+
+class GLHelperTexture: public QVector<VertexTexcoord>
+{
+public:
+    GLHelperTexture();
+    void draw(QOpenGLFunctions *gl, QMatrix4x4 mvp, Textures textureno, GLenum operation,
+              bool colorize=false, QColor color = QColor::fromRgbF(1,1,1));
 };
 
 #endif // GLUTILS_H
