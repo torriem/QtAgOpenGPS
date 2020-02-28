@@ -150,7 +150,7 @@ void FormGPS::processSectionLookahead() {
 
     //clamp the height after looking way ahead, this is for switching off super section only
     rpHeight = fabs(rpHeight) * 2.0;
-    if (rpHeight > 195) rpHeight = 195;
+    if (rpHeight > 245) rpHeight = 245;
     if (rpHeight < 8) rpHeight = 8;
     //qDebug() << rpHeight;
 
@@ -491,7 +491,7 @@ void FormGPS::processSectionOnOffRequests()
             //if Off section timer is zero, turn off the section
             if (tool.section[j].sectionOffTimer == 0 && tool.section[j].sectionOnTimer == 0 && tool.section[j].sectionOffRequest)
             {
-                if (tool.section[j].isSectionOn) tool.section[j].turnSectionOff(vehicle);
+                if (tool.section[j].isSectionOn) tool.section[j].turnSectionOff(vehicle, tool);
                 tool.section[j].sectionOnOffCycle = false;
                 tool.section[j].sectionOffRequest = false;
             }
@@ -886,4 +886,9 @@ void FormGPS::swapDirection() {
     {
         //if (yt.isYouTurnBtnOn) btnAutoYouTurn.PerformClick();
     }
+}
+
+void FormGPS::onClearRecvCounter()
+{
+    recvCounter = 0;
 }

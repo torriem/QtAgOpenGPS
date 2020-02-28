@@ -172,8 +172,6 @@ public:
 
     // Storage For Our Tractor, implement, background etc Textures
     //Texture particleTexture;
-    GLuint texture[3];
-    QVector<QOpenGLTexture *> texture1;
 
     //create instance of a stopwatch for timing of frames and NMEA hz determination
     QElapsedTimer swFrame;
@@ -411,6 +409,9 @@ public:
     int mouseX = 0, mouseY = 0;
     int lastWidth=-1, lastHeight=-1;
     double maxFieldX, maxFieldY, minFieldX, minFieldY, fieldCenterX, fieldCenterY, maxFieldDistance;
+    double offX = 0.0, offY = 0.0;
+
+    bool isDay;
 
     //data buffer for pixels read from off screen buffer
     //uchar grnPixels[80001];
@@ -467,16 +468,17 @@ public:
     */
     void drawManUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
     void drawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
+    void makeFlagMark(QOpenGLFunctions *gl);
     void drawFlags(QOpenGLFunctions *gl, QMatrix4x4 mvp);
 
-    void drawLightBar(double Width, double Height, double offlineDistance, const QMatrix4x4 &modelview, const QMatrix4x4 &projection);
-    void drawLightBarText();
-    void drawRollBar();
-    void drawSky();
-    void drawCompassText();
-    void drawCompass();
-    void drawSpeedo();
-    void drawFieldText();
+    void drawLightBar(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height, double offlineDistance);
+    void drawLightBarText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height);
+    void drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 mvp);
+    void drawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int height);
+    void drawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);
+    void drawCompass(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);
+    void drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height);
+    //void drawFieldText();
     void calcFrustum(const QMatrix4x4 &mvp);
     void calculateMinMax();
 
@@ -501,6 +503,8 @@ public:
      * SerialComm.Designer.cs *
      **************************/
 public:
+
+    double actualSteerAngleDisp;
     void autoSteerDataOutToPort();
     void autoSteerSettingsOutToPort();
     void sectionControlOutToPort();
