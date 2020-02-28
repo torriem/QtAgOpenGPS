@@ -53,6 +53,7 @@ CVehicle::CVehicle(QObject *parent) : QObject(parent)
 
     //zero out all ten slots of avgSpeed[]
     memset(avgSpeed,0,sizeof(double)*10);
+    ringCounter = 0;
 }
 
 //called from various Classes, always needs current speed
@@ -266,7 +267,9 @@ void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 mvp,
 void CVehicle::onNewSpeed(double _speed)
 {
     avgSpeed[ringCounter] = _speed;
-    if(ringCounter++ > 10) ringCounter = 0;
+    ringCounter++;
+    if(ringCounter > 9)
+        ringCounter = 0;
 }
 
 double CVehicle::getAvgSpeed(bool metric)
