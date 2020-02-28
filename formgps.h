@@ -145,9 +145,6 @@ public:
     //for animated submenu
     bool isMenuHid = true;
 
-    //flag for free drive window to control autosteer
-    bool isInFreeDriveMode = false;
-
     //Flag stuff
     uchar flagColor = 0;
     bool leftMouseDownOnOpenGL = false; //mousedown event in opengl window
@@ -272,15 +269,7 @@ public:
     int fixUpdateHz = 5;
     double fixUpdateTime = 0.2;
 
-    //for heading or Atan2 as camera
-    bool isAtanCam = true;
-
-    /*
-    //Current fix positions
-    double fixEasting = 0.0;
-    double fixNorthing = 3.0;
-    double fixZ = 0.0;
-    */
+    QString headingFromSource;
 
     Vec2 fix;
     /*
@@ -293,15 +282,28 @@ public:
     Vec2 prevFix;
 
     //headings
+    double camHeading = 0.0, gpsHeading = 0.0, prevGPSHeading = 0.0;
+
+
+    //a distance between previous and current fix
+    double distance = 0.0;
+    double treeSpacingCounter = 0.0;
+    int treeTrigger = 0;
+
+    //how far travelled since last section was added, section points
+    double sectionTriggerDistance = 0, sectionTriggerStepDistance = 0;
+    Vec2 prevSectionPos = Vec2(0, 0);
+
+    Vec2 prevBoundaryPos = Vec2(0, 0);
+
+
+
+    //headings
     //double fixHeading = 0.0;
     double fixHeadingCam = 0.0;
 
     //storage for the cos and sin of heading
     //double cosSectionHeading = 1.0, sinSectionHeading = 0.0;
-
-    //a distance between previous and current fix
-    double distance = 0.0, userDistance = 0;
-
 
     //are we still getting valid data from GPS, resets to 0 in NMEA RMC block, watchdog
     int recvCounter = 20;
@@ -313,6 +315,8 @@ public:
     QVector<CFlag> flagPts;
     bool flagsBufferCurrent = false;
 
+
+
     //used to determine NMEA sentence frequency
     int timerPn = 1;
     double et = 0, hzTime = 0;
@@ -321,11 +325,36 @@ public:
     double avgSpeed[10];//for average speed
     int ringCounter = 0;
     */
+    //double avgSpeed[10];//for average speed moved to vehicle
+    double avgXTE[20]; //for average cross track error
+    int ringCounter = 0, avgXTECntr, crossTrackError;
+
+
+    //youturn
+    double distancePivotToTurnLine = -2222;
+    double distanceToolToTurnLine = -2222;
+
+
 
     //IMU
     double rollDistance = 0;
     double roll = 0; //, pitch = 0, angVel = 0;
     double avgRoll = 0; //, avgPitch = 0, avgAngVel = 0;
+    double rollCorrectionDistance = 0;
+    double gyroCorrection, gyroCorrected;
+
+    double rollUsed;
+    double offset = 0;
+    double headlandDistanceDelta = 0, boundaryDistanceDelta = 0;
+
+
+    //cautosteer
+    //flag for free drive window to control autosteer
+    bool isInFreeDriveMode = false;
+    int driveFreeSteerAngle = 0;
+
+
+
 
     int times;
     double avgTiltRoll[30];//for tilt
@@ -346,16 +375,16 @@ public:
 
     //step distances and positions for boundary, 6 meters before next point
     double boundaryTriggerDistance = 6.0;
-    Vec2 prevBoundaryPos;
 
     bool isBoundAlarming = false;
 
     void updateFixPosition(); //process a new position
     void calculatePositionHeading(); // compute all headings and fixes
-    void addBoundaryPoint();
+    void addBoundaryAndPerimiterPoint();
     void addSectionContourPathPoints();
     void calculateSectionLookAhead(double northing, double easting, double cosHeading, double sinHeading);
     void initializeFirstFewGPSPositions();
+    bool isInsideGeoFence();
 
 
 
@@ -369,7 +398,7 @@ public:
 
     //moved to CContour.
     //list of the list of patch data individual triangles for contour tracking
-    //QVector<QSharedPointer<QVector<Vec4>>> contourSaveList;
+    QVector<QSharedPointer<QVector<Vec3>>> contourSaveList;
 
     /**********************
      * OpenGL.Designer.cs *
@@ -381,6 +410,7 @@ public:
     double camDistanceFactor = -2;
     int mouseX = 0, mouseY = 0;
     int lastWidth=-1, lastHeight=-1;
+    double maxFieldX, maxFieldY, minFieldX, minFieldY, fieldCenterX, fieldCenterY, maxFieldDistance;
 
     //data buffer for pixels read from off screen buffer
     //uchar grnPixels[80001];

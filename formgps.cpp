@@ -40,7 +40,7 @@ FormGPS::FormGPS(QWidget *parent) :
     //TODO: move all the settings loading/setting of defaults to a separate
     //function.
     minFixStepDist = s.value("position/minFixStep",1.0).toDouble(); //minimum distance between fixes.
-    isAtanCam = s.value("camera/useCalculatedHeading", true).toBool();
+    //isAtanCam = s.value("camera/useCalculatedHeading", true).toBool();
 
     //fieldColor = QColor(s.value("display/fieldColor", "#82781E").toString());
     //sectionColor = QColor(s.value("display/sectionColor", "#32DCC8").toString());
