@@ -26,7 +26,7 @@ CWorldGrid::~CWorldGrid() {
     //gridBuffer.destroy();
 }
 
-void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, QOpenGLTexture &texture)
+void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, QColor fieldColor)
 {
     QSettings settings;
 
@@ -35,19 +35,19 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, Q
         QVector<QVector3D> vertices;
 
         SurfaceVertex field[] = {
-            { QVector3D(eastingMin, northingMin, 0.0),
-              QVector2D(0,0) },
-            { QVector3D(eastingMax, northingMin, 0.0),
-              QVector2D(texZoom, 0) },
             { QVector3D(eastingMin, northingMax, 0.0),
-              QVector2D(0,texZoom) },
+              QVector2D(0,0) },
             { QVector3D(eastingMax, northingMax, 0.0),
-              QVector2D(texZoom, texZoom) }
+              QVector2D(texZoomE, 0) },
+            { QVector3D(eastingMin, northingMin, 0.0),
+              QVector2D(0,texZoomN) },
+            { QVector3D(eastingMax, northingMin, 0.0),
+              QVector2D(texZoomE, texZoomN) }
         };
 
         if (fieldBuffer.isCreated())
             fieldBuffer.destroy();
-   fieldBuffer.create();
+        fieldBuffer.create();
         fieldBuffer.bind();
         fieldBuffer.allocate(field, sizeof(SurfaceVertex) * 4);
         fieldBuffer.release();
@@ -56,8 +56,6 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, Q
     }
 
     // Enable Texture Mapping and set color to white
-
-    QColor fieldColor = QColor(settings.value("display/fieldColor", "#82781E").toString());
 
     if (!fieldShader) {
         //have to dynamically create it because we're in a different thread now
@@ -70,7 +68,7 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, Q
     }
 
     //bind field surface texture
-    texture.bind();
+    texture[Textures::FLOOR]->bind();
 
     //bind and set up the shader
     fieldShader->bind();
@@ -100,7 +98,7 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, Q
 
     gl->glDrawArrays(GL_TRIANGLE_STRIP,0, 4); //A quad from triangles
 
-    texture.release();
+    texture[Textures::FLOOR]->release();
     fieldBuffer.release();
     fieldShader->release();
 
@@ -156,11 +154,11 @@ void CWorldGrid::drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, doub
 
 void CWorldGrid::createWorldGrid(double northing, double easting) {
     //draw a grid 5 km each direction away from initial fix
-     northingMax = northing + 4000;
-     northingMin = northing - 4000;
+     northingMax = northing + 160;
+     northingMin = northing - 160;
 
-     eastingMax = easting + 4000;
-     eastingMin = easting - 4000;
+     eastingMax = easting + 160;
+     eastingMin = easting - 160;
 
      //reconstruct VBOs
      fieldBufferCurrent = false;
@@ -174,10 +172,10 @@ void CWorldGrid::checkZoomWorldGrid(double northing, double easting) {
 
     //hmm, buffers are still redone a lot.
 
-    if ((northingMax - northing) < 1500) { northingMax = northing + 2000; invalidateBuffers(); }
-    if ((northing - northingMin) < 1500) { northingMin = northing - 2000; invalidateBuffers(); }
-    if ((eastingMax - easting) < 1500)  { eastingMax = easting + 2000; invalidateBuffers(); }
-    if ((easting - eastingMin) < 1500) { eastingMin = easting - 2000; invalidateBuffers(); }
+    if ((northingMax - northing) < 1000) { northingMax = northing + 2000; invalidateBuffers(); }
+    if ((northing - northingMin) < 1000) { northingMin = northing - 2000; invalidateBuffers(); }
+    if ((eastingMax - easting) < 1000)  { eastingMax = easting + 2000; invalidateBuffers(); }
+    if ((easting - eastingMin) < 1000) { eastingMin = easting - 2000; invalidateBuffers(); }
 }
 
 void CWorldGrid::destroyGLBuffers() {

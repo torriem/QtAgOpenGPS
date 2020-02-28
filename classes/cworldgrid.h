@@ -34,11 +34,12 @@ public:
     double eastingMax = 0;
     double eastingMin = 0;
 
-    const double texZoom = 20;
+    const double texZoomE = 20;
+    const double texZoomN = 20;
 
     CWorldGrid();
     ~CWorldGrid();
-    void drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, QOpenGLTexture &texture);
+    void drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, QColor fieldColor);
     void drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, double _gridZoom);
     void createWorldGrid(double northing, double easting);
     void checkZoomWorldGrid(double northing, double easting);

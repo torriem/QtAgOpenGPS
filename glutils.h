@@ -34,6 +34,8 @@ enum Textures {
 };
 
 extern bool isFontOn;
+extern QVector<QOpenGLTexture *> texture;
+
 
 //thinking about putting GL buffer drawing routines here
 //like Draw box, etc. Do I put the shaders as module globals here?
