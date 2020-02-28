@@ -689,7 +689,7 @@ void FormGPS::addSectionContourPathPoints()
     {
         if (tool.section[j].isSectionOn)
         {
-            tool.section[j].addPathPoint(vehicle, vehicle.toolPos.northing, vehicle.toolPos.easting, vehicle.cosSectionHeading, vehicle.sinSectionHeading);
+            tool.section[j].addPathPoint(vehicle, tool, vehicle.toolPos.northing, vehicle.toolPos.easting, vehicle.cosSectionHeading, vehicle.sinSectionHeading);
             sectionCounter++;
         }
     }
