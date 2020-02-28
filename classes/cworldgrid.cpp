@@ -30,6 +30,9 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, Q
 {
     QSettings settings;
 
+
+    //We can save a lot of time by keeping this grid buffer on the GPU unless it needs to
+    //be altered.
     if (!fieldBufferCurrent) {
         //regenerate the field surface VBO
         QVector<QVector3D> vertices;
@@ -104,7 +107,7 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, Q
 
 }
 
-void CWorldGrid::drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, double _gridZoom)
+void CWorldGrid::drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, double _gridZoom, QColor gridColor)
 {
     //draw easting lines and westing lines to produce a grid
     QSettings settings;
@@ -144,10 +147,8 @@ void CWorldGrid::drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, doub
 
     }
 
-    QColor fieldColor = QColor(settings.value("display/fieldColor", "#82781E").toString());
-
     glDrawArraysColor(gl, mvp,
-                      GL_LINES, fieldColor,
+                      GL_LINES, gridColor,
                       gridBuffer,GL_FLOAT,
                       gridBufferCount);
 }
