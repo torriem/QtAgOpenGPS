@@ -22,7 +22,7 @@ void main(void)
         //adjust the color brightness according to the lum calculated
         //This is not quite what AOG does; maybe there's a different
         //way we want to blend the colors to make the ground look better.
-        gl_FragColor  = vec4(color.r * lum, color.g*lum, color.b*lum, 1.0);
+        gl_FragColor  = vec4(color.r * lum, color.g*lum, color.b*lum, temp1.a);
     } else {
         //just draw texture
         gl_FragColor = temp1;
