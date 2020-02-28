@@ -118,5 +118,13 @@
         <file>shaders/colors_fshader.fsh</file>
         <file>shaders/colortex_fshader.fsh</file>
         <file>shaders/colortex_vshader.vsh</file>
+        <file>images/textures/Compass.png</file>
+        <file>images/textures/Font.png</file>
+        <file>images/textures/speedo.png</file>
+        <file>images/textures/speedo - Copy.png</file>
+        <file>images/textures/SpeedoNedle.png</file>
+        <file>images/textures/Turn.png</file>
+        <file>images/textures/TurnCancel.png</file>
+        <file>images/textures/TurnManual.png</file>
     </qresource>
 </RCC>
