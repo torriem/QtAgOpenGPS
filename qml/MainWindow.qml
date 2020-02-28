@@ -261,6 +261,61 @@ Item {
                     visible: false
                     objectName: "section7"
                 }
+
+                SectionButton {
+                    id: btnSection9Man
+                    visible: false
+                    objectName: "section8"
+                }
+
+                SectionButton {
+                    id: btnSection10Man
+                    visible: false
+                    objectName: "section9"
+                }
+
+                SectionButton {
+                    id: btnSection11Man
+                    visible: false
+                    objectName: "section10"
+                }
+
+                SectionButton {
+                    id: btnSection12Man
+                    visible: false
+                    objectName: "section11"
+                }
+
+                SectionButton {
+                    id: btnSection13Man
+                    visible: false
+                    objectName: "section12"
+                }
+
+                SectionButton {
+                    id: btnSection14Man
+                    visible: false
+                    objectName: "section13"
+                }
+
+                SectionButton {
+                    id: btnSection15Man
+                    visible: false
+                    objectName: "section14"
+                }
+
+                SectionButton {
+                    id: btnSection16Man
+                    visible: false
+                    objectName: "section15"
+                }
+
+                SectionButton {
+                    id: btnSection17Man
+                    visible: false
+                    objectName: "section16"
+                }
+
             }
 
             Column {

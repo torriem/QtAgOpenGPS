@@ -5,6 +5,7 @@
 #include <QMatrix4x4>
 #include <QColor>
 #include <QOpenGLBuffer>
+#include <QOpenGLTexture>
 #include <QVector3D>
 #include <QVector4D>
 #include <QVector2D>

@@ -6,7 +6,6 @@
 #include "cworldgrid.h"
 #include "ccontour.h"
 #include "cabline.h"
-#include "cperimeter.h"
 #include "cboundary.h"
 #include "aogrenderer.h"
 #include "cnmea.h"
@@ -19,17 +18,20 @@
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLBuffer>
+#include "aogsettings.h"
 
 #include <assert.h>
 
 void FormGPS::openGLControl_Draw()
 {
+    USE_SETTINGS;
     QOpenGLContext *glContext = QOpenGLContext::currentContext();
     QOpenGLFunctions *gl = glContext->functions();
     //int width = glContext->surface()->size().width();
     //int height = glContext->surface()->size().height();
     QMatrix4x4 projection;
     QMatrix4x4 modelview;
+    GLHelperOneColor gldraw1;
 
     int width = qmlItem(qml_root, "openglcontrol")->property("width").toReal();
     int height = qmlItem(qml_root, "openglcontrol")->property("height").toReal();
@@ -38,22 +40,13 @@ void FormGPS::openGLControl_Draw()
 
     gl->glEnable(GL_POINT_SPRITE);
     gl->glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-    //std::cout << "draw routine here." << std::endl;
 
     //Do stuff that was in the initialized method, since Qt uses OpenGL and may
     //have messed with the matrix stuff and other defaults
 
-    //qml has messed with the state variables; reset them to a sane state.
-    //qmlview->resetOpenGLState();
-    //  Set the clear color.
-
-    //gl->glClearColor(0.22f, 0.2858f, 0.16f, 1.0f);
-
     // Set The Blending Function For Translucency
     gl->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    //glDisable(GL_CULL_FACE);
-    //gl->glCullFace(GL_BACK);
     gl->glDisable(GL_CULL_FACE);
 
     //set the camera to right distance
@@ -65,14 +58,10 @@ void FormGPS::openGLControl_Draw()
     //context to work with.
     projection.setToIdentity();
 
+    //to shift, translate projection here. -1,0,0 is far left, 1,0,0 is far right.
+
     //  Create a perspective transformation.
-    projection.perspective(fovy, width / (double)height, 1, camDistanceFactor * camera.camSetDistance);
-
-
-    //double aspect = width / (float)height;
-    //double fH = tan( fovy / 360 * M_PI);
-    //double fW = fH * aspect;
-    //projection.frustum(-fW, fW, -fH, fH, 1, camDistanceFactor * camera.camSetDistance );
+    projection.perspective(fovy, width / (double)height, 10.0f, camDistanceFactor * camera.camSetDistance);
 
     if (isGPSPositionInitialized)
     {
@@ -82,54 +71,64 @@ void FormGPS::openGLControl_Draw()
         modelview.setToIdentity();
 
         //camera does translations and rotations
-        camera.setWorldCam(modelview, vehicle->pivotAxlePos.easting, vehicle->pivotAxlePos.northing, fixHeadingCam);
+        camera.setWorldCam(modelview, vehicle.pivotAxlePos.easting + offX, vehicle.pivotAxlePos.northing + offY, fixHeadingCam);
 
         //calculate the frustum planes for culling
         calcFrustum(projection*modelview);
 
+        QColor fieldcolor;
+        if(isDay) {
+            fieldcolor = SETTINGS_DISPLAY_FIELDCOLORDAY;
+        } else {
+            fieldcolor = SETTINGS_DISPLAY_FIELDCOLORNIGHT;
+        }
         //draw the field ground images
-        worldGrid->drawFieldSurface(gl, projection *modelview, *(texture1[1]));
+        worldGrid.drawFieldSurface(gl, projection *modelview, fieldcolor);
 
         ////Draw the world grid based on camera position
-        gl->glDisable(GL_DEPTH_TEST);
-        gl->glDisable(GL_TEXTURE_2D);
+        //gl->glDisable(GL_DEPTH_TEST);
+        //gl->glDisable(GL_TEXTURE_2D);
 
         ////if grid is on draw it
-        if (isGridOn) worldGrid->drawWorldGrid(gl,projection*modelview,gridZoom);
+        if (isGridOn) worldGrid.drawWorldGrid(gl,projection*modelview,gridZoom, QColor::fromRgb(0,0,0));
 
         //turn on blend for paths
         gl->glEnable(GL_BLEND);
 
         //section patch color
-        QColor sectionColor = QColor(settings.value("display/sectionColor", "#32DCC8").toString());
-        sectionColor.setAlpha(160);
+        QColor sectionColor;
+        if(isDay) sectionColor = SETTINGS_DISPLAY_SECTIONSCOLORDAY;
+        else sectionColor = SETTINGS_DISPLAY_SECTIONSCOLORNIGHT;
+
+        sectionColor.setAlpha(152);
 
         //OpenGL ES does not support wireframe in this way. If we want wireframe,
         //we'll have to do it with LINES
         //if (isDrawPolygons) gl->glPolygonMode(GL_FRONT, GL_LINE);
 
         //draw patches of sections
-        for (int j = 0; j < vehicle->numSuperSection; j++)
+        for (int j = 0; j < tool.numSuperSection; j++)
         {
             //every time the section turns off and on is a new patch
-            int patchCount = vehicle->section[j].patchList.size();
 
             //check if in frustum or not
             bool isDraw;
+            int patches = tool.section[j].patchList.size();
 
-            if (patchCount > 0)
+            if (patches > 0)
             {
                 //initialize the steps for mipmap of triangles (skipping detail while zooming out)
+                /* Unused since we use the triangle lists directly with the buffers
                 int mipmap = 0;
                 if (camera.camSetDistance < -800) mipmap = 2;
                 if (camera.camSetDistance < -1500) mipmap = 4;
                 if (camera.camSetDistance < -2400) mipmap = 8;
                 if (camera.camSetDistance < -4800) mipmap = 16;
-
+                */
                 //for every new chunk of patch
 
                 //foreach is a Qt macro that iterates over Qt containers
-                foreach (QSharedPointer<QVector<QVector3D>> triList, vehicle->section[j].patchList)
+                foreach (QSharedPointer<TriangleList> triList, tool.section[j].patchList)
                 {
                     isDraw = false;
                     int count2 = triList->size();
@@ -168,26 +167,6 @@ void FormGPS::openGLControl_Draw()
                         triBuffer.allocate(triList->data(), count2 * sizeof(QVector3D));
                         triBuffer.release();
 
-                        //TODO: to skip triangles, we can use an index buffer and glDrawElements
-                        /*
-                        //if large enough patch and camera zoomed out, fake mipmap the patches, skip triangles
-                        if (count2 >= (mipmap + 2))
-                        {
-                            int step = mipmap;
-                            for (int i = 0; i < count2; i += step)
-                            {
-                                gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0); i++;
-                                gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0); i++;
-
-                                //too small to mipmap it
-                                if (count2 - i <= (mipmap + 2)) step = 0;
-                            }
-                        } else {
-                            for (int i = 0; i < count2; i++)
-                                gl->glVertex3d((*triList)[i].easting, (*triList)[i].northing, 0);
-                        }
-                        triBuffer.allocate(vertices.data(),vertices.count()*sizeof(QVector3D));
-                        */
                         glDrawArraysColor(gl,projection*modelview,
                                           GL_TRIANGLE_STRIP, sectionColor,
                                           triBuffer,GL_FLOAT,count2);
@@ -198,108 +177,129 @@ void FormGPS::openGLControl_Draw()
             }
         }
 
-        //draw contour line if button on
-        if (ct->isContourBtnOn) ct->drawContourLine(glContext, modelview, projection);
+        // the follow up to sections patches
+        int patchCount = 0;
 
-        // draw the current and reference AB Lines
-        else { 
-	    if (ABLine->isABLineSet || ABLine->isABLineBeingSet) 
-	        ABLine->drawABLines(gl, projection * modelview); 
-        }
-
-        //draw the flags if there are some
-
-        if (!flagsBufferCurrent) {
-
-            if(flagsBuffer.isCreated())
-                flagsBuffer.destroy();
-            flagsBuffer.create();
-            flagsBuffer.bind();
-
-            QVector<ColorVertex> flagpoints;
-
-            for (int f = 0; f < flagPts.size(); f++)
-            {
-                QVector4D color;
-                if (flagPts[f].color == 0) color = QVector4D(1.0,0,flagPts[f].ID/255.0,1.0);
-                if (flagPts[f].color == 1) color = QVector4D(0,1.0,flagPts[f].ID/255.0,1.0);
-                if (flagPts[f].color == 2) color = QVector4D(1.0,1.0,flagPts[f].ID/255.0,1.0);
-                flagpoints.append( { QVector3D(flagPts[f].easting, flagPts[f].northing, 0),
-                                     color } );
-            }
-            flagsBuffer.allocate(flagpoints.data(),flagPts.size() * sizeof(ColorVertex));
-            flagsBuffer.release();
-
-            flagsBufferCurrent = true;
-        }
-
-        glDrawArraysColors(gl,projection * modelview,
-                           GL_POINTS, flagsBuffer,
-                           GL_FLOAT, flagPts.size(), 8.0f);
-
-        if (flagNumberPicked != 0)
+        if (autoBtnState == btnStates::Auto || manualBtnState == btnStates::On)
         {
-            QOpenGLBuffer pickedFlagBuffer;
+            if (tool.section[tool.numOfSections].isSectionOn && tool.section[tool.numOfSections].patchList.count()> 0)
+            {
+                patchCount = tool.section[tool.numOfSections].patchList.count();
 
-            pickedFlagBuffer.create();
-            pickedFlagBuffer.bind();
+                //draw the triangle in each triangle strip
+                gldraw1.clear();
 
+                //left side of triangle
+                QVector3D pt((vehicle.cosSectionHeading * tool.section[tool.numOfSections].positionLeft) + vehicle.toolPos.easting,
+                        (vehicle.sinSectionHeading * tool.section[tool.numOfSections].positionLeft) + vehicle.toolPos.northing, 0);
+                gldraw1.append(pt);
 
-            ////draw the box around flag
-            QVector4D color(0.980f, 0.0f, 0.980f, 1.0f);
+                //TODO: label3.Text = pt.northing.ToString();
 
-            double offSet = (zoomValue * zoomValue * 0.01);
-            ColorVertex boxCoords[5] = {
-                { QVector3D(flagPts[flagNumberPicked - 1].easting, flagPts[flagNumberPicked - 1].northing + offSet, 0), color },
-                { QVector3D(flagPts[flagNumberPicked - 1].easting - offSet, flagPts[flagNumberPicked - 1].northing, 0), color },
-                { QVector3D(flagPts[flagNumberPicked - 1].easting, flagPts[flagNumberPicked - 1].northing - offSet, 0), color },
-                { QVector3D(flagPts[flagNumberPicked - 1].easting + offSet, flagPts[flagNumberPicked - 1].northing, 0), color },
-                { QVector3D(flagPts[flagNumberPicked - 1].easting, flagPts[flagNumberPicked - 1].northing + offSet, 0), color },
-            };
+                //Right side of triangle
+                pt = QVector3D((vehicle.cosSectionHeading * tool.section[tool.numOfSections].positionRight) + vehicle.toolPos.easting,
+                   (vehicle.sinSectionHeading * tool.section[tool.numOfSections].positionRight) + vehicle.toolPos.northing, 0);
+                gldraw1.append(pt);
 
-            pickedFlagBuffer.allocate(boxCoords, 5*sizeof(ColorVertex));
-            pickedFlagBuffer.release();
+                int last = tool.section[tool.numOfSections].patchList[patchCount - 1]->count();
+                //antenna
+                gldraw1.append((*tool.section[tool.numOfSections].patchList[patchCount - 1])[last - 2]);
+                gldraw1.append((*tool.section[tool.numOfSections].patchList[patchCount - 1])[last - 1]);
+                //TODO: label4.Text = (*tool.section[tool.numOfSections].patchList[patchCount - 1])[last - 2].y().ToString();
 
-            glDrawArraysColors(gl, projection*modelview,
-                               GL_LINE_STRIP, pickedFlagBuffer,
-                               GL_FLOAT, 5, 4.0f);
+                gldraw1.draw(gl, modelview*projection, sectionColor, GL_TRIANGLE_STRIP, 1.0f);
 
-            pickedFlagBuffer.destroy();
-            pickedFlagBuffer.create();
-            pickedFlagBuffer.bind();
+            }
+            else
+            {
+                for (int j = 0; j < tool.numSuperSection; j++)
+                {
+                    if (tool.section[j].isSectionOn && tool.section[j].patchList.count() > 0)
+                    {
+                        gldraw1.clear();
+                        patchCount = tool.section[j].patchList.count();
 
-            ColorVertex blackDot[1] = {
-                { QVector3D(flagPts[flagNumberPicked - 1].easting, flagPts[flagNumberPicked - 1].northing, 0),
-                  QVector4D(0.0,0.0,0.0,1.0) } };
+                        //draw the triangle in each triangle strip
+                        //left side of triangle
+                        QVector3D pt((vehicle.cosSectionHeading * tool.section[j].positionLeft) + vehicle.toolPos.easting,
+                                (vehicle.sinSectionHeading * tool.section[j].positionLeft) + vehicle.toolPos.northing, 0);
+                        gldraw1.append(pt);
+                        //TODO: label3.Text = pt.northing.ToString();
 
-            pickedFlagBuffer.allocate(blackDot, sizeof(ColorVertex));
-            pickedFlagBuffer.release();
+                        //Right side of triangle
+                        pt = QVector3D((vehicle.cosSectionHeading * tool.section[j].positionRight) + vehicle.toolPos.easting,
+                           (vehicle.sinSectionHeading * tool.section[j].positionRight) + vehicle.toolPos.northing, 0);
+                        gldraw1.append(pt);
 
-            //draw the flag with a black dot inside
-            glDrawArraysColors(gl, projection*modelview,
-                               GL_POINTS, pickedFlagBuffer,
-                               GL_FLOAT, 1, 4.0f);
-            pickedFlagBuffer.destroy();
+                        int last = tool.section[j].patchList[patchCount - 1]->count();
+                        //antenna
+                        gldraw1.append((*tool.section[j].patchList[patchCount - 1])[last - 2]);
+                        gldraw1.append((*tool.section[j].patchList[patchCount - 1])[last - 1]);
+                        //TODO: label4.Text = (*tool.section[j].patchList[patchCount - 1])[last - 2].y().ToString();
+
+                        gldraw1.draw(gl,modelview*projection, sectionColor, GL_TRIANGLE_STRIP, 1.0f);
+                    }
+                }
+            }
         }
 
-        //draw the perimter line, returns if no line to draw
-        periArea.drawPerimeterLine(glContext,projection*modelview);
+        //draw contour line if button on
+        if (ct.isContourBtnOn)
+        {
+            ct.drawContourLine(gl, modelview*projection, vehicle);
+        }
+        else// draw the current and reference AB Lines or CurveAB Ref and line
+        {
+            if (ABLine.isABLineSet | ABLine.isABLineBeingSet) ABLine.drawABLines(gl, modelview*projection, vehicle, tool, yt, tram, camera);
+            if (curve.isBtnCurveOn) curve.drawCurve(gl, modelview*projection, vehicle, tool, yt, tram, camera);
+        }
 
-        //draw the boundary line
-        boundary->drawBoundaryLine(gl, projection*modelview);
+        //if (recPath.isRecordOn)
+        recPath.drawRecordedLine(gl, modelview*projection);
+        recPath.drawDubins(gl, modelview*projection);
 
-        //screen text for debug
-        //glDrawText(120, 10, 1, 1, 1, "Courier", 18, " camstep: " + testInt.ToString());
-        //glDrawText(120, 40, 1, 1, 1, "Courier", 18, "head: " + Convert.ToString((double)(testDouble)));
-        //glDrawText(120, 70, 1, 1, 1, "Courier", 18, " Xe: " + Convert.ToString(Xe));
+        //draw Boundaries
+        bnd.drawBoundaryLines(vehicle, gl, modelview*projection);
 
-        //glDrawText(40, 75, 1, 1, 1, "Courier", 16, " SteerCT " + Convert.ToString(ct.steeringAngleCT));
-        //glDrawText(40, 90, 1, 1, 1, "Courier", 12, " RadiusCT " + Convert.ToString(ct.radiusCT));
-        //glDrawText(40, 105, 1, 0.5f, 1, "Courier", 12, " TrigSetDist(m) " + Convert.ToString(Math.Round(sectionTriggerStepDistance, 2)));
-        //glDrawText(40, 120, 1, 0.5, 1, "Courier", 12, " frame msec " + Convert.ToString((int)(frameTime)));
+        //draw the turnLines
+        if (yt.isYouTurnBtnOn)
+        {
+            if (!ABLine.isEditing && !curve.isEditing && !ct.isContourBtnOn)
+            {
+                turn.drawTurnLines(bnd, gl, modelview*projection);
+            }
+        }
+        else if (!yt.isYouTurnBtnOn && SETTINGS_DISPLAY_UTURNALWAYSON)
+        {
+            if (!ABLine.isEditing && !curve.isEditing && !ct.isContourBtnOn)
+            {
+                turn.drawTurnLines(bnd, gl, modelview*projection);
+            }
+        }
+
+        if (mc.isOutOfBounds) gf.drawGeoFenceLines(bnd, gl, modelview*projection);
+
+        if (hd.isOn) hd.drawHeadLines(gl, modelview*projection, SETTINGS_DISPLAY_LINEWIDTH);
+
+        if (flagPts.size() > 0) drawFlags(gl, modelview*projection);
+
+
+        if (flagNumberPicked > 0)
+        {
+            gl->glLineWidth(SETTINGS_DISPLAY_LINEWIDTH);
+            gldraw1.clear();
+            //TODO: implement with shader: GL.LineStipple(1, 0x0707);
+            gldraw1.append(QVector3D(vehicle.pivotAxlePos.easting, vehicle.pivotAxlePos.northing, 0));
+            gldraw1.append(QVector3D(flagPts[flagNumberPicked-1].easting, flagPts[flagNumberPicked-1].northing, 0));
+            gldraw1.draw(gl, modelview*projection,
+                         QColor::fromRgbF(0.930f, 0.72f, 0.32f),
+                         GL_LINES, SETTINGS_DISPLAY_LINEWIDTH);
+        }
+
 
         //draw the vehicle/implement
-        vehicle->drawVehicle(glContext,modelview, projection, camera.camSetDistance > -1500);
+        tool.drawTool(vehicle, camera, gl, modelview*projection);
+        vehicle.drawVehicle(gl, modelview*projection, camera, tool, bnd, hd, ct, curve, ABLine);
 
         //// 2D Ortho --------------------------
         projection.setToIdentity();
@@ -309,105 +309,43 @@ void FormGPS::openGLControl_Draw()
         //  Create the appropriate modelview matrix.
         modelview.setToIdentity();
 
-        //TODO: sky on checkbox from qml
-        //if (ui->actionSky_On->isChecked())
-        if (1)
-        {
-            ////draw the background when in 3D
-            if (camera.camPitch < -60)
-            {
-                if ( (lastWidth != width)  || (lastHeight != height)) {
-                    lastWidth = width;
-                    lastHeight = height;
 
-                    //-10 to -32 (top) is camera pitch range. Set skybox to line up with horizon
-                    double hite = (camera.camPitch + 60) / -20 * 0.34;
-                    //hite = 0.001;
+        if(SETTINGS_DISPLAY_SKYON) drawSky(gl, modelview*projection, width, height);
 
-                    //the background
-                    double winLeftPos = -(double)width / 2;
-                    double winRightPos = -winLeftPos;
-
-                    //map texture coordinates to model coordinates
-                    VertexTexcoord vertices[] = {
-                        { QVector3D(winRightPos, 0.0, 0), QVector2D(0,0)}, //top right
-                        { QVector3D(winLeftPos, 0.0, 0), QVector2D(1,0)}, //top left
-                        { QVector3D(winRightPos, hite*(double)height,0), QVector2D(0,1) }, //bottom right
-                        { QVector3D(winLeftPos, hite*(double)height,0), QVector2D(1,1) }, //bottom left
-                    };
-                    //rebuild sky buffer
-                    if (skyBuffer.isCreated())
-                        skyBuffer.destroy();
-                    skyBuffer.create();
-                    skyBuffer.bind();
-                    skyBuffer.allocate(vertices,4*sizeof(VertexTexcoord));
-                    //skyBuffer.allocate(vertices,4*sizeof(QVector3D));
-                    skyBuffer.release();
-                }
-
-                texture1[0]->bind();
-                glDrawArraysTexture(gl,projection * modelview,
-                                    GL_TRIANGLE_STRIP, skyBuffer,
-                                    GL_FLOAT,
-                                    4);
-                texture1[0]->release();
-            }
+        if(SETTINGS_DISPLAY_LIGHTBARON) {
+            drawRollBar(gl, modelview*projection);
+            drawLightBarText(gl, modelview*projection, width, height);
         }
 
-        //LightBar if AB Line is set and turned on or contour
-        if (isLightbarOn)
+        if (bnd.bndArr.size() > 0 && yt.isYouTurnBtnOn) drawUTurnBtn(gl, modelview*projection);
+
+        if (isAutoSteerBtnOn && !ct.isContourBtnOn) drawManUTurnBtn(gl, modelview*projection);
+
+        if (SETTINGS_DISPLAY_COMPASS) drawCompass(gl, modelview*projection, width);
+
+        drawCompassText(gl, modelview*projection, width);
+
+        if (SETTINGS_DISPLAY_SPEEDO) drawSpeedo(gl, modelview*projection, width, height);
+
+        //draw the zoom window
+        if (isJobStarted)
         {
-            if (ct->isContourBtnOn)
+            /*TODO implement floating zoom windo
+            if (threeSeconds != zoomUpdateCounter)
             {
-                if (ct->distanceFromCurrentLine == 32000) ct->distanceFromCurrentLine = 0;
-
-                drawLightBar(width, height, ct->distanceFromCurrentLine * 0.1, modelview, projection);
-            } else if (ABLine->isABLineSet || ABLine->isABLineBeingSet) {
-                drawLightBar(width, height,
-                             ABLine->distanceFromCurrentLine * 0.1,
-                             modelview, projection);
+                zoomUpdateCounter = threeSeconds;
+                oglZoom.Refresh();
             }
-
+            */
         }
-
-        gl->glFlush();//finish openGL commands
-        //gl->glPopMatrix();//  Pop the modelview.
-
-        //  back to the projection and pop it, then back to the model view.
-        //gl->glMatrixMode(GL_PROJECTION);
-        //gl->glPopMatrix();
-        //gl->glMatrixMode(GL_MODELVIEW);
-
-        //reset point size
-        //gl->glPointSize(1.0f);
-        gl->glFlush();
-
-        if (leftMouseDownOnOpenGL)
-        {
-            leftMouseDownOnOpenGL = false;
-            uchar data1[192];
-
-            //scan the center of click and a set of square points around
-            gl->glReadPixels(mouseX - 4, mouseY - 4, 8, 8, GL_RGB, GL_UNSIGNED_BYTE, data1);
-
-            //made it here so no flag found
-            flagNumberPicked = 0;
-
-            for (int ctr = 0; ctr < 192; ctr += 3)
-            {
-                if ((data1[ctr] == 255) || (data1[ctr + 1] == 255))
-                {
-                    flagNumberPicked = data1[ctr + 2];
-                    qDebug() << flagNumberPicked;
-                    break;
-                }
-            }
-        }
+        if (leftMouseDownOnOpenGL) makeFlagMark(gl);
     }
     else
     {
         gl->glClear(GL_COLOR_BUFFER_BIT);
     }
+
+    gl->glFlush();
     //qmlview->resetOpenGLState();
 
     //directly call section lookahead GL stuff from here
@@ -464,24 +402,11 @@ void FormGPS::openGLControl_Shutdown()
     qDebug() << QOpenGLContext::currentContext();
     //We should have a valid OpenGL context here so we can clean up shaders and buffers
     destroyShaders();
-    /*
-    delete simpleColorShader;
-    simpleColorShader = 0;
-
-    delete interpColorShader;
-    interpColorShader = 0;
-    */
-    //free textures
-    foreach(QOpenGLTexture *t, texture1)
-    {
-        t->destroy();
-    }
-
+    destroyTextures();
     //destroy any openGL buffers.
-    worldGrid->destroyGLBuffers();
-    vehicle->destroyGLBuffers();
-
+    worldGrid.destroyGLBuffers();
 }
+
 //main openGL draw function
 void FormGPS::openGLControlBack_Draw()
 {
@@ -496,6 +421,8 @@ void FormGPS::openGLControlBack_Draw()
     QMatrix4x4 projection;
     QMatrix4x4 modelview;
 
+    GLHelperOneColor gldraw;
+
     /* use the QML context with an offscreen surface to draw
      * the lookahead triangles
      */
@@ -504,38 +431,23 @@ void FormGPS::openGLControlBack_Draw()
         format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
         //TODO: backFBO is leaking... delete it in the destructor?
         //I think context has to be active to delete it...
-        backFBO = new QOpenGLFramebufferObject(QSize(400,400),format);
+        backFBO = new QOpenGLFramebufferObject(QSize(500,500),format);
     }
 
     glContext->makeCurrent(&backSurface);
     backFBO->bind();
-    glContext->functions()->glViewport(0,0,400,400);
+    glContext->functions()->glViewport(0,0,500,500);
 
     //int width = glContext->surface()->size().width();
     //int height = glContext->surface()->size().height();
 
     gl->glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
-    /* set projection */
-    //gl->glMatrixMode(GL_PROJECTION);
-
     //  Load the identity.
-    //gl->glLoadIdentity();
     projection.setToIdentity();
 
-    // change these at your own peril!!!! Very critical
-    //  Create a perspective transformation.
-    //gl->glPerspective(6.0f, 1, 1, 6000);
-    projection.perspective(6.0f,1,1,6000);
-
-    //double fH = tan( 6.0 / 360 * M_PI);
-    //double fW = fH;
-    //gl->glFrustum(-fW, fW, -fH, fH, 1, 6000 );
-
-    /* end set projection */
-
-    //  Set the modelview matrix.
-    //gl->glMatrixMode(GL_MODELVIEW);
+    //projection.perspective(6.0f,1,1,6000);
+    projection.perspective(0.104719758f, 1.0f, 50.0f, 520.0f);
 
     gl->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
@@ -543,38 +455,34 @@ void FormGPS::openGLControlBack_Draw()
     modelview.setToIdentity();
 
     //back the camera up
-    //gl->glTranslated(0, 0, -390);
-    modelview.translate(0, 0, -390);
+    modelview.translate(0, 0, -480);
 
     //rotate camera so heading matched fix heading in the world
     //gl->glRotated(toDegrees(fixHeadingSection), 0, 0, 1);
-    modelview.rotate(toDegrees(vehicle->fixHeadingSection), 0, 0, 1);
+    modelview.rotate(glm::toDegrees(vehicle.toolPos.heading), 0, 0, 1);
 
     //translate to that spot in the world
-    //gl->glTranslated(-toolPos.easting, -toolPos.northing, -fixZ);
-    modelview.translate(-vehicle->toolPos.easting, -vehicle->toolPos.northing, -vehicle->fixZ);
+    modelview.translate(-vehicle.toolPos.easting, -vehicle.toolPos.northing, 0);
 
     //patch color
-    //QColor patchColor(0.0f, 0.5f, 0.0f);
-    QColor patchColor = QColor(0,128,0);
-    //gl->glColor3f(0.0f, 0.5f, 0.0f);
+    QColor patchColor = QColor::fromRgbF(0.0f, 0.5f, 0.0f);
 
     //calculate the frustum for the section control window
-    calcFrustum(projection* modelview);
+    calcFrustum(projection*modelview);
 
     //to draw or not the triangle patch
     bool isDraw;
 
     //draw patches j= # of sections
-    for (int j = 0; j < vehicle->numSuperSection; j++)
+    for (int j = 0; j < tool.numSuperSection; j++)
     {
         //every time the section turns off and on is a new patch
-        int patchCount = vehicle->section[j].patchList.size();
+        int patchCount = tool.section[j].patchList.size();
 
         if (patchCount > 0)
         {
             //for every new chunk of patch
-            foreach (QSharedPointer<QVector<QVector3D>> triList, vehicle->section[j].patchList)
+            foreach (QSharedPointer<QVector<QVector3D>> triList, tool.section[j].patchList)
             {
                 isDraw = false;
                 int count2 = triList->size();
@@ -620,15 +528,28 @@ void FormGPS::openGLControlBack_Draw()
         }
     }
 
-    //draw boundary line
-    boundary->drawBoundaryLineOnBackBuffer(gl, projection*modelview);
+    //draw bright green on back buffer
+    if (bnd.bndArr.count() > 0)
+    {
+        ////draw the bnd line
+        int ptCount = bnd.bndArr[0].bndLine.count();
+        if (ptCount > 1)
+        {
+            gl->glLineWidth(2);
+            for (int h = 0; h < ptCount; h++)
+                gldraw.append(QVector3D(bnd.bndArr[0].bndLine[h].easting, bnd.bndArr[0].bndLine[h].northing, 0));
+
+            gldraw.draw( gl, modelview*projection, QColor::fromRgbF(0.0f, 0.99f, 0.0f),
+                         GL_LINE_STRIP, 2.0);
+        }
+    }
+
 
     //read the whole block of pixels up to max lookahead, one read only
     //we'll use Qt's QImage function to grab it.
     grnPix = backFBO->toImage().mirrored().convertToFormat(QImage::Format_RGBX8888);
-    QImage temp = grnPix.copy(vehicle->rpXPosition, 202, vehicle->rpWidth, 195 /*(int)rpHeight*/);
+    QImage temp = grnPix.copy(tool.rpXPosition, 252, tool.rpWidth, 245 /*(int)rpHeight*/);
     memcpy(lookaheadPixels, temp.constBits(), temp.size().width() * temp.size().height() * 4);
-    //grnPix = backFBO->toImage().mirrored().convertToFormat(QImage::Format_RGB888);
     grnPix = temp;
 
     //The remaining code from the original method in the C# code is
@@ -670,135 +591,487 @@ void FormGPS::openGLControlBack_Initialized()
 {
 }
 
-void FormGPS::drawLightBar(double Width, double Height, double offlineDistance,
-                           const QMatrix4x4 &modelview, const QMatrix4x4 &projection)
+void  FormGPS::drawManUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp)
 {
-    QOpenGLContext *glContext = QOpenGLContext::currentContext();
-    QOpenGLFunctions *gl = glContext->functions();
+    GLHelperTexture gldraw;
+    VertexTexcoord vt;
+
+    int two3 = qmlItem(qml_root, "openglcontrol")->property("width").toReal() / 4;
+
+    vt.texcoord = QVector2D(0,0); vt.vertex = QVector3D(-82 - two3, 45, 0);
+    gldraw.append(vt);
+    vt.texcoord = QVector2D(1,0); vt.vertex = QVector3D(-82 - two3, 45, 0);
+    gldraw.append(vt);
+    vt.texcoord = QVector2D(1,1); vt.vertex = QVector3D(-82 - two3, 120, 0);
+    gldraw.append(vt);
+    vt.texcoord = QVector2D(0,1); vt.vertex = QVector3D(-82 - two3, 120, 0);
+    gldraw.append(vt);
+
+    gldraw.draw(gl, mvp, Textures::TURNMANUAL, GL_QUADS, true, QColor::fromRgbF(0.90f, 0.90f, 0.293f));
+}
+
+void FormGPS::drawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp)
+{
+    QColor color;
+    Textures whichtex;
+    GLHelperTexture gldraw;
+    VertexTexcoord vt;
+    QLocale locale;
+
+    if (!yt.isYouTurnTriggered)
+    {
+        whichtex = Textures::TURN;
+        if (distancePivotToTurnLine > 0 && !yt.isOutOfBounds) color = QColor::fromRgbF(0.3f, 0.95f, 0.3f);
+        else color = QColor::fromRgbF(0.97f, 0.635f, 0.4f);
+    }
+    else
+    {
+        whichtex = Textures::TURNCANCEL;
+        color = QColor::fromRgbF(0.90f, 0.90f, 0.293f);
+    }
+
+    int two3 = qmlItem(qml_root, "openglcontrol")->property("width").toReal() / 5;
+    if (!yt.isYouTurnRight)
+    {
+        vt.texcoord = QVector2D(0, 0); vt.vertex = QVector3D(-62 + two3, 50,0); //
+        gldraw.append(vt);
+        vt.texcoord = QVector2D(1, 0); vt.vertex = QVector3D(62 + two3, 50,0); //
+        gldraw.append(vt);
+        vt.texcoord = QVector2D(1, 1); vt.vertex = QVector3D(62 + two3, 120,0); //
+        gldraw.append(vt);
+        vt.texcoord = QVector2D(0, 1); vt.vertex = QVector3D(-62 + two3, 120,0); //
+    }
+    else
+    {
+        vt.texcoord = QVector2D(1, 0); vt.vertex = QVector3D(-62 + two3, 50,0); //
+        gldraw.append(vt);
+        vt.texcoord = QVector2D(0, 0); vt.vertex = QVector3D(62 + two3, 50,0); //
+        gldraw.append(vt);
+        vt.texcoord = QVector2D(0, 1); vt.vertex = QVector3D(62 + two3, 120,0); //
+        gldraw.append(vt);
+        vt.texcoord = QVector2D(1, 1); vt.vertex = QVector3D(-62 + two3, 120,0); //
+    }
+
+    gldraw.draw(gl, mvp, whichtex, GL_QUADS, true, color);
+
+    // Done Building Triangle Strip
+    if (isMetric)
+    {
+        if (!yt.isYouTurnTriggered)
+        {
+            //drawText(gl, mvp, -30 + two3, 80, DistPivotM, 1.0, true, color);
+        }
+        else
+        {
+            drawText(gl, mvp, -30 + two3, 80, locale.toString(yt.onA), 1.0, true, color);
+        }
+    }
+    else
+    {
+
+        if (!yt.isYouTurnTriggered)
+        {
+            //drawText(gl, mvp, -40 + two3, 85, DistPivotFt, 1.0, true, color);
+        }
+        else
+        {
+            drawText(gl, mvp, -40 + two3, 85, locale.toString(yt.onA), 1.0, true, color);
+        }
+    }
+
+}
+
+void FormGPS::makeFlagMark(QOpenGLFunctions *gl)
+{
+    leftMouseDownOnOpenGL = false;
+    uchar data1[768];
+
+    //scan the center of click and a set of square points around
+    gl->glReadPixels(mouseX - 8, mouseY - 8, 16, 16, GL_RGB, GL_UNSIGNED_BYTE, data1);
+
+    //made it here so no flag found
+    flagNumberPicked = 0;
+
+    for (int ctr = 0; ctr < 768; ctr += 3)
+    {
+        if ((data1[ctr] == 255) || (data1[ctr + 1] == 255))
+        {
+            flagNumberPicked = data1[ctr + 2];
+            qDebug() << flagNumberPicked;
+            break;
+        }
+    }
+    /*TODO: popup flag menu*/
+
+}
+
+void FormGPS::drawFlags(QOpenGLFunctions *gl, QMatrix4x4 mvp)
+{
+    GLHelperOneColor gldraw;
+
+    int flagCnt = flagPts.count();
+    for (int f = 0; f < flagCnt; f++)
+    {
+        QColor color;
+        if (flagPts[f].color == 0) color = QColor::fromRgb(255, 0, flagPts[f].ID);
+        if (flagPts[f].color == 1) color = QColor::fromRgb(0, 255, flagPts[f].ID);
+        if (flagPts[f].color == 2) color = QColor::fromRgb(255, 255, flagPts[f].ID);
+        gldraw.append(QVector3D(flagPts[f].easting, flagPts[f].northing, 0));
+        gldraw.draw(gl, mvp, color, GL_POINTS, 8.0f);
+
+        drawText3D(camera, gl, mvp, flagPts[f].easting, flagPts[f].northing, "&" + (f+1));
+    }
+
+    if (flagNumberPicked != 0)
+    {
+        ////draw the box around flag
+        gldraw.clear();
+
+        double offSet = (camera.zoomValue * camera.zoomValue * 0.01);
+        gl->glLineWidth(4.0f);
+        gldraw.append(QVector3D(flagPts[flagNumberPicked - 1].easting, flagPts[flagNumberPicked - 1].northing + offSet, 0));
+        gldraw.append(QVector3D(flagPts[flagNumberPicked - 1].easting - offSet, flagPts[flagNumberPicked - 1].northing, 0));
+        gldraw.append(QVector3D(flagPts[flagNumberPicked - 1].easting, flagPts[flagNumberPicked - 1].northing - offSet, 0));
+        gldraw.append(QVector3D(flagPts[flagNumberPicked - 1].easting + offSet, flagPts[flagNumberPicked - 1].northing, 0));
+        gldraw.append(QVector3D(flagPts[flagNumberPicked - 1].easting, flagPts[flagNumberPicked - 1].northing + offSet, 0));
+        gldraw.draw(gl, mvp, QColor::fromRgbF(0.980f, 0.0f, 0.980f),
+                    GL_LINE_STRIP, 4.0);
+    }
+}
+
+void FormGPS::drawLightBar(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height, double offlineDistance)
+{
+    USE_SETTINGS;
+
+    GLHelperColors gldraw;
+    ColorVertex tv;
+
     double down = 20;
+    gl->glLineWidth(1);
+
 
     QOpenGLBuffer dotbuffer;
-    QVector<ColorVertex> dots;
-
-    //TODO: Light dots never change, except in size and color. Maybe we could
-    //use index buffers to choose which lights we want to draw.
 
     //  Dot distance is representation of how far from AB Line
-    int dotDistance = (int)(offlineDistance);
+    int dotDistance = offlineDistance;
+    int limit = SETTINGS_DISPLAY_LIGHTBARCMPP * 8;
 
-    if (dotDistance < -320) dotDistance = -320;
-    if (dotDistance > 320) dotDistance = 320;
-
-    if (dotDistance < -10) dotDistance -= 30;
-    if (dotDistance > 10) dotDistance += 30;
-
-    dotbuffer.create();
-    dotbuffer.bind();
+    if (dotDistance < -limit) dotDistance = -limit;
+    if (dotDistance > limit) dotDistance = limit;
 
     // dot background
-    for (int i = -10; i < 0; i++) dots.append({ QVector3D(i*40, down, 0),
+    for (int i = -10; i < 0; i++) gldraw.append({ QVector3D(i*40, down, 0),
                                                 QVector4D(0,0,0,1)} ); //gl->glVertex2d((i * 40), down);
-    for (int i = 1; i < 11; i++) dots.append({ QVector3D(i*40, down, 0),
+    for (int i = 1; i < 11; i++) gldraw.append({ QVector3D(i*40, down, 0),
                                                QVector4D(0,0,0,1)} ); //gl->glVertex2d((i * 40), down);
-    dotbuffer.allocate(dots.constData(), dots.size() * sizeof(ColorVertex));
-    dotbuffer.release();
-    glDrawArraysColors(gl, projection * modelview,
-                      GL_POINTS, dotbuffer,GL_FLOAT,dots.size(), 8.0f);
 
+    gldraw.draw(gl, mvp, GL_POINTS, 8.0f);
 
-
-    dots.clear();
-
+    gldraw.clear();
     //red left side
-    for (int i = -10; i < 0; i++) dots.append({ QVector3D(i*40, down, 0),   //gl->glVertex2d((i * 40), down);
+    for (int i = -10; i < 0; i++) gldraw.append({ QVector3D(i*40, down, 0),   //gl->glVertex2d((i * 40), down);
                                                 QVector4D(0.9750f, 0.0f, 0.0f, 1.0f) } );
 
     //green right side
-    for (int i = 1; i < 11; i++) dots.append( { QVector3D(i*40, down, 0), //gl->glVertex2d((i * 40), down);
+    for (int i = 1; i < 11; i++) gldraw.append( { QVector3D(i*40, down, 0), //gl->glVertex2d((i * 40), down);
                                                 QVector4D(0.0f, 0.9750f, 0.0f, 1.0f) } );
 
-    dotbuffer.bind();
-    dotbuffer.write(0, dots.constData(), dots.size() * sizeof(ColorVertex));
-    dotbuffer.release();
-    glDrawArraysColors(gl, projection * modelview,
-                       GL_POINTS, dotbuffer, GL_FLOAT,
-                       dots.size(), 4.0f);
+    gldraw.draw(gl, mvp, GL_POINTS, 4.0f);
 
     //Are you on the right side of line? So its green.
     if ((offlineDistance) < 0.0)
     {
-        int numDots = dotDistance * -1 / 32;
+        int numDots = dotDistance * -1 / SETTINGS_DISPLAY_LIGHTBARCMPP;
 
-        dots.clear();
-        for (int i = 1; i < numDots + 1; i++) dots.append({ QVector3D(i*40, down, 0), //gl->glVertex2d((i * 40), down);
+        gldraw.clear();
+        for (int i = 1; i < numDots + 1; i++) gldraw.append({ QVector3D(i*40, down, 0), //gl->glVertex2d((i * 40), down);
                                                             QVector4D(0,0,0,1) } );
-        dotbuffer.bind();
-        dotbuffer.write(0,dots.constData(),dots.size()*sizeof(ColorVertex));
-        dotbuffer.release();
-        glDrawArraysColors(gl, projection*modelview, GL_POINTS,
-                           dotbuffer, GL_FLOAT, dots.size(), 32.0f);
+        gldraw.draw(gl, mvp, GL_POINTS, 32.0f);
 
-        dots.clear();
-        for (int i = 0; i < numDots; i++) dots.append({ QVector3D(i*40+40, down, 0), //gl->glVertex2d((i * 40 + 40), down);
+        gldraw.clear();
+        for (int i = 0; i < numDots; i++) gldraw.append({ QVector3D(i*40+40, down, 0), //gl->glVertex2d((i * 40 + 40), down);
                                                         QVector4D(0.0f, 0.980f, 0.0f,1)} );
-        dotbuffer.bind();
-        dotbuffer.write(0, dots.constData(), dots.size()*sizeof(ColorVertex));
-        dotbuffer.release();
-        glDrawArraysColors(gl, projection*modelview, GL_POINTS,
-                           dotbuffer, GL_FLOAT, dots.size(), 24.0f);
+        gldraw.draw(gl, mvp, GL_POINTS, 24.0f);
     }
 
     else
     {
-        int numDots = dotDistance / 32;
+        int numDots = dotDistance / SETTINGS_DISPLAY_LIGHTBARCMPP;
 
-        dots.clear();
-        for (int i = 1; i < numDots + 1; i++) dots.append({ QVector3D(i*-40, down, 0), //gl->glVertex2d((i * -40), down);
+        gldraw.clear();
+        for (int i = 1; i < numDots + 1; i++) gldraw.append({ QVector3D(i*-40, down, 0), //gl->glVertex2d((i * -40), down);
                                                             QVector4D(0,0,0,1) } );
-        dotbuffer.bind();
-        dotbuffer.write(0,dots.constData(),dots.size()*sizeof(ColorVertex));
-        dotbuffer.release();
-        glDrawArraysColors(gl, projection*modelview, GL_POINTS,
-                           dotbuffer, GL_FLOAT, dots.size(), 32.0f);
+        gldraw.draw(gl, mvp, GL_POINTS, 32.0f);
 
-        dots.clear();
-        for (int i = 0; i < numDots; i++) dots.append({ QVector3D(i*-40-40, down, 0), //gl->glVertex2d((i * -40 - 40), down);
+        gldraw.clear();
+        for (int i = 0; i < numDots; i++) gldraw.append({ QVector3D(i*-40-40, down, 0), //gl->glVertex2d((i * -40 - 40), down);
                                                         QVector4D(0.980f, 0.30f, 0.0f,1)} );
-        dotbuffer.bind();
-        dotbuffer.write(0, dots.constData(), dots.size()*sizeof(ColorVertex));
-        dotbuffer.release();
-        glDrawArraysColors(gl, projection*modelview, GL_POINTS,
-                           dotbuffer, GL_FLOAT, dots.size(), 24.0f);
+        gldraw.draw(gl, mvp, GL_POINTS, 24.0f);
     }
 
     //yellow center dot
     ColorVertex p = { QVector3D(0, down, 0),
                       QVector4D(0,0,0,1) };
-    dotbuffer.bind();
-    dotbuffer.write(0,&p,sizeof(ColorVertex));
-    dotbuffer.release();
 
-    if (dotDistance >= -10 && dotDistance <= 10)
+    gldraw.clear();
+    gldraw.append(p);
+
+    if (dotDistance >= -SETTINGS_DISPLAY_LIGHTBARCMPP && dotDistance <= SETTINGS_DISPLAY_LIGHTBARCMPP)
     {
-       glDrawArraysColors(gl, projection * modelview, GL_POINTS,
-                           dotbuffer,GL_FLOAT,1,32.0f);
+        gldraw.draw(gl, mvp, GL_POINTS, 32.0f);
 
-        p.color = QVector4D(0.980f, 0.98f, 0.0f, 1.0f);
-        dotbuffer.bind();
-        dotbuffer.write(0,&p,sizeof(ColorVertex));
-        dotbuffer.release();
-        glDrawArraysColors(gl, projection * modelview, GL_POINTS,
-                           dotbuffer,GL_FLOAT,1,24.0f);
-
+        gldraw[0].color = QVector4D(0.980f, 0.98f, 0.0f, 1.0f);
+        gldraw.draw(gl, mvp, GL_POINTS, 24.0f);
     }
 
     else
     {
-        glDrawArraysColors(gl, projection * modelview, GL_POINTS,
-                           dotbuffer,GL_FLOAT,1,8.0f);
+        gldraw.draw(gl, mvp, GL_POINTS, 8.0f);
     }
 
-    dotbuffer.destroy();
+}
+
+void FormGPS::drawLightBarText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height)
+{
+    QLocale locale;
+    if (ct.isContourBtnOn || ABLine.isBtnABLineOn || curve.isBtnCurveOn)
+    {
+        double dist = vehicle.distanceDisplay * 0.1;
+
+        drawLightBar(gl, mvp, Width, Height, dist);
+
+        double size = 1.5;
+        QString hede;
+
+        if (dist == 3200 || dist == 3202 )
+        {
+            //lblDistanceOffLine.Text = "Lost";
+        }
+        else
+        {
+            QColor color;
+            if (dist < 0.0)
+            {
+                color = QColor::fromRgbF(0.50f, 0.952f, 0.3f);
+                hede = QString("< ") + locale.toString(fabs(dist), 'g', 1);
+            }
+            else
+            {
+                color = QColor::fromRgbF(0.9752f, 0.50f, 0.3f);
+                hede = locale.toString(dist, 'g', 1) + " >" ;
+            }
+            int center = -(int)(((double)(hede.length()) * 0.5) * 16 * size);
+            drawText(gl, mvp, center, 38, hede, size, true, color);
+        }
+    }
+}
+
+void FormGPS::drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 mvp)
+{
+    double set = vehicle.guidanceLineSteerAngle * 0.01 * (50 / vehicle.maxSteerAngle);
+    double actual = actualSteerAngleDisp * 0.01 * (50 / vehicle.maxSteerAngle);
+    double hiit = 0;
+    GLHelperOneColor gldraw;
+
+    mvp.translate(0, 100, 0);
+
+    //If roll is used rotate graphic based on roll angle
+    if ((ahrs.isRollFromBrick | ahrs.isRollFromAutoSteer | ahrs.isRollFromGPS) && ahrs.rollX16 != 9999)
+        mvp.rotate(((ahrs.rollX16 - ahrs.rollZeroX16) * 0.0625f), 0.0f, 0.0f, 1.0f);
+
+    gl->glLineWidth(1);
+
+    double wiid = 50;
+
+    gldraw.append(QVector3D(-wiid, 25, 0));
+    gldraw.append(QVector3D(-wiid, 0, 0));
+    gldraw.append(QVector3D(wiid, 0, 0));
+    gldraw.append(QVector3D(wiid, 25, 0));
+
+    gldraw.draw(gl, mvp, QColor::fromRgbF(0.54f, 0.54f, 0.54f),
+                GL_LINE_STRIP, 1);
+
+    mvp.translate(0, 10, 0);
+
+    {
+        if (actualSteerAngleDisp > 0)
+        {
+            gl->glLineWidth(1);
+
+            gldraw.clear();
+            gldraw.append(QVector3D(0, hiit, 0));
+            gldraw.append(QVector3D(actual, hiit + 8, 0));
+            gldraw.append(QVector3D(0, hiit + 16, 0));
+            gldraw.append(QVector3D(0, hiit, 0));
+            gldraw.draw(gl, mvp, QColor::fromRgbF(0.0f, 0.75930f, 0.0f),
+                        GL_LINE_STRIP, 1);
+
+        }
+        else
+        {
+            //actual
+            gl->glLineWidth(1);
+
+            gldraw.clear();
+            gldraw.append(QVector3D(-0, hiit, 0));
+            gldraw.append(QVector3D(actual, hiit + 8, 0));
+            gldraw.append(QVector3D(-0, hiit + 16, 0));
+            gldraw.append(QVector3D(-0, hiit, 0));
+            gldraw.draw(gl, mvp, QColor::fromRgbF(0.75930f, 0.0f, 0.0f),
+                        GL_LINE_STRIP, 1);
+        }
+    }
+
+    if (vehicle.guidanceLineSteerAngle > 0)
+    {
+        gl->glLineWidth(1);
+
+        gldraw.clear();
+        gldraw.append(QVector3D(0, hiit, 0));
+        gldraw.append(QVector3D(set, hiit + 8, 0));
+        gldraw.append(QVector3D(0, hiit + 16, 0));
+        gldraw.append(QVector3D(0, hiit, 0));
+        gldraw.draw(gl, mvp, QColor::fromRgbF(0.75930f, 0.75930f, 0.0f),
+                    GL_LINE_STRIP, 1);
+
+    }
+    else
+    {
+        gl->glLineWidth(1);
+
+        gldraw.clear();
+        gldraw.append(QVector3D(-0, hiit, 0));
+        gldraw.append(QVector3D(set, hiit + 8, 0));
+        gldraw.append(QVector3D(-0, hiit + 16, 0));
+        gldraw.append(QVector3D(-0, hiit, 0));
+        gldraw.draw(gl, mvp, QColor::fromRgbF(0.75930f, 0.75930f, 0.0f),
+                    GL_LINE_STRIP, 1);
+
+    }
+
+    //return back
+}
+
+
+void FormGPS::drawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int height)
+{
+
+    ////draw the background when in 3D
+    if (camera.camPitch < -52)
+    {
+        if ( (lastWidth != width)  || (lastHeight != height)) {
+            lastWidth = width;
+            lastHeight = height;
+
+            //-10 to -32 (top) is camera pitch range. Set skybox to line up with horizon
+            double hite = (camera.camPitch + 63) * -0.026;
+            //hite = 0.001;
+
+            //the background
+            double winLeftPos = -(double)width / 2;
+            double winRightPos = -winLeftPos;
+
+            //map texture coordinates to model coordinates
+            VertexTexcoord vertices[] = {
+                { QVector3D(winRightPos, 0.0, 0), QVector2D(0,0)}, //top right
+                { QVector3D(winLeftPos, 0.0, 0), QVector2D(1,0)}, //top left
+                { QVector3D(winRightPos, hite*(double)height,0), QVector2D(0,1) }, //bottom right
+                { QVector3D(winLeftPos, hite*(double)height,0), QVector2D(1,1) }, //bottom left
+            };
+            //rebuild sky buffer
+            if (skyBuffer.isCreated())
+                skyBuffer.destroy();
+            skyBuffer.create();
+            skyBuffer.bind();
+            skyBuffer.allocate(vertices,4*sizeof(VertexTexcoord));
+            //skyBuffer.allocate(vertices,4*sizeof(QVector3D));
+            skyBuffer.release();
+        }
+
+        texture[Textures::SKY]->bind();
+        glDrawArraysTexture(gl, mvp,
+                            GL_TRIANGLE_STRIP, skyBuffer,
+                            GL_FLOAT,
+                            4, true, QColor::fromRgbF(0.5,0.5,0.5));
+        texture[Textures::SKY]->release();
+    }
+}
+
+void FormGPS::drawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width)
+{
+    USE_SETTINGS;
+    QLocale locale;
+    QString hede = locale.toString(camera.camHeading, 'g', 1);
+    int center = Width / 2 - 45 - (int)(((double)(hede.length()) * 0.5) * 16);
+
+    if (SETTINGS_DISPLAY_COMPASS)
+        drawText(gl, mvp, center, 65, hede, 0.8, true, QColor::fromRgbF(0.9752f, 0.952f, 0.83f));
+    else drawText(gl, mvp, center, 65, hede, 1.2, true, QColor::fromRgbF(0.9752f, 0.952f, 0.83f));
+}
+
+void FormGPS::drawCompass(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width)
+{
+    //Heading text
+    int center = Width / 2 - 55;
+    drawText(gl, mvp, center-8, 40, "^", 0.8);
+
+    GLHelperTexture gldraw;
+
+
+    mvp.translate(center, 78, 0);
+
+    mvp.rotate(-camera.camHeading, 0, 0, 1);
+    gldraw.append( { QVector3D(-52, -52, 0), QVector2D(0, 0) });
+    gldraw.append( { QVector3D(52, -52.0, 0), QVector2D(1, 0) });
+    gldraw.append( { QVector3D(52, 52, 0), QVector2D(1, 1) });
+    gldraw.append( { QVector3D(-52, 52, 0), QVector2D(0, 1) });
+
+    gldraw.draw(gl, mvp, Textures::COMPASS, GL_QUADS, true, QColor::fromRgbF(0.952f, 0.870f, 0.73f, 0.8));
+}
+
+void FormGPS::drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height)
+{
+    GLHelperTexture gldraw1;
+
+    int bottomSide = Height - 55;
+
+    mvp.translate(Width / 2 - 60, bottomSide, 0);
+
+    gldraw1.append({ QVector3D(-58, -58, 0), QVector2D(0, 0) });
+    gldraw1.append({ QVector3D(58, -58.0, 0), QVector2D(1, 0) });
+    gldraw1.append({ QVector3D(58, 58, 0), QVector2D(1, 1) });
+    gldraw1.append({ QVector3D(-58, 58, 0), QVector2D(0, 1) });
+
+    gldraw1.draw(gl, mvp, Textures::SPEEDO, GL_QUADS, true, QColor::fromRgbF(0.952f, 0.870f, 0.823f, 0.8));
+
+    double angle = 0;
+    double aveSpd = 0;
+    if (isMetric)
+    {
+        for (int c = 0; c < 10; c++) aveSpd += vehicle.avgSpeed[c];
+        aveSpd *= 0.1;
+        if (aveSpd > 20) aveSpd = 20;
+        angle = (aveSpd - 10) * 15;
+    }
+    else
+    {
+        double aveSpd = 0;
+        for (int c = 0; c < 10; c++) aveSpd += vehicle.avgSpeed[c];
+        aveSpd *= 0.0621371;
+        angle = (aveSpd - 10) * 15;
+        if (aveSpd > 20) aveSpd = 20;
+    }
+
+    GLHelperOneColor gldraw2;
+
+    mvp.rotate(angle, 0, 0, 1);
+    gldraw2.append(QVector3D(0, 0, 0)); gldraw2.append(QVector3D(-48, -48, 0)); //
+    gldraw2.append(QVector3D(1, 0, 0)); gldraw2.append(QVector3D(48, -48.0, 0)); //
+    gldraw2.append(QVector3D(1, 1, 0)); gldraw2.append(QVector3D(48, 48, 0)); //
+    gldraw2.append(QVector3D(0, 1, 0)); gldraw2.append(QVector3D(-48, 48, 0)); //
+
+    gldraw2.draw(gl, mvp, QColor::fromRgbF(0.952f, 0.70f, 0.23f),
+                 GL_QUADS, 1.0f);
 }
 
 void FormGPS::calcFrustum(const QMatrix4x4 &mvp)
@@ -888,40 +1161,6 @@ void FormGPS::setZoom()
 
 void FormGPS::loadGLTextures()
 {
-    QOpenGLTexture *t;
 
-    //  Background
-    t = new QOpenGLTexture(QImage(":/images/Landscape.png").mirrored());
-    //t->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
-    //t->setMagnificationFilter(QOpenGLTexture::Linear);
-
-    texture1.append(t); //position 0
-
-    //  Floor
-    t = new QOpenGLTexture(QImage(":/images/floor.png"));
-    t->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
-    t->setMagnificationFilter(QOpenGLTexture::Linear);
-    t->setWrapMode(QOpenGLTexture::Repeat);
-
-    texture1.append(t); //position 1
-    /*
-    QImage tex = QGLWidget::convertToGLFormat(QImage(":/images/Landscape.png"));
-    gl->glGenTextures(1,&texture[0]);
-    gl->glBindTexture(GL_TEXTURE_2D, texture[0]);
-    gl->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    gl->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    gl->glTexImage2D( GL_TEXTURE_2D, 0, 3, tex.width(), tex.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, tex.bits());
-
-    tex = QGLWidget::convertToGLFormat(QImage(":/images/floor.png").mirrored());
-    qDebug() << tex.width() << ", " << tex.height();
-    gl->glGenTextures(1,&texture[1]);
-    gl->glBindTexture(GL_TEXTURE_2D, texture[1]);
-    gl->glTexImage2D( GL_TEXTURE_2D, 0, 3, tex.width(), tex.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, tex.bits());
-    gl->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    gl->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    qDebug() << "textures: " << texture[0] << " " << texture[1];
-    */
+    initializeTextures();
 }
