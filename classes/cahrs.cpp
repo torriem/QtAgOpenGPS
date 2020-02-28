@@ -27,6 +27,10 @@ CAHRS::CAHRS(QObject *parent) : QObject(parent)
 }
 
 //SLOTS
+void CAHRS::setRollX16(int chx16) { rollX16 = chx16;}
+
+void CAHRS::setRollZeroX16(int chx16) { rollZeroX16 = chx16;}
+
 void CAHRS::setCorrectionHeadingX16(int chx16) { correctionHeadingX16 = chx16;}
 
 void CAHRS::setIsAutoSteerOn(bool state) { isAutoSteerAuto = state; }

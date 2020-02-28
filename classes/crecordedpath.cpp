@@ -169,7 +169,7 @@ void CRecordedPath::StopDrivingRecordedPath()
 
 void CRecordedPath::GetDubinsPath(const CVehicle &vehicle, const CBoundary &bnd, CGeoFence &gf, CMazeGrid &mazeGrid, double minFieldX, double minFieldY, Vec3 goal)
 {
-    CDubins::turningRadius = vehicle.minTurningRadius * 1.0;
+    CDubinsTurningRadius = vehicle.minTurningRadius * 1.0;
     CDubins dubPath;
 
     // current psition

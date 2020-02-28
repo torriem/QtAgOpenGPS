@@ -180,3 +180,21 @@ bool CHead::findHeadlandDistance(const CVehicle &vehicle, const CTool &tool)
         return isToolUp;
     }
 }
+
+void CHead::drawHeadLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, int lineWidth)
+{
+    if (headArr[0].hdLine.count() > 0 && isOn) headArr[0].drawHeadLine(gl, mvp, lineWidth);
+}
+
+bool CHead::isPointInsideHeadLine(Vec2 pt)
+{
+    //if inside outer boundary, then potentially add
+    if (headArr.count() > 0 && headArr[0].isPointInHeadArea(pt))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}

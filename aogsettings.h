@@ -3,11 +3,13 @@
 
 #include <QSettings>
 #include <QVariant>
+#include <QList>
 
 class AOGSettings : public QSettings
 {
 public:
     QVariant value(const QString &key, const QVariant &defaultvalue);
+    QColor getColor(const QString &key);
 };
 
 //Macros to use settings in a consistant way
@@ -127,10 +129,6 @@ public:
 #define SETTINGS_VEHICLE_NAME			settings.   value("vehicle/name", "unnamed").toQString()
 #define SETTINGS_SET_VEHICLE_NAME(VAL)	settings.setValue("vehicle/name",VAL)
 
-//CABLINE
-#define SETTINGS_DISPLAY_LINEWIDTH			settings.   value("display/lineWidth", 2).toInt()
-#define SETTINGS_SET_DISPLAY_LINEWIDTH(VAL)	settings.setValue("display/lineWidth",VAL)
-
 //CFONT
 #define SETTINGS_DISPLAY_ISFONTON			settings.   value("display/isFontOn", true).toBool()
 #define SETTINGS_SET_DISPLAY_ISFONTON(VAL)	settings.setValue("display/isFontOn",VAL)
@@ -167,34 +165,93 @@ public:
 #define SETTINGS_GPS_ISROLLFROMAUTOSTEER			settings.   value("gps/isRollFromAutosteer", false).toBool()
 #define SETTINGS_SET_GPS_ISROLLFROMAUTOSTEER(VAL)	settings.setValue("gps/isRollFromAutosteer",VAL)
 
-#define SETTINGS_GPS_ISHEADINGFROMBRICK			settings.   value("gps/isHeadingFromBrick", false).toBool();
+#define SETTINGS_GPS_ISHEADINGFROMBRICK			settings.   value("gps/isHeadingFromBrick", false).toBool()
 #define SETTINGS_SET_GPS_ISHEADINGFROMBRICK(VAL)	settings.setValue("gps/isHeadingFromBrick",VAL)
 
-#define SETTINGS_GPS_ISHEADINGFROMAUTOSTEER			settings.   value("gps/isHeadingFromAutoSteer", false).toBool();
+#define SETTINGS_GPS_ISHEADINGFROMAUTOSTEER			settings.   value("gps/isHeadingFromAutoSteer", false).toBool()
 #define SETTINGS_SET_GPS_ISHEADINGFROMAUTOSTEER(VAL)	settings.setValue("gps/isHeadingFromAutoSteer",VAL)
 
-#define SETTINGS_GPS_ISROLLFROMBRICK			settings.   value("gps/isRollFromBrick", false).toBool();
+#define SETTINGS_GPS_ISROLLFROMBRICK			settings.   value("gps/isRollFromBrick", false).toBool()
 #define SETTINGS_SET_GPS_ISROLLFROMBRICK(VAL)	settings.setValue("gps/isRollFromBrick",VAL)
 
-#define SETTINGS_GPS_ISHEADINGFROMEXTUDP			settings.   value("gps/isHeadingFromExtUdp", false).toBool();
+#define SETTINGS_GPS_ISHEADINGFROMEXTUDP			settings.   value("gps/isHeadingFromExtUdp", false).toBool()
 #define SETTINGS_SET_GPS_ISHEADINGFROMEXTUDP(VAL)	settings.setValue("gps/isHeadingFromExtUdp",VAL)
 
-#define SETTINGS_GPS_ISROLLFROMEXTUDP			settings.   value("gps/isRollFromExtUdp", false).toBool();
+#define SETTINGS_GPS_ISROLLFROMEXTUDP			settings.   value("gps/isRollFromExtUdp", false).toBool()
 #define SETTINGS_SET_GPS_ISROLLFROMEXTUDP(VAL)	settings.setValue("gps/isRollFromExtUdp",VAL)
 
-#define SETTINGS_GPS_IMUPITCHZEROX16			settings.   value("gps/IMUPitchZeroX16", 0).toInt();
+#define SETTINGS_GPS_IMUPITCHZEROX16			settings.   value("gps/IMUPitchZeroX16", 0).toInt()
 #define SETTINGS_SET_GPS_IMUPITCHZEROX16(VAL)	settings.setValue("gps/IMUPitchZeroX16",VAL)
 
-#define SETTINGS_GPS_IMUROLLZEROX16				settings.   value("gps/IMURollZeroX16", 0).toInt();
+#define SETTINGS_GPS_IMUROLLZEROX16				settings.   value("gps/IMURollZeroX16", 0).toInt()
 #define SETTINGS_SET_GPS_IMUROLLZEROX16(VAL)	settings.setValue("gps/IMURollZeroX16",VAL)
 
 //DISPLAY/GUI/MENU
 #define SETTINGS_DISPLAY_ISPUREON			settings.   value("display/isPureOn", true).toBool()
 #define SETTINGS_SET_DISPLAY_ISPUREON(VAL)	settings.setValue("display/isPureOn",VAL)
 
-#define SETTINGS_DISPLAY_CAMPITCH	settings.   value("display/camPitch", -32).toDouble()
-#define SETTINGS_SET_CAMPITCH(VAL)	settings.setValue("display/camPitch",VAL)
+#define SETTINGS_DISPLAY_CAMPITCH	        settings.   value("display/camPitch", -32).toDouble()
+#define SETTINGS_SET_DISPLAY_CAMPITCH(VAL)	settings.setValue("display/camPitch",VAL)
 
+#define SETTINGS_DISPLAY_TRIANGLERESOLUTION	        	settings.   value("display/triangleResolution", 1).toDouble()
+#define SETTINGS_SET_DISPLAY_TRIANGLERESOLUTION(VAL)	settings.setValue("display/triangleResolution",VAL)
+
+#define SETTINGS_DISPLAY_LIGHTBARCMPP	       	settings.   value("display/lightbarCmPerPixel", 4).toInt()
+#define SETTINGS_SET_DISPLAY_LIGHTBARCMPP(VAL)	settings.setValue("display/lightbarCmPerPixel",VAL)
+
+#define SETTINGS_DISPLAY_ISBATMANON			settings.   value("display/isBatManOn", false).toBool()
+#define SETTINGS_SET_DISPLAY_ISBATMANON(VAL)	settings.setValue("display/isBatManOn",VAL)
+
+#define SETTINGS_DISPLAY_LINEWIDTH			settings.   value("display/lineWidth", 2).toInt()
+#define SETTINGS_SET_DISPLAY_LINEWIDTH(VAL)	settings.setValue("display/lineWidth",VAL)
+
+#define SETTINGS_DISPLAY_SIMPANELLOCATION			settings.   value("display/simPanelLocation","97,600").toString()
+#define SETTINGS_SET_DISPLAY_SIMPANELLOCATION(VAL)	settings.setValue("display/simPanelLocation",VAL)
+
+#define SETTINGS_DISPLAY_COLORDAY			settings.   value("display/colorDay","210,220,230").toString()
+#define SETTINGS_SET_DISPLAY_COLORDAY(VAL)	settings.setValue("display/colorDay",VAL)
+
+#define SETTINGS_DISPLAY_COLORNIGHT				settings.   value("display/colorNight","60,60,60").toString()
+#define SETTINGS_SET_DISPLAY_COLORNIGHT(VAL)	settings.setValue("display/colorNight",VAL)
+
+#define SETTINGS_DISPLAY_SECTIONSCOLORDAY			settings.   value("display/colorSectionsDay","27,151,160").toString()
+#define SETTINGS_SET_DISPLAY_SECTIONSCOLORDAY(VAL)	settings.setValue("display/colorSectionsDay",VAL)
+
+#define SETTINGS_DISPLAY_SECTIONSCOLORNIGHT				settings.   value("display/colorSectionsNight","27,100,100").toString()
+#define SETTINGS_SET_DISPLAY_SECTIONSCOLORNIGHT(VAL)	settings.setValue("display/colorSectionsNight",VAL)
+
+#define SETTINGS_DISPLAY_FIELDCOLORDAY			settings.   value("display/colorFieldDay","90,90,90").toString()
+#define SETTINGS_SET_DISPLAY_FIELDCOLORDAY(VAL)	settings.setValue("display/colorFieldDay",VAL)
+
+#define SETTINGS_DISPLAY_FIELDCOLORNIGHT			settings.   value("display/colorFieldNight","60,60,60").toString()
+#define SETTINGS_SET_DISPLAY_FIELDCOLORNIGHT(VAL)	settings.setValue("display/colorFieldNight",VAL)
+
+#define SETTINGS_DISPLAY_ISSIMPLE			settings.   value("display/isSimple", true).toBool()
+#define SETTINGS_SET_DISPLAY_ISSIMPLE(VAL)	settings.setValue("display/isSimple",VAL)
+
+#define SETTINGS_DISPLAY_ISDAYMODE			settings.   value("display/isDayMode", true).toBool()
+#define SETTINGS_SET_DISPLAY_ISDAYMODE(VAL)	settings.setValue("display/isDayMode",VAL)
+
+#define SETTINGS_DISPLAY_ISAUTODAYNIGHT			settings.   value("display/isAutoDayNight", true).toBool()
+#define SETTINGS_SET_DISPLAY_ISAUTODAYNIGHT(VAL)	settings.setValue("display/isAutoDayNight",VAL)
+
+#define SETTINGS_DISPLAY_SIDEGUIDELINES			settings.   value("display/showSideGuideLines", false).toBool()
+#define SETTINGS_SET_DISPLAY_SIDEGUIDELINES(VAL)	settings.setValue("display/showSideGuideLines",VAL)
+
+#define SETTINGS_DISPLAY_UTURNALWAYSON			settings.   value("display/isUTurnAlwaysOn", false).toBool()
+#define SETTINGS_SET_DISPLAY_UTURNALWAYSON(VAL)	settings.setValue("display/isUTurnAlwaysOn",VAL)
+
+#define SETTINGS_DISPLAY_SKYON			settings.   value("display/isSkyOn", true).toBool()
+#define SETTINGS_SET_DISPLAY_SKYON(VAL)	settings.setValue("display/isSkyOn",VAL)
+
+#define SETTINGS_DISPLAY_LIGHTBARON				settings.   value("display/isLightBarOn", true).toBool()
+#define SETTINGS_SET_DISPLAY_LIGHTBARON(VAL)	settings.setValue("display/isLightBarOn",VAL)
+
+#define SETTINGS_DISPLAY_COMPASS			settings.   value("display/isCompassOn", false).toBool()
+#define SETTINGS_SET_DISPLAY_COMPASS(VAL)	settings.setValue("display/isCompassOn",VAL)
+
+#define SETTINGS_DISPLAY_SPEEDO				settings.   value("display/isSpeedoOn", false).toBool()
+#define SETTINGS_SET_DISPLAY_SPEEDO(VAL)	settings.setValue("display/isSpeedoOn",VAL)
 
 //AUTOSTEER
 #define SETTINGS_AUTOSTEER_KO			settings.   value("autosteer/Ko", 5).toInt()

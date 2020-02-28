@@ -35,7 +35,7 @@ CTool::CTool()
     //TOOD: section settings
 }
 
-void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 &mvp)
+void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp)
 {
     //translate and rotate at pivot axle, caller's mvp will be changed
     mvp.translate(v.pivotAxlePos.easting, v.pivotAxlePos.northing, 0);

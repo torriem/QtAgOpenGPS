@@ -62,11 +62,6 @@ public:
     bool isSuperSectionAllowedOn;
     bool areAllSectionBtnsOn = true;
 
-    //read pixel values
-    int rpXPosition;
-    int rpWidth;
-
-
     double avgSpeed[10];//for average speed
     int ringCounter = 0;
 
@@ -103,12 +98,9 @@ public:
     //tally counters for display
     double totalSquareMeters = 0, totalUserSquareMeters = 0, userSquareMetersAlarm = 0;
 
-    //list of the list of patch data individual triangles for field sections
-    QVector<QSharedPointer<QVector<QVector3D>>> patchSaveList;
-
     explicit CVehicle(QObject *parent = 0);
     double updateGoalPointDistance(CNMEA &pn, double distanceFromCurrentLine);
-    void drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 &mvp, const CCamera &camera, CTool &tool, CBoundary &bnd, CHead &hd, const CContour &ct, const CABCurve &curve, const CABLine &ABLine);
+    void drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 mvp, const CCamera &camera, CTool &tool, CBoundary &bnd, CHead &hd, const CContour &ct, const CABCurve &curve, const CABLine &ABLine);
 
     double getAvgSpeed(bool metric = true);
 

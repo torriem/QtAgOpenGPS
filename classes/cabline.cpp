@@ -410,8 +410,8 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
 
 void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                           const CVehicle &vehicle, const CTool &tool,
-                          CYouTurn &yt, CTram &tram, const CCamera &camera,
-                          bool isSideGuideLines) {
+                          CYouTurn &yt, CTram &tram, const CCamera &camera)
+{
     USE_SETTINGS;
 
 	QOpenGLBuffer abBuffer;
@@ -474,7 +474,7 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                       GL_FLOAT, 2, 1.0f);
 
     if (!isEditing) {
-        if (isSideGuideLines && camera.camSetDistance > tool.toolWidth * -120) {
+        if (SETTINGS_DISPLAY_SIDEGUIDELINES && camera.camSetDistance > tool.toolWidth * -120) {
             //get the tool offset and width
             double toolOffset = tool.toolOffset * 2;
             double toolWidth = tool.toolWidth - tool.toolOverlap;

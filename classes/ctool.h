@@ -51,10 +51,13 @@ public:
     int rpWidth;
 
     CSection section[MAXSECTIONS+1];
-    void sectionCalcWidths();
 
+    //list of the list of patch data individual triangles for field sections
+    QVector<QSharedPointer<QVector<QVector3D>>> patchSaveList;
+
+    void sectionCalcWidths();
     CTool();
-    void drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 &mvp);
+    void drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp);
 };
 
 #endif // CTOOL_H

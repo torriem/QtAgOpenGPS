@@ -3,6 +3,7 @@
 #include "glm.h"
 
 static const double driveDistance = 0.1;
+double CDubinsTurningRadius = 1;
 
 //Takes care of all standardized methods related the generating of Dubins paths
 //Calculate center positions of the Right circle
@@ -11,8 +12,8 @@ Vec2 GetRightCircleCenterPos(Vec2 circlePos, double heading)
    Vec2 rightCirclePos = Vec2(0, 0);
 
    //The circle is 90 degrees (pi/2 radians) to the right of the car's heading
-   rightCirclePos.easting = circlePos.easting + (CDubins::turningRadius * qSin(heading + glm::PIBy2));
-   rightCirclePos.northing = circlePos.northing + (CDubins::turningRadius * qCos(heading + glm::PIBy2));
+   rightCirclePos.easting = circlePos.easting + (CDubinsTurningRadius * qSin(heading + glm::PIBy2));
+   rightCirclePos.northing = circlePos.northing + (CDubinsTurningRadius * qCos(heading + glm::PIBy2));
    return rightCirclePos;
 }
 
@@ -22,8 +23,8 @@ Vec2 GetLeftCircleCenterPos(Vec2 circlePos, double heading)
     Vec2 rightCirclePos = Vec2(0, 0);
 
     //The circle is 90 degrees (pi/2 radians) to the left of the car's heading
-    rightCirclePos.easting = circlePos.easting + (CDubins::turningRadius * qSin(heading - glm::PIBy2));
-    rightCirclePos.northing = circlePos.northing + (CDubins::turningRadius * qCos(heading - glm::PIBy2));
+    rightCirclePos.easting = circlePos.easting + (CDubinsTurningRadius * qSin(heading - glm::PIBy2));
+    rightCirclePos.northing = circlePos.northing + (CDubinsTurningRadius * qCos(heading - glm::PIBy2));
     return rightCirclePos;
 }
 
@@ -41,8 +42,8 @@ void LSLorRSR(Vec2 startCircle, Vec2 goalCircle, bool isBottom, Vec2 &startTange
     if (isBottom) theta += M_PI;
 
     //The coordinates of the first tangent points
-    double xT1 = startCircle.easting + (CDubins::turningRadius * qCos(theta));
-    double zT1 = startCircle.northing + (CDubins::turningRadius * qSin(theta));
+    double xT1 = startCircle.easting + (CDubinsTurningRadius * qCos(theta));
+    double zT1 = startCircle.northing + (CDubinsTurningRadius * qSin(theta));
 
     //To get the second coordinate we need a direction
     //This direction is the same as the direction between the center pos of the circles
@@ -65,7 +66,7 @@ void RSLorLSR(Vec2 startCircle, Vec2 goalCircle, bool isBottom, Vec2 &startTange
 
     //If the circles have the same radius we can use cosine and not the law of cosines
     //to calculate the angle to the first tangent coordinate
-    double theta = qAcos((2 * CDubins::turningRadius) / D);
+    double theta = qAcos((2 * CDubinsTurningRadius) / D);
 
     //If the circles is LSR, then the first tangent pos is on the other side of the center line
     if (isBottom) theta *= -1.0;
@@ -74,13 +75,13 @@ void RSLorLSR(Vec2 startCircle, Vec2 goalCircle, bool isBottom, Vec2 &startTange
     theta += qAtan2(goalCircle.northing - startCircle.northing, goalCircle.easting - startCircle.easting);
 
     //The coordinates of the first tangent point
-    double xT1 = startCircle.easting + (CDubins::turningRadius * qCos(theta));
-    double zT1 = startCircle.northing + (CDubins::turningRadius * qSin(theta));
+    double xT1 = startCircle.easting + (CDubinsTurningRadius * qCos(theta));
+    double zT1 = startCircle.northing + (CDubinsTurningRadius * qSin(theta));
 
     //To get the second tangent coordinate we need the direction of the tangent
     //To get the direction we move up 2 circle radius and end up at this coordinate
-    double xT1_tmp = startCircle.easting + (2.0 * CDubins::turningRadius * qCos(theta));
-    double zT1_tmp = startCircle.northing + (2.0 * CDubins::turningRadius * qSin(theta));
+    double xT1_tmp = startCircle.easting + (2.0 * CDubinsTurningRadius * qCos(theta));
+    double zT1_tmp = startCircle.northing + (2.0 * CDubinsTurningRadius * qSin(theta));
 
     //The direction is between the new coordinate and the center of the target circle
     Vec2 dirVec = goalCircle - Vec2(xT1_tmp, zT1_tmp);
@@ -106,7 +107,7 @@ void GetRLRorLRLTangents(Vec2 startCircle, Vec2 goalCircle,
 
     //The angle between the goal and the new 3rd circle we create with the law of cosines
     //4.0f percision ?
-    double theta = qAcos(D / (4.0f * CDubins::turningRadius));
+    double theta = qAcos(D / (4.0f * CDubinsTurningRadius));
 
     //But we need to modify the angle theta if the circles are not on the same line
     Vec2 V1 = goalCircle - startCircle;
@@ -118,8 +119,8 @@ void GetRLRorLRLTangents(Vec2 startCircle, Vec2 goalCircle,
         theta = qAtan2(V1.northing, V1.easting) - theta;
 
     //Calculate the position of the third circle
-    double x = startCircle.easting + (2 * CDubins::turningRadius * qCos(theta));
-    double z = startCircle.northing + (2 * CDubins::turningRadius * qSin(theta));
+    double x = startCircle.easting + (2 * CDubinsTurningRadius * qCos(theta));
+    double z = startCircle.northing + (2 * CDubinsTurningRadius * qSin(theta));
 
 // return ?
     middleCircle = Vec2(x, z);
@@ -129,8 +130,8 @@ void GetRLRorLRLTangents(Vec2 startCircle, Vec2 goalCircle,
     V2.normalize();
     Vec2 V3 = (goalCircle - middleCircle);
     V2.normalize();
-    V2 *= CDubins::turningRadius;
-    V3 *= CDubins::turningRadius;
+    V2 *= CDubinsTurningRadius;
+    V3 *= CDubinsTurningRadius;
 // return ?
     startTangent = middleCircle + V2;
     goalTangent = middleCircle + V3;
@@ -146,7 +147,7 @@ double GetArcLength(Vec2 circleCenterPos, Vec2 startPos, Vec2 goalPos, bool isLe
     double theta = qAtan2(V2.northing, V2.easting) - qAtan2(V1.northing, V1.easting);
     if (theta < 0.0f && isLeftCircle) theta += 2.0 * M_PI;
     else if (theta > 0 && !isLeftCircle) theta -= 2.0 * M_PI;
-    return qAbs(theta * CDubins::turningRadius);
+    return qAbs(theta * CDubinsTurningRadius);
 }
 
 
@@ -168,7 +169,7 @@ void AddCoordinatesToPath(Vec2 &currentPos, double &theta, QVector<Vec2> &finalP
             if (!isTurningRight) turnParameter = -1.0;
 
             //Update the heading
-            theta += (CDubins::turningRadius) * turnParameter;
+            theta += (CDubinsTurningRadius) * turnParameter;
         }
 
         //Add the new coordinate to the path
@@ -333,7 +334,7 @@ void CDubins::CalculateDubinsPathsLengths()
     }
 
     //RSL and LSR is only working of the circles don't intersect
-    double comparisonSqr = CDubins::turningRadius * 2.0f * CDubins::turningRadius * 2.0f;
+    double comparisonSqr = CDubinsTurningRadius * 2.0f * CDubinsTurningRadius * 2.0f;
 
     //RSL
     if ((startRightCircle - goalLeftCircle).getLengthSquared() > comparisonSqr)
@@ -348,7 +349,7 @@ void CDubins::CalculateDubinsPathsLengths()
     }
 
     //With the LRL and RLR paths, the distance between the circles have to be less than 4 * r
-    comparisonSqr = 4.0f * CDubins::turningRadius * 4.0f * CDubins::turningRadius;
+    comparisonSqr = 4.0f * CDubinsTurningRadius * 4.0f * CDubinsTurningRadius;
 
     //RLR
     if ((startRightCircle - goalRightCircle).getLengthSquared() < comparisonSqr)

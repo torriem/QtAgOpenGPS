@@ -9,6 +9,7 @@
 typedef QVector<QVector3D> TriangleList;
 
 class CVehicle;
+class CTool;
 
 class CSection
 {
@@ -70,8 +71,9 @@ public:
     CSection();
 
     void turnSectionOn(const CVehicle &vehicle );
-    void turnSectionOff(CVehicle &vehicle );
-    void addPathPoint(CVehicle &vehicle, double northing, double easting,
+    void turnSectionOff(CVehicle &vehicle, CTool &tool);
+    void addPathPoint(CVehicle &vehicle, CTool &tool,
+                      double northing, double easting,
                       double cosHeading, double sinHeading);
 
 };

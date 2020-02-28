@@ -33,7 +33,7 @@ public:
 
     explicit CHead(QObject *parent = 0);
     bool findHeadlandDistance(const CVehicle &vehicle, const CTool &tool);
-    void drawHeadLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
+    void drawHeadLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, int lineWidth);
     bool isPointInsideHeadLine(Vec2 pt);
 signals:
     //indicate that tool is to be lowered or raised

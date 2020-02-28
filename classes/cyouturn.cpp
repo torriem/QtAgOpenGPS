@@ -257,7 +257,7 @@ bool CYouTurn::buildDriveAround(const CVehicle &vehicle,
     QVector<Vec3> shortestDubinsList;
 
     //Dubins at the start and stop of mazePath
-    CDubins::turningRadius = vehicle.minTurningRadius * 1.0;
+    CDubinsTurningRadius = vehicle.minTurningRadius * 1.0;
     CDubins dubPath;
 
     //start is navigateable - maybe
@@ -399,7 +399,7 @@ bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
         //used for distance calc for other part of turn
 
         CDubins dubYouTurnPath;
-        CDubins::turningRadius = vehicle.minTurningRadius;
+        CDubinsTurningRadius = vehicle.minTurningRadius;
 
         //point on AB line closest to pivot axle point from ABLine PurePursuit
         rEastYT = ABLine.rEastAB;
@@ -1086,7 +1086,7 @@ bool CYouTurn::buildCurveDubinsYouTurn(const CVehicle &vehicle,
         }
 
         CDubins dubYouTurnPath;
-        CDubins::turningRadius = vehicle.minTurningRadius;
+        CDubinsTurningRadius = vehicle.minTurningRadius;
 
         //grab the vehicle widths and offsets
         double widthMinusOverlap = tool.toolWidth - tool.toolOverlap;
@@ -1429,7 +1429,7 @@ void CYouTurn::buildManualYouTurn(const CVehicle &vehicle, CTool &tool,
     //if (isUsingDubinsTurn)
     {
         CDubins dubYouTurnPath;
-        CDubins::turningRadius = vehicle.minTurningRadius;
+        CDubinsTurningRadius = vehicle.minTurningRadius;
 
         //if its straight across it makes 2 loops instead so goal is a little lower then start
         if (!isABSameAsFixHeading) head += 3.14;

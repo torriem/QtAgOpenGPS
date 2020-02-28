@@ -75,7 +75,7 @@ double CVehicle::updateGoalPointDistance(CNMEA &pn, double distanceFromCurrentLi
 
 }
 
-void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 &mvp,
+void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 mvp,
                            const CCamera &camera, CTool &tool,
                            CBoundary &bnd, CHead &hd,
                            const CContour &ct,

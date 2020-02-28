@@ -13,6 +13,9 @@ class CBoundary;
 
 using namespace std;
 
+//The radius the car can turn 360 degrees with
+extern double CDubinsTurningRadius;
+
 enum PathType { RSR, LSL, RSL, LSR, RLR, LRL };
 
 class OneDubinsPath
@@ -61,9 +64,6 @@ public:
 
     //How far we are driving each update, the accuracy will improve if we lower the driveDistance
     //static const double driveDistance;
-
-    //The radius the car can turn 360 degrees with
-    static double turningRadius;
 
     //takes 2 points and headings to create a path - returns list of vec3 points and headings
     QVector<Vec3> GenerateDubins(Vec3 _start, Vec3 _goal);

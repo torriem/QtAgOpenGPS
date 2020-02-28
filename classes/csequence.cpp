@@ -4,6 +4,9 @@
 #include "common.h"
 #include "cyouturn.h"
 
+SeqEvent::SeqEvent()
+{
+}
 
 CSequence::CSequence(QObject *parent) : QObject(parent)
 {

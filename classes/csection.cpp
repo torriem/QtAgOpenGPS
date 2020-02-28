@@ -1,5 +1,6 @@
 #include "csection.h"
 #include "cvehicle.h"
+#include "ctool.h"
 
 #include <math.h>
 
@@ -34,22 +35,23 @@ void CSection::turnSectionOn(const CVehicle &vehicle) {
     }
 }
 
-void CSection::turnSectionOff(CVehicle &vehicle) {
+void CSection::turnSectionOff(CVehicle &vehicle, CTool &tool) {
     //qDebug() << "section turned off";
-    addPathPoint(vehicle, vehicle.toolPos.northing, vehicle.toolPos.easting, vehicle.cosSectionHeading, vehicle.sinSectionHeading);
+    addPathPoint(vehicle, tool, vehicle.toolPos.northing, vehicle.toolPos.easting, vehicle.cosSectionHeading, vehicle.sinSectionHeading);
 
     isSectionOn = false;
     numTriangles = 0;
 
     //save the triangle list in a patch list to add to saving file
-    vehicle.patchSaveList.append(triangleList);
+    //is this used anymore?
+    tool.patchSaveList.append(triangleList);
 }
 
 
 //every time a new fix, a new patch point from last point to this point
 //only need prev point on the first points of triangle strip that makes a box (2 triangles)
 
-void CSection::addPathPoint(CVehicle &vehicle, double northing, double easting, double cosHeading, double sinHeading)
+void CSection::addPathPoint(CVehicle &vehicle, CTool &tool, double northing, double easting, double cosHeading, double sinHeading)
 {
     //add two triangles for next step.
     //left side and add the point to List
@@ -104,7 +106,7 @@ void CSection::addPathPoint(CVehicle &vehicle, double northing, double easting, 
         numTriangles = 0;
 
         //save the cutoff patch to be saved later
-        vehicle.patchSaveList.append(triangleList);
+        tool.patchSaveList.append(triangleList);
 
         triangleList = QSharedPointer<TriangleList>( new TriangleList);
         patchList.append(triangleList);

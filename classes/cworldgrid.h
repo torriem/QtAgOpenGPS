@@ -40,7 +40,7 @@ public:
     CWorldGrid();
     ~CWorldGrid();
     void drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, QColor fieldColor);
-    void drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, double _gridZoom);
+    void drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, double _gridZoom, QColor gridColor);
     void createWorldGrid(double northing, double easting);
     void checkZoomWorldGrid(double northing, double easting);
     void destroyGLBuffers();

@@ -2,9 +2,9 @@
 #define CHEADLINES_H
 
 #include <QVector>
+#include "vec3.h"
+#include "vec2.h"
 
-class Vec3;
-class Vec2;
 class QOpenGLFunctions;
 class QMatrix4x4;
 
