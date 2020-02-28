@@ -17,7 +17,10 @@ class CTool;
 class CBoundary;
 class CNMEA;
 class CHead;
-
+class CCamera;
+class CABCurve;
+class CABLine;
+class CContour;
 
 class CVehicle: public QObject
 {
@@ -105,7 +108,7 @@ public:
 
     explicit CVehicle(QObject *parent = 0);
     double updateGoalPointDistance(CNMEA &pn, double distanceFromCurrentLine);
-    void drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 &mvp, CCamera &camera, CTool &tool, CBoundary &bnd, CHead &hd);
+    void drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 &mvp, const CCamera &camera, CTool &tool, CBoundary &bnd, CHead &hd, const CContour &ct, const CABCurve &curve, const CABLine &ABLine);
 
     double getAvgSpeed(bool metric = true);
 

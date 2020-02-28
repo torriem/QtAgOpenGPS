@@ -11,6 +11,10 @@
 #include "glutils.h"
 #include "cnmea.h"
 #include "chead.h"
+#include "ccamera.h"
+#include "cabline.h"
+#include "cabcurve.h"
+#include "ccontour.h"
 
 CVehicle::CVehicle(QObject *parent) : QObject(parent)
 {
@@ -72,8 +76,10 @@ double CVehicle::updateGoalPointDistance(CNMEA &pn, double distanceFromCurrentLi
 }
 
 void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 &mvp,
-                           CCamera &camera, CTool &tool,
-                           CBoundary &bnd, CHead &hd)
+                           const CCamera &camera, CTool &tool,
+                           CBoundary &bnd, CHead &hd,
+                           const CContour &ct,
+                           const CABCurve &curve, const CABLine &ABLine)
 {
     //draw vehicle
     mvp.rotate(glm::toDegrees(-fixHeading), 0.0, 0.0, 1.0);
@@ -81,6 +87,7 @@ void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 &mvp,
     GLHelperColors glcolors;
     GLHelperOneColor gldraw;
     ColorVertex cv;
+    QLocale locale;
 
 
     //antenna
@@ -189,18 +196,18 @@ void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 &mvp,
         }
     }
 
-    /* TODO: implement font  texture and subroutines for text
-    if (mf.curve.isBtnCurveOn && !mf.ct.isContourBtnOn)
+    if (curve.isBtnCurveOn && !ct.isContourBtnOn)
     {
-        GL.Color4(0.969, 0.95, 0.9510, 0.87);
-        mf.font.DrawTextVehicle(0, wheelbase, mf.curve.curveNumber.ToString(), 1.5);
+        drawTextVehicle(camera, gl, mvp, 0, wheelbase,
+                        locale.toString(curve.curveNumber), 1.5,
+                        true, QColor::fromRgbF(0.969, 0.95, 0.9510, 0.87));
     }
-    else if (mf.ABLine.isBtnABLineOn && !mf.ct.isContourBtnOn)
+    else if (ABLine.isBtnABLineOn && !ct.isContourBtnOn)
     {
-        GL.Color4(0.96, 0.95, 0.9510, 0.87);
-        mf.font.DrawTextVehicle(0, wheelbase, mf.ABLine.passNumber.ToString(), 1.5);
+        drawTextVehicle(camera, gl, mvp, 0, wheelbase,
+                        locale.toString(ABLine.passNumber), 1.5,
+                        true, QColor::fromRgbF(0.969, 0.95, 0.9510, 0.87));
     }
-    */
 
     //draw the rigid hitch
     gldraw.clear();

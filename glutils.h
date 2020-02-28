@@ -33,6 +33,8 @@ enum Textures {
     SPEEDONEDLE=8
 };
 
+extern bool isFontOn;
+
 //thinking about putting GL buffer drawing routines here
 //like Draw box, etc. Do I put the shaders as module globals here?
 
@@ -66,9 +68,9 @@ void glDrawArraysTexture(QOpenGLFunctions *gl, QMatrix4x4 mvp,
                          int count, bool useColor, QColor color);
 //draw arrays
 
-void drawText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString text, double size = 1.0);
-void drawText3D(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString text, double size = 1.0);
-void drawTextVehicle(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString text, double size = 1.0);
+void drawText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString text, double size = 1.0, bool colorize = false, QColor color = QColor::fromRgbF(1,1,1));
+void drawText3D(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp, double x1, double y1, QString text, double size = 1.0, bool colorize = false, QColor color = QColor::fromRgbF(1,1,1));
+void drawTextVehicle(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString text, double size = 1.0, bool colorize = false, QColor color = QColor::fromRgbF(1,1,1));
 
 class GLHelperOneColor: public QVector<QVector3D>
 {

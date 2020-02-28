@@ -22,7 +22,7 @@ int textureWidth;
 int textureHeight;
 
 
-
+bool isFontOn = true;
 
 bool texturesLoaded = false;
 
@@ -246,7 +246,7 @@ void glDrawArraysTexture(QOpenGLFunctions *gl,
     texShader->release();
 }
 
-void drawText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString text, double size)
+void drawText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString text, double size, bool colorize, QColor color)
 {
     //GL.Color3(0.95f, 0.95f, 0.40f);
 
@@ -281,11 +281,13 @@ void drawText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString 
         x += CharXSpacing * size;
     }
 
-    gldraw.draw(gl, mvp, Textures::FONT, GL_QUADS, false);
+    gldraw.draw(gl, mvp, Textures::FONT, GL_QUADS, colorize, color);
 }
 
-void drawText3D(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp,
-                double x1, double y1, QString text, double size) {
+void drawText3D(const CCamera &camera, QOpenGLFunctions *gl,
+                QMatrix4x4 mvp, double x1, double y1, QString text,
+                double size, bool colorize, QColor color)
+{
 
     GLHelperTexture gldraw;
     VertexTexcoord vt;
@@ -340,11 +342,11 @@ void drawText3D(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp,
         x += CharXSpacing * size;
     }
 
-    gldraw.draw(gl, mvp, Textures::FONT, GL_QUADS, false);
+    gldraw.draw(gl, mvp, Textures::FONT, GL_QUADS, colorize, color);
 }
 
 void drawTextVehicle(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp,
-                     double x, double y, QString text, double size)
+                     double x, double y, QString text, double size, bool colorize, QColor color)
 {
     GLHelperTexture gldraw;
     VertexTexcoord vt;
@@ -411,7 +413,7 @@ void drawTextVehicle(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp
 
         x += CharXSpacing * size;
     }
-    gldraw.draw(gl, mvp, Textures::FONT, GL_QUADS, false);
+    gldraw.draw(gl, mvp, Textures::FONT, GL_QUADS, colorize, color);
 }
 
 GLHelperOneColor::GLHelperOneColor() {

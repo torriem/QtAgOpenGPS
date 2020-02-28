@@ -434,9 +434,8 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                        GL_POINTS, abBuffer,
                        GL_FLOAT, 2, 8.0f);
 
-    //TODO: draw font
-    //mf.font.DrawText3D(refPoint1.easting, refPoint1.northing, "&A");
-    //mf.font.DrawText3D(refPoint2.easting, refPoint2.northing, "&B");
+    drawText3D(camera, gl, mvp, refPoint1.easting, refPoint1.northing, "&A");
+    drawText3D(camera, gl, mvp, refPoint2.easting, refPoint2.northing, "&B");
 
     //Draw reference AB line
 

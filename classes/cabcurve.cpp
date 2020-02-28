@@ -12,6 +12,7 @@
 #include "cboundary.h"
 #include "ctram.h"
 #include "ccamera.h"
+#include "cnmea.h"
 #include "aogsettings.h"
 
 CABCurve::CABCurve(QObject *parent) : QObject(parent)
@@ -54,15 +55,12 @@ void CABCurve::drawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
 
         gldraw_colors.draw(gl, mvp, GL_LINES, SETTINGS_DISPLAY_LINEWIDTH);
 
-        /*
-         * TODO: implement GL font textures
-        if (mf.font.isFontOn && refList.size() > 410)
+        if (isFontOn && refList.size() > 410)
         {
-            GL.Color3(0.40f, 0.90f, 0.95f);
-            mf.font.DrawText3D(refList[201].easting, refList[201].northing, "&A");
-            mf.font.DrawText3D(refList[refList.size() - 200].easting, refList[refList.size() - 200].northing, "&B");
+            QColor color = QColor::fromRgbF(0.40f, 0.90f, 0.95f);
+            drawText3D(camera, gl, mvp, refList[201].easting, refList[201].northing, "&A", 1.0, true, color);
+            drawText3D(camera, gl, mvp, refList[refList.size() - 200].easting, refList[refList.size() - 200].northing, "&B", 1.0, true, color);
         }
-        */
 
         //just draw ref and smoothed line if smoothing window is open
         if (isSmoothWindowOpen)
