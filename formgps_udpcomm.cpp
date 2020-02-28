@@ -17,7 +17,7 @@ void FormGPS::udpServerReadDatagrams()
     while (udpSocket->hasPendingDatagrams()) {
         datagram = udpSocket->receiveDatagram();
 
-        pn->rawBuffer += datagram.data();
+        pn.rawBuffer += datagram.data();
         //Will a ton of incoming data make this whole thing block
         //forever? maybe.
     }
