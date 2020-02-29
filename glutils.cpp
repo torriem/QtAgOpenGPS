@@ -59,6 +59,7 @@ void initializeTextures() {
     t = new QOpenGLTexture(QImage(":/images/textures/Landscape.png").mirrored());
     texture.append(t); //position 0
     t = new QOpenGLTexture(QImage(":/images/textures/floor.png").mirrored());
+    t->setMinMagFilters(QOpenGLTexture::Linear, QOpenGLTexture::Linear);
     texture.append(t); //position 1
     t = new QOpenGLTexture(QImage(":/images/textures/Font.png").mirrored());
     textureWidth = t->width();

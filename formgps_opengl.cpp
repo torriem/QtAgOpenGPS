@@ -46,8 +46,9 @@ void FormGPS::openGLControl_Draw()
 
     // Set The Blending Function For Translucency
     gl->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    gl->glCullFace(GL_BACK);
 
-    gl->glDisable(GL_CULL_FACE);
+    //gl->glDisable(GL_CULL_FACE);
 
     //set the camera to right distance
     setZoom();
@@ -77,7 +78,7 @@ void FormGPS::openGLControl_Draw()
         calcFrustum(projection*modelview);
 
         QColor fieldcolor;
-        if(isDay) {
+        if(SETTINGS_DISPLAY_DAYMODE) {
             fieldcolor = parseColor(SETTINGS_DISPLAY_FIELDCOLORDAY);
         } else {
             fieldcolor = parseColor(SETTINGS_DISPLAY_FIELDCOLORNIGHT);
@@ -97,7 +98,7 @@ void FormGPS::openGLControl_Draw()
 
         //section patch color
         QColor sectionColor;
-        if(isDay) sectionColor = parseColor(SETTINGS_DISPLAY_SECTIONSCOLORDAY);
+        if(SETTINGS_DISPLAY_DAYMODE) sectionColor = parseColor(SETTINGS_DISPLAY_SECTIONSCOLORDAY);
         else sectionColor = parseColor(SETTINGS_DISPLAY_SECTIONSCOLORNIGHT);
 
         sectionColor.setAlpha(152);

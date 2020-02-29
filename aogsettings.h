@@ -256,6 +256,9 @@ QColor parseColor(QString setcolor);
 #define SETTINGS_DISPLAY_SPEEDO				settings.   value("display/isSpeedoOn", false).toBool()
 #define SETTINGS_SET_DISPLAY_SPEEDO(VAL)	settings.setValue("display/isSpeedoOn",VAL)
 
+#define SETTINGS_DISPLAY_DAYMODE				settings.   value("display/isDayMode", true).toBool()
+#define SETTINGS_SET_DISPLAY_DAYMODE(VAL)	settings.setValue("display/isDayMode",VAL)
+
 //AUTOSTEER
 #define SETTINGS_AUTOSTEER_KO			settings.   value("autosteer/Ko", 5).toInt()
 #define SETTINGS_SET_AUTOSTEER_KO(VAL)	settings.setValue("autosteer/Ko",VAL)
