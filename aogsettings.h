@@ -5,12 +5,15 @@
 #include <QVariant>
 #include <QList>
 
+#include <QColor>
+
 class AOGSettings : public QSettings
 {
 public:
     QVariant value(const QString &key, const QVariant &defaultvalue);
-    QColor getColor(const QString &key);
 };
+
+QColor parseColor(QString setcolor);
 
 //Macros to use settings in a consistant way
 #define USE_SETTINGS AOGSettings settings

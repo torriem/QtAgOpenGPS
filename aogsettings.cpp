@@ -2,6 +2,8 @@
 #include <QString>
 #include <QStringList>
 #include <QColor>
+#include "common.h"
+#include <QDebug>
 
 QVariant AOGSettings::value(const QString &key, const QVariant &defaultvalue)
 {
@@ -15,13 +17,11 @@ QVariant AOGSettings::value(const QString &key, const QVariant &defaultvalue)
     return val;
 }
 
-QColor AOGSettings::getColor(const QString &key)
+QColor parseColor(QString setcolor)
 {
-    QVariant val = QSettings::value(key, QVariant::Invalid);
+    //qDebug() << setcolor;
 
-    if( val == QVariant::Invalid) return QColor::fromRgb(255,0,255); //return magenta so we can see it
-
-    QStringList c = val.toString().split(",");
+    QStringList c = setcolor.split(",");
     if (c.size() == 3) {
         return QColor::fromRgb(c.at(0).toInt(),
                                c.at(1).toInt(),
