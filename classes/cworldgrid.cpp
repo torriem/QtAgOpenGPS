@@ -31,6 +31,7 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, Q
     QSettings settings;
 
 
+    gl->glEnable(GL_TEXTURE_2D);
     //We can save a lot of time by keeping this grid buffer on the GPU unless it needs to
     //be altered.
     if (!fieldBufferCurrent) {
@@ -72,6 +73,7 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, Q
 
     //bind field surface texture
     texture[Textures::FLOOR]->bind();
+    qDebug() << texture[Textures::FLOOR] -> width();
 
     //bind and set up the shader
     fieldShader->bind();
@@ -104,6 +106,7 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, Q
     texture[Textures::FLOOR]->release();
     fieldBuffer.release();
     fieldShader->release();
+    gl->glDisable(GL_TEXTURE_2D);
 
 }
 

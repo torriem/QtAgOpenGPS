@@ -61,7 +61,7 @@ void FormGPS::openGLControl_Draw()
     //to shift, translate projection here. -1,0,0 is far left, 1,0,0 is far right.
 
     //  Create a perspective transformation.
-    projection.perspective(fovy, width / (double)height, 10.0f, camDistanceFactor * camera.camSetDistance);
+    projection.perspective(fovy, width / (double)height, 1.0f, camDistanceFactor * camera.camSetDistance);
 
     if (isGPSPositionInitialized)
     {
@@ -78,9 +78,9 @@ void FormGPS::openGLControl_Draw()
 
         QColor fieldcolor;
         if(isDay) {
-            fieldcolor = SETTINGS_DISPLAY_FIELDCOLORDAY;
+            fieldcolor = parseColor(SETTINGS_DISPLAY_FIELDCOLORDAY);
         } else {
-            fieldcolor = SETTINGS_DISPLAY_FIELDCOLORNIGHT;
+            fieldcolor = parseColor(SETTINGS_DISPLAY_FIELDCOLORNIGHT);
         }
         //draw the field ground images
         worldGrid.drawFieldSurface(gl, projection *modelview, fieldcolor);
@@ -90,15 +90,15 @@ void FormGPS::openGLControl_Draw()
         //gl->glDisable(GL_TEXTURE_2D);
 
         ////if grid is on draw it
-        if (isGridOn) worldGrid.drawWorldGrid(gl,projection*modelview,gridZoom, QColor::fromRgb(0,0,0));
+        if (isGridOn) worldGrid.drawWorldGrid(gl,projection*modelview,gridZoom, QColor::fromRgbF(0,0,0));
 
         //turn on blend for paths
         gl->glEnable(GL_BLEND);
 
         //section patch color
         QColor sectionColor;
-        if(isDay) sectionColor = SETTINGS_DISPLAY_SECTIONSCOLORDAY;
-        else sectionColor = SETTINGS_DISPLAY_SECTIONSCOLORNIGHT;
+        if(isDay) sectionColor = parseColor(SETTINGS_DISPLAY_SECTIONSCOLORDAY);
+        else sectionColor = parseColor(SETTINGS_DISPLAY_SECTIONSCOLORNIGHT);
 
         sectionColor.setAlpha(152);
 
@@ -207,7 +207,7 @@ void FormGPS::openGLControl_Draw()
                 gldraw1.append((*tool.section[tool.numOfSections].patchList[patchCount - 1])[last - 1]);
                 //TODO: label4.Text = (*tool.section[tool.numOfSections].patchList[patchCount - 1])[last - 2].y().ToString();
 
-                gldraw1.draw(gl, modelview*projection, sectionColor, GL_TRIANGLE_STRIP, 1.0f);
+                gldraw1.draw(gl, projection*modelview, sectionColor, GL_TRIANGLE_STRIP, 1.0f);
 
             }
             else
@@ -237,7 +237,7 @@ void FormGPS::openGLControl_Draw()
                         gldraw1.append((*tool.section[j].patchList[patchCount - 1])[last - 1]);
                         //TODO: label4.Text = (*tool.section[j].patchList[patchCount - 1])[last - 2].y().ToString();
 
-                        gldraw1.draw(gl,modelview*projection, sectionColor, GL_TRIANGLE_STRIP, 1.0f);
+                        gldraw1.draw(gl,projection*modelview, sectionColor, GL_TRIANGLE_STRIP, 1.0f);
                     }
                 }
             }
@@ -246,42 +246,42 @@ void FormGPS::openGLControl_Draw()
         //draw contour line if button on
         if (ct.isContourBtnOn)
         {
-            ct.drawContourLine(gl, modelview*projection, vehicle);
+            ct.drawContourLine(gl, projection*modelview, vehicle);
         }
         else// draw the current and reference AB Lines or CurveAB Ref and line
         {
-            if (ABLine.isABLineSet | ABLine.isABLineBeingSet) ABLine.drawABLines(gl, modelview*projection, vehicle, tool, yt, tram, camera);
-            if (curve.isBtnCurveOn) curve.drawCurve(gl, modelview*projection, vehicle, tool, yt, tram, camera);
+            if (ABLine.isABLineSet | ABLine.isABLineBeingSet) ABLine.drawABLines(gl, projection*modelview, vehicle, tool, yt, tram, camera);
+            if (curve.isBtnCurveOn) curve.drawCurve(gl, projection*modelview, vehicle, tool, yt, tram, camera);
         }
 
         //if (recPath.isRecordOn)
-        recPath.drawRecordedLine(gl, modelview*projection);
-        recPath.drawDubins(gl, modelview*projection);
+        recPath.drawRecordedLine(gl, projection*modelview);
+        recPath.drawDubins(gl, projection*modelview);
 
         //draw Boundaries
-        bnd.drawBoundaryLines(vehicle, gl, modelview*projection);
+        bnd.drawBoundaryLines(vehicle, gl, projection*modelview);
 
         //draw the turnLines
         if (yt.isYouTurnBtnOn)
         {
             if (!ABLine.isEditing && !curve.isEditing && !ct.isContourBtnOn)
             {
-                turn.drawTurnLines(bnd, gl, modelview*projection);
+                turn.drawTurnLines(bnd, gl, projection*modelview);
             }
         }
         else if (!yt.isYouTurnBtnOn && SETTINGS_DISPLAY_UTURNALWAYSON)
         {
             if (!ABLine.isEditing && !curve.isEditing && !ct.isContourBtnOn)
             {
-                turn.drawTurnLines(bnd, gl, modelview*projection);
+                turn.drawTurnLines(bnd, gl, projection*modelview);
             }
         }
 
-        if (mc.isOutOfBounds) gf.drawGeoFenceLines(bnd, gl, modelview*projection);
+        if (mc.isOutOfBounds) gf.drawGeoFenceLines(bnd, gl, projection*modelview);
 
-        if (hd.isOn) hd.drawHeadLines(gl, modelview*projection, SETTINGS_DISPLAY_LINEWIDTH);
+        if (hd.isOn) hd.drawHeadLines(gl, projection*modelview, SETTINGS_DISPLAY_LINEWIDTH);
 
-        if (flagPts.size() > 0) drawFlags(gl, modelview*projection);
+        if (flagPts.size() > 0) drawFlags(gl, projection*modelview);
 
 
         if (flagNumberPicked > 0)
@@ -291,15 +291,15 @@ void FormGPS::openGLControl_Draw()
             //TODO: implement with shader: GL.LineStipple(1, 0x0707);
             gldraw1.append(QVector3D(vehicle.pivotAxlePos.easting, vehicle.pivotAxlePos.northing, 0));
             gldraw1.append(QVector3D(flagPts[flagNumberPicked-1].easting, flagPts[flagNumberPicked-1].northing, 0));
-            gldraw1.draw(gl, modelview*projection,
+            gldraw1.draw(gl, projection*modelview,
                          QColor::fromRgbF(0.930f, 0.72f, 0.32f),
                          GL_LINES, SETTINGS_DISPLAY_LINEWIDTH);
         }
 
 
         //draw the vehicle/implement
-        tool.drawTool(vehicle, camera, gl, modelview*projection);
-        vehicle.drawVehicle(gl, modelview*projection, camera, tool, bnd, hd, ct, curve, ABLine);
+        tool.drawTool(vehicle, camera, gl, modelview, projection);
+        vehicle.drawVehicle(gl, modelview, projection, camera, tool, bnd, hd, ct, curve, ABLine);
 
         //// 2D Ortho --------------------------
         projection.setToIdentity();
@@ -310,22 +310,22 @@ void FormGPS::openGLControl_Draw()
         modelview.setToIdentity();
 
 
-        if(SETTINGS_DISPLAY_SKYON) drawSky(gl, modelview*projection, width, height);
+        if(SETTINGS_DISPLAY_SKYON) drawSky(gl, projection*modelview, width, height);
 
         if(SETTINGS_DISPLAY_LIGHTBARON) {
-            drawRollBar(gl, modelview*projection);
-            drawLightBarText(gl, modelview*projection, width, height);
+            drawRollBar(gl, modelview, projection);
+            drawLightBarText(gl, projection*modelview, width, height);
         }
 
-        if (bnd.bndArr.size() > 0 && yt.isYouTurnBtnOn) drawUTurnBtn(gl, modelview*projection);
+        if (bnd.bndArr.size() > 0 && yt.isYouTurnBtnOn) drawUTurnBtn(gl, projection*modelview);
 
-        if (isAutoSteerBtnOn && !ct.isContourBtnOn) drawManUTurnBtn(gl, modelview*projection);
+        if (isAutoSteerBtnOn && !ct.isContourBtnOn) drawManUTurnBtn(gl, projection*modelview);
 
-        if (SETTINGS_DISPLAY_COMPASS) drawCompass(gl, modelview*projection, width);
+        if (SETTINGS_DISPLAY_COMPASS) drawCompass(gl, modelview, projection, width);
 
-        drawCompassText(gl, modelview*projection, width);
+        drawCompassText(gl, projection*modelview, width);
 
-        if (SETTINGS_DISPLAY_SPEEDO) drawSpeedo(gl, modelview*projection, width, height);
+        if (SETTINGS_DISPLAY_SPEEDO) drawSpeedo(gl, modelview, projection, width, height);
 
         //draw the zoom window
         if (isJobStarted)
@@ -467,11 +467,11 @@ void FormGPS::openGLControlBack_Draw()
     //patch color
     QColor patchColor = QColor::fromRgbF(0.0f, 0.5f, 0.0f);
 
-    //calculate the frustum for the section control window
-    calcFrustum(projection*modelview);
-
     //to draw or not the triangle patch
     bool isDraw;
+
+    //calculate the frustum for the section control window
+    calcFrustum(projection*modelview);
 
     //draw patches j= # of sections
     for (int j = 0; j < tool.numSuperSection; j++)
@@ -539,7 +539,7 @@ void FormGPS::openGLControlBack_Draw()
             for (int h = 0; h < ptCount; h++)
                 gldraw.append(QVector3D(bnd.bndArr[0].bndLine[h].easting, bnd.bndArr[0].bndLine[h].northing, 0));
 
-            gldraw.draw( gl, modelview*projection, QColor::fromRgbF(0.0f, 0.99f, 0.0f),
+            gldraw.draw( gl, projection*modelview, QColor::fromRgbF(0.0f, 0.99f, 0.0f),
                          GL_LINE_STRIP, 2.0);
         }
     }
@@ -866,18 +866,18 @@ void FormGPS::drawLightBarText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Widt
     }
 }
 
-void FormGPS::drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 mvp)
+void FormGPS::drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection)
 {
     double set = vehicle.guidanceLineSteerAngle * 0.01 * (50 / vehicle.maxSteerAngle);
     double actual = actualSteerAngleDisp * 0.01 * (50 / vehicle.maxSteerAngle);
     double hiit = 0;
     GLHelperOneColor gldraw;
 
-    mvp.translate(0, 100, 0);
+    modelview.translate(0, 100, 0);
 
     //If roll is used rotate graphic based on roll angle
     if ((ahrs.isRollFromBrick | ahrs.isRollFromAutoSteer | ahrs.isRollFromGPS) && ahrs.rollX16 != 9999)
-        mvp.rotate(((ahrs.rollX16 - ahrs.rollZeroX16) * 0.0625f), 0.0f, 0.0f, 1.0f);
+        modelview.rotate(((ahrs.rollX16 - ahrs.rollZeroX16) * 0.0625f), 0.0f, 0.0f, 1.0f);
 
     gl->glLineWidth(1);
 
@@ -888,10 +888,10 @@ void FormGPS::drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 mvp)
     gldraw.append(QVector3D(wiid, 0, 0));
     gldraw.append(QVector3D(wiid, 25, 0));
 
-    gldraw.draw(gl, mvp, QColor::fromRgbF(0.54f, 0.54f, 0.54f),
+    gldraw.draw(gl, projection*modelview, QColor::fromRgbF(0.54f, 0.54f, 0.54f),
                 GL_LINE_STRIP, 1);
 
-    mvp.translate(0, 10, 0);
+    modelview.translate(0, 10, 0);
 
     {
         if (actualSteerAngleDisp > 0)
@@ -903,7 +903,7 @@ void FormGPS::drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 mvp)
             gldraw.append(QVector3D(actual, hiit + 8, 0));
             gldraw.append(QVector3D(0, hiit + 16, 0));
             gldraw.append(QVector3D(0, hiit, 0));
-            gldraw.draw(gl, mvp, QColor::fromRgbF(0.0f, 0.75930f, 0.0f),
+            gldraw.draw(gl, projection*modelview, QColor::fromRgbF(0.0f, 0.75930f, 0.0f),
                         GL_LINE_STRIP, 1);
 
         }
@@ -917,7 +917,7 @@ void FormGPS::drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 mvp)
             gldraw.append(QVector3D(actual, hiit + 8, 0));
             gldraw.append(QVector3D(-0, hiit + 16, 0));
             gldraw.append(QVector3D(-0, hiit, 0));
-            gldraw.draw(gl, mvp, QColor::fromRgbF(0.75930f, 0.0f, 0.0f),
+            gldraw.draw(gl, projection*modelview, QColor::fromRgbF(0.75930f, 0.0f, 0.0f),
                         GL_LINE_STRIP, 1);
         }
     }
@@ -931,7 +931,7 @@ void FormGPS::drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 mvp)
         gldraw.append(QVector3D(set, hiit + 8, 0));
         gldraw.append(QVector3D(0, hiit + 16, 0));
         gldraw.append(QVector3D(0, hiit, 0));
-        gldraw.draw(gl, mvp, QColor::fromRgbF(0.75930f, 0.75930f, 0.0f),
+        gldraw.draw(gl, projection*modelview, QColor::fromRgbF(0.75930f, 0.75930f, 0.0f),
                     GL_LINE_STRIP, 1);
 
     }
@@ -944,7 +944,7 @@ void FormGPS::drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 mvp)
         gldraw.append(QVector3D(set, hiit + 8, 0));
         gldraw.append(QVector3D(-0, hiit + 16, 0));
         gldraw.append(QVector3D(-0, hiit, 0));
-        gldraw.draw(gl, mvp, QColor::fromRgbF(0.75930f, 0.75930f, 0.0f),
+        gldraw.draw(gl, projection*modelview, QColor::fromRgbF(0.75930f, 0.75930f, 0.0f),
                     GL_LINE_STRIP, 1);
 
     }
@@ -959,6 +959,7 @@ void FormGPS::drawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int heigh
     ////draw the background when in 3D
     if (camera.camPitch < -52)
     {
+        gl->glEnable(GL_TEXTURE_2D);
         if ( (lastWidth != width)  || (lastHeight != height)) {
             lastWidth = width;
             lastHeight = height;
@@ -970,6 +971,7 @@ void FormGPS::drawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int heigh
             //the background
             double winLeftPos = -(double)width / 2;
             double winRightPos = -winLeftPos;
+
 
             //map texture coordinates to model coordinates
             VertexTexcoord vertices[] = {
@@ -989,6 +991,7 @@ void FormGPS::drawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int heigh
         }
 
         texture[Textures::SKY]->bind();
+        qDebug() << texture[Textures::SKY]->isCreated();
         glDrawArraysTexture(gl, mvp,
                             GL_TRIANGLE_STRIP, skyBuffer,
                             GL_FLOAT,
@@ -1009,40 +1012,40 @@ void FormGPS::drawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width
     else drawText(gl, mvp, center, 65, hede, 1.2, true, QColor::fromRgbF(0.9752f, 0.952f, 0.83f));
 }
 
-void FormGPS::drawCompass(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width)
+void FormGPS::drawCompass(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection, double Width)
 {
     //Heading text
     int center = Width / 2 - 55;
-    drawText(gl, mvp, center-8, 40, "^", 0.8);
+    drawText(gl, projection*modelview, center-8, 40, "^", 0.8);
 
     GLHelperTexture gldraw;
 
 
-    mvp.translate(center, 78, 0);
+    modelview.translate(center, 78, 0);
 
-    mvp.rotate(-camera.camHeading, 0, 0, 1);
+    modelview.rotate(-camera.camHeading, 0, 0, 1);
     gldraw.append( { QVector3D(-52, -52, 0), QVector2D(0, 0) });
     gldraw.append( { QVector3D(52, -52.0, 0), QVector2D(1, 0) });
     gldraw.append( { QVector3D(52, 52, 0), QVector2D(1, 1) });
     gldraw.append( { QVector3D(-52, 52, 0), QVector2D(0, 1) });
 
-    gldraw.draw(gl, mvp, Textures::COMPASS, GL_QUADS, true, QColor::fromRgbF(0.952f, 0.870f, 0.73f, 0.8));
+    gldraw.draw(gl, projection*modelview, Textures::COMPASS, GL_QUADS, true, QColor::fromRgbF(0.952f, 0.870f, 0.73f, 0.8));
 }
 
-void FormGPS::drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height)
+void FormGPS::drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection, double Width, double Height)
 {
     GLHelperTexture gldraw1;
 
     int bottomSide = Height - 55;
 
-    mvp.translate(Width / 2 - 60, bottomSide, 0);
+    modelview.translate(Width / 2 - 60, bottomSide, 0);
 
     gldraw1.append({ QVector3D(-58, -58, 0), QVector2D(0, 0) });
     gldraw1.append({ QVector3D(58, -58.0, 0), QVector2D(1, 0) });
     gldraw1.append({ QVector3D(58, 58, 0), QVector2D(1, 1) });
     gldraw1.append({ QVector3D(-58, 58, 0), QVector2D(0, 1) });
 
-    gldraw1.draw(gl, mvp, Textures::SPEEDO, GL_QUADS, true, QColor::fromRgbF(0.952f, 0.870f, 0.823f, 0.8));
+    gldraw1.draw(gl, projection*modelview, Textures::SPEEDO, GL_QUADS, true, QColor::fromRgbF(0.952f, 0.870f, 0.823f, 0.8));
 
     double angle = 0;
     double aveSpd = 0;
@@ -1064,13 +1067,13 @@ void FormGPS::drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, dou
 
     GLHelperOneColor gldraw2;
 
-    mvp.rotate(angle, 0, 0, 1);
+    modelview.rotate(angle, 0, 0, 1);
     gldraw2.append(QVector3D(0, 0, 0)); gldraw2.append(QVector3D(-48, -48, 0)); //
     gldraw2.append(QVector3D(1, 0, 0)); gldraw2.append(QVector3D(48, -48.0, 0)); //
     gldraw2.append(QVector3D(1, 1, 0)); gldraw2.append(QVector3D(48, 48, 0)); //
     gldraw2.append(QVector3D(0, 1, 0)); gldraw2.append(QVector3D(-48, 48, 0)); //
 
-    gldraw2.draw(gl, mvp, QColor::fromRgbF(0.952f, 0.70f, 0.23f),
+    gldraw2.draw(gl, projection*modelview, QColor::fromRgbF(0.952f, 0.70f, 0.23f),
                  GL_QUADS, 1.0f);
 }
 
@@ -1145,8 +1148,8 @@ void FormGPS::setZoom()
 {
     //match grid to cam distance and redo perspective
     if (camera.camSetDistance <= -20000) gridZoom = 2000;
-    if (camera.camSetDistance >= -20000 && camera.camSetDistance < -10000) gridZoom =   2000;
-    if (camera.camSetDistance >= -10000 && camera.camSetDistance < -5000) gridZoom =    1000;
+    if (camera.camSetDistance >= -20000 && camera.camSetDistance < -10000) gridZoom =   2012;
+    if (camera.camSetDistance >= -10000 && camera.camSetDistance < -5000) gridZoom =    1006;
     if (camera.camSetDistance >= -5000 && camera.camSetDistance < -2000) gridZoom =     503;
     if (camera.camSetDistance >= -2000 && camera.camSetDistance < -1000) gridZoom =     201.2;
     if (camera.camSetDistance >= -1000 && camera.camSetDistance < -500) gridZoom =      100.6;

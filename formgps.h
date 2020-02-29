@@ -473,11 +473,11 @@ public:
 
     void drawLightBar(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height, double offlineDistance);
     void drawLightBarText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height);
-    void drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 mvp);
+    void drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection);
     void drawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int height);
     void drawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);
-    void drawCompass(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);
-    void drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height);
+    void drawCompass(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection, double Width);
+    void drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection, double Width, double Height);
     //void drawFieldText();
     void calcFrustum(const QMatrix4x4 &mvp);
     void calculateMinMax();

@@ -35,16 +35,17 @@ CTool::CTool()
     //TOOD: section settings
 }
 
-void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp)
+void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection)
 {
     //translate and rotate at pivot axle, caller's mvp will be changed
-    mvp.translate(v.pivotAxlePos.easting, v.pivotAxlePos.northing, 0);
+    modelview.translate(v.pivotAxlePos.easting, v.pivotAxlePos.northing, 0);
 
-    QMatrix4x4 mvp1 = mvp; //make a copy, simulate PushMatrix
     GLHelperOneColor gldraw;
 
+    QMatrix4x4 mv = modelview; //push matrix
+
     //translate down to the hitch pin
-    mvp1.translate(sin(v.fixHeading) * hitchLength,
+    mv.translate(sin(v.fixHeading) * hitchLength,
                             cos(v.fixHeading) * hitchLength, 0);
 
     //settings doesn't change trailing hitch length if set to rigid, so do it here
@@ -60,29 +61,29 @@ void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix
     if (isToolTBT && isToolTrailing)
     {
         //rotate to tank heading
-        mvp1.rotate(glm::toDegrees(-v.tankPos.heading), 0.0, 0.0, 1.0);
+        mv.rotate(glm::toDegrees(-v.tankPos.heading), 0.0, 0.0, 1.0);
 
 
         //draw the tank hitch
         gldraw.append(QVector3D(0.0, trailingTank, 0.0));
         gldraw.append(QVector3D(0, 0, 0));
-        gldraw.draw(gl,mvp1,QColor::fromRgbF(0.7f, 0.7f, 0.97f),GL_LINES, 2.0f);
+        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.7f, 0.7f, 0.97f),GL_LINES, 2.0f);
 
         //section markers
         gldraw.clear();
         gldraw.append(QVector3D(0.0, trailingTank, 0.0));
-        gldraw.draw(gl,mvp1,QColor::fromRgbF(0.95f, 0.95f, 0.0f),GL_POINTS, 6.0f);
+        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.95f, 0.95f, 0.0f),GL_POINTS, 6.0f);
 
         //move down the tank hitch, unwind, rotate to section heading
-        mvp1.translate(0.0, trailingTank, 0.0);
-        mvp1.rotate(glm::toDegrees(v.tankPos.heading), 0.0, 0.0, 1.0);
-        mvp1.rotate(glm::toDegrees(v.toolPos.heading), 0.0, 0.0, 1.0);
+        mv.translate(0.0, trailingTank, 0.0);
+        mv.rotate(glm::toDegrees(v.tankPos.heading), 0.0, 0.0, 1.0);
+        mv.rotate(glm::toDegrees(v.toolPos.heading), 0.0, 0.0, 1.0);
     }
 
     //no tow between hitch
     else
     {
-        mvp1.rotate(glm::toDegrees(-v.toolPos.heading), 0.0, 0.0, 1.0);
+        mv.rotate(glm::toDegrees(-v.toolPos.heading), 0.0, 0.0, 1.0);
     }
 
     //draw the hitch if trailing
@@ -91,7 +92,7 @@ void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix
         gldraw.clear();
         gldraw.append(QVector3D(0.0, trailingTool, 0.0));
         gldraw.append(QVector3D(0,0,0));
-        gldraw.draw(gl,mvp1,QColor::fromRgbF(0.7f, 0.7f, 0.97f),GL_LINES, 2.0f);
+        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.7f, 0.7f, 0.97f),GL_LINES, 2.0f);
     }
 
     //draw the sections
@@ -136,7 +137,7 @@ void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix
         }
     }
 
-    gldrawcolors.draw(gl,mvp1,GL_LINES,8.0f);
+    gldrawcolors.draw(gl,projection*mv,GL_LINES,8.0f);
 
     //draw section markers if close enough
     if (camera.camSetDistance > -250)
@@ -146,10 +147,9 @@ void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix
         for (int j = 0; j < numOfSections - 1; j++)
             gldraw.append(QVector3D(section[j].positionRight, trailingTool, 0));
 
-        gldraw.draw(gl,mvp1,QColor::fromRgbF(0,0,0),GL_POINTS,3.0f);
+        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0,0,0),GL_POINTS,3.0f);
     }
 
-    //GL.PopMatrix();
 }
 
 //function to calculate the width of each section and update

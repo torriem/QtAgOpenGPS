@@ -57,7 +57,7 @@ public:
 
     void sectionCalcWidths();
     CTool();
-    void drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp);
+    void drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection);
 };
 
 #endif // CTOOL_H

@@ -76,19 +76,22 @@ double CVehicle::updateGoalPointDistance(CNMEA &pn, double distanceFromCurrentLi
 
 }
 
-void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 mvp,
+void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
+                           QMatrix4x4 projection,
                            const CCamera &camera, CTool &tool,
                            CBoundary &bnd, CHead &hd,
                            const CContour &ct,
                            const CABCurve &curve, const CABLine &ABLine)
 {
     //draw vehicle
-    mvp.rotate(glm::toDegrees(-fixHeading), 0.0, 0.0, 1.0);
+    modelview.rotate(glm::toDegrees(-fixHeading), 0.0, 0.0, 1.0);
 
     GLHelperColors glcolors;
     GLHelperOneColor gldraw;
     ColorVertex cv;
     QLocale locale;
+
+    QMatrix4x4 mvp = projection*modelview;
 
 
     //antenna
