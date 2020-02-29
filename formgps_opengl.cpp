@@ -87,8 +87,8 @@ void FormGPS::openGLControl_Draw()
         worldGrid.drawFieldSurface(gl, projection *modelview, fieldcolor);
 
         ////Draw the world grid based on camera position
-        //gl->glDisable(GL_DEPTH_TEST);
-        //gl->glDisable(GL_TEXTURE_2D);
+        gl->glDisable(GL_DEPTH_TEST);
+        gl->glDisable(GL_TEXTURE_2D);
 
         ////if grid is on draw it
         if (isGridOn) worldGrid.drawWorldGrid(gl,projection*modelview,gridZoom, QColor::fromRgbF(0,0,0));
