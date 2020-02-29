@@ -34,8 +34,8 @@ public:
     double eastingMax = 0;
     double eastingMin = 0;
 
-    const double texZoomE = 20;
-    const double texZoomN = 20;
+    double texZoomE = 20;
+    double texZoomN = 20;
 
     CWorldGrid();
     ~CWorldGrid();

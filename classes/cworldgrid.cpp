@@ -176,10 +176,28 @@ void CWorldGrid::checkZoomWorldGrid(double northing, double easting) {
 
     //hmm, buffers are still redone a lot.
 
-    if ((northingMax - northing) < 1000) { northingMax = northing + 2000; invalidateBuffers(); }
-    if ((northing - northingMin) < 1000) { northingMin = northing - 2000; invalidateBuffers(); }
-    if ((eastingMax - easting) < 1000)  { eastingMax = easting + 2000; invalidateBuffers(); }
-    if ((easting - eastingMin) < 1000) { eastingMin = easting - 2000; invalidateBuffers(); }
+    if ((northingMax - northing) < 1000)
+    {
+        northingMax = northing + 2000;
+        texZoomN = (double)(int)((northingMax - northingMin) / 500.0);
+        invalidateBuffers();
+    }
+    if ((northing - northingMin) < 1000) {
+        northingMin = northing - 2000;
+        texZoomN = (double)(int)((northingMax - northingMin) / 500.0);
+        invalidateBuffers();
+    }
+    if ((eastingMax - easting) < 1000)
+    {
+        eastingMax = easting + 2000;
+        texZoomE = (double)(int)((eastingMax - eastingMin) / 500.0);
+        invalidateBuffers();
+    }
+    if ((easting - eastingMin) < 1000) {
+        eastingMin = easting - 2000;
+        texZoomE = (double)(int)((eastingMax - eastingMin) / 500.0);
+        invalidateBuffers();
+    }
 }
 
 void CWorldGrid::destroyGLBuffers() {
