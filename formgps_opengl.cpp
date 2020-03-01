@@ -326,6 +326,7 @@ void FormGPS::openGLControl_Draw()
         drawCompassText(gl, projection*modelview, width - 400);
 
         if (SETTINGS_DISPLAY_SPEEDO) drawSpeedo(gl, modelview, projection, width - 400, height);
+        gl->glFlush();
 
         //draw the zoom window
         if (isJobStarted)
@@ -345,11 +346,11 @@ void FormGPS::openGLControl_Draw()
         gl->glClear(GL_COLOR_BUFFER_BIT);
     }
 
-    gl->glFlush();
     //qmlview->resetOpenGLState();
 
     //directly call section lookahead GL stuff from here
     openGLControlBack_Draw();
+    gl->glFlush();
 }
 
 /// Handles the OpenGLInitialized event of the openGLControl control.
@@ -685,7 +686,9 @@ void FormGPS::makeFlagMark(QOpenGLFunctions *gl)
 {
     leftMouseDownOnOpenGL = false;
     uchar data1[768];
+    memset(data1,0,768);
 
+    qDebug() << "mouse down at " << mouseX << ", " << mouseY;
     //scan the center of click and a set of square points around
     gl->glReadPixels(mouseX - 8, mouseY - 8, 16, 16, GL_RGB, GL_UNSIGNED_BYTE, data1);
 
