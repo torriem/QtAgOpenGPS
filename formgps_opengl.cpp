@@ -305,11 +305,10 @@ void FormGPS::openGLControl_Draw()
         //// 2D Ortho --------------------------
         projection.setToIdentity();
         //negative and positive on width, 0 at top to bottom ortho view
-        projection.ortho(-(double)width / 2, width / 2, (double)height, 0, -1, 1);
+        projection.ortho(-(double)width / 2, (double)width / 2, (double)height, 0, -1, 1);
 
         //  Create the appropriate modelview matrix.
         modelview.setToIdentity();
-
 
         if(SETTINGS_DISPLAY_SKYON) drawSky(gl, projection*modelview, width, height);
 
@@ -322,11 +321,11 @@ void FormGPS::openGLControl_Draw()
 
         if (isAutoSteerBtnOn && !ct.isContourBtnOn) drawManUTurnBtn(gl, projection*modelview);
 
-        if (SETTINGS_DISPLAY_COMPASS) drawCompass(gl, modelview, projection, width);
+        if (SETTINGS_DISPLAY_COMPASS) drawCompass(gl, modelview, projection, width - 400);
 
-        drawCompassText(gl, projection*modelview, width);
+        drawCompassText(gl, projection*modelview, width - 400);
 
-        if (SETTINGS_DISPLAY_SPEEDO) drawSpeedo(gl, modelview, projection, width, height);
+        if (SETTINGS_DISPLAY_SPEEDO) drawSpeedo(gl, modelview, projection, width - 400, height);
 
         //draw the zoom window
         if (isJobStarted)
@@ -854,12 +853,12 @@ void FormGPS::drawLightBarText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Widt
             if (dist < 0.0)
             {
                 color = QColor::fromRgbF(0.50f, 0.952f, 0.3f);
-                hede = QString("< ") + locale.toString(fabs(dist), 'g', 1);
+                hede = QString("< ") + locale.toString(fabs(dist), 'f', 1);
             }
             else
             {
                 color = QColor::fromRgbF(0.9752f, 0.50f, 0.3f);
-                hede = locale.toString(dist, 'g', 1) + " >" ;
+                hede = locale.toString(dist, 'f', 1) + " >" ;
             }
             int center = -(int)(((double)(hede.length()) * 0.5) * 16 * size);
             drawText(gl, mvp, center, 38, hede, size, true, color);
@@ -867,14 +866,14 @@ void FormGPS::drawLightBarText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Widt
     }
 }
 
-void FormGPS::drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection)
+void FormGPS::drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection)
 {
     double set = vehicle.guidanceLineSteerAngle * 0.01 * (50 / vehicle.maxSteerAngle);
     double actual = actualSteerAngleDisp * 0.01 * (50 / vehicle.maxSteerAngle);
     double hiit = 0;
     GLHelperOneColor gldraw;
 
-    modelview.translate(0, 100, 0);
+    modelview.translate(0, 100, 0); //will not override caller's modelview
 
     //If roll is used rotate graphic based on roll angle
     if ((ahrs.isRollFromBrick | ahrs.isRollFromAutoSteer | ahrs.isRollFromGPS) && ahrs.rollX16 != 9999)
@@ -956,11 +955,11 @@ void FormGPS::drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x
 
 void FormGPS::drawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int height)
 {
+    VertexTexcoord vertices[4];
 
     ////draw the background when in 3D
     if (camera.camPitch < -52)
     {
-        gl->glEnable(GL_TEXTURE_2D);
         if ( (lastWidth != width)  || (lastHeight != height)) {
             lastWidth = width;
             lastHeight = height;
@@ -975,12 +974,18 @@ void FormGPS::drawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int heigh
 
 
             //map texture coordinates to model coordinates
-            VertexTexcoord vertices[] = {
-                { QVector3D(winRightPos, 0.0, 0), QVector2D(0,0)}, //top right
-                { QVector3D(winLeftPos, 0.0, 0), QVector2D(1,0)}, //top left
-                { QVector3D(winRightPos, hite*(double)height,0), QVector2D(0,1) }, //bottom right
-                { QVector3D(winLeftPos, hite*(double)height,0), QVector2D(1,1) }, //bottom left
-            };
+            vertices[0].vertex = QVector3D(winRightPos, 0.0, 0);
+            vertices[0].texcoord = QVector2D(0,0); //top right
+
+            vertices[1].vertex = QVector3D(winLeftPos, 0.0, 0);
+            vertices[1].texcoord = QVector2D(1,0); //top left
+
+            vertices[2].vertex = QVector3D(winRightPos, hite*(double)height,0);
+            vertices[2].texcoord = QVector2D(0,1); //bottom right
+
+            vertices[3].vertex = QVector3D(winLeftPos, hite*(double)height,0);
+            vertices[3].texcoord = QVector2D(1,1); //bottom left
+
             //rebuild sky buffer
             if (skyBuffer.isCreated())
                 skyBuffer.destroy();
@@ -991,13 +996,17 @@ void FormGPS::drawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int heigh
             skyBuffer.release();
         }
 
-        texture[Textures::SKY]->bind();
-        qDebug() << texture[Textures::SKY]->isCreated();
+        texture[Textures::FONT]->bind(0);
+        qDebug() << texture[Textures::FONT]->isCreated() << " " <<
+                    texture[Textures::FONT]->isBound() << " " <<
+                    sizeof(VertexTexcoord) << " " << sizeof(vertices);
+
         glDrawArraysTexture(gl, mvp,
                             GL_TRIANGLE_STRIP, skyBuffer,
                             GL_FLOAT,
                             4, true, QColor::fromRgbF(0.5,0.5,0.5));
-        texture[Textures::SKY]->release();
+        texture[Textures::FONT]->release();
+
     }
 }
 
@@ -1005,7 +1014,7 @@ void FormGPS::drawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width
 {
     USE_SETTINGS;
     QLocale locale;
-    QString hede = locale.toString(camera.camHeading, 'g', 1);
+    QString hede = locale.toString(camera.camHeading, 'f', 1);
     int center = Width / 2 - 45 - (int)(((double)(hede.length()) * 0.5) * 16);
 
     if (SETTINGS_DISPLAY_COMPASS)
@@ -1013,7 +1022,7 @@ void FormGPS::drawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width
     else drawText(gl, mvp, center, 65, hede, 1.2, true, QColor::fromRgbF(0.9752f, 0.952f, 0.83f));
 }
 
-void FormGPS::drawCompass(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection, double Width)
+void FormGPS::drawCompass(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width)
 {
     //Heading text
     int center = Width / 2 - 55;
@@ -1030,10 +1039,10 @@ void FormGPS::drawCompass(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x
     gldraw.append( { QVector3D(52, 52, 0), QVector2D(1, 1) });
     gldraw.append( { QVector3D(-52, 52, 0), QVector2D(0, 1) });
 
-    gldraw.draw(gl, projection*modelview, Textures::COMPASS, GL_QUADS, true, QColor::fromRgbF(0.952f, 0.870f, 0.73f, 0.8));
+    gldraw.draw(gl, projection*modelview, Textures::COMPASS, GL_QUADS, true, QColor::fromRgbF(0.952f, 0.870f, 0.73f, 0.8f));
 }
 
-void FormGPS::drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection, double Width, double Height)
+void FormGPS::drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width, double Height)
 {
     GLHelperTexture gldraw1;
 
@@ -1066,16 +1075,14 @@ void FormGPS::drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4
         if (aveSpd > 20) aveSpd = 20;
     }
 
-    GLHelperOneColor gldraw2;
-
+    gldraw1.clear();
     modelview.rotate(angle, 0, 0, 1);
-    gldraw2.append(QVector3D(0, 0, 0)); gldraw2.append(QVector3D(-48, -48, 0)); //
-    gldraw2.append(QVector3D(1, 0, 0)); gldraw2.append(QVector3D(48, -48.0, 0)); //
-    gldraw2.append(QVector3D(1, 1, 0)); gldraw2.append(QVector3D(48, 48, 0)); //
-    gldraw2.append(QVector3D(0, 1, 0)); gldraw2.append(QVector3D(-48, 48, 0)); //
+    gldraw1.append({ QVector3D(-48, -48, 0),  QVector2D(0, 0) });
+    gldraw1.append({ QVector3D(48, -48.0, 0), QVector2D(1, 0) });
+    gldraw1.append({ QVector3D(48, 48, 0),    QVector2D(1, 1) });
+    gldraw1.append({ QVector3D(-48, 48, 0),   QVector2D(0, 1) });
 
-    gldraw2.draw(gl, projection*modelview, QColor::fromRgbF(0.952f, 0.70f, 0.23f),
-                 GL_QUADS, 1.0f);
+    gldraw1.draw(gl, projection*modelview, Textures::SPEEDONEDLE, GL_QUADS, true, QColor::fromRgbF(0.952f, 0.70f, 0.23f));
 }
 
 void FormGPS::calcFrustum(const QMatrix4x4 &mvp)

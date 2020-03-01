@@ -48,6 +48,8 @@ void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix
     mv.translate(sin(v.fixHeading) * hitchLength,
                             cos(v.fixHeading) * hitchLength, 0);
 
+    gl->glLineWidth(2.0f);
+
     //settings doesn't change trailing hitch length if set to rigid, so do it here
     double trailingTank, trailingTool;
     if (isToolTrailing)
@@ -98,6 +100,8 @@ void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix
     //draw the sections
     GLHelperColors gldrawcolors;
     QColor color;
+
+    gl->glLineWidth(8.0f);
 
     //draw section line
     if (section[numOfSections].isSectionOn)

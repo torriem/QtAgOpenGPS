@@ -31,7 +31,6 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, Q
     QSettings settings;
 
 
-    gl->glEnable(GL_TEXTURE_2D);
     //We can save a lot of time by keeping this grid buffer on the GPU unless it needs to
     //be altered.
     if (!fieldBufferCurrent) {
@@ -59,55 +58,21 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, Q
         fieldBufferCurrent = true;
     }
 
-    // Enable Texture Mapping and set color to white
-
-    if (!fieldShader) {
-        //have to dynamically create it because we're in a different thread now
-        //than when the constructor ran. QThread will destroy it for us when
-        //we're done.
-        fieldShader = new QOpenGLShaderProgram(QThread::currentThread());
-        assert(fieldShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/colortex_vshader.vsh"));
-        assert(fieldShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/colortex_fshader.fsh"));
-        assert(fieldShader->link());
-    }
-
     //bind field surface texture
     texture[Textures::FLOOR]->bind();
-    qDebug() << texture[Textures::FLOOR] -> width();
+    //qDebug() << texture[Textures::FLOOR] -> width();
 
-    //bind and set up the shader
-    fieldShader->bind();
-    fieldShader->setUniformValue("color", fieldColor);
-    fieldShader->setUniformValue("texture", 0); //magic number texture 0?
-    fieldShader->setUniformValue("mvpMatrix", mvp);
-    fieldShader->setUniformValue("useColor", true);
-
-    fieldBuffer.bind();
-    fieldShader->enableAttributeArray("vertex");
-    fieldShader->enableAttributeArray("texcoord_src");
-
-    //TODO move these shader and drawing routines to glutils
-    gl->glVertexAttribPointer(fieldShader->attributeLocation("vertex"),
-                              3, //3D vertices
-                              GL_FLOAT, GL_FALSE,
-                              5 * sizeof(float),
-                              0 //vertex comes first
-                             );
-
-    gl->glVertexAttribPointer(fieldShader->attributeLocation("texcoord_src"),
-                              2, //2D texture coordinate
-                              GL_FLOAT, GL_FALSE,
-                              5 * sizeof(float),
-                              ((float *)0) + 3 //comes after the vertex
-                             );
-
-    gl->glDrawArrays(GL_TRIANGLE_STRIP,0, 4); //A quad from triangles
+    glDrawArraysTexture(gl, mvp, GL_TRIANGLE_STRIP, fieldBuffer, GL_FLOAT, 4, true, fieldColor);
 
     texture[Textures::FLOOR]->release();
-    fieldBuffer.release();
-    fieldShader->release();
-    gl->glDisable(GL_TEXTURE_2D);
-
+    /*
+    GLHelperTexture gldraw;
+    gldraw.append( { QVector3D(eastingMin, northingMax, 0.0), QVector2D(0,0) } );
+    gldraw.append( { QVector3D(eastingMax, northingMax, 0.0), QVector2D(texZoomE, 0) } );
+    gldraw.append( { QVector3D(eastingMin, northingMin, 0.0), QVector2D(0,texZoomN) } );
+    gldraw.append( { QVector3D(eastingMax, northingMin, 0.0), QVector2D(texZoomE, texZoomN) } );
+    gldraw.draw(gl, mvp, Textures::FLOOR, GL_TRIANGLE_STRIP, true, fieldColor);
+    */
 }
 
 void CWorldGrid::drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, double _gridZoom, QColor gridColor)
