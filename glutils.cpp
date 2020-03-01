@@ -56,12 +56,12 @@ void initializeTextures() {
     QOpenGLTexture *t;
 
     //  Background
-    t = new QOpenGLTexture(QImage(":/images/textures/Landscape.png").mirrored());
+    t = new QOpenGLTexture(QImage(":/images/textures/Landscape.png"));
     texture.append(t); //position 0
-    t = new QOpenGLTexture(QImage(":/images/textures/floor.png").mirrored());
+    t = new QOpenGLTexture(QImage(":/images/textures/floor.png"));
     t->setMinMagFilters(QOpenGLTexture::Linear, QOpenGLTexture::Linear);
     texture.append(t); //position 1
-    t = new QOpenGLTexture(QImage(":/images/textures/Font.png").mirrored());
+    t = new QOpenGLTexture(QImage(":/images/textures/Font.png"));
     textureWidth = t->width();
     textureHeight= t->height();
     texture.append(t); //position 2
@@ -71,11 +71,11 @@ void initializeTextures() {
     texture.append(t); //position 4
     t = new QOpenGLTexture(QImage(":/images/textures/TurnManual.png").mirrored());
     texture.append(t); //position 5
-    t = new QOpenGLTexture(QImage(":/images/textures/Compass.png").mirrored());
+    t = new QOpenGLTexture(QImage(":/images/textures/Compass.png"));
     texture.append(t); //position 6
-    t = new QOpenGLTexture(QImage(":/images/textures/speedo.png").mirrored());
+    t = new QOpenGLTexture(QImage(":/images/textures/speedo.png"));
     texture.append(t); //position 7
-    t = new QOpenGLTexture(QImage(":/images/textures/SpeedoNedle.png").mirrored());
+    t = new QOpenGLTexture(QImage(":/images/textures/SpeedoNedle.png"));
     texture.append(t); //position 8
 }
 
@@ -207,13 +207,14 @@ void glDrawArraysTexture(QOpenGLFunctions *gl,
                          bool useColor = false,
                          QColor color = QColor::fromRgbF(1,1,1))
 {
+    gl->glEnable(GL_TEXTURE_2D);
     //bind shader
     assert(texShader->bind());
     //set mvp matrix
-    texShader->setUniformValue("mvpMatrix", mvp);
+    texShader->setUniformValue("color", color);
     texShader->setUniformValue("texture", 0);
+    texShader->setUniformValue("mvpMatrix", mvp);
     texShader->setUniformValue("useColor", useColor);
-    simpleColorShader->setUniformValue("color", color);
 
 
     vertexBuffer.bind();
@@ -223,7 +224,7 @@ void glDrawArraysTexture(QOpenGLFunctions *gl,
     texShader->enableAttributeArray("texcoord_src");
 
     //use attribute array from buffer, using non-normalized vertices
-    gl->glVertexAttribPointer(interpColorShader->attributeLocation("vertex"),
+    gl->glVertexAttribPointer(texShader->attributeLocation("vertex"),
                               3, //3D vertices
                               GL_type, //type of data GL_FLAOT or GL_DOUBLE
                               GL_FALSE, //not normalized vertices!
@@ -231,7 +232,7 @@ void glDrawArraysTexture(QOpenGLFunctions *gl,
                               0 //start at offset 0 in buffer
                              );
 
-    gl->glVertexAttribPointer(interpColorShader->attributeLocation("texcoord_src"),
+    gl->glVertexAttribPointer(texShader->attributeLocation("texcoord_src"),
                               2, //2D coordinate
                               GL_type, //type of data GL_FLAOT or GL_DOUBLE
                               GL_FALSE, //not normalized vertices!
@@ -245,11 +246,11 @@ void glDrawArraysTexture(QOpenGLFunctions *gl,
     vertexBuffer.release();
     //release shader
     texShader->release();
+    gl->glDisable(GL_TEXTURE_2D);
 }
 
 void drawText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString text, double size, bool colorize, QColor color)
 {
-    /*
     //GL.Color3(0.95f, 0.95f, 0.40f);
 
     GLHelperTexture gldraw;
@@ -284,14 +285,12 @@ void drawText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString 
     }
 
     gldraw.draw(gl, mvp, Textures::FONT, GL_QUADS, colorize, color);
-    */
 }
 
 void drawText3D(const CCamera &camera, QOpenGLFunctions *gl,
                 QMatrix4x4 mvp, double x1, double y1, QString text,
                 double size, bool colorize, QColor color)
 {
-    /*
     GLHelperTexture gldraw;
     VertexTexcoord vt;
 
@@ -346,13 +345,11 @@ void drawText3D(const CCamera &camera, QOpenGLFunctions *gl,
     }
 
     gldraw.draw(gl, mvp, Textures::FONT, GL_QUADS, colorize, color);
-    */
 }
 
 void drawTextVehicle(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp,
                      double x, double y, QString text, double size, bool colorize, QColor color)
 {
-    /*
     GLHelperTexture gldraw;
     VertexTexcoord vt;
 
@@ -419,7 +416,6 @@ void drawTextVehicle(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp
         x += CharXSpacing * size;
     }
     gldraw.draw(gl, mvp, Textures::FONT, GL_QUADS, colorize, color);
-    */
 }
 
 GLHelperOneColor::GLHelperOneColor() {
