@@ -996,16 +996,13 @@ void FormGPS::drawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int heigh
             skyBuffer.release();
         }
 
-        texture[Textures::FONT]->bind(0);
-        qDebug() << texture[Textures::FONT]->isCreated() << " " <<
-                    texture[Textures::FONT]->isBound() << " " <<
-                    sizeof(VertexTexcoord) << " " << sizeof(vertices);
+        texture[Textures::SKY]->bind(0);
 
         glDrawArraysTexture(gl, mvp,
                             GL_TRIANGLE_STRIP, skyBuffer,
                             GL_FLOAT,
                             4, true, QColor::fromRgbF(0.5,0.5,0.5));
-        texture[Textures::FONT]->release();
+        texture[Textures::SKY]->release();
 
     }
 }
