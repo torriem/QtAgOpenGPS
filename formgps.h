@@ -404,7 +404,7 @@ public:
     //extracted Near, Far, Right, Left clipping planes of frustum
     double frustum[24];
 
-    double fovy = 45;
+    double fovy = 0.7;
     double camDistanceFactor = -2;
     int mouseX = 0, mouseY = 0;
     int lastWidth=-1, lastHeight=-1;

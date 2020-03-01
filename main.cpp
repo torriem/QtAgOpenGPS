@@ -1,8 +1,11 @@
 #include "formgps.h"
 #include <QApplication>
 #include <QCoreApplication>
+#include <QLabel>
 
 #include "aogrenderer.h"
+
+QLabel *grnPixels;
 
 #ifndef TESTING
 int main(int argc, char *argv[])
@@ -19,7 +22,10 @@ int main(int argc, char *argv[])
     qmlRegisterType<AOGRendererInSG>("AgOpenGPS",1,0,"AOGRenderer");
     FormGPS w;
     w.show();
-
+    //grnPixels = new QLabel("Hello");
+    //grnPixels->setFixedWidth(500);
+    //grnPixels->setFixedHeight(500);
+    //grnPixels->show();
     return a.exec();
 }
 #endif

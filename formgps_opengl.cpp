@@ -62,7 +62,7 @@ void FormGPS::openGLControl_Draw()
     //to shift, translate projection here. -1,0,0 is far left, 1,0,0 is far right.
 
     //  Create a perspective transformation.
-    projection.perspective(fovy, width / (double)height, 1.0f, camDistanceFactor * camera.camSetDistance);
+    projection.perspective(glm::toDegrees(fovy), width / (double)height, 1.0f, camDistanceFactor * camera.camSetDistance);
 
     if (isGPSPositionInitialized)
     {
@@ -72,7 +72,7 @@ void FormGPS::openGLControl_Draw()
         modelview.setToIdentity();
 
         //camera does translations and rotations
-        camera.setWorldCam(modelview, vehicle.pivotAxlePos.easting + offX, vehicle.pivotAxlePos.northing + offY, fixHeadingCam);
+        camera.setWorldCam(modelview, vehicle.pivotAxlePos.easting + offX, vehicle.pivotAxlePos.northing + offY, camera.camHeading);
 
         //calculate the frustum planes for culling
         calcFrustum(projection*modelview);
@@ -418,7 +418,6 @@ void FormGPS::openGLControlBack_Draw()
     //thread can then run the second part of this function, which I've
     //split out into its own function.
     QOpenGLContext *glContext = QOpenGLContext::currentContext();
-    QOpenGLFunctions *gl = glContext->functions();
     QMatrix4x4 projection;
     QMatrix4x4 modelview;
 
@@ -438,6 +437,7 @@ void FormGPS::openGLControlBack_Draw()
     glContext->makeCurrent(&backSurface);
     backFBO->bind();
     glContext->functions()->glViewport(0,0,500,500);
+    QOpenGLFunctions *gl = glContext->functions();
 
     //int width = glContext->surface()->size().width();
     //int height = glContext->surface()->size().height();
@@ -448,7 +448,7 @@ void FormGPS::openGLControlBack_Draw()
     projection.setToIdentity();
 
     //projection.perspective(6.0f,1,1,6000);
-    projection.perspective(0.104719758f, 1.0f, 50.0f, 520.0f);
+    projection.perspective(glm::toDegrees(0.104719758f), 1.0f, 50.0f, 520.0f);
 
     gl->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
@@ -549,6 +549,7 @@ void FormGPS::openGLControlBack_Draw()
     //read the whole block of pixels up to max lookahead, one read only
     //we'll use Qt's QImage function to grab it.
     grnPix = backFBO->toImage().mirrored().convertToFormat(QImage::Format_RGBX8888);
+    qDebug() << grnPix.size();
     QImage temp = grnPix.copy(tool.rpXPosition, 252, tool.rpWidth, 245 /*(int)rpHeight*/);
     memcpy(lookaheadPixels, temp.constBits(), temp.size().width() * temp.size().height() * 4);
     grnPix = temp;

@@ -8,6 +8,10 @@
 #include <QLocale>
 #include <QLabel>
 
+extern QLabel *grnPixels;
+
+
+
 FormGPS::FormGPS(QWidget *parent) :
     QQuickView(qobject_cast<QWindow *>(parent))
 {
@@ -125,7 +129,7 @@ void FormGPS::processSectionLookahead() {
 
     //not using regular Qt Widgets in the main window anymore.  For
     //debugging purposes, this could go in another popup window
-    //ui->grnPixels->setPixmap(QPixmap::fromImage(grnPix.mirrored()));
+    //grnPixels->setPixmap(QPixmap::fromImage(grnPix.mirrored()));
 
     //determine farthest ahead lookahead - is the height of the readpixel line
     double rpHeight = 0;
