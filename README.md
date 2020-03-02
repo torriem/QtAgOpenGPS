@@ -33,29 +33,28 @@ NMEA simulator.
 This application is distributed here in source code form only. I will
 post demo binaries outside of this tree somewhere.
 
+Copyright
+---------
+Much of the code is copied straight from the AOG C Sharp sources and is
+therefore copyright Brian Tischler.  Everything else is copyright 
+Michael Torrie (torriem@gmail.com) and Muhktimar (tamirscn@gmail.com).
+
 License
 -------
-Since QtAOG is a direct port of AOG, this project is bound by the same
-license as AOG, which is the GPLv3, and much of the code is still
-copyrighted by the creator of AOG, farmerbriantee.
+AOG was originally licensed under the GPLv3, so this port was also 
+licensed under the GPLv3.  AOG has since been relicensed to the MIT
+license, which is still compatible with the GPLv3, so this project
+remains GPLv3 for now.
 
 Requirements
 ------------
-QtAOG requires Qt 5.8 or newer to build, on any Qt-supported platform
-that has full OpenGL 4. It currently will not run on OpenGL ES, though
-that will come in the future.  Although graphics cards on Windows often
-have full OpenGL 4 support, Qt itself only supports OpenGL ES on
-Windows. However calling OpenGL calls directly works and that is what
-I'm going to do for now. Once OpenGL ES support is in, QtAOG will use
-Qt wrappers for all opengl calls.
+QtAOG requires Qt 5.9 or newer to build, on any Qt-supported platform
+that supports OpenGL ES 2 or newer, or DirectX on Windows.
 
 Why this Port?
 --------------
 This port is mainly for my own entertainment, to allow me to run AOG
-on Linux. When the OpenGL calls are converted to OpenGL ES, QtAOG
-should run on ARM-based computers and tablets also.  As the main
-interface is built using QtQuick components, a port to Android is
-possible as well.
+on Linux, including SBCs like the Raspberry Pi, or even Android. 
 
 Notes on the Port
 -----------------
@@ -84,24 +83,21 @@ must manage those matrices ourselves anyway.
 
 Status of the Port
 ------------------
-As of Oct 19, 2017, all of the core logic of AOG has been ported. This
-includes coverage tracking, section control lookahead, field boundaries,
-AB Lines, Contour tracking, the works.  However there are currently no
-interfaces with the serial ports, so no way of actually controlling
-sections or steering yet. Also very little of the UI has been hooked
-up. Most buttons do nothing.  The app will take NMEA data over UDP, and
-for testing purposes, it runs with an open job so you can drive around
-and turn on sections.
+As of March 2020, the backend code is tracking the current released
+branch of https://github.com/farmerbriantee/AgOpenGPS, which is version
+3.  
 
-The only buttons connected are the tilt, zoom, individual section
-buttons, manual off/on, and automatic section off on.  No other UI
-elements, including the menu do anything.  But the program is able to
-function and demonstrate section coverage mapping and control, using
-a UDP NMEA source.
+UI is still mostly non-present, and really only works with the built-in
+simulator, or a UDP data stream.  For testing purposes, a job and field
+is automatically started, and a demo AB line is defined at 5 degrees.
 
-Configuration is currently done entirely through a config file that
-QtAOG creats automatically on first run. In Linux this is
-$HOME/.config/AgOpenGPS/QtAgOpenGPS.conf.
+Bugs
+----
+Section lookahead isn't working quite right compared to AOG.  Zero speed
+doesn't seem to be detected, and sometimes turning a section off while on
+Auto will cause the entire tool to turn off.
 
-The next stage is to hook up the UI buttons and implement field job
-control.  Also the settings UI needs to be created.
+GL font drawing has issues.
+
+Manual UTurn "buttons" aren't drawing
+
