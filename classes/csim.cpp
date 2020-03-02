@@ -2,6 +2,7 @@
 #include <QDateTime>
 #include <iostream>
 #include <cmath>
+#include "glm.h"
 
 
 CSim::CSim()
@@ -11,28 +12,25 @@ CSim::CSim()
 }
 void CSim::DoSimTick(double _st)
 {
+    QByteArray sbSendText;
+
     steerAngle = _st;
     double temp = (stepDistance *qTan(steerAngle * 0.0165329252) / 3.3);
     headingTrue += temp;
-    if (headingTrue > (2.0 * M_PI)) headingTrue -=(2.0 * M_PI);
-    if (headingTrue < 0) headingTrue += (2.0 * M_PI);
+    if (headingTrue > (2.0 * M_PI)) headingTrue -= glm::twoPI;
+    if (headingTrue < 0) headingTrue += glm::twoPI;
 
-    degrees = headingTrue * ANG_TO_RAD;
-    degrees = qRound(degrees);
+    degrees = glm::toDegrees(headingTrue);
     //Calculate the next Latitude and Longitude based on heading and distance
     CalculateNewPositionFromBearingDistance(latitude, longitude, degrees, stepDistance / 1000.0);
+    //qDebug() << fixed << qSetRealNumberPrecision(7) << latitude;
     // calc the speed
-    speed = qRound(1.944 * stepDistance * 5);
-    BuildGGA();
-    BuildVTG();
-
-    sbSendText.append(sbGGA);
-
-    sbSendText.append(sbVTG);
+    speed = 1.944 * stepDistance * 5;
+    sbSendText.append(BuildGGA().toLatin1());
+    sbSendText.append(BuildVTG().toLatin1());
 
     // if you want to see the generated data, uncomment it
-
-//    cout << sbSendText.data();
+    //qDebug() << sbSendText.constData();
 
     emit new_position(sbSendText);
 
@@ -82,11 +80,11 @@ void CSim::CalculateNewPositionFromBearingDistance(double lat, double lng, doubl
 void CSim::CalculateCheckSum(QString Sentence)
 {
     int sum = 0, inx;
-    const char * sentence_chars = Sentence.toLatin1().data();
+    QByteArray sentence_chars = Sentence.toLatin1();
     char tmp;
-    for (inx = 1; ; inx++)
+    for (inx = 1; inx < Sentence.length(); inx++)
     {
-        tmp = sentence_chars[inx];
+        tmp = sentence_chars.at(inx);
         if (tmp == '*') break;
         sum ^= tmp;
     }
@@ -94,14 +92,15 @@ void CSim::CalculateCheckSum(QString Sentence)
 
 }
 
-void CSim::BuildGGA()
+QString CSim::BuildGGA()
 {
+    QString sbGGA;
     QString hms = QDateTime::currentDateTime().toString("HHmmss.00,");
     sbGGA.clear();
     sbGGA.append("$GPGGA,");
     sbGGA.append(hms);
-    sbGGA.append(QString::number(latNMEA,'g',7)).append(',').append(NS).append(',');
-    sbGGA.append(QString::number(longNMEA,'g',7)).append(',').append(EW).append(',');
+    sbGGA.append(QString::number(latNMEA,'f',7)).append(',').append(NS).append(',');
+    sbGGA.append(QString::number(longNMEA,'f',7)).append(',').append(EW).append(',');
     sbGGA.append(QString::number(fixQuality)).
             append(',').
             append(QString::number(sats)).
@@ -114,10 +113,13 @@ void CSim::BuildGGA()
     sbGGA.append(sumStr);
     sbGGA.append("\r\n");
 
+    return sbGGA;
+
 }
 
-void CSim::BuildVTG()
+QString CSim::BuildVTG()
 {
+    QString sbVTG;
     sbVTG.clear();
     sbVTG.append("$GPVTG,");
     sbVTG.append(QString::number(degrees));
@@ -129,6 +131,8 @@ void CSim::BuildVTG()
     CalculateCheckSum(sbVTG);
     sbVTG.append(sumStr);
     sbVTG.append("\r\n");
+
+    return sbVTG;
 }
 
 void CSim::setSimStepDistance(double _stepDistance)
