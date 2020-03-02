@@ -1,5 +1,5 @@
 import QtQuick 2.8
-//import QtQuick.Controls 2.1
+import QtQuick.Controls 2.1
 import AgOpenGPS 1.0
 
 Item {
@@ -371,6 +371,40 @@ Item {
                     icon: "qrc:/images/ZoomOut48.png"
                 }
             }
+            Slider {
+                id: speedSlider
+                objectName: "simSpeed"
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                width: 200
+                from: 0
+                to: 100
+                value: 5
+            }
+            Slider {
+                id: steerSlider
+                objectName: "simSteer"
+                anchors.bottom: speedSlider.top
+                anchors.left: parent.left
+                width: 200
+                from: 0
+                to: 600
+                value: 300
+            }
+
+            IconButton {
+                id: centerSteerbutton
+                objectName: "simSteerCenter"
+                width: 50
+                height: 50
+                anchors.left: steerSlider.right
+                anchors.bottom: steerSlider.bottom
+                onClicked: {
+                    steerSlider.value = 300;
+                }
+
+            }
+
 
 
             IconPalette {

@@ -47,7 +47,8 @@ FormGPS::FormGPS(QWidget *parent) :
 
     //fieldColor = QColor(s.value("display/fieldColor", "#82781E").toString());
     //sectionColor = QColor(s.value("display/sectionColor", "#32DCC8").toString());
-
+    SETTINGS_SET_DISPLAY_COMPASS(true);
+    SETTINGS_SET_DISPLAY_SPEEDO(true);
 
     tool.section[0].positionLeft = -8;
     tool.section[0].positionRight = -4;
@@ -73,6 +74,12 @@ FormGPS::FormGPS(QWidget *parent) :
     tool.section[1].isAllowedOn = true;
     tool.section[2].isAllowedOn = true;
     tool.section[3].isAllowedOn = true;
+
+    ABLine.refPoint1.easting = 0;
+    ABLine.refPoint1.easting = 0;
+    ABLine.setABLineByHeading(glm::toRadians(5.0f));
+    ABLine.isBtnABLineOn = true;
+    //isAutoSteerBtnOn = true;
 
     if (isUDPServerOn) startUDPServer();
 
