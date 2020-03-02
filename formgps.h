@@ -269,7 +269,6 @@ public:
 
     QString headingFromSource;
 
-    Vec2 fix;
     /*
     double fixHeadingSection = 0.0, fixHeadingTank = 0.0;
     Vec2 pivotAxlePos;
