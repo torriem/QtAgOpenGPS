@@ -38,8 +38,11 @@ void FormGPS::openGLControl_Draw()
     gl->glViewport(0,0,width,height);
     //qDebug() << width << height;
 
+#ifndef Q_OS_ANDROID
+    //not compatible with Android
     gl->glEnable(GL_POINT_SPRITE);
     gl->glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+#endif
 
     //Do stuff that was in the initialized method, since Qt uses OpenGL and may
     //have messed with the matrix stuff and other defaults
@@ -604,12 +607,12 @@ void  FormGPS::drawManUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp)
     gldraw.append(vt);
     vt.texcoord = QVector2D(1,0); vt.vertex = QVector3D(-82 - two3, 45, 0);
     gldraw.append(vt);
-    vt.texcoord = QVector2D(1,1); vt.vertex = QVector3D(-82 - two3, 120, 0);
-    gldraw.append(vt);
     vt.texcoord = QVector2D(0,1); vt.vertex = QVector3D(-82 - two3, 120, 0);
     gldraw.append(vt);
+    vt.texcoord = QVector2D(1,1); vt.vertex = QVector3D(-82 - two3, 120, 0);
+    gldraw.append(vt);
 
-    gldraw.draw(gl, mvp, Textures::TURNMANUAL, GL_QUADS, true, QColor::fromRgbF(0.90f, 0.90f, 0.293f));
+    gldraw.draw(gl, mvp, Textures::TURNMANUAL, GL_TRIANGLE_STRIP, true, QColor::fromRgbF(0.90f, 0.90f, 0.293f));
 }
 
 void FormGPS::drawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp)
@@ -639,22 +642,24 @@ void FormGPS::drawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp)
         gldraw.append(vt);
         vt.texcoord = QVector2D(1, 0); vt.vertex = QVector3D(62 + two3, 50,0); //
         gldraw.append(vt);
+        vt.texcoord = QVector2D(0, 1); vt.vertex = QVector3D(-62 + two3, 120,0); //
+        gldraw.append(vt);
         vt.texcoord = QVector2D(1, 1); vt.vertex = QVector3D(62 + two3, 120,0); //
         gldraw.append(vt);
-        vt.texcoord = QVector2D(0, 1); vt.vertex = QVector3D(-62 + two3, 120,0); //
     }
     else
     {
-        vt.texcoord = QVector2D(1, 0); vt.vertex = QVector3D(-62 + two3, 50,0); //
-        gldraw.append(vt);
         vt.texcoord = QVector2D(0, 0); vt.vertex = QVector3D(62 + two3, 50,0); //
+        gldraw.append(vt);
+        vt.texcoord = QVector2D(1, 0); vt.vertex = QVector3D(-62 + two3, 50,0); //
         gldraw.append(vt);
         vt.texcoord = QVector2D(0, 1); vt.vertex = QVector3D(62 + two3, 120,0); //
         gldraw.append(vt);
         vt.texcoord = QVector2D(1, 1); vt.vertex = QVector3D(-62 + two3, 120,0); //
+        gldraw.append(vt);
     }
 
-    gldraw.draw(gl, mvp, whichtex, GL_QUADS, true, color);
+    gldraw.draw(gl, mvp, whichtex, GL_TRIANGLE_STRIP, true, color);
 
     // Done Building Triangle Strip
     if (isMetric)
@@ -1035,12 +1040,12 @@ void FormGPS::drawCompass(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4
     modelview.translate(center, 78, 0);
 
     modelview.rotate(-camera.camHeading, 0, 0, 1);
-    gldraw.append( { QVector3D(-52, -52, 0), QVector2D(0, 0) });
-    gldraw.append( { QVector3D(52, -52.0, 0), QVector2D(1, 0) });
-    gldraw.append( { QVector3D(52, 52, 0), QVector2D(1, 1) });
-    gldraw.append( { QVector3D(-52, 52, 0), QVector2D(0, 1) });
+    gldraw.append( { QVector3D(-52, -52, 0), QVector2D(0, 0) }); //bottom left
+    gldraw.append( { QVector3D(52, -52.0, 0), QVector2D(1, 0) }); //bottom right
+    gldraw.append( { QVector3D(-52, 52, 0), QVector2D(0, 1) }); // top left
+    gldraw.append( { QVector3D(52, 52, 0), QVector2D(1, 1) }); // top right
 
-    gldraw.draw(gl, projection*modelview, Textures::COMPASS, GL_QUADS, true, QColor::fromRgbF(0.952f, 0.870f, 0.73f, 0.8f));
+    gldraw.draw(gl, projection*modelview, Textures::COMPASS, GL_TRIANGLE_STRIP, true, QColor::fromRgbF(0.952f, 0.870f, 0.73f, 0.8f));
 }
 
 void FormGPS::drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width, double Height)
@@ -1051,12 +1056,12 @@ void FormGPS::drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 
 
     modelview.translate(Width / 2 - 60, bottomSide, 0);
 
-    gldraw1.append({ QVector3D(-58, -58, 0), QVector2D(0, 0) });
-    gldraw1.append({ QVector3D(58, -58.0, 0), QVector2D(1, 0) });
-    gldraw1.append({ QVector3D(58, 58, 0), QVector2D(1, 1) });
-    gldraw1.append({ QVector3D(-58, 58, 0), QVector2D(0, 1) });
+    gldraw1.append({ QVector3D(-58, -58, 0), QVector2D(0, 0) }); //bottom left
+    gldraw1.append({ QVector3D(58, -58.0, 0), QVector2D(1, 0) }); //bottom right
+    gldraw1.append({ QVector3D(-58, 58, 0), QVector2D(0, 1) }); //top left
+    gldraw1.append({ QVector3D(58, 58, 0), QVector2D(1, 1) }); //top right
 
-    gldraw1.draw(gl, projection*modelview, Textures::SPEEDO, GL_QUADS, true, QColor::fromRgbF(0.952f, 0.870f, 0.823f, 0.8));
+    gldraw1.draw(gl, projection*modelview, Textures::SPEEDO, GL_TRIANGLE_STRIP, true, QColor::fromRgbF(0.952f, 0.870f, 0.823f, 0.8));
 
     double angle = 0;
     double aveSpd = 0;
@@ -1080,10 +1085,10 @@ void FormGPS::drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 
     modelview.rotate(angle, 0, 0, 1);
     gldraw1.append({ QVector3D(-48, -48, 0),  QVector2D(0, 0) });
     gldraw1.append({ QVector3D(48, -48.0, 0), QVector2D(1, 0) });
-    gldraw1.append({ QVector3D(48, 48, 0),    QVector2D(1, 1) });
     gldraw1.append({ QVector3D(-48, 48, 0),   QVector2D(0, 1) });
+    gldraw1.append({ QVector3D(48, 48, 0),    QVector2D(1, 1) });
 
-    gldraw1.draw(gl, projection*modelview, Textures::SPEEDONEDLE, GL_QUADS, true, QColor::fromRgbF(0.952f, 0.70f, 0.23f));
+    gldraw1.draw(gl, projection*modelview, Textures::SPEEDONEDLE, GL_TRIANGLE_STRIP, true, QColor::fromRgbF(0.952f, 0.70f, 0.23f));
 }
 
 void FormGPS::calcFrustum(const QMatrix4x4 &mvp)
