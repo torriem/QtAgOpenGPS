@@ -9,7 +9,6 @@
 #include "cnmea.h"
 #include "cvehicle.h"
 #include "csection.h"
-#include "toplinedisplay.h"
 #include "ccontour.h"
 #include "cabline.h"
 
