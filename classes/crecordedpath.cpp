@@ -342,7 +342,7 @@ void CRecordedPath::StanleyRecPath(CVehicle &vehicle, const CNMEA &pn, int ptCou
     if (steerAngleRP > vehicle.maxSteerAngle) steerAngleRP = vehicle.maxSteerAngle;
 
     //Convert to millimeters and round properly to above/below .5
-    distanceFromCurrentLine = glm::roundAwayFromZero(distanceFromCurrentLine * 1000.0);
+    distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);
 
     //every guidance method dumps into these that are used and sent everywhere, last one wins
     vehicle.guidanceLineDistanceOff = vehicle.distanceDisplay = (int)distanceFromCurrentLine;
@@ -426,7 +426,7 @@ void CRecordedPath::StanleyDubinsPath(CVehicle &vehicle, const CNMEA &pn, int pt
     if (steerAngleRP > vehicle.maxSteerAngle) steerAngleRP = vehicle.maxSteerAngle;
 
     //Convert to millimeters and round properly to above/below .5
-    distanceFromCurrentLine = glm::roundAwayFromZero(distanceFromCurrentLine * 1000.0);
+    distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);
 
     //every guidance method dumps into these that are used and sent everywhere, last one wins
     vehicle.guidanceLineDistanceOff = vehicle.distanceDisplay = (int)distanceFromCurrentLine;

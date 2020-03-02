@@ -642,7 +642,7 @@ void CContour::distanceFromContourLine(CVehicle &vehicle, CNMEA &pn, Vec3 pivot,
             if (steerAngleCT > vehicle.maxSteerAngle) steerAngleCT = vehicle.maxSteerAngle;
 
             //Convert to millimeters
-            distanceFromCurrentLine = glm::roundAwayFromZero(distanceFromCurrentLine * 1000.0);
+            distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);
         }
         else
         {
@@ -846,7 +846,7 @@ void CContour::distanceFromContourLine(CVehicle &vehicle, CNMEA &pn, Vec3 pivot,
                     : (atan((vehicle.wheelbase * -vehicle.maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777))));
             }
             //Convert to centimeters
-            distanceFromCurrentLine = glm::roundAwayFromZero(distanceFromCurrentLine * 1000.0);
+            distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);
 
             //distance is negative if on left, positive if on right
             //if you're going the opposite direction left is right and right is left

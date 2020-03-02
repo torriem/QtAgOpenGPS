@@ -1603,7 +1603,7 @@ void CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
             if (steerAngleYT > vehicle.maxSteerAngle) steerAngleYT = vehicle.maxSteerAngle;
 
             //Convert to millimeters and round properly to above/below .5
-            distanceFromCurrentLine = glm::roundAwayFromZero(distanceFromCurrentLine * 1000.0);
+            distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);
 
             //every guidance method dumps into these that are used and sent everywhere, last one wins
             vehicle.guidanceLineDistanceOff = vehicle.distanceDisplay = (int)distanceFromCurrentLine;
@@ -1764,7 +1764,7 @@ void CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
                     : (atan((vehicle.wheelbase * -vehicle.maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777))));
             }
             //Convert to centimeters
-            distanceFromCurrentLine = glm::roundAwayFromZero(distanceFromCurrentLine * 1000.0);
+            distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);
 
             //distance is negative if on left, positive if on right
             //if you're going the opposite direction left is right and right is left

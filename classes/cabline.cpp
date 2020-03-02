@@ -61,17 +61,19 @@ void CABLine::setABLineByBPoint(const CVehicle &vehicle)
     isABLineLoaded = true;
 }
 
-void CABLine::setABLineByHeading()
+void CABLine::setABLineByHeading(double heading)
 {
     //heading is set in the AB Form
-    refABLineP1.easting = refPoint1.easting - (sin(abHeading) * 4000.0);
-    refABLineP1.northing = refPoint1.northing - (cos(abHeading) * 4000.0);
+    refABLineP1.easting = refPoint1.easting - (sin(heading) * 4000.0);
+    refABLineP1.northing = refPoint1.northing - (cos(heading) * 4000.0);
 
-    refABLineP2.easting = refPoint1.easting + (sin(abHeading) * 4000.0);
-    refABLineP2.northing = refPoint1.northing + (cos(abHeading) * 4000.0);
+    refABLineP2.easting = refPoint1.easting + (sin(heading) * 4000.0);
+    refABLineP2.northing = refPoint1.northing + (cos(heading) * 4000.0);
 
     refPoint2.easting = refABLineP2.easting;
     refPoint2.northing = refABLineP2.northing;
+
+    abHeading = heading;
 
     isABLineSet = true;
     isABLineLoaded = true;
@@ -128,7 +130,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
         distanceFromRefLine = fabs(distanceFromRefLine);
 
         //Which ABLine is the vehicle on, negative is left and positive is right side
-        howManyPathsAway = glm::roundAwayFromZero(distanceFromRefLine / widthMinusOverlap);
+        howManyPathsAway = glm::roundMidAwayFromZero(distanceFromRefLine / widthMinusOverlap);
 
         //generate that pass number as signed integer
         passNumber = int(refLineSide * howManyPathsAway);
@@ -233,7 +235,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
         if (steerAngleAB > vehicle.maxSteerAngle) steerAngleAB = vehicle.maxSteerAngle;
 
         //Convert to millimeters
-        distanceFromCurrentLine = glm::roundAwayFromZero(distanceFromCurrentLine * 1000.0);
+        distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);
     }
     else
     {
@@ -362,7 +364,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
         radiusPointAB.northing = pivot.northing + (ppRadiusAB * sin(localHeading));
 
         //Convert to millimeters
-        distanceFromCurrentLine = glm::roundAwayFromZero(distanceFromCurrentLine * 1000.0);
+        distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);
 
         //angular velocity in rads/sec  = 2PI * m/sec * radians/meters
         angVel = glm::twoPI * 0.277777 * pn.speed * (tan(glm::toRadians(steerAngleAB)))/vehicle.wheelbase;
@@ -385,26 +387,27 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
         {
             if (isOnRightSideCurrentLine) distanceFromCurrentLine *= -1.0;
         }
+    }
 
-        //TODO: make these CYouTurn &ytignal?
-        vehicle.guidanceLineDistanceOff = int(distanceFromCurrentLine);
-        vehicle.guidanceLineSteerAngle = int(steerAngleAB * 100);
+    //TODO: make these CYouTurn &ytignal?
+    vehicle.guidanceLineDistanceOff = vehicle.distanceDisplay = int(distanceFromCurrentLine);
+    vehicle.guidanceLineSteerAngle = int(steerAngleAB * 100);
+    qDebug() << vehicle.guidanceLineDistanceOff << ", " << steerAngleAB;
 
-        if(yt.isYouTurnTriggered) {
-            //do the pure pursuit from youTurn
-            yt.distanceFromYouTurnLine(vehicle,pn);
-            //mf.seq.doSequenceEvent(); //TODO:?
-            emit doSequence(yt);
+    if(yt.isYouTurnTriggered) {
+        //do the pure pursuit from youTurn
+        yt.distanceFromYouTurnLine(vehicle,pn);
+        //mf.seq.doSequenceEvent(); //TODO:?
+        emit doSequence(yt);
 
-            //now substitute what it thinks are AB line values with auto turn values
-            steerAngleAB = yt.steerAngleYT;
-            distanceFromCurrentLine = yt.distanceFromCurrentLine;
+        //now substitute what it thinks are AB line values with auto turn values
+        steerAngleAB = yt.steerAngleYT;
+        distanceFromCurrentLine = yt.distanceFromCurrentLine;
 
-            goalPointAB = yt.goalPointYT;
-            radiusPointAB.easting = yt.radiusPointYT.easting;
-            radiusPointAB.northing = yt.radiusPointYT.northing;
-            ppRadiusAB = yt.ppRadiusYT;
-        }
+        goalPointAB = yt.goalPointYT;
+        radiusPointAB.easting = yt.radiusPointYT.easting;
+        radiusPointAB.northing = yt.radiusPointYT.northing;
+        ppRadiusAB = yt.ppRadiusYT;
     }
 }
 

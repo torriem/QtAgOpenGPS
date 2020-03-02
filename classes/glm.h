@@ -147,8 +147,9 @@ namespace glm {
         return degrees * M_PI / 180.0;
     }
 
-    static inline double roundAwayFromZero(double number) {
-       return (number < 0) ? floor(number) : ceil(number);
+    static inline double roundMidAwayFromZero(double number) {
+        return std::lround(number);
+        //return (number < 0) ? floor(number) : ceil(number);
     }
 
 

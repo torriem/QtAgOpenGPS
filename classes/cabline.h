@@ -92,7 +92,7 @@ public:
     explicit CABLine(QObject *parent = 0);
     void deleteAB();
     void setABLineByBPoint(const CVehicle &vehicle);
-    void setABLineByHeading(); //do we need to pass in heading somewhere from the main form?
+    void setABLineByHeading(double heading); //do we need to pass in heading somewhere from the main form?
     void snapABLine();
     void getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTurn &yt, const CTool &tool, CNMEA &pn);
     void drawABLines(QOpenGLFunctions *g, const QMatrix4x4 &mvp, const CVehicle &vehicle, const CTool &tool, CYouTurn &yt, CTram &tram, const CCamera &camera);
