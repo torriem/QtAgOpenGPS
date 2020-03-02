@@ -4,7 +4,6 @@
 #include <QRgb>
 #include "qmlutil.h"
 #include "glm.h"
-#include "toplinedisplay.h"
 #include <QLocale>
 #include <QLabel>
 
