@@ -46,7 +46,7 @@ QColor parseColor(QString setcolor);
 #define SETTINGS_TOOLISTBT 				settings.   value("vehicle/toolIsTBT", false).toBool()
 #define SETTINGS_SET_TOOLISTBT(VAL)		settings.setValue("vehicle/toolIsTBT", VAL)
 
-#define SETTINGS_TOOLLOOKAHEAD 				settings.   value("vehicle/toolLookAhead", 0.1).toDouble()
+#define SETTINGS_TOOLLOOKAHEAD 				settings.   value("vehicle/toolLookAhead", 2).toDouble()
 #define SETTINGS_SET_TOOLLOOKAHEAD(VAL)		settings.setValue("vehicle/toolLookAhead", VAL)
 
 #define SETTINGS_TOOLTURNOFFDELAY 				settings.   value("vehicle/toolTurnOffDelay", 1).toDouble()

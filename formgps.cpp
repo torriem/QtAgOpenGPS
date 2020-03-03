@@ -155,7 +155,7 @@ void FormGPS::processSectionLookahead() {
     }
 
     //if only one section, or going slow no need for super section
-    if (tool.numOfSections == 1 || pn.speed < tool.slowSpeedCutoff)
+    if (tool.numOfSections == 1 || pn.speed <= tool.slowSpeedCutoff)
             tool.isSuperSectionAllowedOn = false;
 
     //clamp the height after looking way ahead, this is for switching off super section only
@@ -327,7 +327,7 @@ GetMeOutaHere:
 
 
                     int tagged = 0;
-                    for (int h = 0; h < (int)tool.section[j].sectionLookAhead; h++)
+                    for (int h = 0; h < ceil(tool.section[j].sectionLookAhead); h++)
                     {
                         for (int a = start; a < end; a++)
                         {
@@ -398,9 +398,8 @@ GetMeOutaHere:
             }
 
             //if going too slow turn off sections
-            if (pn.speed < tool.slowSpeedCutoff)
+            if (pn.speed <= tool.slowSpeedCutoff)
             {
-                //qDebug() << "section speed too slow on "<< j;
                 tool.section[j].sectionOnRequest = false;
                 tool.section[j].sectionOffRequest = true;
             }
