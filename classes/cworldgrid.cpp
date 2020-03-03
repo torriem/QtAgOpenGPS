@@ -114,7 +114,7 @@ void CWorldGrid::drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, doub
         gridBufferCount = vertices.count();
 
     }
-
+    gl->glLineWidth(1);
     glDrawArraysColor(gl, mvp,
                       GL_LINES, gridColor,
                       gridBuffer,GL_FLOAT,
