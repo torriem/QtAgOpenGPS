@@ -13,9 +13,13 @@ Rectangle {
     property color color2: "#00000000"
     property color color3: "#00000000"
 
-    property color colorPressed1: "#ffffff"
+    property color colorPressed1: "#888888"
     property color colorPressed2: "#ffffff"
-    property color colorPressed3: "#888888"
+    property color colorPressed3: "#ffffff"
+
+    property color colorHover1: "#ffffff"
+    property color colorHover2: "#ffffff"
+    property color colorHover3: "#888888"
 
     property url icon: "/images/AutoSteerOn.png"
     property int bordersize: 0
@@ -87,6 +91,18 @@ Rectangle {
             when: mouseArea.containsMouse
             name: "hover"
             PropertyChanges { target: iconButton; bordersize: 1}
+            PropertyChanges {
+                target: gradientStop1
+                color: colorHover1
+            }
+            PropertyChanges {
+                target: gradientStop2
+                color: colorHover2
+            }
+            PropertyChanges {
+                target: gradientStop3
+                color: colorHover3
+            }
         }
     ]
 

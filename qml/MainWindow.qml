@@ -24,7 +24,7 @@ Item {
         height: screenPixelDensity * 0.3 //.3" tall
         Text {
             id: text1
-            text: "Top line stuff goes here"
+            text: ""
             color: systemPalette.windowText
             anchors.horizontalCenter: parent.horizontalCenter
 
@@ -42,6 +42,7 @@ Item {
         anchors.bottom:  statusBar.top
 
         color: "black"
+        /*
         Text {
             id: text2
             text: qsTr("No GPS")
@@ -49,6 +50,7 @@ Item {
             font.pointSize: 24
             anchors.centerIn: parent
         }
+        */
     }
 
 
@@ -343,6 +345,23 @@ Item {
                     radius: 10
                     icon: "qrc:/images/TiltUp.png"
                 }
+                IconButton {
+                    id: btnZoomIn
+                    objectName: "btnZoomIn"
+                    width: 70
+                    height: 70
+                    radius: 10
+                    icon: "qrc:/images/ZoomIn48.png"
+                }
+
+                IconButton {
+                    id: btnZoomOut
+                    objectName: "btnZoomOut"
+                    width: 70
+                    height: 70
+                    radius: 10
+                    icon: "qrc:/images/ZoomOut48.png"
+                }
             }
 
             Row {
@@ -365,8 +384,11 @@ Item {
                 }
                 anchors.left: tiltButtons.right;
                 anchors.top: tiltButtons.top;
+                spacing: 6
+                anchors.leftMargin: 10
             }
 
+            /*
             Column {
                 id: zoomButtons
                 spacing: 6
@@ -375,25 +397,8 @@ Item {
                 anchors.top: parent.top
                 anchors.topMargin: 20
 
-                IconButton {
-                    id: btnZoomIn
-                    objectName: "btnZoomIn"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon: "qrc:/images/ZoomIn48.png"
-                }
-
-                IconButton {
-                    id: btnZoomOut
-                    objectName: "btnZoomOut"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon: "qrc:/images/ZoomOut48.png"
-                }
             }
-
+            */
             /*
             Rectangle {
                 width: 104
@@ -556,7 +561,9 @@ Item {
 
     Rectangle {
         id: statusBar
-        height: screenPixelDensity * 0.3
+        //height: screenPixelDensity * 0.3
+        height: screenPixelDensity * 0
+        visible: false
         color: systemPalette.window
         anchors.right: parent.right
         anchors.rightMargin: 0

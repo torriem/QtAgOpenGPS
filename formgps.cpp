@@ -60,9 +60,27 @@ FormGPS::FormGPS(QWidget *parent) :
     tool.section[3].positionRight = 8;
     tool.numOfSections = 4; //0-3
     tool.numSuperSection = 5;
-    tool.toolTrailingHitchLength = -10; //30 foot hitch to see following action better
-
+    tool.toolTrailingHitchLength = -4; //30 foot hitch to see following action better
+    vehicle.minTurningRadius = 5;
+    vehicle.maxSteerAngle = 45;
     tool.sectionCalcWidths();
+
+    CBoundaryLines boundary;
+    boundary.bndLine.append(Vec3(-100,0,0));
+    boundary.bndLine.append(Vec3( 100,0,0));
+    boundary.bndLine.append(Vec3( 100,250,0));
+    boundary.bndLine.append(Vec3(-100,250,0));
+    boundary.bndLine.append(Vec3(-100,0,0));
+    boundary.isSet = true;
+    boundary.calculateBoundaryArea();
+    boundary.calculateBoundaryHeadings();
+    boundary.preCalcBoundaryLines();
+
+    bnd.bndArr.append(boundary);
+
+    gf.geoFenceArr.append(CGeoFenceLines());
+    gf.buildGeoFenceLines(bnd, tool.toolWidth, SETTINGS_VEHICLE_GEOFENCEDIST);
+
     //turn on the right number of section buttons.
     //we don't need to do this on resize, but we will need
     //to call it when settings change.
@@ -627,6 +645,8 @@ void FormGPS::tmrWatchdog_timeout()
             //counter used for saving field in background
             saveCounter++;
 
+            qmlItem(qml_root,"btnPerimeter")->setProperty("buttonText", locale.toString(vehicle.totalSquareMeters / 1000, 'f', 2));
+
             /*
             if (panelBatman.Visible)
             {
@@ -789,6 +809,27 @@ void FormGPS::tmrWatchdog_timeout()
         }
 
     } //there was a new GPS update
+
+    //Do these updates every cycle
+
+    //we cannot manipulate the GUI from any of the OpenGL drawing methods as they run in a
+    //different thread.
+    if (isAutoSteerBtnOn && !ct.isContourBtnOn) {
+        qmlItem(qml_root, "btnManUturnLeft")->setProperty("visible", true);
+        qmlItem(qml_root, "btnManUturnRight")->setProperty("visible", true);
+    } else {
+        qmlItem(qml_root, "btnManUturnLeft")->setProperty("visible", false);
+        qmlItem(qml_root, "btnManUturnRight")->setProperty("visible", false);
+    }
+
+    if (ct.isContourBtnOn || ABLine.isBtnABLineOn || curve.isBtnCurveOn)
+    {
+        double dist = vehicle.distanceDisplay * 0.1;
+        qmlItem(qml_root, "btnAutoSteer")->setProperty("buttonText", locale.toString(dist,'f',1));
+    } else {
+        qmlItem(qml_root, "btnAutoSteer")->setProperty("buttonText", "");
+    }
+
 
     //start timer again and wait for new fix
     //qmlItem(qml_root,"stripAreaUser")->setProperty("text", locale.toString(vehicle.totalUserSquareMeters * 0.0001,'f',1) + " " + tr("Ha"));

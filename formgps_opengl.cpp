@@ -322,13 +322,14 @@ void FormGPS::openGLControl_Draw()
 
         if (bnd.bndArr.size() > 0 && yt.isYouTurnBtnOn) drawUTurnBtn(gl, projection*modelview);
 
-        if (isAutoSteerBtnOn && !ct.isContourBtnOn) drawManUTurnBtn(gl, projection*modelview);
+        //Manual UTurn buttons are now in QML and are manipulated
+        //in tmrWatchdog_timeout()
 
         if (SETTINGS_DISPLAY_COMPASS) drawCompass(gl, modelview, projection, width - 400);
 
         drawCompassText(gl, projection*modelview, width - 400);
 
-        if (SETTINGS_DISPLAY_SPEEDO) drawSpeedo(gl, modelview, projection, width - 400, height);
+        if (SETTINGS_DISPLAY_SPEEDO) drawSpeedo(gl, modelview, projection, width, height);
         gl->glFlush();
 
         //draw the zoom window
@@ -451,7 +452,7 @@ void FormGPS::openGLControlBack_Draw()
     projection.setToIdentity();
 
     //projection.perspective(6.0f,1,1,6000);
-    projection.perspective(glm::toDegrees(0.104719758f), 1.0f, 50.0f, 520.0f);
+    projection.perspective(glm::toDegrees((double)0.104719758f), 1.0f, 50.0f, 520.0f);
 
     gl->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
@@ -552,12 +553,12 @@ void FormGPS::openGLControlBack_Draw()
     //read the whole block of pixels up to max lookahead, one read only
     //we'll use Qt's QImage function to grab it.
     grnPix = backFBO->toImage().mirrored().convertToFormat(QImage::Format_RGBX8888);
-    qDebug() << grnPix.size();
+    //qDebug() << grnPix.size();
     QImage temp = grnPix.copy(tool.rpXPosition, 252, tool.rpWidth, 245 /*(int)rpHeight*/);
     memcpy(lookaheadPixels, temp.constBits(), temp.size().width() * temp.size().height() * 4);
-    grnPix = temp;
+    //grnPix = temp;
 
-    //The remaining code from the original method in the C# code is
+    //The remaining codesteerSlider the original method in the C# code is
     //broken out into a callback in formgps.c called
     //processSectionLookahead().
 
@@ -601,15 +602,16 @@ void  FormGPS::drawManUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp)
     GLHelperTexture gldraw;
     VertexTexcoord vt;
 
-    int two3 = qmlItem(qml_root, "openglcontrol")->property("width").toReal() / 4;
+    int two3 = qmlItem(qml_root, "openglcontrol")->property("width").toReal() / 6;
+    //int two3 = 0;
 
     vt.texcoord = QVector2D(0,0); vt.vertex = QVector3D(-82 - two3, 45, 0);
     gldraw.append(vt);
-    vt.texcoord = QVector2D(1,0); vt.vertex = QVector3D(-82 - two3, 45, 0);
+    vt.texcoord = QVector2D(1,0); vt.vertex = QVector3D(82 - two3, 45, 0);
     gldraw.append(vt);
     vt.texcoord = QVector2D(0,1); vt.vertex = QVector3D(-82 - two3, 120, 0);
     gldraw.append(vt);
-    vt.texcoord = QVector2D(1,1); vt.vertex = QVector3D(-82 - two3, 120, 0);
+    vt.texcoord = QVector2D(1,1); vt.vertex = QVector3D(82 - two3, 120, 0);
     gldraw.append(vt);
 
     gldraw.draw(gl, mvp, Textures::TURNMANUAL, GL_TRIANGLE_STRIP, true, QColor::fromRgbF(0.90f, 0.90f, 0.293f));
@@ -758,9 +760,6 @@ void FormGPS::drawLightBar(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, d
     double down = 20;
     gl->glLineWidth(1);
 
-
-    QOpenGLBuffer dotbuffer;
-
     //  Dot distance is representation of how far from AB Line
     int dotDistance = offlineDistance;
     int limit = SETTINGS_DISPLAY_LIGHTBARCMPP * 8;
@@ -769,20 +768,20 @@ void FormGPS::drawLightBar(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, d
     if (dotDistance > limit) dotDistance = limit;
 
     // dot background
-    for (int i = -10; i < 0; i++) gldraw.append({ QVector3D(i*40, down, 0),
-                                                QVector4D(0,0,0,1)} ); //gl->glVertex2d((i * 40), down);
-    for (int i = 1; i < 11; i++) gldraw.append({ QVector3D(i*40, down, 0),
-                                               QVector4D(0,0,0,1)} ); //gl->glVertex2d((i * 40), down);
+    for (int i = -8; i < 0; i++) gldraw.append({ QVector3D(i*32, down, 0),
+                                                QVector4D(0,0,0,1)} );
+    for (int i = 1; i < 9; i++) gldraw.append({ QVector3D(i*32, down, 0),
+                                               QVector4D(0,0,0,1)} );
 
     gldraw.draw(gl, mvp, GL_POINTS, 8.0f);
 
     gldraw.clear();
     //red left side
-    for (int i = -10; i < 0; i++) gldraw.append({ QVector3D(i*40, down, 0),   //gl->glVertex2d((i * 40), down);
+    for (int i = -8; i < 0; i++) gldraw.append({ QVector3D(i*32, down, 0),
                                                 QVector4D(0.9750f, 0.0f, 0.0f, 1.0f) } );
 
     //green right side
-    for (int i = 1; i < 11; i++) gldraw.append( { QVector3D(i*40, down, 0), //gl->glVertex2d((i * 40), down);
+    for (int i = 1; i < 9; i++) gldraw.append( { QVector3D(i*32, down, 0),
                                                 QVector4D(0.0f, 0.9750f, 0.0f, 1.0f) } );
 
     gldraw.draw(gl, mvp, GL_POINTS, 4.0f);
@@ -793,12 +792,12 @@ void FormGPS::drawLightBar(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, d
         int numDots = dotDistance * -1 / SETTINGS_DISPLAY_LIGHTBARCMPP;
 
         gldraw.clear();
-        for (int i = 1; i < numDots + 1; i++) gldraw.append({ QVector3D(i*40, down, 0), //gl->glVertex2d((i * 40), down);
+        for (int i = 1; i < numDots + 1; i++) gldraw.append({ QVector3D(i*32, down, 0),
                                                             QVector4D(0,0,0,1) } );
         gldraw.draw(gl, mvp, GL_POINTS, 32.0f);
 
         gldraw.clear();
-        for (int i = 0; i < numDots; i++) gldraw.append({ QVector3D(i*40+40, down, 0), //gl->glVertex2d((i * 40 + 40), down);
+        for (int i = 0; i < numDots; i++) gldraw.append({ QVector3D(i*32+32, down, 0),
                                                         QVector4D(0.0f, 0.980f, 0.0f,1)} );
         gldraw.draw(gl, mvp, GL_POINTS, 24.0f);
     }
@@ -808,12 +807,12 @@ void FormGPS::drawLightBar(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, d
         int numDots = dotDistance / SETTINGS_DISPLAY_LIGHTBARCMPP;
 
         gldraw.clear();
-        for (int i = 1; i < numDots + 1; i++) gldraw.append({ QVector3D(i*-40, down, 0), //gl->glVertex2d((i * -40), down);
+        for (int i = 1; i < numDots + 1; i++) gldraw.append({ QVector3D(i*-32, down, 0),
                                                             QVector4D(0,0,0,1) } );
         gldraw.draw(gl, mvp, GL_POINTS, 32.0f);
 
         gldraw.clear();
-        for (int i = 0; i < numDots; i++) gldraw.append({ QVector3D(i*-40-40, down, 0), //gl->glVertex2d((i * -40 - 40), down);
+        for (int i = 0; i < numDots; i++) gldraw.append({ QVector3D(i*-32-32, down, 0),
                                                         QVector4D(0.980f, 0.30f, 0.0f,1)} );
         gldraw.draw(gl, mvp, GL_POINTS, 24.0f);
     }
