@@ -3,12 +3,15 @@
 #include <iostream>
 #include <cmath>
 #include "glm.h"
+#include "aogsettings.h"
 
 
 CSim::CSim()
 {
-    latitude = simLat;
-    longitude = simLon;
+    USE_SETTINGS;
+
+    latitude = SETTINGS_SIM_LATITUDE;
+    longitude = SETTINGS_SIM_LONGITUDE;
 }
 void CSim::DoSimTick(double _st)
 {
@@ -23,7 +26,7 @@ void CSim::DoSimTick(double _st)
     degrees = glm::toDegrees(headingTrue);
     //Calculate the next Latitude and Longitude based on heading and distance
     CalculateNewPositionFromBearingDistance(latitude, longitude, degrees, stepDistance / 1000.0);
-    //qDebug() << fixed << qSetRealNumberPrecision(7) << latitude;
+    //qDebug() << fixed << qSetRealNumberPrecision(7) << latitude << ", " << fixed << qSetRealNumberPrecision(7) << longitude;
     // calc the speed
     speed = 1.944 * stepDistance * 5;
     sbSendText.append(BuildGGA().toLatin1());
@@ -99,8 +102,8 @@ QString CSim::BuildGGA()
     sbGGA.clear();
     sbGGA.append("$GPGGA,");
     sbGGA.append(hms);
-    sbGGA.append(QString::number(latNMEA,'f',7)).append(',').append(NS).append(',');
-    sbGGA.append(QString::number(longNMEA,'f',7)).append(',').append(EW).append(',');
+    sbGGA.append(QString::number(fabs(latNMEA),'f',7)).append(',').append(NS).append(',');
+    sbGGA.append(QString::number(fabs(longNMEA),'f',7)).append(',').append(EW).append(',');
     sbGGA.append(QString::number(fixQuality)).
             append(',').
             append(QString::number(sats)).

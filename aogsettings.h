@@ -276,7 +276,7 @@ QColor parseColor(QString setcolor);
 #define SETTINGS_SET_AUTOSTEER_STEERINGANGLEOFFSET(VAL)	settings.setValue("autosteer/steeringAngleOffset",VAL)
 
 #define SETTINGS_AUTOSTEER_MINSTEERPWM			settings.   value("autosteer/minSteerPWM", 10).toInt()
-#define SETTINGS_SET_AUTOSTEER_MINSTEERPWM(VAL)	settings.setValue("autosteer/minSteerPWM",VAL)
+#define SETTINGS_SET_AUTOSTEER_MINSTEERPWM(VAL)	settings.setValue("autosteer/minSteerPWM",VAL)y
 
 #define SETTINGS_AUTOSTEER_MAXINTEGRAL			settings.   value("autosteer/maxIntegral", 20).toInt()
 #define SETTINGS_SET_AUTOSTEER_MAXINTEGRAL(VAL)	settings.setValue("autosteer/maxIntegral",VAL)
@@ -321,6 +321,12 @@ QColor parseColor(QString setcolor);
 #define SETTINGS_VEHICLE_SEQACTIONLIST			settings.   value("vehicle/seqActionList", "Turn Off,Turn On")).toString()
 #define SETTINGS_SET_VEHICLE_SEQACTIONLIST(VAL)	settings.setValue("vehicle/seqActionList",VAL)
 
+//CSIM
+#define SETTINGS_SIM_LATITUDE			settings.   value("sim/latitude", 49).toDouble()
+#define SETTINGS_SET_SIM_LATITUDE(VAL)	settings.setValue("sim/latitude",VAL)
+
+#define SETTINGS_SIM_LONGITUDE			settings.   value("sim/longitude", -111).toDouble()
+#define SETTINGS_SET_SIM_LONGITUDE(VAL)	settings.setValue("sim/longitude",VAL)
 
 
 #endif // AOGSETTINGS_H
