@@ -65,11 +65,11 @@ void initializeTextures() {
     textureWidth = t->width();
     textureHeight= t->height();
     texture.append(t); //position 2
-    t = new QOpenGLTexture(QImage(":/images/textures/Turn.png").mirrored());
+    t = new QOpenGLTexture(QImage(":/images/textures/Turn.png"));
     texture.append(t); //position 3
-    t = new QOpenGLTexture(QImage(":/images/textures/TurnCancel.png").mirrored());
+    t = new QOpenGLTexture(QImage(":/images/textures/TurnCancel.png"));
     texture.append(t); //position 4
-    t = new QOpenGLTexture(QImage(":/images/textures/TurnManual.png").mirrored());
+    t = new QOpenGLTexture(QImage(":/images/textures/TurnManual.png"));
     texture.append(t); //position 5
     t = new QOpenGLTexture(QImage(":/images/textures/Compass.png"));
     texture.append(t); //position 6

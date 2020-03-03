@@ -126,5 +126,8 @@
         <file>images/textures/Turn.png</file>
         <file>images/textures/TurnCancel.png</file>
         <file>images/textures/TurnManual.png</file>
+        <file>qml/IconButtonTransparent.qml</file>
+	<file>images/TurnManualLeft.png</file>
+        <file>images/TurnManualRight.png</file>
     </qresource>
 </RCC>

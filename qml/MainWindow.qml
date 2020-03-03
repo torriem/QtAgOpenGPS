@@ -345,6 +345,28 @@ Item {
                 }
             }
 
+            Row {
+                id: manTurnButtons
+                visible: true
+                objectName: "manUTurnButtons"
+                IconButtonTransparent {
+                    id: manUturnBtnLeft
+                    objectName: "btnManUturnLeft"
+                    width: 58
+                    height: 58
+                    icon: "qrc:/images/TurnManualLeft.png"
+                }
+                IconButtonTransparent {
+                    id: manUturnBtnRight
+                    objectName: "btnManUturnRight"
+                    width: 58
+                    height: 58
+                    icon: "qrc:/images/TurnManualRight.png"
+                }
+                anchors.left: tiltButtons.right;
+                anchors.top: tiltButtons.top;
+            }
+
             Column {
                 id: zoomButtons
                 spacing: 6
@@ -371,6 +393,28 @@ Item {
                     icon: "qrc:/images/ZoomOut48.png"
                 }
             }
+
+            /*
+            Rectangle {
+                width: 104
+                height: 104
+                color: "#00000000"
+                Image {
+                    id: compassPic
+                    source: "qrc:/images/textures/Compass.png"
+                    transform: Rotation {
+                        origin.x: 52
+                        origin.y: 52
+                        angle: 45
+                    }
+                    fillMode: Image.PreserveAspectFit
+                    anchors.fill: parent
+                }
+                anchors.right: zoomButtons.left
+                anchors.top: zoomButtons.top
+            }
+            */
+
             Slider {
                 id: speedSlider
                 objectName: "simSpeed"

@@ -182,6 +182,12 @@ void FormGPS::setupGui()
     temp = qmlItem(qml_root,"btnAreaSide");
     connect(temp,SIGNAL(clicked()), this, SLOT(onBtnAreaSide_clicked()));
 
+    temp = qmlItem(qml_root, "btnManUturnLeft");
+    connect(temp,SIGNAL(clicked()), this, SLOT(onBtnManUTurnLeft_clicked()));
+
+    temp = qmlItem(qml_root, "btnManUturnRight");
+    connect(temp,SIGNAL(clicked()), this, SLOT(onBtnManUTurnRight_clicked()));
+
     openGLControl = qml_root->findChild<AOGRendererInSG *>("openglcontrol");
     //This is a bit hackish, but all rendering is done in this item, so
     //we have to give it a way of calling our initialize and draw functions
@@ -537,4 +543,24 @@ bool FormGPS::closeAllMenus()
         return true;
     }
     return false;
+}
+
+void FormGPS::onBtnManUTurnLeft_clicked()
+{
+    if (yt.isYouTurnTriggered) {
+        yt.resetYouTurn();
+    }else {
+        yt.isYouTurnTriggered = true;
+        yt.buildManualYouTurn(vehicle, tool, ABLine, curve, false, true);
+   }
+}
+
+void FormGPS::onBtnManUTurnRight_clicked()
+{
+    if (yt.isYouTurnTriggered) {
+        yt.resetYouTurn();
+    }else {
+        yt.isYouTurnTriggered = true;
+        yt.buildManualYouTurn(vehicle, tool, ABLine, curve, true, true);
+   }
 }

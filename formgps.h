@@ -573,6 +573,9 @@ public slots:
         isBoundAlarming = false;
     }
 
+    void onBtnManUTurnLeft_clicked();
+    void onBtnManUTurnRight_clicked();
+
     /***************************
      * from OpenGL.Designer.cs *
      ***************************/

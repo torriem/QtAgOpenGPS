@@ -84,8 +84,8 @@ QColor parseColor(QString setcolor);
 #define SETTINGS_VEHICLE_WHEELBASE			settings.   value("vehicle/wheelbase", 2.5).toDouble()
 #define SETTINGS_SET_VEHICLE_WHEELBASE(VAL)	settings.setValue("vehicle/wheelbase",VAL)
 
-#define SETTINGS_VEHICLE_MINTURNINGRADIUS			settings.   value("vehicle/isPivotBehindAntenna", true).toBool()
-#define SETTINGS_SET_VEHICLE_MINTURNINGRADIUS(VAL)	settings.setValue("vehicle/isPivotBehindAntenna",VAL)
+#define SETTINGS_VEHICLE_MINTURNINGRADIUS			settings.   value("vehicle/minSteeringRadius", 1).toDouble()
+#define SETTINGS_SET_VEHICLE_MINTURNINGRADIUS(VAL)	settings.setValue("vehicle/minSteeringRadius",VAL)
 
 #define SETTINGS_VEHICLE_ISSTEERAXLEAHEAD			settings.   value("vehicle/isSteerAxleAhead", true).toBool()
 #define SETTINGS_SET_VEHICLE_ISSTEERAXLEAHEAD(VAL)	settings.setValue("vehicle/isSteerAxleAhead",VAL)
