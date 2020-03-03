@@ -25,5 +25,4 @@ void FormGPS::onSimTimerTimeout()
         //TODO: sim.DoSimTick(sim.steerAngleScrollBar);
         sim.DoSimTick(steerAngle); //drive straight for now until UI
 
-
 }
