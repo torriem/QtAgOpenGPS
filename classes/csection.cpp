@@ -89,6 +89,8 @@ void CSection::addPathPoint(CVehicle &vehicle, CTool &tool, double northing, dou
             temp = fabs(temp / 2.0);
             vehicle.totalSquareMeters += temp;
             vehicle.totalUserSquareMeters += temp;
+            //TODO: mf.fd.workedAreaTotal += temp;
+            //mf.fd.workedAreaTotalUser += temp;
 
             //temp = 0;
             temp = ((*triangleList)[c - 1].x() * ((*triangleList)[c - 2].y() - (*triangleList)[c - 3].y())) +
@@ -98,6 +100,8 @@ void CSection::addPathPoint(CVehicle &vehicle, CTool &tool, double northing, dou
             temp = fabs(temp / 2.0);
             vehicle.totalSquareMeters += temp;
             vehicle.totalUserSquareMeters += temp;
+            //mf.fd.workedAreaTotal += temp;
+            //mf.fd.workedAreaTotalUser += temp;
         }
     }
 

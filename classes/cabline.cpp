@@ -392,7 +392,6 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
     //TODO: make these CYouTurn &ytignal?
     vehicle.guidanceLineDistanceOff = vehicle.distanceDisplay = int(distanceFromCurrentLine);
     vehicle.guidanceLineSteerAngle = int(steerAngleAB * 100);
-    qDebug() << vehicle.guidanceLineDistanceOff << ", " << steerAngleAB;
 
     if(yt.isYouTurnTriggered) {
         //do the pure pursuit from youTurn
