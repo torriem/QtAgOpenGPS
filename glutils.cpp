@@ -261,6 +261,7 @@ void drawText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString 
 
     for (int n = 0; n < text.length(); n++)
     {
+        gldraw.clear();
         char idx = text.at(n).toLatin1();
         double u = (double)(idx % GlyphsPerLine) * u_step;
         double v = (double)(idx / GlyphsPerLine) * v_step;
@@ -282,10 +283,10 @@ void drawText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString 
         gldraw.append(vt);
 
         x += CharXSpacing * size;
-    }
+        gldraw.draw(gl, mvp, Textures::FONT, GL_TRIANGLE_STRIP, colorize, color);
+}    }
 
-    gldraw.draw(gl, mvp, Textures::FONT, GL_TRIANGLE_STRIP, colorize, color);
-}
+
 
 void drawText3D(const CCamera &camera, QOpenGLFunctions *gl,
                 QMatrix4x4 mvp, double x1, double y1, QString text,
@@ -324,6 +325,7 @@ void drawText3D(const CCamera &camera, QOpenGLFunctions *gl,
         char idx = text.at(n).toLatin1();
         double u = (double)(idx % GlyphsPerLine) * u_step;
         double v = (double)(idx / GlyphsPerLine) * v_step;
+        gldraw.clear();
 
         vt.texcoord = QVector2D(u, v + v_step);
         vt.vertex = QVector3D(x, y, 0);
@@ -340,11 +342,11 @@ void drawText3D(const CCamera &camera, QOpenGLFunctions *gl,
         vt.texcoord = QVector2D(u + u_step, v);
         vt.vertex = QVector3D(x + GlyphWidth * size, y + GlyphHeight * size, 0);
         gldraw.append(vt);
+        gldraw.draw(gl, mvp, Textures::FONT, GL_TRIANGLE_STRIP, colorize, color);
 
         x += CharXSpacing * size;
     }
 
-    gldraw.draw(gl, mvp, Textures::FONT, GL_TRIANGLE_STRIP, colorize, color);
 }
 
 void drawTextVehicle(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp,
