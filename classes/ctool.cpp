@@ -162,7 +162,7 @@ void CTool::sectionCalcWidths()
     for (int j = 0; j < MAXSECTIONS; j++)
     {
         section[j].sectionWidth = (section[j].positionRight - section[j].positionLeft);
-        section[j].rpSectionPosition = 200 + (int)(glm::roundMidAwayFromZero(section[j].positionLeft * 10));
+        section[j].rpSectionPosition = 250 + (int)(glm::roundMidAwayFromZero(section[j].positionLeft * 10));
         section[j].rpSectionWidth = (int)(glm::roundMidAwayFromZero(section[j].sectionWidth * 10));
     }
 
@@ -179,6 +179,6 @@ void CTool::sectionCalcWidths()
     section[numOfSections].positionRight = toolFarRightPosition;
 
     //find the right side pixel position
-    rpXPosition = 200 + (int)(glm::roundMidAwayFromZero(toolFarLeftPosition * 10));
+    rpXPosition = 250 + (int)(glm::roundMidAwayFromZero(toolFarLeftPosition * 10));
     rpWidth = (int)(glm::roundMidAwayFromZero(toolWidth * 10));
 }
