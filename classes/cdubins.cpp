@@ -169,7 +169,7 @@ void AddCoordinatesToPath(Vec2 &currentPos, double &theta, QVector<Vec2> &finalP
             if (!isTurningRight) turnParameter = -1.0;
 
             //Update the heading
-            theta += (CDubinsTurningRadius) * turnParameter;
+            theta += (driveDistance / CDubinsTurningRadius) * turnParameter;
         }
 
         //Add the new coordinate to the path
@@ -184,6 +184,7 @@ CDubins::CDubins()
 
 QVector<Vec3> CDubins::GenerateDubins(Vec3 _start, Vec3 _goal)
 {
+    QVector<Vec3> dubinsShortestPathList;
     startPos.easting = _start.easting;
     startPos.northing = _start.northing;
     startHeading = _start.heading;
@@ -196,7 +197,7 @@ QVector<Vec3> CDubins::GenerateDubins(Vec3 _start, Vec3 _goal)
     pathDataList = GetAllDubinsPaths();
 
     //clear out existing path of vec3 points
-    dubinsShortestPathList.clear();
+    //dubinsShortestPathList.clear();
 
     if (pathDataList.count() > 0)
     {
@@ -208,7 +209,7 @@ QVector<Vec3> CDubins::GenerateDubins(Vec3 _start, Vec3 _goal)
             {
                 Vec3 pt(pathDataList[0].pathCoordinates[i].easting, pathDataList[0].pathCoordinates[i].northing, 0);
                 pt.heading = qAtan2(pathDataList[0].pathCoordinates[i + 1].easting - pathDataList[0].pathCoordinates[i].easting,
-                        pathDataList[0].pathCoordinates[i + 1].northing - pathDataList[0].pathCoordinates[i].northing);
+                                    pathDataList[0].pathCoordinates[i + 1].northing - pathDataList[0].pathCoordinates[i].northing);
                 dubinsShortestPathList.append(pt);
             }
         }
@@ -218,6 +219,7 @@ QVector<Vec3> CDubins::GenerateDubins(Vec3 _start, Vec3 _goal)
 
 QVector<Vec3> CDubins::GenerateDubins(Vec3 _start, Vec3 _goal, const CBoundary &bnd, CGeoFence &fence)
 {
+    QVector<Vec3> dubinsShortestPathList;
     //positions and heading
     startPos.easting = _start.easting;
     startPos.northing = _start.northing;
@@ -367,10 +369,10 @@ void CDubins::CalculateDubinsPathsLengths()
 void CDubins::Get_RSR_Length()
 {
     //Find both tangent positons
-   Vec2 startTangent = Vec2(0, 0);
-   Vec2 goalTangent = Vec2(0, 0);
+   Vec2 startTangent(0, 0);
+   Vec2 goalTangent(0, 0);
 
-//   LSLorRSR(startRightCircle, goalRightCircle, false, out startTangent, out goalTangent);
+   LSLorRSR(startRightCircle, goalRightCircle, false, startTangent, goalTangent);
 
 
    //Calculate lengths
@@ -397,7 +399,7 @@ void CDubins::Get_LSL_Length()
       Vec2 startTangent = Vec2(0, 0);
       Vec2 goalTangent = Vec2(0, 0);
 
-//      LSLorRSR(startLeftCircle, goalLeftCircle, true, out startTangent, out goalTangent);
+      LSLorRSR(startLeftCircle, goalLeftCircle, true, startTangent, goalTangent);
 
       //Calculate lengths
       double length1 = GetArcLength(startLeftCircle, startPos, startTangent, true);
@@ -543,7 +545,7 @@ void CDubins::GeneratePathCoordinates()
     }
 }
 
-void CDubins::GetTotalPath(OneDubinsPath pathData)
+void CDubins::GetTotalPath(OneDubinsPath &pathData)
 {
 //Store the waypoints of the final path here
     QVector<Vec2> finalPath = QVector<Vec2>();

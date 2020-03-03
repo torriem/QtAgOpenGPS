@@ -78,7 +78,6 @@ private:
     //The 4 different circles we have that sits to the left/right of the start/goal
     Vec2 startLeftCircle, startRightCircle, goalLeftCircle, goalRightCircle;
     QVector<OneDubinsPath> pathDataList;
-    QVector<Vec3> dubinsShortestPathList;
     QVector<OneDubinsPath> GetAllDubinsPaths();
     void PositionLeftRightCircles();
     void CalculateDubinsPathsLengths();
@@ -89,7 +88,7 @@ private:
     void Get_RLR_Length();
     void Get_LRL_Length();
     void GeneratePathCoordinates();
-    void GetTotalPath(OneDubinsPath pathData);
+    void GetTotalPath(OneDubinsPath &pathData);
 
 };
 
