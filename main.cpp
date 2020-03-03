@@ -15,9 +15,8 @@ int main(int argc, char *argv[])
     QFont f = a.font();
     f.setPointSize(16);
     a.setFont(f);
-    //glutInit(&argc,argv);
     QCoreApplication::setOrganizationName("AgOpenGPS");
-    QCoreApplication::setOrganizationDomain("agopengps");
+    QCoreApplication::setOrganizationDomain("qtagopengps");
     QCoreApplication::setApplicationName("QtAgOpenGPS");
     qmlRegisterType<AOGRendererInSG>("AgOpenGPS",1,0,"AOGRenderer");
     FormGPS w;
