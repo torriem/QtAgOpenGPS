@@ -268,6 +268,7 @@ public:
     double fixUpdateTime = 0.2;
 
     QString headingFromSource;
+    QString headingFromSourceBak;
 
     /*
     double fixHeadingSection = 0.0, fixHeadingTank = 0.0;
@@ -318,14 +319,7 @@ public:
     int timerPn = 1;
     double et = 0, hzTime = 0;
 
-    /*
-    double avgSpeed[10];//for average speed
-    int ringCounter = 0;
-    */
-    //double avgSpeed[10];//for average speed moved to vehicle
-    double avgXTE[20]; //for average cross track error
-    int ringCounter = 0, avgXTECntr, crossTrackError;
-
+    double crossTrackError; //for average cross track error
 
     //youturn
     double distancePivotToTurnLine = -2222;
@@ -341,7 +335,6 @@ public:
     double gyroCorrection, gyroCorrected;
 
     double rollUsed;
-    double offset = 0;
     double headlandDistanceDelta = 0, boundaryDistanceDelta = 0;
 
 
@@ -377,14 +370,11 @@ public:
 
     void updateFixPosition(); //process a new position
     void calculatePositionHeading(); // compute all headings and fixes
-    void addBoundaryAndPerimiterPoint();
-    void addSectionContourPathPoints();
+    void addBoundaryPoint();
+    void addSectionOrContourPathPoints();
     void calculateSectionLookAhead(double northing, double easting, double cosHeading, double sinHeading);
     void initializeFirstFewGPSPositions();
     bool isInsideGeoFence();
-
-
-
 
     /************************
      * SaveOpen.Designer.cs *
@@ -437,6 +427,8 @@ public:
 
     void startUDPServer();
     void stopUDPServer();
+
+    void sendUDPMessage(uchar *msg);
 
    /**********************
      * OpenGL.Designer.cs *
@@ -505,8 +497,10 @@ public:
 
     double actualSteerAngleDisp;
     void autoSteerDataOutToPort();
-    void autoSteerSettingsOutToPort();
+    void sendSteerSettingsOutAutoSteerPort();
     void sectionControlOutToPort();
+    void sendOutUSBAutoSteerPort(uchar *data, int pgnSentenceLength);
+
 
     /***********************
      * FormGPS.Designer.cs *
@@ -611,6 +605,8 @@ public slots:
      */
     void onClearRecvCounter();
 
+    /* CNMEA */
+    void onHeadingSource(int);
 
 };
 

@@ -1066,15 +1066,14 @@ void FormGPS::drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 
     double aveSpd = 0;
     if (isMetric)
     {
-        for (int c = 0; c < 10; c++) aveSpd += vehicle.avgSpeed[c];
+        aveSpd = vehicle.avgSpeed;
         aveSpd *= 0.1;
         if (aveSpd > 20) aveSpd = 20;
         angle = (aveSpd - 10) * 15;
     }
     else
     {
-        double aveSpd = 0;
-        for (int c = 0; c < 10; c++) aveSpd += vehicle.avgSpeed[c];
+        double aveSpd = vehicle.avgSpeed;
         aveSpd *= 0.0621371;
         angle = (aveSpd - 10) * 15;
         if (aveSpd > 20) aveSpd = 20;

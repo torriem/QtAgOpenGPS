@@ -22,18 +22,6 @@ FormGPS::FormGPS(QWidget *parent) :
 
 
     /* test data to see if drawing routines are working. */
-    /*
-    isGPSPositionInitialized = true;
-    pivotAxlePos.easting = 5005;
-    pivotAxlePos.northing = 5005;
-    fixEasting = 5005;
-    fixNorthing = 5000;
-    fixHeadingSection = 0;
-    fixHeading = 0;
-    fixHeadingCam = 0;
-    fixHeadingSection = 0;
-    worldGrid->createWorldGrid(5005,5005);
-    */
 
     isAreaOnRight = s.value("vehicle/isAreaOnRight",false).toBool();
 
@@ -106,6 +94,7 @@ FormGPS::FormGPS(QWidget *parent) :
     connect(&pn, SIGNAL(setCorrectionHeadingX16(int)), &ahrs,SLOT(setCorrectionHeadingX16(int)));
     connect(&pn, SIGNAL(clearRecvCounter()), this, SLOT(onClearRecvCounter()));
     connect(&pn, SIGNAL(newSpeed(double)), &vehicle, SLOT(onNewSpeed(double)));
+    connect(&pn, SIGNAL(headingSource(int)), this, SLOT(onHeadingSource(int)));
 
     connect(&curve, SIGNAL(doSequence(CYouTurn&)), &seq, SLOT(DoSequenceEvent(CYouTurn&)));
 
@@ -114,11 +103,16 @@ FormGPS::FormGPS(QWidget *parent) :
 
     //connnect(&ct, SIGNAL(showMessage(int,QString,QString))
 
-    //connect(&hd, SIGNAL(moveHydraulics(int))..
+    for(int i=0; i < MAXSECTIONS+1 ; i++) {
+        //connect sections so they can increment area counters
+        connect(&tool.section[i], SIGNAL(addToTotalArea(double)), &fd, SLOT(addToTotalArea(double)));
+        connect(&tool.section[i], SIGNAL(addToUserArea(double)), &fd, SLOT(addToUserArea(double)));
+    }
 
-    //connect(&mc, SIGNAL(sendAutoSteerDataOutToPort())
-    //connect(&mc, SIGNAL(sendAutoSteerSettingsOutToPort())
-    //connect(&mc, SIGNAL(sendRelayOutToPort(uchar*,int))
+    connect(&hd, SIGNAL(moveHydraulics(int)), &mc, SLOT(setHydLift(int)));
+
+    //connect(&mc, SIGNAL(sendOutUSBAutoSteerPort(uchar*,int)),
+    //connect(&mc, SIGNAL(sendOutUSBMachinePort(uchar*,int)),
 
     connect(&yt, SIGNAL(outOfBounds()), &mc, SLOT(setOutOfBounds()));
     connect(&yt, SIGNAL(resetSequenceEventTriggers()), &seq, SLOT(ResetSequenceEventTriggers()));
@@ -893,9 +887,7 @@ void FormGPS::manualBtnUpdate(int sectNumber)
 }
 
 QString FormGPS::speedKPH() {
-    double spd = 0;
-    for (int c = 0; c < 10; c++)
-        spd += vehicle.avgSpeed[c];
+    double spd = vehicle.avgSpeed;
 
     //convert to kph
     spd *= 0.1;
@@ -904,9 +896,7 @@ QString FormGPS::speedKPH() {
 }
 
 QString FormGPS::speedMPH() {
-    double spd = 0;
-    for (int c = 0; c < 10; c++)
-        spd += vehicle.avgSpeed[c];
+    double spd = vehicle.avgSpeed;
 
     //convert to mph
     spd *= 0.0621371;
@@ -941,4 +931,14 @@ void FormGPS::swapDirection() {
 void FormGPS::onClearRecvCounter()
 {
     recvCounter = 0;
+}
+
+void FormGPS::onHeadingSource(int tempInt)
+{
+    if (tempInt == 0)//0: no heading, no roll 1: heading ok, no roll 2: roll+heading ok
+    {
+        if (headingFromSource != "Fix") { headingFromSourceBak = headingFromSource; }
+        headingFromSource = "Fix";
+    }
+    else { headingFromSource = headingFromSourceBak; }
 }

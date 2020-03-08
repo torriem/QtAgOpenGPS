@@ -46,4 +46,8 @@ void FormGPS::stopUDPServer()
     }
 }
 
+void FormGPS::sendUDPMessage(uchar *message) //10 bytes
+{
+
+}
 //TODO: connection to MKR1000 on fixed address.. probably in another module

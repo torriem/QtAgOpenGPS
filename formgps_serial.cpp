@@ -5,7 +5,7 @@ void FormGPS::autoSteerDataOutToPort()
 
 }
 
-void FormGPS::autoSteerSettingsOutToPort()
+void FormGPS::sendSteerSettingsOutAutoSteerPort()
 {
 
 }
