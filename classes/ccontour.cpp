@@ -631,12 +631,15 @@ void CContour::distanceFromContourLine(CVehicle &vehicle, CNMEA &pn, Vec3 pivot,
             if (abFixHeadingDelta > 0.74) abFixHeadingDelta = 0.74;
             if (abFixHeadingDelta < -0.74) abFixHeadingDelta = -0.74;
 
-            steerAngleCT = atan((distanceFromCurrentLine * vehicle.stanleyGain) / ((pn.speed * 0.277777) + 1));
+            steerAngleCT = atan((distanceFromCurrentLine * vehicle.stanleyGain) / ((fabs(pn.speed) * 0.277777) + 1));
 
             if (steerAngleCT > 0.74) steerAngleCT = 0.74;
             if (steerAngleCT < -0.74) steerAngleCT = -0.74;
 
-            steerAngleCT = glm::toDegrees((steerAngleCT + abFixHeadingDelta) * -1.0);
+            if (pn.speed > -0.1)
+                steerAngleCT = glm::toDegrees((steerAngleCT + abFixHeadingDelta) * -1.0);
+            else
+                steerAngleCT = glm::toDegrees((steerAngleCT - abFixHeadingDelta) * -1.0);
 
             if (steerAngleCT < -vehicle.maxSteerAngle) steerAngleCT = -vehicle.maxSteerAngle;
             if (steerAngleCT > vehicle.maxSteerAngle) steerAngleCT = vehicle.maxSteerAngle;

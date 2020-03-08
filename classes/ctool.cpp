@@ -22,8 +22,9 @@ CTool::CTool()
     isToolTrailing = SETTINGS_TOOLISTRAILING;
     isToolTBT = SETTINGS_TOOLISTBT;
 
-    toolLookAhead = SETTINGS_TOOLLOOKAHEAD;
-    toolTurnOffDelay = SETTINGS_TOOLTURNOFFDELAY;
+    lookAheadOnSetting = SETTINGS_VEHICLE_TOOLLOOKAHEADON;
+    lookAheadOffSetting  = SETTINGS_VEHICLE_TOOLLOOKAHEADOFF;
+    turnOffDelay = SETTINGS_VEHICLE_TOOLOFFDELAY;
 
     numOfSections = SETTINGS_NUMSECTIONS;
     numSuperSection = numOfSections + 1;
@@ -97,17 +98,46 @@ void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix
         gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.7f, 0.7f, 0.97f),GL_LINES, 2.0f);
     }
 
-    //draw the sections
+    //look ahead lines
     GLHelperColors gldrawcolors;
+    ColorVertex cv;
     QColor color;
+    gl->glLineWidth(1);
 
-    gl->glLineWidth(8.0f);
+    //lookahead section on
+    cv.color = QVector4D(0.20f, 0.7f, 0.2f, 1);
+    cv.vertex = QVector3D(toolFarLeftPosition, (lookAheadDistanceOnPixelsLeft) * 0.1 + trailingTool, 0);
+    gldrawcolors.append(cv);
+    cv.vertex = QVector3D(toolFarRightPosition, (lookAheadDistanceOnPixelsRight) * 0.1 + trailingTool, 0);
+    gldrawcolors.append(cv);
 
-    //draw section line
+    //lookahead section off
+    cv.color = QVector4D(0.70f, 0.2f, 0.2f, 1);
+    cv.vertex = QVector3D(toolFarLeftPosition, (lookAheadDistanceOffPixelsLeft) * 0.1 + trailingTool, 0);
+    gldrawcolors.append(cv);
+    cv.vertex = QVector3D(toolFarRightPosition, (lookAheadDistanceOffPixelsRight) * 0.1 + trailingTool, 0);
+    gldrawcolors.append(cv);
+
+
+    if (v.isHydLiftOn)
+    {
+        cv.color = QVector4D(0.70f, 0.2f, 0.72f, 1);
+        cv.vertex = QVector3D(section[0].positionLeft, (v.hydLiftLookAheadDistanceLeft * 0.1) + trailingTool, 0);
+        gldrawcolors.append(cv);
+        cv.vertex = QVector3D(section[numOfSections - 1].positionRight, (v.hydLiftLookAheadDistanceRight * 0.1) + trailingTool, 0);
+        gldrawcolors.append(cv);
+    }
+
+    gldrawcolors.draw(gl, projection * mv, GL_LINES, 1.0);
+
+    //draw the sections
+    gldrawcolors.clear();
+    gl->glLineWidth(4);
+
+    //draw super section line
     if (section[numOfSections].isSectionOn)
     {
-        ColorVertex cv;
-        if (section[0].manBtnState == btnStates::Auto) cv.color=QVector4D(0.0f, 0.97f, 0.0f, 1.0);
+        if (section[0].manBtnState == btnStates::Auto) cv.color=QVector4D(0.50f, 0.97f, 0.950f, 1.0);
         else cv.color = QVector4D(0.99, 0.99, 0, 1.0);
 
         cv.vertex = QVector3D( section[numOfSections].positionLeft, trailingTool, 0);
@@ -120,17 +150,16 @@ void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix
     {
         for (int j = 0; j < numOfSections; j++)
         {
-            ColorVertex cv;
 
             //if section is on, green, if off, red color
             if (section[j].isSectionOn)
             {
-                if (section[j].manBtnState == btnStates::Auto) cv.color = QVector4D(0.0f, 0.97f, 0.0f, 1.0f);
+                if (section[j].manBtnState == btnStates::Auto) cv.color = QVector4D(0.0f, 0.9f, 0.0f, 1.0f);
                 else cv.color = QVector4D(0.97, 0.97, 0, 1.0f);
             }
             else
             {
-                cv.color = QVector4D(0.97f, 0.2f, 0.2f, 1.0f);
+                cv.color = QVector4D(0.7f, 0.2f, 0.2f, 1.0f);
             }
 
             //draw section line

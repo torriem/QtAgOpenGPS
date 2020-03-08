@@ -72,9 +72,9 @@ void CHeadLines::drawHeadLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, int l
             {
                 gldraw.clear();
                 if (cntr > 0)
-                    gldraw.append(QVector3D(hdLine[cntr-1].easting, hdLine[cntr-1].northing, 0));
+                    gldraw.append(QVector3D(hdLine[cntr - 1].easting, hdLine[cntr - 1].northing, 0));
                 else
-                    gldraw.append(QVector3D(hdLine[hdLine.size()-1].easting, hdLine[hdLine.size()-1].northing, 0));
+                    gldraw.append(QVector3D(hdLine[hdLine.size() - 1].easting, hdLine[hdLine.size() - 1].northing, 0));
 
 
                 for (int i = cntr; i < ptCount; i++)
@@ -95,3 +95,45 @@ void CHeadLines::drawHeadLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, int l
         }
     }
 }
+
+void CHeadLines::drawHeadLineBackBuffer(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
+{
+    if (hdLine.count() < 2) return;
+    int ptCount = hdLine.count();
+    int cntr = 0;
+    if (ptCount > 1)
+    {
+        GLHelperOneColor gldraw;
+        gl->glLineWidth(3);
+
+        QColor color = QColor::fromRgbF(0.960f, 0.96232f, 0.30f);
+
+        while (cntr < ptCount)
+        {
+            if (isDrawList[cntr])
+            {
+                gldraw.clear();
+
+                if (cntr > 0) gldraw.append(QVector3D(hdLine[cntr - 1].easting, hdLine[cntr - 1].northing, 0));
+                else gldraw.append(QVector3D(hdLine[hdLine.count() - 1].easting, hdLine[hdLine.count() - 1].northing, 0));
+
+
+                for (int i = cntr; i < ptCount; i++)
+                {
+                    cntr++;
+                    if (!isDrawList[i]) break;
+                    gldraw.append(QVector3D(hdLine[i].easting, hdLine[i].northing, 0));
+                }
+                if (cntr < ptCount - 1)
+                    gldraw.append(QVector3D(hdLine[cntr + 1].easting, hdLine[cntr + 1].northing, 0));
+
+                gldraw.draw(gl, mvp, color, GL_LINE_STRIP, 3.0);
+            }
+            else
+            {
+                cntr++;
+            }
+        }
+    }
+}
+

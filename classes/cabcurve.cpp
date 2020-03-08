@@ -572,12 +572,16 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot, Vec3 steer,
             if (abFixHeadingDelta > 0.74) abFixHeadingDelta = 0.74;
             if (abFixHeadingDelta < -0.74) abFixHeadingDelta = -0.74;
 
-            steerAngleCu = atan((distanceFromCurrentLine * vehicle.stanleyGain) / ((pn.speed * 0.277777) + 1));
+            steerAngleCu = atan((distanceFromCurrentLine * vehicle.stanleyGain) /
+                                ((fabs(pn.speed) * 0.277777) + 1));
 
             if (steerAngleCu > 0.74) steerAngleCu = 0.74;
             if (steerAngleCu < -0.74) steerAngleCu = -0.74;
 
-            steerAngleCu = glm::toDegrees((steerAngleCu + abFixHeadingDelta) * -1.0);
+            if (pn.speed > -0.1)
+                steerAngleCu = glm::toDegrees((steerAngleCu + abFixHeadingDelta) * -1.0);
+            else
+                steerAngleCu = glm::toDegrees((steerAngleCu - abFixHeadingDelta) * -1.0);
 
             if (steerAngleCu < -vehicle.maxSteerAngle) steerAngleCu = -vehicle.maxSteerAngle;
             if (steerAngleCu > vehicle.maxSteerAngle) steerAngleCu = vehicle.maxSteerAngle;

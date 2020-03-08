@@ -28,7 +28,7 @@ void CSim::DoSimTick(double _st)
     CalculateNewPositionFromBearingDistance(latitude, longitude, degrees, stepDistance / 1000.0);
     //qDebug() << fixed << qSetRealNumberPrecision(7) << latitude << ", " << fixed << qSetRealNumberPrecision(7) << longitude;
     // calc the speed
-    speed = 1.944 * stepDistance * 5;
+    speed = 1.944 * stepDistance * 10;
     sbSendText.append(BuildGGA().toLatin1());
     sbSendText.append(BuildVTG().toLatin1());
 

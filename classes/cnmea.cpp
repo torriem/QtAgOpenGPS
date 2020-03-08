@@ -3,6 +3,8 @@
 #include "aogsettings.h"
 #include "cnmea.h"
 #include "vec2.h"
+#include "glm.h"
+
 //#include "latlong-utm.h"
 
 //$GPGGA,123519,4807.038,N,01131.000,E,1,08,0.9,545.4,M,46.9,M ,  ,*47
@@ -80,6 +82,9 @@ CNMEA::CNMEA(QObject *parent) : QObject(parent)
 
 void CNMEA::updateNorthingEasting()
 {
+    USE_SETTINGS;
+
+    //#region convergence
     Vec2 xy = CNMEA::decDeg2UTM(latitude, longitude);
 
     //keep a copy of actual easting and northings
@@ -96,9 +101,36 @@ void CNMEA::updateNorthingEasting()
     //compensate for the fact the zones lines are a grid and the world is round
     fix.easting = (cos(-convergenceAngle) * east) - (sin(-convergenceAngle) * nort);
     fix.northing = (sin(-convergenceAngle) * east) + (cos(-convergenceAngle) * nort);
+
+    //#region Antenna Offset
+    if (SETTINGS_VEHICLE_ANTENNAOFFSET != 0)
+    {
+        fix.easting = (cos(-this->lastHeading) * SETTINGS_VEHICLE_ANTENNAOFFSET) + fix.easting;
+        fix.northing = (sin(-this->lastHeading) * SETTINGS_VEHICLE_ANTENNAOFFSET) + fix.northing;
+    }
+    //#endregion
+
+    //#region Roll
+
+    if (SETTINGS_GPS_ISROLLFROMAUTOSTEER || SETTINGS_GPS_ISROLLFROMGPS || SETTINGS_GPS_ISROLLFROMEXTUDP)
+    {
+        double rollUsed = ((double)(this->roll - SETTINGS_GPS_IMUROLLZEROX16)) * 0.0625;
+        emit setRollUsed(rollUsed);
+
+        //change for roll to the right is positive times -1
+        double rollCorrectionDistance = sin(glm::toRadians((rollUsed))) * - SETTINGS_VEHICLE_ANTENNAHEIGHT;
+        emit setRollCorrectionDistance(rollCorrectionDistance);
+
+        // roll to left is positive  **** important!!
+        // not any more - April 30, 2019 - roll to right is positive Now! Still Important
+        fix.easting = (cos(-this->lastHeading) * rollCorrectionDistance) + fix.easting;
+        fix.northing = (sin(-this->lastHeading) * rollCorrectionDistance) + fix.northing;
+    }
+
+    //#endregion
 }
 
-void CNMEA::parseNMEA()
+void CNMEA::parseNMEA(double lastHeading, double roll)
 {
     if (!rawBuffer.size()) return;
 
@@ -127,6 +159,9 @@ void CNMEA::parseNMEA()
     dollar = rawBuffer.indexOf("$");
     if (cr == -1 || dollar == -1)
         return;
+
+    this->lastHeading = lastHeading;
+    this->roll = roll;
 
     //now we have a complete sentence or more somewhere in the portData
     while (true)
@@ -380,14 +415,13 @@ void CNMEA::parseOGI()
         speed = words[12].toDouble() * 1.852;
 
         //True heading
-        headingTrue = words[13].toDouble();
+        headingHDT = words[13].toDouble();
 
         //roll
         nRoll = words[14].toDouble();
 
         if(SETTINGS_GPS_ISROLLFROMGPS)
-            //TODO: emit this signal always, and move logic to
-            //handler
+            //TODO: kalman filter this roll in handler
             emit setRollX16(nRoll * 16);
 
         //pitch
@@ -395,22 +429,67 @@ void CNMEA::parseOGI()
 
         //yaw
         nYaw = words[16].toDouble();
-        if (SETTINGS_GPS_ISHEADINGFROMPAOGI)
+        //if (SETTINGS_GPS_ISHEADINGFROMPAOGI)
                 //TODO: emit this signal always, and move logic to
                 //handler
-            emit setCorrectionHeadingX16(nYaw * 16);
+        //    emit setCorrectionHeadingX16(nYaw * 16);
 
         //angular velocity (yaw rate)
         nAngularVelocity = words[17].toDouble();
 
         //is imu valid fusion?
+        emit headingSource(words[18].toInt());
+
         isValidIMU = words[18] == "T";
 
         //update the watchdog
         emit clearRecvCounter();
         updatedOGI = true;
+
+        //average the speed
+        emit newSpeed(speed);
     }
 
+    /*
+    $PAOGI
+    ** From GGA:
+    (1, 2) 123519 Fix taken at 1219 UTC
+    (3, 4) 4807.038,N Latitude 48 deg 07.038' N
+    (5, 6) 01131.000,E Longitude 11 deg 31.000' E
+    (7) 1 Fix quality:
+        0 = invalid
+        1 = GPS fix(SPS)
+        2 = DGPS fix
+        3 = PPS fix
+        4 = Real Time Kinematic
+        5 = Float RTK
+        6 = estimated(dead reckoning)(2.3 feature)
+        7 = Manual input mode
+        8 = Simulation mode
+    (8) 08 Number of satellites being tracked
+    (9) 0.9 Horizontal dilution of position
+    (10, 11) 545.4,M Altitude, Meters, above mean sea level
+    (12) 1.2 time in seconds since last DGPS update
+
+    From RMC or VTG:
+    (13) 022.4 Speed over the ground in knots
+    (14) 054.7,T True track made good(degrees)
+
+    FROM IMU:
+    (14) XXX.xx IMU Heading in degrees True
+    (15) XXX.xx Roll angle in degrees(positive roll = right leaning - right down, left up)
+    (16) XXX.xx Pitch angle in degrees(Positive pitch = nose up)
+    (17) XXX.xx Yaw Rate in Degrees / second
+    (18) GPS roll/ heading quality:
+        0 = no roll / heading = no corrected pos
+        1 = heading OK, no roll
+        2 = OK, corrected position
+    (19) driving Direction
+        0 = not sure / standing still
+        1 = forewards
+        2 = backwards
+    * CHKSUM
+    */
 }
 
 void CNMEA::parseRMC() {

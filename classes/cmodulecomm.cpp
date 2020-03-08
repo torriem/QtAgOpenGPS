@@ -14,10 +14,8 @@
 CModuleComm::CModuleComm(QObject *parent) : QObject(parent)
 {
     USE_SETTINGS;
-    serialRecvAutoSteerStr = "Oops NC";
-    serialRecvRelayStr = "Oops NC";
-
-    pgn.clear();
+    serialRecvAutoSteerStr = " ** Steer Module Not Connected";
+    serialRecvMachineStr = " ** Machine Module Not Connected";
 
     //WorkSwitch logic
     isWorkSwitchEnabled = false;
@@ -25,16 +23,121 @@ CModuleComm::CModuleComm(QObject *parent) : QObject(parent)
     //does a low, grounded out, mean on
     isWorkSwitchActiveLow = true;
 
+    isMachineDataSentToAutoSteer = SETTINGS_VEHICLE_ISMACHINECONTROLTOAUTOSTEER;
+
+    //autosteer constant data
     autoSteerData[sdHeaderHi] = 127; // PGN - 32766
     autoSteerData[sdHeaderLo] = 254;
-    autoSteerData[sdRelayLo] = 0;
+    autoSteerData[sd2] = 0;
     autoSteerData[sdSpeed] = 0;
     autoSteerData[sdDistanceHi] = 125; // PGN - 32020
     autoSteerData[sdDistanceLo] = 20;
     autoSteerData[sdSteerAngleHi] = 125; // PGN - 32020
     autoSteerData[sdSteerAngleLo] = 20;
-    autoSteerData[sdYouTurnByte] = 0;
-    pgn.append((const char *)autoSteerData, pgnSentenceLength);
+    autoSteerData[sd8] = 0;
+    autoSteerData[sd9] = 0;
+
+    //autosteer steer settings
+    autoSteerSettings[ssHeaderHi] = 127;// PGN - 32764 as header
+    autoSteerSettings[ssHeaderLo] = 252;
+    autoSteerSettings[ssKp] = SETTINGS_AUTOSTEER_KP;
+    autoSteerSettings[ssKi] = SETTINGS_AUTOSTEER_KI;
+    autoSteerSettings[ssKd] = SETTINGS_AUTOSTEER_KD;
+    autoSteerSettings[ssKo] = SETTINGS_AUTOSTEER_KO;
+    autoSteerSettings[ssSteerOffset] = SETTINGS_AUTOSTEER_STEERINGANGLEOFFSET;
+    autoSteerSettings[ssMinPWM] = SETTINGS_AUTOSTEER_MINSTEERPWM;
+    autoSteerSettings[ssMaxIntegral] = SETTINGS_AUTOSTEER_MAXINTEGRAL;
+    autoSteerSettings[ssCountsPerDegree] = SETTINGS_AUTOSTEER_COUNTSPERDEGREE;
+
+    //arduino basic steer settings
+    ardSteerConfig[arHeaderHi] = 127; //PGN - 32763
+    ardSteerConfig[arHeaderLo] = 251;
+    ardSteerConfig[arSet0] = SETTINGS_ARDSTEER_SETTING0;
+    ardSteerConfig[arSet1] = SETTINGS_ARDSTEER_SETTING1;
+    ardSteerConfig[arMaxSpd] = SETTINGS_ARDSTEER_MAXSPEED;
+    ardSteerConfig[arMinSpd] = SETTINGS_ARDSTEER_MINSPEED;
+        uchar inc = (uchar)(SETTINGS_ARDSTEER_INCLINOMETER << 6);
+    ardSteerConfig[arIncMaxPulse] = (uchar)(inc + (uchar)SETTINGS_ARDSTEER_MAXPULSECOUNTS);
+    ardSteerConfig[arAckermanFix] = SETTINGS_ARDSTEER_ACKERMANFIX;
+    ardSteerConfig[ar8] = 0;
+    ardSteerConfig[ar9] = 0;
+
+    //machine, sections data array
+    machineData[mdHeaderHi] = 127; // PGN - 32758
+    machineData[mdHeaderLo] = 246;
+    machineData[mdSectionControlByteHi] = 0;
+    machineData[mdSectionControlByteLo] = 0;
+    machineData[mdSpeedXFour] = 0;
+    machineData[mdUTurn] = 0;
+    machineData[mdTree] = 0;
+    machineData[mdHydLift] = 0;
+    machineData[md8] = 0;
+    machineData[md9] = 0;
+
+    //arduino machine configuration
+    ardMachineConfig[amHeaderHi] = 127; //PGN - 32760
+    ardMachineConfig[amHeaderLo] = 248;
+    ardMachineConfig[amRaiseTime] = SETTINGS_ARDSTEER_HYDRAISETIME;
+    ardMachineConfig[amLowerTime] = SETTINGS_ARDSTEER_HYDLOWERTIME;
+    ardMachineConfig[amEnableHyd] = SETTINGS_ARDSTEER_ISHYDENABLED;
+    ardMachineConfig[am5] = 0;
+    ardMachineConfig[am6] = 0;
+    ardMachineConfig[am7] = 0;
+    ardMachineConfig[am8] = 0;
+    ardMachineConfig[am9] = 0;
+
+     //Section control: switches
+    ss[swHeaderHi] = 0;  //PGN - 32609
+    ss[swHeaderLo] = 0;  //0xE0
+    ss[sw2] = 0;
+    ss[sw3] = 0;
+    ss[sw4] = 0;
+    ss[swONHi] = 0;
+    ss[swONLo] = 0;
+    ss[swOFFHi] = 0;
+    ss[swOFFLo] = 0;
+    ss[swMain] = 0;
+
+    ssP[swHeaderHi] = 0;  //PGN - 32609
+    ssP[swHeaderLo] = 0;  //0xE0
+    ssP[sw2] = 0;
+    ssP[sw3] = 0;
+    ssP[sw4] = 0;
+    ssP[swONHi] = 0;
+    ssP[swONLo] = 0;
+    ssP[swOFFHi] = 0;
+    ssP[swOFFLo] = 0;
+    ssP[swMain] = 0;
+
+}
+
+void CModuleComm::resetAllModuleCommValues()
+{
+    USE_SETTINGS;
+    machineData[mdHeaderHi] = 127; // PGN - 32762
+    machineData[mdHeaderLo] = 250;
+    machineData[mdSectionControlByteHi] = 0;
+    machineData[mdSectionControlByteLo] = 0;
+    machineData[mdSpeedXFour] = 0;
+    machineData[mdUTurn] = 0;
+    machineData[mdTree] = 0;
+    machineData[mdHydLift] = 0;
+    machineData[md8] = 0;
+    machineData[md9] = 0;
+
+    emit sendOutUSBMachinePort(machineData, pgnSentenceLength);
+
+    autoSteerData[sdHeaderHi] = 127; // PGN - 32766
+    autoSteerData[sdHeaderLo] = 254;
+    autoSteerData[sd2] = 0;
+    autoSteerData[sdSpeed] = 0;
+    autoSteerData[sdDistanceHi] = 125; // PGN - 32020
+    autoSteerData[sdDistanceLo] = 20;
+    autoSteerData[sdSteerAngleHi] = 125; // PGN - 32020
+    autoSteerData[sdSteerAngleLo] = 20;
+    autoSteerData[sd8] = 0;
+    autoSteerData[sd9] = 0;
+    emit sendOutUSBAutoSteerPort(autoSteerData, pgnSentenceLength);
 
     autoSteerSettings[ssHeaderHi] = 127;// PGN - 32764 as header
     autoSteerSettings[ssHeaderLo] = 252;
@@ -46,88 +149,36 @@ CModuleComm::CModuleComm(QObject *parent) : QObject(parent)
     autoSteerSettings[ssMinPWM] = SETTINGS_AUTOSTEER_MINSTEERPWM;
     autoSteerSettings[ssMaxIntegral] = SETTINGS_AUTOSTEER_MAXINTEGRAL;
     autoSteerSettings[ssCountsPerDegree] = SETTINGS_AUTOSTEER_COUNTSPERDEGREE;
-    pgn.append((const char*)autoSteerSettings, pgnSentenceLength);
+    //mf.SendSteerSettingsOutAutoSteerPort();
 
-    relayData[rdHeaderHi] = 127; // PGN - 32762
-    relayData[rdHeaderLo] = 250;
-    relayData[rdSectionControlByteHi] = 0;
-    relayData[rdSectionControlByteLo] = 0;
-    relayData[rdSpeedXFour] = 0;
-    relayData[rdTramLine] = 0;
-    relayData[rdTree] = 0;
-    relayData[rdUTurn] = 0;
-    relayData[rdHydLift] = 0;
-    relayData[rd9] = 0;
-    pgn.append((const char*)relayData, pgnSentenceLength);
+    ardSteerConfig[arHeaderHi] = 127; //PGN - 32763
+    ardSteerConfig[arHeaderLo] = 251;
+    ardSteerConfig[arSet0] = SETTINGS_ARDSTEER_SETTING0;
+    ardSteerConfig[arSet1] = SETTINGS_ARDSTEER_SETTING1;
+    ardSteerConfig[arMaxSpd] = SETTINGS_ARDSTEER_MAXSPEED;
+    ardSteerConfig[arMinSpd] = SETTINGS_ARDSTEER_MINSPEED;
+        uchar inc = (uchar)(SETTINGS_ARDSTEER_INCLINOMETER << 6);
+    ardSteerConfig[arIncMaxPulse] = (uchar)(inc + (uchar)SETTINGS_ARDSTEER_MAXPULSECOUNTS);
+    ardSteerConfig[arAckermanFix] = SETTINGS_ARDSTEER_ACKERMANFIX;
+    ardSteerConfig[ar8] = 0;
+    ardSteerConfig[ar9] = 0;
 
-    machineControlData[cnHeaderHi] = 127; // PGN - 32758
-    machineControlData[cnHeaderLo] = 246;
-    machineControlData[cnPedalControl] = 0;
-    machineControlData[cnSpeed] = 0;
-    machineControlData[cnRelayLo] = 0;
-    machineControlData[cnYouTurn] = 0;
-    machineControlData[6] = 0;
-    machineControlData[7] = 0;
-    machineControlData[8] = 0;
-    machineControlData[9] = 0;
-    pgn.append((const char*)machineControlData,pgnSentenceLength);
-
+    //arduino machine configuration
+    ardMachineConfig[amHeaderHi] = 127; //PGN - 32760
+    ardMachineConfig[amHeaderLo] = 248;
+    ardMachineConfig[amRaiseTime] = SETTINGS_ARDSTEER_HYDRAISETIME;
+    ardMachineConfig[amLowerTime] = SETTINGS_ARDSTEER_HYDLOWERTIME;
+    ardMachineConfig[amEnableHyd] = SETTINGS_ARDSTEER_ISHYDENABLED;
+    ardMachineConfig[am5] = 0;
+    ardMachineConfig[am6] = 0;
+    ardMachineConfig[am7] = 0;
+    ardMachineConfig[am8] = 0;
+    ardMachineConfig[am9] = 0;
 
 }
 
-void CModuleComm::resetAllModuleCommValues()
+void CModuleComm::setHydLift(int value)
 {
-    USE_SETTINGS;
-
-    relayData[rdHeaderHi] = 127; // PGN - 32762
-    relayData[rdHeaderLo] = 250;
-    relayData[rdSectionControlByteHi] = 0;
-    relayData[rdSectionControlByteLo] = 0;
-    relayData[rdSpeedXFour] = 0;
-    relayData[rdTramLine] = 0;
-    relayData[rdTree] = 0;
-    relayData[rdUTurn] = 0;
-    relayData[rdHydLift] = 0;
-    relayData[rd9] = 0;
-
-    emit sendRelayOutToPort(relayData, pgnSentenceLength);
-
-    //prefill the autosteer data
-    autoSteerData[sdHeaderHi] = 127; //PGN - 32766
-    autoSteerData[sdHeaderLo] = 254;
-    autoSteerData[sdRelayLo] = 0;
-    autoSteerData[sdSpeed] = 0;
-    autoSteerData[sdDistanceHi] = 25; //PGN - 32020
-    autoSteerData[sdDistanceLo] = 20;
-    autoSteerData[sdSteerAngleHi] = 125; //PGN - 32020
-    autoSteerData[sdSteerAngleLo] = 20;
-    autoSteerData[sdYouTurnByte] = 0;
-
-    emit sendAutoSteerDataOutToPort();
-
-    //prefill the autosteer settings from settings xml
-    autoSteerSettings[ssHeaderHi] = 127;
-    autoSteerSettings[ssHeaderLo] = 252; //PGN - 32764 as header
-    autoSteerSettings[ssKp] = SETTINGS_AUTOSTEER_KP;
-    autoSteerSettings[ssKi] = SETTINGS_AUTOSTEER_KI;
-    autoSteerSettings[ssKd] = SETTINGS_AUTOSTEER_KD;
-    autoSteerSettings[ssKo] = SETTINGS_AUTOSTEER_KO;
-    autoSteerSettings[ssSteerOffset] = SETTINGS_AUTOSTEER_STEERINGANGLEOFFSET;
-    autoSteerSettings[ssMinPWM] = SETTINGS_AUTOSTEER_MINSTEERPWM;
-    autoSteerSettings[ssMaxIntegral] = SETTINGS_AUTOSTEER_MAXINTEGRAL;
-    autoSteerSettings[ssCountsPerDegree] = SETTINGS_AUTOSTEER_COUNTSPERDEGREE;
-
-    emit sendAutoSteerSettingsOutToPort();
-
-    machineControlData[cnHeaderHi] = 127; // PGN - 32758
-    machineControlData[cnHeaderLo] = 246;
-    machineControlData[cnPedalControl] = 0;
-    machineControlData[cnSpeed] = 0;
-    machineControlData[cnRelayLo] = 0;
-    machineControlData[cnYouTurn] = 0;
-    machineControlData[6] = 0;
-    machineControlData[7] = 0;
-    machineControlData[8] = 0;
-    machineControlData[9] = 0;
-
+    //Slot for other modules to signal
+    machineData[mdHydLift] = value;
 }

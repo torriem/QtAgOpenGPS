@@ -46,11 +46,14 @@ QColor parseColor(QString setcolor);
 #define SETTINGS_TOOLISTBT 				settings.   value("vehicle/toolIsTBT", false).toBool()
 #define SETTINGS_SET_TOOLISTBT(VAL)		settings.setValue("vehicle/toolIsTBT", VAL)
 
-#define SETTINGS_TOOLLOOKAHEAD 				settings.   value("vehicle/toolLookAhead", 2).toDouble()
-#define SETTINGS_SET_TOOLLOOKAHEAD(VAL)		settings.setValue("vehicle/toolLookAhead", VAL)
+#define SETTINGS_VEHICLE_TOOLLOOKAHEADON 				settings.   value("vehicle/toolLookAheadOn", 1).toDouble()
+#define SETTINGS_SET_VEHICLE_TOOLLOOKAHEADON(VAL)		settings.setValue("vehicle/toolLookAheadOn", VAL)
 
-#define SETTINGS_TOOLTURNOFFDELAY 				settings.   value("vehicle/toolTurnOffDelay", 1).toDouble()
-#define SETTINGS_SET_TOOLTURNOFFDELAY(VAL)		settings.setValue("vehicle/toolTurnOffDelay", VAL)
+#define SETTINGS_VEHICLE_TOOLLOOKAHEADOFF 				settings.   value("vehicle/toolLookAheadOff", 0.5).toDouble()
+#define SETTINGS_SET_VEHICLE_TOOLLOOKAHEADOFF(VAL)		settings.setValue("vehicle/toolLookAheadOff", VAL)
+
+#define SETTINGS_VEHICLE_TOOLOFFDELAY 				settings.   value("vehicle/toolOffDelay", 0).toDouble()
+#define SETTINGS_SET_VEHICLE_TOOLTOFFDELAY(VAL)		settings.setValue("vehicle/toolOffDelay", VAL)
 
 #define SETTINGS_NUMSECTIONS 			settings.   value("vehicle/numSections", 3).toInt()
 #define SETTINGS_SET_NUMSECTIONS(VAL)		settings.setValue("vehicle/numSections", VAL)
@@ -132,6 +135,40 @@ QColor parseColor(QString setcolor);
 #define SETTINGS_VEHICLE_NAME			settings.   value("vehicle/name", "unnamed").toQString()
 #define SETTINGS_SET_VEHICLE_NAME(VAL)	settings.setValue("vehicle/name",VAL)
 
+#define SETTINGS_VEHICLE_ISMACHINECONTROLTOAUTOSTEER			settings.   value("vehicle/isMachineControlToAutoSteer", false).toBool()
+#define SETTINGS_SET_VEHICLE_ISMACHINECONTROLTOAUTOSTEER(VAL)	settings.setValue("vehicle/isMachineControlToAutoSteer",VAL)
+
+//CMACHINECOMM
+#define SETTINGS_ARDSTEER_SETTING1			settings.   value("ardSteer/setting1", 0).toInt()
+#define SETTINGS_SET_ARDSTEER_SETTING1(VAL)	settings.setValue("ardSteer/setting1", VAL)
+
+#define SETTINGS_ARDSTEER_MINSPEED			settings.   value("ardSteer/minSpeed", 1).toInt()
+#define SETTINGS_SET_ARDSTEER_MINSPEED(VAL)	settings.setValue("ardSteer/minSpeed", VAL)
+
+#define SETTINGS_ARDSTEER_MAXSPEED			settings.   value("ardSteer/maxSpeed", 20).toInt()
+#define SETTINGS_SET_ARDSTEER_MAXSPEED(VAL)	settings.setValue("ardSteer/maxSpeed", VAL)
+
+#define SETTINGS_ARDSTEER_SETTING0			settings.   value("ardSteer/setting0", 120).toInt()
+#define SETTINGS_SET_ARDSTEER_SETTING0(VAL)	settings.setValue("ardSteer/setting0", VAL)
+
+#define SETTINGS_ARDSTEER_INCLINOMETER			settings.   value("ardSteer/inclinometer", 2).toInt()
+#define SETTINGS_SET_ARDSTEER_INCLINOMETER(VAL)	settings.setValue("ardSteer/inclinometer", VAL)
+
+#define SETTINGS_ARDSTEER_MAXPULSECOUNTS			settings.   value("ardSteer/maxPulseCounts", 15).toInt()
+#define SETTINGS_SET_ARDSTEER_MAXPULSECOUNTS(VAL)	settings.setValue("ardSteer/maxPulseCounts", VAL)
+
+#define SETTINGS_ARDSTEER_HYDRAISETIME			settings.   value("ardSteer/hydRaiseTime", 6).toInt()
+#define SETTINGS_SET_ARDSTEER_HYDRAISETIME(VAL)	settings.setValue("ardSteer/hydRaiseTime", VAL)
+
+#define SETTINGS_ARDSTEER_HYDLOWERTIME			settings.   value("ardSteer/hydLowerTime", 7).toInt()
+#define SETTINGS_SET_ARDSTEER_HYDLOWERTIME(VAL)	settings.setValue("ardSteer/hydLowerTime", VAL)
+
+#define SETTINGS_ARDSTEER_ISHYDENABLED			settings.   value("ardSteer/isHydEnabled", 0).toInt()
+#define SETTINGS_SET_ARDSTEER_ISHYDENABLED(VAL)	settings.setValue("ardSteer/isHydEnabled", VAL)
+
+#define SETTINGS_ARDSTEER_ACKERMANFIX			settings.   value("ardSteer/ackermanFix", 100).toInt()
+#define SETTINGS_SET_ARDSTEER_ACKERMANFIX(VAL)	settings.setValue("ardSteer/ackermanFix", VAL)
+
 //CFONT
 #define SETTINGS_DISPLAY_ISFONTON			settings.   value("display/isFontOn", true).toBool()
 #define SETTINGS_SET_DISPLAY_ISFONTON(VAL)	settings.setValue("display/isFontOn",VAL)
@@ -159,26 +196,23 @@ QColor parseColor(QString setcolor);
 #define SETTINGS_GPS_ISROLLFROMGPS			settings.   value("gps/isRollFromGPS", false).toBool()
 #define SETTINGS_SET_GPS_ISROLLFROMGPS(VAL)	settings.setValue("gps/isRollFromGPS",VAL)
 
-#define SETTINGS_GPS_ISHEADINGFROMPAOGI			settings.   value("gps/isHeadingFromPAOGI", false).toBool()
-#define SETTINGS_SET_GPS_HEADINGFROMPAOGI(VAL)	settings.setValue("gps/isHeadingFromPAOGI",VAL)
-
 #define SETTINGS_GPS_BRICKUID			settings.   value("gps/brickUID", QString("68wESU")).toString()
 #define SETTINGS_SET_GPS_BRICKUID(VAL)	settings.setValue("gps/brickUID",VAL)
 
 #define SETTINGS_GPS_ISROLLFROMAUTOSTEER			settings.   value("gps/isRollFromAutosteer", false).toBool()
 #define SETTINGS_SET_GPS_ISROLLFROMAUTOSTEER(VAL)	settings.setValue("gps/isRollFromAutosteer",VAL)
 
-#define SETTINGS_GPS_ISHEADINGFROMBRICK			settings.   value("gps/isHeadingFromBrick", false).toBool()
-#define SETTINGS_SET_GPS_ISHEADINGFROMBRICK(VAL)	settings.setValue("gps/isHeadingFromBrick",VAL)
+#define SETTINGS_GPS_ISHEADINGCORRECTIONFROMBRICK			settings.   value("gps/isHeadingCorrectionFromBrick", false).toBool()
+#define SETTINGS_SET_GPS_ISHEADINGCORRECTIONFROMBRICK(VAL)	settings.setValue("gps/isHeadingCorrectionFromBrick",VAL)
 
-#define SETTINGS_GPS_ISHEADINGFROMAUTOSTEER			settings.   value("gps/isHeadingFromAutoSteer", false).toBool()
-#define SETTINGS_SET_GPS_ISHEADINGFROMAUTOSTEER(VAL)	settings.setValue("gps/isHeadingFromAutoSteer",VAL)
+#define SETTINGS_GPS_ISHEADINGCORRECTIONFROMAUTOSTEER			settings.   value("gps/isHeadingCorrectionFromAutoSteer", false).toBool()
+#define SETTINGS_SET_GPS_ISHEADINGCORRECTIONFROMAUTOSTEER(VAL)	settings.setValue("gps/isHeadingCorrectionFromAutoSteer",VAL)
 
 #define SETTINGS_GPS_ISROLLFROMBRICK			settings.   value("gps/isRollFromBrick", false).toBool()
 #define SETTINGS_SET_GPS_ISROLLFROMBRICK(VAL)	settings.setValue("gps/isRollFromBrick",VAL)
 
-#define SETTINGS_GPS_ISHEADINGFROMEXTUDP			settings.   value("gps/isHeadingFromExtUdp", false).toBool()
-#define SETTINGS_SET_GPS_ISHEADINGFROMEXTUDP(VAL)	settings.setValue("gps/isHeadingFromExtUdp",VAL)
+#define SETTINGS_GPS_ISHEADINGCORRECTIONFROMEXTUDP			settings.   value("gps/isHeadingCorrectionFromExtUdp", false).toBool()
+#define SETTINGS_SET_GPS_ISHEADINGCORRECTIONFROMEXTUDP(VAL)	settings.setValue("gps/isHeadingCorrectionFromExtUdp",VAL)
 
 #define SETTINGS_GPS_ISROLLFROMEXTUDP			settings.   value("gps/isRollFromExtUdp", false).toBool()
 #define SETTINGS_SET_GPS_ISROLLFROMEXTUDP(VAL)	settings.setValue("gps/isRollFromExtUdp",VAL)
@@ -327,6 +361,11 @@ QColor parseColor(QString setcolor);
 
 #define SETTINGS_SIM_LONGITUDE			settings.   value("sim/longitude", -111).toDouble()
 #define SETTINGS_SET_SIM_LONGITUDE(VAL)	settings.setValue("sim/longitude",VAL)
+
+//POSITION.DESIGNER
+#define SETTINGS_COMM_UDPISON			settings.   value("communications/udpIsOn", false).toBool()
+#define SETTINGS_SET_COMM_UDPISON(VAL)	settings.setValue("communications/udpIsOn",VAL)
+
 
 
 #endif // AOGSETTINGS_H

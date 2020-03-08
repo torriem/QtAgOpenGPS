@@ -20,6 +20,8 @@ public:
     bool isPointInHeadArea(Vec3 testPointv2);
     bool isPointInHeadArea(Vec2 testPointv2);
     void drawHeadLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, int linewidth);
+    void drawHeadLineBackBuffer(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
+
     void preCalcHeadLines();
 };
 

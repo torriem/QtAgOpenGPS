@@ -205,7 +205,7 @@ QVector<Vec3> CDubins::GenerateDubins(Vec3 _start, Vec3 _goal)
         if (cnt > 1)
         {
             //calculate the heading for each point
-            for (int i = 0; i < cnt - 1; i += 10)
+            for (int i = 0; i < cnt - 1; i += 5)
             {
                 Vec3 pt(pathDataList[0].pathCoordinates[i].easting, pathDataList[0].pathCoordinates[i].northing, 0);
                 pt.heading = qAtan2(pathDataList[0].pathCoordinates[i + 1].easting - pathDataList[0].pathCoordinates[i].easting,
@@ -263,7 +263,7 @@ QVector<Vec3> CDubins::GenerateDubins(Vec3 _start, Vec3 _goal, const CBoundary &
         if (cnt > 1)
         {
             //calculate the heading for each point
-            for (int i = 0; i < cnt - 1; i += 10)
+            for (int i = 0; i < cnt - 1; i += 5)
             {
                 Vec3 pt(pathDataList[0].pathCoordinates[i].easting, pathDataList[0].pathCoordinates[i].northing, 0);
                 pt.heading = qAtan2(pathDataList[0].pathCoordinates[i + 1].easting - pathDataList[0].pathCoordinates[i].easting,

@@ -152,10 +152,10 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
         }
 
         //create the new line extent points for current ABLine based on original heading of AB line
-        currentABLineP1.easting = point1.easting - (sin(abHeading) *   1600.0);
+        currentABLineP1.easting = point1.easting - (sin(abHeading) * 1600.0);
         currentABLineP1.northing = point1.northing - (cos(abHeading) * 1600.0);
 
-        currentABLineP2.easting = point1.easting + (sin(abHeading) *   1600.0);
+        currentABLineP2.easting = point1.easting + (sin(abHeading) * 1600.0);
         currentABLineP2.northing = point1.northing + (cos(abHeading) * 1600.0);
 
         //get the distance from currently active AB line
@@ -224,12 +224,15 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
         if (abFixHeadingDelta > 0.4) abFixHeadingDelta = 0.4;
         if (abFixHeadingDelta < -0.4) abFixHeadingDelta = -0.4;
 
-        steerAngleAB = atan((distanceFromCurrentLine * vehicle.stanleyGain) / ((pn.speed * 0.277777) + 1));
+        steerAngleAB = atan((distanceFromCurrentLine * vehicle.stanleyGain) / ((fabs(pn.speed) * 0.277777) + 1));
 
         if (steerAngleAB > 0.4) steerAngleAB = 0.4;
         if (steerAngleAB < -0.4) steerAngleAB = -0.4;
 
-        steerAngleAB = glm::toDegrees((steerAngleAB + abFixHeadingDelta) * -1.0);
+        if (pn.speed > -0.1)
+            steerAngleAB = glm::toDegrees((steerAngleAB + abFixHeadingDelta) * -1.0);
+        else
+            steerAngleAB = glm::toDegrees((steerAngleAB - abFixHeadingDelta) * -1.0);
 
         if (steerAngleAB < -vehicle.maxSteerAngle) steerAngleAB = -vehicle.maxSteerAngle;
         if (steerAngleAB > vehicle.maxSteerAngle) steerAngleAB = vehicle.maxSteerAngle;

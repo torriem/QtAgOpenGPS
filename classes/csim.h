@@ -38,10 +38,10 @@ private:
     QChar NS = 'N';
     double latitude, longitude;
     double latDeg, latMinu, longDeg, longMinu, latNMEA, longNMEA;
-    double speed = 4.0, headingTrue, stepDistance = 0.2, steerAngle;
+    double speed = 4.0, headingTrue, stepDistance = 0.05, steerAngle;
     double steerAngleScrollBar = 0;
     double degrees;
-    const int fixQuality = 5, sats = 12;
+    const int fixQuality = 4, sats = 12;
     const double HDOP = 0.9;
     double altitude = 300;
 

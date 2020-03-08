@@ -46,7 +46,10 @@ public:
     double maxSteerAngle;
     double maxAngularVelocity;
     double treeSpacing;
-    double hydLiftLookAhead;
+    double hydLiftLookAheadTime;
+
+    double hydLiftLookAheadDistanceLeft, hydLiftLookAheadDistanceRight;
+
     bool isHydLiftOn;
 
     //autosteer values
@@ -62,7 +65,7 @@ public:
     bool isSuperSectionAllowedOn;
     bool areAllSectionBtnsOn = true;
 
-    double avgSpeed[10];//for average speed
+    double avgSpeed;//for average speed
     int ringCounter = 0;
 
     //headings
@@ -102,7 +105,6 @@ public:
     double updateGoalPointDistance(CNMEA &pn, double distanceFromCurrentLine);
     void drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, const CCamera &camera, CTool &tool, CBoundary &bnd, CHead &hd, const CContour &ct, const CABCurve &curve, const CABLine &ABLine);
 
-    double getAvgSpeed(bool metric = true);
 
 signals:
     //void setLookAheadGoal(double);

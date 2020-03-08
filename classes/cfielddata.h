@@ -12,6 +12,7 @@ class CNMEA;
 
 class CFieldData : public QObject
 {
+    Q_OBJECT
 private:
     //all the section area added up;
     double workedAreaTotal;
@@ -142,6 +143,14 @@ public:
         return locale.toString(speed * toolWidth * 0.2471, 'f', 1);
     }
 
+public slots:
+    void addToTotalArea(double addedArea) {
+        workedAreaTotal += addedArea;
+    }
+
+    void addToUserArea(double addedArea) {
+        workedAreaTotalUser += addedArea;
+    }
 };
 
 #endif // CFIELDDATA_H

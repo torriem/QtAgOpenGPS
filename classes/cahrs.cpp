@@ -1,16 +1,14 @@
-#include "cahrs.h"
+ #include "cahrs.h"
 #include "aogsettings.h"
 
 CAHRS::CAHRS(QObject *parent) : QObject(parent)
 {
     USE_SETTINGS;
-    isHeadingFromAutoSteer = SETTINGS_GPS_ISHEADINGFROMAUTOSTEER;
-    isHeadingFromBrick = SETTINGS_GPS_ISHEADINGFROMBRICK;
-    isHeadingFromPAOGI = SETTINGS_GPS_ISHEADINGFROMPAOGI;
-    isHeadingFromExtUDP = SETTINGS_GPS_ISHEADINGFROMEXTUDP;
+    isHeadingCorrectionFromAutoSteer = SETTINGS_GPS_ISHEADINGCORRECTIONFROMAUTOSTEER;
+    isHeadingCorrectionFromBrick = SETTINGS_GPS_ISHEADINGCORRECTIONFROMBRICK;
+    isHeadingCorrectionFromExtUDP = SETTINGS_GPS_ISHEADINGCORRECTIONFROMEXTUDP;
 
     isRollFromAutoSteer = SETTINGS_GPS_ISROLLFROMAUTOSTEER;
-    isRollFromBrick = SETTINGS_GPS_ISROLLFROMBRICK;
     isRollFromGPS = SETTINGS_GPS_ISROLLFROMGPS;
     isRollFromExtUDP = SETTINGS_GPS_ISROLLFROMEXTUDP;
 
@@ -19,7 +17,7 @@ CAHRS::CAHRS(QObject *parent) : QObject(parent)
 
     isAutoSteerAuto = SETTINGS_AUTOSTEER_AUTOON;
 
-    if (isHeadingFromBrick || isRollFromBrick )
+    if (isHeadingCorrectionFromBrick )
     {
         //TODO: implement brick connection
 
@@ -27,25 +25,34 @@ CAHRS::CAHRS(QObject *parent) : QObject(parent)
 }
 
 //SLOTS
-void CAHRS::setRollX16(int chx16) { rollX16 = chx16;}
+void CAHRS::setRollX16(int chx16) {
+    rollX16 = chx16;
+}
 
-void CAHRS::setRollZeroX16(int chx16) { rollZeroX16 = chx16;}
+void CAHRS::setRollZeroX16(int nRoll) {
+    rollK = nRoll; //input to the kalman filter
+    //kalman filter
+    Pc = P + varProcess;//0.001
+    G = Pc / (Pc + varRoll);
+    P = (1 - G) * Pc;
+    Xp = XeRoll;
+    Zp = Xp;
+    XeRoll = (G * (rollK - Zp)) + Xp;//result
+
+    rollZeroX16 = XeRoll;
+}
 
 void CAHRS::setCorrectionHeadingX16(int chx16) { correctionHeadingX16 = chx16;}
 
 void CAHRS::setIsAutoSteerOn(bool state) { isAutoSteerAuto = state; }
 
-void CAHRS::setIsHeadingFromAutoSteer(bool state) { isHeadingFromAutoSteer = state; }
+void CAHRS::setIsHeadingCorrectionFromAutoSteer(bool state) { isHeadingCorrectionFromAutoSteer = state; }
 
-void CAHRS::setIsHeadingFromBrick(bool state) { isHeadingFromBrick = state; }
+void CAHRS::setIsHeadingCorrectionFromBrick(bool state) { isHeadingCorrectionFromBrick = state; }
 
-void CAHRS::setIsHeadingFromPAOGI(bool state) { isHeadingFromPAOGI = state; }
-
-void CAHRS::setIsHeadingFromExtUDP(bool state) { isHeadingFromExtUDP = state; }
+void CAHRS::setIsHeadingCorrectionFromExtUDP(bool state) { isHeadingCorrectionFromExtUDP = state; }
 
 void CAHRS::setIsRollFromAutoSteer(bool state) { isRollFromAutoSteer = state; }
-
-void CAHRS::setIsRollFromBrick(bool state) { isRollFromBrick = state; }
 
 void CAHRS::setIsRollFromGPS(bool state) { isRollFromGPS = state; }
 

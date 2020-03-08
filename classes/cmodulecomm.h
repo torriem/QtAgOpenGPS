@@ -15,28 +15,20 @@ public:
     bool isOutOfBounds = true;
     //receive string for RateRelay
     QString serialRecvAutoSteerStr;
-    QString serialRecvRelayStr;
+    QString serialRecvMachineStr;
 
-    QByteArray pgn;
-
-    //RateRelay
-    enum relayRateItemsIndex {
-        azSteerData = 0,
-        azSteerSettings = 1,
-        azRelayData = 2,
-        azRelaySettings = 3,
-        azMachineControl = 4
-    };
+    bool isMachineDataSentToAutoSteer;
 
     //AutoSteer
 
     // PGN - 32766 - 127.254 0x7FFD
     uchar autoSteerData[pgnSentenceLength];
     enum steerDataItemsIndex {
-        sdHeaderHi = 0, sdHeaderLo=1, sdRelayLo=2, sdSpeed=3, sdDistanceHi=4,
-        sdDistanceLo=5, sdSteerAngleHi=6, sdSteerAngleLo=7, sdYouTurnByte = 8, sd8 = 9
+        sdHeaderHi = 0, sdHeaderLo=1, sd2=2, sdSpeed=3, sdDistanceHi=4,
+        sdDistanceLo=5, sdSteerAngleHi=6, sdSteerAngleLo=7, sd8 = 8, sd9 = 9
     };
 
+    //AutoSteer Basic Setting
     // PGN - 32764 - 127.252 0x7FFC
     uchar autoSteerSettings[pgnSentenceLength];
     enum steerSettingItemsIndex { ssHeaderHi = 0, ssHeaderLo = 1,
@@ -44,19 +36,32 @@ public:
                                   ssKo = 5, ssSteerOffset = 6, ssMinPWM = 7,
                                   ssMaxIntegral = 8, ssCountsPerDegree = 9 };
 
-    // PGN - 32762 - 127.250 0x7FFA
-    uchar relayData[pgnSentenceLength];
-    enum relayItemsIndex {
-        rdHeaderHi=0, rdHeaderLo = 1, rdSectionControlByteHi = 2, rdSectionControlByteLo = 3,
-        rdSpeedXFour = 4, rdTramLine = 5, rdTree = 6, rdUTurn = 7, rdHydLift = 8, rd9 = 9
-    };
+    //Arduino Steer Config
+    //PGN - 32763 - 127.251 0x7FFB
+    uchar ardSteerConfig[pgnSentenceLength];
+    enum arduinoSteerItems { arHeaderHi = 0, arHeaderLo = 1, arSet0 = 2, arSet1 = 3, arMaxSpd = 4, arMinSpd = 5, arIncMaxPulse = 6,
+        arAckermanFix = 7, ar8 = 8, ar9 = 9  };
 
-    //Machine control
-    //PGN 32758 - 127.246 0x7FF6
-    uchar machineControlData[pgnSentenceLength];
-    enum machnineControlDataItems {
-        cnHeaderHi, cnHeaderLo = 1, cnPedalControl = 2, cnSpeed = 3, cnRelayLo = 4, cnYouTurn = 5
-    };
+     //Machine Module Data ------------------------------------------------------------------------------------
+    // PGN - 32762 - 127.250 0x7FFA
+    uchar machineData[pgnSentenceLength];
+    enum machineDataItems { mdHeaderHi=0, mdHeaderLo = 1, mdSectionControlByteHi = 2, mdSectionControlByteLo = 3,
+        mdSpeedXFour = 4, mdUTurn = 5, mdTree = 6, mdHydLift = 7, md8 = 8, md9 = 9 };
+
+    // ---- Arduino configuration on machine module  ---------------------------------------------------------
+    //PGN - 32760 - 127.248 0x7FF9
+    uchar ardMachineConfig[pgnSentenceLength];
+    enum ardConfigItems { amHeaderHi=0 , amHeaderLo = 1, amRaiseTime = 2, amLowerTime = 3, amEnableHyd = 4,
+         am5 = 5, am6 = 6, am7 = 7, am8 = 8, am9 = 9 };
+
+    // ---- Section control switches to AOG  ---------------------------------------------------------
+    //PGN - 32761 - 127.224 0x7FE0
+    uchar ss[pgnSentenceLength];
+    uchar ssP[pgnSentenceLength];
+    enum sectionContolItems {swHeaderHi=0, swHeaderLo = 1, sw2 = 2, sw3 = 3, sw4 = 4,
+         swONHi = 5, swONLo = 6, swOFFHi = 7, swOFFLo = 8, swMain = 9 };
+
+
 
     //LIDAR
     //UDP sentence just rec'd
@@ -66,18 +71,19 @@ public:
 
     //for the workswitch
     bool isWorkSwitchActiveLow=false, isWorkSwitchEnabled=false, isWorkSwitchManual = false;
-    int workSwitchValue = 1, steerSwitchValue ;
+    int workSwitchValue = 0, steerSwitchValue = 1 ;
 
     explicit CModuleComm(QObject *parent = 0);
     void resetAllModuleCommValues();
 signals:
-    void sendRelayOutToPort(uchar *, int);
-    void sendAutoSteerDataOutToPort();
-    void sendAutoSteerSettingsOutToPort();
+    void sendOutUSBMachinePort(uchar *, int);
+    void sendOutUSBAutoSteerPort(uchar *, int);
 public slots:
     void setOutOfBounds() {
         isOutOfBounds = true;
     }
+
+    void setHydLift(int);
 };
 
 #endif // CMODULECOMM_H

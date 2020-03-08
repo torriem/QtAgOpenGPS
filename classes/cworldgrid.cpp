@@ -123,11 +123,11 @@ void CWorldGrid::drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, doub
 
 void CWorldGrid::createWorldGrid(double northing, double easting) {
     //draw a grid 5 km each direction away from initial fix
-     northingMax = northing + 160;
-     northingMin = northing - 160;
+     northingMax = northing + 5000.0;
+     northingMin = northing - 5000.0;
 
-     eastingMax = easting + 160;
-     eastingMin = easting - 160;
+     eastingMax = easting + 5000.0;
+     eastingMin = easting - 5000.0;
 
      //reconstruct VBOs
      fieldBufferCurrent = false;
@@ -141,26 +141,26 @@ void CWorldGrid::checkZoomWorldGrid(double northing, double easting) {
 
     //hmm, buffers are still redone a lot.
 
-    if ((northingMax - northing) < 1000)
+    if ((northingMax - northing) < 1500)
     {
         northingMax = northing + 2000;
-        texZoomN = (double)(int)((northingMax - northingMin) / 500.0);
+        texZoomN = (double)(int)((northingMax - northingMin) / 1000.0);
         invalidateBuffers();
     }
-    if ((northing - northingMin) < 1000) {
+    if ((northing - northingMin) < 1500) {
         northingMin = northing - 2000;
-        texZoomN = (double)(int)((northingMax - northingMin) / 500.0);
+        texZoomN = (double)(int)((northingMax - northingMin) / 1000.0);
         invalidateBuffers();
     }
-    if ((eastingMax - easting) < 1000)
+    if ((eastingMax - easting) < 1500)
     {
         eastingMax = easting + 2000;
-        texZoomE = (double)(int)((eastingMax - eastingMin) / 500.0);
+        texZoomE = (double)(int)((eastingMax - eastingMin) / 1000.0);
         invalidateBuffers();
     }
-    if ((easting - eastingMin) < 1000) {
+    if ((easting - eastingMin) < 1500) {
         eastingMin = easting - 2000;
-        texZoomE = (double)(int)((eastingMax - eastingMin) / 500.0);
+        texZoomE = (double)(int)((eastingMax - eastingMin) / 1000.0);
         invalidateBuffers();
     }
 }

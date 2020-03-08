@@ -176,20 +176,20 @@ bool CYouTurn::findCurveTurnPoints(const CABCurve &curve, const CBoundary &bnd, 
 void CYouTurn::addSequenceLines(double head, Vec3 pivot)
 {
     Vec3 pt;
-    for (int a = 0; a < youTurnStartOffset; a++)
+    for (int a = 0; a < youTurnStartOffset*2; a++)
     {
-        pt.easting = ytList[0].easting + (sin(head));
-        pt.northing = ytList[0].northing + (cos(head));
+        pt.easting = ytList[0].easting + (sin(head) * 0.5);
+        pt.northing = ytList[0].northing + (cos(head) * 0.5);
         pt.heading = ytList[0].heading;
         ytList.insert(0, pt);
     }
 
     int count = ytList.size();
 
-    for (int i = 1; i <= youTurnStartOffset; i++)
+    for (int i = 1; i <= youTurnStartOffset*2; i++)
     {
-        pt.easting = ytList[count - 1].easting + (sin(head) * i);
-        pt.northing = ytList[count - 1].northing + (cos(head) * i);
+        pt.easting = ytList[count - 1].easting + (sin(head) * i * 0.5);
+        pt.northing = ytList[count - 1].northing + (cos(head) * i * 0.5);
         pt.heading = head;
         ytList.append(pt);
     }
@@ -413,8 +413,8 @@ bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
         double turnOffset;
 
         //turning right
-        if (isTurnRight) turnOffset = (widthMinusOverlap + toolOffset);
-        else turnOffset = (widthMinusOverlap - toolOffset);
+        if (isTurnRight) turnOffset = (widthMinusOverlap - toolOffset);
+        else turnOffset = (widthMinusOverlap + toolOffset);
 
         double turnRadius = turnOffset / cos(boundaryAngleOffPerpendicular);
         if (!isABSameAsFixHeading) head += M_PI;
@@ -440,7 +440,8 @@ bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
 
         //now we go the other way to turn round
         head -= M_PI;
-        if (head < 0) head += glm::twoPI;
+        if (head < -M_PI) head += glm::twoPI;
+        if (head > M_PI) head -= glm::twoPI;
 
         if ((vehicle.minTurningRadius * 2.0) < turnOffset)
         {
@@ -500,6 +501,9 @@ bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
                 goal.easting = rEastYT + (cos(-head) * turnOffset);
                 goal.northing = rNorthYT + (sin(-head) * turnOffset);
             }
+            goal.easting += (sin(head) * 1);
+            goal.northing += (cos(head) * 1);
+            goal.heading = head;
         }
 
         goal.heading = head;
@@ -507,8 +511,7 @@ bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
         //generate the turn points
         ytList = dubYouTurnPath.GenerateDubins(start, goal);
         addSequenceLines(head,vehicle.pivotAxlePos);
-        int count = ytList.size();
-        if (count == 0) return false;
+        if (ytList.count() == 0) return false;
         else youTurnPhase = 1;
     }
 
@@ -626,8 +629,8 @@ bool CYouTurn::buildABLinePatternYouTurn(const CVehicle &vehicle,
     double turnOffset;
 
     //turning right
-    if (isTurnRight) turnOffset = (widthMinusOverlap + toolOffset);
-    else turnOffset = (widthMinusOverlap - toolOffset);
+    if (isTurnRight) turnOffset = (widthMinusOverlap - toolOffset);
+    else turnOffset = (widthMinusOverlap + toolOffset);
 
     //Pattern Turn
     numShapePoints = youFileList.size();
@@ -847,8 +850,8 @@ bool CYouTurn::buildCurvePatternYouTurn(const CVehicle &vehicle,
         double turnOffset;
 
         //turning right
-        if (isTurnRight) turnOffset = (widthMinusOverlap + toolOffset);
-        else turnOffset = (widthMinusOverlap - toolOffset);
+        if (isTurnRight) turnOffset = (widthMinusOverlap - toolOffset);
+        else turnOffset = (widthMinusOverlap + toolOffset);
 
         //to compensate for AB Curve overlap
         turnOffset *= delta;
@@ -1094,8 +1097,8 @@ bool CYouTurn::buildCurveDubinsYouTurn(const CVehicle &vehicle,
         double turnOffset;
 
         //calculate the true width
-        if (isTurnRight) turnOffset = (widthMinusOverlap + toolOffset);
-        else turnOffset = (widthMinusOverlap - toolOffset);
+        if (isTurnRight) turnOffset = (widthMinusOverlap - toolOffset);
+        else turnOffset = (widthMinusOverlap + toolOffset);
 
         //to compensate for AB Curve overlap
         turnOffset *= delta;
@@ -1119,7 +1122,8 @@ bool CYouTurn::buildCurveDubinsYouTurn(const CVehicle &vehicle,
 
         //now we go the other way to turn round
         head -= M_PI;
-        if (head < 0) head += glm::twoPI;
+        if (head < -M_PI) head += glm::twoPI;
+        if (head > M_PI) head -= glm::twoPI;
 
         if ((vehicle.minTurningRadius * 2.0) < turnOffset)
         {
@@ -1611,7 +1615,7 @@ void CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
         }
         else
         {
-            pivot = vehicle.pivotAxlePos;
+            pivot = vehicle.steerAxlePos;
 
             //find the closest 2 points to current fix
             for (int t = 0; t < ptCount; t++)

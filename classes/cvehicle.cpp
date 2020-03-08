@@ -42,18 +42,16 @@ CVehicle::CVehicle(QObject *parent) : QObject(parent)
     maxAngularVelocity = SETTINGS_VEHICLE_MAXANGULARVELOCITY;
     maxSteerAngle = SETTINGS_VEHICLE_MAXSTEERANGLE;
 
-    isHydLiftOn = SETTINGS_VEHICLE_ISHYDLIFTON;
+    isHydLiftOn = false;
+
 
     //treeSpacing = Properties.Settings.Default.setDistance_TreeSpacing;
     treeSpacing = 0;
 
     vehicleType = SETTINGS_VEHICLE_VEHICLETYPE;
 
-    hydLiftLookAhead = SETTINGS_VEHICLE_HYDLIFTLOOKAHEAD;
+    hydLiftLookAheadTime = SETTINGS_VEHICLE_HYDLIFTLOOKAHEAD;
 
-    //zero out all ten slots of avgSpeed[]
-    memset(avgSpeed,0,sizeof(double)*10);
-    ringCounter = 0;
 }
 
 //called from various Classes, always needs current speed
@@ -108,7 +106,7 @@ void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
 
     ////draw the vehicle Body
 
-    if (!hd.isOn)
+    if (!isHydLiftOn)
     {
         glcolors.clear();
 
@@ -137,7 +135,7 @@ void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
             gldraw.append(QVector3D(0, wheelbase, 0.0));
             gldraw.append(QVector3D(-1.0, -0, 0.0));
             gldraw.append(QVector3D(1.0, -0, 0.0));
-            gldraw.draw(gl,mvp,QColor::fromRgbF(0.95, 0.0, 0.0),
+            gldraw.draw(gl,mvp,QColor::fromRgbF(0.0, 0.95, 0.0),
                         GL_TRIANGLE_FAN,1.0f);
         }
         else
@@ -147,7 +145,7 @@ void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
             gldraw.append(QVector3D(0, wheelbase, 0.0));
             gldraw.append(QVector3D(-1.0, -0, 0.0));
             gldraw.append(QVector3D(1.0, -0, 0.0));
-            gldraw.draw(gl,mvp,QColor::fromRgbF(0.0, 0.950, 0.0),
+            gldraw.draw(gl,mvp,QColor::fromRgbF(0.950, 0.0, 0.0),
                         GL_TRIANGLE_FAN,1.0f);
         }
     }
@@ -269,20 +267,8 @@ void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
 
 void CVehicle::onNewSpeed(double _speed)
 {
-    avgSpeed[ringCounter] = _speed;
-    ringCounter++;
-    if(ringCounter > 9)
-        ringCounter = 0;
+    avgSpeed = _speed * 0.8 + avgSpeed * 0.2;
+
+    //TODO: complementary filter instead of ring buffer?
 }
 
-double CVehicle::getAvgSpeed(bool metric)
-{
-    double spd = 0;
-    for (int c=0; c<10; c++) spd +=avgSpeed[c];
-    spd *= 0.1;
-
-    if (metric)
-        return spd; //kph
-    else
-        return spd * 0.621371; //mph
-}

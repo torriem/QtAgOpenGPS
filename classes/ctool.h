@@ -24,8 +24,12 @@ public:
     double toolTrailingHitchLength, toolTankTrailingHitchLength;
     double toolOffset;
 
-    double toolTurnOffDelay;
-    double toolLookAhead;
+    double lookAheadOffSetting, lookAheadOnSetting;
+    double turnOffDelay;
+
+    double lookAheadDistanceOnPixelsLeft, lookAheadDistanceOnPixelsRight;
+    double lookAheadDistanceOffPixelsLeft, lookAheadDistanceOffPixelsRight;
+
 
     double slowSpeedCutoff = 0;
 
@@ -45,6 +49,8 @@ public:
 
     bool isSuperSectionAllowedOn;
     bool areAllSectionBtnsOn = true;
+
+    bool isLeftSideInHeadland = true, isRightSideInHeadland = true;
 
     //read pixel values
     int rpXPosition;

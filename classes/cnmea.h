@@ -17,6 +17,8 @@ class Vec2;
 };
 */
 
+class CVehicle;
+
 
 class CNMEA : public QObject
 {
@@ -30,6 +32,10 @@ private:
     double P = 1.0;
     const double varRoll = 0.1; // variance, smaller, more faster filtering
     const double varProcess = 0.0003;
+
+    //Some methods require these items to be passed in from outside
+    double lastHeading;
+    double roll;
 
 public:
     //WGS84 Lat Long
@@ -73,7 +79,7 @@ public:
 
     explicit CNMEA(QObject *parent = 0);
     void updateNorthingEasting();
-    void parseNMEA();
+    void parseNMEA(double lastHeading, double roll);
     void parseAVR();
     QByteArray parse();
 
@@ -91,6 +97,9 @@ public:
 signals:
     void setRollX16(int); //set mf.ahrs.rollX16
     void setCorrectionHeadingX16(int); //set mf.ahrs.correctionHeadingX16
+    void setRollUsed(double);
+    void setRollCorrectionDistance(double);
+    void headingSource(int);
     void clearRecvCounter(); //tell watchdog to reset it's counter
     void newSpeed(double); //so display can average this into it's speed
 
