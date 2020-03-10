@@ -67,294 +67,418 @@ void FormGPS::openGLControl_Draw()
     //  Create a perspective transformation.
     projection.perspective(glm::toDegrees(fovy), width / (double)height, 1.0f, camDistanceFactor * camera.camSetDistance);
 
-    if (isGPSPositionInitialized)
-    {
+    //oglMain rendering, Draw
 
-        //  Clear the color and depth buffer.
+    int deadCam = 0;
+
+    if(sentenceCounter > 99)
+    {
+        gl->glEnable(GL_BLEND);
+
+        gl->glClearColor(0.25122f, 0.258f, 0.275f, 1.0f);
+
         gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         modelview.setToIdentity();
 
-        //camera does translations and rotations
-        camera.setWorldCam(modelview, vehicle.pivotAxlePos.easting + offX, vehicle.pivotAxlePos.northing + offY, camera.camHeading);
+        //position the camera
+        //back the camera up
+        camera.camSetDistance = -40;
+        setZoom();
 
-        //calculate the frustum planes for culling
-        calcFrustum(projection*modelview);
+        modelview.translate(0.0, 0.0, -20);
+        //rotate the camera down to look at fix
+        modelview.rotate(-60, 1.0, 0.0, 0.0);
 
-        QColor fieldcolor;
-        if(SETTINGS_DISPLAY_DAYMODE) {
-            fieldcolor = parseColor(SETTINGS_DISPLAY_FIELDCOLORDAY);
-        } else {
-            fieldcolor = parseColor(SETTINGS_DISPLAY_FIELDCOLORNIGHT);
-        }
-        //draw the field ground images
-        worldGrid.drawFieldSurface(gl, projection *modelview, fieldcolor);
+        camera.camHeading = 0;
 
-        ////Draw the world grid based on camera position
-        gl->glDisable(GL_DEPTH_TEST);
-        gl->glDisable(GL_TEXTURE_2D);
+        deadCam++;
+        modelview.rotate(deadCam/3, 0.0, 0.0, 1.0);
+        ////draw the guide
+        GLHelperColors gldrawcolors;
+        ColorVertex cv;
 
-        ////if grid is on draw it
-        if (isGridOn) worldGrid.drawWorldGrid(gl,projection*modelview,gridZoom, QColor::fromRgbF(0,0,0));
+        cv.color = QVector4D(0.98f, 0.0f, 0.0f, 1.0f);
+        cv.vertex = QVector3D(0.0f, -1.0f, 0.0f);
+        gldrawcolors.append(cv);
+        cv.color = QVector4D(0.0f, 0.98f, 0.0f, 1.0f);
+        cv.vertex = QVector3D(-1.0f, 1.0f, 0.0f);
+        gldrawcolors.append(cv);
+        cv.color = QVector4D(0.98f, 0.98f, 0.0f, 1.0f);
+        cv.vertex = QVector3D(1.0f, -0.0f, 0.0f);
+        gldrawcolors.append(cv);
 
-        //turn on blend for paths
-        gl->glEnable(GL_BLEND);
+        gldrawcolors.draw(gl, projection * modelview, GL_TRIANGLES, 1.0); // Done Drawing Reticle
 
-        //section patch color
-        QColor sectionColor;
-        if(SETTINGS_DISPLAY_DAYMODE) sectionColor = parseColor(SETTINGS_DISPLAY_SECTIONSCOLORDAY);
-        else sectionColor = parseColor(SETTINGS_DISPLAY_SECTIONSCOLORNIGHT);
+        modelview.rotate(deadCam + 90, 0.0, 0.0, 1.0);
+        drawText3D(camera, gl, projection*modelview, 0,0, "  I'm Lost  ", 1, true, QColor::fromRgbF(0.98f, 0.98f, 0.0f));
 
-        sectionColor.setAlpha(152);
+        modelview.rotate(deadCam + 180, 0.0, 0.0, 1.0);
+        drawText3D(camera, gl, projection*modelview,
+                   0,0, "   No GPS   ", 1, true, QColor::fromRgbF(0.98f, 0.98f, 0.70f));
 
-        //OpenGL ES does not support wireframe in this way. If we want wireframe,
-        //we'll have to do it with LINES
-        //if (isDrawPolygons) gl->glPolygonMode(GL_FRONT, GL_LINE);
+        // 2D Ortho ---------------------------------------////////-------------------------------------------------
 
-        //draw patches of sections
-        for (int j = 0; j < tool.numSuperSection; j++)
-        {
-            //every time the section turns off and on is a new patch
-
-            //check if in frustum or not
-            bool isDraw;
-            int patches = tool.section[j].patchList.size();
-
-            if (patches > 0)
-            {
-                //initialize the steps for mipmap of triangles (skipping detail while zooming out)
-                /* Unused since we use the triangle lists directly with the buffers
-                int mipmap = 0;
-                if (camera.camSetDistance < -800) mipmap = 2;
-                if (camera.camSetDistance < -1500) mipmap = 4;
-                if (camera.camSetDistance < -2400) mipmap = 8;
-                if (camera.camSetDistance < -4800) mipmap = 16;
-                */
-                //for every new chunk of patch
-
-                //foreach is a Qt macro that iterates over Qt containers
-                foreach (QSharedPointer<TriangleList> triList, tool.section[j].patchList)
-                {
-                    isDraw = false;
-                    int count2 = triList->size();
-                    for (int i = 0; i < count2; i += 3)
-                    {
-                        //determine if point is in frustum or not, if < 0, its outside so abort, z always is 0
-                        //x is easting, y is northing
-                        if (frustum[0] * (*triList)[i].x() + frustum[1] * (*triList)[i].y() + frustum[3] <= 0)
-                            continue;//right
-                        if (frustum[4] * (*triList)[i].x() + frustum[5] * (*triList)[i].y() + frustum[7] <= 0)
-                            continue;//left
-                        if (frustum[16] * (*triList)[i].x() + frustum[17] * (*triList)[i].y() + frustum[19] <= 0)
-                            continue;//bottom
-                        if (frustum[20] * (*triList)[i].x() + frustum[21] * (*triList)[i].y() + frustum[23] <= 0)
-                            continue;//top
-                        if (frustum[8] * (*triList)[i].x() + frustum[9] * (*triList)[i].y() + frustum[11] <= 0)
-                            continue;//far
-                        if (frustum[12] * (*triList)[i].x() + frustum[13] * (*triList)[i].y() + frustum[15] <= 0)
-                            continue;//near
-
-                        //point is in frustum so draw the entire patch. The downside of triangle strips.
-                        isDraw = true;
-                        break;
-                    }
-
-                    if (isDraw)
-                    {
-                        //QVector<QVector3D> vertices;
-                        QOpenGLBuffer triBuffer;
-
-                        triBuffer.create();
-                        triBuffer.bind();
-
-                        //triangle lists are now using QVector3D, so we can allocate buffers
-                        //directly from list data.
-                        triBuffer.allocate(triList->data(), count2 * sizeof(QVector3D));
-                        triBuffer.release();
-
-                        glDrawArraysColor(gl,projection*modelview,
-                                          GL_TRIANGLE_STRIP, sectionColor,
-                                          triBuffer,GL_FLOAT,count2);
-
-                        triBuffer.destroy();
-                    }
-                }
-            }
-        }
-
-        // the follow up to sections patches
-        int patchCount = 0;
-
-        if (autoBtnState == btnStates::Auto || manualBtnState == btnStates::On)
-        {
-            if (tool.section[tool.numOfSections].isSectionOn && tool.section[tool.numOfSections].patchList.count()> 0)
-            {
-                patchCount = tool.section[tool.numOfSections].patchList.count();
-
-                //draw the triangle in each triangle strip
-                gldraw1.clear();
-
-                //left side of triangle
-                QVector3D pt((vehicle.cosSectionHeading * tool.section[tool.numOfSections].positionLeft) + vehicle.toolPos.easting,
-                        (vehicle.sinSectionHeading * tool.section[tool.numOfSections].positionLeft) + vehicle.toolPos.northing, 0);
-                gldraw1.append(pt);
-
-                //TODO: label3.Text = pt.northing.ToString();
-
-                //Right side of triangle
-                pt = QVector3D((vehicle.cosSectionHeading * tool.section[tool.numOfSections].positionRight) + vehicle.toolPos.easting,
-                   (vehicle.sinSectionHeading * tool.section[tool.numOfSections].positionRight) + vehicle.toolPos.northing, 0);
-                gldraw1.append(pt);
-
-                int last = tool.section[tool.numOfSections].patchList[patchCount - 1]->count();
-                //antenna
-                gldraw1.append((*tool.section[tool.numOfSections].patchList[patchCount - 1])[last - 2]);
-                gldraw1.append((*tool.section[tool.numOfSections].patchList[patchCount - 1])[last - 1]);
-                //TODO: label4.Text = (*tool.section[tool.numOfSections].patchList[patchCount - 1])[last - 2].y().ToString();
-
-                gldraw1.draw(gl, projection*modelview, sectionColor, GL_TRIANGLE_STRIP, 1.0f);
-
-            }
-            else
-            {
-                for (int j = 0; j < tool.numSuperSection; j++)
-                {
-                    if (tool.section[j].isSectionOn && tool.section[j].patchList.count() > 0)
-                    {
-                        gldraw1.clear();
-                        patchCount = tool.section[j].patchList.count();
-
-                        //draw the triangle in each triangle strip
-                        //left side of triangle
-                        QVector3D pt((vehicle.cosSectionHeading * tool.section[j].positionLeft) + vehicle.toolPos.easting,
-                                (vehicle.sinSectionHeading * tool.section[j].positionLeft) + vehicle.toolPos.northing, 0);
-                        gldraw1.append(pt);
-                        //TODO: label3.Text = pt.northing.ToString();
-
-                        //Right side of triangle
-                        pt = QVector3D((vehicle.cosSectionHeading * tool.section[j].positionRight) + vehicle.toolPos.easting,
-                           (vehicle.sinSectionHeading * tool.section[j].positionRight) + vehicle.toolPos.northing, 0);
-                        gldraw1.append(pt);
-
-                        int last = tool.section[j].patchList[patchCount - 1]->count();
-                        //antenna
-                        gldraw1.append((*tool.section[j].patchList[patchCount - 1])[last - 2]);
-                        gldraw1.append((*tool.section[j].patchList[patchCount - 1])[last - 1]);
-                        //TODO: label4.Text = (*tool.section[j].patchList[patchCount - 1])[last - 2].y().ToString();
-
-                        gldraw1.draw(gl,projection*modelview, sectionColor, GL_TRIANGLE_STRIP, 1.0f);
-                    }
-                }
-            }
-        }
-
-        //draw contour line if button on
-        if (ct.isContourBtnOn)
-        {
-            ct.drawContourLine(gl, projection*modelview, vehicle);
-        }
-        else// draw the current and reference AB Lines or CurveAB Ref and line
-        {
-            if (ABLine.isABLineSet | ABLine.isABLineBeingSet) ABLine.drawABLines(gl, projection*modelview, vehicle, tool, yt, tram, camera);
-            if (curve.isBtnCurveOn) curve.drawCurve(gl, projection*modelview, vehicle, tool, yt, tram, camera);
-        }
-
-        //if (recPath.isRecordOn)
-        recPath.drawRecordedLine(gl, projection*modelview);
-        recPath.drawDubins(gl, projection*modelview);
-
-        //draw Boundaries
-        bnd.drawBoundaryLines(vehicle, gl, projection*modelview);
-
-        //draw the turnLines
-        if (yt.isYouTurnBtnOn)
-        {
-            if (!ABLine.isEditing && !curve.isEditing && !ct.isContourBtnOn)
-            {
-                turn.drawTurnLines(bnd, gl, projection*modelview);
-            }
-        }
-        else if (!yt.isYouTurnBtnOn && SETTINGS_DISPLAY_UTURNALWAYSON)
-        {
-            if (!ABLine.isEditing && !curve.isEditing && !ct.isContourBtnOn)
-            {
-                turn.drawTurnLines(bnd, gl, projection*modelview);
-            }
-        }
-
-        if (mc.isOutOfBounds) gf.drawGeoFenceLines(bnd, gl, projection*modelview);
-
-        if (hd.isOn) hd.drawHeadLines(gl, projection*modelview, SETTINGS_DISPLAY_LINEWIDTH);
-
-        if (flagPts.size() > 0) drawFlags(gl, projection*modelview);
-
-
-        if (flagNumberPicked > 0)
-        {
-            gl->glLineWidth(SETTINGS_DISPLAY_LINEWIDTH);
-            gldraw1.clear();
-            //TODO: implement with shader: GL.LineStipple(1, 0x0707);
-            gldraw1.append(QVector3D(vehicle.pivotAxlePos.easting, vehicle.pivotAxlePos.northing, 0));
-            gldraw1.append(QVector3D(flagPts[flagNumberPicked-1].easting, flagPts[flagNumberPicked-1].northing, 0));
-            gldraw1.draw(gl, projection*modelview,
-                         QColor::fromRgbF(0.930f, 0.72f, 0.32f),
-                         GL_LINES, SETTINGS_DISPLAY_LINEWIDTH);
-        }
-
-
-        //draw the vehicle/implement
-        tool.drawTool(vehicle, camera, gl, modelview, projection);
-        vehicle.drawVehicle(gl, modelview, projection, camera, tool, bnd, hd, ct, curve, ABLine);
-
-        //// 2D Ortho --------------------------
+        //we don't need to save the matrix since it's regenerated every time through this method
         projection.setToIdentity();
+
         //negative and positive on width, 0 at top to bottom ortho view
         projection.ortho(-(double)width / 2, (double)width / 2, (double)height, 0, -1, 1);
 
         //  Create the appropriate modelview matrix.
         modelview.setToIdentity();
 
-        if(SETTINGS_DISPLAY_SKYON) drawSky(gl, projection*modelview, width, height);
+        /*
+        //TODO: implement serial port connections
+        QColor color = QColor::fromRgbF(0.98f, 0.98f, 0.70f);
 
-        if(SETTINGS_DISPLAY_LIGHTBARON) {
-            drawRollBar(gl, modelview, projection);
-            drawLightBarText(gl, projection*modelview, width, height);
+        int edge = -width / 2 + 10;
+        int line = 20;
+
+        drawText(gl, projection*modelview, edge, line, "NMEA: " + recvSentenceSettings, 1, true, color);
+        line += 30;
+        if (sp.isOpen)
+        {
+            drawText(gl, projection*modelview, edge, line, "GPS Port: Connected", 1, true, color);
+        }
+        else
+        {
+            drawText(gl, projection*modelview, edge, line, "GPS Port: Not Connected", 1, true, color);
         }
 
-        if (bnd.bndArr.size() > 0 && yt.isYouTurnBtnOn) drawUTurnBtn(gl, projection*modelview);
+        line += 30;
 
-        //Manual UTurn buttons are now in QML and are manipulated
-        //in tmrWatchdog_timeout()
+        if (spAutoSteer.IsOpen)
+        {
+            drawText(gl, projection*modelview, edge, line, "AutoSteer Port: Connected", 1, true, color);
+        }
+        else
+        {
+            drawText(gl, projection*modelview, edge, line, "AutoSteer Port: Not Connected", 1, true, color);
+        }
+        line += 30;
+        if (spMachine.IsOpen)
+        {
+            drawText(gl, projection*modelview, edge, line, "Machine Port: Connected", 1, true, color);
+        }
+        else
+        {
+            drawText(gl, projection*modelview, edge, line, "Machine Port: Not Connected", 1, true, color);
+        }
+        line += 30;
+        if (Properties.Settings.Default.setUDP_isOn)
+        {
+            drawText(gl, projection*modelview, edge, line, "UDP: Counter is " + pbarUDP.ToString(), 1, true, color);
+        }
+        else
+        {
+            drawText(gl, projection*modelview, edge, line, "UDP: Off", 1, true, color);
+        }
+        line += 30;
+        */
 
-        if (SETTINGS_DISPLAY_COMPASS) drawCompass(gl, modelview, projection, width - 400);
-
-        drawCompassText(gl, projection*modelview, width - 400);
-
-        if (SETTINGS_DISPLAY_SPEEDO) drawSpeedo(gl, modelview, projection, width, height);
         gl->glFlush();
 
-        //draw the zoom window
-        if (isJobStarted)
-        {
-            /*TODO implement floating zoom windo
-            if (threeSeconds != zoomUpdateCounter)
-            {
-                zoomUpdateCounter = threeSeconds;
-                oglZoom.Refresh();
-            }
-            */
-        }
-        if (leftMouseDownOnOpenGL) makeFlagMark(gl);
+        //GUI widgets have to be updated elsewhere
     }
     else
     {
-        gl->glClear(GL_COLOR_BUFFER_BIT);
+        if (isGPSPositionInitialized)
+        {
+
+            //  Clear the color and depth buffer.
+            gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            if (isDay) gl->glClearColor(0.27f, 0.4f, 0.7f, 1.0f);
+            else gl->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+            modelview.setToIdentity();
+
+            //camera does translations and rotations
+            camera.setWorldCam(modelview, vehicle.pivotAxlePos.easting + offX, vehicle.pivotAxlePos.northing + offY, camera.camHeading);
+
+            //calculate the frustum planes for culling
+            calcFrustum(projection*modelview);
+
+            QColor fieldcolor;
+            if(SETTINGS_DISPLAY_DAYMODE) {
+                fieldcolor = parseColor(SETTINGS_DISPLAY_FIELDCOLORDAY);
+            } else {
+                fieldcolor = parseColor(SETTINGS_DISPLAY_FIELDCOLORNIGHT);
+            }
+            //draw the field ground images
+            worldGrid.drawFieldSurface(gl, projection *modelview, fieldcolor);
+
+            ////Draw the world grid based on camera position
+            gl->glDisable(GL_DEPTH_TEST);
+            gl->glDisable(GL_TEXTURE_2D);
+
+            ////if grid is on draw it
+            if (isGridOn) worldGrid.drawWorldGrid(gl,projection*modelview,gridZoom, QColor::fromRgbF(0,0,0));
+
+            //turn on blend for paths
+            gl->glEnable(GL_BLEND);
+
+            QColor sectionColor;
+            if(SETTINGS_DISPLAY_DAYMODE) {
+                sectionColor = parseColor(SETTINGS_DISPLAY_SECTIONSCOLORDAY);
+                sectionColor.setAlpha(152*0.52);
+            } else {
+                sectionColor = parseColor(SETTINGS_DISPLAY_SECTIONSCOLORNIGHT);
+                sectionColor.setAlpha(152*0.52);
+            }
+
+            //OpenGL ES does not support wireframe in this way. If we want wireframe,
+            //we'll have to do it with LINES
+            //if (isDrawPolygons) gl->glPolygonMode(GL_FRONT, GL_LINE);
+
+            //draw patches of sections
+            for (int j = 0; j < tool.numSuperSection; j++)
+            {
+                //every time the section turns off and on is a new patch
+
+                //check if in frustum or not
+                bool isDraw;
+                int patches = tool.section[j].patchList.size();
+
+                if (patches > 0)
+                {
+                    //initialize the steps for mipmap of triangles (skipping detail while zooming out)
+                    /* Unused since we use the triangle lists directly with the buffers
+                    int mipmap = 0;
+                    if (camera.camSetDistance < -800) mipmap = 2;
+                    if (camera.camSetDistance < -1500) mipmap = 4;
+                    if (camera.camSetDistance < -2400) mipmap = 8;
+                    if (camera.camSetDistance < -4800) mipmap = 16;
+                    */
+                    //for every new chunk of patch
+
+                    //foreach is a Qt macro that iterates over Qt containers
+                    foreach (QSharedPointer<TriangleList> triList, tool.section[j].patchList)
+                    {
+                        isDraw = false;
+                        int count2 = triList->size();
+                        for (int i = 0; i < count2; i += 3) //would start at 1 if we stored color in the first element
+                        {
+                            //determine if point is in frustum or not, if < 0, its outside so abort, z always is 0
+                            //x is easting, y is northing
+                            if (frustum[0] * (*triList)[i].x() + frustum[1] * (*triList)[i].y() + frustum[3] <= 0)
+                                continue;//right
+                            if (frustum[4] * (*triList)[i].x() + frustum[5] * (*triList)[i].y() + frustum[7] <= 0)
+                                continue;//left
+                            if (frustum[16] * (*triList)[i].x() + frustum[17] * (*triList)[i].y() + frustum[19] <= 0)
+                                continue;//bottom
+                            if (frustum[20] * (*triList)[i].x() + frustum[21] * (*triList)[i].y() + frustum[23] <= 0)
+                                continue;//top
+                            if (frustum[8] * (*triList)[i].x() + frustum[9] * (*triList)[i].y() + frustum[11] <= 0)
+                                continue;//far
+                            if (frustum[12] * (*triList)[i].x() + frustum[13] * (*triList)[i].y() + frustum[15] <= 0)
+                                continue;//near
+
+                            //point is in frustum so draw the entire patch. The downside of triangle strips.
+                            isDraw = true;
+                            break;
+                        }
+
+                        if (isDraw)
+                        {
+                            //QVector<QVector3D> vertices;
+                            QOpenGLBuffer triBuffer;
+
+                            triBuffer.create();
+                            triBuffer.bind();
+
+                            //triangle lists are now using QVector3D, so we can allocate buffers
+                            //directly from list data.
+                            triBuffer.allocate(triList->data(), count2 * sizeof(QVector3D));
+                            triBuffer.release();
+
+                            glDrawArraysColor(gl,projection*modelview,
+                                              GL_TRIANGLE_STRIP, sectionColor,
+                                              triBuffer,GL_FLOAT,count2);
+
+                            triBuffer.destroy();
+                        }
+                    }
+                }
+            }
+
+            // the follow up to sections patches
+            int patchCount = 0;
+
+            if (autoBtnState == btnStates::Auto || manualBtnState == btnStates::On)
+            {
+                //section patch color
+                if (tool.section[tool.numOfSections].isSectionOn && tool.section[tool.numOfSections].patchList.count() > 0)
+                {
+                    patchCount = tool.section[tool.numOfSections].patchList.count();
+
+                    //draw the triangle in each triangle strip
+                    gldraw1.clear();
+
+                    //left side of triangle
+                    QVector3D pt((vehicle.cosSectionHeading * tool.section[tool.numOfSections].positionLeft) + vehicle.toolPos.easting,
+                            (vehicle.sinSectionHeading * tool.section[tool.numOfSections].positionLeft) + vehicle.toolPos.northing, 0);
+                    gldraw1.append(pt);
+
+                    //TODO: label3.Text = pt.northing.ToString();
+
+                    //Right side of triangle
+                    pt = QVector3D((vehicle.cosSectionHeading * tool.section[tool.numOfSections].positionRight) + vehicle.toolPos.easting,
+                       (vehicle.sinSectionHeading * tool.section[tool.numOfSections].positionRight) + vehicle.toolPos.northing, 0);
+                    gldraw1.append(pt);
+
+                    int last = tool.section[tool.numOfSections].patchList[patchCount - 1]->count();
+                    //antenna
+                    gldraw1.append((*tool.section[tool.numOfSections].patchList[patchCount - 1])[last - 2]);
+                    gldraw1.append((*tool.section[tool.numOfSections].patchList[patchCount - 1])[last - 1]);
+                    //TODO: label4.Text = (*tool.section[tool.numOfSections].patchList[patchCount - 1])[last - 2].y().ToString();
+
+                    gldraw1.draw(gl, projection*modelview, sectionColor, GL_TRIANGLE_STRIP, 1.0f);
+
+                }
+                else
+                {
+                    for (int j = 0; j < tool.numSuperSection; j++)
+                    {
+                        if (tool.section[j].isSectionOn && tool.section[j].patchList.count() > 0)
+                        {
+                            gldraw1.clear();
+                            patchCount = tool.section[j].patchList.count();
+
+                            //draw the triangle in each triangle strip
+                            //left side of triangle
+                            QVector3D pt((vehicle.cosSectionHeading * tool.section[j].positionLeft) + vehicle.toolPos.easting,
+                                    (vehicle.sinSectionHeading * tool.section[j].positionLeft) + vehicle.toolPos.northing, 0);
+                            gldraw1.append(pt);
+                            //TODO: label3.Text = pt.northing.ToString();
+
+                            //Right side of triangle
+                            pt = QVector3D((vehicle.cosSectionHeading * tool.section[j].positionRight) + vehicle.toolPos.easting,
+                               (vehicle.sinSectionHeading * tool.section[j].positionRight) + vehicle.toolPos.northing, 0);
+                            gldraw1.append(pt);
+
+                            int last = tool.section[j].patchList[patchCount - 1]->count();
+                            //antenna
+                            gldraw1.append((*tool.section[j].patchList[patchCount - 1])[last - 2]);
+                            gldraw1.append((*tool.section[j].patchList[patchCount - 1])[last - 1]);
+                            //TODO: label4.Text = (*tool.section[j].patchList[patchCount - 1])[last - 2].y().ToString();
+
+                            gldraw1.draw(gl,projection*modelview, sectionColor, GL_TRIANGLE_STRIP, 1.0f);
+                        }
+                    }
+                }
+            }
+
+            //draw contour line if button on
+            if (ct.isContourBtnOn)
+            {
+                ct.drawContourLine(gl, projection*modelview, vehicle);
+            }
+            else// draw the current and reference AB Lines or CurveAB Ref and line
+            {
+                if (ABLine.isABLineSet | ABLine.isABLineBeingSet) ABLine.drawABLines(gl, projection*modelview, vehicle, tool, yt, tram, camera);
+                if (curve.isBtnCurveOn) curve.drawCurve(gl, projection*modelview, vehicle, tool, yt, tram, camera);
+            }
+
+            //if (recPath.isRecordOn)
+            recPath.drawRecordedLine(gl, projection*modelview);
+            recPath.drawDubins(gl, projection*modelview);
+
+            //draw Boundaries
+            bnd.drawBoundaryLines(vehicle, gl, projection*modelview);
+
+            //draw the turnLines
+            if (yt.isYouTurnBtnOn)
+            {
+                if (!ABLine.isEditing && !curve.isEditing && !ct.isContourBtnOn)
+                {
+                    turn.drawTurnLines(bnd, gl, projection*modelview);
+                }
+            }
+            else if (!yt.isYouTurnBtnOn && SETTINGS_DISPLAY_UTURNALWAYSON)
+            {
+                if (!ABLine.isEditing && !curve.isEditing && !ct.isContourBtnOn)
+                {
+                    turn.drawTurnLines(bnd, gl, projection*modelview);
+                }
+            }
+
+            if (mc.isOutOfBounds) gf.drawGeoFenceLines(bnd, gl, projection*modelview);
+
+            if (hd.isOn) hd.drawHeadLines(gl, projection*modelview, SETTINGS_DISPLAY_LINEWIDTH);
+
+            if (flagPts.size() > 0) drawFlags(gl, projection*modelview);
+
+
+            if (flagNumberPicked > 0)
+            {
+                gl->glLineWidth(SETTINGS_DISPLAY_LINEWIDTH);
+                gldraw1.clear();
+                //TODO: implement with shader: GL.LineStipple(1, 0x0707);
+                gldraw1.append(QVector3D(vehicle.pivotAxlePos.easting, vehicle.pivotAxlePos.northing, 0));
+                gldraw1.append(QVector3D(flagPts[flagNumberPicked-1].easting, flagPts[flagNumberPicked-1].northing, 0));
+                gldraw1.draw(gl, projection*modelview,
+                             QColor::fromRgbF(0.930f, 0.72f, 0.32f),
+                             GL_LINES, SETTINGS_DISPLAY_LINEWIDTH);
+            }
+
+
+            //draw the vehicle/implement
+            tool.drawTool(vehicle, camera, gl, modelview, projection);
+            vehicle.drawVehicle(gl, modelview, projection, camera, tool, bnd, hd, ct, curve, ABLine);
+
+            // 2D Ortho --------------------------
+            //no need to "push" matrix since it will be regenerated next time
+            projection.setToIdentity();
+            //negative and positive on width, 0 at top to bottom ortho view
+            projection.ortho(-(double)width / 2, (double)width / 2, (double)height, 0, -1, 1);
+
+            //  Create the appropriate modelview matrix.
+            modelview.setToIdentity();
+
+            if(SETTINGS_DISPLAY_SKYON) drawSky(gl, projection*modelview, width, height);
+
+            if(SETTINGS_DISPLAY_LIGHTBARON) {
+                drawRollBar(gl, modelview, projection);
+                drawLightBarText(gl, projection*modelview, width, height);
+            }
+
+            if (bnd.bndArr.size() > 0 && yt.isYouTurnBtnOn) drawUTurnBtn(gl, projection*modelview);
+
+            //Manual UTurn buttons are now in QML and are manipulated
+            //in tmrWatchdog_timeout()
+
+            if (SETTINGS_DISPLAY_COMPASS) drawCompass(gl, modelview, projection, width - 400);
+
+            drawCompassText(gl, projection*modelview, width - 400);
+
+            if (SETTINGS_DISPLAY_SPEEDO) drawSpeedo(gl, modelview, projection, width, height);
+            gl->glFlush();
+
+            //draw the zoom window
+            if (isJobStarted)
+            {
+                /*TODO implement floating zoom windo
+                if (threeSeconds != zoomUpdateCounter)
+                {
+                    zoomUpdateCounter = threeSeconds;
+                    oglZoom.Refresh();
+                }
+                */
+            }
+            if (leftMouseDownOnOpenGL) makeFlagMark(gl); //TODO: not working, fix!
+        }
+        else
+        {
+            gl->glClear(GL_COLOR_BUFFER_BIT);
+        }
+
+        //qmlview->resetOpenGLState();
+
+        //directly call section lookahead GL stuff from here
+        openGLControlBack_Draw();
+        gl->glFlush();
     }
-
-    //qmlview->resetOpenGLState();
-
-    //directly call section lookahead GL stuff from here
-    openGLControlBack_Draw();
-    gl->glFlush();
 }
 
 /// Handles the OpenGLInitialized event of the openGLControl control.
@@ -491,7 +615,7 @@ void FormGPS::openGLControlBack_Draw()
             {
                 isDraw = false;
                 int count2 = triList->size();
-                for (int i = 0; i < count2; i+=3)
+                for (int i = 0; i < count2; i+=3) //would start at 1 if color was stored as first vertice
                 {
                     //determine if point is in frustum or not
                     //x is easting, y is northing
@@ -519,6 +643,8 @@ void FormGPS::openGLControlBack_Draw()
                     //triangle lists are now using QVector3D, so we can allocate buffers
                     //directly from list data.
 
+                    //TODO if storing color in first vertice, we should skip it
+                    //triBuffer.allocate(triList->data() + sizeof(QVector3D), count2 * sizeof(QVector3D));
                     triBuffer.allocate(triList->data(), count2 * sizeof(QVector3D));
                     triBuffer.release();
 
@@ -549,13 +675,18 @@ void FormGPS::openGLControlBack_Draw()
         }
     }
 
+    //draw the headland
+    if (hd.isOn) hd.drawHeadLinesBack(gl, projection*modelview);
+
+    //finish it up - we need to read the ram of video card
+    gl->glFlush();
 
     //read the whole block of pixels up to max lookahead, one read only
     //we'll use Qt's QImage function to grab it.
     grnPix = backFBO->toImage().mirrored().convertToFormat(QImage::Format_RGBX8888);
     //qDebug() << grnPix.size();
-    QImage temp = grnPix.copy(tool.rpXPosition, 252, tool.rpWidth, 245 /*(int)rpHeight*/);
-    memcpy(lookaheadPixels, temp.constBits(), temp.size().width() * temp.size().height() * 4);
+    QImage temp = grnPix.copy(tool.rpXPosition, 250, tool.rpWidth, 245 /*(int)rpHeight*/);
+    memcpy(grnPixels, temp.constBits(), temp.size().width() * temp.size().height() * 4);
     //grnPix = temp;
 
     //The remaining codesteerSlider the original method in the C# code is
@@ -571,27 +702,6 @@ void FormGPS::openGLControlBack_Draw()
     resetOpenGLState();
 }
 
-/*
-//Resize is called upn window creation
-private void openGLControlBack_Resized(object sender, EventArgs e)
-{
-    //  Get the OpenGL object.
-    OpenGL gls = openGLControlBack.OpenGL;
-
-    gl->glMatrixMode(OpenGL.GL_PROJECTION);
-
-    //  Load the identity.
-    gl->glLoadIdentity();
-
-    // change these at your own peril!!!! Very critical
-    //  Create a perspective transformation.
-    gl->glPerspective(6.0f, 1, 1, 6000);
-
-    //  Set the modelview matrix.
-    gl->glMatrixMode(OpenGL.GL_MODELVIEW);
-}
-
-*/
 //Draw section OpenGL window, not visible
 void FormGPS::openGLControlBack_Initialized()
 {
@@ -884,7 +994,7 @@ void FormGPS::drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4
     modelview.translate(0, 100, 0); //will not override caller's modelview
 
     //If roll is used rotate graphic based on roll angle
-    if ((ahrs.isRollFromBrick | ahrs.isRollFromAutoSteer | ahrs.isRollFromGPS) && ahrs.rollX16 != 9999)
+    if ((ahrs.isRollFromAutoSteer || ahrs.isRollFromGPS || ahrs.isRollFromExtUDP) && ahrs.rollX16 != 9999)
         modelview.rotate(((ahrs.rollX16 - ahrs.rollZeroX16) * 0.0625f), 0.0f, 0.0f, 1.0f);
 
     gl->glLineWidth(1);

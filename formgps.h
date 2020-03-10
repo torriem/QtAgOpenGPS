@@ -181,9 +181,6 @@ public:
     //Time to do fix position update and draw routine
     double frameTime = 0;
 
-    //For field saving in background
-    int saveCounter = 1;
-
     //Time to do fix position update and draw routine
     double HzTime = 5;
 
@@ -198,6 +195,7 @@ private:
      int oneSecondCounter = 0, oneSecond = 0;
      int oneHalfSecondCounter = 0, oneHalfSecond = 0;
      int oneFifthSecondCounter = 0, oneFifthSecond = 0;
+     int minuteCounter = 1;
 public:
      int pbarSteer, pbarRelay, pbarUDP;
      double nudNumber = 0;
@@ -404,7 +402,7 @@ public:
 
     //data buffer for pixels read from off screen buffer
     //uchar grnPixels[80001];
-    LookAheadPixels lookaheadPixels[80001];
+    LookAheadPixels grnPixels[80001];
     QImage grnPix;
 
     /*
@@ -414,6 +412,8 @@ public:
     */
     QOpenGLBuffer skyBuffer;
     QOpenGLBuffer flagsBuffer;
+
+    uint sentenceCounter = 0;
 
 
     /***********************
@@ -487,7 +487,7 @@ private:
 public:
     QString speedMPH();
     QString speedKPH();
-    void processSectionOnOffRequests();
+    void processSectionOnOffRequests(bool isMapping);
     bool scanForNMEA();
 
     /**************************

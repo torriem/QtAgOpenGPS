@@ -264,7 +264,7 @@ void FormGPS::updateFixPosition()
         mc.autoSteerData[mc.sdSteerAngleLo] = (char)(vehicle.guidanceLineSteerAngle);
     }
 
-    sendOutUSBAutoSteerPort(mc.autoSteerData, pgnSentenceLength);
+    //TODO: sendOutUSBAutoSteerPort(mc.autoSteerData, pgnSentenceLength);
 
     //send out to network
     if (SETTINGS_COMM_UDPISON)
