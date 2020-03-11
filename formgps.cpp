@@ -7,7 +7,7 @@
 #include <QLocale>
 #include <QLabel>
 
-extern QLabel *grnPixels;
+extern QLabel *grnPixelsWindow;
 
 
 
@@ -147,7 +147,7 @@ void FormGPS::processSectionLookahead() {
     USE_SETTINGS;
     //not using regular Qt Widgets in the main window anymore.  For
     //debugging purposes, this could go in another popup window
-    //grnPixelsWindow->setPixmap(QPixmap::fromImage(grnPix.mirrored()));
+    grnPixelsWindow->setPixmap(QPixmap::fromImage(grnPix.mirrored()));
 
     bool isHeadlandClose = false, isBoundaryClose = false, isMapping = true;
 
@@ -687,7 +687,7 @@ GetOutSectionOff1:
             }
 
             //if going too slow turn off sections
-            if (pn.speed < SETTINGS_VEHICLE_SLOWSPEEDCUTOFF)
+            if (pn.speed <= SETTINGS_VEHICLE_SLOWSPEEDCUTOFF)
             {
                 tool.section[j].sectionOnRequest = false;
                 tool.section[j].sectionOffRequest = true;
@@ -726,7 +726,7 @@ GetOutSectionOff1:
             }
 
             //if going too slow turn off sections
-            if (pn.speed < SETTINGS_VEHICLE_SLOWSPEEDCUTOFF)
+            if (pn.speed <= SETTINGS_VEHICLE_SLOWSPEEDCUTOFF)
             {
                 tool.section[j].mappingOnRequest = false;
                 tool.section[j].mappingOffRequest = true;
@@ -1047,7 +1047,7 @@ void FormGPS::tmrWatchdog_timeout()
             //counter used for saving field in background
             minuteCounter++;
 
-            qmlItem(qml_root,"btnPerimeter")->setProperty("buttonText", locale.toString(vehicle.totalSquareMeters / 1000, 'f', 2));
+            qmlItem(qml_root,"btnPerimeter")->setProperty("buttonText", locale.toString(fd.workedAreaTotal / 1000, 'f', 2));
 
             /*
             if (panelBatman.Visible)

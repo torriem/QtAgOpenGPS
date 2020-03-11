@@ -1,6 +1,7 @@
 #include "csection.h"
 #include "cvehicle.h"
 #include "ctool.h"
+#include "aogsettings.h"
 
 #include <math.h>
 
@@ -10,23 +11,26 @@ CSection::CSection(QObject *parent) : QObject(parent)
 }
 
 void CSection::turnMappingOn() {
+    USE_SETTINGS;
     numTriangles = 0;
 
     //do not tally square meters on inital point, that would be silly
-    if (!isSectionOn)
+    if (!isMappingOn)
     {
+        qDebug() << "turn section mapping on";
         //set the section bool to on
-        isSectionOn = true;
+        isMappingOn = true;
 
         //starting a new patch chunk so create a new triangle list
         //and add the previous triangle list to the list of paths
-
-        //vec3 colur = new vec3(mf.sectionColorDay.R, mf.sectionColorDay.G, mf.sectionColorDay.B);
-        //triangleList.Add(colur); //what's with colur? not being used currently
-
         // start a brand new triangle list
         triangleList = QSharedPointer<TriangleList>( new TriangleList);
         patchList.append(triangleList);
+
+        //vec3 colur = new vec3(mf.sectionColorDay.R, mf.sectionColorDay.G, mf.sectionColorDay.B);
+        QVector3D colur = parseColorVector(SETTINGS_DISPLAY_SECTIONSCOLORDAY);
+        triangleList->append(colur);
+
 
         //left side of triangle
         triangleList->append(QVector3D(leftPoint.easting, leftPoint.northing,0));
@@ -42,7 +46,7 @@ void CSection::turnMappingOff(CTool &tool) {
 
     isMappingOn = false;
     numTriangles = 0;
-    if (triangleList->count() > 3) //4 if using colur
+    if (triangleList->count() > 4)
     {
         //save the triangle list in a patch list to add to saving file
         tool.patchSaveList.append(triangleList);
@@ -60,6 +64,7 @@ void CSection::turnMappingOff(CTool &tool) {
 
 void CSection::addMappingPoint(CTool &tool)
 {
+    USE_SETTINGS;
     //add two triangles for next step.
     //left side and add the point to List
 
@@ -83,7 +88,7 @@ void CSection::addMappingPoint(CTool &tool)
 
     //when closing a job the triangle patches all are emptied but the section delay keeps going.
     //Prevented by quick check. 4 points plus colour (which we aren't implementing at this yet. TODO
-    if (c >= 4) //would be 5 if using colur thing
+    if (c >= 5) //would be 5 if using colur thing
     {
         //calculate area of these 2 new triangles - AbsoluteValue of (Ax(By-Cy) + Bx(Cy-Ay) + Cx(Ay-By)/2)
         //easting = x, northing = y!
@@ -116,6 +121,10 @@ void CSection::addMappingPoint(CTool &tool)
 
         triangleList = QSharedPointer<TriangleList>( new TriangleList);
         patchList.append(triangleList);
+
+        //add patch color
+        QVector3D colur = parseColorVector(SETTINGS_DISPLAY_SECTIONSCOLORDAY);
+        triangleList->append(colur);
 
         //add the points to List, yes its more points, but breaks up patches for culling
         triangleList->append(point);

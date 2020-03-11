@@ -35,3 +35,13 @@ QColor parseColor(QString setcolor)
        return QColor::fromRgb(255,0,255); //return magenta so we can see it
     }
 }
+
+QVector3D parseColorVector(QString setcolor)
+{
+    //qDebug() << setcolor;
+
+    QStringList c = setcolor.split(",");
+    return QVector3D(c.at(0).toInt(),
+                     c.at(1).toInt(),
+                     c.at(2).toInt());
+}

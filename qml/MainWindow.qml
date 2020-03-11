@@ -426,8 +426,8 @@ Item {
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 width: 200
-                from: 0
-                to: 100
+                from: -50
+                to: 50
                 value: 5
             }
             Slider {

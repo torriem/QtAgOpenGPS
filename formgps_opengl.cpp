@@ -257,7 +257,7 @@ void FormGPS::openGLControl_Draw()
                     {
                         isDraw = false;
                         int count2 = triList->size();
-                        for (int i = 0; i < count2; i += 3) //would start at 1 if we stored color in the first element
+                        for (int i = 1; i < count2; i += 3) //first vertice is color
                         {
                             //determine if point is in frustum or not, if < 0, its outside so abort, z always is 0
                             //x is easting, y is northing
@@ -289,12 +289,12 @@ void FormGPS::openGLControl_Draw()
 
                             //triangle lists are now using QVector3D, so we can allocate buffers
                             //directly from list data.
-                            triBuffer.allocate(triList->data(), count2 * sizeof(QVector3D));
+                            triBuffer.allocate(triList->data() + 1, (count2-1) * sizeof(QVector3D));
                             triBuffer.release();
 
                             glDrawArraysColor(gl,projection*modelview,
                                               GL_TRIANGLE_STRIP, sectionColor,
-                                              triBuffer,GL_FLOAT,count2);
+                                              triBuffer,GL_FLOAT,count2-1);
 
                             triBuffer.destroy();
                         }
@@ -615,7 +615,7 @@ void FormGPS::openGLControlBack_Draw()
             {
                 isDraw = false;
                 int count2 = triList->size();
-                for (int i = 0; i < count2; i+=3) //would start at 1 if color was stored as first vertice
+                for (int i = 1; i < count2; i+=3)
                 {
                     //determine if point is in frustum or not
                     //x is easting, y is northing
@@ -643,15 +643,15 @@ void FormGPS::openGLControlBack_Draw()
                     //triangle lists are now using QVector3D, so we can allocate buffers
                     //directly from list data.
 
-                    //TODO if storing color in first vertice, we should skip it
-                    //triBuffer.allocate(triList->data() + sizeof(QVector3D), count2 * sizeof(QVector3D));
-                    triBuffer.allocate(triList->data(), count2 * sizeof(QVector3D));
+                    //first vertice is color, so we should skip it
+                    triBuffer.allocate(triList->data() + 1, (count2-1) * sizeof(QVector3D));
+                    //triBuffer.allocate(triList->data(), count2 * sizeof(QVector3D));
                     triBuffer.release();
 
                     //draw the triangles in each triangle strip
                     glDrawArraysColor(gl,projection*modelview,
                                       GL_TRIANGLE_STRIP, patchColor,
-                                      triBuffer,GL_FLOAT,count2);
+                                      triBuffer,GL_FLOAT,count2-1);
 
                     triBuffer.destroy();
                 }
@@ -1176,18 +1176,20 @@ void FormGPS::drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 
     double aveSpd = 0;
     if (isMetric)
     {
-        aveSpd = vehicle.avgSpeed;
-        aveSpd *= 0.1;
+        aveSpd = fabs(vehicle.avgSpeed);
         if (aveSpd > 20) aveSpd = 20;
         angle = (aveSpd - 10) * 15;
     }
     else
     {
-        double aveSpd = vehicle.avgSpeed;
-        aveSpd *= 0.0621371;
-        angle = (aveSpd - 10) * 15;
+        double aveSpd = fabs(vehicle.avgSpeed) * 0.621371;
         if (aveSpd > 20) aveSpd = 20;
+        angle = (aveSpd - 10) * 15;
     }
+
+    QColor color;
+    if (vehicle.avgSpeed > -0.1) color = QColor::fromRgbF(0.0f, 0.950f, 0.0f);
+    else color = QColor::fromRgbF(0.952f, 0.0f, 0.0f);
 
     gldraw1.clear();
     modelview.rotate(angle, 0, 0, 1);
@@ -1196,7 +1198,8 @@ void FormGPS::drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 
     gldraw1.append({ QVector3D(-48, 48, 0),   QVector2D(0, 1) });
     gldraw1.append({ QVector3D(48, 48, 0),    QVector2D(1, 1) });
 
-    gldraw1.draw(gl, projection*modelview, Textures::SPEEDONEDLE, GL_TRIANGLE_STRIP, true, QColor::fromRgbF(0.952f, 0.70f, 0.23f));
+    gldraw1.draw(gl, projection*modelview, Textures::SPEEDONEDLE, GL_TRIANGLE_STRIP,
+                 true, color);
 }
 
 void FormGPS::calcFrustum(const QMatrix4x4 &mvp)

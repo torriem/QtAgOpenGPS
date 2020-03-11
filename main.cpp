@@ -15,16 +15,16 @@ int main(int argc, char *argv[])
     QFont f = a.font();
     f.setPointSize(16);
     a.setFont(f);
-    QCoreApplication::setOrganizationName("AgOpenGPS");
+    QCoreApplication::setOrganizationName("QtAgOpenGPS");
     QCoreApplication::setOrganizationDomain("qtagopengps");
     QCoreApplication::setApplicationName("QtAgOpenGPS");
     qmlRegisterType<AOGRendererInSG>("AgOpenGPS",1,0,"AOGRenderer");
     FormGPS w;
     w.show();
-    //grnPixelsWindow = new QLabel("Hello");
-    //grnPixelsWindow->setFixedWidth(500);
-    //grnPixelsWindow->setFixedHeight(500);
-    //grnPixelsWindow->show();
+    grnPixelsWindow = new QLabel("Hello");
+    grnPixelsWindow->setFixedWidth(500);
+    grnPixelsWindow->setFixedHeight(500);
+    grnPixelsWindow->show();
     return a.exec();
 }
 #endif

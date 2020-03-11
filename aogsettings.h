@@ -4,6 +4,7 @@
 #include <QSettings>
 #include <QVariant>
 #include <QList>
+#include <QVector3D>
 
 #include <QColor>
 
@@ -14,6 +15,7 @@ public:
 };
 
 QColor parseColor(QString setcolor);
+QVector3D parseColorVector(QString setcolor);
 
 //Macros to use settings in a consistant way
 #define USE_SETTINGS AOGSettings settings

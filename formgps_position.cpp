@@ -1060,6 +1060,13 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
 
         tool.section[j].rightPoint = Vec3(cosHeading * (tool.section[j].positionRight) + easting,
                             sinHeading * (tool.section[j].positionRight) + northing,0);
+        /*
+        qDebug() << j << ": " << tool.section[j].leftPoint.easting << "," <<
+                                 tool.section[j].leftPoint.northing <<" " <<
+                                 tool.section[j].rightPoint.easting << ", " <<
+                                 tool.section[j].rightPoint.northing;
+                                 */
+
 
         //now we have left and right for this section
         right = tool.section[j].rightPoint - tool.section[j].lastRightPoint;
@@ -1105,6 +1112,8 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
         else tool.section[j].speedPixels = rightSpeed;
     }
 
+    //qDebug() << leftSpeed << " " << rightSpeed;
+
     //fill in tool positions
     tool.section[tool.numOfSections].leftPoint = tool.section[0].leftPoint;
     tool.section[tool.numOfSections].rightPoint = tool.section[tool.numOfSections-1].rightPoint;
@@ -1144,8 +1153,8 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
             if (j == 0)
             {
                 //only one first left point, the rest are all rights moved over to left
-                isLeftIn = hd.headArr[0].isPointInHeadArea(tool.section[j].leftPoint);
-                isRightIn = hd.headArr[0].isPointInHeadArea(tool.section[j].rightPoint);
+                isLeftIn = bnd.bndArr[0].isPointInsideBoundary(tool.section[j].leftPoint);
+                isRightIn = bnd.bndArr[0].isPointInsideBoundary(tool.section[j].rightPoint);
 
                 for (int i = 1; i < bnd.bndArr.count(); i++)
                 {
@@ -1164,14 +1173,14 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
             {
                 //grab the right of previous section, its the left of this section
                 isLeftIn = isRightIn;
-                isRightIn = hd.headArr[0].isPointInHeadArea(tool.section[j].rightPoint);
+                isRightIn = bnd.bndArr[0].isPointInsideBoundary(tool.section[j].rightPoint);
                 for (int i = 1; i < hd.headArr.count(); i++)
                 {
                     //inner boundaries should normally NOT have point inside
                     if (bnd.bndArr[i].isSet) isRightIn &= !bnd.bndArr[i].isPointInsideBoundary(tool.section[j].rightPoint);
                 }
 
-                if (!isLeftIn && !isRightIn) tool.section[j].isInBoundary = true;
+                if (isLeftIn && isRightIn) tool.section[j].isInBoundary = true;
                 else tool.section[j].isInBoundary = false;
             }
             tool.section[tool.numOfSections].isInBoundary &= tool.section[j].isInBoundary;
