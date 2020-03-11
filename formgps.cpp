@@ -262,7 +262,7 @@ GetOutTool:
             if (isHeadlandClose || hd.isToolInHeadland) tool.isSuperSectionAllowedOn = false;
 
             //set hydraulics based on tool in headland or not
-            hd.setHydPosition(vehicle, pn.speed);
+            hd.setHydPosition(vehicle, pn.speed); //TODO: pass in button state
 
             ////
             //if (hd.isToolInHeadland) lblInHead.Text = "Headland";
@@ -413,6 +413,10 @@ GetOutMappingOn:
         }
 
         ///////////////////////////////////////////   Section control        ssssssssssssssssssssss
+        ///
+
+        if (hd.isOn) hd.whereAreToolLookOnPoints(vehicle, tool);
+
         for (int j = 0; j < tool.numOfSections; j++)
         {
             //If any nowhere applied, send OnRequest, if its all green send an offRequest
@@ -562,7 +566,6 @@ GetOutHdOn:
                     //GetOutHdOff:
 
                         //determine if look ahead points are completely in headland
-                        hd.whereAreToolLookOnPoints(vehicle, tool);
 
                         if (tool.section[j].isSectionRequiredOn && tool.section[j].isLookOnInHeadland && !isHeadlandInLookOn)
                         {
@@ -1047,7 +1050,7 @@ void FormGPS::tmrWatchdog_timeout()
             //counter used for saving field in background
             minuteCounter++;
 
-            qmlItem(qml_root,"btnPerimeter")->setProperty("buttonText", locale.toString(fd.workedAreaTotal / 1000, 'f', 2));
+            qmlItem(qml_root,"btnPerimeter")->setProperty("buttonText", fd.getWorkedHectares());
 
             /*
             if (panelBatman.Visible)

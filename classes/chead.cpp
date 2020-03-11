@@ -21,7 +21,7 @@ CHead::CHead(QObject *parent) : QObject(parent)
 
 void CHead::setHydPosition(const CVehicle &vehicle, double currentSpeed)
 {
-    if (vehicle.isHydLiftOn && currentSpeed > 0.2)
+    if (vehicle.isHydLiftOn && currentSpeed > 0.2 ) //TODO: && mf.autoBtnState == FormGPS.btnStates.Auto
     {
         if (isToolInHeadland)
         {

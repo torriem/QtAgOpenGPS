@@ -1091,25 +1091,29 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
             if (rightSpeed > 0) rightSpeed *= -1;
         }
 
-        //save the far left and right speed in m/sec
+        double sped = 0;
+        //save the far left and right speed in m/sec averaged over 20%
         if (j==0)
         {
-            tool.toolFarLeftSpeed = (leftSpeed * 0.1);
-            if (tool.toolFarLeftSpeed < 0.1) tool.toolFarLeftSpeed = 0.1;
+            sped = (leftSpeed * 0.1);
+            if (sped < 0.1) sped = 0.1;
+            tool.toolFarLeftSpeed = tool.toolFarLeftSpeed * 0.8 + sped * 0.2;
         }
         if (j == tool.numOfSections - 1)
         {
-            tool.toolFarRightSpeed = (rightSpeed * 0.1);
-            if (tool.toolFarRightSpeed < 0.1) tool.toolFarRightSpeed = 0.1;
+            sped = (rightSpeed * 0.1);
+            if(sped < 0.1) sped = 0.1;
+            tool.toolFarRightSpeed = tool.toolFarRightSpeed * 0.8 + sped * 0.2;
         }
 
         //choose fastest speed
         if (leftSpeed > rightSpeed)
         {
-            tool.section[j].speedPixels = leftSpeed;
+            sped = leftSpeed;
             leftSpeed = rightSpeed;
         }
-        else tool.section[j].speedPixels = rightSpeed;
+        else sped = rightSpeed;
+        tool.section[j].speedPixels = tool.section[j].speedPixels * 0.8 + sped * 0.2;
     }
 
     //qDebug() << leftSpeed << " " << rightSpeed;
