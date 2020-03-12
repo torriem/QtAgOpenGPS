@@ -95,8 +95,14 @@ QVector3D parseColorVector(QString setcolor);
 #define SETTINGS_VEHICLE_ISSTEERAXLEAHEAD			settings.   value("vehicle/isSteerAxleAhead", true).toBool()
 #define SETTINGS_SET_VEHICLE_ISSTEERAXLEAHEAD(VAL)	settings.setValue("vehicle/isSteerAxleAhead",VAL)
 
+#define SETTINGS_VEHICLE_MINFIXSTEP			settings.   value("vehicle/minFixStep", 1).toDouble()
+#define SETTINGS_SET_VEHICLE_MINFIXSTEP(VAL)	settings.setValue("vehicle/minFixStep",VAL)
+
 #define SETTINGS_VEHICLE_SLOWSPEEDCUTOFF			settings.   value("vehicle/slowSpeedCuttoff", 0).toDouble()
 #define SETTINGS_SET_VEHICLE_SLOWSPEEDCUTOFF(VAL)	settings.setValue("vehicle/slowSpeedCuttoff",VAL)
+
+#define SETTINGS_VEHICLE_TYPE			settings.   value("vehicle/vehicleType", 0).toInt()
+#define SETTINGS_SET_VEHICLE_TYPE(VAL)	settings.setValue("vehicle/vehicleType",VAL)
 
 #define SETTINGS_VEHICLE_LOOKAHEAD				settings.   value("vehicle/goalPointLookAhead", 3).toDouble()
 #define SETTINGS_SET_VEHICLE_LOOKAHEAD(VAL)		settings.setValue("vehicle/goalPointLookAhead",VAL)
@@ -113,8 +119,8 @@ QVector3D parseColorVector(QString setcolor);
 #define SETTINGS_VEHICLE_ISSTANLEYUSED			settings.   value("vehicle/isStanleyUsed", true).toBool()
 #define SETTINGS_SET_VEHICLE_ISSTANLEYUSED(VAL)	settings.setValue("vehicle/isStanleyUsed",VAL)
 
-#define SETTINGS_VEHICLE_STANLEY_GAIN			settings.   value("vehicle/stanleyGain", 1).toDouble()
-#define SETTINGS_SET_VEHICLE_STANLEY_GAIN(VAL)	settings.setValue("vehicle/stanleyGain",VAL)
+#define SETTINGS_VEHICLE_STANLEYGAIN			settings.   value("vehicle/stanleyGain", 1).toDouble()
+#define SETTINGS_SET_VEHICLE_STANLEYGAIN(VAL)	settings.setValue("vehicle/stanleyGain",VAL)
 
 #define SETTINGS_VEHICLE_STANLEYHEADINGERRORGAIN			settings.   value("vehicle/stanleyHeadingErrorGain", 1).toDouble()
 #define SETTINGS_SET_VEHICLE_STANLEYHEADINGERRORGAIN(VAL)	settings.setValue("vehicle/stanleyHeadingErrorGain",VAL)
@@ -122,14 +128,11 @@ QVector3D parseColorVector(QString setcolor);
 #define SETTINGS_VEHICLE_MAXANGULARVELOCITY				settings.   value("vehicle/maxAngularVelocity", 7).toDouble()
 #define SETTINGS_SET_VEHICLE_MAXANGULARVELOCITY(VAL)	settings.setValue("vehicle/maxAngularVelocity",VAL)
 
-#define SETTINGS_VEHICLE_MAXSTEERANGLE			settings.   value("vehicle/maxSteerAngle", 40).toDouble();
+#define SETTINGS_VEHICLE_MAXSTEERANGLE			settings.   value("vehicle/maxSteerAngle", 40).toDouble()
 #define SETTINGS_SET_VEHICLE_MAXSTEERANGLE(VAL)	settings.setValue("vehicle/maxSteerAngle",VAL)
 
 #define SETTINGS_VEHICLE_ISHYDLIFTON			settings.   value("vehicle/isHydLiftOn", false).toBool()
 #define SETTINGS_SET_VEHICLE_ISHYDLIFTON(VAL)	settings.setValue("vehicle/stanleyHeadingErrorGain",VAL)
-
-#define SETTINGS_VEHICLE_VEHICLETYPE			settings.   value("vehicle/vehicleType", 0).toInt()
-#define SETTINGS_SET_VEHICLE_VEHICLETYPE(VAL)	settings.setValue("vehicle/vehicleType",VAL)
 
 #define SETTINGS_VEHICLE_HYDLIFTLOOKAHEAD			settings.   value("vehicle/hydraulicLiftLookAhead", 2).toDouble()
 #define SETTINGS_SET_VEHICLE_HYDLIFTLOOKAHEAD(VAL)	settings.setValue("vehicle/hydraulicLiftLookAhead",VAL)
@@ -159,15 +162,6 @@ QVector3D parseColorVector(QString setcolor);
 #define SETTINGS_ARDSTEER_MAXPULSECOUNTS			settings.   value("ardSteer/maxPulseCounts", 15).toInt()
 #define SETTINGS_SET_ARDSTEER_MAXPULSECOUNTS(VAL)	settings.setValue("ardSteer/maxPulseCounts", VAL)
 
-#define SETTINGS_ARDSTEER_HYDRAISETIME			settings.   value("ardSteer/hydRaiseTime", 6).toInt()
-#define SETTINGS_SET_ARDSTEER_HYDRAISETIME(VAL)	settings.setValue("ardSteer/hydRaiseTime", VAL)
-
-#define SETTINGS_ARDSTEER_HYDLOWERTIME			settings.   value("ardSteer/hydLowerTime", 7).toInt()
-#define SETTINGS_SET_ARDSTEER_HYDLOWERTIME(VAL)	settings.setValue("ardSteer/hydLowerTime", VAL)
-
-#define SETTINGS_ARDSTEER_ISHYDENABLED			settings.   value("ardSteer/isHydEnabled", 0).toInt()
-#define SETTINGS_SET_ARDSTEER_ISHYDENABLED(VAL)	settings.setValue("ardSteer/isHydEnabled", VAL)
-
 #define SETTINGS_ARDSTEER_ACKERMANFIX			settings.   value("ardSteer/ackermanFix", 100).toInt()
 #define SETTINGS_SET_ARDSTEER_ACKERMANFIX(VAL)	settings.setValue("ardSteer/ackermanFix", VAL)
 
@@ -192,6 +186,9 @@ QVector3D parseColorVector(QString setcolor);
 #define SETTINGS_SET_VEHICLE_ISUSINGDUBINSTURN(VAL)	settings.setValue("vehicle/isUsingDubins",VAL)
 
 //CNMEA / GPS / IMU
+#define SETTINGS_GPS_HEADINGFROMWHICHSOURCE			settings.   value("gps/headingFromWhichSource", QString("Fix")).toString()
+#define SETTINGS_SET_GPS_HEADINGFROMWHICHSOURCE(VAL)	settings.setValue("gps/headingFromWhichSource",VAL)
+
 #define SETTINGS_GPS_FIXFROMWHICH			settings.   value("gps/fixFromWhichSentence", QString("GGA")).toString()
 #define SETTINGS_SET_GPS_FIXFROMWHICH(VAL)	settings.setValue("gps/fixFromWhichSentence",VAL)
 
@@ -332,6 +329,16 @@ QVector3D parseColorVector(QString setcolor);
 #define SETTINGS_AUTOSTEER_ISJRK			settings.   value("autosteer/isJRK", false).toBool()
 #define SETTINGS_SET_AUTOSTEER_ISJRK(VAL)	settings.setValue("autosteer/isJRK",VAL)
 
+//MACHINE CONTROL
+#define SETTINGS_ARDMAC_HYDRAISETIME			settings.   value("ardMac/hydRaiseTime", 6).toInt()
+#define SETTINGS_SET_ARDMAC_HYDRAISETIME(VAL)	settings.setValue("ardMac/hydRaiseTime", VAL)
+
+#define SETTINGS_ARDMAC_HYDLOWERTIME			settings.   value("ardMac/hydLowerTime", 7).toInt()
+#define SETTINGS_SET_ARDMAC_HYDLOWERTIME(VAL)	settings.setValue("ardMac/hydLowerTime", VAL)
+
+#define SETTINGS_ARDMAC_ISHYDENABLED			settings.   value("ardMac/isHydEnabled", 0).toInt()
+#define SETTINGS_SET_ARDMAC_ISHYDENABLED(VAL)	settings.setValue("ardMac/isHydEnabled", VAL)
+
 //CSEQUENCE
 #define SETTINGS_VEHICLE_SEQFUNCTIONENTER			settings.   value("vehicle/seqFunctionEnter", "0,0,0,0,0,0,0,0").toString()
 #define SETTINGS_SET_VEHICLE_SEQFUNCTIONENTER(VAL)	settings.setValue("vehicle/seqFunctionEnter",VAL)
@@ -354,7 +361,7 @@ QVector3D parseColorVector(QString setcolor);
 #define SETTINGS_VEHICLE_SEQFUNCTIONLIST			settings.   value("vehicle/seqFunctionList", "Relay 1,Relay 2,Relay 3,Relay 4,Relay 5,Relay 6").toString()
 #define SETTINGS_SET_VEHICLE_SEQFUNCTIONLIST(VAL)	settings.setValue("vehicle/seqFunctionList",VAL)
 
-#define SETTINGS_VEHICLE_SEQACTIONLIST			settings.   value("vehicle/seqActionList", "Turn Off,Turn On")).toString()
+#define SETTINGS_VEHICLE_SEQACTIONLIST			settings.   value("vehicle/seqActionList", "Turn Off,Turn On").toString()
 #define SETTINGS_SET_VEHICLE_SEQACTIONLIST(VAL)	settings.setValue("vehicle/seqActionList",VAL)
 
 //CSIM
