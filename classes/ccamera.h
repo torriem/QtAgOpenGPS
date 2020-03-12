@@ -13,7 +13,6 @@ private:
 public:
     double camYaw = 0;
 
-    double camPitch = 0;
     double offset = 0;
     double camSetDistance = -100; //put in setttings?
     //double camDelta = 0;

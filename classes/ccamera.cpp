@@ -7,14 +7,14 @@
 CCamera::CCamera()
     :camPosZ(0.0)
 {
-    USE_SETTINGS;
-    camPitch = SETTINGS_DISPLAY_CAMPITCH;
     camFollowing = true;
 }
 
 void CCamera::setWorldCam(QMatrix4x4 &modelview,
                           double _fixPosX, double _fixPosY,
-                          double _fixHeading) {
+                          double _fixHeading)
+{
+    USE_SETTINGS;
 
     camPosX = _fixPosX;
     camPosY = _fixPosY;
@@ -23,7 +23,7 @@ void CCamera::setWorldCam(QMatrix4x4 &modelview,
     //back the camera up
     modelview.translate(0,0,camSetDistance * 0.5);
 
-    modelview.rotate(camPitch, 1, 0, 0);
+    modelview.rotate(SETTINGS_DISPLAY_CAMPITCH, 1, 0, 0);
 
     if(camFollowing) {
         modelview.rotate(camYaw, 0,0,1);

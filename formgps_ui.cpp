@@ -400,20 +400,30 @@ void FormGPS::onBtnSectionMan_clicked(int sectNumber) {
 }
 
 void FormGPS::onBtnTiltDown_clicked(){
+    USE_SETTINGS;
+
+    double camPitch = SETTINGS_DISPLAY_CAMPITCH;
+
     if (closeAllMenus()) return;
     qDebug()<<"TiltDown button clicked.";
-    camera.camPitch -= (camera.camPitch*0.03-1);
-    if (camera.camPitch > 0) camera.camPitch = 0;
+    camPitch -= (camPitch*0.03-1);
+    if (camPitch > 0) camPitch = 0;
     lastHeight = -1; //redraw the sky
+    SETTINGS_SET_DISPLAY_CAMPITCH(camPitch);
     openGLControl->update();
 }
 
 void FormGPS::onBtnTiltUp_clicked(){
+    USE_SETTINGS;
+
+    double camPitch = SETTINGS_DISPLAY_CAMPITCH;
+
     if (closeAllMenus()) return;
     qDebug()<<"TiltUp button clicked.";
-    camera.camPitch += (camera.camPitch*0.03-1);
-    if (camera.camPitch < -80) camera.camPitch = -80;
+    camPitch += (camPitch*0.03-1);
+    if (camPitch < -80) camPitch = -80;
     lastHeight = -1; //redraw the sky
+    SETTINGS_SET_DISPLAY_CAMPITCH(camPitch);
     openGLControl->update();
 }
 

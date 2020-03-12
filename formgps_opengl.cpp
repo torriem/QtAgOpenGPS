@@ -1075,17 +1075,20 @@ void FormGPS::drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4
 
 void FormGPS::drawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int height)
 {
+    USE_SETTINGS;
+
     VertexTexcoord vertices[4];
+    double camPitch = SETTINGS_DISPLAY_CAMPITCH;
 
     ////draw the background when in 3D
-    if (camera.camPitch < -52)
+    if (camPitch < -52)
     {
         if ( (lastWidth != width)  || (lastHeight != height)) {
             lastWidth = width;
             lastHeight = height;
 
             //-10 to -32 (top) is camera pitch range. Set skybox to line up with horizon
-            double hite = (camera.camPitch + 63) * -0.026;
+            double hite = (camPitch + 63) * -0.026;
             //hite = 0.001;
 
             //the background
