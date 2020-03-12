@@ -743,7 +743,8 @@ void FormGPS::calculatePositionHeading()
     }
 
     //an IMU with heading correction, add the correction
-    if (ahrs.isHeadingCorrectionFromBrick || ahrs.isHeadingCorrectionFromAutoSteer || ahrs.isHeadingCorrectionFromExtUDP)
+    if (SETTINGS_GPS_ISHEADINGCORRECTIONFROMBRICK || SETTINGS_GPS_ISHEADINGCORRECTIONFROMAUTOSTEER ||
+            SETTINGS_GPS_ISHEADINGCORRECTIONFROMEXTUDP)
     {
         //current gyro angle in radians
         double correctionHeading = (glm::toRadians((double)ahrs.correctionHeadingX16 * 0.0625));

@@ -996,8 +996,8 @@ void FormGPS::drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4
     modelview.translate(0, 100, 0); //will not override caller's modelview
 
     //If roll is used rotate graphic based on roll angle
-    if ((ahrs.isRollFromAutoSteer || ahrs.isRollFromGPS || ahrs.isRollFromExtUDP) && ahrs.rollX16 != 9999)
-        modelview.rotate(((ahrs.rollX16 - ahrs.rollZeroX16) * 0.0625f), 0.0f, 0.0f, 1.0f);
+    if ((SETTINGS_GPS_ISROLLFROMAUTOSTEER || SETTINGS_GPS_ISROLLFROMGPS || SETTINGS_GPS_ISROLLFROMEXTUDP) && ahrs.rollX16 != 9999)
+        modelview.rotate(((ahrs.rollX16 - SETTINGS_GPS_IMUROLLZEROX16) * 0.0625f), 0.0f, 0.0f, 1.0f);
 
     gl->glLineWidth(1);
 

@@ -17,9 +17,6 @@
 
 CABLine::CABLine(QObject *parent) : QObject(parent)
 {
-    USE_SETTINGS;
-    lineWidth = SETTINGS_DISPLAY_LINEWIDTH;
-
 }
 
 void CABLine::deleteAB() {
