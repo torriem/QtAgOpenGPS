@@ -551,7 +551,7 @@ void FormGPS::onBtnManUTurnLeft_clicked()
         yt.resetYouTurn();
     }else {
         yt.isYouTurnTriggered = true;
-        yt.buildManualYouTurn(vehicle, tool, ABLine, curve, false, true);
+        yt.buildManualYouTurn(tool, ABLine, curve, false, true);
    }
 }
 
@@ -561,6 +561,6 @@ void FormGPS::onBtnManUTurnRight_clicked()
         yt.resetYouTurn();
     }else {
         yt.isYouTurnTriggered = true;
-        yt.buildManualYouTurn(vehicle, tool, ABLine, curve, true, true);
+        yt.buildManualYouTurn(tool, ABLine, curve, true, true);
    }
 }

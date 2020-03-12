@@ -214,12 +214,15 @@ void CYouTurn::addSequenceLines(double head, Vec3 pivot)
     }
 }
 
-bool CYouTurn::buildDriveAround(const CVehicle &vehicle,
-                                const CABLine &ABLine,
+bool CYouTurn::buildDriveAround(const CABLine &ABLine,
                                 CGeoFence &gf, CTurn &turn,
                                 const CBoundary &bnd, CMazeGrid &mazeGrid,
                                 double minFieldX, double minFieldY)
 {
+    USE_SETTINGS;
+
+    double minTurningRadius = SETTINGS_VEHICLE_MINTURNINGRADIUS;
+
     double headAB = ABLine.abHeading;
     if (!ABLine.isABSameAsVehicleHeading) headAB += M_PI;
 
@@ -257,7 +260,7 @@ bool CYouTurn::buildDriveAround(const CVehicle &vehicle,
     QVector<Vec3> shortestDubinsList;
 
     //Dubins at the start and stop of mazePath
-    CDubinsTurningRadius = vehicle.minTurningRadius * 1.0;
+    CDubinsTurningRadius = minTurningRadius * 1.0;
     CDubins dubPath;
 
     //start is navigateable - maybe
@@ -267,8 +270,8 @@ bool CYouTurn::buildDriveAround(const CVehicle &vehicle,
 
     if (cnt > 0)
     {
-        pt2.easting = start.easting - (sinHead * vehicle.minTurningRadius * 1.5);
-        pt2.northing = start.northing - (cosHead * vehicle.minTurningRadius * 1.5);
+        pt2.easting = start.easting - (sinHead * minTurningRadius * 1.5);
+        pt2.northing = start.northing - (cosHead * minTurningRadius * 1.5);
         pt2.heading = headAB;
 
         shortestDubinsList = dubPath.GenerateDubins(pt2, mazeList[cut - 1], bnd, gf);
@@ -284,8 +287,8 @@ bool CYouTurn::buildDriveAround(const CVehicle &vehicle,
             ytList.append(pt);
         }
 
-        pt2.easting = stop.easting + (sinHead * vehicle.minTurningRadius * 1.5);
-        pt2.northing = stop.northing + (cosHead * vehicle.minTurningRadius * 1.5);
+        pt2.easting = stop.easting + (sinHead * minTurningRadius * 1.5);
+        pt2.northing = stop.northing + (cosHead * minTurningRadius * 1.5);
         pt2.heading = headAB;
 
         shortestDubinsList = dubPath.GenerateDubins(mazeList[cnt - cut], pt2, bnd, gf);
@@ -332,12 +335,16 @@ bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
                                         double minFieldX, double minFieldY,
                                         bool isTurnRight)
 {
+    USE_SETTINGS;
+
+    double minTurningRadius = SETTINGS_VEHICLE_MINTURNINGRADIUS;
+
     double headAB = ABLine.abHeading;
     if (!ABLine.isABSameAsVehicleHeading) headAB += M_PI;
 
     if (youTurnPhase == 0)
     {
-        if (buildDriveAround(vehicle, ABLine, gf, turn, bnd, mazeGrid, minFieldX, minFieldY )) return true;
+        if (buildDriveAround(ABLine, gf, turn, bnd, mazeGrid, minFieldX, minFieldY )) return true;
 
         //grab the pure pursuit point right on ABLine
         Vec3 onPurePoint(ABLine.rEastAB, ABLine.rNorthAB, 0);
@@ -372,34 +379,34 @@ bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
         //distance from TurnLine for trigger added in youturn form, include the 3 m bump forward
         distanceTurnBeforeLine = 0;
 
-        if (vehicle.minTurningRadius * 2 < toolTurnWidth)
+        if (minTurningRadius * 2 < toolTurnWidth)
         {
             if (boundaryAngleOffPerpendicular < 0)
             {
                 //which is actually left
                 if (isYouTurnRight)
-                    distanceTurnBeforeLine += (vehicle.minTurningRadius * tan(tangencyAngle));//short
+                    distanceTurnBeforeLine += (minTurningRadius * tan(tangencyAngle));//short
                 else
-                    distanceTurnBeforeLine += (vehicle.minTurningRadius / tan(tangencyAngle)); //long
+                    distanceTurnBeforeLine += (minTurningRadius / tan(tangencyAngle)); //long
             }
             else
             {
                 //which is actually left
                 if (isYouTurnRight)
-                    distanceTurnBeforeLine += (vehicle.minTurningRadius / tan(tangencyAngle)); //long
+                    distanceTurnBeforeLine += (minTurningRadius / tan(tangencyAngle)); //long
                 else
-                    distanceTurnBeforeLine += (vehicle.minTurningRadius * tan(tangencyAngle)); //short
+                    distanceTurnBeforeLine += (minTurningRadius * tan(tangencyAngle)); //short
             }
         }
         else //turn Radius is wider then equipment width so ohmega turn
         {
-            distanceTurnBeforeLine += (2 * vehicle.minTurningRadius);
+            distanceTurnBeforeLine += (2 * minTurningRadius);
         }
 
         //used for distance calc for other part of turn
 
         CDubins dubYouTurnPath;
-        CDubinsTurningRadius = vehicle.minTurningRadius;
+        CDubinsTurningRadius = minTurningRadius;
 
         //point on AB line closest to pivot axle point from ABLine PurePursuit
         rEastYT = ABLine.rEastAB;
@@ -443,7 +450,7 @@ bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
         if (head < -M_PI) head += glm::twoPI;
         if (head > M_PI) head -= glm::twoPI;
 
-        if ((vehicle.minTurningRadius * 2.0) < turnOffset)
+        if ((minTurningRadius * 2.0) < turnOffset)
         {
             //are we right of boundary
             if (boundaryAngleOffPerpendicular > 0)
@@ -453,7 +460,7 @@ bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
                     goal.easting += (sin(bndAngle) * turnRadius);
                     goal.northing += (cos(bndAngle) * turnRadius);
 
-                    double dis = (vehicle.minTurningRadius / tan(tangencyAngle)); //long
+                    double dis = (minTurningRadius / tan(tangencyAngle)); //long
                     goal.easting += (sin(head) * dis);
                     goal.northing += (cos(head) * dis);
                 }
@@ -462,7 +469,7 @@ bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
                     goal.easting -= (sin(bndAngle) * turnRadius);
                     goal.northing -= (cos(bndAngle) * turnRadius);
 
-                    double dis = (vehicle.minTurningRadius * tan(tangencyAngle)); //short
+                    double dis = (minTurningRadius * tan(tangencyAngle)); //short
                     goal.easting += (sin(head) * dis);
                     goal.northing += (cos(head) * dis);
                 }
@@ -474,7 +481,7 @@ bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
                     goal.easting += (sin(bndAngle) * turnRadius);
                     goal.northing += (cos(bndAngle) * turnRadius);
 
-                    double dis = (vehicle.minTurningRadius * tan(tangencyAngle)); //short
+                    double dis = (minTurningRadius * tan(tangencyAngle)); //short
                     goal.easting += (sin(head) * dis);
                     goal.northing += (cos(head) * dis);
                 }
@@ -483,7 +490,7 @@ bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
                     goal.easting -= (sin(bndAngle) * turnRadius);
                     goal.northing -= (cos(bndAngle) * turnRadius);
 
-                    double dis = (vehicle.minTurningRadius / tan(tangencyAngle)); //long
+                    double dis = (minTurningRadius / tan(tangencyAngle)); //long
                     goal.easting += (sin(head) * dis);
                     goal.northing += (cos(head) * dis);
                 }
@@ -1043,6 +1050,10 @@ bool CYouTurn::buildCurveDubinsYouTurn(const CVehicle &vehicle,
                                        CTurn &turn,
                                        bool isTurnRight, Vec3 pivotPos)
 {
+    USE_SETTINGS;
+
+    double minTurningRadius = SETTINGS_VEHICLE_MINTURNINGRADIUS;
+
     if (youTurnPhase > 0)
     {
         isABSameAsFixHeading = curve.isSameWay;
@@ -1062,34 +1073,34 @@ bool CYouTurn::buildCurveDubinsYouTurn(const CVehicle &vehicle,
         tangencyAngle = (glm::PIBy2 - fabs(boundaryAngleOffPerpendicular)) * 0.5;
 
         //distance from crossPoint to turn line
-        if (vehicle.minTurningRadius * 2 < (tool.toolWidth * rowSkipsWidth))
+        if (minTurningRadius * 2 < (tool.toolWidth * rowSkipsWidth))
         {
             if (boundaryAngleOffPerpendicular < 0)
             {
                 //which is actually left
                 if (isYouTurnRight)
-                    distanceTurnBeforeLine = (vehicle.minTurningRadius * tan(tangencyAngle));//short
+                    distanceTurnBeforeLine = (minTurningRadius * tan(tangencyAngle));//short
                 else
-                    distanceTurnBeforeLine = (vehicle.minTurningRadius / tan(tangencyAngle)); //long
+                    distanceTurnBeforeLine = (minTurningRadius / tan(tangencyAngle)); //long
             }
             else
             {
                 //which is actually left
                 if (isYouTurnRight)
-                    distanceTurnBeforeLine = (vehicle.minTurningRadius / tan(tangencyAngle)); //long
+                    distanceTurnBeforeLine = (minTurningRadius / tan(tangencyAngle)); //long
                 else
-                    distanceTurnBeforeLine = (vehicle.minTurningRadius * tan(tangencyAngle)); //short
+                    distanceTurnBeforeLine = (minTurningRadius * tan(tangencyAngle)); //short
             }
         }
 
         //turn Radius is wider then equipment width so ohmega turn
         else
         {
-            distanceTurnBeforeLine = (2 * vehicle.minTurningRadius);
+            distanceTurnBeforeLine = (2 * minTurningRadius);
         }
 
         CDubins dubYouTurnPath;
-        CDubinsTurningRadius = vehicle.minTurningRadius;
+        CDubinsTurningRadius = minTurningRadius;
 
         //grab the vehicle widths and offsets
         double widthMinusOverlap = tool.toolWidth - tool.toolOverlap;
@@ -1125,7 +1136,7 @@ bool CYouTurn::buildCurveDubinsYouTurn(const CVehicle &vehicle,
         if (head < -M_PI) head += glm::twoPI;
         if (head > M_PI) head -= glm::twoPI;
 
-        if ((vehicle.minTurningRadius * 2.0) < turnOffset)
+        if ((minTurningRadius * 2.0) < turnOffset)
         {
             //are we right of boundary
             if (boundaryAngleOffPerpendicular > 0)
@@ -1135,7 +1146,7 @@ bool CYouTurn::buildCurveDubinsYouTurn(const CVehicle &vehicle,
                     goal.easting += (sin(bndAngle) * turnRadius);
                     goal.northing += (cos(bndAngle) * turnRadius);
 
-                    double dis = (vehicle.minTurningRadius / tan(tangencyAngle)); //long
+                    double dis = (minTurningRadius / tan(tangencyAngle)); //long
                     goal.easting += (sin(head) * dis);
                     goal.northing += (cos(head) * dis);
                 }
@@ -1144,7 +1155,7 @@ bool CYouTurn::buildCurveDubinsYouTurn(const CVehicle &vehicle,
                     goal.easting -= (sin(bndAngle) * turnRadius);
                     goal.northing -= (cos(bndAngle) * turnRadius);
 
-                    double dis = (vehicle.minTurningRadius * tan(tangencyAngle)); //short
+                    double dis = (minTurningRadius * tan(tangencyAngle)); //short
                     goal.easting += (sin(head) * dis);
                     goal.northing += (cos(head) * dis);
                 }
@@ -1156,7 +1167,7 @@ bool CYouTurn::buildCurveDubinsYouTurn(const CVehicle &vehicle,
                     goal.easting += (sin(bndAngle) * turnRadius);
                     goal.northing += (cos(bndAngle) * turnRadius);
 
-                    double dis = (vehicle.minTurningRadius * tan(tangencyAngle)); //short
+                    double dis = (minTurningRadius * tan(tangencyAngle)); //short
                     goal.easting += (sin(head) * dis);
                     goal.northing += (cos(head) * dis);
                 }
@@ -1165,7 +1176,7 @@ bool CYouTurn::buildCurveDubinsYouTurn(const CVehicle &vehicle,
                     goal.easting -= (sin(bndAngle) * turnRadius);
                     goal.northing -= (cos(bndAngle) * turnRadius);
 
-                    double dis = (vehicle.minTurningRadius / tan(tangencyAngle)); //long
+                    double dis = (minTurningRadius / tan(tangencyAngle)); //long
                     goal.easting += (sin(head) * dis);
                     goal.northing += (cos(head) * dis);
                 }
@@ -1392,10 +1403,14 @@ void CYouTurn::loadYouTurnShapeFromFile(QString filename)
 }
 
 //build the points and path of youturn to be scaled and transformed
-void CYouTurn::buildManualYouTurn(const CVehicle &vehicle, CTool &tool,
+void CYouTurn::buildManualYouTurn(CTool &tool,
                                   const CABLine &ABLine, CABCurve &curve,
                                   bool isTurnRight, bool isTurnButtonTriggered)
 {
+    USE_SETTINGS;
+
+    double minTurningRadius = SETTINGS_VEHICLE_MINTURNINGRADIUS;
+
     isYouTurnTriggered = true;
 
     double delta, head;
@@ -1433,7 +1448,7 @@ void CYouTurn::buildManualYouTurn(const CVehicle &vehicle, CTool &tool,
     //if (isUsingDubinsTurn)
     {
         CDubins dubYouTurnPath;
-        CDubinsTurningRadius = vehicle.minTurningRadius;
+        CDubinsTurningRadius = minTurningRadius;
 
         //if its straight across it makes 2 loops instead so goal is a little lower then start
         if (!isABSameAsFixHeading) head += 3.14;
@@ -1496,13 +1511,19 @@ void CYouTurn::buildManualYouTurn(const CVehicle &vehicle, CTool &tool,
 //determine distance from youTurn guidance line
 void CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
 {
-   //grab a copy from main - the steer position
+    USE_SETTINGS;
+
+    double maxSteerAngle = SETTINGS_VEHICLE_MAXSTEERANGLE;
+    double wheelbase = SETTINGS_VEHICLE_WHEELBASE;
+    double maxAngularVelocity = SETTINGS_VEHICLE_MAXANGULARVELOCITY;
+
+    //grab a copy from main - the steer position
     double minDistA = 1000000, minDistB = 1000000;
     int ptCount = ytList.size();
 
     if (ptCount > 0)
     {
-        if (vehicle.isStanleyUsed)
+        if (SETTINGS_VEHICLE_ISSTANLEYUSED)
         {
             pivot = vehicle.steerAxlePos;
 
@@ -1590,12 +1611,12 @@ void CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
             else if (abFixHeadingDelta < -glm::PIBy2) abFixHeadingDelta += M_PI;
 
             //normally set to 1, less then unity gives less heading error.
-            abFixHeadingDelta *= vehicle.stanleyHeadingErrorGain;
+            abFixHeadingDelta *= SETTINGS_VEHICLE_STANLEYHEADINGERRORGAIN;
             if (abFixHeadingDelta > 0.74) abFixHeadingDelta = 0.74;
             if (abFixHeadingDelta < -0.74) abFixHeadingDelta = -0.74;
 
             //the non linear distance error part of stanley
-            steerAngleYT = atan((distanceFromCurrentLine * vehicle.stanleyGain) / ((pn.speed * 0.277777) + 1));
+            steerAngleYT = atan((distanceFromCurrentLine * SETTINGS_VEHICLE_STANLEYGAIN) / ((pn.speed * 0.277777) + 1));
 
             //clamp it to max 42 degrees
             if (steerAngleYT > 0.74) steerAngleYT = 0.74;
@@ -1603,8 +1624,8 @@ void CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
 
             //add them up and clamp to max in vehicle settings
             steerAngleYT = glm::toDegrees((steerAngleYT + abFixHeadingDelta) * -1.0);
-            if (steerAngleYT < -vehicle.maxSteerAngle) steerAngleYT = -vehicle.maxSteerAngle;
-            if (steerAngleYT > vehicle.maxSteerAngle) steerAngleYT = vehicle.maxSteerAngle;
+            if (steerAngleYT < -maxSteerAngle) steerAngleYT = -maxSteerAngle;
+            if (steerAngleYT > maxSteerAngle) steerAngleYT = maxSteerAngle;
 
             //Convert to millimeters and round properly to above/below .5
             distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);
@@ -1699,7 +1720,7 @@ void CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
             double goalPointDistance = vehicle.updateGoalPointDistance(pn,distanceFromCurrentLine);
 
             //sharp turns on you turn.
-            goalPointDistance = vehicle.goalPointLookAheadUturnMult * goalPointDistance;
+            goalPointDistance = SETTINGS_VEHICLE_LOOKAHEADUTURNMULT * goalPointDistance;
             //emit setLookaheadGoal(goalPointDistance);
             //mf.lookaheadActual = goalPointDistance; //unused
 
@@ -1746,10 +1767,10 @@ void CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
             ppRadiusYT = goalPointDistanceSquared / (2 * (((goalPointYT.easting - pivot.easting) * cos(localHeading)) + ((goalPointYT.northing - pivot.northing) * sin(localHeading))));
 
             steerAngleYT = glm::toDegrees(atan(2 * (((goalPointYT.easting - pivot.easting) * cos(localHeading))
-                + ((goalPointYT.northing - pivot.northing) * sin(localHeading))) * vehicle.wheelbase / goalPointDistanceSquared));
+                + ((goalPointYT.northing - pivot.northing) * sin(localHeading))) * wheelbase / goalPointDistanceSquared));
 
-            if (steerAngleYT < -vehicle.maxSteerAngle) steerAngleYT = -vehicle.maxSteerAngle;
-            if (steerAngleYT > vehicle.maxSteerAngle) steerAngleYT = vehicle.maxSteerAngle;
+            if (steerAngleYT < -maxSteerAngle) steerAngleYT = -maxSteerAngle;
+            if (steerAngleYT > maxSteerAngle) steerAngleYT = maxSteerAngle;
 
             if (ppRadiusYT < -500) ppRadiusYT = -500;
             if (ppRadiusYT > 500) ppRadiusYT = 500;
@@ -1758,14 +1779,14 @@ void CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
             radiusPointYT.northing = pivot.northing + (ppRadiusYT * sin(localHeading));
 
             //angular velocity in rads/sec  = 2PI * m/sec * radians/meters
-            double angVel = glm::twoPI * 0.277777 * pn.speed * (tan(glm::toRadians(steerAngleYT))) / vehicle.wheelbase;
+            double angVel = glm::twoPI * 0.277777 * pn.speed * (tan(glm::toRadians(steerAngleYT))) / wheelbase;
 
             //clamp the steering angle to not exceed safe angular velocity
-            if (fabs(angVel) > vehicle.maxAngularVelocity)
+            if (fabs(angVel) > maxAngularVelocity)
             {
                 steerAngleYT = glm::toDegrees(steerAngleYT > 0 ?
-                        (atan((vehicle.wheelbase * vehicle.maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777)))
-                    : (atan((vehicle.wheelbase * -vehicle.maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777))));
+                        (atan((wheelbase * maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777)))
+                    : (atan((wheelbase * -maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777))));
             }
             //Convert to centimeters
             distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);

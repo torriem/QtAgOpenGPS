@@ -9,6 +9,7 @@
 #include "ctool.h"
 #include "cheadlines.h"
 #include "common.h"
+#include "aogsettings.h"
 
 CHead::CHead(QObject *parent) : QObject(parent)
 {
@@ -19,9 +20,11 @@ CHead::CHead(QObject *parent) : QObject(parent)
     isToolUp = true;
 }
 
-void CHead::setHydPosition(const CVehicle &vehicle, double currentSpeed)
+void CHead::setHydPosition(double currentSpeed)
 {
-    if (vehicle.isHydLiftOn && currentSpeed > 0.2 ) //TODO: && mf.autoBtnState == FormGPS.btnStates.Auto
+    USE_SETTINGS;
+
+    if (SETTINGS_VEHICLE_ISHYDLIFTON && currentSpeed > 0.2 ) //TODO: && mf.autoBtnState == FormGPS.btnStates.Auto
     {
         if (isToolInHeadland)
         {

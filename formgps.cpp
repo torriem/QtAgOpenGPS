@@ -49,8 +49,8 @@ FormGPS::FormGPS(QWidget *parent) :
     tool.numOfSections = 4; //0-3
     tool.numSuperSection = 5;
     tool.toolTrailingHitchLength = -4; //30 foot hitch to see following action better
-    vehicle.minTurningRadius = 5;
-    vehicle.maxSteerAngle = 45;
+    SETTINGS_SET_VEHICLE_MINTURNINGRADIUS(5);
+    SETTINGS_SET_VEHICLE_MAXSTEERANGLE(45);
     tool.sectionCalcWidths();
 
     CBoundaryLines boundary;
@@ -262,7 +262,7 @@ GetOutTool:
             if (isHeadlandClose || hd.isToolInHeadland) tool.isSuperSectionAllowedOn = false;
 
             //set hydraulics based on tool in headland or not
-            hd.setHydPosition(vehicle, pn.speed); //TODO: pass in button state
+            hd.setHydPosition(pn.speed); //TODO: pass in button state
 
             ////
             //if (hd.isToolInHeadland) lblInHead.Text = "Headland";

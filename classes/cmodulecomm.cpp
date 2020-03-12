@@ -77,9 +77,9 @@ CModuleComm::CModuleComm(QObject *parent) : QObject(parent)
     //arduino machine configuration
     ardMachineConfig[amHeaderHi] = 127; //PGN - 32760
     ardMachineConfig[amHeaderLo] = 248;
-    ardMachineConfig[amRaiseTime] = SETTINGS_ARDSTEER_HYDRAISETIME;
-    ardMachineConfig[amLowerTime] = SETTINGS_ARDSTEER_HYDLOWERTIME;
-    ardMachineConfig[amEnableHyd] = SETTINGS_ARDSTEER_ISHYDENABLED;
+    ardMachineConfig[amRaiseTime] = SETTINGS_ARDMAC_HYDRAISETIME;
+    ardMachineConfig[amLowerTime] = SETTINGS_ARDMAC_HYDLOWERTIME;
+    ardMachineConfig[amEnableHyd] = SETTINGS_ARDMAC_ISHYDENABLED;
     ardMachineConfig[am5] = 0;
     ardMachineConfig[am6] = 0;
     ardMachineConfig[am7] = 0;
@@ -166,9 +166,9 @@ void CModuleComm::resetAllModuleCommValues()
     //arduino machine configuration
     ardMachineConfig[amHeaderHi] = 127; //PGN - 32760
     ardMachineConfig[amHeaderLo] = 248;
-    ardMachineConfig[amRaiseTime] = SETTINGS_ARDSTEER_HYDRAISETIME;
-    ardMachineConfig[amLowerTime] = SETTINGS_ARDSTEER_HYDLOWERTIME;
-    ardMachineConfig[amEnableHyd] = SETTINGS_ARDSTEER_ISHYDENABLED;
+    ardMachineConfig[amRaiseTime] = SETTINGS_ARDMAC_HYDRAISETIME;
+    ardMachineConfig[amLowerTime] = SETTINGS_ARDMAC_HYDLOWERTIME;
+    ardMachineConfig[amEnableHyd] = SETTINGS_ARDMAC_ISHYDENABLED;
     ardMachineConfig[am5] = 0;
     ardMachineConfig[am6] = 0;
     ardMachineConfig[am7] = 0;

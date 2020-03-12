@@ -86,7 +86,7 @@ public:
     void buildContourGuidanceLine(CVehicle &vehicle, CTool &tool, CNMEA &pn, Vec3 pivot);
     void calculateContourHeadings();
     void distanceFromContourLine(CVehicle &vehicle, CNMEA &pn, Vec3 pivot, Vec3 steer);
-    void drawContourLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, CVehicle &vehicle);
+    void drawContourLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
     void resetContour();
 signals:
     //void guidanceLineDistanceOff(int);

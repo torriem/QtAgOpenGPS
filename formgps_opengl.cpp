@@ -372,11 +372,11 @@ void FormGPS::openGLControl_Draw()
             //draw contour line if button on
             if (ct.isContourBtnOn)
             {
-                ct.drawContourLine(gl, projection*modelview, vehicle);
+                ct.drawContourLine(gl, projection*modelview);
             }
             else// draw the current and reference AB Lines or CurveAB Ref and line
             {
-                if (ABLine.isABLineSet | ABLine.isABLineBeingSet) ABLine.drawABLines(gl, projection*modelview, vehicle, tool, yt, tram, camera);
+                if (ABLine.isABLineSet | ABLine.isABLineBeingSet) ABLine.drawABLines(gl, projection*modelview, tool, yt, tram, camera);
                 if (curve.isBtnCurveOn) curve.drawCurve(gl, projection*modelview, vehicle, tool, yt, tram, camera);
             }
 
@@ -986,8 +986,10 @@ void FormGPS::drawLightBarText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Widt
 
 void FormGPS::drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection)
 {
-    double set = vehicle.guidanceLineSteerAngle * 0.01 * (50 / vehicle.maxSteerAngle);
-    double actual = actualSteerAngleDisp * 0.01 * (50 / vehicle.maxSteerAngle);
+    USE_SETTINGS;
+
+    double set = vehicle.guidanceLineSteerAngle * 0.01 * (50 / SETTINGS_VEHICLE_MAXSTEERANGLE);
+    double actual = actualSteerAngleDisp * 0.01 * (50 / SETTINGS_VEHICLE_MAXSTEERANGLE);
     double hiit = 0;
     GLHelperOneColor gldraw;
 

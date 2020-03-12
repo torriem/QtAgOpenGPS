@@ -30,36 +30,10 @@ private:
 public:
     bool isSteerAxleAhead;
     bool isPivotBehindAntenna;
-    double antennaHeight;
-    double antennaPivot;
-    double wheelbase;
-    double minTurningRadius;
-    double antennaOffset;
-    int vehicleType;
 
-    //autosteer values
-    double  goalPointLookAheadSeconds, goalPointLookAheadMinimumDistance, goalPointDistanceMultiplier, goalPointLookAheadUturnMult;
-
-    bool isStanleyUsed;
-    double stanleyGain, stanleyHeadingErrorGain;
-    double minLookAheadDistance = 2.0;
-    double maxSteerAngle;
-    double maxAngularVelocity;
     double treeSpacing;
-    double hydLiftLookAheadTime;
 
     double hydLiftLookAheadDistanceLeft, hydLiftLookAheadDistanceRight;
-
-    bool isHydLiftOn;
-
-    //autosteer values
-    double goalPointLookAhead;
-    int youTurnDistance;
-    int youTurnToolWidths;
-
-    bool youTurnUseDubins;
-
-    double youTurnTriggerDistance;
 
     //used for super section off on
     bool isSuperSectionAllowedOn;

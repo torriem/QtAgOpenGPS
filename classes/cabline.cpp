@@ -108,7 +108,13 @@ void CABLine::snapABLine()
 //called from main form
 void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTurn &yt, const CTool &tool, CNMEA &pn)
 {
-    if (vehicle.isStanleyUsed) {
+    USE_SETTINGS;
+
+    double wheelbase = SETTINGS_VEHICLE_WHEELBASE;
+    double maxSteerAngle = SETTINGS_VEHICLE_MAXSTEERANGLE;
+    double maxAngularVelocity = SETTINGS_VEHICLE_MAXANGULARVELOCITY;
+
+    if (SETTINGS_VEHICLE_ISSTANLEYUSED) {
         //move the ABLine over based on the overlap amount set in vehicle
         double widthMinusOverlap = tool.toolWidth - tool.toolOverlap;
 
@@ -220,11 +226,11 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
         if (abFixHeadingDelta > glm::PIBy2) abFixHeadingDelta -= M_PI;
         else if (abFixHeadingDelta < -glm::PIBy2) abFixHeadingDelta += M_PI;
 
-        abFixHeadingDelta *= vehicle.stanleyHeadingErrorGain;
+        abFixHeadingDelta *= SETTINGS_VEHICLE_STANLEYHEADINGERRORGAIN;
         if (abFixHeadingDelta > 0.4) abFixHeadingDelta = 0.4;
         if (abFixHeadingDelta < -0.4) abFixHeadingDelta = -0.4;
 
-        steerAngleAB = atan((distanceFromCurrentLine * vehicle.stanleyGain) / ((fabs(pn.speed) * 0.277777) + 1));
+        steerAngleAB = atan((distanceFromCurrentLine * SETTINGS_VEHICLE_STANLEYGAIN) / ((fabs(pn.speed) * 0.277777) + 1));
 
         if (steerAngleAB > 0.4) steerAngleAB = 0.4;
         if (steerAngleAB < -0.4) steerAngleAB = -0.4;
@@ -234,8 +240,8 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
         else
             steerAngleAB = glm::toDegrees((steerAngleAB - abFixHeadingDelta) * -1.0);
 
-        if (steerAngleAB < -vehicle.maxSteerAngle) steerAngleAB = -vehicle.maxSteerAngle;
-        if (steerAngleAB > vehicle.maxSteerAngle) steerAngleAB = vehicle.maxSteerAngle;
+        if (steerAngleAB < -maxSteerAngle) steerAngleAB = -maxSteerAngle;
+        if (steerAngleAB > maxSteerAngle) steerAngleAB = maxSteerAngle;
 
         //Convert to millimeters
         distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);
@@ -355,9 +361,9 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
 
         steerAngleAB = glm::toDegrees(atan( 2 * (((goalPointAB.easting - pivot.easting) * cos(localHeading))
                                             + ((goalPointAB.northing - pivot.northing) * sin(localHeading)))
-                                       * vehicle.wheelbase / goalPointDistanceDSquared)) ;
-        if (steerAngleAB < -vehicle.maxSteerAngle) steerAngleAB = -vehicle.maxSteerAngle;
-        if (steerAngleAB > vehicle.maxSteerAngle) steerAngleAB = vehicle.maxSteerAngle;
+                                       * wheelbase / goalPointDistanceDSquared)) ;
+        if (steerAngleAB < -maxSteerAngle) steerAngleAB = -maxSteerAngle;
+        if (steerAngleAB > maxSteerAngle) steerAngleAB = maxSteerAngle;
 
         //limit circle size for display purpose
         if (ppRadiusAB < -500) ppRadiusAB = -500;
@@ -370,13 +376,13 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
         distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);
 
         //angular velocity in rads/sec  = 2PI * m/sec * radians/meters
-        angVel = glm::twoPI * 0.277777 * pn.speed * (tan(glm::toRadians(steerAngleAB)))/vehicle.wheelbase;
+        angVel = glm::twoPI * 0.277777 * pn.speed * (tan(glm::toRadians(steerAngleAB)))/wheelbase;
 
         //clamp the steering angle to not exceed safe angular velocity
-        if (fabs(angVel) > vehicle.maxAngularVelocity)
+        if (fabs(angVel) > maxAngularVelocity)
         {
-            steerAngleAB = glm::toDegrees(steerAngleAB > 0 ? (atan((vehicle.wheelbase * vehicle.maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777)))
-                : (atan((vehicle.wheelbase * -vehicle.maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777))));
+            steerAngleAB = glm::toDegrees(steerAngleAB > 0 ? (atan((wheelbase * maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777)))
+                : (atan((wheelbase * -maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777))));
         }
 
         //distance is negative if on left, positive if on right
@@ -414,7 +420,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
 }
 
 void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
-                          const CVehicle &vehicle, const CTool &tool,
+                          const CTool &tool,
                           CYouTurn &yt, CTram &tram, const CCamera &camera)
 {
     USE_SETTINGS;
@@ -561,7 +567,7 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
 
     }
 
-    if (SETTINGS_DISPLAY_ISPUREON && !vehicle.isStanleyUsed) {
+    if (SETTINGS_DISPLAY_ISPUREON && !SETTINGS_VEHICLE_ISSTANLEYUSED) {
         //Draw lookahead Point
         abline[0] = QVector3D( goalPointAB.easting, goalPointAB.northing, 0.0 );
 

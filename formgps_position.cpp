@@ -707,6 +707,11 @@ void FormGPS::updateFixPosition()
 
 void FormGPS::calculatePositionHeading()
 {
+    USE_SETTINGS;
+
+    double wheelbase = SETTINGS_VEHICLE_WHEELBASE;
+    double antennaPivot = SETTINGS_VEHICLE_ANTENNAPIVOT;
+
     if (!simTimer.isActive()) // use heading true if using simulator
     {
         if  (headingFromSource == "GPS") {
@@ -787,28 +792,28 @@ void FormGPS::calculatePositionHeading()
 
     if (pn.speed > -0.1)
     {
-        vehicle.steerAxlePos.easting = vehicle.pivotAxlePos.easting + (sin(vehicle.fixHeading) * vehicle.wheelbase);
-        vehicle.steerAxlePos.northing = vehicle.pivotAxlePos.northing + (cos(vehicle.fixHeading) * vehicle.wheelbase);
+        vehicle.steerAxlePos.easting = vehicle.pivotAxlePos.easting + (sin(vehicle.fixHeading) * wheelbase);
+        vehicle.steerAxlePos.northing = vehicle.pivotAxlePos.northing + (cos(vehicle.fixHeading) * wheelbase);
         vehicle.steerAxlePos.heading = vehicle.fixHeading;
         //translate world to the pivot axle
-        vehicle.pivotAxlePos.easting = pn.fix.easting - (sin(vehicle.fixHeading) * vehicle.antennaPivot);
-        vehicle.pivotAxlePos.northing = pn.fix.northing - (cos(vehicle.fixHeading) * vehicle.antennaPivot);
+        vehicle.pivotAxlePos.easting = pn.fix.easting - (sin(vehicle.fixHeading) * antennaPivot);
+        vehicle.pivotAxlePos.northing = pn.fix.northing - (cos(vehicle.fixHeading) * antennaPivot);
         vehicle.pivotAxlePos.heading = vehicle.fixHeading;
     }
     else
     {
-        vehicle.steerAxlePos.easting = vehicle.pivotAxlePos.easting + (sin(vehicle.fixHeading) * -vehicle.wheelbase);
-        vehicle.steerAxlePos.northing = vehicle.pivotAxlePos.northing + (cos(vehicle.fixHeading) * -vehicle.wheelbase);
+        vehicle.steerAxlePos.easting = vehicle.pivotAxlePos.easting + (sin(vehicle.fixHeading) * -wheelbase);
+        vehicle.steerAxlePos.northing = vehicle.pivotAxlePos.northing + (cos(vehicle.fixHeading) * -wheelbase);
         vehicle.steerAxlePos.heading = vehicle.fixHeading;
         //translate world to the pivot axle
-        vehicle.pivotAxlePos.easting = pn.fix.easting - (sin(vehicle.fixHeading) * -vehicle.antennaPivot);
-        vehicle.pivotAxlePos.northing = pn.fix.northing - (cos(vehicle.fixHeading) * -vehicle.antennaPivot);
+        vehicle.pivotAxlePos.easting = pn.fix.easting - (sin(vehicle.fixHeading) * -antennaPivot);
+        vehicle.pivotAxlePos.northing = pn.fix.northing - (cos(vehicle.fixHeading) * -antennaPivot);
         vehicle.pivotAxlePos.heading = vehicle.fixHeading;
     }
 
     //determine where the rigid vehicle hitch ends
-    vehicle.hitchPos.easting = pn.fix.easting + (sin(vehicle.fixHeading) * (tool.hitchLength - vehicle.antennaPivot));
-    vehicle.hitchPos.northing = pn.fix.northing + (cos(vehicle.fixHeading) * (tool.hitchLength - vehicle.antennaPivot));
+    vehicle.hitchPos.easting = pn.fix.easting + (sin(vehicle.fixHeading) * (tool.hitchLength - antennaPivot));
+    vehicle.hitchPos.northing = pn.fix.northing + (cos(vehicle.fixHeading) * (tool.hitchLength - antennaPivot));
 
     //tool attached via a trailing hitch
     if (tool.isToolTrailing)
@@ -1018,6 +1023,9 @@ void FormGPS::addSectionOrContourPathPoints()
 //calculate the extreme tool left, right velocities, each section lookahead, and whether or not its going backwards
 void FormGPS::calculateSectionLookAhead(double northing, double easting, double cosHeading, double sinHeading)
 {
+    USE_SETTINGS;
+    double hydLiftLookAheadTime = SETTINGS_VEHICLE_HYDLIFTLOOKAHEAD;
+
     //calculate left side of section 1
     Vec3 left(0,0,0);
     Vec3 right = left;
@@ -1123,8 +1131,8 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
     tool.section[tool.numOfSections].rightPoint = tool.section[tool.numOfSections-1].rightPoint;
 
     //set the look ahead for hyd Lift in pixels per second
-    vehicle.hydLiftLookAheadDistanceLeft = tool.toolFarLeftSpeed * vehicle.hydLiftLookAheadTime * 10;
-    vehicle.hydLiftLookAheadDistanceRight = tool.toolFarRightSpeed * vehicle.hydLiftLookAheadTime * 10;
+    vehicle.hydLiftLookAheadDistanceLeft = tool.toolFarLeftSpeed * hydLiftLookAheadTime * 10;
+    vehicle.hydLiftLookAheadDistanceRight = tool.toolFarRightSpeed * hydLiftLookAheadTime * 10;
 
     if (vehicle.hydLiftLookAheadDistanceLeft > 200) vehicle.hydLiftLookAheadDistanceLeft = 200;
     if (vehicle.hydLiftLookAheadDistanceRight > 200) vehicle.hydLiftLookAheadDistanceRight = 200;

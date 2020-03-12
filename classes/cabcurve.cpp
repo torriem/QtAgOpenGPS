@@ -91,7 +91,7 @@ void CABCurve::drawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                 gldraw.draw(gl, mvp, QColor::fromRgbF(0.95f, 0.2f, 0.95f),
                             GL_LINE_STRIP, 2.0f);
 
-                if (SETTINGS_DISPLAY_ISPUREON && !vehicle.isStanleyUsed)
+                if (SETTINGS_DISPLAY_ISPUREON && !SETTINGS_VEHICLE_ISSTANLEYUSED)
                 {
                     if (ppRadiusCu < 100 && ppRadiusCu > -100)
                     {
@@ -375,6 +375,12 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot, Vec3 steer,
                                    CVehicle &vehicle, CYouTurn &yt,
                                    const CTool &tool, CNMEA &pn)
 {
+    USE_SETTINGS;
+
+    double wheelbase = SETTINGS_VEHICLE_WHEELBASE;
+    double maxSteerAngle = SETTINGS_VEHICLE_MAXSTEERANGLE;
+    double maxAngularVelocity = SETTINGS_VEHICLE_MAXANGULARVELOCITY;
+
     int ptCount = refList.size();
     int ptCnt = ptCount - 1;
     if (ptCount < 5) return;
@@ -482,7 +488,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot, Vec3 steer,
 
     if (ptCount > 0)
     {
-        if (vehicle.isStanleyUsed)
+        if (SETTINGS_VEHICLE_ISSTANLEYUSED)
         {
             //find the closest 2 points to current fix
             for (int t = 0; t < ptCount; t++)
@@ -568,11 +574,11 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot, Vec3 steer,
             if (abFixHeadingDelta > glm::PIBy2) abFixHeadingDelta -= M_PI;
             else if (abFixHeadingDelta < -glm::PIBy2) abFixHeadingDelta += M_PI;
 
-            abFixHeadingDelta *= vehicle.stanleyHeadingErrorGain;
+            abFixHeadingDelta *= SETTINGS_VEHICLE_STANLEYHEADINGERRORGAIN;
             if (abFixHeadingDelta > 0.74) abFixHeadingDelta = 0.74;
             if (abFixHeadingDelta < -0.74) abFixHeadingDelta = -0.74;
 
-            steerAngleCu = atan((distanceFromCurrentLine * vehicle.stanleyGain) /
+            steerAngleCu = atan((distanceFromCurrentLine * SETTINGS_VEHICLE_STANLEYGAIN) /
                                 ((fabs(pn.speed) * 0.277777) + 1));
 
             if (steerAngleCu > 0.74) steerAngleCu = 0.74;
@@ -583,8 +589,8 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot, Vec3 steer,
             else
                 steerAngleCu = glm::toDegrees((steerAngleCu - abFixHeadingDelta) * -1.0);
 
-            if (steerAngleCu < -vehicle.maxSteerAngle) steerAngleCu = -vehicle.maxSteerAngle;
-            if (steerAngleCu > vehicle.maxSteerAngle) steerAngleCu = vehicle.maxSteerAngle;
+            if (steerAngleCu < -maxSteerAngle) steerAngleCu = -maxSteerAngle;
+            if (steerAngleCu > maxSteerAngle) steerAngleCu = maxSteerAngle;
 
             //Convert to millimeters
             distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);
@@ -757,10 +763,10 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot, Vec3 steer,
             ppRadiusCu = goalPointDistanceSquared / (2 * (((goalPointCu.easting - pivot.easting) * cos(localHeading)) + ((goalPointCu.northing - pivot.northing) * sin(localHeading))));
 
             steerAngleCu = glm::toDegrees(atan(2 * (((goalPointCu.easting - pivot.easting) * cos(localHeading))
-                + ((goalPointCu.northing - pivot.northing) * sin(localHeading))) * vehicle.wheelbase / goalPointDistanceSquared));
+                + ((goalPointCu.northing - pivot.northing) * sin(localHeading))) * wheelbase / goalPointDistanceSquared));
 
-            if (steerAngleCu < -vehicle.maxSteerAngle) steerAngleCu = -vehicle.maxSteerAngle;
-            if (steerAngleCu > vehicle.maxSteerAngle) steerAngleCu = vehicle.maxSteerAngle;
+            if (steerAngleCu < -maxSteerAngle) steerAngleCu = -maxSteerAngle;
+            if (steerAngleCu > maxSteerAngle) steerAngleCu = maxSteerAngle;
 
             if (ppRadiusCu < -500) ppRadiusCu = -500;
             if (ppRadiusCu > 500) ppRadiusCu = 500;
@@ -769,14 +775,14 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot, Vec3 steer,
             radiusPointCu.northing = pivot.northing + (ppRadiusCu * sin(localHeading));
 
             //angular velocity in rads/sec  = 2PI * m/sec * radians/meters
-            double angVel = glm::twoPI * 0.277777 * pn.speed * (tan(glm::toRadians(steerAngleCu))) / vehicle.wheelbase;
+            double angVel = glm::twoPI * 0.277777 * pn.speed * (tan(glm::toRadians(steerAngleCu))) / wheelbase;
 
             //clamp the steering angle to not exceed safe angular velocity
-            if (fabs(angVel) > vehicle.maxAngularVelocity)
+            if (fabs(angVel) > maxAngularVelocity)
             {
                 steerAngleCu = glm::toDegrees(steerAngleCu > 0 ?
-                        (atan((vehicle.wheelbase * vehicle.maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777)))
-                    : (atan((vehicle.wheelbase * -vehicle.maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777))));
+                        (atan((wheelbase * maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777)))
+                    : (atan((wheelbase * -maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777))));
             }
             //Convert to centimeters
             distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);

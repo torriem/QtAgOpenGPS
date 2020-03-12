@@ -38,6 +38,8 @@ CTool::CTool()
 
 void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection)
 {
+    USE_SETTINGS;
+
     //translate and rotate at pivot axle, caller's mvp will be changed
     modelview.translate(v.pivotAxlePos.easting, v.pivotAxlePos.northing, 0);
 
@@ -119,7 +121,7 @@ void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix
     gldrawcolors.append(cv);
 
 
-    if (v.isHydLiftOn)
+    if (SETTINGS_VEHICLE_ISHYDLIFTON)
     {
         cv.color = QVector4D(0.70f, 0.2f, 0.72f, 1);
         cv.vertex = QVector3D(section[0].positionLeft, (v.hydLiftLookAheadDistanceLeft * 0.1) + trailingTool, 0);

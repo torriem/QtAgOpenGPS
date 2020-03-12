@@ -19,6 +19,7 @@ class CNMEA;
 
 class CCurveLines
 {
+public:
     QVector<Vec3> curvePts;
     double aveHeading = 3;
     QString Name = "aa";

@@ -17,7 +17,7 @@ void CSection::turnMappingOn() {
     //do not tally square meters on inital point, that would be silly
     if (!isMappingOn)
     {
-        qDebug() << "turn section mapping on";
+        //qDebug() << "turn section mapping on";
         //set the section bool to on
         isMappingOn = true;
 

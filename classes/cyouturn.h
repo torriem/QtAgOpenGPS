@@ -110,7 +110,7 @@ public:
 
     void addSequenceLines(double head, Vec3 pivot);
 
-    bool buildDriveAround(const CVehicle &vehicle, const CABLine &ABLine,
+    bool buildDriveAround(const CABLine &ABLine,
                           CGeoFence &gf, CTurn &turn,
                           const CBoundary &bnd, CMazeGrid &mazeGrid,
                           double minFieldX, double minFieldY);
@@ -157,7 +157,7 @@ public:
     void loadYouTurnShapeFromFile(QString filename);
 
     //build the points and path of youturn to be scaled and transformed
-    void buildManualYouTurn(const CVehicle &vehicle, CTool &tool,
+    void buildManualYouTurn(CTool &tool,
                             const CABLine &ABLine, CABCurve &curve,
                             bool isTurnRight, bool isTurnButtonTriggered);
 

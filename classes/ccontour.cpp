@@ -518,13 +518,19 @@ void CContour::buildContourGuidanceLine(CVehicle &vehicle, CTool& tool, CNMEA &p
 //determine distance from contour guidance line
 void CContour::distanceFromContourLine(CVehicle &vehicle, CNMEA &pn, Vec3 pivot, Vec3 steer)
 {
+    USE_SETTINGS;
+
+    double wheelbase = SETTINGS_VEHICLE_WHEELBASE;
+    double maxSteerAngle = SETTINGS_VEHICLE_MAXSTEERANGLE;
+    double maxAngularVelocity = SETTINGS_VEHICLE_MAXANGULARVELOCITY;
+
     isValid = false;
     double minDistA = 1000000, minDistB = 1000000;
     int ptCount = ctList.size();
     //distanceFromCurrentLine = 9999;
     if (ptCount > 8)
     {
-        if (vehicle.isStanleyUsed)
+        if (SETTINGS_VEHICLE_ISSTANLEYUSED)
         {
             //find the closest 2 points to current fix
             for (int t = 0; t < ptCount; t++)
@@ -627,11 +633,11 @@ void CContour::distanceFromContourLine(CVehicle &vehicle, CNMEA &pn, Vec3 pivot,
             if (abFixHeadingDelta > glm::PIBy2) abFixHeadingDelta -= M_PI;
             else if (abFixHeadingDelta < -glm::PIBy2) abFixHeadingDelta += M_PI;
 
-            abFixHeadingDelta *= vehicle.stanleyHeadingErrorGain;
+            abFixHeadingDelta *= SETTINGS_VEHICLE_STANLEYHEADINGERRORGAIN;
             if (abFixHeadingDelta > 0.74) abFixHeadingDelta = 0.74;
             if (abFixHeadingDelta < -0.74) abFixHeadingDelta = -0.74;
 
-            steerAngleCT = atan((distanceFromCurrentLine * vehicle.stanleyGain) / ((fabs(pn.speed) * 0.277777) + 1));
+            steerAngleCT = atan((distanceFromCurrentLine * SETTINGS_VEHICLE_STANLEYGAIN) / ((fabs(pn.speed) * 0.277777) + 1));
 
             if (steerAngleCT > 0.74) steerAngleCT = 0.74;
             if (steerAngleCT < -0.74) steerAngleCT = -0.74;
@@ -641,8 +647,8 @@ void CContour::distanceFromContourLine(CVehicle &vehicle, CNMEA &pn, Vec3 pivot,
             else
                 steerAngleCT = glm::toDegrees((steerAngleCT - abFixHeadingDelta) * -1.0);
 
-            if (steerAngleCT < -vehicle.maxSteerAngle) steerAngleCT = -vehicle.maxSteerAngle;
-            if (steerAngleCT > vehicle.maxSteerAngle) steerAngleCT = vehicle.maxSteerAngle;
+            if (steerAngleCT < -maxSteerAngle) steerAngleCT = -maxSteerAngle;
+            if (steerAngleCT > maxSteerAngle) steerAngleCT = maxSteerAngle;
 
             //Convert to millimeters
             distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);
@@ -827,10 +833,10 @@ void CContour::distanceFromContourLine(CVehicle &vehicle, CNMEA &pn, Vec3 pivot,
             ppRadiusCT = goalPointDistanceSquared / (2 * (((goalPointCT.easting - pivot.easting) * cos(localHeading)) + ((goalPointCT.northing - pivot.northing) * sin(localHeading))));
 
             steerAngleCT = glm::toDegrees(atan(2 * (((goalPointCT.easting - pivot.easting) * cos(localHeading))
-                + ((goalPointCT.northing - pivot.northing) * sin(localHeading))) * vehicle.wheelbase / goalPointDistanceSquared));
+                + ((goalPointCT.northing - pivot.northing) * sin(localHeading))) * wheelbase / goalPointDistanceSquared));
 
-            if (steerAngleCT < -vehicle.maxSteerAngle) steerAngleCT = -vehicle.maxSteerAngle;
-            if (steerAngleCT > vehicle.maxSteerAngle) steerAngleCT = vehicle.maxSteerAngle;
+            if (steerAngleCT < -maxSteerAngle) steerAngleCT = -maxSteerAngle;
+            if (steerAngleCT > maxSteerAngle) steerAngleCT = maxSteerAngle;
 
             if (ppRadiusCT < -500) ppRadiusCT = -500;
             if (ppRadiusCT > 500) ppRadiusCT = 500;
@@ -839,14 +845,14 @@ void CContour::distanceFromContourLine(CVehicle &vehicle, CNMEA &pn, Vec3 pivot,
             radiusPointCT.northing = pivot.northing + (ppRadiusCT * sin(localHeading));
 
             //angular velocity in rads/sec  = 2PI * m/sec * radians/meters
-            double angVel = glm::twoPI * 0.277777 * pn.speed * (tan(glm::toRadians(steerAngleCT))) / vehicle.wheelbase;
+            double angVel = glm::twoPI * 0.277777 * pn.speed * (tan(glm::toRadians(steerAngleCT))) / wheelbase;
 
             //clamp the steering angle to not exceed safe angular velocity
-            if (fabs(angVel) > vehicle.maxAngularVelocity)
+            if (fabs(angVel) > maxAngularVelocity)
             {
                 steerAngleCT = glm::toDegrees(steerAngleCT > 0 ?
-                        (atan((vehicle.wheelbase * vehicle.maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777)))
-                    : (atan((vehicle.wheelbase * -vehicle.maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777))));
+                        (atan((wheelbase * maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777)))
+                    : (atan((wheelbase * -maxAngularVelocity) / (glm::twoPI * pn.speed * 0.277777))));
             }
             //Convert to centimeters
             distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);
@@ -897,7 +903,7 @@ void CContour::calculateContourHeadings()
 }
 
 //draw the red follow me line
-void CContour::drawContourLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, CVehicle &vehicle)
+void CContour::drawContourLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
 {
     USE_SETTINGS;
     ////draw the guidance line
@@ -923,7 +929,7 @@ void CContour::drawContourLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, CVeh
     gldraw.draw(gl,mvp,QColor::fromRgbF(0.87f, 08.7f, 0.25f),
                 GL_POINTS, SETTINGS_DISPLAY_LINEWIDTH);
 
-    if (SETTINGS_DISPLAY_ISPUREON && distanceFromCurrentLine != 32000 && !vehicle.isStanleyUsed)
+    if (SETTINGS_DISPLAY_ISPUREON && distanceFromCurrentLine != 32000 && !SETTINGS_VEHICLE_ISSTANLEYUSED)
     {
         gldraw.clear();
         gldraw.append(QVector3D(goalPointCT.easting, goalPointCT.northing, 0.0));

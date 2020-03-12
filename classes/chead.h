@@ -39,7 +39,7 @@ public:
     void drawHeadLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, int lineWidth);
     void drawHeadLinesBack(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
     bool isPointInsideHeadLine(Vec2 pt);
-    void setHydPosition(const CVehicle &vehicle, double speed);
+    void setHydPosition(double speed);
 signals:
     //indicate that tool is to be lowered or raised
     void moveHydraulics(int);

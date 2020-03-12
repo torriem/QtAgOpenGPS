@@ -169,7 +169,10 @@ void CRecordedPath::StopDrivingRecordedPath()
 
 void CRecordedPath::GetDubinsPath(const CVehicle &vehicle, const CBoundary &bnd, CGeoFence &gf, CMazeGrid &mazeGrid, double minFieldX, double minFieldY, Vec3 goal)
 {
-    CDubinsTurningRadius = vehicle.minTurningRadius * 1.0;
+    USE_SETTINGS;
+
+    double minTurningRadius = SETTINGS_VEHICLE_MINTURNINGRADIUS;
+    CDubinsTurningRadius = minTurningRadius * 1.0;
     CDubins dubPath;
 
     // current psition
@@ -212,7 +215,7 @@ void CRecordedPath::GetDubinsPath(const CVehicle &vehicle, const CBoundary &bnd,
     if (cnt > 0)
     {
         {
-            int turnRadius = (int)(3 * vehicle.minTurningRadius);
+            int turnRadius = (int)(3 * minTurningRadius);
             if (cnt > 2 * turnRadius)
             {
                 mazeList.remove(0, turnRadius);
@@ -254,6 +257,10 @@ void CRecordedPath::GetDubinsPath(const CVehicle &vehicle, const CBoundary &bnd,
 
 void CRecordedPath::StanleyRecPath(CVehicle &vehicle, const CNMEA &pn, int ptCount)
 {
+    USE_SETTINGS;
+
+    double maxSteerAngle = SETTINGS_VEHICLE_MAXSTEERANGLE;
+
     //find the closest 2 points to current fix
     double minDistA = 9999999999;
 
@@ -325,12 +332,12 @@ void CRecordedPath::StanleyRecPath(CVehicle &vehicle, const CNMEA &pn, int ptCou
     else if (abFixHeadingDelta < -glm::PIBy2) abFixHeadingDelta += M_PI;
 
     //normally set to 1, less then unity gives less heading error.
-    abFixHeadingDelta *= vehicle.stanleyHeadingErrorGain;
+    abFixHeadingDelta *= SETTINGS_VEHICLE_STANLEYHEADINGERRORGAIN;
     if (abFixHeadingDelta > 0.74) abFixHeadingDelta = 0.74;
     if (abFixHeadingDelta < -0.74) abFixHeadingDelta = -0.74;
 
     //the non linear distance error part of stanley
-    steerAngleRP = atan((distanceFromCurrentLine * vehicle.stanleyGain) / ((pn.speed * 0.277777) + 1));
+    steerAngleRP = atan((distanceFromCurrentLine * SETTINGS_VEHICLE_STANLEYGAIN) / ((pn.speed * 0.277777) + 1));
 
     //clamp it to max 42 degrees
     if (steerAngleRP > 0.74) steerAngleRP = 0.74;
@@ -338,8 +345,8 @@ void CRecordedPath::StanleyRecPath(CVehicle &vehicle, const CNMEA &pn, int ptCou
 
     //add them up and clamp to max in vehicle settings
     steerAngleRP = glm::toDegrees((steerAngleRP + abFixHeadingDelta) * -1.0);
-    if (steerAngleRP < -vehicle.maxSteerAngle) steerAngleRP = -vehicle.maxSteerAngle;
-    if (steerAngleRP > vehicle.maxSteerAngle) steerAngleRP = vehicle.maxSteerAngle;
+    if (steerAngleRP < -maxSteerAngle) steerAngleRP = -maxSteerAngle;
+    if (steerAngleRP > maxSteerAngle) steerAngleRP = maxSteerAngle;
 
     //Convert to millimeters and round properly to above/below .5
     distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);
@@ -351,6 +358,10 @@ void CRecordedPath::StanleyRecPath(CVehicle &vehicle, const CNMEA &pn, int ptCou
 
 void CRecordedPath::StanleyDubinsPath(CVehicle &vehicle, const CNMEA &pn, int ptCount)
 {
+    USE_SETTINGS;
+
+    double maxSteerAngle = SETTINGS_VEHICLE_MAXSTEERANGLE;
+
     //distanceFromCurrentLine = 9999;
     //find the closest 2 points to current fix
     double minDistA = 9999999999;
@@ -409,12 +420,12 @@ void CRecordedPath::StanleyDubinsPath(CVehicle &vehicle, const CNMEA &pn, int pt
     else if (abFixHeadingDelta < -glm::PIBy2) abFixHeadingDelta += M_PI;
 
     //normally set to 1, less then unity gives less heading error.
-    abFixHeadingDelta *= vehicle.stanleyHeadingErrorGain;
+    abFixHeadingDelta *= SETTINGS_VEHICLE_STANLEYHEADINGERRORGAIN;
     if (abFixHeadingDelta > 0.74) abFixHeadingDelta = 0.74;
     if (abFixHeadingDelta < -0.74) abFixHeadingDelta = -0.74;
 
     //the non linear distance error part of stanley
-    steerAngleRP = atan((distanceFromCurrentLine * vehicle.stanleyGain) / ((pn.speed * 0.277777) + 1));
+    steerAngleRP = atan((distanceFromCurrentLine * SETTINGS_VEHICLE_STANLEYGAIN) / ((pn.speed * 0.277777) + 1));
 
     //clamp it to max 42 degrees
     if (steerAngleRP > 0.74) steerAngleRP = 0.74;
@@ -422,8 +433,8 @@ void CRecordedPath::StanleyDubinsPath(CVehicle &vehicle, const CNMEA &pn, int pt
 
     //add them up and clamp to max in vehicle settings
     steerAngleRP = glm::toDegrees((steerAngleRP + abFixHeadingDelta) * -1.0);
-    if (steerAngleRP < -vehicle.maxSteerAngle) steerAngleRP = -vehicle.maxSteerAngle;
-    if (steerAngleRP > vehicle.maxSteerAngle) steerAngleRP = vehicle.maxSteerAngle;
+    if (steerAngleRP < -maxSteerAngle) steerAngleRP = -maxSteerAngle;
+    if (steerAngleRP > maxSteerAngle) steerAngleRP = maxSteerAngle;
 
     //Convert to millimeters and round properly to above/below .5
     distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);
