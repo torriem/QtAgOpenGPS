@@ -51,19 +51,18 @@ public:
     // Is the youturn button enabled?
     bool isYouTurnBtnOn;
 
-    //Patterns or Dubins
-    bool isUsingDubinsTurn;
+    ///The following application settings:
+    //bool isUsingDubinsTurn;
+    //int rowSkipsWidth = 1;
+    // distance from headland as offset where to start turn shape
+    //int youTurnStartOffset;
+    //guidance values
+    //double distanceFromCurrentLine, triggerDistanceOffset, geoFenceDistance, dxAB, dyAB;
 
     double boundaryAngleOffPerpendicular;
     double distanceTurnBeforeLine = 0, tangencyAngle;
 
-    int rowSkipsWidth = 1;
-
-    // distance from headland as offset where to start turn shape
-    int youTurnStartOffset;
-
-    //guidance values
-    double distanceFromCurrentLine, triggerDistanceOffset, geoFenceDistance, dxAB, dyAB;
+    double distanceFromCurrentLine, dxAB, dyAB;
     bool isTurnCreationTooClose = false, isTurnCreationNotCrossingError = false;
 
     //pure pursuit values

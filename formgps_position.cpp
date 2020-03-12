@@ -326,7 +326,7 @@ void FormGPS::updateFixPosition()
                         }
                         else
                         {
-                            if (yt.isUsingDubinsTurn)
+                            if (SETTINGS_VEHICLE_ISUSINGDUBINSTURN)
                             {
                                 if (ABLine.isABLineSet) yt.buildABLineDubinsYouTurn(vehicle, tool, bnd, gf,
                                                                                     ABLine, turn, mazeGrid,

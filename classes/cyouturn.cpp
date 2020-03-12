@@ -22,19 +22,6 @@
 //constructor
 CYouTurn::CYouTurn(QObject *parent) : QObject(parent)
 {
-    USE_SETTINGS;
-
-    triggerDistanceOffset = SETTINGS_VEHICLE_YOUTURNTRIGGERDISTANCE;
-    geoFenceDistance = SETTINGS_VEHICLE_GEOFENCEDIST;
-
-    //how far before or after boundary line should turn happen
-    youTurnStartOffset = SETTINGS_VEHICLE_YOUTURNDISTANCE;
-
-    //the youturn shape scaling.
-    rowSkipsWidth = SETTINGS_VEHICLE_YOUSKIPWIDTH;
-
-    isUsingDubinsTurn = SETTINGS_VEHICLE_ISUSINGDUBINSTURN;
-
 }
 
 //needs CABCurve, CBoundary, called from CYouTurn::buildCurvePatternYouTurn
@@ -175,6 +162,10 @@ bool CYouTurn::findCurveTurnPoints(const CABCurve &curve, const CBoundary &bnd, 
 
 void CYouTurn::addSequenceLines(double head, Vec3 pivot)
 {
+    USE_SETTINGS;
+
+    int youTurnStartOffset = SETTINGS_VEHICLE_YOUTURNDISTANCE;
+
     Vec3 pt;
     for (int a = 0; a < youTurnStartOffset*2; a++)
     {
@@ -221,6 +212,7 @@ bool CYouTurn::buildDriveAround(const CABLine &ABLine,
 {
     USE_SETTINGS;
 
+    int youTurnStartOffset = SETTINGS_VEHICLE_YOUTURNDISTANCE;
     double minTurningRadius = SETTINGS_VEHICLE_MINTURNINGRADIUS;
 
     double headAB = ABLine.abHeading;
@@ -337,7 +329,9 @@ bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
 {
     USE_SETTINGS;
 
+
     double minTurningRadius = SETTINGS_VEHICLE_MINTURNINGRADIUS;
+    int rowSkipsWidth = SETTINGS_VEHICLE_YOUSKIPWIDTH;
 
     double headAB = ABLine.abHeading;
     if (!ABLine.isABSameAsVehicleHeading) headAB += M_PI;
@@ -600,6 +594,11 @@ bool CYouTurn::buildABLinePatternYouTurn(const CVehicle &vehicle,
                                          const CABLine &ABLine, CTurn &turn,
                                          bool isTurnRight)
 {
+    USE_SETTINGS;
+
+    int youTurnStartOffset = SETTINGS_VEHICLE_YOUTURNDISTANCE;
+    int rowSkipsWidth = SETTINGS_VEHICLE_YOUSKIPWIDTH;
+
     double headAB = ABLine.abHeading;
     if (!ABLine.isABSameAsVehicleHeading) headAB += M_PI;
 
@@ -840,6 +839,11 @@ bool CYouTurn::buildCurvePatternYouTurn(const CVehicle &vehicle,
                                         CTurn &turn,
                                         bool isTurnRight, Vec3 pivotPos)
 {
+    USE_SETTINGS;
+
+    int rowSkipsWidth = SETTINGS_VEHICLE_YOUSKIPWIDTH;
+    int youTurnStartOffset = SETTINGS_VEHICLE_YOUTURNDISTANCE;
+
     if (youTurnPhase > 0)
     {
         ytList.clear();
@@ -1053,6 +1057,7 @@ bool CYouTurn::buildCurveDubinsYouTurn(const CVehicle &vehicle,
     USE_SETTINGS;
 
     double minTurningRadius = SETTINGS_VEHICLE_MINTURNINGRADIUS;
+    int rowSkipsWidth = SETTINGS_VEHICLE_YOUSKIPWIDTH;
 
     if (youTurnPhase > 0)
     {
@@ -1410,6 +1415,7 @@ void CYouTurn::buildManualYouTurn(CTool &tool,
     USE_SETTINGS;
 
     double minTurningRadius = SETTINGS_VEHICLE_MINTURNINGRADIUS;
+    int rowSkipsWidth = SETTINGS_VEHICLE_YOUSKIPWIDTH;
 
     isYouTurnTriggered = true;
 
@@ -1445,7 +1451,7 @@ void CYouTurn::buildManualYouTurn(CTool &tool,
     turnOffset *= delta;
 
     //if using dubins to calculate youturn
-    //if (isUsingDubinsTurn)
+    //if (SETTINGS_VEHICLE_ISUSINGDUBINSTURN)
     {
         CDubins dubYouTurnPath;
         CDubinsTurningRadius = minTurningRadius;
