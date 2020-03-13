@@ -286,7 +286,7 @@ void FormGPS::fileSaveVehicle(QString filename)
     writer << "Wheelbase," << SETTINGS_VEHICLE_WHEELBASE << endl;
     writer << "MinTurningRadius," << SETTINGS_VEHICLE_MINTURNINGRADIUS << endl;
     writer << "MinFixStep," << SETTINGS_VEHICLE_MINFIXSTEP << endl;
-    writer << "LowSpeedCutoff," << SETTINGS_VEHICLE_SLOWSPEEDCUTOFF << endl;
+    writer << "LowSpeedCutoff," << SETTINGS_TOOL_SLOWSPEEDCUTOFF << endl;
     writer << "VehicleType," << SETTINGS_VEHICLE_TYPE << endl;
 
     writer << "Empty," << "10" << endl;
@@ -702,5 +702,120 @@ bool FormGPS::fileOpenVehicle(QString filename)
             seq.seqExit[i].distance = words[i].toDouble();
     }
     return true;
+
+}
+
+void FormGPS::fileSaveTool(QString filename)
+{
+
+}
+
+bool FormGPS::fileOpenTool(QString filename)
+{
+
+}
+
+void FormGPS::fileSaveEnvironment(QString filename)
+{
+
+}
+
+bool FormGPS::fileOpenEnvironment(QString filename)
+{
+
+}
+
+void FormGPS::fileOpenField(QString openType)
+{
+
+}
+
+void FormGPS::fileCreateField()
+{
+
+}
+
+void FormGPS::fileCreateElevation()
+{
+
+}
+
+void FormGPS::fileSaveSections()
+{
+
+}
+
+void FormGPS::fileCreateSections()
+{
+
+}
+
+void FormGPS::fileCreateFlags()
+{
+
+}
+
+void FormGPS::fileCreateContour()
+{
+
+}
+
+void FormGPS::fileSaveContour()
+{
+
+}
+
+void FormGPS::fileSaveBoundary()
+{
+
+}
+
+void FormGPS::fileSaveHeadland()
+{
+
+}
+
+void FormGPS::fileCreateRecPath()
+{
+
+}
+
+void FormGPS::fileSaveRecPath()
+{
+
+}
+
+void FormGPS::fileSaveFlags()
+{
+
+}
+
+void FormGPS::fileSaveNMEA()
+{
+
+}
+
+void FormGPS::fileSaveElevation()
+{
+
+}
+
+void FormGPS::fileSaveSingleFlagKML2(int flagNumber)
+{
+
+}
+
+void FormGPS::fileSaveSingleFlagKML(int flagNumber)
+{
+
+}
+
+void FormGPS::fileMakeKMLFromCurrentPosition(double lat, double lon)
+{
+
+}
+
+void FormGPS::fileSaveFieldKML()
+{
 
 }

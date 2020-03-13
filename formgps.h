@@ -395,9 +395,9 @@ public:
     void fileSaveVehicle(QString filename);
     bool fileOpenVehicle(QString filename);
     void fileSaveTool(QString filename);
-    void fileOpenTool(QString filename);
+    bool fileOpenTool(QString filename);
     void fileSaveEnvironment(QString filename);
-    void fileOpenEnvironment(QString filename);
+    bool fileOpenEnvironment(QString filename);
     void fileOpenField(QString openType);
     void fileCreateField();
     void fileCreateElevation();
@@ -407,13 +407,14 @@ public:
     void fileCreateContour();
     void fileSaveContour();
     void fileSaveBoundary();
+    void fileCreateRecPath();
     void fileSaveHeadland();
     void fileSaveRecPath();
     void fileSaveFlags();
     void fileSaveNMEA();
     void fileSaveElevation();
     void fileSaveSingleFlagKML2(int flagNumber);
-    void fileSaveSingleFlagXML(int flagNumber);
+    void fileSaveSingleFlagKML(int flagNumber);
     void fileMakeKMLFromCurrentPosition(double lat, double lon);
     void fileSaveFieldKML();
 
