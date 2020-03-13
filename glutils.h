@@ -31,7 +31,9 @@ enum Textures {
     TURNMANUAL=5,
     COMPASS=6,
     SPEEDO=7,
-    SPEEDONEDLE=8
+    SPEEDONEDLE=8,
+    HYDLIFT=9,
+    SKYNIGHT=10
 };
 
 extern bool isFontOn;

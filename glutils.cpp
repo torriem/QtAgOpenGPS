@@ -78,6 +78,10 @@ void initializeTextures() {
     texture.append(t); //position 7
     t = new QOpenGLTexture(QImage(":/images/textures/SpeedoNedle.png"));
     texture.append(t); //position 8
+    t = new QOpenGLTexture(QImage(":/images/textures/LandscapeNight.png"));
+    texture.append(t); //position 9
+    t = new QOpenGLTexture(QImage(":/images/textures/Lift.png"));
+    texture.append(t); //position 10
 }
 
 void destroyShaders() {

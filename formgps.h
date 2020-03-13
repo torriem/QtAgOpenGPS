@@ -131,6 +131,7 @@ public:
     QString currentFieldDirectory = "";
     QString workingDirectory = "";
     QString vehicleFileName = "";
+    QString toolFileName = "";
 
     //colors for sections and field background
     //uchar redSections, grnSections, bluSections;
@@ -503,6 +504,7 @@ public:
     void drawCompass(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width);
     void drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width, double Height);
     //void drawFieldText();
+    void drawLiftIndicator(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, int Width, int Height);
     void calcFrustum(const QMatrix4x4 &mvp);
     void calculateMinMax();
 

@@ -457,6 +457,16 @@ void FormGPS::openGLControl_Draw()
             drawCompassText(gl, projection*modelview, width - 400);
 
             if (SETTINGS_DISPLAY_SPEEDO) drawSpeedo(gl, modelview, projection, width, height);
+
+            if (SETTINGS_VEHICLE_ISHYDLIFTON) drawLiftIndicator(gl, modelview, projection, width, height);
+
+            if (SETTINGS_GPS_EXPECTRTK and pn.fixQuality != 4)
+            {
+                drawText(gl, projection*modelview, -width / 4, 150, "Lost RTK",
+                         2.0, true, QColor::fromRgbF(0.9752f, 0.52f, 0.0f));
+
+            }
+
             gl->glFlush();
 
             //draw the zoom window
@@ -1128,6 +1138,7 @@ void FormGPS::drawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int heigh
         }
 
         texture[Textures::SKY]->bind(0);
+        //TODO nighttime sky
 
         glDrawArraysTexture(gl, mvp,
                             GL_TRIANGLE_STRIP, skyBuffer,
@@ -1213,6 +1224,32 @@ void FormGPS::drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 
 
     gldraw1.draw(gl, projection*modelview, Textures::SPEEDONEDLE, GL_TRIANGLE_STRIP,
                  true, color);
+}
+
+void FormGPS::drawLiftIndicator(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, int Width, int Height)
+{
+    modelview.translate(Width / 2 - 35, Height/2, 0);
+    QColor color;
+
+    GLHelperTexture gldraw;
+
+    if (mc.machineData[mc.mdHydLift] == 2)
+    {
+        color = QColor::fromRgbF(0.0f, 0.950f, 0.0f);
+    }
+    else
+    {
+        modelview.rotate(180, 0, 0, 1);
+        color = QColor::fromRgbF(0.952f, 0.40f, 0.0f);
+    }
+
+    gldraw.append({ QVector3D(-48, -64, 0),  QVector2D(0, 0) });  //
+    gldraw.append({ QVector3D(-48, 64, 0),   QVector2D(0, 1) }); //
+    gldraw.append({ QVector3D(48, -64.0, 0), QVector2D(1, 0) }); //
+    gldraw.append({ QVector3D(48, 64, 0),    QVector2D(1, 1) }); //
+
+    gldraw.draw(gl, projection * modelview, Textures::HYDLIFT,
+                GL_TRIANGLE_STRIP, true, color);
 }
 
 void FormGPS::calcFrustum(const QMatrix4x4 &mvp)
