@@ -9,7 +9,6 @@
 #include <QOpenGLFunctions>
 #include <QColor>
 #include "glutils.h"
-#include "ctool.h"
 #include "cnmea.h"
 
 //??? why does CABLine refer to mf.ABLine? Isn't there only one instance and
@@ -103,7 +102,7 @@ void CABLine::snapABLine()
 }
 
 //called from main form
-void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTurn &yt, const CTool &tool, CNMEA &pn)
+void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTurn &yt, CNMEA &pn)
 {
     USE_SETTINGS;
 
@@ -111,9 +110,12 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
     double maxSteerAngle = SETTINGS_VEHICLE_MAXSTEERANGLE;
     double maxAngularVelocity = SETTINGS_VEHICLE_MAXANGULARVELOCITY;
 
+    double toolWidth = SETTINGS_TOOL_WIDTH;
+    double toolOverlap = SETTINGS_TOOL_OVERLAP;
+
     if (SETTINGS_VEHICLE_ISSTANLEYUSED) {
         //move the ABLine over based on the overlap amount set in vehicle
-        double widthMinusOverlap = tool.toolWidth - tool.toolOverlap;
+        double widthMinusOverlap = toolWidth - toolOverlap;
 
         //x2-x1
         double dx = refABLineP2.easting - refABLineP1.easting;
@@ -139,7 +141,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
         passNumber = int(refLineSide * howManyPathsAway);
 
         //calculate the new point that is number of implement widths over
-        double toolOffset = tool.toolOffset;
+        double toolOffset = SETTINGS_TOOL_OFFSET;
         Vec2 point1;
 
         //depending which way you are going, the offset can be either side
@@ -246,7 +248,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
     else
     {
         //move the ABLine over based on the overlap amount set in vehicle
-        double widthMinusOverlap = tool.toolWidth - tool.toolOverlap;
+        double widthMinusOverlap = toolWidth - toolOverlap;
 
          //x2-x1
         double dx = refABLineP2.easting - refABLineP1.easting;
@@ -272,7 +274,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
         passNumber = int(refLineSide * howManyPathsAway);
 
         //calculate the new point that is number of implement widths over
-        double toolOffset = tool.toolOffset;
+        double toolOffset = SETTINGS_TOOL_OFFSET;
         Vec2 point1;
 
         //depending which way you are going, the offset can be either side
@@ -417,10 +419,13 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTu
 }
 
 void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
-                          const CTool &tool,
                           CYouTurn &yt, CTram &tram, const CCamera &camera)
 {
     USE_SETTINGS;
+
+    double tool_toolWidth = SETTINGS_TOOL_WIDTH;
+    double tool_toolOffset = SETTINGS_TOOL_OFFSET;
+    double tool_toolOverlap = SETTINGS_TOOL_OVERLAP;
 
 	QOpenGLBuffer abBuffer;
 	QColor color;
@@ -482,10 +487,10 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                       GL_FLOAT, 2, 1.0f);
 
     if (!isEditing) {
-        if (SETTINGS_DISPLAY_SIDEGUIDELINES && camera.camSetDistance > tool.toolWidth * -120) {
+        if (SETTINGS_DISPLAY_SIDEGUIDELINES && camera.camSetDistance > tool_toolWidth * -120) {
             //get the tool offset and width
-            double toolOffset = tool.toolOffset * 2;
-            double toolWidth = tool.toolWidth - tool.toolOverlap;
+            double toolOffset = tool_toolOffset * 2;
+            double toolWidth = tool_toolWidth - tool_toolOverlap;
             double cosHeading = cos(-abHeading);
             double sinHeading = sin(-abHeading);
 
@@ -529,7 +534,7 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
         }
     }
     if(isEditing) {
-        double toolWidth2 = tool.toolWidth - tool.toolOverlap;
+        double toolWidth2 = tool_toolWidth - tool_toolOverlap;
         double cosHeading2 = cos(-abHeading);
         double sinHeading2 = sin(-abHeading);
 
@@ -541,7 +546,7 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
             {
                 vertices.append(QVector3D((cosHeading2 * toolWidth2) + refABLineP1.easting, (sinHeading2 * toolWidth2) + refABLineP1.northing, 0));
                 vertices.append(QVector3D((cosHeading2 * toolWidth2) + refABLineP2.easting, (sinHeading2 * toolWidth2) + refABLineP2.northing, 0));
-                toolWidth2 = toolWidth2 + tool.toolWidth - tool.toolOverlap;
+                toolWidth2 = toolWidth2 + tool_toolWidth - tool_toolOverlap;
             }
 
             //reuse abBuffer

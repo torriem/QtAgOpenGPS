@@ -25,6 +25,10 @@
 void FormGPS::openGLControl_Draw()
 {
     USE_SETTINGS;
+
+    int tool_numOfSections = SETTINGS_TOOL_NUMSECTIONS;
+    int tool_numSuperSection = SETTINGS_TOOL_NUMSECTIONS + 1;
+
     QOpenGLContext *glContext = QOpenGLContext::currentContext();
     QOpenGLFunctions *gl = glContext->functions();
     //int width = glContext->surface()->size().width();
@@ -232,7 +236,7 @@ void FormGPS::openGLControl_Draw()
             //if (isDrawPolygons) gl->glPolygonMode(GL_FRONT, GL_LINE);
 
             //draw patches of sections
-            for (int j = 0; j < tool.numSuperSection; j++)
+            for (int j = 0; j < tool_numSuperSection; j++)
             {
                 //every time the section turns off and on is a new patch
 
@@ -308,37 +312,37 @@ void FormGPS::openGLControl_Draw()
             if (autoBtnState == btnStates::Auto || manualBtnState == btnStates::On)
             {
                 //section patch color
-                if (tool.section[tool.numOfSections].isSectionOn && tool.section[tool.numOfSections].patchList.count() > 0)
+                if (tool.section[tool_numOfSections].isSectionOn && tool.section[tool_numOfSections].patchList.count() > 0)
                 {
-                    patchCount = tool.section[tool.numOfSections].patchList.count();
+                    patchCount = tool.section[tool_numOfSections].patchList.count();
 
                     //draw the triangle in each triangle strip
                     gldraw1.clear();
 
                     //left side of triangle
-                    QVector3D pt((vehicle.cosSectionHeading * tool.section[tool.numOfSections].positionLeft) + vehicle.toolPos.easting,
-                            (vehicle.sinSectionHeading * tool.section[tool.numOfSections].positionLeft) + vehicle.toolPos.northing, 0);
+                    QVector3D pt((vehicle.cosSectionHeading * tool.section[tool_numOfSections].positionLeft) + vehicle.toolPos.easting,
+                            (vehicle.sinSectionHeading * tool.section[tool_numOfSections].positionLeft) + vehicle.toolPos.northing, 0);
                     gldraw1.append(pt);
 
                     //TODO: label3.Text = pt.northing.ToString();
 
                     //Right side of triangle
-                    pt = QVector3D((vehicle.cosSectionHeading * tool.section[tool.numOfSections].positionRight) + vehicle.toolPos.easting,
-                       (vehicle.sinSectionHeading * tool.section[tool.numOfSections].positionRight) + vehicle.toolPos.northing, 0);
+                    pt = QVector3D((vehicle.cosSectionHeading * tool.section[tool_numOfSections].positionRight) + vehicle.toolPos.easting,
+                       (vehicle.sinSectionHeading * tool.section[tool_numOfSections].positionRight) + vehicle.toolPos.northing, 0);
                     gldraw1.append(pt);
 
-                    int last = tool.section[tool.numOfSections].patchList[patchCount - 1]->count();
+                    int last = tool.section[tool_numOfSections].patchList[patchCount - 1]->count();
                     //antenna
-                    gldraw1.append((*tool.section[tool.numOfSections].patchList[patchCount - 1])[last - 2]);
-                    gldraw1.append((*tool.section[tool.numOfSections].patchList[patchCount - 1])[last - 1]);
-                    //TODO: label4.Text = (*tool.section[tool.numOfSections].patchList[patchCount - 1])[last - 2].y().ToString();
+                    gldraw1.append((*tool.section[tool_numOfSections].patchList[patchCount - 1])[last - 2]);
+                    gldraw1.append((*tool.section[tool_numOfSections].patchList[patchCount - 1])[last - 1]);
+                    //TODO: label4.Text = (*tool.section[tool_numOfSections].patchList[patchCount - 1])[last - 2].y().ToString();
 
                     gldraw1.draw(gl, projection*modelview, sectionColor, GL_TRIANGLE_STRIP, 1.0f);
 
                 }
                 else
                 {
-                    for (int j = 0; j < tool.numSuperSection; j++)
+                    for (int j = 0; j < tool_numSuperSection; j++)
                     {
                         if (tool.section[j].isSectionOn && tool.section[j].patchList.count() > 0)
                         {
@@ -376,8 +380,8 @@ void FormGPS::openGLControl_Draw()
             }
             else// draw the current and reference AB Lines or CurveAB Ref and line
             {
-                if (ABLine.isABLineSet | ABLine.isABLineBeingSet) ABLine.drawABLines(gl, projection*modelview, tool, yt, tram, camera);
-                if (curve.isBtnCurveOn) curve.drawCurve(gl, projection*modelview, vehicle, tool, yt, tram, camera);
+                if (ABLine.isABLineSet | ABLine.isABLineBeingSet) ABLine.drawABLines(gl, projection*modelview, yt, tram, camera);
+                if (curve.isBtnCurveOn) curve.drawCurve(gl, projection*modelview, vehicle, yt, tram, camera);
             }
 
             //if (recPath.isRecordOn)
@@ -425,7 +429,7 @@ void FormGPS::openGLControl_Draw()
 
             //draw the vehicle/implement
             tool.drawTool(vehicle, camera, gl, modelview, projection);
-            vehicle.drawVehicle(gl, modelview, projection, camera, tool, bnd, hd, ct, curve, ABLine);
+            vehicle.drawVehicle(gl, modelview, projection, camera, bnd, hd, ct, curve, ABLine);
 
             // 2D Ortho --------------------------
             //no need to "push" matrix since it will be regenerated next time
@@ -551,6 +555,10 @@ void FormGPS::openGLControlBack_Draw()
 
     GLHelperOneColor gldraw;
 
+    USE_SETTINGS;
+
+    int tool_numSuperSection = SETTINGS_TOOL_NUMSECTIONS + 1;
+
     /* use the QML context with an offscreen surface to draw
      * the lookahead triangles
      */
@@ -603,7 +611,7 @@ void FormGPS::openGLControlBack_Draw()
     calcFrustum(projection*modelview);
 
     //draw patches j= # of sections
-    for (int j = 0; j < tool.numSuperSection; j++)
+    for (int j = 0; j < tool_numSuperSection; j++)
     {
         //every time the section turns off and on is a new patch
         int patchCount = tool.section[j].patchList.size();

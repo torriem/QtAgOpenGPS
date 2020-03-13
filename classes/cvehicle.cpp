@@ -5,7 +5,6 @@
 #include <QRgb>
 #include "aogsettings.h"
 #include "ccamera.h"
-#include "ctool.h"
 #include "cboundary.h"
 #include "glm.h"
 #include "glutils.h"
@@ -44,7 +43,7 @@ double CVehicle::updateGoalPointDistance(CNMEA &pn, double distanceFromCurrentLi
 
 void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
                            QMatrix4x4 projection,
-                           const CCamera &camera, CTool &tool,
+                           const CCamera &camera,
                            CBoundary &bnd, CHead &hd,
                            const CContour &ct,
                            const CABCurve &curve, const CABLine &ABLine)
@@ -69,7 +68,7 @@ void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
 
     //hitch pin
     cv.color = QVector4D(0.95f, 0.0f, 0.0f, 1.0f);
-    cv.vertex = QVector3D(0, tool.hitchLength, 0);
+    cv.vertex = QVector3D(0, SETTINGS_TOOL_HITCHLENGTH, 0);
     glcolors.append(cv);
 
     glcolors.draw(gl,mvp, GL_POINTS, 6.0f);
@@ -183,7 +182,7 @@ void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
 
     //draw the rigid hitch
     gldraw.clear();
-    gldraw.append(QVector3D(0, tool.hitchLength, 0));
+    gldraw.append(QVector3D(0, SETTINGS_TOOL_HITCHLENGTH, 0));
     gldraw.append(QVector3D(0, 0, 0));
     gldraw.draw(gl,mvp,QColor::fromRgbF(0.37f, 0.37f, 0.97f),
                 GL_LINES, 2);

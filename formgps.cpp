@@ -38,9 +38,9 @@ FormGPS::FormGPS(QWidget *parent) :
     tool.section[2].positionRight = 4;
     tool.section[3].positionLeft = 4;
     tool.section[3].positionRight = 8;
-    tool.numOfSections = 4; //0-3
-    tool.numSuperSection = 5;
-    tool.toolTrailingHitchLength = -4; //30 foot hitch to see following action better
+    SETTINGS_SET_TOOL_NUMSECTIONS(4);
+    //tool.numSuperSection = 5;
+    SETTINGS_SET_TOOL_TRAILINGHITCHLENGTH(-4);
     SETTINGS_SET_VEHICLE_MINTURNINGRADIUS(5);
     SETTINGS_SET_VEHICLE_MAXSTEERANGLE(45);
     tool.sectionCalcWidths();
@@ -59,7 +59,7 @@ FormGPS::FormGPS(QWidget *parent) :
     bnd.bndArr.append(boundary);
 
     gf.geoFenceArr.append(CGeoFenceLines());
-    gf.buildGeoFenceLines(bnd, tool.toolWidth, SETTINGS_VEHICLE_GEOFENCEDIST);
+    gf.buildGeoFenceLines(bnd, SETTINGS_TOOL_WIDTH, SETTINGS_VEHICLE_GEOFENCEDIST);
 
     //turn on the right number of section buttons.
     //we don't need to do this on resize, but we will need
@@ -137,6 +137,10 @@ FormGPS::~FormGPS()
 //by the rendering routine.
 void FormGPS::processSectionLookahead() {
     USE_SETTINGS;
+
+    int tool_numOfSections = SETTINGS_TOOL_NUMSECTIONS;
+    double tool_minUnappliedPixels = SETTINGS_TOOL_MINAPPLIED;
+
     //not using regular Qt Widgets in the main window anymore.  For
     //debugging purposes, this could go in another popup window
     grnPixelsWindow->setPixmap(QPixmap::fromImage(grnPix.mirrored()));
@@ -165,7 +169,7 @@ void FormGPS::processSectionLookahead() {
     isBoundaryClose = false;
 
     //find any off buttons, any outside of boundary, going backwards, and the farthest lookahead
-    for (int j = 0; j < tool.numOfSections; j++)
+    for (int j = 0; j < tool_numOfSections; j++)
     {
         if (tool.section[j].manBtnState == btnStates::Off) tool.isSuperSectionAllowedOn = false;
         if (!tool.section[j].isInBoundary) tool.isSuperSectionAllowedOn = false;
@@ -175,7 +179,7 @@ void FormGPS::processSectionLookahead() {
     }
 
     //if only one section, or going slow no need for super section
-    if (tool.numOfSections == 1 || pn.speed <= SETTINGS_VEHICLE_SLOWSPEEDCUTOFF)
+    if (tool_numOfSections == 1 || pn.speed <= SETTINGS_TOOL_SLOWSPEEDCUTOFF)
             tool.isSuperSectionAllowedOn = false;
 
     //clamp the height after looking way ahead, this is for switching off super section only
@@ -282,7 +286,7 @@ GetOutTool:
     if (manualBtnState == btnStates::On)
     {
         tool.isSuperSectionAllowedOn = true;
-        for (int j = 0; j < tool.numOfSections; j++)
+        for (int j = 0; j < tool_numOfSections; j++)
         {
             if (tool.section[j].manBtnState == btnStates::Off) tool.isSuperSectionAllowedOn = false;
         }
@@ -291,7 +295,7 @@ GetOutTool:
     // If ALL sections are required on, No buttons are off, within boundary, turn super section on, normal sections off
     if (tool.isSuperSectionAllowedOn)
     {
-        for (int j = 0; j < tool.numOfSections; j++)
+        for (int j = 0; j < tool_numOfSections; j++)
         {
             if (tool.section[j].isMappingOn)
             {
@@ -310,11 +314,11 @@ GetOutTool:
         }
 
         //turn on super section
-        tool.section[tool.numOfSections].mappingOnRequest = true;
-        tool.section[tool.numOfSections].mappingOffRequest = false;
+        tool.section[tool_numOfSections].mappingOnRequest = true;
+        tool.section[tool_numOfSections].mappingOffRequest = false;
 
-        tool.section[tool.numOfSections].sectionOnRequest = true;
-        tool.section[tool.numOfSections].sectionOffRequest = false;
+        tool.section[tool_numOfSections].sectionOnRequest = true;
+        tool.section[tool_numOfSections].sectionOffRequest = false;
     }
 
     /* Below is priority based. The last if statement is the one that is
@@ -327,27 +331,27 @@ GetOutTool:
     else
     {
         //if the superSection is on, turn it off
-        if (tool.section[tool.numOfSections].isSectionOn)
+        if (tool.section[tool_numOfSections].isSectionOn)
         {
-            tool.section[tool.numOfSections].sectionOffRequest = true;
-            tool.section[tool.numOfSections].sectionOnRequest = false;
-            tool.section[tool.numOfSections].sectionOffTimer = 0;
-            tool.section[tool.numOfSections].sectionOnTimer = 0;
+            tool.section[tool_numOfSections].sectionOffRequest = true;
+            tool.section[tool_numOfSections].sectionOnRequest = false;
+            tool.section[tool_numOfSections].sectionOffTimer = 0;
+            tool.section[tool_numOfSections].sectionOnTimer = 0;
         }
 
         //if the superSection is on, turn it off
-        if (tool.section[tool.numOfSections].isMappingOn)
+        if (tool.section[tool_numOfSections].isMappingOn)
         {
-            tool.section[tool.numOfSections].mappingOffRequest = true;
-            tool.section[tool.numOfSections].mappingOnRequest = false;
-            tool.section[tool.numOfSections].mappingOffTimer = 0;
-            tool.section[tool.numOfSections].mappingOnTimer = 0;
+            tool.section[tool_numOfSections].mappingOffRequest = true;
+            tool.section[tool_numOfSections].mappingOnRequest = false;
+            tool.section[tool_numOfSections].mappingOffTimer = 0;
+            tool.section[tool_numOfSections].mappingOnTimer = 0;
         }
 
         //Mapping   ---------------------------------------------------------------------------------------------------
         int endHeight = 1, startHeight =1;
 
-        for (int j = 0; j < tool.numOfSections; j++)
+        for (int j = 0; j < tool_numOfSections; j++)
         {
             tool.section[j].isMappingRequiredOn = false;
 
@@ -369,7 +373,7 @@ GetOutTool:
                     if (grnPixels[a].green == 0)
                     {
                         tagged++;
-                        if (tagged > tool.toolMinUnappliedPixels)
+                        if (tagged > tool_minUnappliedPixels)
                         {
                             tool.section[j].isMappingRequiredOn = true;
                             goto GetOutMappingOn;
@@ -409,7 +413,7 @@ GetOutMappingOn:
 
         if (hd.isOn) hd.whereAreToolLookOnPoints(vehicle, tool);
 
-        for (int j = 0; j < tool.numOfSections; j++)
+        for (int j = 0; j < tool_numOfSections; j++)
         {
             //If any nowhere applied, send OnRequest, if its all green send an offRequest
             //ensure it starts off
@@ -443,7 +447,7 @@ GetOutMappingOn:
                             if (grnPixels[a].green == 0)
                             {
                                 tagged++;
-                                if (tagged > tool.toolMinUnappliedPixels)
+                                if (tagged > tool_minUnappliedPixels)
                                 {
                                     tool.section[j].isSectionRequiredOn = true;
                                     goto GetOutSectionOn;
@@ -484,7 +488,7 @@ GetOutSectionOn:
                             if (grnPixels[a].green == 0)
                             {
                                 tagged++;
-                                if (tagged > tool.toolMinUnappliedPixels)
+                                if (tagged > tool_minUnappliedPixels)
                                 {
                                     tool.section[j].isSectionRequiredOn = true;
                                     goto GetOutSectionOff;
@@ -522,7 +526,7 @@ GetOutSectionOff:
                             if (grnPixels[a].green == 250)
                             {
                                 //tagged++;
-                                //if (tagged > tool.toolMinUnappliedPixels)
+                                //if (tagged > tool_minUnappliedPixels)
                                 {
                                     isHeadlandInLookOn = true;
                                     goto GetOutHdOn;
@@ -547,7 +551,7 @@ GetOutHdOn:
                     //            if (grnPixels[a].green == 250)
                     //            {
                     //                //tagged++;
-                    //                //if (tagged > tool.toolMinUnappliedPixels)
+                    //                //if (tagged > tool_minUnappliedPixels)
                     //                {
                     //                    isHeadlandInLookOff = true;
                     //                    goto GetOutHdOff;
@@ -592,7 +596,7 @@ GetOutHdOn:
                         if (grnPixels[a].green == 0)
                         {
                             tagged++;
-                            if (tagged > tool.toolMinUnappliedPixels)
+                            if (tagged > tool_minUnappliedPixels)
                             {
                                 tool.section[j].isSectionRequiredOn = true;
                                 goto GetOutSectionOn1;
@@ -626,7 +630,7 @@ GetOutSectionOn1:
                             if (grnPixels[a].green == 0)
                             {
                                 tagged++;
-                                if (tagged > tool.toolMinUnappliedPixels)
+                                if (tagged > tool_minUnappliedPixels)
                                 {
                                     tool.section[j].isSectionRequiredOn = true;
                                     goto GetOutSectionOff1;
@@ -651,7 +655,7 @@ GetOutSectionOff1:
             }
         }  // end of go thru all sections "for"
         //if Master Auto is on
-        for (int j = 0; j < tool.numOfSections; j++)
+        for (int j = 0; j < tool_numOfSections; j++)
         {
             if (tool.section[j].isSectionRequiredOn && tool.section[j].isAllowedOn)
             {
@@ -682,14 +686,14 @@ GetOutSectionOff1:
             }
 
             //if going too slow turn off sections
-            if (pn.speed <= SETTINGS_VEHICLE_SLOWSPEEDCUTOFF)
+            if (pn.speed <= SETTINGS_TOOL_SLOWSPEEDCUTOFF)
             {
                 tool.section[j].sectionOnRequest = false;
                 tool.section[j].sectionOffRequest = true;
             }
         }
 
-        for (int j = 0; j < tool.numOfSections; j++)
+        for (int j = 0; j < tool_numOfSections; j++)
         {
             //now for  mapping
             if (tool.section[j].isMappingRequiredOn && tool.section[j].isAllowedOn)
@@ -721,7 +725,7 @@ GetOutSectionOff1:
             }
 
             //if going too slow turn off sections
-            if (pn.speed <= SETTINGS_VEHICLE_SLOWSPEEDCUTOFF)
+            if (pn.speed <= SETTINGS_TOOL_SLOWSPEEDCUTOFF)
             {
                 tool.section[j].mappingOnRequest = false;
                 tool.section[j].mappingOffRequest = true;
@@ -810,7 +814,11 @@ GetOutSectionOff1:
 //Does the logic to process section on off requests
 void FormGPS::processSectionOnOffRequests(bool isMapping)
 {
-    for (int j = 0; j < tool.numOfSections + 1; j++)
+    USE_SETTINGS;
+
+    double tool_turnOffDelay = SETTINGS_TOOL_OFFDELAY;
+
+    for (int j = 0; j < SETTINGS_TOOL_NUMSECTIONS + 1; j++)
     {
         //SECTIONS -
 
@@ -818,7 +826,7 @@ void FormGPS::processSectionOnOffRequests(bool isMapping)
         if (tool.section[j].sectionOnRequest)
             tool.section[j].isSectionOn = true;
 
-        if (!tool.section[j].sectionOffRequest) tool.section[j].sectionOffTimer = (int)((double)fixUpdateHz * tool.turnOffDelay);
+        if (!tool.section[j].sectionOffRequest) tool.section[j].sectionOffTimer = (int)((double)fixUpdateHz * tool_turnOffDelay);
 
         if (tool.section[j].sectionOffTimer > 0) tool.section[j].sectionOffTimer--;
 
@@ -841,7 +849,7 @@ void FormGPS::processSectionOnOffRequests(bool isMapping)
 
         //keep setting the timer so full when ready to turn off
         if (!tool.section[j].mappingOffRequest)
-            tool.section[j].mappingOffTimer = (int)(fixUpdateHz * 1 * sped + ((double)fixUpdateHz * tool.turnOffDelay));
+            tool.section[j].mappingOffTimer = (int)(fixUpdateHz * 1 * sped + ((double)fixUpdateHz * tool_turnOffDelay));
 
         //decrement the off timer
         if (tool.section[j].mappingOffTimer > 0) tool.section[j].mappingOffTimer--;
@@ -1238,13 +1246,17 @@ void FormGPS::manualAllBtnsUpdate()
 //in QML they are always centered.
 void FormGPS::lineUpManualBtns()
 {
+    USE_SETTINGS;
+
+    int tool_numOfSections = SETTINGS_TOOL_NUMSECTIONS;
+
     QObject* button;
     for (int b=0; b< MAXSECTIONS-1; b++ ) {
         button = qmlItem(qml_root,QString("section")+QString::number(b));
 
         //temporarily enable them so we can test them
         button->setProperty("enabled", "true");
-        if (b < tool.numOfSections) {
+        if (b < tool_numOfSections) {
             button->setProperty("visible","true");
             if (isJobStarted)
                 button->setProperty("enabled", "true");

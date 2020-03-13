@@ -9,7 +9,6 @@
 #include <QSettings>
 #include "glutils.h"
 #include "cboundary.h"
-#include "ctool.h"
 #include "aogsettings.h"
 #include "cnmea.h"
 #include "common.h"
@@ -68,8 +67,13 @@ void CContour::stopContourLine(Vec3 pivot, QVector<QSharedPointer<QVector<Vec3>>
     isContourOn = false;
 }
 
-void CContour::buildBoundaryContours(CTool &tool, CBoundary &bnd, int pass, int spacingInt)
+void CContour::buildBoundaryContours(CBoundary &bnd, int pass, int spacingInt)
 {
+    USE_SETTINGS;
+
+    double tool_toolWidth = SETTINGS_TOOL_WIDTH;
+    double tool_toolOverlap = SETTINGS_TOOL_OVERLAP;
+
     if (bnd.bndArr.size() == 0)
     {
         qDebug() << "Boundary Contour Error, No Boundaries Made";
@@ -91,14 +95,14 @@ void CContour::buildBoundaryContours(CTool &tool, CBoundary &bnd, int pass, int 
     {
         signPass = -1;
         //determine how wide a headland space
-        totalHeadWidth = ((tool.toolWidth - tool.toolOverlap) * 0.5) - spacing;
+        totalHeadWidth = ((tool_toolWidth - tool_toolOverlap) * 0.5) - spacing;
     }
 
     else
     {
         signPass = 1;
-        totalHeadWidth = ((tool.toolWidth - tool.toolOverlap) * pass) + spacing +
-            ((tool.toolWidth - tool.toolOverlap) * 0.5);
+        totalHeadWidth = ((tool_toolWidth - tool_toolOverlap) * pass) + spacing +
+            ((tool_toolWidth - tool_toolOverlap) * 0.5);
     }
 
     //outside boundary
@@ -119,7 +123,7 @@ void CContour::buildBoundaryContours(CTool &tool, CBoundary &bnd, int pass, int 
         ptList->append(point);
     }
 
-    //totalHeadWidth = (tool.toolWidth - tool.toolOverlap) * 0.5 + 0.2 + (tool.toolWidth - tool.toolOverlap);
+    //totalHeadWidth = (tool_toolWidth - tool_toolOverlap) * 0.5 + 0.2 + (tool_toolWidth - tool_toolOverlap);
 
     for (int j = 1; j < bnd.bndArr.size(); j++)
     {
@@ -156,9 +160,15 @@ void CContour::buildBoundaryContours(CTool &tool, CBoundary &bnd, int pass, int 
 }
 
 //determine closest point on applied
-void CContour::buildContourGuidanceLine(CVehicle &vehicle, CTool& tool, CNMEA &pn, Vec3 pivot)
+void CContour::buildContourGuidanceLine(CVehicle &vehicle, CNMEA &pn, Vec3 pivot)
 {
-    double toolWid = tool.toolWidth;
+    USE_SETTINGS;
+
+    double tool_toolWidth = SETTINGS_TOOL_WIDTH;
+    double tool_toolOverlap = SETTINGS_TOOL_OVERLAP;
+    double tool_toolOffset = SETTINGS_TOOL_OFFSET;
+
+    double toolWid = tool_toolWidth;
 
     double sinH = sin(pivot.heading) * 2.0 * toolWid;
     double cosH = cos(pivot.heading) * 2.0 * toolWid;
@@ -168,27 +178,27 @@ void CContour::buildContourGuidanceLine(CVehicle &vehicle, CTool& tool, CNMEA &p
     double sin2HR = 0;
     double cos2HR = 0;
 
-    if (tool.toolOffset < 0)
+    if (tool_toolOffset < 0)
     {
         //sticks out more left
-        sin2HL = sin(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool.toolOffset * 2)));
-        cos2HL = cos(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool.toolOffset * 2)));
+        sin2HL = sin(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool_toolOffset * 2)));
+        cos2HL = cos(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool_toolOffset * 2)));
 
-        sin2HR = sin(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool.toolOffset)));
-        cos2HR = cos(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool.toolOffset)));
+        sin2HR = sin(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool_toolOffset)));
+        cos2HR = cos(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool_toolOffset)));
     }
     else
     {
         //sticks out more right
-        sin2HL = sin(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool.toolOffset)));
-        cos2HL = cos(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool.toolOffset)));
+        sin2HL = sin(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool_toolOffset)));
+        cos2HL = cos(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool_toolOffset)));
 
-        sin2HR = sin(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool.toolOffset * 2)));
-        cos2HR = cos(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool.toolOffset * 2)));
+        sin2HR = sin(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool_toolOffset * 2)));
+        cos2HR = cos(pivot.heading + glm::PIBy2) * (1.33 * (toolWid + fabs(tool_toolOffset * 2)));
     }
 
     //narrow equipment needs bigger bounding box.
-    if (tool.toolWidth < 6)
+    if (tool_toolWidth < 6)
     {
         sinH = sin(pivot.heading) * 4 * toolWid;
         cosH = cos(pivot.heading) * 4 * toolWid;
@@ -442,7 +452,7 @@ void CContour::buildContourGuidanceLine(CVehicle &vehicle, CTool& tool, CNMEA &p
     else piSide = -glm::PIBy2;
 
     //offset calcs
-    double toolOffset = tool.toolOffset;
+    double toolOffset = tool_toolOffset;
     if (isSameWay)
     {
         toolOffset = 0.0;
@@ -454,7 +464,7 @@ void CContour::buildContourGuidanceLine(CVehicle &vehicle, CTool& tool, CNMEA &p
     }
 
     //move the Guidance Line over based on the overlap, width, and offset amount set in vehicle
-    double widthMinusOverlap = tool.toolWidth - tool.toolOverlap + toolOffset;
+    double widthMinusOverlap = tool_toolWidth - tool_toolOverlap + toolOffset;
 
     //absolute the distance
     distanceFromRefLine = fabs(distanceFromRefLine);

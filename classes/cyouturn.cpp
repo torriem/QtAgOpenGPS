@@ -14,7 +14,6 @@
 #include "glm.h"
 #include "cdubins.h"
 #include "glutils.h"
-#include "ctool.h"
 #include "common.h"
 #include "cgeofence.h"
 
@@ -319,7 +318,6 @@ bool CYouTurn::buildDriveAround(const CABLine &ABLine,
 }
 
 bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
-                                        const CTool &tool,
                                         const CBoundary &bnd,
                                         CGeoFence &gf,
                                         const CABLine &ABLine, CTurn &turn,
@@ -332,6 +330,9 @@ bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
 
     double minTurningRadius = SETTINGS_VEHICLE_MINTURNINGRADIUS;
     int rowSkipsWidth = SETTINGS_VEHICLE_YOUSKIPWIDTH;
+    double tool_toolWidth = SETTINGS_TOOL_WIDTH;
+    double tool_toolOverlap = SETTINGS_TOOL_OVERLAP;
+    double tool_toolOffset = SETTINGS_TOOL_OFFSET;
 
     double headAB = ABLine.abHeading;
     if (!ABLine.isABSameAsVehicleHeading) headAB += M_PI;
@@ -344,7 +345,7 @@ bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
         Vec3 onPurePoint(ABLine.rEastAB, ABLine.rNorthAB, 0);
 
         //how far are we from any turn boundary
-        turn.findClosestTurnPoint(bnd, tool, isYouTurnRight, onPurePoint, headAB);
+        turn.findClosestTurnPoint(bnd, isYouTurnRight, onPurePoint, headAB);
 
         //or did we lose the turnLine - we are on the highway cuz we left the outer/inner turn boundary
         if ((int)turn.closestTurnPt.easting != -20000)
@@ -368,7 +369,7 @@ bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
         tangencyAngle = (glm::PIBy2 - fabs(boundaryAngleOffPerpendicular)) * 0.5;
 
         //baseline away from boundary to start calculations
-        double toolTurnWidth = tool.toolWidth * rowSkipsWidth;
+        double toolTurnWidth = tool_toolWidth * rowSkipsWidth;
 
         //distance from TurnLine for trigger added in youturn form, include the 3 m bump forward
         distanceTurnBeforeLine = 0;
@@ -409,8 +410,8 @@ bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
         double head = ABLine.abHeading;
 
         //grab the vehicle widths and offsets
-        double widthMinusOverlap = tool.toolWidth - tool.toolOverlap;
-        double toolOffset = tool.toolOffset * 2.0;
+        double widthMinusOverlap = tool_toolWidth - tool_toolOverlap;
+        double toolOffset = tool_toolOffset * 2.0;
         double turnOffset;
 
         //turning right
@@ -589,7 +590,6 @@ bool CYouTurn::buildABLineDubinsYouTurn(const CVehicle &vehicle,
 }
 
 bool CYouTurn::buildABLinePatternYouTurn(const CVehicle &vehicle,
-                                         const CTool &tool,
                                          const CBoundary &bnd,
                                          const CABLine &ABLine, CTurn &turn,
                                          bool isTurnRight)
@@ -598,6 +598,9 @@ bool CYouTurn::buildABLinePatternYouTurn(const CVehicle &vehicle,
 
     int youTurnStartOffset = SETTINGS_VEHICLE_YOUTURNDISTANCE;
     int rowSkipsWidth = SETTINGS_VEHICLE_YOUSKIPWIDTH;
+    double tool_toolWidth = SETTINGS_TOOL_WIDTH;
+    double tool_toolOverlap = SETTINGS_TOOL_OVERLAP;
+    double tool_toolOffset = SETTINGS_TOOL_OFFSET;
 
     double headAB = ABLine.abHeading;
     if (!ABLine.isABSameAsVehicleHeading) headAB += M_PI;
@@ -606,7 +609,7 @@ bool CYouTurn::buildABLinePatternYouTurn(const CVehicle &vehicle,
     Vec3 onPurePoint(ABLine.rEastAB, ABLine.rNorthAB, 0);
 
     //how far are we from any turn boundary
-    turn.findClosestTurnPoint(bnd, tool, isYouTurnRight, onPurePoint, headAB);
+    turn.findClosestTurnPoint(bnd, isYouTurnRight, onPurePoint, headAB);
 
     //or did we lose the turnLine - we are on the highway cuz we left the outer/inner turn boundary
     if ((int)turn.closestTurnPt.easting != -20000)
@@ -630,8 +633,8 @@ bool CYouTurn::buildABLinePatternYouTurn(const CVehicle &vehicle,
     double head = ABLine.abHeading;
 
     //grab the vehicle widths and offsets
-    double widthMinusOverlap = tool.toolWidth - tool.toolOverlap;
-    double toolOffset = tool.toolOffset * 2.0;
+    double widthMinusOverlap = tool_toolWidth - tool_toolOverlap;
+    double toolOffset = tool_toolOffset * 2.0;
     double turnOffset;
 
     //turning right
@@ -833,7 +836,6 @@ bool CYouTurn::buildABLinePatternYouTurn(const CVehicle &vehicle,
 }
 
 bool CYouTurn::buildCurvePatternYouTurn(const CVehicle &vehicle,
-                                        const CTool &tool,
                                         const CBoundary &bnd,
                                         const CABCurve &curve,
                                         CTurn &turn,
@@ -843,6 +845,9 @@ bool CYouTurn::buildCurvePatternYouTurn(const CVehicle &vehicle,
 
     int rowSkipsWidth = SETTINGS_VEHICLE_YOUSKIPWIDTH;
     int youTurnStartOffset = SETTINGS_VEHICLE_YOUTURNDISTANCE;
+    double tool_toolWidth = SETTINGS_TOOL_WIDTH;
+    double tool_toolOverlap = SETTINGS_TOOL_OVERLAP;
+    double tool_toolOffset = SETTINGS_TOOL_OFFSET;
 
     if (youTurnPhase > 0)
     {
@@ -856,8 +861,8 @@ bool CYouTurn::buildCurvePatternYouTurn(const CVehicle &vehicle,
         //bool isCountingUp = mf.curve.isABSameAsVehicleHeading;
 
         //grab the vehicle widths and offsets
-        double widthMinusOverlap = tool.toolWidth - tool.toolOverlap;
-        double toolOffset = tool.toolOffset * 2.0;
+        double widthMinusOverlap = tool_toolWidth - tool_toolOverlap;
+        double toolOffset = tool_toolOffset * 2.0;
         double turnOffset;
 
         //turning right
@@ -1048,7 +1053,6 @@ bool CYouTurn::buildCurvePatternYouTurn(const CVehicle &vehicle,
 }
 
 bool CYouTurn::buildCurveDubinsYouTurn(const CVehicle &vehicle,
-                                       const CTool &tool,
                                        const CBoundary &bnd,
                                        const CABCurve &curve,
                                        CTurn &turn,
@@ -1058,6 +1062,9 @@ bool CYouTurn::buildCurveDubinsYouTurn(const CVehicle &vehicle,
 
     double minTurningRadius = SETTINGS_VEHICLE_MINTURNINGRADIUS;
     int rowSkipsWidth = SETTINGS_VEHICLE_YOUSKIPWIDTH;
+    double tool_toolWidth = SETTINGS_TOOL_WIDTH;
+    double tool_toolOverlap = SETTINGS_TOOL_OVERLAP;
+    double tool_toolOffset = SETTINGS_TOOL_OFFSET;
 
     if (youTurnPhase > 0)
     {
@@ -1078,7 +1085,7 @@ bool CYouTurn::buildCurveDubinsYouTurn(const CVehicle &vehicle,
         tangencyAngle = (glm::PIBy2 - fabs(boundaryAngleOffPerpendicular)) * 0.5;
 
         //distance from crossPoint to turn line
-        if (minTurningRadius * 2 < (tool.toolWidth * rowSkipsWidth))
+        if (minTurningRadius * 2 < (tool_toolWidth * rowSkipsWidth))
         {
             if (boundaryAngleOffPerpendicular < 0)
             {
@@ -1108,8 +1115,8 @@ bool CYouTurn::buildCurveDubinsYouTurn(const CVehicle &vehicle,
         CDubinsTurningRadius = minTurningRadius;
 
         //grab the vehicle widths and offsets
-        double widthMinusOverlap = tool.toolWidth - tool.toolOverlap;
-        double toolOffset = tool.toolOffset * 2.0;
+        double widthMinusOverlap = tool_toolWidth - tool_toolOverlap;
+        double toolOffset = tool_toolOffset * 2.0;
         double turnOffset;
 
         //calculate the true width
@@ -1408,14 +1415,16 @@ void CYouTurn::loadYouTurnShapeFromFile(QString filename)
 }
 
 //build the points and path of youturn to be scaled and transformed
-void CYouTurn::buildManualYouTurn(CTool &tool,
-                                  const CABLine &ABLine, CABCurve &curve,
+void CYouTurn::buildManualYouTurn(const CABLine &ABLine, CABCurve &curve,
                                   bool isTurnRight, bool isTurnButtonTriggered)
 {
     USE_SETTINGS;
 
     double minTurningRadius = SETTINGS_VEHICLE_MINTURNINGRADIUS;
     int rowSkipsWidth = SETTINGS_VEHICLE_YOUSKIPWIDTH;
+    double tool_toolWidth = SETTINGS_TOOL_WIDTH;
+    double tool_toolOverlap = SETTINGS_TOOL_OVERLAP;
+    double tool_toolOffset = SETTINGS_TOOL_OFFSET;
 
     isYouTurnTriggered = true;
 
@@ -1439,8 +1448,8 @@ void CYouTurn::buildManualYouTurn(CTool &tool,
     }
 
     //grab the vehicle widths and offsets
-    double widthMinusOverlap = tool.toolWidth - tool.toolOverlap;
-    double toolOffset = tool.toolOffset * 2.0;
+    double widthMinusOverlap = tool_toolWidth - tool_toolOverlap;
+    double toolOffset = tool_toolOffset * 2.0;
     double turnOffset;
 
     //turning right

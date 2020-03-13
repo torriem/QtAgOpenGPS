@@ -8,7 +8,6 @@
 #include "vec2.h"
 #include "aogsettings.h"
 #include "cboundary.h"
-#include "ctool.h"
 #include "cfielddata.h"
 #include "common.h"
 
@@ -28,8 +27,12 @@ CTurn::CTurn(QObject *parent) : QObject(parent)
 }
 
 //called only by CYouTurn
-void CTurn::findClosestTurnPoint(const CBoundary &bnd, const CTool &tool, bool isYouTurnRight, Vec3 fromPt, double headAB)
+void CTurn::findClosestTurnPoint(const CBoundary &bnd, bool isYouTurnRight, Vec3 fromPt, double headAB)
 {
+    USE_SETTINGS;
+
+    double tool_toolWidth = SETTINGS_TOOL_WIDTH;
+
     //initial scan is straight ahead of pivot point of vehicle to find the right turnLine/boundary
     Vec3 pt;
     Vec3 rayPt;
@@ -76,13 +79,13 @@ void CTurn::findClosestTurnPoint(const CBoundary &bnd, const CTool &tool, bool i
     double scanWidthL, scanWidthR;
     if (isYouTurnRight) //its actually left
     {
-        scanWidthL = -(tool.toolWidth * 0.25) - (tool.toolWidth * 0.5);
-        scanWidthR = (tool.toolWidth * 0.25) - (tool.toolWidth * 0.5);
+        scanWidthL = -(tool_toolWidth * 0.25) - (tool_toolWidth * 0.5);
+        scanWidthR = (tool_toolWidth * 0.25) - (tool_toolWidth * 0.5);
     }
     else
     {
-        scanWidthL = -(tool.toolWidth * 0.25) + (tool.toolWidth * 0.5);
-        scanWidthR = (tool.toolWidth * 0.25) + (tool.toolWidth * 0.5);
+        scanWidthL = -(tool_toolWidth * 0.25) + (tool_toolWidth * 0.5);
+        scanWidthR = (tool_toolWidth * 0.25) + (tool_toolWidth * 0.5);
     }
 
     //isYouTurnRight actuall means turning left - Painful, but it switches later
@@ -133,13 +136,13 @@ void CTurn::findClosestTurnPoint(const CBoundary &bnd, const CTool &tool, bool i
     {
         if (isYouTurnRight) //its actually left
         {
-            scanWidthL = -(tool.toolWidth * 0.5);
+            scanWidthL = -(tool_toolWidth * 0.5);
             scanWidthR = 0;
         }
         else
         {
             scanWidthL = 0;
-            scanWidthR = (tool.toolWidth * 0.5);
+            scanWidthR = (tool_toolWidth * 0.5);
         }
 
         //isYouTurnRight actuall means turning left - Painful, but it switches later
@@ -246,8 +249,12 @@ void CTurn::resetTurnLines()
 }
 
 //called by main forms
-void CTurn::buildTurnLines(const CBoundary &bnd, const CTool &tool, CFieldData &fd, double youTurnTriggerDistanceOffset)
+void CTurn::buildTurnLines(const CBoundary &bnd, CFieldData &fd, double youTurnTriggerDistanceOffset)
 {
+    USE_SETTINGS;
+
+    double tool_toolWidth = SETTINGS_TOOL_WIDTH;
+
     //update the GUI values for boundaries
     fd.updateFieldBoundaryGUIAreas(bnd);
 
@@ -281,7 +288,7 @@ void CTurn::buildTurnLines(const CBoundary &bnd, const CTool &tool, CFieldData &
             turnArr[0].turnLine.append(tPnt);
         }
     }
-    turnArr[0].fixTurnLine(totalHeadWidth, bnd.bndArr[0].bndLine, tool.toolWidth * 0.25);
+    turnArr[0].fixTurnLine(totalHeadWidth, bnd.bndArr[0].bndLine, tool_toolWidth * 0.25);
     turnArr[0].preCalcTurnLines();
 
     //inside boundaries
@@ -307,7 +314,7 @@ void CTurn::buildTurnLines(const CBoundary &bnd, const CTool &tool, CFieldData &
                 turnArr[j].turnLine.append(tPnt);
             }
         }
-        turnArr[j].fixTurnLine(totalHeadWidth, bnd.bndArr[j].bndLine, tool.toolWidth * 0.4);
+        turnArr[j].fixTurnLine(totalHeadWidth, bnd.bndArr[j].bndLine, tool_toolWidth * 0.4);
         turnArr[j].preCalcTurnLines();
     }
 

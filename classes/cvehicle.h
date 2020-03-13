@@ -77,7 +77,7 @@ public:
 
     explicit CVehicle(QObject *parent = 0);
     double updateGoalPointDistance(CNMEA &pn, double distanceFromCurrentLine);
-    void drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, const CCamera &camera, CTool &tool, CBoundary &bnd, CHead &hd, const CContour &ct, const CABCurve &curve, const CABLine &ABLine);
+    void drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, const CCamera &camera, CBoundary &bnd, CHead &hd, const CContour &ct, const CABCurve &curve, const CABLine &ABLine);
 
 
 signals:

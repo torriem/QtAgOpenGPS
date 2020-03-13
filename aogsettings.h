@@ -21,47 +21,47 @@ QVector3D parseColorVector(QString setcolor);
 #define USE_SETTINGS AOGSettings settings
 
 //CTOOL
-#define SETTINGS_TOOLWIDTH 				settings.   value("vehicle/toolWidth", 16).toDouble()
-#define SETTINGS_SET_TOOLWIDTH(VAL)		settings.setValue("vehicle/toolWidth", VAL)
+#define SETTINGS_TOOL_WIDTH 				settings.   value("vehicle/toolWidth", 16).toDouble()
+#define SETTINGS_SET_TOOL_WIDTH(VAL)		settings.setValue("vehicle/toolWidth", VAL)
 
-#define SETTINGS_TOOLOVERLAP 			settings.   value("vehicle/toolOverlap", 0).toDouble()
-#define SETTINGS_SET_TOOLOVERLAP(VAL)	settings.setValue("vehicle/toolOverlap", VAL)
+#define SETTINGS_TOOL_OVERLAP 			settings.   value("vehicle/toolOverlap", 0).toDouble()
+#define SETTINGS_SET_TOOL_OVERLAP(VAL)	settings.setValue("vehicle/toolOverlap", VAL)
 
-#define SETTINGS_TOOLOFFSET 			settings.   value("vehicle/toolOffset", 0).toDouble()
-#define SETTINGS_SET_TOOLOFFSET(VAL)	settings.setValue("vehicle/toolOffset", VAL)
+#define SETTINGS_TOOL_OFFSET 			settings.   value("vehicle/toolOffset", 0).toDouble()
+#define SETTINGS_SET_TOOL_OFFSET(VAL)	settings.setValue("vehicle/toolOffset", VAL)
 
-#define SETTINGS_TOOLTRAILINGHITCHLENGTH			settings.   value("vehicle/toolTrailingHitchLength", -2).toDouble()
-#define SETTINGS_SET_TOOLTRAILINGHITCHLENGTH(VAL)	settings.setValue("vehicle/toolTrailingHitchLength", VAL)
+#define SETTINGS_TOOL_TRAILINGHITCHLENGTH			settings.   value("vehicle/toolTrailingHitchLength", -2).toDouble()
+#define SETTINGS_SET_TOOL_TRAILINGHITCHLENGTH(VAL)	settings.setValue("vehicle/toolTrailingHitchLength", VAL)
 
-#define SETTINGS_TOOLTANKTRAILINGHITCHLENGTH 			settings.   value("vehicle/toolTrailingHitchLength", 0).toDouble()
-#define SETTINGS_SET_TOOLTANKTRAILINGHITCHLENGTH(VAL)	settings.setValue("vehicle/toolTrailingHitchLength", VAL)
+#define SETTINGS_TOOL_TANKTRAILINGHITCHLENGTH 			settings.   value("vehicle/toolTrailingHitchLength", 0).toDouble()
+#define SETTINGS_SET_TOOL_TANKTRAILINGHITCHLENGTH(VAL)	settings.setValue("vehicle/toolTrailingHitchLength", VAL)
 
-#define SETTINGS_HITCHLENGTH 				settings.   value("vehicle/hitchLength", 0).toDouble()
-#define SETTINGS_SET_HITCHLENGTH(VAL)		settings.setValue("vehicle/hitchLength", VAL)
+#define SETTINGS_TOOL_HITCHLENGTH 				settings.   value("vehicle/hitchLength", 0).toDouble()
+#define SETTINGS_SET_TOOL_HITCHLENGTH(VAL)		settings.setValue("vehicle/hitchLength", VAL)
 
-#define SETTINGS_TOOLISBEHINDPIVOT 				settings.   value("vehicle/toolIsBehindPivot", true).toBool()
-#define SETTINGS_SET_TOOLISBEHIND(PIVOTVAL)		settings.setValue("vehicle/toolIsBehindPivot", VAL)
+#define SETTINGS_TOOL_ISBEHINDPIVOT 				settings.   value("vehicle/toolIsBehindPivot", true).toBool()
+#define SETTINGS_SET_TOOL_ISBEHINDPIVOT(VAL)		settings.setValue("vehicle/toolIsBehindPivot", VAL)
 
-#define SETTINGS_TOOLISTRAILING 				settings.   value("vehicle/toolIsTrailing", true).toBool()
-#define SETTINGS_SET_TOOLISTRAILING(VAL)		settings.setValue("vehicle/toolIsTrailing", VAL)
+#define SETTINGS_TOOL_ISTRAILING 				settings.   value("vehicle/toolIsTrailing", true).toBool()
+#define SETTINGS_SET_TOOL_ISTRAILING(VAL)		settings.setValue("vehicle/toolIsTrailing", VAL)
 
-#define SETTINGS_TOOLISTBT 				settings.   value("vehicle/toolIsTBT", false).toBool()
-#define SETTINGS_SET_TOOLISTBT(VAL)		settings.setValue("vehicle/toolIsTBT", VAL)
+#define SETTINGS_TOOL_ISTBT 				settings.   value("vehicle/toolIsTBT", false).toBool()
+#define SETTINGS_SET_TOOL_ISTBT(VAL)		settings.setValue("vehicle/toolIsTBT", VAL)
 
-#define SETTINGS_VEHICLE_TOOLLOOKAHEADON 				settings.   value("vehicle/toolLookAheadOn", 1).toDouble()
-#define SETTINGS_SET_VEHICLE_TOOLLOOKAHEADON(VAL)		settings.setValue("vehicle/toolLookAheadOn", VAL)
+#define SETTINGS_TOOL_LOOKAHEADON 				settings.   value("vehicle/toolLookAheadOn", 1).toDouble()
+#define SETTINGS_SET_TOOL_LOOKAHEADON(VAL)		settings.setValue("vehicle/toolLookAheadOn", VAL)
 
-#define SETTINGS_VEHICLE_TOOLLOOKAHEADOFF 				settings.   value("vehicle/toolLookAheadOff", 0.5).toDouble()
-#define SETTINGS_SET_VEHICLE_TOOLLOOKAHEADOFF(VAL)		settings.setValue("vehicle/toolLookAheadOff", VAL)
+#define SETTINGS_TOOL_LOOKAHEADOFF 				settings.   value("vehicle/toolLookAheadOff", 0.5).toDouble()
+#define SETTINGS_SET_TOOL_LOOKAHEADOFF(VAL)		settings.setValue("vehicle/toolLookAheadOff", VAL)
 
-#define SETTINGS_VEHICLE_TOOLOFFDELAY 				settings.   value("vehicle/toolOffDelay", 0).toDouble()
-#define SETTINGS_SET_VEHICLE_TOOLTOFFDELAY(VAL)		settings.setValue("vehicle/toolOffDelay", VAL)
+#define SETTINGS_TOOL_OFFDELAY 				settings.   value("vehicle/toolOffDelay", 0).toDouble()
+#define SETTINGS_SET_TOOL_OFFDELAY(VAL)		settings.setValue("vehicle/toolOffDelay", VAL)
 
-#define SETTINGS_NUMSECTIONS 			settings.   value("vehicle/numSections", 3).toInt()
-#define SETTINGS_SET_NUMSECTIONS(VAL)		settings.setValue("vehicle/numSections", VAL)
+#define SETTINGS_TOOL_NUMSECTIONS 			settings.   value("vehicle/numSections", 3).toInt()
+#define SETTINGS_SET_TOOL_NUMSECTIONS(VAL)		settings.setValue("vehicle/numSections", VAL)
 
-#define SETTINGS_TOOLMINAPPLIED				settings.   value("vehicle/minApplied", 10).toInt()
-#define SETTINGS_SET_TOOLMINAPPLIED(VAL)	settings.setValue("vehicle/minApplied", VAL)
+#define SETTINGS_TOOL_MINAPPLIED				settings.   value("vehicle/minApplied", 10).toInt()
+#define SETTINGS_SET_TOOL_MINAPPLIED(VAL)	settings.setValue("vehicle/minApplied", VAL)
 
 //CTRAM
 #define SETTINGS_TRAM_EQWIDTH 				settings.   value("tram/eqWidth", 24).toDouble()
@@ -98,7 +98,7 @@ QVector3D parseColorVector(QString setcolor);
 #define SETTINGS_VEHICLE_MINFIXSTEP			settings.   value("vehicle/minFixStep", 1).toDouble()
 #define SETTINGS_SET_VEHICLE_MINFIXSTEP(VAL)	settings.setValue("vehicle/minFixStep",VAL)
 
-#define SETTINGS_VEHICLE_SLOWSPEEDCUTOFF			settings.   value("vehicle/slowSpeedCuttoff", 0).toDouble()
+#define SETTINGS_TOOL_SLOWSPEEDCUTOFF			settings.   value("vehicle/slowSpeedCuttoff", 0).toDouble()
 #define SETTINGS_SET_VEHICLE_SLOWSPEEDCUTOFF(VAL)	settings.setValue("vehicle/slowSpeedCuttoff",VAL)
 
 #define SETTINGS_VEHICLE_TYPE			settings.   value("vehicle/vehicleType", 0).toInt()

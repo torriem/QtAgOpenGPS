@@ -61,6 +61,7 @@ void FormGPS::updateFixPosition()
     USE_SETTINGS;
 
     double minFixStepDist = SETTINGS_VEHICLE_MINFIXSTEP;
+    int tool_numOfSections = SETTINGS_TOOL_NUMSECTIONS;
 
     startCounter++;
     totalFixSteps = fixUpdateHz * 6;
@@ -198,12 +199,12 @@ void FormGPS::updateFixPosition()
     {
         if (curve.isCurveSet)
         {
-            curve.getCurrentCurveLine(vehicle.pivotAxlePos, vehicle.steerAxlePos,vehicle, yt, tool, pn);
+            curve.getCurrentCurveLine(vehicle.pivotAxlePos, vehicle.steerAxlePos,vehicle, yt, pn);
         }
 
         if (ABLine.isABLineSet)
         {
-            ABLine.getCurrentABLine(vehicle.pivotAxlePos, vehicle.steerAxlePos, vehicle, yt, tool, pn);
+            ABLine.getCurrentABLine(vehicle.pivotAxlePos, vehicle.steerAxlePos, vehicle, yt, pn);
             if (yt.isRecordingCustomYouTurn)
             {
                 //save reference of first point
@@ -331,18 +332,18 @@ void FormGPS::updateFixPosition()
                         {
                             if (SETTINGS_VEHICLE_ISUSINGDUBINSTURN)
                             {
-                                if (ABLine.isABLineSet) yt.buildABLineDubinsYouTurn(vehicle, tool, bnd, gf,
+                                if (ABLine.isABLineSet) yt.buildABLineDubinsYouTurn(vehicle, bnd, gf,
                                                                                     ABLine, turn, mazeGrid,
                                                                                     minFieldX, minFieldY,
                                                                                     yt.isYouTurnRight);
-                                else yt.buildCurveDubinsYouTurn(vehicle, tool, bnd, curve, turn,
+                                else yt.buildCurveDubinsYouTurn(vehicle, bnd, curve, turn,
                                                                 yt.isYouTurnRight, vehicle.pivotAxlePos);
                             }
                             else
                             {
-                                if (ABLine.isABLineSet) yt.buildABLinePatternYouTurn(vehicle, tool, bnd,
+                                if (ABLine.isABLineSet) yt.buildABLinePatternYouTurn(vehicle, bnd,
                                                                                      ABLine, turn, yt.isYouTurnRight);
-                                else yt.buildCurvePatternYouTurn(vehicle, tool, bnd, curve, turn,
+                                else yt.buildCurvePatternYouTurn(vehicle, bnd, curve, turn,
                                                                  yt.isYouTurnRight, vehicle.pivotAxlePos);
                             }
                         }
@@ -421,37 +422,37 @@ void FormGPS::updateFixPosition()
             if (mc.ss[mc.swONLo] != 0)
             {
                 // ON Signal from Arduino
-                if ((mc.ss[mc.swONLo] & 128) == 128 && tool.numOfSections > 7)
+                if ((mc.ss[mc.swONLo] & 128) == 128 && tool_numOfSections > 7)
                 {
                     if (tool.section[7].manBtnState != btnStates::Auto) tool.section[7].manBtnState = btnStates::Auto;
                     //TODO:btnSection8Man.PerformClick();
                 }
-                if ((mc.ss[mc.swONLo] & 64) == 64 && tool.numOfSections > 6)
+                if ((mc.ss[mc.swONLo] & 64) == 64 && tool_numOfSections > 6)
                 {
                     if (tool.section[6].manBtnState != btnStates::Auto) tool.section[6].manBtnState = btnStates::Auto;
                     //TODO:btnSection7Man.PerformClick();
                 }
-                if ((mc.ss[mc.swONLo] & 32) == 32 && tool.numOfSections > 5)
+                if ((mc.ss[mc.swONLo] & 32) == 32 && tool_numOfSections > 5)
                 {
                     if (tool.section[5].manBtnState != btnStates::Auto) tool.section[5].manBtnState = btnStates::Auto;
                     //TODO:btnSection6Man.PerformClick();
                 }
-                if ((mc.ss[mc.swONLo] & 16) == 16 && tool.numOfSections > 4)
+                if ((mc.ss[mc.swONLo] & 16) == 16 && tool_numOfSections > 4)
                 {
                     if (tool.section[4].manBtnState != btnStates::Auto) tool.section[4].manBtnState = btnStates::Auto;
                     //TODO:btnSection5Man.PerformClick();
                 }
-                if ((mc.ss[mc.swONLo] & 8) == 8 && tool.numOfSections > 3)
+                if ((mc.ss[mc.swONLo] & 8) == 8 && tool_numOfSections > 3)
                 {
                     if (tool.section[3].manBtnState != btnStates::Auto) tool.section[3].manBtnState = btnStates::Auto;
                     //TODO:btnSection4Man.PerformClick();
                 }
-                if ((mc.ss[mc.swONLo] & 4) == 4 && tool.numOfSections > 2)
+                if ((mc.ss[mc.swONLo] & 4) == 4 && tool_numOfSections > 2)
                 {
                     if (tool.section[2].manBtnState != btnStates::Auto) tool.section[2].manBtnState = btnStates::Auto;
                     //TODO:btnSection3Man.PerformClick();
                 }
-                if ((mc.ss[mc.swONLo] & 2) == 2 && tool.numOfSections > 1)
+                if ((mc.ss[mc.swONLo] & 2) == 2 && tool_numOfSections > 1)
                 {
                     if (tool.section[1].manBtnState != btnStates::Auto) tool.section[1].manBtnState = btnStates::Auto;
                     //TODO:btnSection2Man.PerformClick();
@@ -468,43 +469,43 @@ void FormGPS::updateFixPosition()
             if (mc.ss[mc.swONHi] != 0)
             {
                 // tool.sections ON signal from Arduino
-                if ((mc.ss[mc.swONHi] & 128) == 128 && tool.numOfSections > 15)
+                if ((mc.ss[mc.swONHi] & 128) == 128 && tool_numOfSections > 15)
                 {
                     if (tool.section[15].manBtnState != btnStates::Auto) tool.section[15].manBtnState = btnStates::Auto;
                     //TODO:btnSection16Man.PerformClick();
                 }
-                if ((mc.ss[mc.swONHi] & 64) == 64 && tool.numOfSections > 14)
+                if ((mc.ss[mc.swONHi] & 64) == 64 && tool_numOfSections > 14)
                 {
                     if (tool.section[14].manBtnState != btnStates::Auto) tool.section[14].manBtnState = btnStates::Auto;
                     //TODO:btnSection15Man.PerformClick();
                 }
-                if ((mc.ss[mc.swONHi] & 32) == 32 && tool.numOfSections > 13)
+                if ((mc.ss[mc.swONHi] & 32) == 32 && tool_numOfSections > 13)
                 {
                     if (tool.section[13].manBtnState != btnStates::Auto) tool.section[13].manBtnState = btnStates::Auto;
                     //TODO:btnSection14Man.PerformClick();
                 }
-                if ((mc.ss[mc.swONHi] & 16) == 16 && tool.numOfSections > 12)
+                if ((mc.ss[mc.swONHi] & 16) == 16 && tool_numOfSections > 12)
                 {
                     if (tool.section[12].manBtnState != btnStates::Auto) tool.section[12].manBtnState = btnStates::Auto;
                     //TODO:btnSection13Man.PerformClick();
                 }
 
-                if ((mc.ss[mc.swONHi] & 8) == 8 && tool.numOfSections > 11)
+                if ((mc.ss[mc.swONHi] & 8) == 8 && tool_numOfSections > 11)
                 {
                     if (tool.section[11].manBtnState != btnStates::Auto) tool.section[11].manBtnState = btnStates::Auto;
                     //TODO:btnSection12Man.PerformClick();
                 }
-                if ((mc.ss[mc.swONHi] & 4) == 4 && tool.numOfSections > 10)
+                if ((mc.ss[mc.swONHi] & 4) == 4 && tool_numOfSections > 10)
                 {
                     if (tool.section[10].manBtnState != btnStates::Auto) tool.section[10].manBtnState = btnStates::Auto;
                     //TODO:btnSection11Man.PerformClick();
                 }
-                if ((mc.ss[mc.swONHi] & 2) == 2 && tool.numOfSections > 9)
+                if ((mc.ss[mc.swONHi] & 2) == 2 && tool_numOfSections > 9)
                 {
                     if (tool.section[9].manBtnState != btnStates::Auto) tool.section[9].manBtnState = btnStates::Auto;
                     //TODO:btnSection10Man.PerformClick();
                 }
-                if ((mc.ss[mc.swONHi] & 1) == 1 && tool.numOfSections > 8)
+                if ((mc.ss[mc.swONHi] & 1) == 1 && tool_numOfSections > 8)
                 {
                     if (tool.section[8].manBtnState != btnStates::Auto) tool.section[8].manBtnState = btnStates::Auto;
                     //TODO:btnSection9Man.PerformClick();
@@ -714,6 +715,13 @@ void FormGPS::calculatePositionHeading()
 
     double wheelbase = SETTINGS_VEHICLE_WHEELBASE;
     double antennaPivot = SETTINGS_VEHICLE_ANTENNAPIVOT;
+    double tool_toolWidth = SETTINGS_TOOL_WIDTH;
+    double tool_hitchLength = SETTINGS_TOOL_HITCHLENGTH;
+    bool tool_isToolTrailing = SETTINGS_TOOL_ISTRAILING;
+    bool tool_isToolTBT = SETTINGS_TOOL_ISTBT;
+    double tool_toolTankTrailingHitchLength = SETTINGS_TOOL_TANKTRAILINGHITCHLENGTH;
+    double tool_toolTrailingHitchLength = SETTINGS_TOOL_TRAILINGHITCHLENGTH;
+
 
     if (!simTimer.isActive()) // use heading true if using simulator
     {
@@ -816,20 +824,20 @@ void FormGPS::calculatePositionHeading()
     }
 
     //determine where the rigid vehicle hitch ends
-    vehicle.hitchPos.easting = pn.fix.easting + (sin(vehicle.fixHeading) * (tool.hitchLength - antennaPivot));
-    vehicle.hitchPos.northing = pn.fix.northing + (cos(vehicle.fixHeading) * (tool.hitchLength - antennaPivot));
+    vehicle.hitchPos.easting = pn.fix.easting + (sin(vehicle.fixHeading) * (tool_hitchLength - antennaPivot));
+    vehicle.hitchPos.northing = pn.fix.northing + (cos(vehicle.fixHeading) * (tool_hitchLength - antennaPivot));
 
     //tool attached via a trailing hitch
-    if (tool.isToolTrailing)
+    if (tool_isToolTrailing)
     {
         double over;
 
-        if (tool.isToolTBT)
+        if (tool_isToolTBT)
         {
             //Torriem rules!!!!! Oh yes, this is all his. Thank-you
             if (distanceCurrentStepFix != 0)
             {
-                double t = (tool.toolTankTrailingHitchLength) / distanceCurrentStepFix;
+                double t = (tool_toolTankTrailingHitchLength) / distanceCurrentStepFix;
                 vehicle.tankPos.easting = vehicle.hitchPos.easting + t * (vehicle.hitchPos.easting - vehicle.tankPos.easting);
                 vehicle.tankPos.northing = vehicle.hitchPos.northing + t * (vehicle.hitchPos.northing - vehicle.tankPos.northing);
                 vehicle.fixHeadingTank = atan2(vehicle.hitchPos.easting - vehicle.tankPos.easting, vehicle.hitchPos.northing - vehicle.tankPos.northing);
@@ -840,16 +848,16 @@ void FormGPS::calculatePositionHeading()
 
             if (over < 2.0 && startCounter > 50)
             {
-                vehicle.tankPos.easting = vehicle.hitchPos.easting + (sin(vehicle.fixHeadingTank) * (tool.toolTankTrailingHitchLength));
-                vehicle.tankPos.northing = vehicle.hitchPos.northing + (cos(vehicle.fixHeadingTank) * (tool.toolTankTrailingHitchLength));
+                vehicle.tankPos.easting = vehicle.hitchPos.easting + (sin(vehicle.fixHeadingTank) * (tool_toolTankTrailingHitchLength));
+                vehicle.tankPos.northing = vehicle.hitchPos.northing + (cos(vehicle.fixHeadingTank) * (tool_toolTankTrailingHitchLength));
             }
 
             //criteria for a forced reset to put tool directly behind vehicle
             if (over > 2.0 || startCounter < 51 )
             {
                 vehicle.fixHeadingTank = vehicle.fixHeading;
-                vehicle.tankPos.easting = vehicle.hitchPos.easting + (sin(vehicle.tankPos.heading) * (tool.toolTankTrailingHitchLength));
-                vehicle.tankPos.northing = vehicle.hitchPos.northing + (cos(vehicle.tankPos.heading) * (tool.toolTankTrailingHitchLength));
+                vehicle.tankPos.easting = vehicle.hitchPos.easting + (sin(vehicle.tankPos.heading) * (tool_toolTankTrailingHitchLength));
+                vehicle.tankPos.northing = vehicle.hitchPos.northing + (cos(vehicle.tankPos.heading) * (tool_toolTankTrailingHitchLength));
             }
 
         }
@@ -864,7 +872,7 @@ void FormGPS::calculatePositionHeading()
         //Torriem rules!!!!! Oh yes, this is all his. Thank-you
         if (distanceCurrentStepFix != 0)
         {
-            double t = (tool.toolTrailingHitchLength) / distanceCurrentStepFix;
+            double t = (tool_toolTrailingHitchLength) / distanceCurrentStepFix;
             vehicle.toolPos.easting = vehicle.tankPos.easting + t * (vehicle.tankPos.easting - vehicle.toolPos.easting);
             vehicle.toolPos.northing = vehicle.tankPos.northing + t * (vehicle.tankPos.northing - vehicle.toolPos.northing);
             vehicle.toolPos.heading = atan2(vehicle.tankPos.easting - vehicle.toolPos.easting, vehicle.tankPos.northing - vehicle.toolPos.northing);
@@ -875,16 +883,16 @@ void FormGPS::calculatePositionHeading()
 
         if (over < 1.9 && startCounter > 50)
         {
-            vehicle.toolPos.easting = vehicle.tankPos.easting + (sin(vehicle.toolPos.heading) * (tool.toolTrailingHitchLength));
-            vehicle.toolPos.northing = vehicle.tankPos.northing + (cos(vehicle.toolPos.heading) * (tool.toolTrailingHitchLength));
+            vehicle.toolPos.easting = vehicle.tankPos.easting + (sin(vehicle.toolPos.heading) * (tool_toolTrailingHitchLength));
+            vehicle.toolPos.northing = vehicle.tankPos.northing + (cos(vehicle.toolPos.heading) * (tool_toolTrailingHitchLength));
         }
 
         //criteria for a forced reset to put tool directly behind vehicle
         if (over > 1.9 || startCounter < 51 )
         {
             vehicle.toolPos.heading = vehicle.tankPos.heading;
-            vehicle.toolPos.easting = vehicle.tankPos.easting + (sin(vehicle.toolPos.heading) * (tool.toolTrailingHitchLength));
-            vehicle.toolPos.northing = vehicle.tankPos.northing + (cos(vehicle.toolPos.heading) * (tool.toolTrailingHitchLength));
+            vehicle.toolPos.easting = vehicle.tankPos.easting + (sin(vehicle.toolPos.heading) * (tool_toolTrailingHitchLength));
+            vehicle.toolPos.northing = vehicle.tankPos.northing + (cos(vehicle.toolPos.heading) * (tool_toolTrailingHitchLength));
         }
     }
 
@@ -900,7 +908,7 @@ void FormGPS::calculatePositionHeading()
 
     //used to increase triangle count when going around corners, less on straight
     //pick the slow moving side edge of tool
-    double distance = tool.toolWidth * 0.5;
+    double distance = tool_toolWidth * 0.5;
     if (distance > 3) distance = 3;
 
     //whichever is less
@@ -963,6 +971,10 @@ void FormGPS::addBoundaryPoint()
 //add the points for section, contour line points, Area Calc feature
 void FormGPS::addSectionOrContourPathPoints()
 {
+    USE_SETTINGS;
+
+    int tool_numOfSections = SETTINGS_TOOL_NUMSECTIONS;
+
     if (recPath.isRecordOn)
     {
         //keep minimum speed of 1.0
@@ -988,7 +1000,7 @@ void FormGPS::addSectionOrContourPathPoints()
     int sectionCounter = 0;
 
     //send the current and previous GPS fore/aft corrected fix to each section
-    for (int j = 0; j < tool.numOfSections + 1; j++)
+    for (int j = 0; j < tool_numOfSections + 1; j++)
     {
         if (tool.section[j].isMappingOn)
         {
@@ -1020,7 +1032,7 @@ void FormGPS::addSectionOrContourPathPoints()
         else { if (ct.isContourOn) { ct.stopContourLine(vehicle.pivotAxlePos, contourSaveList); } }
 
         //Build contour line if close enough to a patch
-        if (ct.isContourBtnOn) ct.buildContourGuidanceLine(vehicle, tool, pn, vehicle.pivotAxlePos);
+        if (ct.isContourBtnOn) ct.buildContourGuidanceLine(vehicle, pn, vehicle.pivotAxlePos);
     }
 }
 
@@ -1029,6 +1041,9 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
 {
     USE_SETTINGS;
     double hydLiftLookAheadTime = SETTINGS_VEHICLE_HYDLIFTLOOKAHEAD;
+    int tool_numOfSections = SETTINGS_TOOL_NUMSECTIONS;
+    double tool_lookAheadOnSetting = SETTINGS_TOOL_LOOKAHEADON;
+    double tool_lookAheadOffSetting = SETTINGS_TOOL_LOOKAHEADOFF;
 
     //calculate left side of section 1
     Vec3 left(0,0,0);
@@ -1039,7 +1054,7 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
     double meterPerSecPerPixel = fabs(pn.speed) * 4.5;
 
     //now loop all the section rights and the one extreme left
-    for (int j = 0; j < tool.numOfSections; j++)
+    for (int j = 0; j < tool_numOfSections; j++)
     {
         if (j == 0)
         {
@@ -1111,7 +1126,7 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
             if (sped < 0.1) sped = 0.1;
             tool.toolFarLeftSpeed = tool.toolFarLeftSpeed * 0.8 + sped * 0.2;
         }
-        if (j == tool.numOfSections - 1)
+        if (j == tool_numOfSections - 1)
         {
             sped = (rightSpeed * 0.1);
             if(sped < 0.1) sped = 0.1;
@@ -1131,8 +1146,8 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
     //qDebug() << leftSpeed << " " << rightSpeed;
 
     //fill in tool positions
-    tool.section[tool.numOfSections].leftPoint = tool.section[0].leftPoint;
-    tool.section[tool.numOfSections].rightPoint = tool.section[tool.numOfSections-1].rightPoint;
+    tool.section[tool_numOfSections].leftPoint = tool.section[0].leftPoint;
+    tool.section[tool_numOfSections].rightPoint = tool.section[tool_numOfSections-1].rightPoint;
 
     //set the look ahead for hyd Lift in pixels per second
     vehicle.hydLiftLookAheadDistanceLeft = tool.toolFarLeftSpeed * hydLiftLookAheadTime * 10;
@@ -1141,14 +1156,14 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
     if (vehicle.hydLiftLookAheadDistanceLeft > 200) vehicle.hydLiftLookAheadDistanceLeft = 200;
     if (vehicle.hydLiftLookAheadDistanceRight > 200) vehicle.hydLiftLookAheadDistanceRight = 200;
 
-    tool.lookAheadDistanceOnPixelsLeft = tool.toolFarLeftSpeed * tool.lookAheadOnSetting * 10;
-    tool.lookAheadDistanceOnPixelsRight = tool.toolFarRightSpeed * tool.lookAheadOnSetting * 10;
+    tool.lookAheadDistanceOnPixelsLeft = tool.toolFarLeftSpeed * tool_lookAheadOnSetting * 10;
+    tool.lookAheadDistanceOnPixelsRight = tool.toolFarRightSpeed * tool_lookAheadOnSetting * 10;
 
     if (tool.lookAheadDistanceOnPixelsLeft > 200) tool.lookAheadDistanceOnPixelsLeft = 200;
     if (tool.lookAheadDistanceOnPixelsRight > 200) tool.lookAheadDistanceOnPixelsRight = 200;
 
-    tool.lookAheadDistanceOffPixelsLeft = tool.toolFarLeftSpeed * tool.lookAheadOffSetting * 10;
-    tool.lookAheadDistanceOffPixelsRight = tool.toolFarRightSpeed * tool.lookAheadOffSetting * 10;
+    tool.lookAheadDistanceOffPixelsLeft = tool.toolFarLeftSpeed * tool_lookAheadOffSetting * 10;
+    tool.lookAheadDistanceOffPixelsRight = tool.toolFarRightSpeed * tool_lookAheadOffSetting * 10;
 
     if (tool.lookAheadDistanceOffPixelsLeft > 160) tool.lookAheadDistanceOffPixelsLeft = 160;
     if (tool.lookAheadDistanceOffPixelsRight > 160) tool.lookAheadDistanceOffPixelsRight = 160;
@@ -1157,12 +1172,12 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
     if (hd.isOn) hd.whereAreToolCorners(tool);
 
     //set up the super for youturn
-    tool.section[tool.numOfSections].isInBoundary = true;
+    tool.section[tool_numOfSections].isInBoundary = true;
 
     //determine if section is in boundary and headland using the section left/right positions
     bool isLeftIn = true, isRightIn = true;
 
-    for (int j = 0; j < tool.numOfSections; j++)
+    for (int j = 0; j < tool_numOfSections; j++)
     {
         if (bnd.bndArr.count())
         {
@@ -1199,13 +1214,13 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
                 if (isLeftIn && isRightIn) tool.section[j].isInBoundary = true;
                 else tool.section[j].isInBoundary = false;
             }
-            tool.section[tool.numOfSections].isInBoundary &= tool.section[j].isInBoundary;
+            tool.section[tool_numOfSections].isInBoundary &= tool.section[j].isInBoundary;
         }
         //only outside boundary
         else
         {
             tool.section[j].isInBoundary = true;
-            tool.section[tool.numOfSections].isInBoundary = false;
+            tool.section[tool_numOfSections].isInBoundary = false;
         }
     }
 }

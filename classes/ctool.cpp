@@ -7,38 +7,43 @@
 
 CTool::CTool()
 {
+    /*
     USE_SETTINGS;
 
     //from settings grab the vehicle specifics
-    toolWidth = SETTINGS_TOOLWIDTH;
-    toolOverlap = SETTINGS_TOOLOVERLAP;
-    toolOffset = SETTINGS_TOOLOFFSET;
+    //toolWidth = SETTINGS_TOOL_WIDTH;
+    //toolOverlap = SETTINGS_TOOL_OVERLAP;
+    //toolOffset = SETTINGS_TOOL_OFFSET;
 
-    toolTrailingHitchLength = SETTINGS_TOOLTRAILINGHITCHLENGTH;
-    toolTankTrailingHitchLength = SETTINGS_TOOLTANKTRAILINGHITCHLENGTH;
-    hitchLength = SETTINGS_HITCHLENGTH;
+    toolTrailingHitchLength = SETTINGS_TOOL_TRAILINGHITCHLENGTH;
+    toolTankTrailingHitchLength = SETTINGS_TOOL_TANKTRAILINGHITCHLENGTH;
+    hitchLength = SETTINGS_TOOL_HITCHLENGTH;
 
-    isToolBehindPivot = SETTINGS_TOOLISBEHINDPIVOT;
-    isToolTrailing = SETTINGS_TOOLISTRAILING;
-    isToolTBT = SETTINGS_TOOLISTBT;
+    isToolBehindPivot = SETTINGS_TOOL_ISBEHINDPIVOT;
+    isToolTrailing = SETTINGS_TOOL_ISTRAILING;
+    isToolTBT = SETTINGS_TOOL_ISTBT;
 
-    lookAheadOnSetting = SETTINGS_VEHICLE_TOOLLOOKAHEADON;
-    lookAheadOffSetting  = SETTINGS_VEHICLE_TOOLLOOKAHEADOFF;
-    turnOffDelay = SETTINGS_VEHICLE_TOOLOFFDELAY;
+    lookAheadOnSetting = SETTINGS_TOOL_LOOKAHEADON;
+    lookAheadOffSetting  = SETTINGS_TOOL_LOOKAHEADOFF;
+    turnOffDelay = SETTINGS_TOOL_OFFDELAY;
 
-    numOfSections = SETTINGS_NUMSECTIONS;
+    numOfSections = SETTINGS_TOOL_NUMSECTIONS;
     numSuperSection = numOfSections + 1;
 
-    toolMinUnappliedPixels = SETTINGS_TOOLMINAPPLIED;
+    toolMinUnappliedPixels = SETTINGS_TOOL_MINAPPLIED;
 
-    slowSpeedCutoff = SETTINGS_VEHICLE_SLOWSPEEDCUTOFF;
+    slowSpeedCutoff = SETTINGS_TOOL_SLOWSPEEDCUTOFF;
 
     //TOOD: section settings
+    */
 }
 
 void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection)
 {
     USE_SETTINGS;
+
+    int numOfSections = SETTINGS_TOOL_NUMSECTIONS;
+    double hitchLength = SETTINGS_TOOL_HITCHLENGTH;
 
     //translate and rotate at pivot axle, caller's mvp will be changed
     modelview.translate(v.pivotAxlePos.easting, v.pivotAxlePos.northing, 0);
@@ -55,15 +60,15 @@ void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix
 
     //settings doesn't change trailing hitch length if set to rigid, so do it here
     double trailingTank, trailingTool;
-    if (isToolTrailing)
+    if (SETTINGS_TOOL_ISTRAILING)
     {
-        trailingTank = toolTankTrailingHitchLength;
-        trailingTool = toolTrailingHitchLength;
+        trailingTank = SETTINGS_TOOL_TANKTRAILINGHITCHLENGTH;
+        trailingTool = SETTINGS_TOOL_TRAILINGHITCHLENGTH;
     }
     else { trailingTank = 0; trailingTool = 0; }
 
     //there is a trailing tow between hitch
-    if (isToolTBT && isToolTrailing)
+    if (SETTINGS_TOOL_ISTBT && SETTINGS_TOOL_ISTRAILING)
     {
         //rotate to tank heading
         mv.rotate(glm::toDegrees(-v.tankPos.heading), 0.0, 0.0, 1.0);
@@ -92,7 +97,7 @@ void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix
     }
 
     //draw the hitch if trailing
-    if (isToolTrailing)
+    if (SETTINGS_TOOL_ISTRAILING)
     {
         gldraw.clear();
         gldraw.append(QVector3D(0.0, trailingTool, 0.0));
@@ -190,6 +195,10 @@ void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix
 //function to calculate the width of each section and update
 void CTool::sectionCalcWidths()
 {
+    USE_SETTINGS;
+
+    int numOfSections = SETTINGS_TOOL_NUMSECTIONS;
+
     for (int j = 0; j < MAXSECTIONS; j++)
     {
         section[j].sectionWidth = (section[j].positionRight - section[j].positionLeft);
@@ -198,7 +207,8 @@ void CTool::sectionCalcWidths()
     }
 
     //calculate tool width based on extreme right and left values
-    toolWidth = fabs(section[0].positionLeft) + fabs(section[numOfSections - 1].positionRight);
+    double toolWidth = fabs(section[0].positionLeft) + fabs(section[numOfSections - 1].positionRight);
+    SETTINGS_SET_TOOL_WIDTH(toolWidth);
 
     //left and right tool position
     toolFarLeftPosition = section[0].positionLeft;

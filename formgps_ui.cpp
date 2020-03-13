@@ -296,6 +296,10 @@ void FormGPS::onBtnContour_clicked(){
 }
 
 void FormGPS::onBtnManualOffOn_clicked(){
+    USE_SETTINGS;
+
+    int tool_numOfSections = SETTINGS_TOOL_NUMSECTIONS;
+
     qDebug()<<"Manual off on button clicked." ;
     switch (manualBtnState)
     {
@@ -308,7 +312,7 @@ void FormGPS::onBtnManualOffOn_clicked(){
         qmlItem(qml_root,"btnSectionOffAutoOn")->setProperty("isChecked",false);
 
         //turn all the sections allowed and update to ON!! Auto changes to ON
-        for (int j = 0; j < tool.numOfSections; j++)
+        for (int j = 0; j < tool_numOfSections; j++)
         {
             tool.section[j].isAllowedOn = true;
             tool.section[j].manBtnState = btnStates::Auto; //auto rolls over to on
@@ -322,7 +326,7 @@ void FormGPS::onBtnManualOffOn_clicked(){
         qmlItem(qml_root,"btnManualOffOn")->setProperty("isChecked",false);
 
         //turn section buttons all OFF or Auto if SectionAuto was on or off
-        for (int j = 0; j < tool.numOfSections; j++)
+        for (int j = 0; j < tool_numOfSections; j++)
         {
             tool.section[j].isAllowedOn = false;
             tool.section[j].manBtnState = btnStates::On;
@@ -340,6 +344,10 @@ void FormGPS::onBtnManualOffOn_clicked(){
 }
 
 void FormGPS::onBtnSectionOffAutoOn_clicked(){
+    USE_SETTINGS;
+
+    int tool_numOfSections = SETTINGS_TOOL_NUMSECTIONS;
+
     qDebug()<<"Section off auto on button clicked." ;
     switch (autoBtnState)
     {
@@ -352,7 +360,7 @@ void FormGPS::onBtnSectionOffAutoOn_clicked(){
             qmlItem(qml_root,"btnManualOffOn")->setProperty("isChecked",false);
 
             //turn all the sections allowed and update to ON!! Auto changes to ON
-            for (int j = 0; j < tool.numOfSections; j++)
+            for (int j = 0; j < tool_numOfSections; j++)
             {
                 tool.section[j].isAllowedOn = true;
                 tool.section[j].manBtnState = btnStates::Off;
@@ -366,7 +374,7 @@ void FormGPS::onBtnSectionOffAutoOn_clicked(){
             qmlItem(qml_root,"btnSectionOffAutoOn")->setProperty("isChecked",false);
 
             //turn section buttons all OFF or Auto if SectionAuto was on or off
-            for (int j = 0; j < tool.numOfSections; j++)
+            for (int j = 0; j < tool_numOfSections; j++)
             {
                 tool.section[j].isAllowedOn = false;
                 tool.section[j].manBtnState = btnStates::On;
@@ -561,7 +569,7 @@ void FormGPS::onBtnManUTurnLeft_clicked()
         yt.resetYouTurn();
     }else {
         yt.isYouTurnTriggered = true;
-        yt.buildManualYouTurn(tool, ABLine, curve, false, true);
+        yt.buildManualYouTurn(ABLine, curve, false, true);
    }
 }
 
@@ -571,6 +579,6 @@ void FormGPS::onBtnManUTurnRight_clicked()
         yt.resetYouTurn();
     }else {
         yt.isYouTurnTriggered = true;
-        yt.buildManualYouTurn(tool, ABLine, curve, true, true);
+        yt.buildManualYouTurn(ABLine, curve, true, true);
    }
 }

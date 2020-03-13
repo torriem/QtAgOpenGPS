@@ -7,7 +7,6 @@
 #include "vec3.h"
 #include "vec2.h"
 #include "cvehicle.h"
-#include "ctool.h"
 #include "cyouturn.h"
 #include "cboundary.h"
 #include "ctram.h"
@@ -21,10 +20,14 @@ CABCurve::CABCurve(QObject *parent) : QObject(parent)
 }
 
 void CABCurve::drawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
-                         const CVehicle &vehicle, const CTool &tool,
+                         const CVehicle &vehicle,
                          CYouTurn &yt, CTram &tram, const CCamera &camera)
 {
     USE_SETTINGS;
+
+    double tool_toolWidth = SETTINGS_TOOL_WIDTH;
+    double tool_toolOverlap = SETTINGS_TOOL_OVERLAP;
+
 
     GLHelperColors gldraw_colors;
     GLHelperOneColor gldraw;
@@ -172,7 +175,7 @@ void CABCurve::drawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
 
         if (camera.camSetDistance > -200)
         {
-            double toolWidth2 = tool.toolWidth - tool.toolOverlap;
+            double toolWidth2 = tool_toolWidth - tool_toolOverlap;
             double cosHeading2 = cos(-aveLineHeading);
             double sinHeading2 = sin(-aveLineHeading);
 
@@ -182,7 +185,7 @@ void CABCurve::drawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                 for (int h = 0; h < ptCount; h++)
                     gldraw.append(QVector3D((cosHeading2 * toolWidth2) + refList[h].easting,
                                             (sinHeading2 * toolWidth2) + refList[h].northing, 0));
-                toolWidth2 = toolWidth2 + tool.toolWidth - tool.toolOverlap;
+                toolWidth2 = toolWidth2 + tool_toolWidth - tool_toolOverlap;
             }
             gldraw.draw(gl, mvp, QColor::fromRgbF(0.8f, 0.3f, 0.2f),
                         GL_POINTS, 2.0f);
@@ -373,13 +376,16 @@ void CABCurve::saveSmoothAsRefList()
 
 void CABCurve::getCurrentCurveLine(Vec3 pivot, Vec3 steer,
                                    CVehicle &vehicle, CYouTurn &yt,
-                                   const CTool &tool, CNMEA &pn)
+                                   CNMEA &pn)
 {
     USE_SETTINGS;
 
     double wheelbase = SETTINGS_VEHICLE_WHEELBASE;
     double maxSteerAngle = SETTINGS_VEHICLE_MAXSTEERANGLE;
     double maxAngularVelocity = SETTINGS_VEHICLE_MAXANGULARVELOCITY;
+    double tool_toolWidth = SETTINGS_TOOL_WIDTH;
+    double tool_toolOverlap = SETTINGS_TOOL_OVERLAP;
+    double tool_toolOffset = SETTINGS_TOOL_OFFSET;
 
     int ptCount = refList.size();
     int ptCnt = ptCount - 1;
@@ -455,12 +461,12 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot, Vec3 steer,
     else piSide = -glm::PIBy2;
     double widthMinusOverlap;
     //move the ABLine over based on the overlap amount set in vehicle
-    if (tool.toolOffset != 0) {
-        widthMinusOverlap = tool.toolWidth / 2 - tool.toolOverlap;
+    if (tool_toolOffset != 0) {
+        widthMinusOverlap = tool_toolWidth / 2 - tool_toolOverlap;
     }
     else
     {
-         widthMinusOverlap = tool.toolWidth  - tool.toolOverlap;
+         widthMinusOverlap = tool_toolWidth  - tool_toolOverlap;
     }
 
 
@@ -469,7 +475,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot, Vec3 steer,
     curveNumber = howManyPathsAway;
     if (distanceFromRefLine < 0) curveNumber = -curveNumber;
 
-    //double toolOffset = tool.toolOffset;
+    //double toolOffset = tool_toolOffset;
 
     //build the current line
     curList.clear();

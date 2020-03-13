@@ -17,7 +17,6 @@ class CVehicle;
 class QOpenGLFunctions;
 class CVehicle;
 class CTurn;
-class CTool;
 class CGeoFence;
 class CMazeGrid;
 class CNMEA;
@@ -115,7 +114,6 @@ public:
                           double minFieldX, double minFieldY);
 
     bool buildABLineDubinsYouTurn(const CVehicle &vehicle,
-                                  const CTool &tool,
                                   const CBoundary &bnd,
                                   CGeoFence &gf,
                                   const CABLine &ABLine, CTurn &turn,
@@ -124,19 +122,16 @@ public:
                                   bool isTurnRight);
 
     bool buildABLinePatternYouTurn(const CVehicle &vehicle,
-                                   const CTool &tool,
                                    const CBoundary &bnd,
                                    const CABLine &ABLine, CTurn &turn,
                                    bool isTurnRight);
 
     bool buildCurvePatternYouTurn(const CVehicle &vehicle,
-                                  const CTool &tool,
                                   const CBoundary &bnd,
                                   const CABCurve &curve, CTurn &turn,
                                   bool isTurnRight, Vec3 pivotPos);
 
     bool buildCurveDubinsYouTurn(const CVehicle &vehicle,
-                                 const CTool &tool,
                                  const CBoundary &bnd,
                                  const CABCurve &curve, CTurn &turn,
                                  bool isTurnRight, Vec3 pivotPos);
@@ -156,8 +151,7 @@ public:
     void loadYouTurnShapeFromFile(QString filename);
 
     //build the points and path of youturn to be scaled and transformed
-    void buildManualYouTurn(CTool &tool,
-                            const CABLine &ABLine, CABCurve &curve,
+    void buildManualYouTurn(const CABLine &ABLine, CABCurve &curve,
                             bool isTurnRight, bool isTurnButtonTriggered);
 
     //determine distance from youTurn guidance line

@@ -82,8 +82,8 @@ public:
     void startContourLine(Vec3 pivot);
     void addPoint(Vec3 pivot);
     void stopContourLine(Vec3 pivot, QVector<QSharedPointer<QVector<Vec3>>> &contourSaveList);
-    void buildBoundaryContours(CTool &tool, CBoundary &bnd, int pass, int spacingInt);
-    void buildContourGuidanceLine(CVehicle &vehicle, CTool &tool, CNMEA &pn, Vec3 pivot);
+    void buildBoundaryContours(CBoundary &bnd, int pass, int spacingInt);
+    void buildContourGuidanceLine(CVehicle &vehicle, CNMEA &pn, Vec3 pivot);
     void calculateContourHeadings();
     void distanceFromContourLine(CVehicle &vehicle, CNMEA &pn, Vec3 pivot, Vec3 steer);
     void drawContourLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);

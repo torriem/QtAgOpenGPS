@@ -11,7 +11,6 @@
 class QOpenGLFunctions;
 class QMatrix4x4;
 class CBoundary;
-class CTool;
 class CFieldData;
 
 class CTurn: public QObject
@@ -35,10 +34,10 @@ public:
 
     explicit CTurn(QObject *parent = NULL);
 
-    void findClosestTurnPoint(const CBoundary &bnd, const CTool &tool, bool isYouTurnRight, Vec3 fromPt, double headAB);
+    void findClosestTurnPoint(const CBoundary &bnd, bool isYouTurnRight, Vec3 fromPt, double headAB);
     bool pointInsideWorkArea(const CBoundary &bnd, Vec2 pt);
     void resetTurnLines();
-    void buildTurnLines(const CBoundary &bnd, const CTool &tool, CFieldData &fd, double youTurnTriggerDistanceOffset);
+    void buildTurnLines(const CBoundary &bnd, CFieldData &fd, double youTurnTriggerDistanceOffset);
     void drawTurnLines(const CBoundary &bnd, QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
     void drawClosestPoint(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
 

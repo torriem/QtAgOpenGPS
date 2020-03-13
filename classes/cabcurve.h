@@ -11,7 +11,6 @@ class QMatrix4x4;
 class CVehicle;
 class CYouTurn;
 class CTram;
-class CTool;
 class CCamera;
 class CBoundary;
 class CNMEA;
@@ -80,7 +79,7 @@ public:
 
     explicit CABCurve(QObject *parent = 0);
     void drawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
-                   const CVehicle &vehicle, const CTool &tool,
+                   const CVehicle &vehicle,
                    CYouTurn &yt, CTram &tram, const CCamera &camera
                    );
 
@@ -91,8 +90,7 @@ public:
     void calculateTurnHeadings();
     void saveSmoothAsRefList();
     void getCurrentCurveLine(Vec3 pivot, Vec3 steer,
-                             CVehicle &vehicle, CYouTurn &yt,
-                             const CTool &tool, CNMEA &pn);
+                             CVehicle &vehicle, CYouTurn &yt, CNMEA &pn);
     void snapABCurve();
     void moveABCurve(double dist);
     bool pointOnLine(Vec3 pt1, Vec3 pt2, Vec3 pt);

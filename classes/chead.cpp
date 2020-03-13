@@ -41,6 +41,10 @@ void CHead::setHydPosition(double currentSpeed)
 
 void CHead::whereAreToolCorners(CTool &tool)
 {
+    USE_SETTINGS;
+
+    int tool_numOfSections = SETTINGS_TOOL_NUMSECTIONS;
+
     if (headArr[0].hdLine.count() == 0)
     {
         return;
@@ -51,7 +55,7 @@ void CHead::whereAreToolCorners(CTool &tool)
 
         if (isOn)
         {
-            for (int j = 0; j < tool.numOfSections; j++)
+            for (int j = 0; j < tool_numOfSections; j++)
             {
                 if (j == 0)
                 {
@@ -92,6 +96,10 @@ void CHead::whereAreToolCorners(CTool &tool)
 
 void CHead::whereAreToolLookOnPoints(const CVehicle &vehicle, CTool &tool)
 {
+    USE_SETTINGS;
+
+    int tool_numOfSections = SETTINGS_TOOL_NUMSECTIONS;
+
     if (headArr[0].hdLine.count() == 0)
     {
         return;
@@ -106,7 +114,7 @@ void CHead::whereAreToolLookOnPoints(const CVehicle &vehicle, CTool &tool)
         double mOn = (tool.lookAheadDistanceOnPixelsRight - tool.lookAheadDistanceOnPixelsLeft) / tool.rpWidth;
         double endHeight = (tool.lookAheadDistanceOnPixelsLeft + (mOn * pos))*0.1;
 
-        for (int j = 0; j < tool.numOfSections; j++)
+        for (int j = 0; j < tool_numOfSections; j++)
         {
             if (j == 0)
             {

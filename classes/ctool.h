@@ -13,39 +13,39 @@ class CCamera;
 class CTool
 {
 public:
-    double toolWidth;
+    //double toolWidth;
     double toolFarLeftPosition = 0;
     double toolFarLeftSpeed = 0;
     double toolFarRightPosition = 0;
     double toolFarRightSpeed = 0;
     //double toolFarLeftContourSpeed = 0, toolFarRightContourSpeed = 0;
 
-    double toolOverlap;
-    double toolTrailingHitchLength, toolTankTrailingHitchLength;
-    double toolOffset;
+    //double toolOverlap;
+    //double toolTrailingHitchLength, toolTankTrailingHitchLength;
+    //double toolOffset;
 
-    double lookAheadOffSetting, lookAheadOnSetting;
-    double turnOffDelay;
+    //double lookAheadOffSetting, lookAheadOnSetting;
+    //double turnOffDelay;
 
     double lookAheadDistanceOnPixelsLeft, lookAheadDistanceOnPixelsRight;
     double lookAheadDistanceOffPixelsLeft, lookAheadDistanceOffPixelsRight;
 
 
-    double slowSpeedCutoff = 0;
+    //double slowSpeedCutoff = 0;
 
-    bool isToolTrailing, isToolTBT;
-    bool isToolBehindPivot;
+    //bool isToolTrailing, isToolTBT;
+    //bool isToolBehindPivot;
     QString toolAttachType;
 
-    double hitchLength;
+    //double hitchLength;
 
 
     //how many individual sections
-    int numOfSections;
-    int numSuperSection;
+    //int numOfSections;
+    //int numSuperSection;
 
     //used for super section off on
-    int toolMinUnappliedPixels;
+    //int toolMinUnappliedPixels;
 
     bool isSuperSectionAllowedOn;
     bool areAllSectionBtnsOn = true;
