@@ -30,6 +30,13 @@ FormGPS::FormGPS(QWidget *parent) :
     SETTINGS_SET_DISPLAY_COMPASS(true);
     SETTINGS_SET_DISPLAY_SPEEDO(true);
 
+    SETTINGS_SET_TOOL_SECTIONPOSITION1(-8);
+    SETTINGS_SET_TOOL_SECTIONPOSITION2(-4);
+    SETTINGS_SET_TOOL_SECTIONPOSITION3(0);
+    SETTINGS_SET_TOOL_SECTIONPOSITION4(4);
+    SETTINGS_SET_TOOL_SECTIONPOSITION5(8);
+
+    /*
     tool.section[0].positionLeft = -8;
     tool.section[0].positionRight = -4;
     tool.section[1].positionLeft = -4;
@@ -38,11 +45,13 @@ FormGPS::FormGPS(QWidget *parent) :
     tool.section[2].positionRight = 4;
     tool.section[3].positionLeft = 4;
     tool.section[3].positionRight = 8;
+    */
     SETTINGS_SET_TOOL_NUMSECTIONS(4);
     //tool.numSuperSection = 5;
     SETTINGS_SET_TOOL_TRAILINGHITCHLENGTH(-4);
     SETTINGS_SET_VEHICLE_MINTURNINGRADIUS(5);
     SETTINGS_SET_VEHICLE_MAXSTEERANGLE(45);
+    tool.sectionSetPositions();
     tool.sectionCalcWidths();
 
     CBoundaryLines boundary;
@@ -734,7 +743,7 @@ GetOutSectionOff1:
         }
     } // end of supersection is off
     //Checks the workswitch if required
-    if (isJobStarted && mc.isWorkSwitchEnabled)
+    if (isJobStarted && SETTINGS_TOOL_ISWORKSWITCHENABLED)
     {
         //TODO: workSwitch.checkWorkSwitch();
     }

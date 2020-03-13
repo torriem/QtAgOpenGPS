@@ -62,6 +62,8 @@ public:
     QVector<QSharedPointer<QVector<QVector3D>>> patchSaveList;
 
     void sectionCalcWidths();
+    void sectionSetPositions();
+
     CTool();
     void drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection);
 };

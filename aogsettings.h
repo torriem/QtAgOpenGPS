@@ -17,51 +17,117 @@ public:
 QColor parseColor(QString setcolor);
 QVector3D parseColorVector(QString setcolor);
 
+int colorSettingStringToInt(QString colorSettingString);
+
 //Macros to use settings in a consistant way
 #define USE_SETTINGS AOGSettings settings
+#define SYNC_SETTINGS settings.sync()
 
-//CTOOL
-#define SETTINGS_TOOL_WIDTH 				settings.   value("vehicle/toolWidth", 16).toDouble()
-#define SETTINGS_SET_TOOL_WIDTH(VAL)		settings.setValue("vehicle/toolWidth", VAL)
+// TOOL-related settings
+#define SETTINGS_TOOL_NAME			settings.   value("tool/name", "unnamed").toQString()
+#define SETTINGS_SET_TOOL_NAME(VAL)	settings.setValue("tool/name",VAL)
 
-#define SETTINGS_TOOL_OVERLAP 			settings.   value("vehicle/toolOverlap", 0).toDouble()
-#define SETTINGS_SET_TOOL_OVERLAP(VAL)	settings.setValue("vehicle/toolOverlap", VAL)
+#define SETTINGS_TOOL_WIDTH 				settings.   value("tool/width", 16).toDouble()
+#define SETTINGS_SET_TOOL_WIDTH(VAL)		settings.setValue("tool/width", VAL)
 
-#define SETTINGS_TOOL_OFFSET 			settings.   value("vehicle/toolOffset", 0).toDouble()
-#define SETTINGS_SET_TOOL_OFFSET(VAL)	settings.setValue("vehicle/toolOffset", VAL)
+#define SETTINGS_TOOL_OVERLAP 			settings.   value("tool/overlap", 0).toDouble()
+#define SETTINGS_SET_TOOL_OVERLAP(VAL)	settings.setValue("tool/overlap", VAL)
 
-#define SETTINGS_TOOL_TRAILINGHITCHLENGTH			settings.   value("vehicle/toolTrailingHitchLength", -2).toDouble()
-#define SETTINGS_SET_TOOL_TRAILINGHITCHLENGTH(VAL)	settings.setValue("vehicle/toolTrailingHitchLength", VAL)
+#define SETTINGS_TOOL_OFFSET 			settings.   value("tool/offset", 0).toDouble()
+#define SETTINGS_SET_TOOL_OFFSET(VAL)	settings.setValue("tool/offset", VAL)
 
-#define SETTINGS_TOOL_TANKTRAILINGHITCHLENGTH 			settings.   value("vehicle/toolTrailingHitchLength", 0).toDouble()
-#define SETTINGS_SET_TOOL_TANKTRAILINGHITCHLENGTH(VAL)	settings.setValue("vehicle/toolTrailingHitchLength", VAL)
+#define SETTINGS_TOOL_TRAILINGHITCHLENGTH			settings.   value("tool/trailingHitchLength", -2).toDouble()
+#define SETTINGS_SET_TOOL_TRAILINGHITCHLENGTH(VAL)	settings.setValue("tool/trailingHitchLength", VAL)
 
-#define SETTINGS_TOOL_HITCHLENGTH 				settings.   value("vehicle/hitchLength", 0).toDouble()
-#define SETTINGS_SET_TOOL_HITCHLENGTH(VAL)		settings.setValue("vehicle/hitchLength", VAL)
+#define SETTINGS_TOOL_TANKTRAILINGHITCHLENGTH 			settings.   value("tool/tankTrailingHitchLength", 0).toDouble()
+#define SETTINGS_SET_TOOL_TANKTRAILINGHITCHLENGTH(VAL)	settings.setValue("tool/tankTrailingHitchLength", VAL)
 
-#define SETTINGS_TOOL_ISBEHINDPIVOT 				settings.   value("vehicle/toolIsBehindPivot", true).toBool()
-#define SETTINGS_SET_TOOL_ISBEHINDPIVOT(VAL)		settings.setValue("vehicle/toolIsBehindPivot", VAL)
+#define SETTINGS_TOOL_HITCHLENGTH 				settings.   value("tool/hitchLength", 0).toDouble()
+#define SETTINGS_SET_TOOL_HITCHLENGTH(VAL)		settings.setValue("tool/hitchLength", VAL)
 
-#define SETTINGS_TOOL_ISTRAILING 				settings.   value("vehicle/toolIsTrailing", true).toBool()
-#define SETTINGS_SET_TOOL_ISTRAILING(VAL)		settings.setValue("vehicle/toolIsTrailing", VAL)
+#define SETTINGS_TOOL_ISBEHINDPIVOT 				settings.   value("tool/isBehindPivot", true).toBool()
+#define SETTINGS_SET_TOOL_ISBEHINDPIVOT(VAL)		settings.setValue("tool/isBehindPivot", VAL)
 
-#define SETTINGS_TOOL_ISTBT 				settings.   value("vehicle/toolIsTBT", false).toBool()
-#define SETTINGS_SET_TOOL_ISTBT(VAL)		settings.setValue("vehicle/toolIsTBT", VAL)
+#define SETTINGS_TOOL_ISTRAILING 				settings.   value("tool/isTrailing", true).toBool()
+#define SETTINGS_SET_TOOL_ISTRAILING(VAL)		settings.setValue("tool/isTrailing", VAL)
 
-#define SETTINGS_TOOL_LOOKAHEADON 				settings.   value("vehicle/toolLookAheadOn", 1).toDouble()
-#define SETTINGS_SET_TOOL_LOOKAHEADON(VAL)		settings.setValue("vehicle/toolLookAheadOn", VAL)
+#define SETTINGS_TOOL_ISTBT 				settings.   value("tool/isTBT", false).toBool()
+#define SETTINGS_SET_TOOL_ISTBT(VAL)		settings.setValue("tool/isTBT", VAL)
 
-#define SETTINGS_TOOL_LOOKAHEADOFF 				settings.   value("vehicle/toolLookAheadOff", 0.5).toDouble()
-#define SETTINGS_SET_TOOL_LOOKAHEADOFF(VAL)		settings.setValue("vehicle/toolLookAheadOff", VAL)
+#define SETTINGS_TOOL_LOOKAHEADON 				settings.   value("tool/lookAheadOn", 1).toDouble()
+#define SETTINGS_SET_TOOL_LOOKAHEADON(VAL)		settings.setValue("tool/lookAheadOn", VAL)
 
-#define SETTINGS_TOOL_OFFDELAY 				settings.   value("vehicle/toolOffDelay", 0).toDouble()
-#define SETTINGS_SET_TOOL_OFFDELAY(VAL)		settings.setValue("vehicle/toolOffDelay", VAL)
+#define SETTINGS_TOOL_LOOKAHEADOFF 				settings.   value("tool/lookAheadOff", 0.5).toDouble()
+#define SETTINGS_SET_TOOL_LOOKAHEADOFF(VAL)		settings.setValue("tool/lookAheadOff", VAL)
 
-#define SETTINGS_TOOL_NUMSECTIONS 			settings.   value("vehicle/numSections", 3).toInt()
-#define SETTINGS_SET_TOOL_NUMSECTIONS(VAL)		settings.setValue("vehicle/numSections", VAL)
+#define SETTINGS_TOOL_OFFDELAY 				settings.   value("tool/offDelay", 0).toDouble()
+#define SETTINGS_SET_TOOL_OFFDELAY(VAL)		settings.setValue("tool/offDelay", VAL)
 
-#define SETTINGS_TOOL_MINAPPLIED				settings.   value("vehicle/minApplied", 10).toInt()
-#define SETTINGS_SET_TOOL_MINAPPLIED(VAL)	settings.setValue("vehicle/minApplied", VAL)
+#define SETTINGS_TOOL_NUMSECTIONS 			settings.   value("tool/numSections", 3).toInt()
+#define SETTINGS_SET_TOOL_NUMSECTIONS(VAL)		settings.setValue("tool/numSections", VAL)
+
+#define SETTINGS_TOOL_MINAPPLIED				settings.   value("tool/minApplied", 10).toInt()
+#define SETTINGS_SET_TOOL_MINAPPLIED(VAL)	settings.setValue("tool/minApplied", VAL)
+
+#define SETTINGS_TOOL_ISWORKSWITCHENABLED 				settings.   value("tool/isWorkSwitchEnabled", false).toBool()
+#define SETTINGS_SET_TOOL_ISWORKSWITCHENABLED(VAL)		settings.setValue("tool/isWorkSwitchEnabled", VAL)
+
+#define SETTINGS_TOOL_ISWORKSWITCHACTIVELOW 				settings.   value("tool/isWorkSwitchActiveLow", false).toBool()
+#define SETTINGS_SET_TOOL_ISWORKSWITCHACTIVELOW(VAL)		settings.setValue("tool/isWorkSwitchActiveLow", VAL)
+
+#define SETTINGS_TOOL_ISWORKSWITCHMANUAL 				settings.   value("tool/isWorkSwitchManual", false).toBool()
+#define SETTINGS_SET_TOOL_ISWORKSWITCHMANUAL(VAL)		settings.setValue("tool/isWorkSwitchManual", VAL)
+
+#define SETTINGS_TOOL_SECTIONPOSITION1 				settings.   value("tool/sectionPosition1", 0).toDouble()
+#define SETTINGS_SET_TOOL_SECTIONPOSITION1(VAL)		settings.setValue("tool/sectionPosition1", VAL)
+
+#define SETTINGS_TOOL_SECTIONPOSITION2 				settings.   value("tool/sectionPosition2", 0).toDouble()
+#define SETTINGS_SET_TOOL_SECTIONPOSITION2(VAL)		settings.setValue("tool/sectionPosition2", VAL)
+
+#define SETTINGS_TOOL_SECTIONPOSITION3 				settings.   value("tool/sectionPosition3", 0).toDouble()
+#define SETTINGS_SET_TOOL_SECTIONPOSITION3(VAL)		settings.setValue("tool/sectionPosition3", VAL)
+
+#define SETTINGS_TOOL_SECTIONPOSITION4 				settings.   value("tool/sectionPosition4", 0).toDouble()
+#define SETTINGS_SET_TOOL_SECTIONPOSITION4(VAL)		settings.setValue("tool/sectionPosition4", VAL)
+
+#define SETTINGS_TOOL_SECTIONPOSITION5 				settings.   value("tool/sectionPosition5", 0).toDouble()
+#define SETTINGS_SET_TOOL_SECTIONPOSITION5(VAL)		settings.setValue("tool/sectionPosition5", VAL)
+
+#define SETTINGS_TOOL_SECTIONPOSITION6 				settings.   value("tool/sectionPosition6", 0).toDouble()
+#define SETTINGS_SET_TOOL_SECTIONPOSITION6(VAL)		settings.setValue("tool/sectionPosition6", VAL)
+
+#define SETTINGS_TOOL_SECTIONPOSITION7 				settings.   value("tool/sectionPosition7", 0).toDouble()
+#define SETTINGS_SET_TOOL_SECTIONPOSITION7(VAL)		settings.setValue("tool/sectionPosition7", VAL)
+
+#define SETTINGS_TOOL_SECTIONPOSITION8 				settings.   value("tool/sectionPosition8", 0).toDouble()
+#define SETTINGS_SET_TOOL_SECTIONPOSITION8(VAL)		settings.setValue("tool/sectionPosition8", VAL)
+
+#define SETTINGS_TOOL_SECTIONPOSITION9 				settings.   value("tool/sectionPosition9", 0).toDouble()
+#define SETTINGS_SET_TOOL_SECTIONPOSITION9(VAL)		settings.setValue("tool/sectionPosition9", VAL)
+
+#define SETTINGS_TOOL_SECTIONPOSITION10 				settings.   value("tool/sectionPosition10", 0).toDouble()
+#define SETTINGS_SET_TOOL_SECTIONPOSITION10(VAL)		settings.setValue("tool/sectionPosition10", VAL)
+
+#define SETTINGS_TOOL_SECTIONPOSITION11 				settings.   value("tool/sectionPosition11", 0).toDouble()
+#define SETTINGS_SET_TOOL_SECTIONPOSITION11(VAL)		settings.setValue("tool/sectionPosition11", VAL)
+
+#define SETTINGS_TOOL_SECTIONPOSITION12 				settings.   value("tool/sectionPosition12", 0).toDouble()
+#define SETTINGS_SET_TOOL_SECTIONPOSITION12(VAL)		settings.setValue("tool/sectionPosition12", VAL)
+
+#define SETTINGS_TOOL_SECTIONPOSITION13 				settings.   value("tool/sectionPosition13", 0).toDouble()
+#define SETTINGS_SET_TOOL_SECTIONPOSITION13(VAL)		settings.setValue("tool/sectionPosition13", VAL)
+
+#define SETTINGS_TOOL_SECTIONPOSITION14 				settings.   value("tool/sectionPosition14", 0).toDouble()
+#define SETTINGS_SET_TOOL_SECTIONPOSITION14(VAL)		settings.setValue("tool/sectionPosition14", VAL)
+
+#define SETTINGS_TOOL_SECTIONPOSITION15 				settings.   value("tool/sectionPosition15", 0).toDouble()
+#define SETTINGS_SET_TOOL_SECTIONPOSITION15(VAL)		settings.setValue("tool/sectionPosition15", VAL)
+
+#define SETTINGS_TOOL_SECTIONPOSITION16 				settings.   value("tool/sectionPosition16", 0).toDouble()
+#define SETTINGS_SET_TOOL_SECTIONPOSITION16(VAL)		settings.setValue("tool/sectionPosition16", VAL)
+
+#define SETTINGS_TOOL_SECTIONPOSITION17 				settings.   value("tool/sectionPosition17", 0).toDouble()
+#define SETTINGS_SET_TOOL_SECTIONPOSITION17(VAL)		settings.setValue("tool/sectionPosition17", VAL)
 
 //CTRAM
 #define SETTINGS_TRAM_EQWIDTH 				settings.   value("tram/eqWidth", 24).toDouble()
@@ -73,7 +139,7 @@ QVector3D parseColorVector(QString setcolor);
 #define SETTINGS_TRAM_PASSES				settings.   value("tram/passes", 0).toInt()
 #define SETTINGS_SET_TRAM_PASSES(VAL)		settings.setValue("tram/passes",VAL)
 
-//CVEHICLE
+//Vehicle-related settings
 #define SETTINGS_VEHICLE_ISPIVOTBEHINDANTENNA			settings.   value("vehicle/isPivotBehindAntenna", true).toBool()
 #define SETTINGS_SET_VEHICLE_ISPIVOTBEHINDANTENNA(VAL)	settings.setValue("vehicle/isPivotBehindAntenna",VAL)
 
@@ -143,6 +209,47 @@ QVector3D parseColorVector(QString setcolor);
 #define SETTINGS_VEHICLE_ISMACHINECONTROLTOAUTOSTEER			settings.   value("vehicle/isMachineControlToAutoSteer", false).toBool()
 #define SETTINGS_SET_VEHICLE_ISMACHINECONTROLTOAUTOSTEER(VAL)	settings.setValue("vehicle/isMachineControlToAutoSteer",VAL)
 
+#define SETTINGS_VEHICLE_YOUTURNTRIGGERDISTANCE			settings.   value("vehicle/youTriggerDistance", 8).toDouble()
+#define SETTINGS_SET_VEHICLE_YOUTURNTRIGGERDISTANCE(VAL)	settings.setValue("vehicle/youTriggerDistance",VAL)
+
+#define SETTINGS_VEHICLE_GEOFENCEDIST			settings.   value("vehicle/geoFenceDistance", 0).toDouble()
+#define SETTINGS_SET_VEHICLE_GEOFENCEDIST(VAL)	settings.setValue("vehicle/geoFenceDistance",VAL)
+
+#define SETTINGS_VEHICLE_YOUTURNDISTANCE			settings.   value("vehicle/youTurnDistance", 5).toInt()
+#define SETTINGS_SET_VEHICLE_YOUTURNDISTANCE(VAL)	settings.setValue("vehicle/youTurnDistance",VAL)
+
+#define SETTINGS_VEHICLE_YOUSKIPWIDTH			settings.   value("vehicle/youSkipWidth", 1).toInt()
+#define SETTINGS_SET_VEHICLE_YOUSKIPWIDTH(VAL)	settings.setValue("vehicle/youSkipWidth",VAL)
+
+#define SETTINGS_VEHICLE_ISUSINGDUBINSTURN			settings.   value("vehicle/isUsingDubins", true).toBool()
+#define SETTINGS_SET_VEHICLE_ISUSINGDUBINSTURN(VAL)	settings.setValue("vehicle/isUsingDubins",VAL)
+
+//CSEQUENCE
+#define SETTINGS_VEHICLE_SEQFUNCTIONENTER			settings.   value("vehicle/seqFunctionEnter", "0,0,0,0,0,0,0,0").toString()
+#define SETTINGS_SET_VEHICLE_SEQFUNCTIONENTER(VAL)	settings.setValue("vehicle/seqFunctionEnter",VAL)
+
+#define SETTINGS_VEHICLE_SEQFUNCTIONEXIT			settings.   value("vehicle/seqFunctionExit", "0,0,0,0,0,0,0,0").toString()
+#define SETTINGS_SET_VEHICLE_SEQFUNCTIONEXIT(VAL)	settings.setValue("vehicle/seqFunctionExit",VAL)
+
+#define SETTINGS_VEHICLE_SEQACTIONENTER			settings.   value("vehicle/seqActionEnter", "0,0,0,0,0,0,0,0").toString()
+#define SETTINGS_SET_VEHICLE_SEQACTIONENTER(VAL)	settings.setValue("vehicle/seqActionEnter",VAL)
+
+#define SETTINGS_VEHICLE_SEQACTIONEXIT			settings.   value("vehicle/seqActionExit", "0,0,0,0,0,0,0,0").toString()
+#define SETTINGS_SET_VEHICLE_SEQACTIONEXIT(VAL)	settings.setValue("vehicle/seqActionExit",VAL)
+
+#define SETTINGS_VEHICLE_SEQDISTANCEENTER			settings.   value("vehicle/seqDistanceEnter", "0,0,0,0,0,0,0,0").toString()
+#define SETTINGS_SET_VEHICLE_SEQDISTANCEENTER(VAL)	settings.setValue("vehicle/seqDistanceEnter",VAL)
+
+#define SETTINGS_VEHICLE_SEQDISTANCEEXIT			settings.   value("vehicle/seqDistanceExit", "0,0,0,0,0,0,0,0").toString()
+#define SETTINGS_SET_VEHICLE_SEQDISTANCEEXIT(VAL)	settings.setValue("vehicle/seqDistanceExit",VAL)
+
+#define SETTINGS_VEHICLE_SEQFUNCTIONLIST			settings.   value("vehicle/seqFunctionList", "Relay 1,Relay 2,Relay 3,Relay 4,Relay 5,Relay 6").toString()
+#define SETTINGS_SET_VEHICLE_SEQFUNCTIONLIST(VAL)	settings.setValue("vehicle/seqFunctionList",VAL)
+
+#define SETTINGS_VEHICLE_SEQACTIONLIST			settings.   value("vehicle/seqActionList", "Turn Off,Turn On").toString()
+#define SETTINGS_SET_VEHICLE_SEQACTIONLIST(VAL)	settings.setValue("vehicle/seqActionList",VAL)
+
+
 //CMACHINECOMM
 #define SETTINGS_ARDSTEER_SETTING1			settings.   value("ardSteer/setting1", 0).toInt()
 #define SETTINGS_SET_ARDSTEER_SETTING1(VAL)	settings.setValue("ardSteer/setting1", VAL)
@@ -164,26 +271,6 @@ QVector3D parseColorVector(QString setcolor);
 
 #define SETTINGS_ARDSTEER_ACKERMANFIX			settings.   value("ardSteer/ackermanFix", 100).toInt()
 #define SETTINGS_SET_ARDSTEER_ACKERMANFIX(VAL)	settings.setValue("ardSteer/ackermanFix", VAL)
-
-//CFONT
-#define SETTINGS_DISPLAY_ISFONTON			settings.   value("display/isFontOn", true).toBool()
-#define SETTINGS_SET_DISPLAY_ISFONTON(VAL)	settings.setValue("display/isFontOn",VAL)
-
-//CYOUTURN
-#define SETTINGS_VEHICLE_YOUTURNTRIGGERDISTANCE			settings.   value("vehicle/youTriggerDistance", 8).toDouble()
-#define SETTINGS_SET_VEHICLE_YOUTURNTRIGGERDISTANCE(VAL)	settings.setValue("vehicle/youTriggerDistance",VAL)
-
-#define SETTINGS_VEHICLE_GEOFENCEDIST			settings.   value("vehicle/geoFenceDistance", 0).toDouble()
-#define SETTINGS_SET_VEHICLE_GEOFENCEDIST(VAL)	settings.setValue("vehicle/geoFenceDistance",VAL)
-
-#define SETTINGS_VEHICLE_YOUTURNDISTANCE			settings.   value("vehicle/youTurnDistance", 5).toInt()
-#define SETTINGS_SET_VEHICLE_YOUTURNDISTANCE(VAL)	settings.setValue("vehicle/youTurnDistance",VAL)
-
-#define SETTINGS_VEHICLE_YOUSKIPWIDTH			settings.   value("vehicle/youSkipWidth", 1).toInt()
-#define SETTINGS_SET_VEHICLE_YOUSKIPWIDTH(VAL)	settings.setValue("vehicle/youSkipWidth",VAL)
-
-#define SETTINGS_VEHICLE_ISUSINGDUBINSTURN			settings.   value("vehicle/isUsingDubins", true).toBool()
-#define SETTINGS_SET_VEHICLE_ISUSINGDUBINSTURN(VAL)	settings.setValue("vehicle/isUsingDubins",VAL)
 
 //CNMEA / GPS / IMU
 #define SETTINGS_GPS_HEADINGFROMWHICHSOURCE			settings.   value("gps/headingFromWhichSource", QString("Fix")).toString()
@@ -222,7 +309,55 @@ QVector3D parseColorVector(QString setcolor);
 #define SETTINGS_GPS_IMUROLLZEROX16				settings.   value("gps/IMURollZeroX16", 0).toInt()
 #define SETTINGS_SET_GPS_IMUROLLZEROX16(VAL)	settings.setValue("gps/IMURollZeroX16",VAL)
 
-//DISPLAY/GUI/MENU
+#define SETTINGS_GPS_LOGNMEA			settings.   value("gps/logNMEA", false).toBool()
+#define SETTINGS_SET_GPS_LOGNMEA(VAL)	settings.setValue("gps/logNMEA",VAL)
+
+#define SETTINGS_GPS_EXPECTRTK			settings.   value("gps/expectRTK", true).toBool()
+#define SETTINGS_SET_EXPECTRTK(VAL)	settings.setValue("gps/expectRTK",VAL)
+
+#define SETTINGS_GPS_NTRIPCASTERIP			settings.   value("gps/NTRIPCasterIP", "").toString()
+#define SETTINGS_SET_GPS_NTRIPCASTERIP(VAL)	settings.setValue("gps/NTRIPCasterIP",VAL)
+
+#define SETTINGS_GPS_NTRIPCASTERPORT			settings.   value("gps/NTRIPCasterPort", 2101).toInt()
+#define SETTINGS_SET_GPS_NTRIPCASTERPORT(VAL)	settings.setValue("gps/NTRIPCasterPort",VAL)
+
+#define SETTINGS_GPS_NTRIPCASTERURL			settings.   value("gps/NTRIPCasterURL", "").toString()
+#define SETTINGS_SET_GPS_NTRIPCASTERURL(VAL)	settings.setValue("gps/NTRIPCasterURL",VAL)
+
+#define SETTINGS_GPS_NTRIPGGAMANUAL			settings.   value("gps/NTRIPGGAManual", false).toBool()
+#define SETTINGS_SET_GPS_NTRIPGGAMANUAL(VAL)	settings.setValue("gps/NTRIPGGAManual",VAL)
+
+#define SETTINGS_GPS_NTRIPON			settings.   value("gps/NTRIPon", false).toBool()
+#define SETTINGS_SET_GPS_NTRIPON(VAL)	settings.setValue("gps/NTRIPon",VAL)
+
+#define SETTINGS_GPS_NTRIPTCP			settings.   value("gps/NTRIPtcp", true).toBool()
+#define SETTINGS_SET_GPS_NTRIPTCP(VAL)	settings.setValue("gps/NTRIPtcp",VAL)
+
+#define SETTINGS_GPS_NTRIPMANUALLAT			settings.   value("gps/NTRIPManualLat", 0).toDouble()
+#define SETTINGS_SET_GPS_NTRIPMANUALLAT(VAL)	settings.setValue("gps/NTRIPManualLat",VAL)
+
+#define SETTINGS_GPS_NTRIPMANUALLON			settings.   value("gps/NTRIPManualLon", 0 ).toDouble()
+#define SETTINGS_SET_GPS_NTRIPMANUALLON(VAL)	settings.setValue("gps/NTRIPManualLon",VAL)
+
+#define SETTINGS_GPS_NTRIPMOUNT			settings.   value("gps/NTRIPMount", "").toString()
+#define SETTINGS_SET_GPS_NTRIPMOUNT(VAL)	settings.setValue("gps/NTRIPMount",VAL)
+
+#define SETTINGS_GPS_NTRIPGGAINTERVAL			settings.   value("gps/NTRIPGGAInterval", 1).toInt()
+#define SETTINGS_SET_GPS_NTRIPGGAINTERVAL(VAL)	settings.setValue("gps/NTRIPGGAInterval",VAL)
+
+#define SETTINGS_GPS_NTRIPSENDTOUDPPORT				settings.   value("gps/NTRIPSendToUDPport", 0).toInt()
+#define SETTINGS_SET_GPS_NTRIPSENDTOUDPPORT(VAL)	settings.setValue("gps/NTRIPSendToUDPport",VAL)
+
+#define SETTINGS_GPS_NTRIPUSERNAME			settings.   value("gps/NTRIPUsername", "").toString()
+#define SETTINGS_SET_GPS_NTRIPUSERNAME(VAL)	settings.setValue("gps/NTRIPUsername",VAL)
+
+#define SETTINGS_GPS_NTRIPPASSWORD			settings.   value("gps/NTRIPPassword", "").toString()
+#define SETTINGS_SET_GPS_NTRIPPASSWORD(VAL)	settings.setValue("gps/NTRIPPassword",VAL)
+
+//DISPLAY/GUI/MENU/Environment
+#define SETTINGS_DISPLAY_NAME			settings.   value("display/name", "unnamed").toQString()
+#define SETTINGS_SET_DISPLAY_NAME(VAL)	settings.setValue("display/name",VAL)
+
 #define SETTINGS_DISPLAY_ISPUREON			settings.   value("display/isPureOn", true).toBool()
 #define SETTINGS_SET_DISPLAY_ISPUREON(VAL)	settings.setValue("display/isPureOn",VAL)
 
@@ -298,6 +433,15 @@ QVector3D parseColorVector(QString setcolor);
 #define SETTINGS_DISPLAY_ISMETRIC				settings.   value("display/isMetric", true).toBool()
 #define SETTINGS_SET_DISPLAY_ISMETRIC(VAL)	settings.setValue("display/isMetric",VAL)
 
+#define SETTINGS_DISPLAY_ISFONTON			settings.   value("display/isFontOn", true).toBool()
+#define SETTINGS_SET_DISPLAY_ISFONTON(VAL)	settings.setValue("display/isFontOn",VAL)
+
+#define SETTINGS_DISPLAY_OGLZOOM			settings.   value("display/oglZoom", false).toBool()
+#define SETTINGS_SET_DISPLAY_OGLZOOM(VAL)	settings.setValue("display/oglZoom",VAL)
+
+#define SETTINGS_DISPLAY_FULLSCREEN			settings.   value("display/fullScreen", false).toBool()
+#define SETTINGS_SET_DISPLAY_FULLSCREEN(VAL)	settings.setValue("display/fullScreen",VAL)
+
 //AUTOSTEER
 #define SETTINGS_AUTOSTEER_KO			settings.   value("autosteer/Ko", 5).toInt()
 #define SETTINGS_SET_AUTOSTEER_KO(VAL)	settings.setValue("autosteer/Ko",VAL)
@@ -345,37 +489,15 @@ QVector3D parseColorVector(QString setcolor);
 #define SETTINGS_ARDMAC_ISHYDENABLED			settings.   value("ardMac/isHydEnabled", 0).toInt()
 #define SETTINGS_SET_ARDMAC_ISHYDENABLED(VAL)	settings.setValue("ardMac/isHydEnabled", VAL)
 
-//CSEQUENCE
-#define SETTINGS_VEHICLE_SEQFUNCTIONENTER			settings.   value("vehicle/seqFunctionEnter", "0,0,0,0,0,0,0,0").toString()
-#define SETTINGS_SET_VEHICLE_SEQFUNCTIONENTER(VAL)	settings.setValue("vehicle/seqFunctionEnter",VAL)
-
-#define SETTINGS_VEHICLE_SEQFUNCTIONEXIT			settings.   value("vehicle/seqFunctionExit", "0,0,0,0,0,0,0,0").toString()
-#define SETTINGS_SET_VEHICLE_SEQFUNCTIONEXIT(VAL)	settings.setValue("vehicle/seqFunctionExit",VAL)
-
-#define SETTINGS_VEHICLE_SEQACTIONENTER			settings.   value("vehicle/seqActionEnter", "0,0,0,0,0,0,0,0").toString()
-#define SETTINGS_SET_VEHICLE_SEQACTIONENTER(VAL)	settings.setValue("vehicle/seqActionEnter",VAL)
-
-#define SETTINGS_VEHICLE_SEQACTIONEXIT			settings.   value("vehicle/seqActionExit", "0,0,0,0,0,0,0,0").toString()
-#define SETTINGS_SET_VEHICLE_SEQACTIONEXIT(VAL)	settings.setValue("vehicle/seqActionExit",VAL)
-
-#define SETTINGS_VEHICLE_SEQDISTANCEENTER			settings.   value("vehicle/seqDistanceEnter", "0,0,0,0,0,0,0,0").toString()
-#define SETTINGS_SET_VEHICLE_SEQDISTANCEENTER(VAL)	settings.setValue("vehicle/seqDistanceEnter",VAL)
-
-#define SETTINGS_VEHICLE_SEQDISTANCEEXIT			settings.   value("vehicle/seqDistanceExit", "0,0,0,0,0,0,0,0").toString()
-#define SETTINGS_SET_VEHICLE_SEQDISTANCEEXIT(VAL)	settings.setValue("vehicle/seqDistanceExit",VAL)
-
-#define SETTINGS_VEHICLE_SEQFUNCTIONLIST			settings.   value("vehicle/seqFunctionList", "Relay 1,Relay 2,Relay 3,Relay 4,Relay 5,Relay 6").toString()
-#define SETTINGS_SET_VEHICLE_SEQFUNCTIONLIST(VAL)	settings.setValue("vehicle/seqFunctionList",VAL)
-
-#define SETTINGS_VEHICLE_SEQACTIONLIST			settings.   value("vehicle/seqActionList", "Turn Off,Turn On").toString()
-#define SETTINGS_SET_VEHICLE_SEQACTIONLIST(VAL)	settings.setValue("vehicle/seqActionList",VAL)
-
 //CSIM
 #define SETTINGS_SIM_LATITUDE			settings.   value("sim/latitude", 49).toDouble()
 #define SETTINGS_SET_SIM_LATITUDE(VAL)	settings.setValue("sim/latitude",VAL)
 
 #define SETTINGS_SIM_LONGITUDE			settings.   value("sim/longitude", -111).toDouble()
 #define SETTINGS_SET_SIM_LONGITUDE(VAL)	settings.setValue("sim/longitude",VAL)
+
+#define SETTINGS_SIM_ON			settings.   value("sim/on", true).toBool()
+#define SETTINGS_SET_SIM_ON(VAL)	settings.setValue("sim/on",VAL)
 
 //POSITION.DESIGNER
 #define SETTINGS_COMM_UDPISON			settings.   value("communications/udpIsOn", false).toBool()

@@ -268,8 +268,8 @@ void FormGPS::fileSaveVehicle(QString filename)
     SETTINGS_SET_VEHICLE_NAME(vehicleFileName);
 
     QFile saveFile(filename);
-    if( ! saveFile.open(QIODevice::ReadOnly)) {
-        qDebug() << "Cannot open " << filename << " for reading.";
+    if( ! saveFile.open(QIODevice::WriteOnly)) {
+        qDebug() << "Cannot open " << filename << " for writing.";
         //TODO pop up error message
         return;
     }
@@ -404,7 +404,7 @@ bool FormGPS::fileOpenVehicle(QString filename)
     QString line;
 
     line = QFileInfo(filename).baseName() + " - ";
-    SETTINGS_SET_VEHICLE_NAME(filename);
+    SETTINGS_SET_VEHICLE_NAME(line);
 
     QTextStream reader(&openFile);
 
@@ -707,17 +707,396 @@ bool FormGPS::fileOpenVehicle(QString filename)
 
 void FormGPS::fileSaveTool(QString filename)
 {
+    USE_SETTINGS;
+    toolFileName = QFileInfo(filename).baseName() + " - ";
+
+    SETTINGS_SET_TOOL_NAME(toolFileName);
+    
+    QFile saveFile(filename);
+    if( ! saveFile.open(QIODevice::WriteOnly)) {
+        qDebug() << "Cannot open " << filename << " for writing.";
+        //TODO pop up error message
+        return;
+    }
+
+    QTextStream writer(&saveFile);
+ 
+    writer << "Version," << QCoreApplication::applicationVersion() << endl;
+
+    writer << "Overlap," << SETTINGS_TOOL_OVERLAP << endl;
+    writer << "ToolOffset," << SETTINGS_TOOL_OFFSET << endl;
+
+    writer << "LookAheadOff," << SETTINGS_TOOL_LOOKAHEADOFF << endl;
+    writer << "LookAheadOn," << SETTINGS_TOOL_LOOKAHEADON << endl;
+    writer << "TurnOffDelay," << SETTINGS_TOOL_OFFDELAY << endl;
+    writer << "ToolMinUnappliedPixels," << SETTINGS_TOOL_MINAPPLIED << endl;
+
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+
+	writer << "ToolTrailingHitchLength," << SETTINGS_TOOL_TRAILINGHITCHLENGTH << endl;
+	writer << "TankTrailingHitchLength," << SETTINGS_TOOL_TANKTRAILINGHITCHLENGTH << endl;
+    writer << "HitchLength," << SETTINGS_TOOL_HITCHLENGTH << endl;
+
+    writer << "IsToolBehindPivot," << SETTINGS_TOOL_ISBEHINDPIVOT << endl;
+    writer << "IsToolTrailing," << SETTINGS_TOOL_ISTRAILING << endl;
+    writer << "IsToolTBT," << SETTINGS_TOOL_ISTBT << endl;
+
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+
+    writer << "Spinner1," << SETTINGS_TOOL_SECTIONPOSITION1 << endl;
+    writer << "Spinner2," << SETTINGS_TOOL_SECTIONPOSITION2 << endl;
+    writer << "Spinner3," << SETTINGS_TOOL_SECTIONPOSITION3 << endl;
+    writer << "Spinner4," << SETTINGS_TOOL_SECTIONPOSITION4 << endl;
+    writer << "Spinner5," << SETTINGS_TOOL_SECTIONPOSITION5 << endl;
+    writer << "Spinner6," << SETTINGS_TOOL_SECTIONPOSITION6 << endl;
+    writer << "Spinner7," << SETTINGS_TOOL_SECTIONPOSITION7 << endl;
+    writer << "Spinner8," << SETTINGS_TOOL_SECTIONPOSITION8 << endl;
+    writer << "Spinner9," << SETTINGS_TOOL_SECTIONPOSITION9 << endl;
+    writer << "Spinner10," << SETTINGS_TOOL_SECTIONPOSITION10 << endl;
+    writer << "Spinner11," << SETTINGS_TOOL_SECTIONPOSITION11 << endl;
+    writer << "Spinner12," << SETTINGS_TOOL_SECTIONPOSITION12 << endl;
+    writer << "Spinner13," << SETTINGS_TOOL_SECTIONPOSITION13 << endl;
+    writer << "Spinner14," << SETTINGS_TOOL_SECTIONPOSITION14 << endl;
+    writer << "Spinner15," << SETTINGS_TOOL_SECTIONPOSITION15 << endl;
+    writer << "Spinner16," << SETTINGS_TOOL_SECTIONPOSITION16 << endl;
+    writer << "Spinner17," << SETTINGS_TOOL_SECTIONPOSITION17 << endl;
+
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+
+
+	writer << "Sections," << SETTINGS_TOOL_NUMSECTIONS << endl;
+	writer << "ToolWidth," << SETTINGS_TOOL_WIDTH << endl;
+
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+
+    writer << "WorkSwitch," << SETTINGS_TOOL_ISWORKSWITCHENABLED << endl;
+    writer << "ActiveLow," << SETTINGS_TOOL_ISWORKSWITCHACTIVELOW << endl;
+    writer << "SwitchManual," << SETTINGS_TOOL_ISWORKSWITCHMANUAL << endl;
+
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+
+    //little show to say saved and where
+    //TODO: show message var form = new FormTimedMessage(3000, gStr.gsSavedInFolder, toolsDirectory);
 
 }
 
 bool FormGPS::fileOpenTool(QString filename)
 {
+    USE_SETTINGS;
 
+    QFile openFile(filename);
+    if(! openFile.open(QIODevice::ReadOnly)) {
+        qDebug() << "Cannot open " << filename << " for reading.";
+        //TODO: popup error message
+        return false;
+    }
+
+    QString line;
+
+    line = QFileInfo(filename).baseName() + " - ";
+    SETTINGS_SET_TOOL_NAME(line);
+    toolFileName = line; //remove this and use setting directly in other code
+
+    QTextStream reader(&openFile);
+
+    QStringList words;
+
+    line = reader.readLine(); words = line.split(',');
+
+    QString vers = words[1];
+    vers = vers.replace('.','0');
+    int fileVersion = vers.toInt();
+
+    QString assemblyVersion = QCoreApplication::applicationVersion();
+    assemblyVersion = assemblyVersion.replace('.', '0');
+    int appVersion = assemblyVersion.toInt();
+
+    appVersion /= 100;
+    fileVersion /= 100;
+
+    if (fileVersion < appVersion)
+    {
+        qDebug() << "Saved tool file " << filename << " is in an older format and cannot be read.";
+        //TODO error message
+        return false;
+    }
+    else
+    {
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_OVERLAP(words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_OFFSET(words[1].toDouble());
+
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_LOOKAHEADOFF(words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_LOOKAHEADON(words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_OFFDELAY(words[1].toDouble());
+
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_MINAPPLIED(words[1].toDouble());
+
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_TRAILINGHITCHLENGTH(words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_TANKTRAILINGHITCHLENGTH(words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_HITCHLENGTH(words[1].toDouble());
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_TOOL_ISBEHINDPIVOT(true);
+        else
+            SETTINGS_SET_TOOL_ISBEHINDPIVOT(false);
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_TOOL_ISTRAILING(true);
+        else
+            SETTINGS_SET_TOOL_ISTRAILING(false);
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_TOOL_ISTBT(true);
+        else
+            SETTINGS_SET_TOOL_ISTBT(false);
+
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_SECTIONPOSITION1 (words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_SECTIONPOSITION2 (words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_SECTIONPOSITION3 (words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_SECTIONPOSITION4 (words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_SECTIONPOSITION5 (words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_SECTIONPOSITION6 (words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_SECTIONPOSITION7 (words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_SECTIONPOSITION8 (words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_SECTIONPOSITION9 (words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_SECTIONPOSITION10 (words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_SECTIONPOSITION11 (words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_SECTIONPOSITION12 (words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_SECTIONPOSITION13 (words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_SECTIONPOSITION14 (words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_SECTIONPOSITION15 (words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_SECTIONPOSITION16 (words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_SECTIONPOSITION17 (words[1].toDouble());
+
+
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_NUMSECTIONS(words[1].toInt());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_TOOL_WIDTH(words[1].toDouble());
+
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_TOOL_ISWORKSWITCHENABLED(true);
+        else
+            SETTINGS_SET_TOOL_ISWORKSWITCHENABLED(false);
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_TOOL_ISWORKSWITCHACTIVELOW(true);
+        else
+            SETTINGS_SET_TOOL_ISWORKSWITCHACTIVELOW(false);
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_TOOL_ISWORKSWITCHMANUAL(true);
+        else
+            SETTINGS_SET_TOOL_ISWORKSWITCHMANUAL(false);
+
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+
+        SYNC_SETTINGS;
+
+        //Set width of section and positions for each section
+        tool.sectionSetPositions();
+
+        //Calculate total width and each section width
+        tool.sectionCalcWidths();
+
+        //enable disable manual buttons
+        lineUpManualBtns();
+
+        return true;
+    }
 }
 
 void FormGPS::fileSaveEnvironment(QString filename)
 {
+    USE_SETTINGS;
+    QString envFileName = QFileInfo(filename).baseName() + " - ";
 
+    SETTINGS_SET_DISPLAY_NAME(envFileName);
+
+    QFile saveFile(filename);
+    if( ! saveFile.open(QIODevice::WriteOnly)) {
+        qDebug() << "Cannot open " << filename << " for writing.";
+        //TODO pop up error message
+        return;
+    }
+
+    QTextStream writer(&saveFile);
+
+    writer << "Version," << QCoreApplication::applicationVersion() << endl;
+
+    writer << "Culture,en_US" << endl; //for now just use system locale always, ignore this
+    writer << "CamPitch," << SETTINGS_DISPLAY_CAMPITCH << endl;
+    writer << "IsBatmanOn," << SETTINGS_DISPLAY_ISBATMANON << endl;
+    writer << "LightBarCMPerPixel," << SETTINGS_DISPLAY_LIGHTBARCMPP << endl;
+    writer << "LineWidth," << SETTINGS_DISPLAY_LINEWIDTH << endl;
+
+    writer << "IsCompassOn," << SETTINGS_DISPLAY_COMPASS << endl;
+    writer << "IsGridOn," << SETTINGS_DISPLAY_SHOWGRID << endl;
+
+    writer << "IsLightBarOn," << SETTINGS_DISPLAY_LIGHTBARON << endl;
+    writer << "IsLogNMEA," << SETTINGS_GPS_LOGNMEA << endl;
+    writer << "IsMetric," << SETTINGS_DISPLAY_ISMETRIC << endl;
+    writer << "IsOGLZoom," << SETTINGS_DISPLAY_OGLZOOM << endl;
+
+    writer << "IsPurePursuitLineOn," << SETTINGS_DISPLAY_ISPUREON << endl;
+    writer << "IsGuideLinesOn," << SETTINGS_DISPLAY_SIDEGUIDELINES << endl;
+    writer << "IsSimulatorOn," << SETTINGS_SIM_ON << endl;
+    writer << "IsSkyOn," << SETTINGS_DISPLAY_SKYON << endl;
+    writer << "IsSpeedoOn," << SETTINGS_DISPLAY_SPEEDO << endl;
+    writer << "IsUTurnAlwaysOn," << SETTINGS_DISPLAY_UTURNALWAYSON << endl;
+    writer << "IsAutoDayNightModeOn," << SETTINGS_DISPLAY_ISAUTODAYNIGHT << endl;
+    writer << "StartFullScreen," << SETTINGS_DISPLAY_FULLSCREEN << endl;
+    writer << "IsRTKOn," << SETTINGS_GPS_EXPECTRTK << endl;
+
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+
+    writer << "IsNtripCasterIP," << SETTINGS_GPS_NTRIPCASTERIP << endl;
+    writer << "IsNtripCasterPort," << SETTINGS_GPS_NTRIPCASTERPORT << endl;
+    writer << "IsNtripCasterURL," << SETTINGS_GPS_NTRIPCASTERURL << endl;
+    writer << "IsNtripGGAManual," << SETTINGS_GPS_NTRIPGGAMANUAL << endl;
+    writer << "IsNtripOn," << SETTINGS_GPS_NTRIPON << endl;
+    writer << "IsNtripTCP," << SETTINGS_GPS_NTRIPTCP << endl;
+    writer << "IsNtripManualLat," << SETTINGS_GPS_NTRIPMANUALLAT << endl;
+    writer << "IsNtripManualLon," << SETTINGS_GPS_NTRIPMANUALLON << endl;
+    writer << "IsNtripMount," << SETTINGS_GPS_NTRIPMOUNT << endl;
+    writer << "IsNtripGGAInterval," << SETTINGS_GPS_NTRIPGGAINTERVAL << endl;
+    writer << "IsNtripSendToUDPPort," << SETTINGS_GPS_NTRIPSENDTOUDPPORT << endl;
+    writer << "IsNtripUserName," << SETTINGS_GPS_NTRIPUSERNAME << endl;
+    writer << "IsNtripUserPassword," << SETTINGS_GPS_NTRIPPASSWORD << endl;
+
+    writer << "IsUDPOn,True" << endl; //TODO. Where's the port number?
+
+    writer << "GPSSimLatitude," << SETTINGS_SIM_LATITUDE << endl;
+    writer << "GPSSimLongitude," << SETTINGS_SIM_LONGITUDE << endl;
+
+
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+
+
+    writer << "FieldColorDay," << colorSettingStringToInt( SETTINGS_DISPLAY_FIELDCOLORDAY) << endl;
+    writer << "SectionColorDay," << colorSettingStringToInt( SETTINGS_DISPLAY_SECTIONSCOLORDAY) << endl;
+    writer << "FieldColorNight," << colorSettingStringToInt( SETTINGS_DISPLAY_FIELDCOLORNIGHT) << endl;
+    writer << "SectionColorNight," << colorSettingStringToInt( SETTINGS_DISPLAY_SECTIONSCOLORNIGHT) << endl;
+    writer << "DayColor," << colorSettingStringToInt( SETTINGS_DISPLAY_COLORDAY) << endl;
+    writer << "NightColor," << colorSettingStringToInt( SETTINGS_DISPLAY_COLORNIGHT) << endl;
+    writer << "IsSimple," << SETTINGS_DISPLAY_ISSIMPLE << endl;
+    writer << "IsDayMode," << SETTINGS_DISPLAY_ISDAYMODE << endl;
+    //TODO support custom color palette
+    writer << "CustomColors,10130518,7843687,8605795,6170168,3758726,3552822,8826561,15156186,4351583,162626,5317709,7629648,7696185,5789221,14993507,11730944" << endl;
+
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << endl;
+
+    //TODO: message indicating success
 }
 
 bool FormGPS::fileOpenEnvironment(QString filename)

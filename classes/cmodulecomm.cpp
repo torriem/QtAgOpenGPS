@@ -18,10 +18,10 @@ CModuleComm::CModuleComm(QObject *parent) : QObject(parent)
     serialRecvMachineStr = " ** Machine Module Not Connected";
 
     //WorkSwitch logic
-    isWorkSwitchEnabled = false;
+    //isWorkSwitchEnabled = false;
 
     //does a low, grounded out, mean on
-    isWorkSwitchActiveLow = true;
+    //isWorkSwitchActiveLow = true;
 
     isMachineDataSentToAutoSteer = SETTINGS_VEHICLE_ISMACHINECONTROLTOAUTOSTEER;
 

@@ -36,6 +36,24 @@ QColor parseColor(QString setcolor)
     }
 }
 
+int colorSettingStringToInt(QString colorSettingString)
+{
+    QStringList parts = colorSettingString.split(',');
+
+    int color;
+
+    if (parts.length() > 3)
+        color = parts[3].toInt() << 24; //Alpha
+    else
+        color = 0xff000000;
+
+    color |= parts[0].toInt() << 16; // red
+    color |= parts[1].toInt() << 8; // green
+    color |= parts[2].toInt();  //blue
+
+    return color;
+}
+
 QVector3D parseColorVector(QString setcolor)
 {
     //qDebug() << setcolor;

@@ -70,7 +70,7 @@ public:
     int lidarDistance;
 
     //for the workswitch
-    bool isWorkSwitchActiveLow=false, isWorkSwitchEnabled=false, isWorkSwitchManual = false;
+    //bool isWorkSwitchActiveLow=false, isWorkSwitchEnabled=false, isWorkSwitchManual = false; //in settings
     int workSwitchValue = 0, steerSwitchValue = 1 ;
 
     explicit CModuleComm(QObject *parent = 0);
