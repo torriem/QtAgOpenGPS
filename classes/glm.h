@@ -148,12 +148,7 @@ namespace glm {
     }
 
     static inline double roundMidAwayFromZero(double number) {
-#ifndef Q_OS_ANDROID
-        return std::lround(number);
-#else
         return lround(number);
-#endif
-        //return (number < 0) ? floor(number) : ceil(number);
     }
 
 
