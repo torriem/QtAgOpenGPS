@@ -7,8 +7,8 @@
 QT       += core gui opengl quick quickwidgets network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-lessThan(QT_MAJOR_VERSION, 5):error("requires Qt 5.8 or newer")
-equals(QT_MAJOR_VERSION,5):lessThan(QT_MINOR_VERSION,8):error("requires Qt 5.8 or newer")
+lessThan(QT_MAJOR_VERSION, 5):error("requires Qt 5.9 or newer")
+equals(QT_MAJOR_VERSION,5):lessThan(QT_MINOR_VERSION,9):error("requires Qt 5.9 or newer")
 
 TARGET = QtAgOpenGPS
 TEMPLATE = app
@@ -77,7 +77,8 @@ SOURCES += main.cpp\
     classes/cpointdata.cpp \
     classes/crecordedpath.cpp \
     classes/cdubins.cpp \
-    classes/csequence.cpp
+    classes/csequence.cpp \
+    formgps_saveopen.cpp
 
 HEADERS  += formgps.h \
     classes/cabline.h \

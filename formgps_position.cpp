@@ -14,6 +14,7 @@
 #include <string>
 #include "qmlutil.h"
 #include "aogrenderer.h"
+#include "aogsettings.h"
 
 //called by watchdog timer every 50 ms
 bool FormGPS::scanForNMEA()
@@ -58,6 +59,8 @@ bool FormGPS::scanForNMEA()
 void FormGPS::updateFixPosition()
 {
     USE_SETTINGS;
+
+    double minFixStepDist = SETTINGS_VEHICLE_MINFIXSTEP;
 
     startCounter++;
     totalFixSteps = fixUpdateHz * 6;

@@ -18,6 +18,9 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("QtAgOpenGPS");
     QCoreApplication::setOrganizationDomain("qtagopengps");
     QCoreApplication::setApplicationName("QtAgOpenGPS");
+    //We're supposed to be compatible with the saved data
+    //from this version of AOG:
+    QCoreApplication::setApplicationVersion("4.0.1");
     qmlRegisterType<AOGRendererInSG>("AgOpenGPS",1,0,"AOGRenderer");
     FormGPS w;
     w.show();
@@ -25,6 +28,20 @@ int main(int argc, char *argv[])
     grnPixelsWindow->setFixedWidth(500);
     grnPixelsWindow->setFixedHeight(500);
     grnPixelsWindow->show();
+
+    /*
+    //testing to see how locale affects numbers in the stream writer
+    QFileInfo testit("/tmp/noexistant/file.txt");
+    qDebug() << testit.baseName();
+    qDebug() << testit.suffix();
+QFile testFile("/tmp/test.txt");
+    testFile.open(QIODevice::WriteOnly);
+    QTextStream writer(&testFile);
+    writer << "Testing" << endl;
+    writer << qSetFieldWidth(3) << (double)3.1415926535 << endl;
+    testFile.close();
+    */
+
     return a.exec();
 }
 #endif

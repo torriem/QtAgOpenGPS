@@ -104,8 +104,8 @@ QVector3D parseColorVector(QString setcolor);
 #define SETTINGS_VEHICLE_TYPE			settings.   value("vehicle/vehicleType", 0).toInt()
 #define SETTINGS_SET_VEHICLE_TYPE(VAL)	settings.setValue("vehicle/vehicleType",VAL)
 
-#define SETTINGS_VEHICLE_LOOKAHEAD				settings.   value("vehicle/goalPointLookAhead", 3).toDouble()
-#define SETTINGS_SET_VEHICLE_LOOKAHEAD(VAL)		settings.setValue("vehicle/goalPointLookAhead",VAL)
+#define SETTINGS_VEHICLE_GOALPOINTLOOKAHEAD				settings.   value("vehicle/goalPointLookAhead", 3).toDouble()
+#define SETTINGS_SET_VEHICLE_GOALPOINTLOOKAHEAD(VAL)		settings.setValue("vehicle/goalPointLookAhead",VAL)
 
 #define SETTINGS_VEHICLE_LOOKAHEADMINIMUM		settings.   value("vehicle/lookAheadMinimum", 2).toDouble()
 #define SETTINGS_SET_VEHICLE_LOOKAHEADMINIMUM(VAL)	settings.setValue("vehicle/lookAheadMinimum",VAL)
@@ -292,6 +292,12 @@ QVector3D parseColorVector(QString setcolor);
 #define SETTINGS_DISPLAY_DAYMODE				settings.   value("display/isDayMode", true).toBool()
 #define SETTINGS_SET_DISPLAY_DAYMODE(VAL)	settings.setValue("display/isDayMode",VAL)
 
+#define SETTINGS_DISPLAY_SHOWGRID				settings.   value("display/showGrid", true).toBool()
+#define SETTINGS_SET_DISPLAY_SHOWGRID(VAL)	settings.setValue("display/showGrid",VAL)
+
+#define SETTINGS_DISPLAY_ISMETRIC				settings.   value("display/isMetric", true).toBool()
+#define SETTINGS_SET_DISPLAY_ISMETRIC(VAL)	settings.setValue("display/isMetric",VAL)
+
 //AUTOSTEER
 #define SETTINGS_AUTOSTEER_KO			settings.   value("autosteer/Ko", 5).toInt()
 #define SETTINGS_SET_AUTOSTEER_KO(VAL)	settings.setValue("autosteer/Ko",VAL)
@@ -309,7 +315,7 @@ QVector3D parseColorVector(QString setcolor);
 #define SETTINGS_SET_AUTOSTEER_STEERINGANGLEOFFSET(VAL)	settings.setValue("autosteer/steeringAngleOffset",VAL)
 
 #define SETTINGS_AUTOSTEER_MINSTEERPWM			settings.   value("autosteer/minSteerPWM", 10).toInt()
-#define SETTINGS_SET_AUTOSTEER_MINSTEERPWM(VAL)	settings.setValue("autosteer/minSteerPWM",VAL)y
+#define SETTINGS_SET_AUTOSTEER_MINSTEERPWM(VAL)	settings.setValue("autosteer/minSteerPWM",VAL)
 
 #define SETTINGS_AUTOSTEER_MAXINTEGRAL			settings.   value("autosteer/maxIntegral", 20).toInt()
 #define SETTINGS_SET_AUTOSTEER_MAXINTEGRAL(VAL)	settings.setValue("autosteer/maxIntegral",VAL)

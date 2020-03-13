@@ -213,7 +213,7 @@ void FormGPS::openGLControl_Draw()
             gl->glDisable(GL_TEXTURE_2D);
 
             ////if grid is on draw it
-            if (isGridOn) worldGrid.drawWorldGrid(gl,projection*modelview,gridZoom, QColor::fromRgbF(0,0,0));
+            if (SETTINGS_DISPLAY_SHOWGRID) worldGrid.drawWorldGrid(gl,projection*modelview,gridZoom, QColor::fromRgbF(0,0,0));
 
             //turn on blend for paths
             gl->glEnable(GL_BLEND);
@@ -774,7 +774,7 @@ void FormGPS::drawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp)
     gldraw.draw(gl, mvp, whichtex, GL_TRIANGLE_STRIP, true, color);
 
     // Done Building Triangle Strip
-    if (isMetric)
+    if (SETTINGS_DISPLAY_ISMETRIC)
     {
         if (!yt.isYouTurnTriggered)
         {
@@ -1179,7 +1179,7 @@ void FormGPS::drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 
 
     double angle = 0;
     double aveSpd = 0;
-    if (isMetric)
+    if (SETTINGS_DISPLAY_ISMETRIC)
     {
         aveSpd = fabs(vehicle.avgSpeed);
         if (aveSpd > 20) aveSpd = 20;

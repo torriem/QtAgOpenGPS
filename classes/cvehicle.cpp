@@ -26,7 +26,7 @@ double CVehicle::updateGoalPointDistance(CNMEA &pn, double distanceFromCurrentLi
 {
     USE_SETTINGS;
     //how far should goal point be away  - speed * seconds * kmph -> m/s then limit min value
-    double goalPointDistance = pn.speed * SETTINGS_VEHICLE_LOOKAHEAD * 0.27777777;
+    double goalPointDistance = pn.speed * SETTINGS_VEHICLE_GOALPOINTLOOKAHEAD * 0.27777777;
 
     if (distanceFromCurrentLine < 1.0)
         goalPointDistance += distanceFromCurrentLine * goalPointDistance * SETTINGS_VEHICLE_DISTANCEMULTIPLIER;

@@ -130,7 +130,7 @@ public:
     //current directory of field;
     QString currentFieldDirectory = "";
     QString workingDirectory = "";
-    QString vehiclefileName = "";
+    QString vehicleFileName = "";
 
     //colors for sections and field background
     //uchar redSections, grnSections, bluSections;
@@ -151,7 +151,9 @@ public:
     int flagNumberPicked = 0;
 
     //Is it in 2D or 3D, metric, or imperial, display lightbar, display grid
-    bool isIn3D = true, isMetric = true, isLightbarOn = true, isGridOn, isSideGuideLines = true;
+    //following are in settings now:
+    //isGridOn, isMetric
+    bool isIn3D = true, isLightbarOn = true, isSideGuideLines = true;
     //bool isPureOn = true; //refer to QtSettings instead
 
     //bool for whether or not a job is active
@@ -355,7 +357,7 @@ public:
     int totalFixSteps = 10, currentStepFix = 0;
     Vec3 vHold;
     Vec3 stepFixPts[50];
-    double distanceCurrentStepFix = 0, fixStepDist=0, minFixStepDist = 0;
+    double distanceCurrentStepFix = 0, fixStepDist=0; //, minFixStepDist = 0;
     bool isFixHolding = false, isFixHoldLoaded = false;
 
     double rollZero = 0, pitchZero = 0;
@@ -377,13 +379,43 @@ public:
     /************************
      * SaveOpen.Designer.cs *
      ************************/
-    //moved to CVehicle
+
+    //moved to CTool
     //list of the list of patch data individual triangles for field sections
     //QVector<QSharedPointer<QVector<QVector3D>>> patchSaveList;
 
     //moved to CContour.
     //list of the list of patch data individual triangles for contour tracking
     QVector<QSharedPointer<QVector<Vec3>>> contourSaveList;
+
+    void fileSaveCurveLines();
+    void fileLoadCurveLines();
+    void fileSaveABLines();
+    void fileLoadABLines();
+    void fileSaveVehicle(QString filename);
+    bool fileOpenVehicle(QString filename);
+    void fileSaveTool(QString filename);
+    void fileOpenTool(QString filename);
+    void fileSaveEnvironment(QString filename);
+    void fileOpenEnvironment(QString filename);
+    void fileOpenField(QString openType);
+    void fileCreateField();
+    void fileCreateElevation();
+    void fileSaveSections();
+    void fileCreateSections();
+    void fileCreateFlags();
+    void fileCreateContour();
+    void fileSaveContour();
+    void fileSaveBoundary();
+    void fileSaveHeadland();
+    void fileSaveRecPath();
+    void fileSaveFlags();
+    void fileSaveNMEA();
+    void fileSaveElevation();
+    void fileSaveSingleFlagKML2(int flagNumber);
+    void fileSaveSingleFlagXML(int flagNumber);
+    void fileMakeKMLFromCurrentPosition(double lat, double lon);
+    void fileSaveFieldKML();
 
     /**********************
      * OpenGL.Designer.cs *
