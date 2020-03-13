@@ -24,10 +24,14 @@ int main(int argc, char *argv[])
     qmlRegisterType<AOGRendererInSG>("AgOpenGPS",1,0,"AOGRenderer");
     FormGPS w;
     w.show();
-    grnPixelsWindow = new QLabel("Hello");
-    grnPixelsWindow->setFixedWidth(500);
-    grnPixelsWindow->setFixedHeight(500);
-    grnPixelsWindow->show();
+
+    USE_SETTINGS;
+    if (SETTINGS_DISPLAY_SHOWBACK) {
+        grnPixelsWindow = new QLabel("Back Buffer");
+        grnPixelsWindow->setFixedWidth(500);
+        grnPixelsWindow->setFixedHeight(500);
+        grnPixelsWindow->show();
+    }
 
     /*
     //testing to see how locale affects numbers in the stream writer

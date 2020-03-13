@@ -442,6 +442,9 @@ int colorSettingStringToInt(QString colorSettingString);
 #define SETTINGS_DISPLAY_FULLSCREEN			settings.   value("display/fullScreen", false).toBool()
 #define SETTINGS_SET_DISPLAY_FULLSCREEN(VAL)	settings.setValue("display/fullScreen",VAL)
 
+#define SETTINGS_DISPLAY_SHOWBACK			settings.   value("display/showBack", false).toBool()
+#define SETTINGS_SET_DISPLAY_SHOWBACK(VAL)	settings.setValue("display/showBack",VAL)
+
 //AUTOSTEER
 #define SETTINGS_AUTOSTEER_KO			settings.   value("autosteer/Ko", 5).toInt()
 #define SETTINGS_SET_AUTOSTEER_KO(VAL)	settings.setValue("autosteer/Ko",VAL)

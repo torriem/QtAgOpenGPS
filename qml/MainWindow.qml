@@ -426,14 +426,29 @@ Item {
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 width: 200
-                from: -50
-                to: 50
+                from: -30
+                to: 30
                 value: 5
             }
+
+            IconButton {
+                id: simStopButton
+                objectName: "simStopButton"
+                icon: "qrc:/images/Stop.png"
+                width: 50
+                height: 50
+                anchors.left: speedSlider.right
+                anchors.bottom: speedSlider.bottom
+                onClicked: {
+                    speedSlider.value = 0;
+                }
+
+            }
+
             Slider {
                 id: steerSlider
                 objectName: "simSteer"
-                anchors.bottom: speedSlider.top
+                anchors.bottom: simStopButton.top
                 anchors.left: parent.left
                 width: 200
                 from: 0
@@ -453,8 +468,6 @@ Item {
                 }
 
             }
-
-
 
             IconPalette {
                 id: iconPalette

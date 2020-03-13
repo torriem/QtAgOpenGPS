@@ -152,7 +152,8 @@ void FormGPS::processSectionLookahead() {
 
     //not using regular Qt Widgets in the main window anymore.  For
     //debugging purposes, this could go in another popup window
-    grnPixelsWindow->setPixmap(QPixmap::fromImage(grnPix.mirrored()));
+    if (SETTINGS_DISPLAY_SHOWBACK)
+        grnPixelsWindow->setPixmap(QPixmap::fromImage(grnPix.mirrored()));
 
     bool isHeadlandClose = false, isBoundaryClose = false, isMapping = true;
 
