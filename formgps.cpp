@@ -25,14 +25,6 @@ FormGPS::FormGPS(QWidget *parent) :
 
     isAreaOnRight = s.value("vehicle/isAreaOnRight",false).toBool();
 
-    isGridOn = s.value("display/showGrid",true).toBool();
-    isMetric = s.value("display/isMetric", true).toBool();
-
-    //TODO: move all the settings loading/setting of defaults to a separate
-    //function.
-    minFixStepDist = s.value("position/minFixStep",1.0).toDouble(); //minimum distance between fixes.
-    //isAtanCam = s.value("camera/useCalculatedHeading", true).toBool();
-
     //fieldColor = QColor(s.value("display/fieldColor", "#82781E").toString());
     //sectionColor = QColor(s.value("display/sectionColor", "#32DCC8").toString());
     SETTINGS_SET_DISPLAY_COMPASS(true);
@@ -917,6 +909,8 @@ void FormGPS::processSectionOnOffRequests(bool isMapping)
 
 void FormGPS::tmrWatchdog_timeout()
 {
+    USE_SETTINGS;
+
     //Check for a newline char, if none then just return
     sentenceCounter++;
     int cr = pn.rawBuffer.indexOf("\n");
@@ -973,7 +967,7 @@ void FormGPS::tmrWatchdog_timeout()
 
             //TODO: batman panel
 
-            if (isMetric)
+            if (SETTINGS_DISPLAY_ISMETRIC)
             {
                 //TODO: status bar updates
                 /*
