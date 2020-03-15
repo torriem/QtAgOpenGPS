@@ -83,9 +83,8 @@ must manage those matrices ourselves anyway.
 
 Status of the Port
 ------------------
-As of March 2020, the backend code is tracking the current released
-branch of https://github.com/farmerbriantee/AgOpenGPS, which is version
-3.  
+As of March 14, 2020, the backend code is tracking the v4 branch of AOG,
+current to the March 10, 2020 commit.
 
 UI is still mostly non-present, and really only works with the built-in
 simulator, or a UDP data stream.  For testing purposes, a job and field
