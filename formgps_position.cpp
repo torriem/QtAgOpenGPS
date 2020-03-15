@@ -65,6 +65,8 @@ void FormGPS::updateFixPosition()
 
     startCounter++;
     totalFixSteps = fixUpdateHz * 6;
+    if ( totalFixSteps > 60 ) totalFixSteps = 60; //don't want to overflow stepFixPTS array
+
     if (!isGPSPositionInitialized) {  initializeFirstFewGPSPositions();   return;  }
 
     //region Step Fix
@@ -1052,6 +1054,7 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
 
     //speed max for section kmh*0.277 to m/s * 10 cm per pixel * 1.7 max speed
     double meterPerSecPerPixel = fabs(pn.speed) * 4.5;
+    //qDebug() << pn.speed << ", m/s per pixel is " << meterPerSecPerPixel;
 
     //now loop all the section rights and the one extreme left
     for (int j = 0; j < tool_numOfSections; j++)
@@ -1069,6 +1072,7 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
 
             //get the speed for left side only once
             leftSpeed = left.getLength() / fixUpdateTime * 10;
+            //qDebug() << leftSpeed << " - left speed";
             if (leftSpeed > meterPerSecPerPixel) leftSpeed = meterPerSecPerPixel;
 
         }
@@ -1158,6 +1162,7 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
 
     tool.lookAheadDistanceOnPixelsLeft = tool.toolFarLeftSpeed * tool_lookAheadOnSetting * 10;
     tool.lookAheadDistanceOnPixelsRight = tool.toolFarRightSpeed * tool_lookAheadOnSetting * 10;
+    //qDebug() << tool.toolFarLeftSpeed << ", look dist " << tool.lookAheadDistanceOnPixelsLeft;
 
     if (tool.lookAheadDistanceOnPixelsLeft > 200) tool.lookAheadDistanceOnPixelsLeft = 200;
     if (tool.lookAheadDistanceOnPixelsRight > 200) tool.lookAheadDistanceOnPixelsRight = 200;

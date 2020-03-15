@@ -44,7 +44,7 @@ public:
     double latStart, lonStart;
     double actualEasting=0, actualNorthing=0;
     double zone=0;
-    double centralMeridian, convergenceAngle;
+    double centralMeridian, convergenceAngle = 0;
 
     bool updatedGGA=false, updatedOGI=false, updatedRMC=false;
 

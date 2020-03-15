@@ -112,7 +112,7 @@ void CNMEA::updateNorthingEasting()
 
     //#region Roll
 
-    if (SETTINGS_GPS_ISROLLFROMAUTOSTEER || SETTINGS_GPS_ISROLLFROMGPS || SETTINGS_GPS_ISROLLFROMEXTUDP)
+    if ((SETTINGS_GPS_ISROLLFROMAUTOSTEER || SETTINGS_GPS_ISROLLFROMGPS || SETTINGS_GPS_ISROLLFROMEXTUDP) && this->roll != 9999)
     {
         double rollUsed = ((double)(this->roll - SETTINGS_GPS_IMUROLLZEROX16)) * 0.0625;
         emit setRollUsed(rollUsed);
