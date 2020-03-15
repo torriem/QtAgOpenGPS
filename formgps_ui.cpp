@@ -205,8 +205,19 @@ void FormGPS::setupGui()
     connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(tmrWatchdog_timeout()));
     tmrWatchdog->start(50); //fire every 50ms.
 
+    //SIM on
     connect(&simTimer, SIGNAL(timeout()),this,SLOT(onSimTimerTimeout()));
-    simTimer.start(100); //fire simulator every 200 ms.
+    if (SETTINGS_SIM_ON) {
+        simTimer.start(100); //fire simulator every 200 ms.
+        fixUpdateHz = 10;
+    } else {
+        fixUpdateHz = 5;
+        //TODO! NMEA update settings
+    }
+
+    fixUpdateTime = 1.0 / fixUpdateHz;
+
+
 
     swFrame.start();
 

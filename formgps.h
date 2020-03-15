@@ -348,16 +348,11 @@ public:
 
 
     int times;
-    double avgTiltRoll[30];//for tilt
-    int ringCounterTiltRoll = 0;
-    //public double[] avgTiltPitch = new double[10];//for pitch
-    //public int ringCounterTiltPitch = 0;
-    //public double[] avgAngularVelocity = new double[30];//for angular velocity
-    //public int ringCounterAngularVelocity = 0;
 
     int totalFixSteps = 10, currentStepFix = 0;
     Vec3 vHold;
-    Vec3 stepFixPts[50];
+    Vec3 stepFixPts[60];
+    //int fence = 0x0ff;
     double distanceCurrentStepFix = 0, fixStepDist=0; //, minFixStepDist = 0;
     bool isFixHolding = false, isFixHoldLoaded = false;
 
