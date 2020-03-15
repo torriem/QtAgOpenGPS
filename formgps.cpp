@@ -30,9 +30,9 @@ FormGPS::FormGPS(QWidget *parent) :
     SETTINGS_SET_DISPLAY_COMPASS(true);
     SETTINGS_SET_DISPLAY_SPEEDO(true);
 
-    SETTINGS_SET_TOOL_SECTIONPOSITION1(-8);
-    SETTINGS_SET_TOOL_SECTIONPOSITION2(-4);
-    SETTINGS_SET_TOOL_SECTIONPOSITION3(0);
+    SETTINGS_SET_TOOL_SECTIONPOSITION1(-4);
+    SETTINGS_SET_TOOL_SECTIONPOSITION2(-1);
+    SETTINGS_SET_TOOL_SECTIONPOSITION3(1);
     SETTINGS_SET_TOOL_SECTIONPOSITION4(4);
     SETTINGS_SET_TOOL_SECTIONPOSITION5(8);
 
@@ -46,9 +46,10 @@ FormGPS::FormGPS(QWidget *parent) :
     tool.section[3].positionLeft = 4;
     tool.section[3].positionRight = 8;
     */
-    SETTINGS_SET_TOOL_NUMSECTIONS(4);
+    SETTINGS_SET_TOOL_NUMSECTIONS(3);
     //tool.numSuperSection = 5;
-    SETTINGS_SET_TOOL_TRAILINGHITCHLENGTH(-4);
+    SETTINGS_SET_TOOL_TRAILINGHITCHLENGTH(-2);
+    SETTINGS_SET_TOOL_HITCHLENGTH(-0.5);
     SETTINGS_SET_VEHICLE_MINTURNINGRADIUS(5);
     SETTINGS_SET_VEHICLE_MAXSTEERANGLE(45);
     tool.sectionSetPositions();
@@ -86,7 +87,17 @@ FormGPS::FormGPS(QWidget *parent) :
     ABLine.refPoint1.easting = 0;
     ABLine.setABLineByHeading(glm::toRadians(5.0f));
     ABLine.isBtnABLineOn = true;
+
+    CABLines line;
+    line.origin = Vec2(0,0);
+    line.ref1 = Vec2(0,0); //doesn't seem to be used by logic
+    line.ref2 = Vec2(0,0); //doesn't seem to be used by logic
+    line.heading = glm::toRadians(5.0f);
+    line.Name = "Test AB Line";
+    ABLine.lineArr.append( line );
     //isAutoSteerBtnOn = true;
+
+    currentFieldDirectory = "TestField";
 
     if (isUDPServerOn) startUDPServer();
 

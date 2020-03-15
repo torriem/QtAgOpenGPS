@@ -14,7 +14,7 @@ public:
     double camYaw = 0;
 
     double offset = 0;
-    double camSetDistance = -100; //put in setttings?
+    double camSetDistance = -75; //put in setttings?
     //double camDelta = 0;
     double gridZoom;
     double zoomValue = 15;
