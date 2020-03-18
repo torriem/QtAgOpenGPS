@@ -7,8 +7,8 @@ void FormGPS::fileSaveCurveLines()
 {
     curve.moveDistance = 0;
 
-    QString directoryName = QStandardPaths::DocumentsLocation + "/" +
-            QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
 
     QDir saveDir(directoryName);
     if (!saveDir.exists()) {
@@ -18,6 +18,7 @@ void FormGPS::fileSaveCurveLines()
             return;
         }
     }
+    qDebug() << directoryName;
 
     QString filename = directoryName + "/CurveLines.txt";
 
@@ -52,9 +53,9 @@ void FormGPS::fileSaveCurveLines()
             if (curve.curveArr[i].curvePts.count() > 0)
             {
                 for (int j = 0; j < cnt2; j++)
-                    writer << qSetFieldWidth(3) << curve.curveArr[i].curvePts[j].easting << ","
-                           << qSetFieldWidth(3) << curve.curveArr[i].curvePts[j].northing << ","
-                           << qSetFieldWidth(5) << curve.curveArr[i].curvePts[j].heading << endl;
+                    writer << qSetRealNumberPrecision(3) << curve.curveArr[i].curvePts[j].easting << ","
+                           << qSetRealNumberPrecision(3) << curve.curveArr[i].curvePts[j].northing << ","
+                           << qSetRealNumberPrecision(5) << curve.curveArr[i].curvePts[j].heading << endl;
             }
         }
     }
@@ -72,8 +73,8 @@ void FormGPS::fileLoadCurveLines()
     curve.numCurveLines = 0;
 
     //current field directory should already exist
-    QString directoryName = QStandardPaths::DocumentsLocation + "/" +
-            QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
 
     QDir loadDir(directoryName);
     if (!loadDir.exists()) {
@@ -151,8 +152,8 @@ void FormGPS::fileSaveABLines()
 {
     ABLine.moveDistance = 0;
 
-    QString directoryName = QStandardPaths::DocumentsLocation + "/" +
-            QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
 
     QDir saveDir(directoryName);
     if (!saveDir.exists()) {
@@ -182,9 +183,9 @@ void FormGPS::fileSaveABLines()
         {
             //make it culture invariant
             writer << item.Name << ","
-                   << qSetFieldWidth(8) << glm::toDegrees(item.heading) << ","
-                   << qSetFieldWidth(3) << item.origin.easting << ","
-                   << qSetFieldWidth(3) << item.origin.northing << endl;
+                   << qSetRealNumberPrecision(8) << glm::toDegrees(item.heading) << ","
+                   << qSetRealNumberPrecision(3) << item.origin.easting << ","
+                   << qSetRealNumberPrecision(3) << item.origin.northing << endl;
         }
     }
 
@@ -199,8 +200,8 @@ void FormGPS::fileLoadABLines()
     ABLine.moveDistance = 0;
 
     //current field directory should already exist
-    QString directoryName = QStandardPaths::DocumentsLocation + "/" +
-            QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
 
     QDir loadDir(directoryName);
     if (!loadDir.exists()) {
@@ -298,8 +299,8 @@ void FormGPS::fileSaveVehicle(QString filename)
     writer << "UTurnSkipWidth," << SETTINGS_VEHICLE_YOUSKIPWIDTH << endl;
     writer << "YouTurnDistance," << SETTINGS_VEHICLE_YOUTURNDISTANCE << endl;
     writer << "youTriggerDistance," << SETTINGS_VEHICLE_YOUTURNTRIGGERDISTANCE << endl;
-    writer << "YouTurnUseDubins," << SETTINGS_VEHICLE_ISUSINGDUBINSTURN << endl;
-    writer << "IsMachineControlToAS," << SETTINGS_VEHICLE_ISMACHINECONTROLTOAUTOSTEER << endl;
+    writer << "YouTurnUseDubins," << (SETTINGS_VEHICLE_ISUSINGDUBINSTURN ? "True" : "False") << endl;
+    writer << "IsMachineControlToAS," << (SETTINGS_VEHICLE_ISMACHINECONTROLTOAUTOSTEER ? "True" : "False") << endl;
 
     //AutoSteer
     writer << "pidP," << SETTINGS_AUTOSTEER_KP << endl;
@@ -312,10 +313,10 @@ void FormGPS::fileSaveVehicle(QString filename)
     writer << "CountsPerDegree," << SETTINGS_AUTOSTEER_COUNTSPERDEGREE << endl;
     writer << "MaxSteerAngle," << SETTINGS_VEHICLE_MAXSTEERANGLE << endl;
     writer << "MaxAngularVelocity," << SETTINGS_VEHICLE_MAXANGULARVELOCITY << endl;
-    writer << "IsJRK," << SETTINGS_AUTOSTEER_ISJRK << endl;
+    writer << "IsJRK," << (SETTINGS_AUTOSTEER_ISJRK ? "True" : "False") << endl;
     writer << "SnapDistance," << SETTINGS_AUTOSTEER_SNAPDISTANCE << endl;
 
-    writer << "isStanleyUsed," << SETTINGS_VEHICLE_ISSTANLEYUSED << endl;
+    writer << "isStanleyUsed," << (SETTINGS_VEHICLE_ISSTANLEYUSED ? "True" : "False") << endl;
     writer << "StanleyGain," << SETTINGS_VEHICLE_STANLEYGAIN << endl;
     writer << "StanleyHeadingError," << SETTINGS_VEHICLE_STANLEYHEADINGERRORGAIN << endl;
 
@@ -573,7 +574,7 @@ bool FormGPS::fileOpenVehicle(QString filename)
         if(words[1].toLower().trimmed() == "true")
             SETTINGS_SET_GPS_ISROLLFROMAUTOSTEER(true);
         else
-            SETTINGS_SET_GPS_ISROLLFROMAUTOSTEER(true);
+            SETTINGS_SET_GPS_ISROLLFROMAUTOSTEER(false);
 
         line = reader.readLine(); words = line.split(',');
         if(words[1].toLower().trimmed() == "true")
@@ -740,9 +741,9 @@ void FormGPS::fileSaveTool(QString filename)
 	writer << "TankTrailingHitchLength," << SETTINGS_TOOL_TANKTRAILINGHITCHLENGTH << endl;
     writer << "HitchLength," << SETTINGS_TOOL_HITCHLENGTH << endl;
 
-    writer << "IsToolBehindPivot," << SETTINGS_TOOL_ISBEHINDPIVOT << endl;
-    writer << "IsToolTrailing," << SETTINGS_TOOL_ISTRAILING << endl;
-    writer << "IsToolTBT," << SETTINGS_TOOL_ISTBT << endl;
+    writer << "IsToolBehindPivot," << (SETTINGS_TOOL_ISBEHINDPIVOT ? "True": "False") << endl;
+    writer << "IsToolTrailing," << (SETTINGS_TOOL_ISTRAILING ? "True": "False")  << endl;
+    writer << "IsToolTBT," << (SETTINGS_TOOL_ISTBT ? "True": "False")  << endl;
 
     writer << "Empty," << "10" << endl;
     writer << "Empty," << "10" << endl;
@@ -796,9 +797,9 @@ void FormGPS::fileSaveTool(QString filename)
     writer << "Empty," << "10" << endl;
     writer << "Empty," << "10" << endl;
 
-    writer << "WorkSwitch," << SETTINGS_TOOL_ISWORKSWITCHENABLED << endl;
-    writer << "ActiveLow," << SETTINGS_TOOL_ISWORKSWITCHACTIVELOW << endl;
-    writer << "SwitchManual," << SETTINGS_TOOL_ISWORKSWITCHMANUAL << endl;
+    writer << "WorkSwitch," << ( SETTINGS_TOOL_ISWORKSWITCHENABLED ? "True" : "False" ) << endl;
+    writer << "ActiveLow," << ( SETTINGS_TOOL_ISWORKSWITCHACTIVELOW ? "True" : "False" ) << endl;
+    writer << "SwitchManual," << ( SETTINGS_TOOL_ISWORKSWITCHMANUAL ? "True" : "False" ) << endl;
 
     writer << "Empty," << "10" << endl;
     writer << "Empty," << "10" << endl;
@@ -1101,6 +1102,250 @@ void FormGPS::fileSaveEnvironment(QString filename)
 
 bool FormGPS::fileOpenEnvironment(QString filename)
 {
+    USE_SETTINGS;
+
+    QFile openFile(filename);
+    if(! openFile.open(QIODevice::ReadOnly)) {
+        qDebug() << "Cannot open environment file " << filename << " for reading.";
+        //TODO: popup error message
+        return false;
+    }
+    QTextStream reader(&openFile);
+
+    QString line;
+
+
+    QStringList words;
+    line = reader.readLine(); words = line.split(',');
+
+
+    QString vers = words[1].replace('.', '0');
+    int fileVersion = vers.toInt();
+
+    QString assemblyVersion = QCoreApplication::applicationVersion();
+    assemblyVersion = assemblyVersion.replace('.', '0');
+    int appVersion = assemblyVersion.toInt();
+
+    appVersion /= 100;
+    fileVersion /= 100;
+
+    if (fileVersion < appVersion)
+    {
+        qDebug() << "Saved tool file " << filename << " is in an older format and cannot be read.";
+        //TODO error message
+        return false;
+    }
+    else
+    {
+        line = reader.readLine(); words = line.split(',');
+        //using system language settings for now
+        //Properties.Settings.Default.setF_culture = (words[1]);
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_DISPLAY_CAMPITCH(words[0].toDouble());
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_DISPLAY_ISBATMANON(true);
+        else
+            SETTINGS_SET_DISPLAY_ISBATMANON(false);
+
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_DISPLAY_LIGHTBARCMPP(words[1].toInt());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_DISPLAY_LINEWIDTH(words[1].toInt());
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_DISPLAY_COMPASS(true);
+        else
+            SETTINGS_SET_DISPLAY_COMPASS(false);
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_DISPLAY_SHOWGRID(true);
+        else
+            SETTINGS_SET_DISPLAY_SHOWGRID(false);
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_DISPLAY_LIGHTBARON(true);
+        else
+            SETTINGS_SET_DISPLAY_LIGHTBARON(false);
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_GPS_LOGNMEA(true);
+        else
+            SETTINGS_SET_GPS_LOGNMEA(false);
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_DISPLAY_ISMETRIC(true);
+        else
+            SETTINGS_SET_DISPLAY_ISMETRIC(false);
+
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_DISPLAY_OGLZOOM(words[1].toInt());
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_DISPLAY_ISPUREON(true);
+        else
+            SETTINGS_SET_DISPLAY_ISPUREON(false);
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_DISPLAY_SIDEGUIDELINES(true);
+        else
+            SETTINGS_SET_DISPLAY_SIDEGUIDELINES(false);
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_SIM_ON(true);
+        else
+            SETTINGS_SET_SIM_ON(false);
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_DISPLAY_SKYON(true);
+        else
+            SETTINGS_SET_DISPLAY_SKYON(false);
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_DISPLAY_SPEEDO(true);
+        else
+            SETTINGS_SET_DISPLAY_SPEEDO(false);
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_DISPLAY_UTURNALWAYSON(true);
+        else
+            SETTINGS_SET_DISPLAY_UTURNALWAYSON(false);
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_DISPLAY_ISAUTODAYNIGHT(true);
+        else
+            SETTINGS_SET_DISPLAY_ISAUTODAYNIGHT(false);
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_DISPLAY_FULLSCREEN(true);
+        else
+            SETTINGS_SET_DISPLAY_FULLSCREEN(false);
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_GPS_EXPECTRTK(true);
+        else
+            SETTINGS_SET_GPS_EXPECTRTK(false);
+
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_GPS_NTRIPCASTERIP(words[1]);
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_GPS_NTRIPCASTERPORT(words[1].toInt());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_GPS_NTRIPCASTERURL(words[1]);
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_GPS_NTRIPGGAMANUAL(true);
+        else
+            SETTINGS_SET_GPS_NTRIPGGAMANUAL(false);
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_GPS_NTRIPON(true);
+        else
+            SETTINGS_SET_GPS_NTRIPON(false);
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_GPS_NTRIPTCP(true);
+        else
+            SETTINGS_SET_GPS_NTRIPTCP(false);
+
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_GPS_NTRIPMANUALLAT(words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_GPS_NTRIPMANUALLON(words[1].toDouble());
+
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_GPS_NTRIPMOUNT(words[1]);
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_GPS_NTRIPGGAINTERVAL(words[1].toInt());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_GPS_NTRIPSENDTOUDPPORT(words[1].toInt());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_GPS_NTRIPUSERNAME(words[1]);
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_GPS_NTRIPPASSWORD(words[1]);
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+        {} //SETTINGS_SET_??? UDP(true);
+        else
+        {} //SETTINGS_SET_??? UDP(false);
+
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_SIM_LATITUDE(words[1].toDouble());
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_SIM_LONGITUDE(words[1].toDouble());
+
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_DISPLAY_FIELDCOLORDAY(colorSettingStringToInt(words[1]));
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_DISPLAY_SECTIONSCOLORDAY(colorSettingStringToInt(words[1]));
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_DISPLAY_FIELDCOLORNIGHT(colorSettingStringToInt(words[1]));
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_DISPLAY_SECTIONSCOLORNIGHT(colorSettingStringToInt(words[1]));
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_DISPLAY_COLORDAY(colorSettingStringToInt(words[1]));
+        line = reader.readLine(); words = line.split(',');
+        SETTINGS_SET_DISPLAY_COLORDAY(colorSettingStringToInt(words[1]));
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_DISPLAY_ISSIMPLE(true);
+        else
+            SETTINGS_SET_DISPLAY_ISSIMPLE(false);
+
+        line = reader.readLine(); words = line.split(',');
+        if(words[1].toLower().trimmed() == "true")
+            SETTINGS_SET_DISPLAY_ISDAYMODE(true);
+        else
+            SETTINGS_SET_DISPLAY_ISDAYMODE(false);
+
+        line = reader.readLine(); words = line.split(',');
+        //TODO: Properties.Settings.Default.setDisplay_customColors = line.Substring(13);
+
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+        line = reader.readLine();
+
+        //fill in the current variables with restored data
+        QString envFileName = QFileInfo(filename).baseName();
+        SETTINGS_SET_ENVIRONMENT_NAME(envFileName);
+
+    }
+
+    return true;
+
 
 }
 
@@ -1111,21 +1356,155 @@ void FormGPS::fileOpenField(QString openType)
 
 void FormGPS::fileCreateField()
 {
+    if( ! isJobStarted)
+    {
+        qDebug() << "field not open";
+        return;
+    }
 
+    QString myFilename;
+
+    //get the directory and make sure it exists, create if not
+
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+
+    QDir saveDir(directoryName);
+    if (!saveDir.exists()) {
+        bool ok = saveDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    myFilename = directoryName + "/Field.txt";
+    QFile fieldFile(myFilename);
+    if (!fieldFile.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "Couldn't open " << myFilename << "for writing!";
+        return;
+    }
+
+    QTextStream writer(&fieldFile);
+
+    QDateTime now = QDateTime::currentDateTime();
+
+    //Write out the date
+    writer << now.toString("yyyy-MMMM-dd hh:mm:ss tt") << endl;
+
+    writer << "$FieldDir" << endl;
+    writer << currentFieldDirectory << endl;
+
+    //write out the easting and northing Offsets
+    writer << "$Offsets" << endl;
+    writer << pn.utmEast << "," << pn.utmNorth << "," << pn.zone << endl;
+
+    writer << "Convergence" << endl;
+    writer << pn.convergenceAngle << endl;
+
+    writer << "StartFix" << endl;
+    writer << pn.latitude << "," << pn.longitude << endl;
+
+    fieldFile.close();
 }
 
 void FormGPS::fileCreateElevation()
 {
+    //Why is this the same as field.txt?
 
+    QString myFilename;
+
+    //get the directory and make sure it exists, create if not
+
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+
+    QDir saveDir(directoryName);
+    if (!saveDir.exists()) {
+        bool ok = saveDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    myFilename = directoryName + "/Elevation.txt";
+    QFile fieldFile(myFilename);
+    if (!fieldFile.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "Couldn't open " << myFilename << "for writing!";
+        return;
+    }
+
+    QTextStream writer(&fieldFile);
+
+    QDateTime now = QDateTime::currentDateTime();
+
+    //Write out the date
+    writer << now.toString("yyyy-MMMM-dd hh:mm:ss tt") << endl;
+
+    writer << "$FieldDir" << endl;
+    writer << currentFieldDirectory << endl;
+
+    //write out the easting and northing Offsets
+    writer << "$Offsets" << endl;
+    writer << pn.utmEast << "," << pn.utmNorth << "," << pn.zone << endl;
+
+    writer << "Convergence" << endl;
+    writer << pn.convergenceAngle << endl;
+
+    writer << "StartFix" << endl;
+    writer << pn.latitude << "," << pn.longitude << endl;
+
+    fieldFile.close();
 }
 
 void FormGPS::fileSaveSections()
 {
+    if (tool.patchSaveList.count() == 0) return;
 
+    QString myFilename;
+
+    //get the directory and make sure it exists, create if not
+
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+
+    myFilename = directoryName + "/Sections.txt";
+    QFile sectionFile(myFilename);
+    if (!sectionFile.open(QIODevice::Append))
+    {
+        qWarning() << "Couldn't open " << myFilename << "for appending!";
+        return;
+    }
+
+    QTextStream writer(&sectionFile);
+
+    //for each patch, write out the list of triangles to the file
+    QSharedPointer<QVector<QVector3D>> triList;
+    foreach(triList, tool.patchSaveList)
+    {
+        int count2 = triList->count();
+        writer << count2 << endl;
+
+        for (int i=0; i < count2; i++)
+        {
+            writer << qSetRealNumberPrecision(3)
+                   << (*triList)[i].x() << "," << (*triList)[i].y()
+                   << "," << (*triList)[i].z() << endl;
+        }
+    }
+
+    //clear out that patchList and begin adding new ones for next save
+    tool.patchSaveList.clear();
+    sectionFile.close();
 }
 
 void FormGPS::fileCreateSections()
 {
+    //not needed. fileSaveSections() will create the file for us.
+    //no longer using $Sections header
 
 }
 
@@ -1141,16 +1520,134 @@ void FormGPS::fileCreateContour()
 
 void FormGPS::fileSaveContour()
 {
+    if (contourSaveList.count() == 0) return;
 
+    QString myFilename;
+
+    //get the directory and make sure it exists, create if not
+
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+
+    myFilename = directoryName + "/Contour.txt";
+    QFile contourFile(myFilename);
+    if (!contourFile.open(QIODevice::Append))
+    {
+        qWarning() << "Couldn't open " << myFilename << "for appending!";
+        return;
+    }
+
+    QTextStream writer(&contourFile);
+    QSharedPointer<QVector<Vec3>> triList;
+
+    foreach (triList, contourSaveList)
+    {
+        int count2 = triList->count();
+
+        writer << count2 << endl;
+
+        for (int i = 0; i < count2; i++)
+        {
+            writer << qSetRealNumberPrecision(3)
+                   << (*triList)[i].easting << ","
+                   << (*triList)[i].northing << ","
+                   << (*triList)[i].heading << endl;
+        }
+    }
+
+    contourSaveList.clear();
+    contourFile.close();
 }
 
 void FormGPS::fileSaveBoundary()
 {
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+
+    QDir saveDir(directoryName);
+    if (!saveDir.exists()) {
+        bool ok = saveDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    QString filename = directoryName + "/Boundary.txt";
+
+    QFile boundfile(filename);
+    if (!boundfile.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "Couldn't open " << filename << "for writing!";
+        return;
+    }
+
+    QTextStream writer(&boundfile);
+    writer << "$Boundary" << endl;
+    for(int i = 0; i < bnd.bndArr.count(); i++)
+    {
+        writer << (bnd.bndArr[i].isDriveThru ? "True" : "False") << endl;
+        writer << (bnd.bndArr[i].isDriveAround ? "True" : "False") << endl;
+        //writer.WriteLine(bnd.bndArr[i].isOwnField);
+
+        writer << bnd.bndArr[i].bndLine.count() << endl;
+        if (bnd.bndArr[i].bndLine.count() > 0)
+        {
+            for (int j = 0; j < bnd.bndArr[i].bndLine.count(); j++)
+                writer << qSetRealNumberPrecision(3)
+                       << bnd.bndArr[i].bndLine[j].easting << ","
+                       << bnd.bndArr[i].bndLine[j].northing << ","
+                       << qSetRealNumberPrecision(5)
+                       << bnd.bndArr[i].bndLine[j].heading << endl;
+        }
+    }
+
+
+    boundfile.close();
 
 }
 
 void FormGPS::fileSaveHeadland()
 {
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+
+    QDir saveDir(directoryName);
+    if (!saveDir.exists()) {
+        bool ok = saveDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    QString filename = directoryName + "/Headland.txt";
+
+    QFile headfile(filename);
+    if (!headfile.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "Couldn't open " << filename << "for writing!";
+        return;
+    }
+
+    QTextStream writer(&headfile);
+    writer << "$Headland" << endl;
+    for(int i = 0; i < hd.headArr.count(); i++)
+    {
+        writer << hd.headArr[i].hdLine.count() << endl;
+        if (hd.headArr[i].hdLine.count() > 0)
+        {
+            for (int j = 0; j < hd.headArr[i].hdLine.count(); j++)
+                writer << qSetRealNumberPrecision(3)
+                       << hd.headArr[i].hdLine[j].easting << ","
+                       << hd.headArr[i].hdLine[j].northing << ","
+                       << qSetRealNumberPrecision(5)
+                       << hd.headArr[i].hdLine[j].heading << endl;
+        }
+    }
+
+
+    headfile.close();
 
 }
 

@@ -313,7 +313,7 @@ int colorSettingStringToInt(QString colorSettingString);
 #define SETTINGS_SET_GPS_LOGNMEA(VAL)	settings.setValue("gps/logNMEA",VAL)
 
 #define SETTINGS_GPS_EXPECTRTK			settings.   value("gps/expectRTK", true).toBool()
-#define SETTINGS_SET_EXPECTRTK(VAL)	settings.setValue("gps/expectRTK",VAL)
+#define SETTINGS_SET_GPS_EXPECTRTK(VAL)	settings.setValue("gps/expectRTK",VAL)
 
 #define SETTINGS_GPS_NTRIPCASTERIP			settings.   value("gps/NTRIPCasterIP", "").toString()
 #define SETTINGS_SET_GPS_NTRIPCASTERIP(VAL)	settings.setValue("gps/NTRIPCasterIP",VAL)
@@ -506,6 +506,9 @@ int colorSettingStringToInt(QString colorSettingString);
 #define SETTINGS_COMM_UDPISON			settings.   value("communications/udpIsOn", false).toBool()
 #define SETTINGS_SET_COMM_UDPISON(VAL)	settings.setValue("communications/udpIsOn",VAL)
 
+//environment
+#define SETTINGS_ENVIRONMENT_NAME			settings.   value("environment/name", "unnamed").toQString()
+#define SETTINGS_SET_ENVIRONMENT_NAME(VAL)	settings.setValue("environment/name",VAL)
 
 
 #endif // AOGSETTINGS_H
