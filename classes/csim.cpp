@@ -28,7 +28,8 @@ void CSim::DoSimTick(double _st)
     CalculateNewPositionFromBearingDistance(latitude, longitude, degrees, stepDistance / 1000.0);
     //qDebug() << fixed << qSetRealNumberPrecision(7) << latitude << ", " << fixed << qSetRealNumberPrecision(7) << longitude;
     // calc the speed
-    speed = 1.944 * stepDistance * 10;
+    speed = 1.944 * stepDistance * 10; //in knots
+    //qDebug() << stepDistance << ", " << speed;
     sbSendText.append(BuildGGA().toLatin1());
     sbSendText.append(BuildVTG().toLatin1());
 
@@ -47,12 +48,21 @@ void CSim::CalculateNewPositionFromBearingDistance(double lat, double lng, doubl
 
     const double R = 6371; // Earth Radius in Km
 
-    double lat2 = qAsin((qSin(M_PI / 180 * lat) * qCos(distance / R)) + (qCos(M_PI / 180 * lat) * qSin(distance / R)
-                                                                         *qCos(M_PI / 180 * bearing)));
-    double lon2 = (M_PI / 180 * lng) + qAtan2(qSin(M_PI / 180 * bearing) * qSin(distance / R) *
-                                              qCos(M_PI / 180 * lat), qCos(distance / R) - (qSin(M_PI / 180 * lat) * qSin(lat2)));
+    double lat2 = asin((sin(M_PI / 180 * lat) * cos(distance / R))
+        + (cos(M_PI / 180 * lat) * sin(distance / R) * cos(M_PI / 180 * bearing)));
+
+    double lon2 = (M_PI / 180 * lng) + atan2(sin(M_PI / 180 * bearing) * sin(distance / R)
+        * cos(M_PI / 180 * lat), cos(distance / R) - (sin(M_PI / 180 * lat) * sin(lat2)));
+
+
+    //double lat2 = qAsin((qSin(M_PI / 180 * lat) * qCos(distance / R)) + (qCos(M_PI / 180 * lat) * qSin(distance / R)
+    //                                                                     *qCos(M_PI / 180 * bearing)));
+    //double lon2 = (M_PI / 180 * lng) + qAtan2(qSin(M_PI / 180 * bearing) * qSin(distance / R) *
+    //                                          qCos(M_PI / 180 * lat), qCos(distance / R) - (qSin(M_PI / 180 * lat) * qSin(lat2)));
     latitude = 180 / M_PI * lat2;
     longitude = 180 / M_PI * lon2;
+
+    //qDebug() << bearing <<" " << distance;
 
     // convert to DMS from Degrees
 

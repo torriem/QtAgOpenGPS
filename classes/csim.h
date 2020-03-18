@@ -25,6 +25,8 @@ public:
     QString BuildVTG();
     void DoSimTick(double _st);
 
+    double steerAngle;
+
 private:
     QString sbHDT;
     QString sbOGI;
@@ -38,7 +40,7 @@ private:
     QChar NS = 'N';
     double latitude, longitude;
     double latDeg, latMinu, longDeg, longMinu, latNMEA, longNMEA;
-    double speed = 4.0, headingTrue, stepDistance = 0.05, steerAngle;
+    double speed = 4.0, headingTrue, stepDistance = 0.05;
     double steerAngleScrollBar = 0;
     double degrees;
     const int fixQuality = 4, sats = 12;
