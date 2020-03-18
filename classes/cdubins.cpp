@@ -129,7 +129,7 @@ void GetRLRorLRLTangents(Vec2 startCircle, Vec2 goalCircle,
     Vec2 V2 = (startCircle - middleCircle);
     V2.normalize();
     Vec2 V3 = (goalCircle - middleCircle);
-    V2.normalize();
+    V3.normalize();
     V2 *= CDubinsTurningRadius;
     V3 *= CDubinsTurningRadius;
 // return ?
