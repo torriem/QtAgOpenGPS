@@ -4,6 +4,7 @@
 #include "glutils.h"
 #include "vec3.h"
 #include "vec2.h"
+#include "glm.h"
 
 CHeadLines::CHeadLines()
 {
@@ -133,6 +134,34 @@ void CHeadLines::drawHeadLineBackBuffer(QOpenGLFunctions *gl, const QMatrix4x4 &
             {
                 cntr++;
             }
+        }
+    }
+}
+
+void CHeadLines::preCalcHeadLines()
+{
+    int j = hdLine.count() - 1;
+    //clear the list, constant is easting, multiple is northing
+    calcList.clear();
+    Vec2 constantMultiple(0, 0);
+
+    for (int i = 0; i < hdLine.count(); j = i++)
+    {
+        //check for divide by zero
+        if (fabs(hdLine[i].northing - hdLine[j].northing) < glm::DOUBLE_EPSILON)
+        {
+            constantMultiple.easting = hdLine[i].easting;
+            constantMultiple.northing = 0;
+            calcList.append(constantMultiple);
+        }
+        else
+        {
+            //determine constant and multiple and add to list
+            constantMultiple.easting = hdLine[i].easting - ((hdLine[i].northing * hdLine[j].easting)
+                            / (hdLine[j].northing - hdLine[i].northing)) + ((hdLine[i].northing * hdLine[i].easting)
+                                / (hdLine[j].northing - hdLine[i].northing));
+            constantMultiple.northing = (hdLine[j].easting - hdLine[i].easting) / (hdLine[j].northing - hdLine[i].northing);
+            calcList.append(constantMultiple);
         }
     }
 }
