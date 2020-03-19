@@ -7,6 +7,7 @@
 #include "cmazegrid.h"
 #include "glm.h"
 #include "glutils.h"
+#include "aogsettings.h"
 
 CGeoFence::CGeoFence()
 {
@@ -186,8 +187,13 @@ bool CGeoFence::isPointInsideGeoFences(const CBoundary &bnd, const Vec2 pt)
     }
 }
 
-void CGeoFence::buildGeoFenceLines(CBoundary &bnd, double toolWidth, double ytGeoFenceDistance)
+void CGeoFence::buildGeoFenceLines(CBoundary &bnd)
 {
+    USE_SETTINGS;
+
+    double toolWidth = SETTINGS_TOOL_WIDTH;
+    double ytGeoFenceDistance = SETTINGS_VEHICLE_GEOFENCEDIST;
+
     if (bnd.bndArr.size() == 0)
     {
         return;

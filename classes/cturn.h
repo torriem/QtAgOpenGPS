@@ -37,7 +37,7 @@ public:
     void findClosestTurnPoint(const CBoundary &bnd, bool isYouTurnRight, Vec3 fromPt, double headAB);
     bool pointInsideWorkArea(const CBoundary &bnd, Vec2 pt);
     void resetTurnLines();
-    void buildTurnLines(const CBoundary &bnd, CFieldData &fd, double youTurnTriggerDistanceOffset);
+    void buildTurnLines(const CBoundary &bnd, CFieldData &fd);
     void drawTurnLines(const CBoundary &bnd, QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
     void drawClosestPoint(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
 

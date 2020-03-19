@@ -249,11 +249,12 @@ void CTurn::resetTurnLines()
 }
 
 //called by main forms
-void CTurn::buildTurnLines(const CBoundary &bnd, CFieldData &fd, double youTurnTriggerDistanceOffset)
+void CTurn::buildTurnLines(const CBoundary &bnd, CFieldData &fd)
 {
     USE_SETTINGS;
 
     double tool_toolWidth = SETTINGS_TOOL_WIDTH;
+    double youTurnTriggerDistanceOffset = SETTINGS_VEHICLE_YOUTURNTRIGGERDISTANCE;
 
     //update the GUI values for boundaries
     fd.updateFieldBoundaryGUIAreas(bnd);

@@ -14,13 +14,14 @@ class CFieldData : public QObject
 {
     Q_OBJECT
 private:
+
+public:
     //all the section area added up;
     double workedAreaTotal;
 
     //just a cumulative tally based on distance and eq width.
     double workedAreaTotalUser;
 
-public:
     //accumulated user distance
     double distanceUser;
     double barPercent = 0;

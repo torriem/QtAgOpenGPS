@@ -27,8 +27,7 @@ public:
     bool isPointInsideGeoFences(const CBoundary &bnd, const Vec3 pt);
     bool isPointInsideGeoFences(const CBoundary &bnd, const Vec2 pt);
 
-    void buildGeoFenceLines(CBoundary &bnd, double toolWidth,
-                            double ytGeoFenceDistance);
+    void buildGeoFenceLines(CBoundary &bnd);
 
     void drawGeoFenceLines(const CBoundary &bnd, QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
 };
