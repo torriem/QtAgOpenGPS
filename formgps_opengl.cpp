@@ -1342,3 +1342,85 @@ void FormGPS::loadGLTextures()
 
     initializeTextures();
 }
+
+//determine mins maxs of patches and whole field.
+void FormGPS::calculateMinMax()
+{
+
+    minFieldX = 9999999; minFieldY = 9999999;
+    maxFieldX = -9999999; maxFieldY = -9999999;
+
+
+    //min max of the boundary
+    //min max of the boundary
+    if (bnd.bndArr.count() > 0)
+    {
+        int bndCnt = bnd.bndArr[0].bndLine.count();
+        for (int i = 0; i < bndCnt; i++)
+        {
+            double x = bnd.bndArr[0].bndLine[i].easting;
+            double y = bnd.bndArr[0].bndLine[i].northing;
+
+            //also tally the max/min of field x and z
+            if (minFieldX > x) minFieldX = x;
+            if (maxFieldX < x) maxFieldX = x;
+            if (minFieldY > y) minFieldY = y;
+            if (maxFieldY < y) maxFieldY = y;
+        }
+
+    }
+    else
+    {
+        //draw patches j= # of sections
+        for (int j = 0; j < SETTINGS_TOOL_NUMSECTIONS; j++)
+        {
+            //every time the section turns off and on is a new patch
+            int patchCount = tool.section[j].patchList.count();
+
+            if (patchCount > 0)
+            {
+                //for every new chunk of patch
+                QSharedPointer<TriangleList> triList;
+
+                foreach (triList, tool.section[j].patchList)
+                {
+                    int count2 = triList->count();
+                    for (int i = 0; i < count2; i += 3)
+                    {
+                        double x = (*triList)[i].x();
+                        double y = (*triList)[i].y();
+
+                        //also tally the max/min of field x and z
+                        if (minFieldX > x) minFieldX = x;
+                        if (maxFieldX < x) maxFieldX = x;
+                        if (minFieldY > y) minFieldY = y;
+                        if (maxFieldY < y) maxFieldY = y;
+                    }
+                }
+            }
+        }
+    }
+
+
+    if (maxFieldX == -9999999 || minFieldX == 9999999 || maxFieldY == -9999999 || minFieldY == 9999999)
+    {
+        maxFieldX = 0; minFieldX = 0; maxFieldY = 0; minFieldY = 0;
+    }
+    else
+    {
+        //the largest distancew across field
+        double dist = fabs(minFieldX - maxFieldX);
+        double dist2 = fabs(minFieldY - maxFieldY);
+
+        if (dist > dist2) maxFieldDistance = (dist);
+        else maxFieldDistance = (dist2);
+
+        if (maxFieldDistance < 100) maxFieldDistance = 100;
+        if (maxFieldDistance > 19900) maxFieldDistance = 19900;
+        //lblMax.Text = ((int)maxFieldDistance).ToString();
+
+        fieldCenterX = (maxFieldX + minFieldX) / 2.0;
+        fieldCenterY = (maxFieldY + minFieldY) / 2.0;
+    }
+
+}
