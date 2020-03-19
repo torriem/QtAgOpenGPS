@@ -520,6 +520,9 @@ public:
     void processSectionOnOffRequests(bool isMapping);
     bool scanForNMEA();
 
+    void jobNew();
+    void jobClose();
+
     /**************************
      * SerialComm.Designer.cs *
      **************************/

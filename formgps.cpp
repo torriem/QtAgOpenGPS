@@ -69,7 +69,7 @@ FormGPS::FormGPS(QWidget *parent) :
     bnd.bndArr.append(boundary);
 
     gf.geoFenceArr.append(CGeoFenceLines());
-    gf.buildGeoFenceLines(bnd, SETTINGS_TOOL_WIDTH, SETTINGS_VEHICLE_GEOFENCEDIST);
+    gf.buildGeoFenceLines(bnd);
 
     //turn on the right number of section buttons.
     //we don't need to do this on resize, but we will need
@@ -1363,4 +1363,278 @@ void FormGPS::onHeadingSource(int tempInt)
         headingFromSource = "Fix";
     }
     else { headingFromSource = headingFromSourceBak; }
+}
+
+void FormGPS::jobClose()
+{
+    //settings are always live in FormGPS
+
+    pn.fixOffset.easting = 0;
+    pn.fixOffset.northing = 0;
+    hd.isOn = false;
+    //TODO: btnHeadlandOnOff.Image = Properties.Resources.HeadlandOff;
+
+    //make sure hydraulic lift is off
+    mc.machineData[mc.mdHydLift] = 0;
+    SETTINGS_SET_VEHICLE_ISHYDLIFTON(false);
+    //TODO: btnHydLift.Image = Properties.Resources.HydraulicLiftOff;
+
+    //zoom gone
+    //TODO: oglZoom.SendToBack();
+
+    //clean all the lines
+    bnd.bndArr.clear();
+    gf.geoFenceArr.clear();
+    turn.turnArr.clear();
+    hd.headArr[0].hdLine.clear();
+
+    //TODO: layoutPanelRight.Enabled = false;
+    //TODO: toolStripBtnDropDownBoundaryTools.Enabled = false;
+
+    //TODO: menustripLanguage.Enabled = true;
+    isJobStarted = false;
+
+    //reset the lat lon start pos
+    pn.latStart = 0;
+    pn.lonStart = 0;
+
+    //turn section buttons all OFF
+    for (int j = 0; j < MAXSECTIONS; j++)
+    {
+        tool.section[j].isAllowedOn = false;
+        tool.section[j].manBtnState = btnStates::On;
+    }
+
+    //fix ManualOffOnAuto buttons
+    //TODO: btnManualOffOn.Enabled = false;
+    manualBtnState = btnStates::Off;
+    //TODO: btnManualOffOn.Image = Properties.Resources.ManualOff;
+
+    //fix auto button
+    //TODO: btnSectionOffAutoOn.Enabled = false;
+    autoBtnState = btnStates::Off;
+    //TODO: btnSectionOffAutoOn.Image = Properties.Resources.SectionMasterOff;
+
+    //Update the button colors and text
+    manualAllBtnsUpdate();
+
+    //enable disable manual buttons
+    lineUpManualBtns();
+
+    /*
+     TODO:
+    btnSection1Man.Enabled = false;
+    btnSection2Man.Enabled = false;
+    btnSection3Man.Enabled = false;
+    btnSection4Man.Enabled = false;
+    btnSection5Man.Enabled = false;
+    btnSection6Man.Enabled = false;
+    btnSection7Man.Enabled = false;
+    btnSection8Man.Enabled = false;
+    btnSection9Man.Enabled = false;
+    btnSection10Man.Enabled = false;
+    btnSection11Man.Enabled = false;
+    btnSection12Man.Enabled = false;
+    btnSection13Man.Enabled = false;
+    btnSection14Man.Enabled = false;
+    btnSection15Man.Enabled = false;
+    btnSection16Man.Enabled = false;
+
+    btnSection1Man.BackColor = Color.Silver;
+    btnSection2Man.BackColor = Color.Silver;
+    btnSection3Man.BackColor = Color.Silver;
+    btnSection4Man.BackColor = Color.Silver;
+    btnSection5Man.BackColor = Color.Silver;
+    btnSection6Man.BackColor = Color.Silver;
+    btnSection7Man.BackColor = Color.Silver;
+    btnSection8Man.BackColor = Color.Silver;
+    btnSection9Man.BackColor = Color.Silver;
+    btnSection10Man.BackColor = Color.Silver;
+    btnSection11Man.BackColor = Color.Silver;
+    btnSection12Man.BackColor = Color.Silver;
+    btnSection13Man.BackColor = Color.Silver;
+    btnSection14Man.BackColor = Color.Silver;
+    btnSection15Man.BackColor = Color.Silver;
+    btnSection16Man.BackColor = Color.Silver;
+    */
+
+    //clear the section lists
+    for (int j = 0; j < MAXSECTIONS; j++)
+    {
+        //clean out the lists
+        tool.section[j].patchList.clear();
+        tool.section[j].triangleList.clear();
+    }
+
+    //clear the flags
+    flagPts.clear();
+    //btnFlag.Enabled = false;
+
+    //ABLine
+    //btnABLine.Enabled = false;
+    //btnABLine.Image = Properties.Resources.ABLineOff;
+    ABLine.isBtnABLineOn = false;
+    ABLine.deleteAB();
+    ABLine.lineArr.clear();
+    ABLine.numABLineSelected = 0;
+    ABLine.tramArr.clear();
+    ABLine.tramList.clear();
+
+    //curve line
+    //btnCurve.Enabled = false;
+    //btnCurve.Image = Properties.Resources.CurveOff;
+    curve.isBtnCurveOn = false;
+    curve.isCurveSet = false;
+    curve.resetCurveLine();
+    curve.curveArr.clear();
+    curve.numCurveLineSelected = 0;
+    curve.tramArr.clear();
+    curve.tramList.clear();
+
+    //clean up tram
+    tram.displayMode = 0;
+    tram.outArr.clear();
+
+    //clear out contour and Lists
+    //btnContour.Enabled = false;
+    //btnContourPriority.Enabled = false;
+    //btnContourPriority.Image = Properties.Resources.Snap2;
+    ct.resetContour();
+    ct.isContourBtnOn = false;
+    //btnContour.Image = Properties.Resources.ContourOff;
+    ct.isContourOn = false;
+
+    //btnMakeLinesFromBoundary.Enabled = false;
+    //btnCycleLines.Enabled = false;
+
+    //AutoSteer
+    //btnAutoSteer.Enabled = false;
+    isAutoSteerBtnOn = false;
+    //btnAutoSteer.Image = Properties.Resources.AutoSteerOff;
+
+    //auto YouTurn shutdown
+    yt.isYouTurnBtnOn = false;
+    //btnAutoYouTurn.Image = Properties.Resources.YouTurnNo;
+    //btnAutoYouTurn.Enabled = false;
+    yt.resetYouTurn();
+    //DisableYouTurnButtons();
+
+    //reset acre and distance counters
+    fd.workedAreaTotal = 0;
+
+    //reset boundaries
+    bnd.resetBoundaries();
+
+    //reset turn lines
+    turn.resetTurnLines();
+
+    //reset GUI areas
+    fd.updateFieldBoundaryGUIAreas(bnd);
+
+    ////turn off path record
+    recPath.recList.clear();
+    if (recPath.isRecordOn)
+    {
+        recPath.isRecordOn = false;
+        //recordPathMenu.Image = Properties.Resources.BoundaryRecord;
+    }
+
+    //reset all Port Module values
+    mc.resetAllModuleCommValues();
+
+
+}
+
+void FormGPS::jobNew()
+{
+    /*
+     * TODO:
+    if (Settings.Default.setMenu_isOGLZoomOn == 1)
+    {
+        oglZoom.BringToFront();
+        oglZoom.Width = 300;
+        oglZoom.Height = 300;
+    }
+    */
+        //isGPSPositionInitialized = false;
+        //offset = 0;
+        //pn.latStart = pn.latitude;
+        //pn.lonStart = pn.longitude;
+
+    sendSteerSettingsOutAutoSteerPort();
+    isJobStarted = true;
+    startCounter = 0;
+
+    //btnManualOffOn.Enabled = true;
+    manualBtnState = btnStates::Off;
+    //btnManualOffOn.Image = Properties.Resources.ManualOff;
+
+    //btnSectionOffAutoOn.Enabled = true;
+    autoBtnState = btnStates::Off;
+    //btnSectionOffAutoOn.Image = Properties.Resources.SectionMasterOff;
+
+    /*
+    btnSection1Man.BackColor = Color.Red;
+    btnSection2Man.BackColor = Color.Red;
+    btnSection3Man.BackColor = Color.Red;
+    btnSection4Man.BackColor = Color.Red;
+    btnSection5Man.BackColor = Color.Red;
+    btnSection6Man.BackColor = Color.Red;
+    btnSection7Man.BackColor = Color.Red;
+    btnSection8Man.BackColor = Color.Red;
+    btnSection9Man.BackColor = Color.Red;
+    btnSection10Man.BackColor = Color.Red;
+    btnSection11Man.BackColor = Color.Red;
+    btnSection12Man.BackColor = Color.Red;
+    btnSection13Man.BackColor = Color.Red;
+    btnSection14Man.BackColor = Color.Red;
+    btnSection15Man.BackColor = Color.Red;
+    btnSection16Man.BackColor = Color.Red;
+
+    btnSection1Man.Enabled = true;
+    btnSection2Man.Enabled = true;
+    btnSection3Man.Enabled = true;
+    btnSection4Man.Enabled = true;
+    btnSection5Man.Enabled = true;
+    btnSection6Man.Enabled = true;
+    btnSection7Man.Enabled = true;
+    btnSection8Man.Enabled = true;
+    btnSection9Man.Enabled = true;
+    btnSection10Man.Enabled = true;
+    btnSection11Man.Enabled = true;
+    btnSection12Man.Enabled = true;
+    btnSection13Man.Enabled = true;
+    btnSection14Man.Enabled = true;
+    btnSection15Man.Enabled = true;
+    btnSection16Man.Enabled = true;
+    */
+
+
+    // btnABLine.Enabled = true;
+    //btnContour.Enabled = true;
+    //btnCurve.Enabled = true;
+    //btnMakeLinesFromBoundary.Enabled = true;
+    //btnCycleLines.Enabled = true;
+
+    ABLine.abHeading = 0.00;
+    //btnAutoSteer.Enabled = true;
+
+    //disableYouTurnButtons();
+    //btnFlag.Enabled = true;
+
+    //btnContourPriority.Image = Properties.Resources.Snap2;
+
+    if (recPath.isRecordOn)
+    {
+        recPath.isRecordOn = false;
+    }
+
+    lineUpManualBtns();
+
+    //update the menu
+    //this.menustripLanguage.Enabled = false;
+    //layoutPanelRight.Enabled = true;
+    //boundaryToolStripBtn.Enabled = true;
+    //toolStripBtnDropDownBoundaryTools.Enabled = true;
+
 }
