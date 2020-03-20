@@ -2127,28 +2127,189 @@ void FormGPS::fileSaveHeadland()
 
 void FormGPS::fileCreateRecPath()
 {
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
 
+    QDir saveDir(directoryName);
+    if (!saveDir.exists()) {
+        bool ok = saveDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    QString filename = directoryName + "/RecPath.txt";
+
+    QFile recpathfile(filename);
+    if (!recpathfile.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "Couldn't open " << filename << "for writing!";
+        return;
+    }
+
+    QTextStream writer(&recpathfile);
+
+    writer << "$RecPath" << endl;
+    writer << "0" << endl;
+
+    recpathfile.close();
 
 }
 
 void FormGPS::fileSaveRecPath()
 {
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+
+    QDir saveDir(directoryName);
+    if (!saveDir.exists()) {
+        bool ok = saveDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    QString filename = directoryName + "/RecPath.txt";
+
+    QFile recpathfile(filename);
+    if (!recpathfile.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "Couldn't open " << filename << "for writing!";
+        return;
+    }
+
+    QTextStream writer(&recpathfile);
+
+    writer << "$RecPath" << endl;
+    writer << recPath.recList.count() << endl;
+
+    if (recPath.recList.count() > 0)
+    {
+        for (int j = 0; j < recPath.recList.count(); j++)
+            writer << qSetRealNumberPrecision(3)
+                   << recPath.recList[j].easting << ","
+                   << recPath.recList[j].northing << ","
+                   << recPath.recList[j].heading << ","
+                   << qSetRealNumberPrecision(1)
+                   << recPath.recList[j].speed << ","
+                   << recPath.recList[j].autoBtnState << endl;
+
+    }
+
+    recpathfile.close();
 
 }
 
 void FormGPS::fileSaveFlags()
 {
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+
+    QDir saveDir(directoryName);
+    if (!saveDir.exists()) {
+        bool ok = saveDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    QString filename = directoryName + "/Flags.txt";
+
+    QFile flagsfile(filename);
+    if (!flagsfile.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "Couldn't open " << filename << "for writing!";
+        return;
+    }
+
+    QTextStream writer(&flagsfile);
+
+    writer << "$Flags" << endl;
+
+    int count2 = flagPts.count();
+    writer << count2 << endl;
+
+    for (int i = 0; i < count2; i++)
+    {
+        writer << flagPts[i].latitude << ","
+               << flagPts[i].longitude << ","
+               << flagPts[i].easting << ","
+               << flagPts[i].northing << ","
+               << flagPts[i].heading << ","
+               << flagPts[i].color << ","
+               << flagPts[i].ID << ","
+               << flagPts[i].notes << endl;
+    }
+
+    flagsfile.close();
 
 }
 
 void FormGPS::fileSaveNMEA()
 {
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
 
+    QDir saveDir(directoryName);
+    if (!saveDir.exists()) {
+        bool ok = saveDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    QString filename = directoryName + "/NMEA_log.txt";
+
+    QFile nmeafile(filename);
+    if (!nmeafile.open(QIODevice::Append))
+    {
+        qWarning() << "Couldn't open " << filename << "for writing!";
+        return;
+    }
+
+    QTextStream writer(&nmeafile);
+
+    writer << pn.logNMEASentence;
+
+    pn.logNMEASentence.clear();
+
+    nmeafile.close();
 }
 
 void FormGPS::fileSaveElevation()
 {
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
 
+    QDir saveDir(directoryName);
+    if (!saveDir.exists()) {
+        bool ok = saveDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    QString filename = directoryName + "/Elevation.txt";
+
+    QFile elevfile(filename);
+    if (!elevfile.open(QIODevice::Append))
+    {
+        qWarning() << "Couldn't open " << filename << "for writing!";
+        return;
+    }
+
+    QTextStream writer(&elevfile);
+
+    writer << sbFix;
+
+    sbFix.clear();
+
+    elevfile.close();
 }
 
 void FormGPS::fileSaveSingleFlagKML2(int flagNumber)
