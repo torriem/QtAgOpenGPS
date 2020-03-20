@@ -132,7 +132,11 @@ void CNMEA::updateNorthingEasting()
 
 void CNMEA::parseNMEA(double lastHeading, double roll)
 {
+    USE_SETTINGS;
     if (!rawBuffer.size()) return;
+
+    if(SETTINGS_GPS_LOGNMEA)
+            this->logNMEASentence.append(this->rawBuffer);
 
     //find end of a sentence
     int cr = rawBuffer.indexOf("\r\n");

@@ -312,6 +312,9 @@ int colorSettingStringToInt(QString colorSettingString);
 #define SETTINGS_GPS_LOGNMEA			settings.   value("gps/logNMEA", false).toBool()
 #define SETTINGS_SET_GPS_LOGNMEA(VAL)	settings.setValue("gps/logNMEA",VAL)
 
+#define SETTINGS_GPS_LOGELEVATION			settings.   value("gps/logElevation", false).toBool()
+#define SETTINGS_SET_GPS_LOGELEVATION(VAL)	settings.setValue("gps/logElevation",VAL)
+
 #define SETTINGS_GPS_EXPECTRTK			settings.   value("gps/expectRTK", true).toBool()
 #define SETTINGS_SET_GPS_EXPECTRTK(VAL)	settings.setValue("gps/expectRTK",VAL)
 

@@ -141,11 +141,12 @@ void FormGPS::updateFixPosition()
         stepFixPts[(totalFixSteps - 1)].heading = 0;
 
         //grab sentences for logging
-        if (isLogNMEA)
-        {
+        //MOVED to CNMEA
+        //if (isLogNMEA)
+        //{
             //TODO implement logging
-            //logNMEASentence.append(recvSentenceSettings);
-        }
+        //    logNMEASentence.append(recvSentenceSettings);
+        //}
 
         calculateSectionLookAhead(vehicle.toolPos.northing,
                                   vehicle.toolPos.easting,
@@ -159,11 +160,19 @@ void FormGPS::updateFixPosition()
             addSectionOrContourPathPoints();
 
             //grab fix and elevation
-            /*
-            if (isLogElevation) sbFix.append(pn.fix.easting.ToString("N2") + "," + pn.fix.northing.ToString("N2") + ","
-                                                + pn.altitude.ToString("N2") + ","
-                                                + pn.latitude + "," + pn.longitude + "\r\n");
-                                                */
+            if (SETTINGS_GPS_LOGELEVATION)
+            {
+                sbFix.append(QByteArray::number(pn.fix.easting, 'f', 2));
+                sbFix.append(",");
+                sbFix.append(QByteArray::number(pn.fix.northing, 'f', 2));
+                sbFix.append(",");
+                sbFix.append(QByteArray::number(pn.altitude, 'f', 2));
+                sbFix.append(",");
+                sbFix.append(QByteArray::number(pn.latitude, 'f', 9));
+                sbFix.append(",");
+                sbFix.append(QByteArray::number(pn.longitude, 'f', 9));
+                sbFix.append("\r\n");
+            }
         }
         //test if travelled far enough for new boundary point
         if(bnd.isOkToAddPoints)

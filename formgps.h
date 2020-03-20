@@ -295,6 +295,7 @@ public:
 
     Vec2 prevBoundaryPos = Vec2(0, 0);
 
+    QByteArray sbFix;
 
 
     //headings
