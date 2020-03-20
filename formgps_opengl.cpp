@@ -42,13 +42,15 @@ void FormGPS::openGLControl_Draw()
     gl->glViewport(0,0,width,height);
     //qDebug() << width << height;
 
+    /*
 #ifdef GL_POINT_SPRITE
     //not compatible with OpenGL ES
     gl->glEnable(GL_POINT_SPRITE);
 #endif
-#ifdef GL_VERTEX_PROGRAM_POINT_SIZE
-    //not compatibel with OpenGL ES
-    gl->glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+    */
+#ifdef GL_PROGRAM_POINT_SIZE
+    //not required on OpenGL ES
+    gl->glEnable(GL_PROGRAM_POINT_SIZE);
 #endif
 
     //Do stuff that was in the initialized method, since Qt uses OpenGL and may
