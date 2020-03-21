@@ -1400,7 +1400,10 @@ void FormGPS::fileOpenField(QString fieldDir)
     QStringList offs = line.split(',');
     pn.utmEast = offs[0].toInt();
     pn.utmNorth = offs[1].toInt();
+    pn.actualEasting = offs[0].toDouble();
+    pn.actualNorthing = offs[1].toDouble();
     pn.zone = offs[2].toInt();
+    isFirstFixPositionSet = true;
 
     //create a new grid
     worldGrid.createWorldGrid(pn.actualNorthing - pn.utmNorth, pn.actualEasting - pn.utmEast);
@@ -1425,6 +1428,9 @@ void FormGPS::fileOpenField(QString fieldDir)
         pn.lonStart = offs[1].toDouble();
     }
 
+    sim.latitude = pn.latStart;
+    sim.longitude = pn.lonStart;
+
     fieldFile.close();
 
 
@@ -1438,7 +1444,8 @@ void FormGPS::fileOpenField(QString fieldDir)
         //ABLine.refPoint2 = ABLine.lineArr[ABLine.numABLineSelected - 1].ref2;
         ABLine.abHeading = ABLine.lineArr[ABLine.numABLineSelected - 1].heading;
         ABLine.setABLineByHeading(ABLine.abHeading);
-        ABLine.isABLineSet = false;
+        //ABLine.isABLineSet = false;
+        ABLine.isABLineSet = true;
         ABLine.isABLineLoaded = true;
     }
     else
@@ -1742,54 +1749,53 @@ void FormGPS::fileOpenField(QString fieldDir)
     {
         qWarning() << "Couldn't open headland " << filename << "for reading!";
         //TODO timed messagebox
-        return;
-    }
+    } else {
+        reader.setDevice(&headlandFile);
 
-    reader.setDevice(&headlandFile);
-
-    //read header
-    line = reader.readLine();
-
-    for (int k = 0; true; k++)
-    {
-        if (reader.atEnd()) break;
-
-        hd.headArr[0].hdLine.clear();
-
-        //read the number of points
+        //read header
         line = reader.readLine();
-        int numPoints = line.toInt();
 
-        if (numPoints > 0 && bnd.bndArr.count() >= hd.headArr.count())
+        for (int k = 0; true; k++)
         {
+            if (reader.atEnd()) break;
 
-            hd.headArr[k].hdLine.clear();
-            hd.headArr[k].calcList.clear();
+            hd.headArr[0].hdLine.clear();
 
-            //load the line
-            for (int i = 0; i < numPoints; i++)
+            //read the number of points
+            line = reader.readLine();
+            int numPoints = line.toInt();
+
+            if (numPoints > 0 && bnd.bndArr.count() >= hd.headArr.count())
             {
-                line = reader.readLine();
-                QStringList words = line.split(',');
-                Vec3 vecPt(words[0].toDouble(),
-                           words[1].toDouble(),
-                           words[2].toDouble());
-                hd.headArr[k].hdLine.append(vecPt);
 
-                if (gf.geoFenceArr[0].isPointInGeoFenceArea(vecPt)) hd.headArr[0].isDrawList.append(true);
-                else hd.headArr[0].isDrawList.append(false);
+                hd.headArr[k].hdLine.clear();
+                hd.headArr[k].calcList.clear();
+
+                //load the line
+                for (int i = 0; i < numPoints; i++)
+                {
+                    line = reader.readLine();
+                    QStringList words = line.split(',');
+                    Vec3 vecPt(words[0].toDouble(),
+                               words[1].toDouble(),
+                               words[2].toDouble());
+                    hd.headArr[k].hdLine.append(vecPt);
+
+                    if (gf.geoFenceArr[0].isPointInGeoFenceArea(vecPt)) hd.headArr[0].isDrawList.append(true);
+                    else hd.headArr[0].isDrawList.append(false);
+                }
+                hd.headArr[k].preCalcHeadLines();
             }
-            hd.headArr[k].preCalcHeadLines();
         }
+
+        //if (hd.headArr[0].hdLine.count() > 0) hd.isOn = true;
+        hd.isOn = false;
+
+        //if (hd.isOn) btnHeadlandOnOff.Image = Properties.Resources.HeadlandOn;
+        //TODO: btnHeadlandOnOff.Image = Properties.Resources.HeadlandOff;
+
+        headlandFile.close();
     }
-
-    //if (hd.headArr[0].hdLine.count() > 0) hd.isOn = true;
-    hd.isOn = false;
-
-    //if (hd.isOn) btnHeadlandOnOff.Image = Properties.Resources.HeadlandOn;
-    //TODO: btnHeadlandOnOff.Image = Properties.Resources.HeadlandOff;
-
-    headlandFile.close();
 
     //Recorded Path
     filename = directoryName + "/RecPath.txt";

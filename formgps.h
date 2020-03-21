@@ -395,7 +395,7 @@ public:
     bool fileOpenTool(QString filename);
     void fileSaveEnvironment(QString filename);
     bool fileOpenEnvironment(QString filename);
-    void fileOpenField(QString openType);
+    void fileOpenField(QString fieldDir);
     void fileCreateField();
     void fileCreateElevation();
     void fileSaveSections();

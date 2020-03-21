@@ -198,7 +198,7 @@ int colorSettingStringToInt(QString colorSettingString);
 #define SETTINGS_SET_VEHICLE_MAXSTEERANGLE(VAL)	settings.setValue("vehicle/maxSteerAngle",VAL)
 
 #define SETTINGS_VEHICLE_ISHYDLIFTON			settings.   value("vehicle/isHydLiftOn", false).toBool()
-#define SETTINGS_SET_VEHICLE_ISHYDLIFTON(VAL)	settings.setValue("vehicle/stanleyHeadingErrorGain",VAL)
+#define SETTINGS_SET_VEHICLE_ISHYDLIFTON(VAL)	settings.setValue("vehicle/isHydLiftOn",VAL)
 
 #define SETTINGS_VEHICLE_HYDLIFTLOOKAHEAD			settings.   value("vehicle/hydraulicLiftLookAhead", 2).toDouble()
 #define SETTINGS_SET_VEHICLE_HYDLIFTLOOKAHEAD(VAL)	settings.setValue("vehicle/hydraulicLiftLookAhead",VAL)

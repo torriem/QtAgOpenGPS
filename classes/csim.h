@@ -26,6 +26,8 @@ public:
     void DoSimTick(double _st);
 
     double steerAngle;
+    double latitude, longitude;
+    double altitude = 300;
 
 private:
     QString sbHDT;
@@ -38,14 +40,12 @@ private:
     const double simLon = 127.0197155;
     QChar EW = 'W';
     QChar NS = 'N';
-    double latitude, longitude;
     double latDeg, latMinu, longDeg, longMinu, latNMEA, longNMEA;
     double speed = 4.0, headingTrue, stepDistance = 0.05;
     double steerAngleScrollBar = 0;
     double degrees;
     const int fixQuality = 4, sats = 12;
     const double HDOP = 0.9;
-    double altitude = 300;
 
     // The checksum of an NMEA line
     QString sumStr = "";
