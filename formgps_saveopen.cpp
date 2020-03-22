@@ -3,6 +3,25 @@
 #include "aogsettings.h"
 #include "cmodulecomm.h"
 
+QString caseInsensitiveFilename(QString directory, QString filename)
+{
+    //A bit of a hack to work with files from AOG that might not have
+    //the exact case we are expecting. For example, Boundaries.Txt and
+    //Headland.Txt (vs txt).
+
+    QStringList search;
+    QDir findDir(directory);
+
+    search << filename;
+
+    findDir.setNameFilters(search); //seems to be case insensitive
+    if (findDir.count() > 0)
+        return findDir[0];
+    else
+        return filename;
+
+}
+
 void FormGPS::fileSaveCurveLines()
 {
     curve.moveDistance = 0;
@@ -18,9 +37,8 @@ void FormGPS::fileSaveCurveLines()
             return;
         }
     }
-    qDebug() << directoryName;
 
-    QString filename = directoryName + "/CurveLines.txt";
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "CurveLines.txt");
 
     int cnt = curve.curveArr.count();
     curve.numCurveLines = cnt;
@@ -85,7 +103,7 @@ void FormGPS::fileLoadCurveLines()
         }
     }
 
-    QString filename = directoryName + "/CurveLines.txt";
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "CurveLines.txt");
 
     QFile curveFile(filename);
     if (!curveFile.open(QIODevice::ReadOnly))
@@ -164,7 +182,7 @@ void FormGPS::fileSaveABLines()
         }
     }
 
-    QString filename = directoryName + "/ABLines.txt";
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "ABLines.txt" );
 
     QFile lineFile(filename);
     if (!lineFile.open(QIODevice::WriteOnly))
@@ -212,7 +230,7 @@ void FormGPS::fileLoadABLines()
         }
     }
 
-    QString filename = directoryName + "/ABLines.txt";
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "ABLines.txt");
 
     QFile linesFile(filename);
     if (!linesFile.open(QIODevice::ReadOnly))
@@ -265,10 +283,12 @@ void FormGPS::fileSaveVehicle(QString filename)
 {
     USE_SETTINGS;
 
-    vehicleFileName = QFileInfo(filename).baseName() + " - ";
+    QFileInfo vehicleFile(filename);
+    QString vehicleFileName = vehicleFile.baseName() + " - ";
+
     SETTINGS_SET_VEHICLE_NAME(vehicleFileName);
 
-    QFile saveFile(filename);
+    QFile saveFile(vehicleFile.path() + "/" + caseInsensitiveFilename(vehicleFile.path(), vehicleFile.fileName()));
     if( ! saveFile.open(QIODevice::WriteOnly)) {
         qDebug() << "Cannot open " << filename << " for writing.";
         //TODO pop up error message
@@ -395,17 +415,18 @@ bool FormGPS::fileOpenVehicle(QString filename)
 {
     USE_SETTINGS;
 
-    QFile openFile(filename);
+    QString line;
+
+    QFileInfo vehicleFile(filename);
+    line = vehicleFile.baseName() + " - ";
+    SETTINGS_SET_VEHICLE_NAME(line);
+
+    QFile openFile(vehicleFile.path() + "/" + caseInsensitiveFilename(vehicleFile.path(), vehicleFile.fileName()));
     if(! openFile.open(QIODevice::ReadOnly)) {
         qDebug() << "Cannot open " << filename << " for reading.";
         //TODO: popup error message
         return false;
     }
-
-    QString line;
-
-    line = QFileInfo(filename).baseName() + " - ";
-    SETTINGS_SET_VEHICLE_NAME(line);
 
     QTextStream reader(&openFile);
 
@@ -709,11 +730,13 @@ bool FormGPS::fileOpenVehicle(QString filename)
 void FormGPS::fileSaveTool(QString filename)
 {
     USE_SETTINGS;
-    toolFileName = QFileInfo(filename).baseName() + " - ";
+    QFileInfo toolFile(filename);
+
+    toolFileName = toolFile.baseName() + " - ";
 
     SETTINGS_SET_TOOL_NAME(toolFileName);
     
-    QFile saveFile(filename);
+    QFile saveFile(toolFile.path() + "/" + caseInsensitiveFilename(toolFile.path(), toolFile.fileName()));
     if( ! saveFile.open(QIODevice::WriteOnly)) {
         qDebug() << "Cannot open " << filename << " for writing.";
         //TODO pop up error message
@@ -815,18 +838,19 @@ bool FormGPS::fileOpenTool(QString filename)
 {
     USE_SETTINGS;
 
-    QFile openFile(filename);
+    QString line;
+
+    QFileInfo toolFile(filename);
+    line = toolFile.baseName() + " - ";
+    SETTINGS_SET_TOOL_NAME(line);
+    toolFileName = line; //remove this and use setting directly in other code
+
+    QFile openFile(toolFile.path() + "/" + caseInsensitiveFilename(toolFile.path(), toolFile.fileName()));
     if(! openFile.open(QIODevice::ReadOnly)) {
         qDebug() << "Cannot open " << filename << " for reading.";
         //TODO: popup error message
         return false;
     }
-
-    QString line;
-
-    line = QFileInfo(filename).baseName() + " - ";
-    SETTINGS_SET_TOOL_NAME(line);
-    toolFileName = line; //remove this and use setting directly in other code
 
     QTextStream reader(&openFile);
 
@@ -1006,11 +1030,12 @@ bool FormGPS::fileOpenTool(QString filename)
 void FormGPS::fileSaveEnvironment(QString filename)
 {
     USE_SETTINGS;
-    QString envFileName = QFileInfo(filename).baseName() + " - ";
+    QFileInfo envFile(filename);
+    QString envFileName = envFile.baseName() + " - ";
 
     SETTINGS_SET_DISPLAY_NAME(envFileName);
 
-    QFile saveFile(filename);
+    QFile saveFile(envFile.path() + "/" + caseInsensitiveFilename(envFile.path(), envFile.fileName()));
     if( ! saveFile.open(QIODevice::WriteOnly)) {
         qDebug() << "Cannot open " << filename << " for writing.";
         //TODO pop up error message
@@ -1354,7 +1379,7 @@ void FormGPS::fileOpenField(QString fieldDir)
     QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
             + "/" + QCoreApplication::applicationName() + "/Fields/" + fieldDir;
 
-    QString filename = directoryName + "/Field.txt";
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Field.txt");
 
     QFile fieldFile(filename);
     if (!fieldFile.open(QIODevice::ReadOnly))
@@ -1477,7 +1502,7 @@ void FormGPS::fileOpenField(QString fieldDir)
     }
 
     //section patches
-    filename = directoryName + "/Sections.txt";
+    filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Sections.txt");
 
     QFile sectionsFile(filename);
     if (!sectionsFile.open(QIODevice::ReadOnly))
@@ -1544,7 +1569,7 @@ void FormGPS::fileOpenField(QString fieldDir)
 
     // Contour points ----------------------------------------------------------------------------
 
-    filename = directoryName + "/Contour.txt";
+    filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Contour.txt");
 
     QFile contourFile(filename);
     if (!contourFile.open(QIODevice::ReadOnly))
@@ -1586,7 +1611,7 @@ void FormGPS::fileOpenField(QString fieldDir)
     // Flags -------------------------------------------------------------------------------------------------
 
     //Either exit or update running save
-    filename = directoryName + "/Flags.txt";
+    filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Flags.txt");
 
     QFile flagsFile(filename);
     if (!flagsFile.open(QIODevice::ReadOnly))
@@ -1652,7 +1677,7 @@ void FormGPS::fileOpenField(QString fieldDir)
 
     //Boundaries
     //Either exit or update running save
-    filename = directoryName + "/Boundary.txt";
+    filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Boundary.txt");
 
     QFile boundariesFile(filename);
     if (!boundariesFile.open(QIODevice::ReadOnly))
@@ -1742,7 +1767,7 @@ void FormGPS::fileOpenField(QString fieldDir)
     flagsFile.close();
 
     // Headland  -------------------------------------------------------------------------------------------------
-    filename = directoryName + "/Headland.txt";
+    filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Headland.txt");
 
     QFile headlandFile(filename);
     if (!headlandFile.open(QIODevice::ReadOnly))
@@ -1798,7 +1823,7 @@ void FormGPS::fileOpenField(QString fieldDir)
     }
 
     //Recorded Path
-    filename = directoryName + "/RecPath.txt";
+    filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "RecPath.txt");
 
     QFile recpathFile(filename);
     if (!recpathFile.open(QIODevice::ReadOnly))
@@ -1859,7 +1884,7 @@ void FormGPS::fileCreateField()
         }
     }
 
-    myFilename = directoryName + "/Field.txt";
+    myFilename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Field.txt");
     QFile fieldFile(myFilename);
     if (!fieldFile.open(QIODevice::WriteOnly))
     {
@@ -1910,7 +1935,7 @@ void FormGPS::fileCreateElevation()
         }
     }
 
-    myFilename = directoryName + "/Elevation.txt";
+    myFilename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Elevation.txt");
     QFile fieldFile(myFilename);
     if (!fieldFile.open(QIODevice::WriteOnly))
     {
@@ -1952,7 +1977,7 @@ void FormGPS::fileSaveSections()
     QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
             + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
 
-    myFilename = directoryName + "/Sections.txt";
+    myFilename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Sections.txt");
     QFile sectionFile(myFilename);
     if (!sectionFile.open(QIODevice::Append))
     {
@@ -2010,7 +2035,7 @@ void FormGPS::fileSaveContour()
     QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
             + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
 
-    myFilename = directoryName + "/Contour.txt";
+    myFilename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Contour.txt");
     QFile contourFile(myFilename);
     if (!contourFile.open(QIODevice::Append))
     {
@@ -2054,7 +2079,7 @@ void FormGPS::fileSaveBoundary()
         }
     }
 
-    QString filename = directoryName + "/Boundary.txt";
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Boundary.txt");
 
     QFile boundfile(filename);
     if (!boundfile.open(QIODevice::WriteOnly))
@@ -2102,7 +2127,7 @@ void FormGPS::fileSaveHeadland()
         }
     }
 
-    QString filename = directoryName + "/Headland.txt";
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Headland.txt");
 
     QFile headfile(filename);
     if (!headfile.open(QIODevice::WriteOnly))
@@ -2145,7 +2170,7 @@ void FormGPS::fileCreateRecPath()
         }
     }
 
-    QString filename = directoryName + "/RecPath.txt";
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "RecPath.txt");
 
     QFile recpathfile(filename);
     if (!recpathfile.open(QIODevice::WriteOnly))
@@ -2177,7 +2202,7 @@ void FormGPS::fileSaveRecPath()
         }
     }
 
-    QString filename = directoryName + "/RecPath.txt";
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "RecPath.txt");
 
     QFile recpathfile(filename);
     if (!recpathfile.open(QIODevice::WriteOnly))
@@ -2222,7 +2247,7 @@ void FormGPS::fileSaveFlags()
         }
     }
 
-    QString filename = directoryName + "/Flags.txt";
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Flags.txt");
 
     QFile flagsfile(filename);
     if (!flagsfile.open(QIODevice::WriteOnly))
@@ -2268,7 +2293,7 @@ void FormGPS::fileSaveNMEA()
         }
     }
 
-    QString filename = directoryName + "/NMEA_log.txt";
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "NMEA_log.txt");
 
     QFile nmeafile(filename);
     if (!nmeafile.open(QIODevice::Append))
@@ -2300,7 +2325,7 @@ void FormGPS::fileSaveElevation()
         }
     }
 
-    QString filename = directoryName + "/Elevation.txt";
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Elevation.txt");
 
     QFile elevfile(filename);
     if (!elevfile.open(QIODevice::Append))
