@@ -62,8 +62,10 @@ FormGPS::FormGPS(QWidget *parent) :
     boundary.bndLine.append(Vec3(-100,250,0));
     boundary.bndLine.append(Vec3(-100,0,0));
     boundary.isSet = true;
-    boundary.calculateBoundaryArea();
     boundary.calculateBoundaryHeadings();
+    boundary.preCalcBoundaryLines();
+    boundary.fixBoundaryLine(0,SETTINGS_TOOL_WIDTH);
+    boundary.calculateBoundaryArea();
     boundary.preCalcBoundaryLines();
 
     bnd.bndArr.append(boundary);
@@ -90,8 +92,8 @@ FormGPS::FormGPS(QWidget *parent) :
 
     CABLines line;
     line.origin = Vec2(0,0);
-    line.ref1 = Vec2(0,0); //doesn't seem to be used by logic
-    line.ref2 = Vec2(0,0); //doesn't seem to be used by logic
+    line.ref1 = Vec2(0,0);
+    line.ref2 = Vec2(0,0);
     line.heading = glm::toRadians(5.0f);
     line.Name = "Test AB Line";
     ABLine.lineArr.append( line );

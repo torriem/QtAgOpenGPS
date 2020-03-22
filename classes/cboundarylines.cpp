@@ -225,7 +225,7 @@ void CBoundaryLines::drawBoundaryLine(QOpenGLFunctions *gl, const QMatrix4x4 &mv
         gldraw.append(QVector3D(bndLine[h].easting, bndLine[h].northing, 0));
 
     gldraw.draw(gl,mvp,color,
-                GL_LINE_STRIP, 2.0);
+                GL_LINES, 2.0);
 }
 
 void CBoundaryLines::calculateBoundaryArea()
