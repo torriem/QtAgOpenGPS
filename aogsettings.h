@@ -300,6 +300,9 @@ int colorSettingStringToInt(QString colorSettingString);
 #define SETTINGS_GPS_ISHEADINGCORRECTIONFROMEXTUDP			settings.   value("gps/isHeadingCorrectionFromExtUdp", false).toBool()
 #define SETTINGS_SET_GPS_ISHEADINGCORRECTIONFROMEXTUDP(VAL)	settings.setValue("gps/isHeadingCorrectionFromExtUdp",VAL)
 
+#define SETTINGS_GPS_ISROLLFROMOGI			settings.   value("gps/isRollFromOGI", false).toBool()
+#define SETTINGS_SET_GPS_ISROLLFROMOGI(VAL)	settings.setValue("gps/isRollFromOGI",VAL)
+
 #define SETTINGS_GPS_ISROLLFROMEXTUDP			settings.   value("gps/isRollFromExtUdp", false).toBool()
 #define SETTINGS_SET_GPS_ISROLLFROMEXTUDP(VAL)	settings.setValue("gps/isRollFromExtUdp",VAL)
 

@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("QtAgOpenGPS");
     //We're supposed to be compatible with the saved data
     //from this version of AOG:
-    QCoreApplication::setApplicationVersion("4.0.1");
+    QCoreApplication::setApplicationVersion("4.1.0");
     qmlRegisterType<AOGRendererInSG>("AgOpenGPS",1,0,"AOGRenderer");
     FormGPS w;
     w.show();

@@ -237,7 +237,5 @@ void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
 void CVehicle::onNewSpeed(double _speed)
 {
     avgSpeed = _speed * 0.9 + avgSpeed * 0.1;
-
-    //TODO: complementary filter instead of ring buffer?
 }
 

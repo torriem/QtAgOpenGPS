@@ -112,7 +112,7 @@ void CNMEA::updateNorthingEasting()
 
     //#region Roll
 
-    if ((SETTINGS_GPS_ISROLLFROMAUTOSTEER || SETTINGS_GPS_ISROLLFROMGPS || SETTINGS_GPS_ISROLLFROMEXTUDP) && this->roll != 9999)
+    if ((SETTINGS_GPS_ISROLLFROMAUTOSTEER || SETTINGS_GPS_ISROLLFROMGPS) && !SETTINGS_GPS_ISROLLFROMOGI && this->roll != 9999)
     {
         double rollUsed = ((double)(this->roll - SETTINGS_GPS_IMUROLLZEROX16)) * 0.0625;
         emit setRollUsed(rollUsed);
@@ -125,6 +125,11 @@ void CNMEA::updateNorthingEasting()
         // not any more - April 30, 2019 - roll to right is positive Now! Still Important
         fix.easting = (cos(-this->lastHeading) * rollCorrectionDistance) + fix.easting;
         fix.northing = (sin(-this->lastHeading) * rollCorrectionDistance) + fix.northing;
+    }
+    //used only for draft compensation
+    else if (SETTINGS_GPS_ISROLLFROMOGI)
+    {
+        emit setRollUsed(((double)(this->roll - SETTINGS_GPS_IMUROLLZEROX16)) * 0.0625);
     }
 
     //#endregion
@@ -243,6 +248,7 @@ void CNMEA::parseAVR()
 
             emit setRollX16(XeRoll * 16);
         }
+        else emit setRollX16(0);
     }
 
 }
@@ -396,8 +402,6 @@ void CNMEA::parseOGI()
 
             if (words[5] == "W") longitude *= -1;
 
-            //calculate zone and UTM coords
-            updateNorthingEasting();
         }
 
         //fixQuality
@@ -413,38 +417,37 @@ void CNMEA::parseOGI()
         altitude = words[9].toDouble();
 
         //age of differential
-        ageDiff = words[11].toDouble();
+        ageDiff = words[10].toDouble();
 
         //kph for speed - knots read
-        speed = words[12].toDouble() * 1.852;
+        speed = words[11].toDouble() * 1.852;
 
-        //True heading
-        headingHDT = words[13].toDouble();
+        //Dual antenna derived heading
+
+        headingHDT = words[12].toDouble();
 
         //roll
-        nRoll = words[14].toDouble();
+        nRoll = words[13].toDouble();
 
         if(SETTINGS_GPS_ISROLLFROMGPS)
-            //TODO: kalman filter this roll in handler
-            emit setRollX16(nRoll * 16);
+        {
+            rollK = nRoll; //input to the kalman filter
+            Pc = P + varProcess;
+            G = Pc / (Pc + varRoll);
+            P = (1 - G) * Pc;
+            Xp = XeRoll;
+            Zp = Xp;
+            XeRoll = (G * (rollK - Zp)) + Xp;//result
+
+            emit setRollX16(XeRoll * 16);
+        }
+        else emit setRollX16(0);
 
         //pitch
-        nPitch = words[15].toDouble();
+        nPitch = words[14].toDouble();
 
-        //yaw
-        nYaw = words[16].toDouble();
-        //if (SETTINGS_GPS_ISHEADINGFROMPAOGI)
-                //TODO: emit this signal always, and move logic to
-                //handler
-        //    emit setCorrectionHeadingX16(nYaw * 16);
-
-        //angular velocity (yaw rate)
-        nAngularVelocity = words[17].toDouble();
-
-        //is imu valid fusion?
-        emit headingSource(words[18].toInt());
-
-        isValidIMU = words[18] == "T";
+        //Angular velocity (yaw rate)
+        nAngularVelocity = words[15].toDouble();
 
         //update the watchdog
         emit clearRecvCounter();
@@ -456,11 +459,13 @@ void CNMEA::parseOGI()
 
     /*
     $PAOGI
-    ** From GGA:
-    (1, 2) 123519 Fix taken at 1219 UTC
-    (3, 4) 4807.038,N Latitude 48 deg 07.038' N
-    (5, 6) 01131.000,E Longitude 11 deg 31.000' E
-    (7) 1 Fix quality:
+    (1) 123519 Fix taken at 1219 UTC
+
+    Roll corrected position
+    (2,3) 4807.038,N Latitude 48 deg 07.038' N
+    (4,5) 01131.000,E Longitude 11 deg 31.000' E
+
+    (6) 1 Fix quality:
         0 = invalid
         1 = GPS fix(SPS)
         2 = DGPS fix
@@ -470,28 +475,19 @@ void CNMEA::parseOGI()
         6 = estimated(dead reckoning)(2.3 feature)
         7 = Manual input mode
         8 = Simulation mode
-    (8) 08 Number of satellites being tracked
-    (9) 0.9 Horizontal dilution of position
-    (10, 11) 545.4,M Altitude, Meters, above mean sea level
-    (12) 1.2 time in seconds since last DGPS update
+    (7) Number of satellites being tracked
+    (8) 0.9 Horizontal dilution of position
+    (9) 545.4 Altitude (ALWAYS in Meters, above mean sea level)
+    (10) 1.2 time in seconds since last DGPS update
 
-    From RMC or VTG:
-    (13) 022.4 Speed over the ground in knots
-    (14) 054.7,T True track made good(degrees)
+    (11) 022.4 Speed over the ground in knots - can be positive or negative
 
-    FROM IMU:
-    (14) XXX.xx IMU Heading in degrees True
-    (15) XXX.xx Roll angle in degrees(positive roll = right leaning - right down, left up)
-    (16) XXX.xx Pitch angle in degrees(Positive pitch = nose up)
-    (17) XXX.xx Yaw Rate in Degrees / second
-    (18) GPS roll/ heading quality:
-        0 = no roll / heading = no corrected pos
-        1 = heading OK, no roll
-        2 = OK, corrected position
-    (19) driving Direction
-        0 = not sure / standing still
-        1 = forewards
-        2 = backwards
+    FROM AHRS:
+    (12) Heading in degrees
+    (13) Roll angle in degrees(positive roll = right leaning - right down, left up)
+    (14) Pitch angle in degrees(Positive pitch = nose up)
+    (15) Yaw Rate in Degrees / second
+
     * CHKSUM
     */
 }

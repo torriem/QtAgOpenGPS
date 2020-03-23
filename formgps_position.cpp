@@ -741,7 +741,7 @@ void FormGPS::calculatePositionHeading()
             camera.camHeading = pn.headingTrue;
             gpsHeading = glm::toRadians(pn.headingTrue);
         } else if (headingFromSource == "Dual") {
-                //use NMEA headings for camera and tractor graphic
+                //use Dual Antenna heading for camera and tractor graphic
                 vehicle.fixHeading = glm::toRadians(pn.headingHDT);
                 camera.camHeading = pn.headingHDT;
                 gpsHeading = glm::toRadians(pn.headingHDT);
@@ -1137,13 +1137,13 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
         {
             sped = (leftSpeed * 0.1);
             if (sped < 0.1) sped = 0.1;
-            tool.toolFarLeftSpeed = tool.toolFarLeftSpeed * 0.8 + sped * 0.2;
+            tool.toolFarLeftSpeed = tool.toolFarLeftSpeed * 0.7 + sped * 0.3;
         }
         if (j == tool_numOfSections - 1)
         {
             sped = (rightSpeed * 0.1);
             if(sped < 0.1) sped = 0.1;
-            tool.toolFarRightSpeed = tool.toolFarRightSpeed * 0.8 + sped * 0.2;
+            tool.toolFarRightSpeed = tool.toolFarRightSpeed * 0.7 + sped * 0.3;
         }
 
         //choose fastest speed
@@ -1153,7 +1153,7 @@ void FormGPS::calculateSectionLookAhead(double northing, double easting, double 
             leftSpeed = rightSpeed;
         }
         else sped = rightSpeed;
-        tool.section[j].speedPixels = tool.section[j].speedPixels * 0.8 + sped * 0.2;
+        tool.section[j].speedPixels = tool.section[j].speedPixels * 0.7 + sped * 0.3;
     }
 
     //qDebug() << leftSpeed << " " << rightSpeed;
