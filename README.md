@@ -83,20 +83,21 @@ must manage those matrices ourselves anyway.
 
 Status of the Port
 ------------------
-As of March 14, 2020, the backend code is tracking the v4 branch of AOG,
-current to the March 10, 2020 commit.
+As of March 23, 2020, the backend code is tracking lastest (of this
+date) commit of the master branch of AOG, which is tagged v4.1.0.
 
 UI is still mostly non-present, and really only works with the built-in
 simulator, or a UDP data stream.  For testing purposes, a job and field
 is automatically started, and a demo AB line is defined at 5 degrees.
 
+Coverage works, boundaries work, u-turn works, automatic u-turn works (but
+has no button to enable it).  AB Line following works. Headland mode works.
+
 Bugs
 ----
-Section lookahead isn't working quite right compared to AOG.  Zero speed
-doesn't seem to be detected, and sometimes turning a section off while on
-Auto will cause the entire tool to turn off.
+- GL font drawing has issues, but only with the AB Line number display
+- demo border creates very strange geofence. Suspect I need to change order
+  of coordinates
 
-GL font drawing has issues.
 
-Manual UTurn "buttons" aren't drawing
 
