@@ -773,7 +773,9 @@ GetOutSectionOff1:
 
     ////send machine data to autosteer if checked
     if (mc.isMachineDataSentToAutoSteer)
+    {
         //TODO: SendOutUSBAutoSteerPort(mc.machineData, CModuleComm.pgnSentenceLength);
+    }
 
 
     //if a minute has elapsed save the field in case of crash and to be able to resume
@@ -785,13 +787,14 @@ GetOutSectionOff1:
         if (isJobStarted )
         {
             //auto save the field patches, contours accumulated so far
-            //TODO:FileSaveSections();
-            //TODO: FileSaveContour();
+            fileSaveSections();
+            fileSaveContour();
 
             //NMEA log file
-            //TODO: if (isLogNMEA) FileSaveNMEA();
-            //TODO: if (isLogElevation) FileSaveElevation();
-            //FileSaveFieldKML();
+            if (SETTINGS_GPS_LOGNMEA) fileSaveNMEA();
+            if (SETTINGS_GPS_LOGELEVATION) fileSaveElevation();
+            fileSaveFieldKML();
+            qDebug() << "Saving to field " << currentFieldDirectory;
         }
 
         /*
@@ -819,10 +822,10 @@ GetOutSectionOff1:
                 lblSunset.Text = sunset.ToString("HH:mm");
             }
         }
+        */
 
         //if its the next day, calc sunrise sunset for next day
         minuteCounter = 0;
-        */
 
         //set saving flag off
         isSavingFile = false;
