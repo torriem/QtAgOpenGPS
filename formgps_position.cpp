@@ -73,6 +73,7 @@ void FormGPS::updateFixPosition()
     if(bootstrap_field)
     {
         fileCreateField();
+        fileSaveABLines();
         bootstrap_field = false;
     }
 

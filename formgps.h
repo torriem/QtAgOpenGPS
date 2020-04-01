@@ -49,10 +49,9 @@
 
 //forward declare classes referred to below, to break circular
 //references in the code
-class TopLineDisplay;
-
 class QOpenGLShaderProgram;
 class AOGRendererInSG;
+class QQuickCloseEvent;
 
 class FormGPS : public QQmlApplicationEngine
 {
@@ -646,7 +645,7 @@ public slots:
     void onHeadingSource(int);
 
 
-    void fileSaveEverythingBeforeClosingField();
+    void fileSaveEverythingBeforeClosingField(QQuickCloseEvent *event);
 };
 
 #endif // FORMGPS_H

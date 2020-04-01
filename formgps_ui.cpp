@@ -39,8 +39,7 @@ void FormGPS::setupGui()
     qml_root->setProperty("visible",true);
 
 
-    //connect(this, SIGNAL(close()), this, SLOT(fileSaveEverythingBeforeClosingField()));
-
+    connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
 
     //connect qml button signals to callbacks (it's not automatic with qml)
     btnMenuDrawer = qmlItem(qml_root, "btnMenuDrawer");

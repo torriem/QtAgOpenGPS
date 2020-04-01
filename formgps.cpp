@@ -6,6 +6,7 @@
 #include "glm.h"
 #include <QLocale>
 #include <QLabel>
+#include <QQuickWindow>
 
 extern QLabel *grnPixelsWindow;
 
@@ -1654,11 +1655,11 @@ void FormGPS::jobNew()
 
 }
 
-void FormGPS::fileSaveEverythingBeforeClosingField()
+void FormGPS::fileSaveEverythingBeforeClosingField(QQuickCloseEvent *event)
 {
     USE_SETTINGS;
 
-    qDebug() << "shutting down.";
+    qDebug() << "shutting down, saving field items.";
 
     if (!isJobStarted) return;
 
