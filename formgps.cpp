@@ -12,7 +12,7 @@ extern QLabel *grnPixelsWindow;
 
 
 FormGPS::FormGPS(QWidget *parent) :
-    QQuickView(qobject_cast<QWindow *>(parent))
+    QQmlApplicationEngine(parent)
 {
     USE_SETTINGS;
     setupGui();
@@ -55,51 +55,61 @@ FormGPS::FormGPS(QWidget *parent) :
     tool.sectionSetPositions();
     tool.sectionCalcWidths();
 
-    CBoundaryLines boundary;
-    boundary.bndLine.append(Vec3(-100,0,0));
-    boundary.bndLine.append(Vec3( 100,0,0));
-    boundary.bndLine.append(Vec3( 100,250,0));
-    boundary.bndLine.append(Vec3(-100,250,0));
-    boundary.bndLine.append(Vec3(-100,0,0));
-    boundary.isSet = true;
-    boundary.calculateBoundaryHeadings();
-    boundary.preCalcBoundaryLines();
-    boundary.fixBoundaryLine(0,SETTINGS_TOOL_WIDTH);
-    boundary.calculateBoundaryArea();
-    boundary.preCalcBoundaryLines();
-
-    bnd.bndArr.append(boundary);
-
-    gf.geoFenceArr.append(CGeoFenceLines());
-    gf.buildGeoFenceLines(bnd);
-
     //turn on the right number of section buttons.
     //we don't need to do this on resize, but we will need
     //to call it when settings change.
     lineUpManualBtns();
 
     //hard wire this on for testing
-    isJobStarted = true;
-    tool.section[0].isAllowedOn = true;
-    tool.section[1].isAllowedOn = true;
-    tool.section[2].isAllowedOn = true;
-    tool.section[3].isAllowedOn = true;
+    //fileCreateField();
+    if (! fileOpenField(SETTINGS_ENVIRONMENT_LASTFIELD))
+    {
+        //set up default field to play in
+        tool.section[0].isAllowedOn = true;
+        tool.section[1].isAllowedOn = true;
+        tool.section[2].isAllowedOn = true;
+        tool.section[3].isAllowedOn = true;
 
-    ABLine.refPoint1.easting = 0;
-    ABLine.refPoint1.easting = 0;
-    ABLine.setABLineByHeading(glm::toRadians(5.0f));
-    ABLine.isBtnABLineOn = true;
+        ABLine.refPoint1.easting = 0;
+        ABLine.refPoint1.easting = 0;
+        ABLine.setABLineByHeading(glm::toRadians(5.0f));
+        ABLine.isBtnABLineOn = true;
 
-    CABLines line;
-    line.origin = Vec2(0,0);
-    line.ref1 = Vec2(0,0);
-    line.ref2 = Vec2(0,0);
-    line.heading = glm::toRadians(5.0f);
-    line.Name = "Test AB Line";
-    ABLine.lineArr.append( line );
-    //isAutoSteerBtnOn = true;
+        CABLines line;
+        line.origin = Vec2(0,0);
+        line.ref1 = Vec2(0,0);
+        line.ref2 = Vec2(0,0);
+        line.heading = glm::toRadians(5.0f);
+        line.Name = "Test AB Line";
+        ABLine.lineArr.append( line );
 
-    currentFieldDirectory = "TestField";
+        CBoundaryLines boundary;
+        boundary.bndLine.append(Vec3(-100,0,0));
+        boundary.bndLine.append(Vec3(-100,250,0));
+        boundary.bndLine.append(Vec3( 100,250,0));
+        boundary.bndLine.append(Vec3( 100,0,0));
+        boundary.bndLine.append(Vec3(-100,0,0));
+        boundary.isSet = true;
+        boundary.calculateBoundaryHeadings();
+        boundary.preCalcBoundaryLines();
+        boundary.fixBoundaryLine(0,SETTINGS_TOOL_WIDTH);
+        boundary.calculateBoundaryArea();
+        boundary.preCalcBoundaryLines();
+
+        bnd.bndArr.append(boundary);
+
+        turn.turnArr.append(CTurnLines());
+        gf.geoFenceArr.append(CGeoFenceLines());
+        gf.buildGeoFenceLines(bnd);
+
+        turn.buildTurnLines(bnd, fd);
+        mazeGrid.buildMazeGridArray(bnd,gf, minFieldX, maxFieldX, minFieldY, maxFieldY);
+
+        currentFieldDirectory = "TestField";
+        SETTINGS_SET_ENVIRONMENT_LASTFIELD(currentFieldDirectory);
+        bootstrap_field=true;
+        isJobStarted = true;
+    }
 
     if (isUDPServerOn) startUDPServer();
 
@@ -1641,5 +1651,36 @@ void FormGPS::jobNew()
     //layoutPanelRight.Enabled = true;
     //boundaryToolStripBtn.Enabled = true;
     //toolStripBtnDropDownBoundaryTools.Enabled = true;
+
+}
+
+void FormGPS::fileSaveEverythingBeforeClosingField()
+{
+    USE_SETTINGS;
+
+    qDebug() << "shutting down.";
+
+    if (!isJobStarted) return;
+
+    //turn off contour line if on
+    if (ct.isContourOn) ct.stopContourLine(vehicle.pivotAxlePos, contourSaveList);
+
+    //turn off all the sections
+    for (int j = 0; j < SETTINGS_TOOL_NUMSECTIONS; j++)
+    {
+        if (tool.section[j].isMappingOn) tool.section[j].turnMappingOff(tool);
+        tool.section[j].sectionOnOffCycle = false;
+        tool.section[j].sectionOffRequest = false;
+    }
+
+    //FileSaveHeadland();
+    fileSaveBoundary();
+    fileSaveSections();
+    fileSaveContour();
+    fileSaveFlags();
+    fileSaveFieldKML();
+
+    jobClose();
+    //Text = "AgOpenGPS";
 
 }
