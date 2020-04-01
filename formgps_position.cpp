@@ -69,6 +69,13 @@ void FormGPS::updateFixPosition()
 
     if (!isGPSPositionInitialized) {  initializeFirstFewGPSPositions();   return;  }
 
+    //GPS is valid, let's bootstrap the demo field if needed
+    if(bootstrap_field)
+    {
+        fileCreateField();
+        bootstrap_field = false;
+    }
+
     //region Step Fix
 
     //**** heading of the vec3 structure is used for distance in Step fix!!!!!

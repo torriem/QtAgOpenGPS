@@ -1374,7 +1374,7 @@ bool FormGPS::fileOpenEnvironment(QString filename)
 
 }
 
-void FormGPS::fileOpenField(QString fieldDir)
+bool FormGPS::fileOpenField(QString fieldDir)
 {
     QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
             + "/" + QCoreApplication::applicationName() + "/Fields/" + fieldDir;
@@ -1386,7 +1386,7 @@ void FormGPS::fileOpenField(QString fieldDir)
     {
         qWarning() << "Couldn't open field " << filename << "for reading!";
         //TODO timed messagebox
-        return;
+        return false;
     }
 
     QTextStream reader(&fieldFile);
@@ -1509,63 +1509,65 @@ void FormGPS::fileOpenField(QString fieldDir)
     {
         qWarning() << "Couldn't open sections " << filename << "for reading!";
         //TODO timed messagebox
-        return;
-    }
-
-    reader.setDevice(&sectionsFile);
-    bool isv3 = false;
-    fd.workedAreaTotal = 0;
-    fd.distanceUser = 0;
-    QVector3D vecFix;
-
-    //read header
-    while (!reader.atEnd())
+        //return;
+    } else
     {
-        line = reader.readLine();
-        if (line.contains("ect"))
-        {
-            isv3 = true;
-            break;
-        }
 
-        int verts = line.toInt();
+        reader.setDevice(&sectionsFile);
+        bool isv3 = false;
+        fd.workedAreaTotal = 0;
+        fd.distanceUser = 0;
+        QVector3D vecFix;
 
-        tool.section[0].triangleList = QSharedPointer<TriangleList>( new TriangleList);
-        tool.section[0].patchList.append(tool.section[0].triangleList);
-
-
-        for (int v = 0; v < verts; v++)
+        //read header
+        while (!reader.atEnd())
         {
             line = reader.readLine();
-            QStringList words = line.split(',');
-            vecFix.setX(words[0].toDouble());
-            vecFix.setY(words[1].toDouble());
-            vecFix.setZ(words[2].toDouble());
-            tool.section[0].triangleList->append(vecFix);
-        }
-
-        //calculate area of this patch - AbsoluteValue of (Ax(By-Cy) + Bx(Cy-Ay) + Cx(Ay-By)/2)
-        verts -= 2;
-        if (verts >= 2)
-        {
-            for (int j = 1; j < verts; j++)
+            if (line.contains("ect"))
             {
-                double temp = 0;
-                temp = (*tool.section[0].triangleList)[j].x() * ((*tool.section[0].triangleList)[j + 1].y() - (*tool.section[0].triangleList)[j + 2].y()) +
-                         (*tool.section[0].triangleList)[j + 1].x() * ((*tool.section[0].triangleList)[j + 2].y() - (*tool.section[0].triangleList)[j].y()) +
-                             (*tool.section[0].triangleList)[j + 2].x() * ((*tool.section[0].triangleList)[j].y() - (*tool.section[0].triangleList)[j + 1].y());
+                isv3 = true;
+                break;
+            }
 
-                fd.workedAreaTotal += fabs((temp * 0.5));
+            int verts = line.toInt();
+
+            tool.section[0].triangleList = QSharedPointer<TriangleList>( new TriangleList);
+            tool.section[0].patchList.append(tool.section[0].triangleList);
+
+
+            for (int v = 0; v < verts; v++)
+            {
+                line = reader.readLine();
+                QStringList words = line.split(',');
+                vecFix.setX(words[0].toDouble());
+                vecFix.setY(words[1].toDouble());
+                vecFix.setZ(words[2].toDouble());
+                tool.section[0].triangleList->append(vecFix);
+            }
+
+            //calculate area of this patch - AbsoluteValue of (Ax(By-Cy) + Bx(Cy-Ay) + Cx(Ay-By)/2)
+            verts -= 2;
+            if (verts >= 2)
+            {
+                for (int j = 1; j < verts; j++)
+                {
+                    double temp = 0;
+                    temp = (*tool.section[0].triangleList)[j].x() * ((*tool.section[0].triangleList)[j + 1].y() - (*tool.section[0].triangleList)[j + 2].y()) +
+                             (*tool.section[0].triangleList)[j + 1].x() * ((*tool.section[0].triangleList)[j + 2].y() - (*tool.section[0].triangleList)[j].y()) +
+                                 (*tool.section[0].triangleList)[j + 2].x() * ((*tool.section[0].triangleList)[j].y() - (*tool.section[0].triangleList)[j + 1].y());
+
+                    fd.workedAreaTotal += fabs((temp * 0.5));
+                }
+            }
+
+            //was old version prior to v4
+            if (isv3)
+            {
+                    //Append the current list to the field file
             }
         }
-
-        //was old version prior to v4
-        if (isv3)
-        {
-                //Append the current list to the field file
-        }
+        sectionsFile.close();
     }
-    sectionsFile.close();
 
     // Contour points ----------------------------------------------------------------------------
 
@@ -1576,37 +1578,38 @@ void FormGPS::fileOpenField(QString fieldDir)
     {
         qWarning() << "Couldn't open contour " << filename << "for reading!";
         //TODO timed messagebox
-        return;
-    }
-
-    reader.setDevice(&contourFile);
-
-    //read header
-    line = reader.readLine();
-
-    while (!reader.atEnd())
+    } else
     {
-        //read how many vertices in the following patch
+
+        reader.setDevice(&contourFile);
+
+        //read header
         line = reader.readLine();
-        int verts = line.toInt();
 
-        Vec3 vecFix(0, 0, 0);
-
-        ct.ptList = QSharedPointer<QVector<Vec3>>(new QVector<Vec3>);
-        ct.stripList.append(ct.ptList);
-
-        for (int v = 0; v < verts; v++)
+        while (!reader.atEnd())
         {
+            //read how many vertices in the following patch
             line = reader.readLine();
-            QStringList words = line.split(',');
-            vecFix.easting = words[0].toDouble();
-            vecFix.northing = words[1].toDouble();
-            vecFix.heading = words[2].toDouble();
-            ct.ptList->append(vecFix);
-        }
-    }
+            int verts = line.toInt();
 
-    contourFile.close();
+            Vec3 vecFix(0, 0, 0);
+
+            ct.ptList = QSharedPointer<QVector<Vec3>>(new QVector<Vec3>);
+            ct.stripList.append(ct.ptList);
+
+            for (int v = 0; v < verts; v++)
+            {
+                line = reader.readLine();
+                QStringList words = line.split(',');
+                vecFix.easting = words[0].toDouble();
+                vecFix.northing = words[1].toDouble();
+                vecFix.heading = words[2].toDouble();
+                ct.ptList->append(vecFix);
+            }
+        }
+
+        contourFile.close();
+    }
 
     // Flags -------------------------------------------------------------------------------------------------
 
@@ -1618,62 +1621,64 @@ void FormGPS::fileOpenField(QString fieldDir)
     {
         qWarning() << "Couldn't open flags " << filename << "for reading!";
         //TODO timed messagebox
-        return;
-    }
-
-    reader.setDevice(&flagsFile);
-
-    flagPts.clear();
-    //read header
-    line = reader.readLine();
-
-    //number of flags
-    line = reader.readLine();
-    int points = line.toInt();
-
-    if (points > 0)
+        //return;
+    } else
     {
-        double lat;
-        double longi;
-        double east;
-        double nort;
-        double head;
-        int color, ID;
-        QString notes;
 
-        for (int v = 0; v < points; v++)
+        reader.setDevice(&flagsFile);
+
+        flagPts.clear();
+        //read header
+        line = reader.readLine();
+
+        //number of flags
+        line = reader.readLine();
+        int points = line.toInt();
+
+        if (points > 0)
         {
-            line = reader.readLine();
-            QStringList words = line.split(',');
+            double lat;
+            double longi;
+            double east;
+            double nort;
+            double head;
+            int color, ID;
+            QString notes;
 
-            if (words.count() == 8)
+            for (int v = 0; v < points; v++)
             {
-                lat = words[0].toDouble();
-                longi = words[1].toDouble();
-                east = words[2].toDouble();
-                nort = words[3].toDouble();
-                head = words[4].toDouble();
-                color = words[5].toInt();
-                ID = words[6].toInt();
-                notes = words[7].trimmed();
-            }
-            else
-            {
-                lat = words[0].toDouble();
-                longi = words[1].toDouble();
-                east = words[2].toDouble();
-                nort = words[3].toDouble();
-                head = 0;
-                color = words[4].toInt();
-                ID = words[5].toInt();
-                notes = "";
-            }
+                line = reader.readLine();
+                QStringList words = line.split(',');
 
-            CFlag flagPt(lat, longi, east, nort, head, color, ID, notes);
-            flagPts.append(flagPt);
+                if (words.count() == 8)
+                {
+                    lat = words[0].toDouble();
+                    longi = words[1].toDouble();
+                    east = words[2].toDouble();
+                    nort = words[3].toDouble();
+                    head = words[4].toDouble();
+                    color = words[5].toInt();
+                    ID = words[6].toInt();
+                    notes = words[7].trimmed();
+                }
+                else
+                {
+                    lat = words[0].toDouble();
+                    longi = words[1].toDouble();
+                    east = words[2].toDouble();
+                    nort = words[3].toDouble();
+                    head = 0;
+                    color = words[4].toInt();
+                    ID = words[5].toInt();
+                    notes = "";
+                }
+
+                CFlag flagPt(lat, longi, east, nort, head, color, ID, notes);
+                flagPts.append(flagPt);
+            }
         }
+        flagsFile.close();
     }
-    flagsFile.close();
 
     //Boundaries
     //Either exit or update running save
@@ -1684,87 +1689,89 @@ void FormGPS::fileOpenField(QString fieldDir)
     {
         qWarning() << "Couldn't open boundaries " << filename << "for reading!";
         //TODO timed messagebox
-        return;
-    }
-
-    reader.setDevice(&boundariesFile);
-    //read header
-    line = reader.readLine();//Boundary
-
-    for (int k = 0; true; k++)
+        //return;
+    } else
     {
-        if (reader.atEnd()) break;
 
-        bnd.bndArr.append(CBoundaryLines());
-        turn.turnArr.append(CTurnLines());
-        gf.geoFenceArr.append(CGeoFenceLines());
+        reader.setDevice(&boundariesFile);
+        //read header
+        line = reader.readLine();//Boundary
 
-        //True or False OR points from older boundary files
-        line = reader.readLine();
-
-        //Check for older boundary files, then above line string is num of points
-        if (line == "True")
+        for (int k = 0; true; k++)
         {
-            bnd.bndArr[k].isDriveThru = true;
+            if (reader.atEnd()) break;
+
+            bnd.bndArr.append(CBoundaryLines());
+            turn.turnArr.append(CTurnLines());
+            gf.geoFenceArr.append(CGeoFenceLines());
+
+            //True or False OR points from older boundary files
             line = reader.readLine();
-        } else if (line == "False")
-        {
-            bnd.bndArr[k].isDriveThru = false;
-            line = reader.readLine(); //number of points
-        }
 
-        //Check for latest boundary files, then above line string is num of points
-        if (line == "True")
-        {
-            bnd.bndArr[k].isDriveAround = true;
-            line = reader.readLine(); //number of points
-        } else if( line == "False")
-        {
-            bnd.bndArr[k].isDriveAround = false;
-            line = reader.readLine(); //number of points
-        }
-
-        int numPoints = line.toInt();
-
-        if (numPoints > 0)
-        {
-            //load the line
-            for (int i = 0; i < numPoints; i++)
+            //Check for older boundary files, then above line string is num of points
+            if (line == "True")
             {
+                bnd.bndArr[k].isDriveThru = true;
                 line = reader.readLine();
-                QStringList words = line.split(',');
-                Vec3 vecPt( words[0].toDouble(),
-                            words[1].toDouble(),
-                            words[2].toDouble() );
-
-                //if (turnheading)
-                //{
-                //    vecPt.heading = vecPt.heading + Math.PI;
-                //}
-                bnd.bndArr[k].bndLine.append(vecPt);
+            } else if (line == "False")
+            {
+                bnd.bndArr[k].isDriveThru = false;
+                line = reader.readLine(); //number of points
             }
 
-            bnd.bndArr[k].calculateBoundaryArea();
-            bnd.bndArr[k].preCalcBoundaryLines();
-            if (bnd.bndArr[k].area > 0) bnd.bndArr[k].isSet = true;
-            else bnd.bndArr[k].isSet = false;
+            //Check for latest boundary files, then above line string is num of points
+            if (line == "True")
+            {
+                bnd.bndArr[k].isDriveAround = true;
+                line = reader.readLine(); //number of points
+            } else if( line == "False")
+            {
+                bnd.bndArr[k].isDriveAround = false;
+                line = reader.readLine(); //number of points
+            }
+
+            int numPoints = line.toInt();
+
+            if (numPoints > 0)
+            {
+                //load the line
+                for (int i = 0; i < numPoints; i++)
+                {
+                    line = reader.readLine();
+                    QStringList words = line.split(',');
+                    Vec3 vecPt( words[0].toDouble(),
+                                words[1].toDouble(),
+                                words[2].toDouble() );
+
+                    //if (turnheading)
+                    //{
+                    //    vecPt.heading = vecPt.heading + Math.PI;
+                    //}
+                    bnd.bndArr[k].bndLine.append(vecPt);
+                }
+
+                bnd.bndArr[k].calculateBoundaryArea();
+                bnd.bndArr[k].preCalcBoundaryLines();
+                if (bnd.bndArr[k].area > 0) bnd.bndArr[k].isSet = true;
+                else bnd.bndArr[k].isSet = false;
+            }
+            else
+            {
+                bnd.bndArr.removeAt(bnd.bndArr.count() - 1);
+                turn.turnArr.removeAt(bnd.bndArr.count() - 1);
+                gf.geoFenceArr.removeAt(bnd.bndArr.count() - 1);
+                k = k - 1;
+            }
+            if (reader.atEnd()) break;
         }
-        else
-        {
-            bnd.bndArr.removeAt(bnd.bndArr.count() - 1);
-            turn.turnArr.removeAt(bnd.bndArr.count() - 1);
-            gf.geoFenceArr.removeAt(bnd.bndArr.count() - 1);
-            k = k - 1;
-        }
-        if (reader.atEnd()) break;
+
+        calculateMinMax();
+        turn.buildTurnLines(bnd, fd);
+        gf.buildGeoFenceLines(bnd);
+        mazeGrid.buildMazeGridArray(bnd,gf, minFieldX, maxFieldX, minFieldY, maxFieldY);
+
+        boundariesFile.close();
     }
-
-    calculateMinMax();
-    turn.buildTurnLines(bnd, fd);
-    gf.buildGeoFenceLines(bnd);
-    mazeGrid.buildMazeGridArray(bnd,gf, minFieldX, maxFieldX, minFieldY, maxFieldY);
-
-    flagsFile.close();
 
     // Headland  -------------------------------------------------------------------------------------------------
     filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Headland.txt");
@@ -1830,34 +1837,36 @@ void FormGPS::fileOpenField(QString fieldDir)
     {
         qWarning() << "Couldn't open recpath " << filename << "for reading!";
         //TODO timed messagebox
-        return;
-    }
-
-    reader.setDevice(&recpathFile);
-    //read header
-    line = reader.readLine();
-    line = reader.readLine();
-    int numPoints = line.toInt();
-    recPath.recList.clear();
-
-    while (!reader.atEnd())
+    } else
     {
-        for (int v = 0; v < numPoints; v++)
-        {
-            line = reader.readLine();
-            QStringList words = line.split(',');
-            CRecPathPt point(
-                words[0].toDouble(),
-                words[1].toDouble(),
-                words[2].toDouble(),
-                words[3].toDouble(),
-                (words[4] == "True" ? true : false) );
 
-            //add the point
-            recPath.recList.append(point);
+        reader.setDevice(&recpathFile);
+        //read header
+        line = reader.readLine();
+        line = reader.readLine();
+        int numPoints = line.toInt();
+        recPath.recList.clear();
+
+        while (!reader.atEnd())
+        {
+            for (int v = 0; v < numPoints; v++)
+            {
+                line = reader.readLine();
+                QStringList words = line.split(',');
+                CRecPathPt point(
+                    words[0].toDouble(),
+                    words[1].toDouble(),
+                    words[2].toDouble(),
+                    words[3].toDouble(),
+                    (words[4] == "True" ? true : false) );
+
+                //add the point
+                recPath.recList.append(point);
+            }
         }
+        recpathFile.close();
     }
-    recpathFile.close();
+    return true;
 }
 
 void FormGPS::fileCreateField()

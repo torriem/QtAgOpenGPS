@@ -251,6 +251,8 @@ public:
     CFieldData fd;
     CGeoFence gf;
 
+    bool bootstrap_field = false;
+
 
     /*************************
      *  Position.designer.cs *
@@ -395,7 +397,7 @@ public:
     bool fileOpenTool(QString filename);
     void fileSaveEnvironment(QString filename);
     bool fileOpenEnvironment(QString filename);
-    void fileOpenField(QString fieldDir);
+    bool fileOpenField(QString fieldDir);
     void fileCreateField();
     void fileCreateElevation();
     void fileSaveSections();
@@ -642,6 +644,8 @@ public slots:
     /* CNMEA */
     void onHeadingSource(int);
 
+
+    void fileSaveEverythingBeforeClosingField();
 };
 
 #endif // FORMGPS_H
