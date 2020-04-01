@@ -1,16 +1,17 @@
 import QtQuick 2.8
+import QtQuick.Window 2.0
 import QtQuick.Controls 2.1
 import AgOpenGPS 1.0
 
-Item {
+Window {
     //We draw native opengl to this root object
     id: item1
-    width: 900
-    height: 600
+    width: 1000
+    height: 700
     //objectName: "openGLControl"
     //width:800
     //height:600
-    anchors.fill: parent
+    //anchors.fill: parent
 
     SystemPalette {
         id: systemPalette

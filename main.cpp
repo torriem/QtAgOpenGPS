@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationVersion("4.1.0");
     qmlRegisterType<AOGRendererInSG>("AgOpenGPS",1,0,"AOGRenderer");
     FormGPS w;
-    w.show();
+    //w.show();
 
     USE_SETTINGS;
     if (SETTINGS_DISPLAY_SHOWBACK) {

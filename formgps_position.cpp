@@ -717,7 +717,7 @@ void FormGPS::updateFixPosition()
     //#endregion
 
     //openGLControl_Draw routine triggered manually
-    update();
+    //update();
     AOGRendererInSG *renderer = qml_root->findChild<AOGRendererInSG *>("openglcontrol");
     renderer->update();
 

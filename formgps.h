@@ -13,7 +13,8 @@
 #include <QSurfaceFormat>
 #include <QOpenGLFramebufferObject>
 #include <QOpenGLBuffer>
-#include <QQuickView>
+//#include <QQuickView>
+#include <QQmlApplicationEngine>
 
 #include "common.h"
 
@@ -53,7 +54,7 @@ class TopLineDisplay;
 class QOpenGLShaderProgram;
 class AOGRendererInSG;
 
-class FormGPS : public QQuickView
+class FormGPS : public QQmlApplicationEngine
 {
     Q_OBJECT
 public:
@@ -64,7 +65,7 @@ public:
      * Qt-specific things we need to keep track of *
      ***********************************************/
     QLocale locale;
-    QQuickItem *qml_root;
+    QObject *qml_root;
     QSignalMapper *sectionButtonsSignalMapper;
     QTimer *tmrWatchdog;
     QTimer simTimer;
