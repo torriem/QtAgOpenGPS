@@ -14,6 +14,7 @@
 #include <QOpenGLFramebufferObject>
 #include <QOpenGLBuffer>
 #include <QQuickView>
+#include <QSerialPort>
 
 #include "common.h"
 
@@ -527,6 +528,15 @@ public:
     /**************************
      * SerialComm.Designer.cs *
      **************************/
+private:
+    QString portNameGPS = "COM GPS";
+    int baudRateGPS = QSerialPort::Baud4800;
+
+    //serial port gps is connected to
+    QSerialPort sp;
+
+    void SerialLineReceived(QByteArray sentence);
+
 public:
 
     double actualSteerAngleDisp;
@@ -535,6 +545,8 @@ public:
     void sectionControlOutToPort();
     void sendOutUSBAutoSteerPort(uchar *data, int pgnSentenceLength);
 
+    void SerialPortOpenGPS();
+    void SerialPortCloseGPS();
 
     /***********************
      * FormGPS.Designer.cs *
@@ -627,6 +639,11 @@ public slots:
      * From Position.Designer.cs
      */
     void processSectionLookahead(); //called when section lookahead GL stuff is rendered
+
+    /**************************
+     * SerialComm.Designer.cs *
+     **************************/
+    void sp_DataReceived();
 
     /*
      * simulator

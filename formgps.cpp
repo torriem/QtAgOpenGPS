@@ -18,8 +18,15 @@ FormGPS::FormGPS(QWidget *parent) :
     setupGui();
     AOGSettings s;
 
-    isUDPServerOn = s.value("port/udp_on", true).toBool();
+    /**************************
+     * SerialComm.Designer.cs *
+     **************************/
+    sp.setDataBits(QSerialPort::Data8);
+    sp.setParity(QSerialPort::NoParity);
+    sp.setStopBits(QSerialPort::OneStop);
 
+
+    isUDPServerOn = s.value("port/udp_on", true).toBool();
 
     /* test data to see if drawing routines are working. */
 

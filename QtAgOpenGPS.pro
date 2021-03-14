@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl quick quickwidgets network
+QT       += core gui opengl quick quickwidgets network serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 lessThan(QT_MAJOR_VERSION, 5):error("requires Qt 5.9 or newer")
