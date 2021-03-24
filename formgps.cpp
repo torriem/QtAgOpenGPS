@@ -18,8 +18,15 @@ FormGPS::FormGPS(QWidget *parent) :
     setupGui();
     AOGSettings s;
 
-    isUDPServerOn = s.value("port/udp_on", true).toBool();
+    /**************************
+     * SerialComm.Designer.cs *
+     **************************/
+    sp.setDataBits(QSerialPort::Data8);
+    sp.setParity(QSerialPort::NoParity);
+    sp.setStopBits(QSerialPort::OneStop);
 
+
+    isUDPServerOn = s.value("port/udp_on", true).toBool();
 
     /* test data to see if drawing routines are working. */
 
@@ -100,6 +107,30 @@ FormGPS::FormGPS(QWidget *parent) :
     //isAutoSteerBtnOn = true;
 
     currentFieldDirectory = "TestField";
+
+    /*****************************
+     * FormGPS.cs:FormGPS_Load() *
+     *****************************/
+    //set baud and port from last time run
+    // TODO QAOG load setting
+    portNameGPS = s.value("port/portNameGPS", "ttyACM0").toString();
+    baudRateGPS = s.value("port/baudRateGPS", QSerialPort::Baud115200).toInt();
+
+    //try and open
+    SerialPortOpenGPS();
+
+    if (sp.isOpen())
+    {
+        // TODO QAOG simulatorOnToolStripMenuItem.Checked = false;
+        qmlItem(qml_root,"simSpeed")->setProperty("visible", false);
+        qmlItem(qml_root,"simStopButton")->setProperty("visible", false);
+        qmlItem(qml_root,"simSteer")->setProperty("visible", false);
+        qmlItem(qml_root,"simSteerCenter")->setProperty("visible", false);
+
+        // TODO QAOG Settings.Default.setMenu_isSimulatorOn = simulatorOnToolStripMenuItem.Checked;
+        // TODO QAOG Settings.Default.Save();
+    }
+
 
     if (isUDPServerOn) startUDPServer();
 
