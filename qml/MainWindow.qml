@@ -209,6 +209,25 @@ Item {
 
             }
 
+            Column {
+                id: rightSubColumn
+                anchors.top: parent.top
+                anchors.topMargin: btnABLine.height + 3
+                anchors.right: rightColumn.left
+                anchors.rightMargin: 3
+                spacing: 3
+
+                IconButton {
+                    id: btnContourPriority
+                    objectName: "btnContourPriority"
+                    checkable: true
+                    isChecked: true
+                    visible: false
+                    icon: "qrc:/images/ContourPriorityLeft.png"
+                    iconChecked: "qrc:/images/ContourPriorityRight.png"
+                }
+            }
+
             Row {
                 id: sectionButtons
                 anchors.horizontalCenter: parent.horizontalCenter
