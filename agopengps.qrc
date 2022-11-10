@@ -29,6 +29,8 @@
         <file>images/ComPorts.png</file>
         <file>images/ContourOff.png</file>
         <file>images/ContourOn.png</file>
+        <file>images/ContourPriorityLeft.png</file>
+        <file>images/ContourPriorityRight.png</file>
         <file>images/Display.png</file>
         <file>images/DnArrow64.png</file>
         <file>images/Examples.png</file>

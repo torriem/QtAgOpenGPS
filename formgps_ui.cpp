@@ -82,6 +82,10 @@ void FormGPS::setupGui()
     connect(btnContour,SIGNAL(clicked()),this,
             SLOT(onBtnContour_clicked()));
 
+    btnContourPriority = qmlItem(qml_root,"btnContourPriority");
+    connect(btnContourPriority,SIGNAL(clicked()),this,
+            SLOT(onBtnContourPriority_clicked()));
+
     btnManualOffOn = qmlItem(qml_root,"btnManualOffOn");
     connect(btnManualOffOn,SIGNAL(clicked()),this,
             SLOT(onBtnManualOffOn_clicked()));
@@ -299,11 +303,25 @@ void FormGPS::onBtnContour_clicked(){
     qDebug()<<"contour button clicked." ;
 
     ct.isContourBtnOn = !ct.isContourBtnOn;
-    if (ct.isContourBtnOn)
+    if (ct.isContourBtnOn) {
         qmlItem(qml_root,"btnContour")->setProperty("isChecked",true);
-    else
+        qmlItem(qml_root,"btnContourPriority")->setProperty("visible",true);
+    } else {
         qmlItem(qml_root,"btnContour")->setProperty("isChecked",false);
+        qmlItem(qml_root,"btnContourPriority")->setProperty("visible",false);
+    }
 
+}
+
+void FormGPS::onBtnContourPriority_clicked(){
+    if (closeAllMenus()) return;
+    qDebug()<<"contour priority button clicked." ;
+
+    ct.isRightPriority = !ct.isRightPriority;
+    if (ct.isRightPriority)
+        qmlItem(qml_root,"btnContourPriority")->setProperty("isChecked",true);
+    else
+        qmlItem(qml_root,"btnContourPriority")->setProperty("isChecked",false);
 }
 
 void FormGPS::onBtnManualOffOn_clicked(){

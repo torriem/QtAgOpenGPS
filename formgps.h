@@ -82,6 +82,7 @@ public:
     QObject *btnFlag;
     QObject *btnABLine;
     QObject *btnContour;
+    QObject *btnContourPriority;
     QObject *btnManualOffOn;
     QObject *btnSectionOffAutoOn;
 
@@ -575,6 +576,7 @@ public slots:
     void onBtnFlag_clicked();
     void onBtnABLine_clicked();
     void onBtnContour_clicked();
+    void onBtnContourPriority_clicked();
     void onBtnManualOffOn_clicked();
     void onBtnSectionOffAutoOn_clicked();
 
