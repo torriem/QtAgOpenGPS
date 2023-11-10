@@ -18,10 +18,10 @@ Rectangle {
         anchors.topMargin: 5
         spacing: 6
         flow: Grid.TopToBottom
-        rows: 4
+        rows: 3
         columns: 3
 
-        IconButton {
+        /*IconButton {
             id: btnSnap
             objectName: "btnSnap"
             icon: "qrc:/images/Snap64.png"
@@ -40,7 +40,7 @@ Rectangle {
             objectName: "btnGPSData"
             buttonText: qsTr("GPS Data")
             icon: "qrc:/images/Satellite64.png"
-        }
+        }*/
 
         IconButtonText {
             id: btnSettings

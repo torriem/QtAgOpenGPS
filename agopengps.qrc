@@ -106,7 +106,6 @@
         <file>qml/IconButtonText.qml</file>
         <file>qml/IconButton.qml</file>
         <file>qml/SectionButton.qml</file>
-        <file>qml/IconMenu.qml</file>
         <file>qml/IconPalette.qml</file>
         <file>qml/MainWindowTest.qml</file>
         <file>images/textures/floor.png</file>
@@ -133,5 +132,7 @@
         <file>images/TurnManualRight.png</file>
         <file>images/textures/LandscapeNight.png</file>
         <file>images/textures/Lift.png</file>
+        <file>../qtag/qml/FieldMenu.qml</file>
+        <file>../qtag/qml/FieldWindow.qml</file>
     </qresource>
 </RCC>

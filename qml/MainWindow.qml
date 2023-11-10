@@ -8,6 +8,7 @@ Item {
     width: 900
     height: 600
     //objectName: "openGLControl"
+    //hello
     //width:800
     //height:600
     anchors.fill: parent
