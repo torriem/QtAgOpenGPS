@@ -17,6 +17,7 @@
 
 //#include <QtGui/private/qguiapplication_p.h>
 //#include <QtGui/qpa/qplatformintegration.h>
+//hello
 
 #include <functional>
 #include <assert.h>

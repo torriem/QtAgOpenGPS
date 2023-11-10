@@ -9,6 +9,7 @@ Window {
     width: 1000
     height: 700
     //objectName: "openGLControl"
+    //hello
     //width:800
     //height:600
     //anchors.fill: parent
