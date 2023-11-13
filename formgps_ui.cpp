@@ -56,10 +56,6 @@ void FormGPS::setupGui()
     //connect qml button signals to callbacks (it's not automatic with qml)
     btnMenuDrawer = qmlItem(qml_root, "btnMenuDrawer");
 
-    btnMinMaxZoom = qmlItem(qml_root,"btnMinMaxZoom");
-    connect(btnMinMaxZoom,SIGNAL(clicked()),this,
-
-            SLOT(onBtnMinMaxZoom_clicked()));
 
     btnPerimeter = qmlItem(qml_root,"btnPerimeter");
     connect(btnPerimeter,SIGNAL(clicked()),this,
@@ -75,9 +71,14 @@ void FormGPS::setupGui()
     connect(btnFlag,SIGNAL(clicked()),this,
             SLOT(onBtnFlag_clicked()));
 
-    btnABLine = qmlItem(qml_root,"btnABLine");
+
+    qmlItem(qml_root,"btnABLine");
     connect(btnABLine,SIGNAL(clicked()),this,
             SLOT(onBtnABLine_clicked()));
+
+    btnCurve = qmlItem(qml_root,"btnABCurve");
+    connect(btnCurve,SIGNAL(clicked()),this,
+            SLOT(onBtnABCurve_clicked()));
 
     btnContour = qmlItem(qml_root,"btnContour");
     connect(btnContour,SIGNAL(clicked()),this,
@@ -113,17 +114,7 @@ void FormGPS::setupGui()
             SLOT(onBtnZoomOut_clicked()));
 
     //icon palette
-    btnSnap = qmlItem(qml_root,"btnSnap");
-    connect(btnSnap,SIGNAL(clicked()),this,
-            SLOT(onBtnSnap_clicked()));
 
-    btnTripOdometer = qmlItem(qml_root,"btnTripOdometer");
-    connect(btnTripOdometer,SIGNAL(clicked()),this,
-            SLOT(onBtnTripOdometer_clicked()));
-
-    btnGPSData = qmlItem(qml_root,"btnGPSData");
-    connect(btnGPSData,SIGNAL(clicked()),this,
-            SLOT(onBtnGPSData_clicked()));
 
     btnSettings = qmlItem(qml_root,"btnSettings");
     connect(btnSettings,SIGNAL(clicked()),this,
@@ -203,8 +194,8 @@ void FormGPS::setupGui()
     connect(openGLControl,SIGNAL(clicked(QVariant)),this,SLOT(onGLControl_clicked(QVariant)));
 
     //TODO: save and restore these numbers from settings
-    setWidth(1000);
-    setHeight(700);
+    setWidth(1920);
+    setHeight(1080);
 
     tmrWatchdog = new QTimer(this);
     connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(tmrWatchdog_timeout()));
@@ -294,11 +285,30 @@ void FormGPS::onBtnFlag_clicked() {
     }
 }
 
+
 void FormGPS::onBtnABLine_clicked(){
     if (closeAllMenus()) return;
     qDebug()<<"abline button clicked." ;
+
+    ABLine.isBtnABLineOn = !ABLine.isBtnABLineOn;
+    if (ABLine.isBtnABLineOn) {
+        qmlItem(qml_root,"btnABLine")->setProperty("isChecked",true);
+    } else {
+        qmlItem(qml_root,"btnABLine")->setProperty("isChecked",false);
+    }
 }
 
+void FormGPS::onBtnABCurve_clicked(){
+    if (closeAllMenus()) return;
+    qDebug()<<"ABCurve button clicked." ;
+    !ABLine.isBtnABLineOn;
+    curve.isBtnCurveOn = !curve.isBtnCurveOn;
+    if (curve.isBtnCurveOn) {
+        qmlItem(qml_root,"btnABCurve")->setProperty("isChecked",true);
+    } else {
+        qmlItem(qml_root,"btnABCurve")->setProperty("isChecked",false);
+    }
+}
 void FormGPS::onBtnContour_clicked(){
     if (closeAllMenus()) return;
     qDebug()<<"contour button clicked." ;

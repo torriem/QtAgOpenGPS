@@ -10,7 +10,6 @@
         <file>images/AreaSide.png</file>
         <file>images/ArrowLeft.png</file>
         <file>images/ArrowRight.png</file>
-        <file>images/AutoSteerConfig.png</file>
         <file>images/AutoSteerOff.png</file>
         <file>images/AutoSteerOn.png</file>
         <file>images/back-button.png</file>
@@ -134,5 +133,39 @@
         <file>images/textures/Lift.png</file>
         <file>../qtag/qml/FieldMenu.qml</file>
         <file>../qtag/qml/FieldWindow.qml</file>
+        <file>qml/FieldMenu.qml</file>
+        <file>qml/FieldWindow.qml</file>
+        <file>qml/ToolsWindow.qml</file>
+        <file>images/fileMenu.png</file>
+        <file>images/SpecialFunctions.png</file>
+        <file>images/ABLineCycle.png</file>
+        <file>images/CurveOff.png</file>
+        <file>images/CurveOn.png</file>
+        <file>images/Terminal.png</file>
+        <file>images/NavigationSettings.png</file>
+        <file>images/Sort.png</file>
+        <file>images/skull.png</file>
+        <file>images/Settings48.png</file>
+        <file>images/AutoSteerConf.png</file>
+        <file>images/ModePurePursuit.png</file>
+        <file>images/ModeStanley.png</file>
+        <file>images/AgIO.png</file>
+        <file>images/AutoSteerConfig.png</file>
+        <file>images/ABLineCycleBk.png</file>
+        <file>images/YouTurn80.png</file>
+        <file>images/YouTurnNo.png</file>
+        <file>images/WindowClose.png</file>
+        <file>images/WindowMaximize.png</file>
+        <file>images/WindowMinimize.png</file>
+        <file>images/HeadlandOn.png</file>
+        <file>images/HeadlandOff.png</file>
+        <file>images/ResetTool.png</file>
+        <file>images/HydraulicLiftOff.png</file>
+        <file>images/HydraulicLiftOn.png</file>
+        <file>images/PointStart.png</file>
+        <file>images/YouSkipOff.png</file>
+        <file>images/YouSkipOn.png</file>
+        <file>images/ABLineEdit.png</file>
+        <file>images/SnapToPivot.png</file>
     </qresource>
 </RCC>

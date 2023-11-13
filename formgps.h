@@ -76,28 +76,38 @@ public:
     //QQuickView *qmlview;
     QWidget *qmlcontainer;
     AOGRendererInSG *openGLControl;
-    QObject *btnMinMaxZoom;
-    QObject *btnPerimeter;
-    QObject *btnAutoSteer;
-    QObject *btnFlag;
-    QObject *btnABLine;
-    QObject *btnContour;
-    QObject *btnContourPriority;
-    QObject *btnManualOffOn;
-    QObject *btnSectionOffAutoOn;
+    //Left Menu & children
+    QObject *btnAcres;
+    QObject *btnnavigationSettings;
+    QObject *btnSettings;
+    QObject *btnTools;
+    QObject *btnPerimeter; //remove this someone plz
+    QObject *btnFieldMenu;
+    QObject *btnAgIO;
+    QObject *btnautoSteerConf;
+    QObject *btnAutoSteerMode;
 
     QObject *btnTiltDown;
     QObject *btnTiltUp;
-
     QObject *btnZoomIn;
     QObject *btnZoomOut;
 
+    //right menu & children
+    QObject *btnContour;
+    QObject *btnCurve;
+    QObject *btnABLine;
+    QObject *btnABLineCycle;
+    QObject *btnABLineCycleBk;
+    QObject *btnManualOffOn;
+    QObject *btnSectionOffAutoOn;
+    QObject *btnAutoSteer;
+
+    QObject *btnContourPriority;
+    //other
+    QObject *btnFlag;
+
     //menu button and icon palette -- do we need to keep all of these?
     QObject *btnMenuDrawer;
-    QObject *btnSnap;
-    QObject *btnTripOdometer;
-    QObject *btnGPSData;
-    QObject *btnSettings;
     QObject *btnJob;
     QObject *btnBoundaryMenu;
     QObject *btnComm;
@@ -573,8 +583,10 @@ public slots:
     void onBtnPerimeter_clicked();
     //void onBtnPerimeter_pressAndHeld();
     void onBtnAutoSteer_clicked();
+    void onBtnTerminal_clicked();
     void onBtnFlag_clicked();
     void onBtnABLine_clicked();
+    void onBtnABCurve_clicked();
     void onBtnContour_clicked();
     void onBtnContourPriority_clicked();
     void onBtnManualOffOn_clicked();

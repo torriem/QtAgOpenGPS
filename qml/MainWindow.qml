@@ -5,8 +5,9 @@ import AgOpenGPS 1.0
 Item {
     //We draw native opengl to this root object
     id: item1
-    width: 900
-    height: 600
+    width: 1100
+    height: 800
+
     //objectName: "openGLControl"
     //hello
     //width:800
@@ -22,7 +23,7 @@ Item {
         id: topLine
         objectName: "topLine"
         width: parent.width
-        height: screenPixelDensity * 0.3 //.3" tall
+        height: 1 //.3" tall
         Text {
             id: text1
             text: ""
@@ -74,11 +75,11 @@ Item {
                 parent.clicked(mouse);
             }
         }
-
+//----------------------------------------------------------------------------------------
         Item {
             id: buttonsArea
             anchors.top: parent.top
-            anchors.topMargin: 42 //TODO: convert to scalable
+            anchors.topMargin: 2 //TODO: convert to scalable
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
@@ -86,10 +87,68 @@ Item {
             Column {
                 id: leftColumn
                 anchors.top: parent.top
+                anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 anchors.leftMargin: 6
                 spacing: 3
 
+                IconButtonText {
+                    id: btnfileMenu
+                    objectName: "btnfileMenu"
+                    buttonText: qsTr("FileMenu")
+                    icon: "qrc:/images/fileMenu.png"
+
+                }
+                IconButtonText {
+                    id: btnAcres
+                    objectName: "btnAcres"
+                    buttonText: qsTr("Acres #N/A")
+                    icon: "qrc:/images/TripOdometer.png"
+
+                }
+                IconButtonText {
+                    id: btnnavigationSettings
+                    objectName: "btnnavigationSettings"
+                    buttonText: qsTr("Display")
+                    icon: "qrc:/images/NavigationSettings.png"
+
+                }
+                IconButtonText {
+                    id: btnSettings
+                    objectName: "btnSettings"
+                    buttonText: qsTr("Settings")
+                    icon: "qrc:/images/Settings48.png"
+
+                }
+                IconButtonText {
+                    id: btnTools
+                    objectName: "btnTools"
+                    buttonText: qsTr("Tools")
+                    icon: "qrc:/images/SpecialFunctions.png"
+                    //pseudo state
+                    property bool hideTools: true
+
+                    onHideToolsChanged: {
+                        if (hideTools == true) {
+                            toolsWindow.visible = false
+                        } else {
+                            toolsWindow.visible = true
+                        }
+                    }
+
+                    function toggle_toolsmenu() {
+                        if (hideTools == true) {
+                            hideTools = false
+                        } else {
+                            hideTools = true
+                        }
+                    }
+
+                    onClicked: {
+                        toggle_toolsmenu();
+                    }
+                }
+                //Lower is no longer used in AOG--Shall we remove it?
                 IconButtonText{
                     id: btnMenuDrawer
                     objectName: "btnMenuDrawer"
@@ -122,13 +181,7 @@ Item {
                     }
                 }
 
-                IconButton{
-                    id: btnMinMaxZoom
-                    objectName: "btnMinMaxZoom"
-
-                    icon: "qrc:/images/Display.png"
-                }
-
+                //will remove as soon as i can figure out how.. right now everything crashes if I remove
                 IconButtonText {
                     id: btnPerimeter
                     objectName: "btnPerimeter"
@@ -146,26 +199,61 @@ Item {
                     }
                 }
 
-                IconButtonText {
-                    id: btnAutoSteer
-                    objectName: "btnAutoSteer"
-                    icon: "qrc:/images/AutoSteerOff.png"
-                    buttonText: "X"
-                }
 
-                IconButton {
-                    id: btnFlag
-                    objectName: "btnFlag"
-                    icon: "qrc:/images/FlagRed.png"
-                    onPressAndHold: {
-                        if (contextFlag.visible) {
-                            contextFlag.visible = false;
+                IconButtonText{
+                    id: btnFieldMenu
+                    objectName: "btnFieldMenu"
+                    buttonText: qsTr("Field")
+                    icon: "qrc:/images/JobActive.png"
+                    //pseudo state
+                   property bool hideFieldMenu: true
+
+                onHideFieldMenuChanged: {
+                        if (hideFieldMenu == true) {
+                            fieldMenu.visible = false
                         } else {
-                            contextFlag.visible = true;
+                           fieldMenu.visible = true
                         }
                     }
+
+                    function toggle_fieldmenu() {
+                        if (hideFieldMenu == true) {
+                            hideFieldMenu = false
+                        } else {
+                            hideFieldMenu = true
+                        }
+                    }
+
+                    onClicked: {
+                        toggle_fieldmenu();
+                    }
                 }
+                IconButtonText {
+                    id: btnAgIO
+                    objectName: "btnAgIO"
+                    buttonText: qsTr("AgIO")
+                    icon: "qrc:/images/AgIO.png"
+                }
+                IconButtonText {
+                    id: btnautoSteerConf
+                    objectName: "btnAutosteerConf"
+                    buttonText: qsTr("Steer config")
+                    icon: "qrc:/images/AutoSteerConf.png"
+                }
+
+                IconButtonText {
+                    id: btnautoSteerMode
+                    objectName: "btnAutosteerMode"
+                    isChecked: false
+                    buttonText: qsTr("Steer Mode")
+                    icon: "qrc:/images/ModeStanley.png"
+                    iconChecked: "qrc:/images/ModePurePursuit"
+                }
+
+
+
             }
+            //------------------------------------------------------------------------------------------right
 
             Column {
                 id: rightColumn
@@ -173,30 +261,57 @@ Item {
                 anchors.right: parent.right
                 anchors.rightMargin: 6
                 spacing: 3
-
-                IconButtonText{
-                    id: btnABLine
-                    objectName: "btnABLine"
-                    buttonText: "X"
-                    icon: "qrc:/images/ABLineOff.png"
+                IconButtonText {
+                    id: btnClose
+                    objectName: "btnClose"
+                    icon: "qrc:/images/ContourOff.png"
+                    iconChecked: "qrc:/images/WindowClose.png"
                 }
 
-                IconButton {
+                IconButtonText {
                     id: btnContour
                     objectName: "btnContour"
-                    checkable: true
                     isChecked: false
                     icon: "qrc:/images/ContourOff.png"
                     iconChecked: "qrc:/images/ContourOn.png"
+                    buttonText: "Contour"
+                    color: "white"
+                }
+                IconButtonText{
+                    id: btnABCurve
+                    objectName: "btnABCurve"
+                    isChecked: false
+                    icon: "qrc:/images/CurveOff.png"
+                    iconChecked: "qrc:/images/CurveOn.png"
+                    buttonText: "ABCurve"
+                }
+                IconButtonText{
+                    id: btnABLine
+                    objectName: "btnABLine"
+                    isChecked: true
+                    icon: "qrc:/images/ABLineOff.png"
+                    iconChecked: "qrc:/images/ABLineOn.png"
+                    buttonText: "ABLine"
                 }
 
-                IconButton {
+                IconButton{
+                    id: btnABLineCycle
+                    objectName: "btnABLineCycle"
+                    icon: "qrc:/images/ABLineCycle.png"
+                }
+                IconButton{
+                    id: btnABLineCycleBk
+                    objectName: "btnABLineCycleBk"
+                    icon: "qrc:/images/ABLineCycleBk.png"
+                }
+
+                IconButtonText {
                     id: btnManualOffOn
                     objectName: "btnManualOffOn"
-                    checkable: true
                     isChecked: false
                     icon: "qrc:/images/ManualOff.png"
                     iconChecked: "qrc:/images/ManualOn.png"
+                    buttonText: "Manual"
                 }
 
                 IconButtonText {
@@ -205,7 +320,21 @@ Item {
                     isChecked: false
                     icon: "qrc:/images/SectionMasterOff.png"
                     iconChecked: "qrc:/images/SectionMasterOn.png"
-                    iconHeightScale: 1.0
+                    buttonText: "Auto"
+                }
+                IconButtonText {
+                    id: btnAutoYouTurn
+                    objectName: "btnAutoYouTurn"
+                    isChecked: false
+                    icon: "qrc:/images/YouTurnNo.png"
+                    iconChecked: "qrc:/images/YouTurn80.png"
+                    buttonText: "AutoUturn"
+                }
+                IconButtonText {
+                    id: btnAutoSteer
+                    objectName: "btnAutoSteer"
+                    icon: "qrc:/images/AutoSteerOff.png"
+                    buttonText: "X"
                 }
 
             }
@@ -213,7 +342,7 @@ Item {
             Column {
                 id: rightSubColumn
                 anchors.top: parent.top
-                anchors.topMargin: btnABLine.height + 3
+                anchors.topMargin: btnContour.height + 3
                 anchors.right: rightColumn.left
                 anchors.rightMargin: 3
                 spacing: 3
@@ -228,13 +357,85 @@ Item {
                     iconChecked: "qrc:/images/ContourPriorityRight.png"
                 }
             }
+            Row{
+                id:bottomButtons
+                anchors.bottom: parent.bottom
+                anchors.left: leftColumn.right
+                anchors.leftMargin: 3
+                spacing:3
+                IconButtonText {
+                    id: btnResetTool
+                    objectName: "btnResetTool"
+                    isChecked: false
+                    icon: "qrc:/images/ResetTool.png"
+                    iconChecked: "qrc:/images/ResetTool.png"
+                    buttonText: "Reset Tool"
+                }
+                IconButtonText {
+                    id: btnHeadland
+                    objectName: "btnHeadland"
+                    isChecked: false
+                    icon: "qrc:/images/HeadlandOff.png"
+                    iconChecked: "qrc:/images/HeadlandOn.png"
+                    buttonText: "Headland"
+                }
+                IconButtonText {
+                    id: btnHydLift
+                    objectName: "btnHydLift"
+                    isChecked: false
+                    icon: "qrc:/images/HydraulicLiftOff.png"
+                    iconChecked: "qrc:/images/HydraulicLiftOn.png"
+                    buttonText: "HydLift"
+                }
+                IconButtonText {
+                    id: btnFlag
+                    objectName: "btnFlag"
+                    isChecked: false
+                    icon: "qrc:/images/FlagRed.png"
+                    onPressAndHold: {
+                        if (contextFlag.visible) {
+                            contextFlag.visible = false;
+                        } else {
+                            contextFlag.visible = true;
+                        }
+                    }
+                    buttonText: "Flag"
+                }
+                IconButtonText {
+                    id: btnPointStart
+                    objectName: "btnPointStart"
+                    icon: "qrc:/images/PointStart.png"
+                    buttonText: "LinePicker"
+                }
+                IconButtonText {
+                    id: btnSnaptoPivot
+                    objectName: "btnSnaptoPivot"
+                    icon: "qrc:/images/SnapToPivot.png"
+                    buttonText: ""
+                }
+                IconButtonText {
+                    id: btnABLineEdit
+                    objectName: "btnABLineEdit"
+                    icon: "qrc:/images/ABLineEdit.png"
+                    buttonText: "ABLineEdit"
+                }
+                IconButtonText {
+                    id: btnYouSkip
+                    objectName: "btnYouSkip"
+                    isChecked: false
+                    icon: "qrc:/images/YouSkipOff.png"
+                    iconChecked: "qrc:/images/YouSkipOn.png"
+                    buttonText: "YouSkips"
+                }
+
+            }
 
             Row {
                 id: sectionButtons
                 anchors.horizontalCenter: parent.horizontalCenter
 
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin:15
+                anchors.bottom: bottomButtons.top
+                anchors.bottomMargin:10
 
                 spacing: 15
 
@@ -443,8 +644,10 @@ Item {
             Slider {
                 id: speedSlider
                 objectName: "simSpeed"
-                anchors.bottom: parent.bottom
-                anchors.left: parent.left
+                anchors.bottom: bottomButtons.top
+                anchors.bottomMargin: 3
+                anchors.left:bottomButtons.left
+                anchors.leftMargin: 3
                 width: 200
                 from: -30
                 to: 30
@@ -469,7 +672,8 @@ Item {
                 id: steerSlider
                 objectName: "simSteer"
                 anchors.bottom: simStopButton.top
-                anchors.left: parent.left
+                anchors.leftMargin: 3
+                anchors.left: bottomButtons.left
                 width: 200
                 from: 0
                 to: 600
@@ -499,6 +703,38 @@ Item {
                 visible: false
 
             }
+            FieldMenu {
+                id: fieldMenu
+                objectName: "slideoutMenu"
+                anchors.top: parent.top
+                anchors.topMargin: 20
+                anchors.left: leftColumn.right
+                anchors.leftMargin: 15
+                visible: false
+
+            }
+            FieldWindow {
+                id: fieldWindow
+                objectName: "slideoutMenu"
+                anchors.top: parent.top
+                anchors.topMargin: 20
+                anchors.left: leftColumn.right
+                anchors.leftMargin: 15
+                visible: false
+
+            }
+            ToolsWindow {
+                id: toolsWindow
+                objectName: "slideoutMenu"
+                anchors.top: parent.top
+                anchors.topMargin: 20
+                anchors.left: leftColumn.right
+                anchors.leftMargin: 15
+                visible: false
+
+            }
+
+
 
             Rectangle {
                 id: contextArea
@@ -509,8 +745,8 @@ Item {
                 visible: false
                 anchors.top: parent.top
                 anchors.left: parent.left
-                anchors.leftMargin: btnPerimeter.width + 10
-                anchors.topMargin: btnPerimeter.y
+                //anchors.leftMargin: btnPerimeter.width + 10
+                //anchors.topMargin: btnPerimeter.y
                 border.color: "#c3ecc0"
 
                 Grid {
