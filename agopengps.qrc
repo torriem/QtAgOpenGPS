@@ -131,8 +131,6 @@
         <file>images/TurnManualRight.png</file>
         <file>images/textures/LandscapeNight.png</file>
         <file>images/textures/Lift.png</file>
-        <file>../qtag/qml/FieldMenu.qml</file>
-        <file>../qtag/qml/FieldWindow.qml</file>
         <file>qml/FieldMenu.qml</file>
         <file>qml/FieldWindow.qml</file>
         <file>qml/ToolsWindow.qml</file>
