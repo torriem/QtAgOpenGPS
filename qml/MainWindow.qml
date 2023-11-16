@@ -148,58 +148,6 @@ Window {
                         toggle_toolsmenu();
                     }
                 }
-                //Lower is no longer used in AOG--Shall we remove it?
-           /*     IconButtonText{
-                    id: btnMenuDrawer
-                    objectName: "btnMenuDrawer"
-                    buttonText: qsTr("Menu")
-                    icon: "qrc:/images/ArrowRight.png"
-
-                    //pseudo state
-                    property bool hideMenu: true
-
-                    onHideMenuChanged: {
-                        if (hideMenu == true) {
-                            icon="qrc:/images/ArrowRight.png"
-                            iconPalette.visible = false
-                        } else {
-                            icon="qrc:/images/ArrowLeft.png"
-                            iconPalette.visible = true
-                        }
-                    }
-
-                    function toggle_menu() {
-                        if (hideMenu == true) {
-                            hideMenu = false
-                        } else {
-                            hideMenu = true
-                        }
-                    }
-
-                    onClicked: {
-                        toggle_menu();
-                    }
-                }
-
-                //will remove as soon as i can figure out how.. right now everything crashes if I remove
-                IconButtonText {
-                    id: btnPerimeter
-                    objectName: "btnPerimeter"
-                    buttonText: "000.00"
-                    isChecked: false
-                    iconHeightScale: 1.0
-                    icon: "qrc:/images/PeriArea.png"
-                    iconChecked: "qrc:/images/PeriDraw.png"
-                    onPressAndHold: {
-                        if (contextArea.visible) {
-                            contextArea.visible = false;
-                        } else {
-                            contextArea.visible = true;
-                        }
-                    }
-                }
-
-*/
                 IconButtonText{
                     id: btnFieldMenu
                     objectName: "btnFieldMenu"
@@ -692,17 +640,6 @@ Window {
                 }
 
             }
-/*
-            IconPalette {
-                id: iconPalette
-                objectName: "slideoutMenu"
-                anchors.top: parent.top
-                anchors.topMargin: 20
-                anchors.left: leftColumn.right
-                anchors.leftMargin: 15
-                visible: false
-
-            }*/
             FieldMenu {
                 id: fieldMenu
                 objectName: "slideoutMenu"
