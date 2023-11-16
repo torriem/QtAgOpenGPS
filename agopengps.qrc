@@ -165,5 +165,10 @@
         <file>images/YouSkipOn.png</file>
         <file>images/ABLineEdit.png</file>
         <file>images/SnapToPivot.png</file>
+        <file>images/SectionMapping.png</file>
+        <file>images/TramAll.png</file>
+        <file>images/TramLines.png</file>
+        <file>images/TramOff.png</file>
+        <file>images/TramOuter.png</file>
     </qresource>
 </RCC>
