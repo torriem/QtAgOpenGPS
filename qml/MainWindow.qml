@@ -75,7 +75,7 @@ Item {
                 parent.clicked(mouse);
             }
         }
-//----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------left column
         Item {
             id: buttonsArea
             anchors.top: parent.top
@@ -149,7 +149,7 @@ Item {
                     }
                 }
                 //Lower is no longer used in AOG--Shall we remove it?
-                IconButtonText{
+           /*     IconButtonText{
                     id: btnMenuDrawer
                     objectName: "btnMenuDrawer"
                     buttonText: qsTr("Menu")
@@ -199,7 +199,7 @@ Item {
                     }
                 }
 
-
+*/
                 IconButtonText{
                     id: btnFieldMenu
                     objectName: "btnFieldMenu"
@@ -692,7 +692,7 @@ Item {
                 }
 
             }
-
+/*
             IconPalette {
                 id: iconPalette
                 objectName: "slideoutMenu"
@@ -702,7 +702,7 @@ Item {
                 anchors.leftMargin: 15
                 visible: false
 
-            }
+            }*/
             FieldMenu {
                 id: fieldMenu
                 objectName: "slideoutMenu"

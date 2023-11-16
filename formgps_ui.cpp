@@ -54,13 +54,13 @@ void FormGPS::setupGui()
 
 
     //connect qml button signals to callbacks (it's not automatic with qml)
-    btnMenuDrawer = qmlItem(qml_root, "btnMenuDrawer");
+    //btnMenuDrawer = qmlItem(qml_root, "btnMenuDrawer");
 
 
-    btnPerimeter = qmlItem(qml_root,"btnPerimeter");
+    /*btnPerimeter = qmlItem(qml_root,"btnPerimeter");
     connect(btnPerimeter,SIGNAL(clicked()),this,
             SLOT(onBtnPerimeter_clicked()));
-
+*/
     contextArea = qmlItem(qml_root, "contextArea");
 
     btnAutoSteer = qmlItem(qml_root,"btnAutoSteer");
@@ -72,7 +72,7 @@ void FormGPS::setupGui()
             SLOT(onBtnFlag_clicked()));
 
 
-    qmlItem(qml_root,"btnABLine");
+    btnABLine = qmlItem(qml_root,"btnABLine");
     connect(btnABLine,SIGNAL(clicked()),this,
             SLOT(onBtnABLine_clicked()));
 
@@ -120,7 +120,7 @@ void FormGPS::setupGui()
     connect(btnSettings,SIGNAL(clicked()),this,
             SLOT(onBtnSettings_clicked()));
 
-    btnJob = qmlItem(qml_root,"btnJob");
+  /*  btnJob = qmlItem(qml_root,"btnJob");
     connect(btnJob,SIGNAL(clicked()),this,
             SLOT(onBtnJob_clicked()));
 
@@ -143,7 +143,7 @@ void FormGPS::setupGui()
     btnAutoSteerConfig = qmlItem(qml_root,"btnAutoSteerConfig");
     connect(btnAutoSteerConfig,SIGNAL(clicked()),this,
             SLOT(onBtnAutoSteerConfig_clicked()));
-
+*/
     //Any objects we don't need to access later we can just store
     //temporarily
     QObject *temp;
@@ -590,7 +590,7 @@ bool FormGPS::closeAllMenus()
 {
     //If any of the popup menus are showing, close them,
     //and cancel the click.
-    if (!btnMenuDrawer->property("hideMenu").toBool() ||
+    /*if (!btnMenuDrawer->property("hideMenu").toBool() ||
         contextArea->property("visible").toBool() ||
         contextFlag->property("visible").toBool()) {
 
@@ -599,7 +599,7 @@ bool FormGPS::closeAllMenus()
         contextFlag->setProperty("visible",false);
         openGLControl->update();
         return true;
-    }
+    }*/
     return false;
 }
 

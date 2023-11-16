@@ -81,7 +81,7 @@ public:
     QObject *btnnavigationSettings;
     QObject *btnSettings;
     QObject *btnTools;
-    QObject *btnPerimeter; //remove this someone plz
+//    QObject *btnPerimeter; //remove this someone plz
     QObject *btnFieldMenu;
     QObject *btnAgIO;
     QObject *btnautoSteerConf;
@@ -107,13 +107,13 @@ public:
     QObject *btnFlag;
 
     //menu button and icon palette -- do we need to keep all of these?
-    QObject *btnMenuDrawer;
+ /*   QObject *btnMenuDrawer;
     QObject *btnJob;
     QObject *btnBoundaryMenu;
     QObject *btnComm;
     QObject *btnUnits;
     QObject *btnFileExplorer;
-    QObject *btnAutoSteerConfig;
+    QObject *btnAutoSteerConfig;*/
 
     //area context menu
     QObject *contextArea;
