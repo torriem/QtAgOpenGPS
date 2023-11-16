@@ -32,7 +32,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += $$PWD/classes
 
 SOURCES += main.cpp\
-    classes/toolmenufunc.cpp \
         formgps.cpp \
     classes/cabline.cpp \
     classes/vec2.cpp \
@@ -83,7 +82,6 @@ SOURCES += main.cpp\
 
 HEADERS  += formgps.h \
     classes/cabline.h \
-    classes/toolmenufunc.h \
     classes/vec2.h \
     classes/vec3.h \
     classes/vec4.h \
