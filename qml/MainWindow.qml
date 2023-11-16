@@ -1,5 +1,6 @@
 import QtQuick 2.8
 import QtQuick.Controls 2.1
+import QtQuick.Layouts 1.3
 import AgOpenGPS 1.0
 
 Item {
@@ -84,13 +85,12 @@ Item {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
 
-            Column {
+            ColumnLayout {
                 id: leftColumn
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 anchors.leftMargin: 6
-                spacing: 3
 
                 IconButtonText {
                     id: btnfileMenu
@@ -102,7 +102,7 @@ Item {
                 IconButtonText {
                     id: btnAcres
                     objectName: "btnAcres"
-                    buttonText: qsTr("Acres #N/A")
+                    buttonText: qsTr("0.00")
                     icon: "qrc:/images/TripOdometer.png"
 
                 }
@@ -203,12 +203,12 @@ Item {
             }
             //------------------------------------------------------------------------------------------right
 
-            Column {
+            ColumnLayout {
                 id: rightColumn
                 anchors.top: parent.top
                 anchors.right: parent.right
+                anchors.bottom: parent.bottom
                 anchors.rightMargin: 6
-                spacing: 3
                 IconButtonText {
                     id: btnClose
                     objectName: "btnClose"
@@ -305,12 +305,15 @@ Item {
                     iconChecked: "qrc:/images/ContourPriorityRight.png"
                 }
             }
-            Row{
+            RowLayout{
                 id:bottomButtons
                 anchors.bottom: parent.bottom
                 anchors.left: leftColumn.right
                 anchors.leftMargin: 3
-                spacing:3
+                anchors.right: rightColumn.left
+                anchors.rightMargin: 3
+                Layout.fillWidth: true
+                //spacing: parent.rowSpacing
                 IconButtonText {
                     id: btnResetTool
                     objectName: "btnResetTool"
@@ -349,6 +352,20 @@ Item {
                     }
                     buttonText: "Flag"
                 }
+
+                IconButtonText {
+                    id: btnTramLines
+                    objectName: "btnTramLines"
+                    icon: "qrc:/images/TramLines.png"
+                    buttonText: "Tram Lines"
+                }
+                IconButtonText {
+                    id:btnSectionMapping
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    objectName: "btnSectionMapping"
+                    icon: "qrc:/images/SectionMapping"
+                }
+
                 IconButtonText {
                     id: btnPointStart
                     objectName: "btnPointStart"
@@ -374,6 +391,31 @@ Item {
                     icon: "qrc:/images/YouSkipOff.png"
                     iconChecked: "qrc:/images/YouSkipOn.png"
                     buttonText: "YouSkips"
+                }
+                ComboBox { //if someone knows how to do this right--size and/or model, do a pull request or tell me plz
+                    id: skips
+                    editable: true
+                    height:parent.height
+                    width: btnYouSkip.width
+                    model: ListModel {
+                        id: model
+                        ListElement {text: "1"}
+                        ListElement {text: "2"}
+                        ListElement {text: "3"}
+                        ListElement {text: "4"}
+                        ListElement {text: "5"}
+                        ListElement {text: "6"}
+                        ListElement {text: "7"}
+                        ListElement {text: "8"}
+                        ListElement {text: "9"}
+                        ListElement {text: "10"}
+                    }
+                    onAccepted: {
+                        if (skips.find(currentText) === -1){
+                            model.append({text: editText})
+                            curentIndex = skips.find(editText)
+                        }
+                    }
                 }
 
             }
