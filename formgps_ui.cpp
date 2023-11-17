@@ -52,6 +52,9 @@ void FormGPS::setupGui()
 */
     contextArea = qmlItem(qml_root, "contextArea");
 
+    btnnavigationSettings = qmlItem(qml_root, "btnNavigationSettings");
+    connect(btnnavigationSettings,SIGNAL(clicked()),this,
+            SLOT(onBtnNavigationSettings_clicked()));
     btnAutoSteer = qmlItem(qml_root,"btnAutoSteer");
     connect(btnAutoSteer,SIGNAL(clicked()),this,
             SLOT(onBtnAutoSteer_clicked()));
@@ -225,15 +228,58 @@ void FormGPS::onGLControl_clicked(const QVariant &event)
     openGLControl->update();
 }
 
-void FormGPS::onBtnMinMaxZoom_clicked(){
-    if (closeAllMenus()) return;
-    qDebug()<<"Min Max button clicked." ;
+void FormGPS::onBtnAcres_clicked(){
+    qDebug()<<"AcresButton";
+}
+void FormGPS::onBtnNavigationSettings_clicked(){
+    qDebug()<<"Navigation Settings";
+}
+void FormGPS::onBtnSettings_clicked(){
+    qDebug()<<"Settings";
+}
+void FormGPS::onBtnAgIO_clicked(){
+    qDebug()<<"AgIO";
+}
+void FormGPS::onBtnSteerConfig_clicked(){
+    qDebug()<<"Steer config`";
+}
+void FormGPS::onBtnSteerMode_clicked(){
+    qDebug()<<"Steer mode`";
+}
+void FormGPS::onBtnToggleAB_clicked(){
+    qDebug()<<"Toggle AB";
+}
+void FormGPS::onBtnToggleABBack_clicked(){
+    qDebug()<<"toggle AB back";
+}
+void FormGPS::onBtnAutoYouTurn_clicked(){
+    qDebug()<<"activate youturn";
+}
+void FormGPS::onBtnResetTool_clicked(){
+    qDebug()<<"REset tool";
+}
+void FormGPS::onBtnHeadland_clicked(){
+    qDebug()<<"Headland";
+}
+void FormGPS::onBtnHydLift_clicked(){
+    qDebug()<<"Hyd";
+}
+void FormGPS::onBtnTramlines_clicked(){
+    qDebug()<<"tramline";
+}
+void FormGPS::onBtnSectionColor_clicked(){
+    qDebug()<<"Section color";
+}
+void FormGPS::onBtnLinePicker_clicked(){
+    qDebug()<<"Line picker";
+}
+void FormGPS::onBtnSnapToPivot_clicked(){
+    qDebug()<<"snap to pivot";
+}
+void FormGPS::onBtnYouSkip_clicked(){
+    qDebug()<<"you skip";
 }
 
-void FormGPS::onBtnPerimeter_clicked(){
-    if (closeAllMenus()) return;
-    qDebug()<<"Perimeter button clicked." ;
-}
 
 void FormGPS::onBtnAreaSide_clicked() {
     isAreaOnRight = !isAreaOnRight;
@@ -488,46 +534,6 @@ void FormGPS::onBtnZoomOut_clicked(){
     camera.camSetDistance = zoomValue * zoomValue * -1;
     setZoom();
     openGLControl->update();
-}
-
-void FormGPS::onBtnSnap_clicked(){
-    qDebug()<<"Snap button clicked." ;
-}
-
-void FormGPS::onBtnTripOdometer_clicked(){
-    qDebug()<<"TripOdometer button clicked." ;
-}
-
-void FormGPS::onBtnGPSData_clicked(){
-    qDebug()<<"GPSData button clicked." ;
-}
-
-void FormGPS::onBtnSettings_clicked(){
-    qDebug()<<"Settings button clicked." ;
-}
-
-void FormGPS::onBtnJob_clicked(){
-    qDebug()<<"Job button clicked." ;
-}
-
-void FormGPS::onBtnBoundaryMenu_clicked(){
-    qDebug()<<"BoundaryMenu button clicked." ;
-}
-
-void FormGPS::onBtnComm_clicked(){
-    qDebug()<<"Comm button clicked." ;
-}
-
-void FormGPS::onBtnUnits_clicked(){
-    qDebug()<<"Units button clicked." ;
-}
-
-void FormGPS::onBtnFileExplorer_clicked(){
-    qDebug()<<"FileExplorer button clicked." ;
-}
-
-void FormGPS::onBtnAutoSteerConfig_clicked(){
-    qDebug()<<"AutoSteerConfig button clicked." ;
 }
 
 void FormGPS::onBtnRedFlag_clicked()

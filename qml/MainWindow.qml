@@ -111,7 +111,26 @@ Window {
                     objectName: "btnnavigationSettings"
                     buttonText: qsTr("Display")
                     icon: "qrc:/images/NavigationSettings.png"
+                    property bool hideButtons: true
 
+                    onHideButtonsChanged: {
+                        if (hideButtons == true) {
+                            displayButtons.visible = false
+                        }else{
+                            displayButtons.visible = true
+                        }
+                    }
+
+                    function toggle_displaybuttons(){
+                        if (hideButtons == true) {
+                            hideButtons = false
+                        }else{
+                            hideButtons = true
+                        }
+                    }
+                    onClicked: {
+                        toggle_displaybuttons()
+                    }
                 }
                 IconButtonText {
                     id: btnSettings
@@ -361,7 +380,7 @@ Window {
                 }
                 IconButtonText {
                     id:btnSectionMapping
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    Layout.alignment: parent.Center
                     objectName: "btnSectionMapping"
                     icon: "qrc:/images/SectionMapping"
                 }
@@ -395,8 +414,6 @@ Window {
                 ComboBox { //if someone knows how to do this right--size and/or model, do a pull request or tell me plz
                     id: skips
                     editable: true
-                    height:parent.height
-                    width: btnYouSkip.width
                     model: ListModel {
                         id: model
                         ListElement {text: "1"}
@@ -416,6 +433,8 @@ Window {
                             curentIndex = skips.find(editText)
                         }
                     }
+                    height:parent.height
+                    width: btnYouSkip.width
                 }
 
             }
@@ -530,48 +549,59 @@ Window {
                 }
 
             }
+            Rectangle{
+                id: displayButtons
+                width: childrenRect.width + 10
+                height: childrenRect.height + 10
+                    anchors.left: leftColumn.right
+                    anchors.leftMargin: 20
+                    anchors.top: parent.top
+                    anchors.topMargin: 20
+        color: "white"
+        visible: false
+                Grid {
+                    id: tiltButtons
+                    anchors.leftMargin: 5
+                    anchors.topMargin: 5
+                    spacing: 6
+                    flow: Grid.TopToBottom
+                    rows:6
+                    columns:2
 
-            Column {
-                id: tiltButtons
-                spacing: 6
-                anchors.left: leftColumn.right
-                anchors.leftMargin: 20
-                anchors.top: parent.top
-                anchors.topMargin: 20
+                    IconButton {
+                        id: btnTiltDown
+                        objectName: "btnTiltDown"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/TiltDown.png"
+                    }
 
-                IconButton {
-                    id: btnTiltDown
-                    objectName: "btnTiltDown"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon: "qrc:/images/TiltDown.png"
-                }
+                    IconButton {
+                        id: btnTiltUp
+                        objectName: "btnTiltUp"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/TiltUp.png"
+                    }
+                    IconButton {
+                        id: btnZoomIn
+                        objectName: "btnZoomIn"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/ZoomIn48.png"
+                    }
 
-                IconButton {
-                    id: btnTiltUp
-                    objectName: "btnTiltUp"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon: "qrc:/images/TiltUp.png"
-                }
-                IconButton {
-                    id: btnZoomIn
-                    objectName: "btnZoomIn"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon: "qrc:/images/ZoomIn48.png"
-                }
-
-                IconButton {
-                    id: btnZoomOut
-                    objectName: "btnZoomOut"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon: "qrc:/images/ZoomOut48.png"
+                    IconButton {
+                        id: btnZoomOut
+                        objectName: "btnZoomOut"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/ZoomOut48.png"
+                    }
                 }
             }
 
@@ -579,6 +609,8 @@ Window {
                 id: manTurnButtons
                 visible: true
                 objectName: "manUTurnButtons"
+                anchors.left: leftColumn.right
+                anchors.leftMargin: 15
                 IconButtonTransparent {
                     id: manUturnBtnLeft
                     objectName: "btnManUturnLeft"
@@ -593,10 +625,9 @@ Window {
                     height: 58
                     icon: "qrc:/images/TurnManualRight.png"
                 }
-                anchors.left: tiltButtons.right;
-                anchors.top: tiltButtons.top;
+                anchors.top: leftColumn.top;
+                anchors.topMargin: 5
                 spacing: 6
-                anchors.leftMargin: 10
             }
 
             /*

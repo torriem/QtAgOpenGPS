@@ -570,18 +570,36 @@ public slots:
      *******************/
     void onGLControl_clicked(const QVariant &event);
 
-    void onBtnMinMaxZoom_clicked();
-    void onBtnPerimeter_clicked();
-    //void onBtnPerimeter_pressAndHeld();
-    void onBtnAutoSteer_clicked();
-    void onBtnTerminal_clicked();
-    void onBtnFlag_clicked();
-    void onBtnABLine_clicked();
-    void onBtnABCurve_clicked();
+    //left column
+    void onBtnAcres_clicked();
+    void onBtnNavigationSettings_clicked();
+    void onBtnSettings_clicked();
+    void onBtnAgIO_clicked();
+    void onBtnSteerConfig_clicked();
+    void onBtnSteerMode_clicked();
+    //right column
     void onBtnContour_clicked();
-    void onBtnContourPriority_clicked();
+    void onBtnABCurve_clicked();
+    void onBtnABLine_clicked();
+    void onBtnToggleAB_clicked();
+    void onBtnToggleABBack_clicked();
     void onBtnManualOffOn_clicked();
     void onBtnSectionOffAutoOn_clicked();
+    void onBtnAutoYouTurn_clicked();
+    void onBtnAutoSteer_clicked();
+    void onBtnContourPriority_clicked();
+    //bottom row
+    void onBtnResetTool_clicked();
+    void onBtnHeadland_clicked();
+    void onBtnHydLift_clicked();
+    void onBtnFlag_clicked();
+    void onBtnTramlines_clicked();
+    void onBtnSectionColor_clicked();
+    void onBtnLinePicker_clicked();
+    void onBtnSnapToPivot_clicked();
+    //don't need ablineedit
+    void onBtnYouSkip_clicked();
+
 
     void onBtnTiltDown_clicked();
     void onBtnTiltUp_clicked();
@@ -589,16 +607,6 @@ public slots:
     void onBtnZoomIn_clicked();
     void onBtnZoomOut_clicked();
 
-    void onBtnSnap_clicked();
-    void onBtnTripOdometer_clicked();
-    void onBtnGPSData_clicked();
-    void onBtnSettings_clicked();
-    void onBtnJob_clicked();
-    void onBtnBoundaryMenu_clicked();
-    void onBtnComm_clicked();
-    void onBtnUnits_clicked();
-    void onBtnFileExplorer_clicked();
-    void onBtnAutoSteerConfig_clicked();
 
     void onBtnAreaSide_clicked();
 
