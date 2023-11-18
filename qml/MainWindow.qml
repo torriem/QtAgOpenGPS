@@ -559,6 +559,7 @@ Item {
                     anchors.topMargin: 20
         color: "white"
         visible: false
+        z:1
                 Grid {
                     id: tiltButtons
                     anchors.leftMargin: 5
@@ -576,7 +577,46 @@ Item {
                         radius: 10
                         icon: "qrc:/images/TiltDown.png"
                     }
-
+                    IconButton {
+                        id: btnCamera2d
+                        objectName: "btnCamera2d"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/Camera2D64.png"
+                    }
+                    IconButton {
+                        id: btnCameraNorth2d
+                        objectName: "btnCameraNorth2d"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/CameraNorth2D.png"
+                    }
+                    IconButton {
+                        id: btnZoomOut
+                        objectName: "btnZoomOut"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/ZoomOut48.png"
+                    }
+                    IconButton {
+                        id: btnWindowDayNight
+                        objectName: "btnWindowDayNight"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/WindowDayMode.png"
+                    }
+                    IconButton {
+                        id: btnBrightnessDown
+                        objectName: "btnBrightnessDown"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/BrightnessDn.png"
+                    }
                     IconButton {
                         id: btnTiltUp
                         objectName: "btnTiltUp"
@@ -586,6 +626,22 @@ Item {
                         icon: "qrc:/images/TiltUp.png"
                     }
                     IconButton {
+                        id: btnCamera3d
+                        objectName: "btnCamera3d"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/Camera3D64.png"
+                    }
+                    IconButton {
+                        id: btnCameraNorth3d
+                        objectName: "btnCameraNorth3d"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/CameraNorth64.png"
+                    }
+                    IconButton {
                         id: btnZoomIn
                         objectName: "btnZoomIn"
                         width: 70
@@ -593,15 +649,32 @@ Item {
                         radius: 10
                         icon: "qrc:/images/ZoomIn48.png"
                     }
-
                     IconButton {
-                        id: btnZoomOut
-                        objectName: "btnZoomOut"
+                        id: btnempty
+                        objectName: "btnempty"
                         width: 70
                         height: 70
                         radius: 10
-                        icon: "qrc:/images/ZoomOut48.png"
+                        icon: "qrc:/images/.png"
                     }
+                    IconButton {
+                        id: btnBrightnessUp
+                        objectName: "btnBrightnessUp"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/BrightnessUp.png"
+                    }/*
+                    IconButton {
+                        id: btn
+                        objectName: "btn"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/.png"
+                    }*/
+
+
                 }
             }
 

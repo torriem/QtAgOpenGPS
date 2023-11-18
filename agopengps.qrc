@@ -170,5 +170,14 @@
         <file>images/TramLines.png</file>
         <file>images/TramOff.png</file>
         <file>images/TramOuter.png</file>
+        <file>images/Camera3D64.png</file>
+        <file>images/Camera2D64.png</file>
+        <file>images/Camera54.png</file>
+        <file>images/CameraNorth2D.png</file>
+        <file>images/CameraNorth64.png</file>
+        <file>images/BrightnessUp.png</file>
+        <file>images/BrightnessDn.png</file>
+        <file>images/WindowDayMode.png</file>
+        <file>images/WindowNightMode.png</file>
     </qresource>
 </RCC>
