@@ -137,6 +137,7 @@ Item {
                     objectName: "btnSettings"
                     buttonText: qsTr("Settings")
                     icon: "qrc:/images/Settings48.png"
+                    onClicked: config.visible = true
 
                 }
                 IconButtonText {
@@ -816,7 +817,15 @@ Item {
                 visible: false
 
             }
-
+            Config {
+                id:config
+                objectName: "config"
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        height:parent.height
+        width:parent.width - 80
+        visible:false
+            }
 
 
             Rectangle {
