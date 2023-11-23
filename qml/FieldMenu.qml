@@ -1,5 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.1
+import Qt.labs.folderlistmodel 2.2
+import QtQuick.Controls.Styles 1.4
 
 Item{
     Rectangle {
@@ -185,6 +187,30 @@ Item{
                 anchors.rightMargin: 30
             }
         }
+        ListView {
+            anchors.top: topLine.bottom
+            anchors.bottom: grid3.top
+            width:parent.width - 10
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+            property Component mycomponent: fileName
+            model :FolderListModel{
+                id: fieldList
+                showDirs: true
+                folder: "file:/home/davidwedel/Documents/QtAgOpenGPS/Fields/"
+            }
+
+            delegate: RadioButton{
+                width:parent.width
+                height:50
+                Text{
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: fileName
+                }
+            }
+        }
+
         Grid {
             id: grid3
             width: childrenRect.width
