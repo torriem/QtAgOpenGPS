@@ -428,5 +428,7 @@
         <file>images/WizWasZeroReset.png</file>
         <file>images/www.png</file>
         <file>images/YouTurnReverse.png</file>
+        <file>images/SvennArrow.png</file>
+        <file>qml/ConfigTractor.qml</file>
     </qresource>
 </RCC>
