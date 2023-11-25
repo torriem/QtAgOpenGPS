@@ -6,7 +6,7 @@ import Qt.labs.folderlistmodel 2.2
 
 Item {
     Rectangle{
-        id: configTractor
+        id: configMain
         color: "light gray"
         border.color: "black"
         border.width: 8
@@ -45,6 +45,15 @@ Item {
                 icon: "qrc:/images/Config/Con_VehicleMenu.png"
                 width:100
                 height:75
+                function toggle_configTractor(){
+                    if(configTractor.visible == true){
+                        configTractor.visible = false
+                    }else{
+                        configTractor.visible = true
+                    }
+                }
+
+                onClicked: toggle_configTractor()
             }
             IconButtonTransparent{
                 id:implementMenu
@@ -52,12 +61,30 @@ Item {
                 icon: "qrc:/images/Config/Con_ImplementMenu.png"
                 width:100
                 height:75
+                function toggle_configImplement(){
+                    if(configImplement.visible == true){
+                        configImplement.visible = false
+                    }else{
+                        configImplement.visible = true
+                    }
+                }
+
+                onClicked: toggle_configImplement()
             }
             IconButtonTransparent{
                 id:sourcesMenu
                 objectName: "btnSourcesMenu"
                 icon: "qrc:/images/Config/Con_SourcesMenu.png"
                 width:100
+                function toggle_configSources(){
+                    if(configSources.visible == true){
+                        configSources.visible = false
+                    }else{
+                        configSources.visible = true
+                    }
+                }
+
+                onClicked: toggle_configSources()
                 height:75
             }
             IconButtonTransparent{
@@ -66,6 +93,15 @@ Item {
                 icon: "qrc:/images/Config/Con_UTurnMenu.png"
                 width:100
                 height:75
+                function toggle_configYouTurn(){
+                    if(configYouTurn.visible == true){
+                        configYouTurn.visible = false
+                    }else{
+                        configYouTurn.visible = true
+                    }
+                }
+
+                onClicked: toggle_configYouTurn()
             }
             IconButtonTransparent{
                 id:modulesMenu
@@ -73,6 +109,15 @@ Item {
                 icon: "qrc:/images/Config/Con_ModulesMenu.png"
                 width:100
                 height:75
+                function toggle_configModules(){
+                    if(configModules.visible == true){
+                        configModules.visible = false
+                    }else{
+                        configModules.visible = true
+                    }
+                }
+
+                onClicked: toggle_configTractor()
             }
             IconButtonTransparent{
                 id:tramMenu
@@ -80,6 +125,15 @@ Item {
                 icon: "qrc:/images/Config/Con_TramMenu.png"
                 width:100
                 height:75
+                function toggle_configTrams(){
+                    if(configTrams.visible == true){
+                        configTrams.visible = false
+                    }else{
+                        configTrams.visible = true
+                    }
+                }
+
+                onClicked: toggle_configTrams()
             }
             IconButtonTransparent{
                 id:featureMenu
@@ -87,6 +141,15 @@ Item {
                 icon: "qrc:/images/Config/Con_FeatureMenu.png"
                 width:100
                 height:75
+                function toggle_configFeatures(){
+                    if(configFeatures.visible == true){
+                        configFeatures.visible = false
+                    }else{
+                        configFeatures.visible = true
+                    }
+                }
+
+                onClicked: toggle_configFeatures()
             }
         }
 
@@ -779,6 +842,48 @@ Item {
                         text: qsTr("Delete")
                     }
                 }
+        }
+        ConfigTractor{
+            id:configTractor
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: false
+        }
+        ConfigImplement{
+            id:configImplement
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: false
+        }
+        ConfigSources{
+            id:configSources
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: false
+        }
+        ConfigYouTurn{
+            id:configYouTurn
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: false
+        }
+        ConfigModules{
+            id:configModules
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: false
+        }
+        ConfigTrams{
+            id:configTrams
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: false
+        }
+        ConfigFeatures{
+            id:configFeatures
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: false
         }
     }
 }
