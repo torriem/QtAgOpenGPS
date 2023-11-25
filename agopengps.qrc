@@ -430,5 +430,11 @@
         <file>images/YouTurnReverse.png</file>
         <file>images/SvennArrow.png</file>
         <file>qml/ConfigTractor.qml</file>
+        <file>qml/ConfigFeatures.qml</file>
+        <file>qml/ConfigImplement.qml</file>
+        <file>qml/ConfigSources.qml</file>
+        <file>qml/ConfigYouTurn.qml</file>
+        <file>qml/ConfigModules.qml</file>
+        <file>qml/ConfigTrams.qml</file>
     </qresource>
 </RCC>
