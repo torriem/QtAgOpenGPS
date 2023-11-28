@@ -117,7 +117,7 @@ Item {
                     }
                 }
 
-                onClicked: toggle_configTractor()
+                onClicked: toggle_configModules()
             }
             IconButtonTransparent{
                 id:tramMenu
