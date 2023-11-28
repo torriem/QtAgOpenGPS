@@ -1,4 +1,6 @@
 import QtQuick 2.0
+Item {
+/*import QtQuick 2.0
 
 Rectangle {
     id: rectangle
@@ -40,7 +42,7 @@ Rectangle {
             objectName: "btnGPSData"
             buttonText: qsTr("GPS Data")
             icon: "qrc:/images/Satellite64.png"
-        }*/
+        }
 
         IconButtonText {
             id: btnSettings
@@ -104,5 +106,6 @@ Rectangle {
         }
 
 
-    }
+    }*/
 }
+
