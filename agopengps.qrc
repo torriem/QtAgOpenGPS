@@ -105,7 +105,6 @@
         <file>qml/IconButtonText.qml</file>
         <file>qml/IconButton.qml</file>
         <file>qml/SectionButton.qml</file>
-        <file>qml/IconPalette.qml</file>
         <file>qml/MainWindowTest.qml</file>
         <file>images/textures/floor.png</file>
         <file>images/textures/Landscape.png</file>
