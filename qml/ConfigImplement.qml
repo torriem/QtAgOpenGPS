@@ -7,6 +7,88 @@ Item {
         anchors.fill: parent
         visible: true
         color: "ghostwhite"
+        Rectangle{
+            anchors.top: parent.top
+            anchors.topMargin: 200
+            anchors.right: parent.left
+            width: 100
+            id: subMenuImplement
+            visible: true
+            color: "white"
+            height: childrenRect.height
+            Column{
+                visible: true
+                anchors.fill: parent
+                IconButton{
+                    id: configImpSettings
+                    icon: "qrc:/images/Config/ConS_VehicleConfig.png"
+                    /* function toggle_(){
+                    if(configImplement.visible == true){
+                        configImplement.visible = false
+                    }else{
+                        configImplement.visible = true
+                    }
+                }
+
+                onClicked: toggle_configImplement()*/
+                }
+                IconButton{
+                    id: configImpDim
+                    icon: "qrc:/images/Config/ConS_ImplementHitch.png"
+                    /* function toggle_(){
+                    if(configImplement.visible == true){
+                        configImplement.visible = false
+                    }else{
+                        configImplement.visible = true
+                    }
+                }
+
+                onClicked: toggle_configImplement()*/
+                }
+                IconButton{
+                    id: configImpSection
+                    icon: "qrc:/images/Config/ConS_ImplementSection.png"
+                    /* function toggle_(){
+                    if(configImplement.visible == true){
+                        configImplement.visible = false
+                    }else{
+                        configImplement.visible = true
+                    }
+                }
+
+                onClicked: toggle_configImplement()*/
+                }
+                IconButton{
+                    id: configImpTiming
+                    icon: "qrc:/images/Config/ConS_ImplementSettings.png"
+                    /* function toggle_(){
+                    if(configImplement.visible == true){
+                        configImplement.visible = false
+                    }else{
+                        configImplement.visible = true
+                    }
+                }
+
+                onClicked: toggle_configImplement()*/
+
+                }
+                IconButton{
+                    id: configImpSwitches
+                    icon: "qrc:/images/Config/ConS_ImplementSwitch.png"
+                    /* function toggle_(){
+                    if(configImplement.visible == true){
+                        configImplement.visible = false
+                    }else{
+                        configImplement.visible = true
+                    }
+                }
+
+                onClicked: toggle_configImplement()*/
+
+                }
+            }
+        }
+
         Text{
             id: text
             anchors.top: parent.top
