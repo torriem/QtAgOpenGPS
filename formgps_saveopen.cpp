@@ -52,28 +52,28 @@ void FormGPS::fileSaveCurveLines()
 
     QTextStream writer(&curveFile);
 
-    writer << "$CurveLines" << endl;
+    writer << "$CurveLines" << Qt::endl;
 
     if (cnt > 0)
     {
         for (int i = 0; i < cnt; i++)
         {
             //write out the Name
-            writer << curve.curveArr[i].Name << endl;
+            writer << curve.curveArr[i].Name << Qt::endl;
 
             //write out the aveheading
-            writer << curve.curveArr[i].aveHeading << endl;
+            writer << curve.curveArr[i].aveHeading << Qt::endl;
 
             //write out the points of ref line
             int cnt2 = curve.curveArr[i].curvePts.count();
 
-            writer << cnt2 << endl;
+            writer << cnt2 << Qt::endl;
             if (curve.curveArr[i].curvePts.count() > 0)
             {
                 for (int j = 0; j < cnt2; j++)
                     writer << qSetRealNumberPrecision(3) << curve.curveArr[i].curvePts[j].easting << ","
                            << qSetRealNumberPrecision(3) << curve.curveArr[i].curvePts[j].northing << ","
-                           << qSetRealNumberPrecision(5) << curve.curveArr[i].curvePts[j].heading << endl;
+                           << qSetRealNumberPrecision(5) << curve.curveArr[i].curvePts[j].heading << Qt::endl;
             }
         }
     }
@@ -203,7 +203,7 @@ void FormGPS::fileSaveABLines()
             writer << item.Name << ","
                    << qSetRealNumberPrecision(8) << glm::toDegrees(item.heading) << ","
                    << qSetRealNumberPrecision(3) << item.origin.easting << ","
-                   << qSetRealNumberPrecision(3) << item.origin.northing << endl;
+                   << qSetRealNumberPrecision(3) << item.origin.northing << Qt::endl;
         }
     }
 
@@ -297,113 +297,113 @@ void FormGPS::fileSaveVehicle(QString filename)
 
     QTextStream writer(&saveFile);
 
-    writer << "Version," << QCoreApplication::applicationVersion() << endl;
-    writer << "AntennaHeight," << SETTINGS_VEHICLE_ANTENNAHEIGHT << endl;
-    writer << "AntennaPivot," << SETTINGS_VEHICLE_ANTENNAPIVOT << endl;
-    writer << "AntennaOffset," << SETTINGS_VEHICLE_ANTENNAOFFSET << endl;
-    writer << "IsPivotBehindAntenna," << (SETTINGS_VEHICLE_ISPIVOTBEHINDANTENNA ? "True" : "False") << endl;
-    writer << "IsSteerAxleAhead," << (SETTINGS_VEHICLE_ISSTEERAXLEAHEAD ? "True" : "False") << endl;
+    writer << "Version," << QCoreApplication::applicationVersion() << Qt::endl;
+    writer << "AntennaHeight," << SETTINGS_VEHICLE_ANTENNAHEIGHT << Qt::endl;
+    writer << "AntennaPivot," << SETTINGS_VEHICLE_ANTENNAPIVOT << Qt::endl;
+    writer << "AntennaOffset," << SETTINGS_VEHICLE_ANTENNAOFFSET << Qt::endl;
+    writer << "IsPivotBehindAntenna," << (SETTINGS_VEHICLE_ISPIVOTBEHINDANTENNA ? "True" : "False") << Qt::endl;
+    writer << "IsSteerAxleAhead," << (SETTINGS_VEHICLE_ISSTEERAXLEAHEAD ? "True" : "False") << Qt::endl;
 
-    writer << "Wheelbase," << SETTINGS_VEHICLE_WHEELBASE << endl;
-    writer << "MinTurningRadius," << SETTINGS_VEHICLE_MINTURNINGRADIUS << endl;
-    writer << "MinFixStep," << SETTINGS_VEHICLE_MINFIXSTEP << endl;
-    writer << "LowSpeedCutoff," << SETTINGS_TOOL_SLOWSPEEDCUTOFF << endl;
-    writer << "VehicleType," << SETTINGS_VEHICLE_TYPE << endl;
+    writer << "Wheelbase," << SETTINGS_VEHICLE_WHEELBASE << Qt::endl;
+    writer << "MinTurningRadius," << SETTINGS_VEHICLE_MINTURNINGRADIUS << Qt::endl;
+    writer << "MinFixStep," << SETTINGS_VEHICLE_MINFIXSTEP << Qt::endl;
+    writer << "LowSpeedCutoff," << SETTINGS_TOOL_SLOWSPEEDCUTOFF << Qt::endl;
+    writer << "VehicleType," << SETTINGS_VEHICLE_TYPE << Qt::endl;
 
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
 
-    writer << "GeoFenceDistance," << SETTINGS_VEHICLE_GEOFENCEDIST << endl;
-    writer << "UTurnSkipWidth," << SETTINGS_VEHICLE_YOUSKIPWIDTH << endl;
-    writer << "YouTurnDistance," << SETTINGS_VEHICLE_YOUTURNDISTANCE << endl;
-    writer << "youTriggerDistance," << SETTINGS_VEHICLE_YOUTURNTRIGGERDISTANCE << endl;
-    writer << "YouTurnUseDubins," << (SETTINGS_VEHICLE_ISUSINGDUBINSTURN ? "True" : "False") << endl;
-    writer << "IsMachineControlToAS," << (SETTINGS_VEHICLE_ISMACHINECONTROLTOAUTOSTEER ? "True" : "False") << endl;
+    writer << "GeoFenceDistance," << SETTINGS_VEHICLE_GEOFENCEDIST << Qt::endl;
+    writer << "UTurnSkipWidth," << SETTINGS_VEHICLE_YOUSKIPWIDTH << Qt::endl;
+    writer << "YouTurnDistance," << SETTINGS_VEHICLE_YOUTURNDISTANCE << Qt::endl;
+    writer << "youTriggerDistance," << SETTINGS_VEHICLE_YOUTURNTRIGGERDISTANCE << Qt::endl;
+    writer << "YouTurnUseDubins," << (SETTINGS_VEHICLE_ISUSINGDUBINSTURN ? "True" : "False") << Qt::endl;
+    writer << "IsMachineControlToAS," << (SETTINGS_VEHICLE_ISMACHINECONTROLTOAUTOSTEER ? "True" : "False") << Qt::endl;
 
     //AutoSteer
-    writer << "pidP," << SETTINGS_AUTOSTEER_KP << endl;
-    writer << "pidI," << SETTINGS_AUTOSTEER_KI << endl;
-    writer << "pidD," << SETTINGS_AUTOSTEER_KD << endl;
-    writer << "pidO," << SETTINGS_AUTOSTEER_KO << endl;
-    writer << "SteerAngleOffset," << SETTINGS_AUTOSTEER_STEERINGANGLEOFFSET << endl;
-    writer << "minPWM," << SETTINGS_AUTOSTEER_MINSTEERPWM << endl;
-    writer << "MaxIntegral," << SETTINGS_AUTOSTEER_MAXINTEGRAL << endl;
-    writer << "CountsPerDegree," << SETTINGS_AUTOSTEER_COUNTSPERDEGREE << endl;
-    writer << "MaxSteerAngle," << SETTINGS_VEHICLE_MAXSTEERANGLE << endl;
-    writer << "MaxAngularVelocity," << SETTINGS_VEHICLE_MAXANGULARVELOCITY << endl;
-    writer << "IsJRK," << (SETTINGS_AUTOSTEER_ISJRK ? "True" : "False") << endl;
-    writer << "SnapDistance," << SETTINGS_AUTOSTEER_SNAPDISTANCE << endl;
+    writer << "pidP," << SETTINGS_AUTOSTEER_KP << Qt::endl;
+    writer << "pidI," << SETTINGS_AUTOSTEER_KI << Qt::endl;
+    writer << "pidD," << SETTINGS_AUTOSTEER_KD << Qt::endl;
+    writer << "pidO," << SETTINGS_AUTOSTEER_KO << Qt::endl;
+    writer << "SteerAngleOffset," << SETTINGS_AUTOSTEER_STEERINGANGLEOFFSET << Qt::endl;
+    writer << "minPWM," << SETTINGS_AUTOSTEER_MINSTEERPWM << Qt::endl;
+    writer << "MaxIntegral," << SETTINGS_AUTOSTEER_MAXINTEGRAL << Qt::endl;
+    writer << "CountsPerDegree," << SETTINGS_AUTOSTEER_COUNTSPERDEGREE << Qt::endl;
+    writer << "MaxSteerAngle," << SETTINGS_VEHICLE_MAXSTEERANGLE << Qt::endl;
+    writer << "MaxAngularVelocity," << SETTINGS_VEHICLE_MAXANGULARVELOCITY << Qt::endl;
+    writer << "IsJRK," << (SETTINGS_AUTOSTEER_ISJRK ? "True" : "False") << Qt::endl;
+    writer << "SnapDistance," << SETTINGS_AUTOSTEER_SNAPDISTANCE << Qt::endl;
 
-    writer << "isStanleyUsed," << (SETTINGS_VEHICLE_ISSTANLEYUSED ? "True" : "False") << endl;
-    writer << "StanleyGain," << SETTINGS_VEHICLE_STANLEYGAIN << endl;
-    writer << "StanleyHeadingError," << SETTINGS_VEHICLE_STANLEYHEADINGERRORGAIN << endl;
+    writer << "isStanleyUsed," << (SETTINGS_VEHICLE_ISSTANLEYUSED ? "True" : "False") << Qt::endl;
+    writer << "StanleyGain," << SETTINGS_VEHICLE_STANLEYGAIN << Qt::endl;
+    writer << "StanleyHeadingError," << SETTINGS_VEHICLE_STANLEYHEADINGERRORGAIN << Qt::endl;
 
-    writer << "GoalPointLookAhead," << SETTINGS_VEHICLE_GOALPOINTLOOKAHEAD << endl;
+    writer << "GoalPointLookAhead," << SETTINGS_VEHICLE_GOALPOINTLOOKAHEAD << Qt::endl;
 
-    writer << "GoalPointLookAheadUTurnMult," << SETTINGS_VEHICLE_LOOKAHEADUTURNMULT << endl;
+    writer << "GoalPointLookAheadUTurnMult," << SETTINGS_VEHICLE_LOOKAHEADUTURNMULT << Qt::endl;
 
-    writer << "GoalPointLookAheadMinumum," << SETTINGS_VEHICLE_LOOKAHEADMINIMUM << endl;
+    writer << "GoalPointLookAheadMinumum," << SETTINGS_VEHICLE_LOOKAHEADMINIMUM << Qt::endl;
 
-    writer << "GoalPointLookAheadDistanceFromLine," << SETTINGS_VEHICLE_DISTANCEMULTIPLIER << endl;
+    writer << "GoalPointLookAheadDistanceFromLine," << SETTINGS_VEHICLE_DISTANCEMULTIPLIER << Qt::endl;
 
-    writer << "HydLiftLookAhead," << SETTINGS_VEHICLE_HYDLIFTLOOKAHEAD << endl;
+    writer << "HydLiftLookAhead," << SETTINGS_VEHICLE_HYDLIFTLOOKAHEAD << Qt::endl;
 
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
 
     //IMU
-    writer << "HeadingFromSource," << SETTINGS_GPS_HEADINGFROMWHICHSOURCE << endl;
-    writer << "GPSWhichSentence," << SETTINGS_GPS_FIXFROMWHICH << endl;
+    writer << "HeadingFromSource," << SETTINGS_GPS_HEADINGFROMWHICHSOURCE << Qt::endl;
+    writer << "GPSWhichSentence," << SETTINGS_GPS_FIXFROMWHICH << Qt::endl;
 
-    writer << "HeadingFromBrick," << SETTINGS_GPS_ISHEADINGCORRECTIONFROMBRICK << endl;
-    writer << "RollFromAutoSteer," << SETTINGS_GPS_ISROLLFROMAUTOSTEER << endl;
-    writer << "HeadingFromAutoSteer," << SETTINGS_GPS_ISHEADINGCORRECTIONFROMAUTOSTEER << endl;
-    writer << "IMUPitchZero," << SETTINGS_GPS_IMUPITCHZEROX16 << endl;
-    writer << "IMURollZero," << SETTINGS_GPS_IMUROLLZEROX16 << endl;
+    writer << "HeadingFromBrick," << SETTINGS_GPS_ISHEADINGCORRECTIONFROMBRICK << Qt::endl;
+    writer << "RollFromAutoSteer," << SETTINGS_GPS_ISROLLFROMAUTOSTEER << Qt::endl;
+    writer << "HeadingFromAutoSteer," << SETTINGS_GPS_ISHEADINGCORRECTIONFROMAUTOSTEER << Qt::endl;
+    writer << "IMUPitchZero," << SETTINGS_GPS_IMUPITCHZEROX16 << Qt::endl;
+    writer << "IMURollZero," << SETTINGS_GPS_IMUROLLZEROX16 << Qt::endl;
 
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
 
     //Arduino steer Config
-    writer << "ArduinoInclinometer," << SETTINGS_ARDSTEER_INCLINOMETER << endl;
-    writer << "ArduinoMaxPulseCounts," << SETTINGS_ARDSTEER_MAXPULSECOUNTS << endl;
-    writer << "ArduinoMaxSpeed," << SETTINGS_ARDSTEER_MAXSPEED << endl;
-    writer << "ArduinoMinSpeed," << SETTINGS_ARDSTEER_MINSPEED << endl;
-    writer << "ArduinoSetting0," << SETTINGS_ARDSTEER_SETTING0 << endl;
-    writer << "ArduinoSetting1," << SETTINGS_ARDSTEER_SETTING1 << endl;
-    writer << "ArduinoAckermanFix," << SETTINGS_ARDSTEER_ACKERMANFIX << endl;
+    writer << "ArduinoInclinometer," << SETTINGS_ARDSTEER_INCLINOMETER << Qt::endl;
+    writer << "ArduinoMaxPulseCounts," << SETTINGS_ARDSTEER_MAXPULSECOUNTS << Qt::endl;
+    writer << "ArduinoMaxSpeed," << SETTINGS_ARDSTEER_MAXSPEED << Qt::endl;
+    writer << "ArduinoMinSpeed," << SETTINGS_ARDSTEER_MINSPEED << Qt::endl;
+    writer << "ArduinoSetting0," << SETTINGS_ARDSTEER_SETTING0 << Qt::endl;
+    writer << "ArduinoSetting1," << SETTINGS_ARDSTEER_SETTING1 << Qt::endl;
+    writer << "ArduinoAckermanFix," << SETTINGS_ARDSTEER_ACKERMANFIX << Qt::endl;
 
     //Arduino Machine Config
-    writer << "ArdMachineRaiseTime," << SETTINGS_ARDMAC_HYDRAISETIME << endl;
-    writer << "ArdMachineLowerTime," << SETTINGS_ARDMAC_HYDLOWERTIME << endl;
-    writer << "ArdMachineEnableHydraulics," << SETTINGS_ARDMAC_ISHYDENABLED << endl;
+    writer << "ArdMachineRaiseTime," << SETTINGS_ARDMAC_HYDRAISETIME << Qt::endl;
+    writer << "ArdMachineLowerTime," << SETTINGS_ARDMAC_HYDLOWERTIME << Qt::endl;
+    writer << "ArdMachineEnableHydraulics," << SETTINGS_ARDMAC_ISHYDENABLED << Qt::endl;
 
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
 
     //uturn sequences
-    writer << "SequenceFunctionEnter;" << SETTINGS_VEHICLE_SEQFUNCTIONENTER << endl;
-    writer << "SequenceFunctionExit;" << SETTINGS_VEHICLE_SEQFUNCTIONEXIT << endl;
-    writer << "SequenceActionEnter;" << SETTINGS_VEHICLE_SEQACTIONENTER << endl;
-    writer << "SequenceActionExit;" << SETTINGS_VEHICLE_SEQACTIONEXIT << endl;
-    writer << "SequenceDistanceEnter;" << SETTINGS_VEHICLE_SEQDISTANCEENTER << endl;
-    writer << "SequenceDistanceExit;" << SETTINGS_VEHICLE_SEQDISTANCEEXIT << endl;
+    writer << "SequenceFunctionEnter;" << SETTINGS_VEHICLE_SEQFUNCTIONENTER << Qt::endl;
+    writer << "SequenceFunctionExit;" << SETTINGS_VEHICLE_SEQFUNCTIONEXIT << Qt::endl;
+    writer << "SequenceActionEnter;" << SETTINGS_VEHICLE_SEQACTIONENTER << Qt::endl;
+    writer << "SequenceActionExit;" << SETTINGS_VEHICLE_SEQACTIONEXIT << Qt::endl;
+    writer << "SequenceDistanceEnter;" << SETTINGS_VEHICLE_SEQDISTANCEENTER << Qt::endl;
+    writer << "SequenceDistanceExit;" << SETTINGS_VEHICLE_SEQDISTANCEEXIT << Qt::endl;
 
-    writer << "FunctionList;" << SETTINGS_VEHICLE_SEQFUNCTIONLIST << endl;
-    writer << "ActionList;" << SETTINGS_VEHICLE_SEQACTIONLIST << endl;
+    writer << "FunctionList;" << SETTINGS_VEHICLE_SEQFUNCTIONLIST << Qt::endl;
+    writer << "ActionList;" << SETTINGS_VEHICLE_SEQACTIONLIST << Qt::endl;
 
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
 
     //little show to say saved and where
     //TODO var form = new FormTimedMessage(3000, gStr.gsSavedInFolder, vehiclesDirectory);
@@ -745,89 +745,89 @@ void FormGPS::fileSaveTool(QString filename)
 
     QTextStream writer(&saveFile);
  
-    writer << "Version," << QCoreApplication::applicationVersion() << endl;
+    writer << "Version," << QCoreApplication::applicationVersion() << Qt::endl;
 
-    writer << "Overlap," << SETTINGS_TOOL_OVERLAP << endl;
-    writer << "ToolOffset," << SETTINGS_TOOL_OFFSET << endl;
+    writer << "Overlap," << SETTINGS_TOOL_OVERLAP << Qt::endl;
+    writer << "ToolOffset," << SETTINGS_TOOL_OFFSET << Qt::endl;
 
-    writer << "LookAheadOff," << SETTINGS_TOOL_LOOKAHEADOFF << endl;
-    writer << "LookAheadOn," << SETTINGS_TOOL_LOOKAHEADON << endl;
-    writer << "TurnOffDelay," << SETTINGS_TOOL_OFFDELAY << endl;
-    writer << "ToolMinUnappliedPixels," << SETTINGS_TOOL_MINAPPLIED << endl;
+    writer << "LookAheadOff," << SETTINGS_TOOL_LOOKAHEADOFF << Qt::endl;
+    writer << "LookAheadOn," << SETTINGS_TOOL_LOOKAHEADON << Qt::endl;
+    writer << "TurnOffDelay," << SETTINGS_TOOL_OFFDELAY << Qt::endl;
+    writer << "ToolMinUnappliedPixels," << SETTINGS_TOOL_MINAPPLIED << Qt::endl;
 
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
 
-	writer << "ToolTrailingHitchLength," << SETTINGS_TOOL_TRAILINGHITCHLENGTH << endl;
-	writer << "TankTrailingHitchLength," << SETTINGS_TOOL_TANKTRAILINGHITCHLENGTH << endl;
-    writer << "HitchLength," << SETTINGS_TOOL_HITCHLENGTH << endl;
+    writer << "ToolTrailingHitchLength," << SETTINGS_TOOL_TRAILINGHITCHLENGTH << Qt::endl;
+    writer << "TankTrailingHitchLength," << SETTINGS_TOOL_TANKTRAILINGHITCHLENGTH << Qt::endl;
+    writer << "HitchLength," << SETTINGS_TOOL_HITCHLENGTH << Qt::endl;
 
-    writer << "IsToolBehindPivot," << (SETTINGS_TOOL_ISBEHINDPIVOT ? "True": "False") << endl;
-    writer << "IsToolTrailing," << (SETTINGS_TOOL_ISTRAILING ? "True": "False")  << endl;
-    writer << "IsToolTBT," << (SETTINGS_TOOL_ISTBT ? "True": "False")  << endl;
+    writer << "IsToolBehindPivot," << (SETTINGS_TOOL_ISBEHINDPIVOT ? "True": "False") << Qt::endl;
+    writer << "IsToolTrailing," << (SETTINGS_TOOL_ISTRAILING ? "True": "False")  << Qt::endl;
+    writer << "IsToolTBT," << (SETTINGS_TOOL_ISTBT ? "True": "False")  << Qt::endl;
 
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
 
-    writer << "Spinner1," << SETTINGS_TOOL_SECTIONPOSITION1 << endl;
-    writer << "Spinner2," << SETTINGS_TOOL_SECTIONPOSITION2 << endl;
-    writer << "Spinner3," << SETTINGS_TOOL_SECTIONPOSITION3 << endl;
-    writer << "Spinner4," << SETTINGS_TOOL_SECTIONPOSITION4 << endl;
-    writer << "Spinner5," << SETTINGS_TOOL_SECTIONPOSITION5 << endl;
-    writer << "Spinner6," << SETTINGS_TOOL_SECTIONPOSITION6 << endl;
-    writer << "Spinner7," << SETTINGS_TOOL_SECTIONPOSITION7 << endl;
-    writer << "Spinner8," << SETTINGS_TOOL_SECTIONPOSITION8 << endl;
-    writer << "Spinner9," << SETTINGS_TOOL_SECTIONPOSITION9 << endl;
-    writer << "Spinner10," << SETTINGS_TOOL_SECTIONPOSITION10 << endl;
-    writer << "Spinner11," << SETTINGS_TOOL_SECTIONPOSITION11 << endl;
-    writer << "Spinner12," << SETTINGS_TOOL_SECTIONPOSITION12 << endl;
-    writer << "Spinner13," << SETTINGS_TOOL_SECTIONPOSITION13 << endl;
-    writer << "Spinner14," << SETTINGS_TOOL_SECTIONPOSITION14 << endl;
-    writer << "Spinner15," << SETTINGS_TOOL_SECTIONPOSITION15 << endl;
-    writer << "Spinner16," << SETTINGS_TOOL_SECTIONPOSITION16 << endl;
-    writer << "Spinner17," << SETTINGS_TOOL_SECTIONPOSITION17 << endl;
+    writer << "Spinner1," << SETTINGS_TOOL_SECTIONPOSITION1 << Qt::endl;
+    writer << "Spinner2," << SETTINGS_TOOL_SECTIONPOSITION2 << Qt::endl;
+    writer << "Spinner3," << SETTINGS_TOOL_SECTIONPOSITION3 << Qt::endl;
+    writer << "Spinner4," << SETTINGS_TOOL_SECTIONPOSITION4 << Qt::endl;
+    writer << "Spinner5," << SETTINGS_TOOL_SECTIONPOSITION5 << Qt::endl;
+    writer << "Spinner6," << SETTINGS_TOOL_SECTIONPOSITION6 << Qt::endl;
+    writer << "Spinner7," << SETTINGS_TOOL_SECTIONPOSITION7 << Qt::endl;
+    writer << "Spinner8," << SETTINGS_TOOL_SECTIONPOSITION8 << Qt::endl;
+    writer << "Spinner9," << SETTINGS_TOOL_SECTIONPOSITION9 << Qt::endl;
+    writer << "Spinner10," << SETTINGS_TOOL_SECTIONPOSITION10 << Qt::endl;
+    writer << "Spinner11," << SETTINGS_TOOL_SECTIONPOSITION11 << Qt::endl;
+    writer << "Spinner12," << SETTINGS_TOOL_SECTIONPOSITION12 << Qt::endl;
+    writer << "Spinner13," << SETTINGS_TOOL_SECTIONPOSITION13 << Qt::endl;
+    writer << "Spinner14," << SETTINGS_TOOL_SECTIONPOSITION14 << Qt::endl;
+    writer << "Spinner15," << SETTINGS_TOOL_SECTIONPOSITION15 << Qt::endl;
+    writer << "Spinner16," << SETTINGS_TOOL_SECTIONPOSITION16 << Qt::endl;
+    writer << "Spinner17," << SETTINGS_TOOL_SECTIONPOSITION17 << Qt::endl;
 
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
 
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
 
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
 
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
 
 
-	writer << "Sections," << SETTINGS_TOOL_NUMSECTIONS << endl;
-	writer << "ToolWidth," << SETTINGS_TOOL_WIDTH << endl;
+    writer << "Sections," << SETTINGS_TOOL_NUMSECTIONS << Qt::endl;
+    writer << "ToolWidth," << SETTINGS_TOOL_WIDTH << Qt::endl;
 
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
 
-    writer << "WorkSwitch," << ( SETTINGS_TOOL_ISWORKSWITCHENABLED ? "True" : "False" ) << endl;
-    writer << "ActiveLow," << ( SETTINGS_TOOL_ISWORKSWITCHACTIVELOW ? "True" : "False" ) << endl;
-    writer << "SwitchManual," << ( SETTINGS_TOOL_ISWORKSWITCHMANUAL ? "True" : "False" ) << endl;
+    writer << "WorkSwitch," << ( SETTINGS_TOOL_ISWORKSWITCHENABLED ? "True" : "False" ) << Qt::endl;
+    writer << "ActiveLow," << ( SETTINGS_TOOL_ISWORKSWITCHACTIVELOW ? "True" : "False" ) << Qt::endl;
+    writer << "SwitchManual," << ( SETTINGS_TOOL_ISWORKSWITCHMANUAL ? "True" : "False" ) << Qt::endl;
 
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
 
     //little show to say saved and where
     //TODO: show message var form = new FormTimedMessage(3000, gStr.gsSavedInFolder, toolsDirectory);
@@ -1044,83 +1044,83 @@ void FormGPS::fileSaveEnvironment(QString filename)
 
     QTextStream writer(&saveFile);
 
-    writer << "Version," << QCoreApplication::applicationVersion() << endl;
+    writer << "Version," << QCoreApplication::applicationVersion() << Qt::endl;
 
-    writer << "Culture,en_US" << endl; //for now just use system locale always, ignore this
-    writer << "CamPitch," << SETTINGS_DISPLAY_CAMPITCH << endl;
-    writer << "IsBatmanOn," << SETTINGS_DISPLAY_ISBATMANON << endl;
-    writer << "LightBarCMPerPixel," << SETTINGS_DISPLAY_LIGHTBARCMPP << endl;
-    writer << "LineWidth," << SETTINGS_DISPLAY_LINEWIDTH << endl;
+    writer << "Culture,en_US" << Qt::endl; //for now just use system locale always, ignore this
+    writer << "CamPitch," << SETTINGS_DISPLAY_CAMPITCH << Qt::endl;
+    writer << "IsBatmanOn," << SETTINGS_DISPLAY_ISBATMANON << Qt::endl;
+    writer << "LightBarCMPerPixel," << SETTINGS_DISPLAY_LIGHTBARCMPP << Qt::endl;
+    writer << "LineWidth," << SETTINGS_DISPLAY_LINEWIDTH << Qt::endl;
 
-    writer << "IsCompassOn," << SETTINGS_DISPLAY_COMPASS << endl;
-    writer << "IsGridOn," << SETTINGS_DISPLAY_SHOWGRID << endl;
+    writer << "IsCompassOn," << SETTINGS_DISPLAY_COMPASS << Qt::endl;
+    writer << "IsGridOn," << SETTINGS_DISPLAY_SHOWGRID << Qt::endl;
 
-    writer << "IsLightBarOn," << SETTINGS_DISPLAY_LIGHTBARON << endl;
-    writer << "IsLogNMEA," << SETTINGS_GPS_LOGNMEA << endl;
-    writer << "IsMetric," << SETTINGS_DISPLAY_ISMETRIC << endl;
-    writer << "IsOGLZoom," << SETTINGS_DISPLAY_OGLZOOM << endl;
+    writer << "IsLightBarOn," << SETTINGS_DISPLAY_LIGHTBARON << Qt::endl;
+    writer << "IsLogNMEA," << SETTINGS_GPS_LOGNMEA << Qt::endl;
+    writer << "IsMetric," << SETTINGS_DISPLAY_ISMETRIC << Qt::endl;
+    writer << "IsOGLZoom," << SETTINGS_DISPLAY_OGLZOOM << Qt::endl;
 
-    writer << "IsPurePursuitLineOn," << SETTINGS_DISPLAY_ISPUREON << endl;
-    writer << "IsGuideLinesOn," << SETTINGS_DISPLAY_SIDEGUIDELINES << endl;
-    writer << "IsSimulatorOn," << SETTINGS_SIM_ON << endl;
-    writer << "IsSkyOn," << SETTINGS_DISPLAY_SKYON << endl;
-    writer << "IsSpeedoOn," << SETTINGS_DISPLAY_SPEEDO << endl;
-    writer << "IsUTurnAlwaysOn," << SETTINGS_DISPLAY_UTURNALWAYSON << endl;
-    writer << "IsAutoDayNightModeOn," << SETTINGS_DISPLAY_ISAUTODAYNIGHT << endl;
-    writer << "StartFullScreen," << SETTINGS_DISPLAY_FULLSCREEN << endl;
-    writer << "IsRTKOn," << SETTINGS_GPS_EXPECTRTK << endl;
+    writer << "IsPurePursuitLineOn," << SETTINGS_DISPLAY_ISPUREON << Qt::endl;
+    writer << "IsGuideLinesOn," << SETTINGS_DISPLAY_SIDEGUIDELINES << Qt::endl;
+    writer << "IsSimulatorOn," << SETTINGS_SIM_ON << Qt::endl;
+    writer << "IsSkyOn," << SETTINGS_DISPLAY_SKYON << Qt::endl;
+    writer << "IsSpeedoOn," << SETTINGS_DISPLAY_SPEEDO << Qt::endl;
+    writer << "IsUTurnAlwaysOn," << SETTINGS_DISPLAY_UTURNALWAYSON << Qt::endl;
+    writer << "IsAutoDayNightModeOn," << SETTINGS_DISPLAY_ISAUTODAYNIGHT << Qt::endl;
+    writer << "StartFullScreen," << SETTINGS_DISPLAY_FULLSCREEN << Qt::endl;
+    writer << "IsRTKOn," << SETTINGS_GPS_EXPECTRTK << Qt::endl;
 
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
 
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
 
-    writer << "IsNtripCasterIP," << SETTINGS_GPS_NTRIPCASTERIP << endl;
-    writer << "IsNtripCasterPort," << SETTINGS_GPS_NTRIPCASTERPORT << endl;
-    writer << "IsNtripCasterURL," << SETTINGS_GPS_NTRIPCASTERURL << endl;
-    writer << "IsNtripGGAManual," << SETTINGS_GPS_NTRIPGGAMANUAL << endl;
-    writer << "IsNtripOn," << SETTINGS_GPS_NTRIPON << endl;
-    writer << "IsNtripTCP," << SETTINGS_GPS_NTRIPTCP << endl;
-    writer << "IsNtripManualLat," << SETTINGS_GPS_NTRIPMANUALLAT << endl;
-    writer << "IsNtripManualLon," << SETTINGS_GPS_NTRIPMANUALLON << endl;
-    writer << "IsNtripMount," << SETTINGS_GPS_NTRIPMOUNT << endl;
-    writer << "IsNtripGGAInterval," << SETTINGS_GPS_NTRIPGGAINTERVAL << endl;
-    writer << "IsNtripSendToUDPPort," << SETTINGS_GPS_NTRIPSENDTOUDPPORT << endl;
-    writer << "IsNtripUserName," << SETTINGS_GPS_NTRIPUSERNAME << endl;
-    writer << "IsNtripUserPassword," << SETTINGS_GPS_NTRIPPASSWORD << endl;
+    writer << "IsNtripCasterIP," << SETTINGS_GPS_NTRIPCASTERIP << Qt::endl;
+    writer << "IsNtripCasterPort," << SETTINGS_GPS_NTRIPCASTERPORT << Qt::endl;
+    writer << "IsNtripCasterURL," << SETTINGS_GPS_NTRIPCASTERURL << Qt::endl;
+    writer << "IsNtripGGAManual," << SETTINGS_GPS_NTRIPGGAMANUAL << Qt::endl;
+    writer << "IsNtripOn," << SETTINGS_GPS_NTRIPON << Qt::endl;
+    writer << "IsNtripTCP," << SETTINGS_GPS_NTRIPTCP << Qt::endl;
+    writer << "IsNtripManualLat," << SETTINGS_GPS_NTRIPMANUALLAT << Qt::endl;
+    writer << "IsNtripManualLon," << SETTINGS_GPS_NTRIPMANUALLON << Qt::endl;
+    writer << "IsNtripMount," << SETTINGS_GPS_NTRIPMOUNT << Qt::endl;
+    writer << "IsNtripGGAInterval," << SETTINGS_GPS_NTRIPGGAINTERVAL << Qt::endl;
+    writer << "IsNtripSendToUDPPort," << SETTINGS_GPS_NTRIPSENDTOUDPPORT << Qt::endl;
+    writer << "IsNtripUserName," << SETTINGS_GPS_NTRIPUSERNAME << Qt::endl;
+    writer << "IsNtripUserPassword," << SETTINGS_GPS_NTRIPPASSWORD << Qt::endl;
 
-    writer << "IsUDPOn,True" << endl; //TODO. Where's the port number?
+    writer << "IsUDPOn,True" << Qt::endl; //TODO. Where's the port number?
 
-    writer << "GPSSimLatitude," << SETTINGS_SIM_LATITUDE << endl;
-    writer << "GPSSimLongitude," << SETTINGS_SIM_LONGITUDE << endl;
-
-
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
+    writer << "GPSSimLatitude," << SETTINGS_SIM_LATITUDE << Qt::endl;
+    writer << "GPSSimLongitude," << SETTINGS_SIM_LONGITUDE << Qt::endl;
 
 
-    writer << "FieldColorDay," << colorSettingStringToInt( SETTINGS_DISPLAY_FIELDCOLORDAY) << endl;
-    writer << "SectionColorDay," << colorSettingStringToInt( SETTINGS_DISPLAY_SECTIONSCOLORDAY) << endl;
-    writer << "FieldColorNight," << colorSettingStringToInt( SETTINGS_DISPLAY_FIELDCOLORNIGHT) << endl;
-    writer << "SectionColorNight," << colorSettingStringToInt( SETTINGS_DISPLAY_SECTIONSCOLORNIGHT) << endl;
-    writer << "DayColor," << colorSettingStringToInt( SETTINGS_DISPLAY_COLORDAY) << endl;
-    writer << "NightColor," << colorSettingStringToInt( SETTINGS_DISPLAY_COLORNIGHT) << endl;
-    writer << "IsSimple," << SETTINGS_DISPLAY_ISSIMPLE << endl;
-    writer << "IsDayMode," << SETTINGS_DISPLAY_ISDAYMODE << endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+
+
+    writer << "FieldColorDay," << colorSettingStringToInt( SETTINGS_DISPLAY_FIELDCOLORDAY) << Qt::endl;
+    writer << "SectionColorDay," << colorSettingStringToInt( SETTINGS_DISPLAY_SECTIONSCOLORDAY) << Qt::endl;
+    writer << "FieldColorNight," << colorSettingStringToInt( SETTINGS_DISPLAY_FIELDCOLORNIGHT) << Qt::endl;
+    writer << "SectionColorNight," << colorSettingStringToInt( SETTINGS_DISPLAY_SECTIONSCOLORNIGHT) << Qt::endl;
+    writer << "DayColor," << colorSettingStringToInt( SETTINGS_DISPLAY_COLORDAY) << Qt::endl;
+    writer << "NightColor," << colorSettingStringToInt( SETTINGS_DISPLAY_COLORNIGHT) << Qt::endl;
+    writer << "IsSimple," << SETTINGS_DISPLAY_ISSIMPLE << Qt::endl;
+    writer << "IsDayMode," << SETTINGS_DISPLAY_ISDAYMODE << Qt::endl;
     //TODO support custom color palette
-    writer << "CustomColors,10130518,7843687,8605795,6170168,3758726,3552822,8826561,15156186,4351583,162626,5317709,7629648,7696185,5789221,14993507,11730944" << endl;
+    writer << "CustomColors,10130518,7843687,8605795,6170168,3758726,3552822,8826561,15156186,4351583,162626,5317709,7629648,7696185,5789221,14993507,11730944" << Qt::endl;
 
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
-    writer << "Empty," << "10" << endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
+    writer << "Empty," << "10" << Qt::endl;
 
     //TODO: message indicating success
 }
@@ -1906,20 +1906,20 @@ void FormGPS::fileCreateField()
     QDateTime now = QDateTime::currentDateTime();
 
     //Write out the date
-    writer << now.toString("yyyy-MMMM-dd hh:mm:ss tt") << endl;
+    writer << now.toString("yyyy-MMMM-dd hh:mm:ss tt") << Qt::endl;
 
-    writer << "$FieldDir" << endl;
-    writer << currentFieldDirectory << endl;
+    writer << "$FieldDir" << Qt::endl;
+    writer << currentFieldDirectory << Qt::endl;
 
     //write out the easting and northing Offsets
-    writer << "$Offsets" << endl;
-    writer << pn.utmEast << "," << pn.utmNorth << "," << pn.zone << endl;
+    writer << "$Offsets" << Qt::endl;
+    writer << pn.utmEast << "," << pn.utmNorth << "," << pn.zone << Qt::endl;
 
-    writer << "Convergence" << endl;
-    writer << pn.convergenceAngle << endl;
+    writer << "Convergence" << Qt::endl;
+    writer << pn.convergenceAngle << Qt::endl;
 
-    writer << "StartFix" << endl;
-    writer << pn.latitude << "," << pn.longitude << endl;
+    writer << "StartFix" << Qt::endl;
+    writer << pn.latitude << "," << pn.longitude << Qt::endl;
 
     fieldFile.close();
 }
@@ -1957,20 +1957,20 @@ void FormGPS::fileCreateElevation()
     QDateTime now = QDateTime::currentDateTime();
 
     //Write out the date
-    writer << now.toString("yyyy-MMMM-dd hh:mm:ss tt") << endl;
+    writer << now.toString("yyyy-MMMM-dd hh:mm:ss tt") << Qt::endl;
 
-    writer << "$FieldDir" << endl;
-    writer << currentFieldDirectory << endl;
+    writer << "$FieldDir" << Qt::endl;
+    writer << currentFieldDirectory << Qt::endl;
 
     //write out the easting and northing Offsets
-    writer << "$Offsets" << endl;
-    writer << pn.utmEast << "," << pn.utmNorth << "," << pn.zone << endl;
+    writer << "$Offsets" << Qt::endl;
+    writer << pn.utmEast << "," << pn.utmNorth << "," << pn.zone << Qt::endl;
 
-    writer << "Convergence" << endl;
-    writer << pn.convergenceAngle << endl;
+    writer << "Convergence" << Qt::endl;
+    writer << pn.convergenceAngle << Qt::endl;
 
-    writer << "StartFix" << endl;
-    writer << pn.latitude << "," << pn.longitude << endl;
+    writer << "StartFix" << Qt::endl;
+    writer << pn.latitude << "," << pn.longitude << Qt::endl;
 
     fieldFile.close();
 }
@@ -2001,13 +2001,13 @@ void FormGPS::fileSaveSections()
     foreach(triList, tool.patchSaveList)
     {
         int count2 = triList->count();
-        writer << count2 << endl;
+        writer << count2 << Qt::endl;
 
         for (int i=0; i < count2; i++)
         {
             writer << qSetRealNumberPrecision(3)
                    << (*triList)[i].x() << "," << (*triList)[i].y()
-                   << "," << (*triList)[i].z() << endl;
+                   << "," << (*triList)[i].z() << Qt::endl;
         }
     }
 
@@ -2059,14 +2059,14 @@ void FormGPS::fileSaveContour()
     {
         int count2 = triList->count();
 
-        writer << count2 << endl;
+        writer << count2 << Qt::endl;
 
         for (int i = 0; i < count2; i++)
         {
             writer << qSetRealNumberPrecision(3)
                    << (*triList)[i].easting << ","
                    << (*triList)[i].northing << ","
-                   << (*triList)[i].heading << endl;
+                   << (*triList)[i].heading << Qt::endl;
         }
     }
 
@@ -2098,14 +2098,14 @@ void FormGPS::fileSaveBoundary()
     }
 
     QTextStream writer(&boundfile);
-    writer << "$Boundary" << endl;
+    writer << "$Boundary" << Qt::endl;
     for(int i = 0; i < bnd.bndArr.count(); i++)
     {
-        writer << (bnd.bndArr[i].isDriveThru ? "True" : "False") << endl;
-        writer << (bnd.bndArr[i].isDriveAround ? "True" : "False") << endl;
+        writer << (bnd.bndArr[i].isDriveThru ? "True" : "False") << Qt::endl;
+        writer << (bnd.bndArr[i].isDriveAround ? "True" : "False") << Qt::endl;
         //writer.WriteLine(bnd.bndArr[i].isOwnField);
 
-        writer << bnd.bndArr[i].bndLine.count() << endl;
+        writer << bnd.bndArr[i].bndLine.count() << Qt::endl;
         if (bnd.bndArr[i].bndLine.count() > 0)
         {
             for (int j = 0; j < bnd.bndArr[i].bndLine.count(); j++)
@@ -2113,7 +2113,7 @@ void FormGPS::fileSaveBoundary()
                        << bnd.bndArr[i].bndLine[j].easting << ","
                        << bnd.bndArr[i].bndLine[j].northing << ","
                        << qSetRealNumberPrecision(5)
-                       << bnd.bndArr[i].bndLine[j].heading << endl;
+                       << bnd.bndArr[i].bndLine[j].heading << Qt::endl;
         }
     }
 
@@ -2146,10 +2146,10 @@ void FormGPS::fileSaveHeadland()
     }
 
     QTextStream writer(&headfile);
-    writer << "$Headland" << endl;
+    writer << "$Headland" << Qt::endl;
     for(int i = 0; i < hd.headArr.count(); i++)
     {
-        writer << hd.headArr[i].hdLine.count() << endl;
+        writer << hd.headArr[i].hdLine.count() << Qt::endl;
         if (hd.headArr[i].hdLine.count() > 0)
         {
             for (int j = 0; j < hd.headArr[i].hdLine.count(); j++)
@@ -2157,7 +2157,7 @@ void FormGPS::fileSaveHeadland()
                        << hd.headArr[i].hdLine[j].easting << ","
                        << hd.headArr[i].hdLine[j].northing << ","
                        << qSetRealNumberPrecision(5)
-                       << hd.headArr[i].hdLine[j].heading << endl;
+                       << hd.headArr[i].hdLine[j].heading << Qt::endl;
         }
     }
 
@@ -2190,8 +2190,8 @@ void FormGPS::fileCreateRecPath()
 
     QTextStream writer(&recpathfile);
 
-    writer << "$RecPath" << endl;
-    writer << "0" << endl;
+    writer << "$RecPath" << Qt::endl;
+    writer << "0" << Qt::endl;
 
     recpathfile.close();
 
@@ -2222,8 +2222,8 @@ void FormGPS::fileSaveRecPath()
 
     QTextStream writer(&recpathfile);
 
-    writer << "$RecPath" << endl;
-    writer << recPath.recList.count() << endl;
+    writer << "$RecPath" << Qt::endl;
+    writer << recPath.recList.count() << Qt::endl;
 
     if (recPath.recList.count() > 0)
     {
@@ -2234,7 +2234,7 @@ void FormGPS::fileSaveRecPath()
                    << recPath.recList[j].heading << ","
                    << qSetRealNumberPrecision(1)
                    << recPath.recList[j].speed << ","
-                   << recPath.recList[j].autoBtnState << endl;
+                   << recPath.recList[j].autoBtnState << Qt::endl;
 
     }
 
@@ -2267,10 +2267,10 @@ void FormGPS::fileSaveFlags()
 
     QTextStream writer(&flagsfile);
 
-    writer << "$Flags" << endl;
+    writer << "$Flags" << Qt::endl;
 
     int count2 = flagPts.count();
-    writer << count2 << endl;
+    writer << count2 << Qt::endl;
 
     for (int i = 0; i < count2; i++)
     {
@@ -2281,7 +2281,7 @@ void FormGPS::fileSaveFlags()
                << flagPts[i].heading << ","
                << flagPts[i].color << ","
                << flagPts[i].ID << ","
-               << flagPts[i].notes << endl;
+               << flagPts[i].notes << Qt::endl;
     }
 
     flagsfile.close();
