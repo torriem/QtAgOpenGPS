@@ -184,7 +184,7 @@ void FormGPS::setupGui()
     openGLControl = qml_root->findChild<AOGRendererInSG *>("openglcontrol");
     //This is a bit hackish, but all rendering is done in this item, so
     //we have to give it a way of calling our initialize and draw functions
-    openGLControl->setProperty("mainform",qVariantFromValue((void *) this));
+    openGLControl->setProperty("mainform",QVariant::fromValue((void *) this));
 
     openGLControl->setProperty("samples",settings.value("display/antiAliasSamples", 0));
     openGLControl->setMirrorVertically(true);

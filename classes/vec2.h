@@ -15,6 +15,8 @@ public:
 
 #ifdef DEBUG_VEC
     ~Vec2();
+#else
+    ~Vec2() = default;
 #endif
 
     double headingXZ();
@@ -25,6 +27,7 @@ public:
     friend Vec2 operator+ (Vec2 lhs, Vec2 rhs);
     friend Vec2 operator- (Vec2 lhs, Vec2 rhs);
     Vec2 operator*= (double rhs);
+    Vec2 &operator=(const Vec2 &other) = default;
 
     operator QVector3D() { return QVector3D(easting,northing,0); }
 };

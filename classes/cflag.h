@@ -31,6 +31,10 @@ public:
           int &color, int &ID, QString &notes);
     CFlag();
     CFlag(const CFlag &);
+
+    ~CFlag() = default;
+    CFlag &operator=(const CFlag &other) = default;
+
 };
 
 #endif // CFLAG_H
