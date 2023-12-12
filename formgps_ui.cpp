@@ -197,8 +197,8 @@ void FormGPS::setupGui()
     connect(openGLControl,SIGNAL(clicked(QVariant)),this,SLOT(onGLControl_clicked(QVariant)));
 
     //TODO: save and restore these numbers from settings
-    setWidth(1920);
-    setHeight(1080);
+    setWidth(1620);
+    setHeight(900);
 
     tmrWatchdog = new QTimer(this);
     connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(tmrWatchdog_timeout()));
