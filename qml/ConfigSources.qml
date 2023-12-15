@@ -8,6 +8,46 @@ Item {
         visible: true
         color: "ghostwhite"
         Rectangle{
+            anchors.top: parent.top
+            anchors.topMargin: 300
+            anchors.right: parent.left
+            width: 100
+            id: subMenuSources
+            visible: true
+            color: "white"
+            height: childrenRect.height
+            Column{
+                visible: true
+                anchors.fill: parent
+                IconButton{
+                    id: configsrcHeading
+                    icon: "qrc:/images/Config/ConS_VehicleConfig.png"
+                    /* function toggle_(){
+                    if(configImplement.visible == true){
+                        configImplement.visible = false
+                    }else{
+                        configImplement.visible = true
+                    }
+                }
+
+                onClicked: toggle_configImplement()*/
+                }
+                IconButton{
+                    id: configsrcRoll
+                    icon: "qrc:/images/Config/ConS_ImplementHitch.png"
+                    function toggle_srcrollwin(){
+                        if(configSrcRollWin.visible == true){
+                            configSrcRollWin.visible = false
+                        }else{
+                            configSrcRollWin.visible = true
+                        }
+                    }
+
+                    onClicked: toggle_srcrollwin()
+                }
+            }
+        }
+        Rectangle{
             id:antennaType
             width: 360
             height: childrenRect.height+ 10
@@ -339,5 +379,127 @@ Item {
                 }
             }
         }
+    }
+    Rectangle{
+        id: configSrcRollWin
+        anchors.fill: parent
+        color: "ghostwhite"
+        visible: false
+        Text{
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            anchors.topMargin: 20
+            text: qsTr("Remove Offset")
+            Rectangle{
+                width:150
+                anchors.left: parent.left
+                anchors.top: parent.bottom
+                height:100
+                radius:5
+                border.color: "black"
+                IconButtonTransparent{
+                    anchors.fill:parent
+                    icon: "qrc:/images/Config/ConDa_RemoveOffset.png"
+                    colorHover1: "transparent"
+                    checkable: true
+                }
+            }
+        }
+        Text{
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            text: qsTr("Zero Roll")
+            Rectangle{
+                width:150
+                anchors.left: parent.left
+                anchors.top: parent.bottom
+                height:100
+                radius:5
+                border.color: "black"
+                IconButtonTransparent{
+                    anchors.fill:parent
+                    icon: "qrc:/images/Config/ConDa_RollSetZero.png"
+                    colorHover1: "transparent"
+                    checkable: true
+                }
+            }
+        }
+        Rectangle{
+            width:150
+            anchors.left: parent.horizontalCenter
+            anchors.top: parent.top
+            anchors.topMargin: 20
+            height:100
+            radius:5
+            border.color: "black"
+            IconButtonTransparent{
+                anchors.fill:parent
+                icon: "qrc:/images/Config/ConDa_ResetIMU.png"
+                colorHover1: "transparent"
+                checkable: true
+            }
+        }
+        Text{
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.horizontalCenter
+            anchors.topMargin: 20
+            text: qsTr("Invert Roll")
+            Rectangle{
+                width:150
+                anchors.left: parent.left
+                anchors.top: parent.bottom
+                height:100
+                radius:5
+                border.color: "black"
+                IconButtonTransparent{
+                    anchors.fill:parent
+                    icon: "qrc:/images/Config/ConDa_InvertRoll.png"
+                    colorHover1: "transparent"
+                    checkable: true
+                }
+            }
+        }
+        Text{
+            anchors.bottom:  rollFilterSlider.top
+            anchors.left: rollFilterSlider.left
+            text: qsTr("Less")
+        }
+        Text{
+            anchors.bottom: rollFilterSlider.top
+            anchors.horizontalCenter: rollFilterSlider.horizontalCenter
+            text: qsTr("Roll Filter")
+        }
+        Text {
+            anchors.right: rollFilterSlider.right
+            anchors.bottom: rollFilterSlider.top
+            text: qsTr("More")
+        }
+       Rectangle{
+            id: rollFilterSlider
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.bottomMargin: 50
+            anchors.leftMargin: 50
+            width: 270
+            height: 50
+            color: "lightgray"
+        Slider{
+            objectName: "rollFilterSlider"
+            anchors.fill: parent
+            from: 0
+            to: 98
+            value: 0
+        }
+       }
+       Image {
+           source: "qrc:/images/Config/ConD_RollHelper"
+           anchors.right: parent.right
+           anchors.rightMargin: 50
+           width: 150
+           height: 200
+           anchors.verticalCenter: parent.verticalCenter
+       }
     }
 }
