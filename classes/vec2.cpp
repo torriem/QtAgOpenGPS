@@ -9,34 +9,17 @@
 Vec2::Vec2()
     : easting(0),northing(0)
 {
-#ifdef DEBUG_VEC
-    std::cout << "vec2 empty construction" << std::endl;
-#endif
 }
 
 Vec2::Vec2(double easting, double northing)
     : easting(easting),northing(northing)
 {
-#ifdef DEBUG_VEC
-    std::cout << "vec2 init construction" << std::endl;
-#endif
 }
 
 Vec2::Vec2(const Vec2 &src) {
     easting = src.easting;
     northing = src.northing;
-
-#ifdef DEBUG_VEC
-    std::cout << "vec2 copy construction" << std::endl;
-#endif
-
 }
-#ifdef DEBUG_VEC
-Vec2::~Vec2()
-{
-    std::cout << "vec2 destroyed" << std::endl;
-}
-#endif
 
 Vec2 operator+ (Vec2 lhs, Vec2 rhs) {
     return Vec2(lhs.easting+rhs.easting,

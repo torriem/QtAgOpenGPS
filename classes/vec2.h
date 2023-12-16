@@ -13,11 +13,7 @@ public:
     Vec2(double easting, double northing);
     Vec2(const Vec2 &src);
 
-#ifdef DEBUG_VEC
-    ~Vec2();
-#else
     ~Vec2() = default;
-#endif
 
     double headingXZ();
     void normalize();
