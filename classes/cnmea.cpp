@@ -189,6 +189,7 @@ void CNMEA::parseNMEA(double lastHeading, double roll)
         if ((words[0] == "$GPRMC") || (words[0] == "$GNRMC")) parseRMC();
         if ((words[0] == "$GPHDT") || (words[0] == "$GNHDT")) parseHDT();
         if (words[0] == "$PAOGI") parseOGI();
+        if (words[0] == "$PANDA") parseNDA();
         if (words[0] == "$PTNL") parseAVR();
         if (words[0] == "$GNTRA") parseTRA();
 
@@ -491,6 +492,125 @@ void CNMEA::parseOGI()
     * CHKSUM
     */
 }
+
+void CNMEA::parseNDA()
+{
+    USE_SETTINGS;
+    //PAOGI parsing of the sentence
+    //make sure there aren't missing coords in sentence
+    if (words[2].size() && words[3].size() &&
+        words[4].size() && words[4].size() ) {
+        if (fixFrom == "GGA") {
+            //get latitude and convert to decimal degrees
+
+            //TODO: check error status from toDouble()
+            latitude = words[2].mid(0,2).toDouble();
+            double temp = words[2].mid(2).toDouble();
+            temp *= 0.01666666666666666666666666666667;
+            latitude += temp;
+            if (words[3] == "S")
+            {
+                latitude *= -1;
+                hemisphere = 'S';
+            }
+            else { hemisphere = 'N'; }
+
+            //get longitude and convert to decimal degrees
+            longitude = words[4].mid(0,3).toDouble();
+            temp = words[4].mid(3).toDouble();
+            longitude += temp * 0.01666666666666666666666666666667;
+
+            if (words[5] == "W") longitude *= -1;
+
+            //calculate zone and UTM coords
+            updateNorthingEasting();
+        }
+
+        //fixQuality
+        fixQuality = words[6].toInt();
+
+        //satellites tracked
+        satellitesTracked = words[7].toInt();
+
+        //hdop
+        hdop = words[8].toDouble();
+
+        //altitude
+        altitude = words[9].toDouble();
+
+        //age of differential
+        ageDiff = words[10].toDouble();
+
+        //kph for speed - knots read
+        speed = words[11].toDouble() * 1.852;
+
+        //Dual antenna derived heading
+
+        headingHDT = words[12].toDouble();
+
+        //roll
+        nRoll = words[13].toDouble();
+
+        if(SETTINGS_GPS_ISROLLFROMGPS)
+        {
+            rollK = nRoll; //input to the kalman filter
+            Pc = P + varProcess;
+            G = Pc / (Pc + varRoll);
+            P = (1 - G) * Pc;
+            Xp = XeRoll;
+            Zp = Xp;
+            XeRoll = (G * (rollK - Zp)) + Xp;//result
+
+            emit setRollX16(XeRoll * 16);
+        }
+        else emit setRollX16(0);
+
+        //pitch
+        nPitch = words[14].toDouble();
+
+        //Angular velocity (yaw rate)
+        nAngularVelocity = words[15].toDouble();
+
+        //update the watchdog
+        emit clearRecvCounter();
+        updatedNDA = true;
+
+        //average the speed
+        emit newSpeed(speed);
+    }
+/*
+  $PANDA
+  (1) Time of fix
+
+  position
+  (2,3) 4807.038,N Latitude 48 deg 07.038' N
+  (4,5) 01131.000,E Longitude 11 deg 31.000' E
+
+  (6) 1 Fix quality:
+    0 = invalid
+    1 = GPS fix(SPS)
+    2 = DGPS fix
+    3 = PPS fix
+    4 = Real Time Kinematic
+    5 = Float RTK
+    6 = estimated(dead reckoning)(2.3 feature)
+    7 = Manual input mode
+    8 = Simulation mode
+  (7) Number of satellites being tracked
+  (8) 0.9 Horizontal dilution of position
+  (9) 545.4 Altitude (ALWAYS in Meters, above mean sea level)
+  (10) 1.2 time in seconds since last DGPS update
+  (11) Speed in knots
+
+  FROM IMU:
+  (12) Heading in degrees
+  (13) Roll angle in degrees(positive roll = right leaning - right down, left up)
+
+  (14) Pitch angle in degrees(Positive pitch = nose up)
+  (15) Yaw Rate in Degrees / second
+
+  CHKSUM
+*/
 
 void CNMEA::parseRMC() {
     //GPRMC parsing of the sentence
