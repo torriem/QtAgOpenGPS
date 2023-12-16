@@ -24,7 +24,7 @@ Item {
         id: topLine
         objectName: "topLine"
         width: parent.width
-        height: 1 //.3" tall
+        height: 75 //.3" tall
         Text {
             id: text1
             text: ""
@@ -76,7 +76,8 @@ Item {
                 parent.clicked(mouse);
             }
         }
-//----------------------------------------------------------------------------------------left column
+
+        //----------------------------------------------------------------------------------------left column
         Item {
             id: buttonsArea
             anchors.top: parent.top
@@ -85,12 +86,111 @@ Item {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
 
+            //top Row
+            Rectangle{
+                id: topRow
+                anchors.bottom: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                color: "ghostwhite"
+                height: 75
+                visible: true
+                Text {
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.leftMargin: 120
+                    text: qsTr("Field: ")
+                    anchors.bottom: parent.verticalCenter
+                    font.bold: true
+                    font.pixelSize: 15
+                }
+                Text {
+                    anchors.bottom: parent.bottom
+                    anchors.left: parent.left
+                    anchors.leftMargin: 150
+                    text: qsTr("ac")
+                    anchors.top: parent.verticalCenter
+                    font.bold: true
+                    font.pixelSize: 15
+                }
+                Text {
+                    anchors.top: parent.top
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: qsTr("ab")
+                    font.bold: true
+                    font.pixelSize: 15
+                }
+                Text {
+                    anchors.top: parent.top
+                    anchors.right: parent.right
+                    anchors.rightMargin: 300
+                    text: qsTr("Age: ")
+                    font.pixelSize: 15
+                    font.bold: true
+                }
+                Text {
+                    anchors.top: parent.top
+                    anchors.right: parent.right
+                    anchors.rightMargin: 150
+                    text: qsTr("Fixtype")
+                    font.bold: true
+                    font.pixelSize: 15
+                }
+                    Button{
+                        implicitHeight: 55
+                        anchors.bottom: parent.bottom
+                        anchors.right: topRowWindow.left
+                        implicitWidth: 75
+                        background: Rectangle{
+                        Text {
+                            text: qsTr("0")
+                            font.bold: true
+                            anchors.centerIn: parent
+                            font.pixelSize: 45
+                        }
+                        color: parent.down ? "gray" : "ghostwhite"
+                       }
+                    }
+                Row{
+                    id: topRowWindow
+                    width: childrenRect.width
+                    height: parent.height
+                    anchors.top: parent.top
+                    anchors.right: parent.right
+
+                    IconButtonTransparent{
+                        objectName: "btnHelp"
+                        height: parent.height
+                        width: 75
+                        icon: "qrc:/images/Help.png"
+                    }
+                    IconButtonTransparent{
+                        objectName: "btnWindowMinimize"
+                        height: parent.height
+                        icon: "qrc:/images/WindowMinimize.png"
+                        width: 75
+                    }
+                    IconButtonTransparent{
+                        objectName: "btnWindowMaximize"
+                        height: parent.height
+                        icon: "qrc:/images/WindowMaximize.png"
+                        width: 75
+                    }
+                    IconButtonTransparent{
+                        objectName: "btnWindowClose"
+                        height: parent.height
+                        width: 75
+                        icon: "qrc:/images/WindowClose.png"
+                    }
+                }
+            }
             ColumnLayout {
                 id: leftColumn
                 anchors.top: parent.top
+                anchors.topMargin: -75
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
-                anchors.leftMargin: 6
+                width: childrenRect.width + 6
 
                 IconButtonText {
                     id: btnfileMenu
@@ -174,13 +274,13 @@ Item {
                     buttonText: qsTr("Field")
                     icon: "qrc:/images/JobActive.png"
                     //pseudo state
-                   property bool hideFieldMenu: true
+                    property bool hideFieldMenu: true
 
-                onHideFieldMenuChanged: {
+                    onHideFieldMenuChanged: {
                         if (hideFieldMenu == true) {
                             fieldMenu.visible = false
                         } else {
-                           fieldMenu.visible = true
+                            fieldMenu.visible = true
                         }
                     }
 
@@ -225,16 +325,10 @@ Item {
 
             ColumnLayout {
                 id: rightColumn
-                anchors.top: parent.top
+                anchors.top: topRow.bottom
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
                 anchors.rightMargin: 6
-                IconButtonText {
-                    id: btnClose
-                    objectName: "btnClose"
-                    icon: "qrc:/images/ContourOff.png"
-                    iconChecked: "qrc:/images/WindowClose.png"
-                }
 
                 IconButtonText {
                     id: btnContour
@@ -554,13 +648,13 @@ Item {
                 id: displayButtons
                 width: childrenRect.width + 10
                 height: childrenRect.height + 10
-                    anchors.left: leftColumn.right
-                    anchors.leftMargin: 20
-                    anchors.top: parent.top
-                    anchors.topMargin: 20
-        color: "white"
-        visible: false
-        z:1
+                anchors.left: leftColumn.right
+                anchors.leftMargin: 20
+                anchors.top: parent.top
+                anchors.topMargin: 20
+                color: "white"
+                visible: false
+                z:1
                 Grid {
                     id: tiltButtons
                     anchors.leftMargin: 5
@@ -820,11 +914,11 @@ Item {
             Config {
                 id:config
                 objectName: "config"
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        height:parent.height
-        width:parent.width - 80
-        visible:false
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                height:parent.height
+                width:parent.width - 80
+                visible:false
             }
 
 
@@ -1025,7 +1119,7 @@ Item {
                 radius: (parent.height-10) / 10
                 anchors.verticalCenter: parent.verticalCenter
             }
-           Text {
+            Text {
                 id: stripPortArduino
                 objectName: "stripPortArduino"
                 text: "* *"
