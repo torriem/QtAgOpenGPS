@@ -3,7 +3,7 @@
 
 #include <QQuickItem>
 
-static inline QObject *qmlItem(QQuickItem *root, QString name)
+static inline QObject *qmlItem(QObject *root, QString name)
 {
     return root->findChild<QObject *>(name);
 

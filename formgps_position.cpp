@@ -69,6 +69,14 @@ void FormGPS::updateFixPosition()
 
     if (!isGPSPositionInitialized) {  initializeFirstFewGPSPositions();   return;  }
 
+    //GPS is valid, let's bootstrap the demo field if needed
+    if(bootstrap_field)
+    {
+        fileCreateField();
+        fileSaveABLines();
+        bootstrap_field = false;
+    }
+
     //region Step Fix
 
     //**** heading of the vec3 structure is used for distance in Step fix!!!!!
@@ -710,7 +718,7 @@ void FormGPS::updateFixPosition()
     //#endregion
 
     //openGLControl_Draw routine triggered manually
-    update();
+    //update();
     AOGRendererInSG *renderer = qml_root->findChild<AOGRendererInSG *>("openglcontrol");
     renderer->update();
 

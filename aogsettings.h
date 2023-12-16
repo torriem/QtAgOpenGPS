@@ -513,9 +513,11 @@ int colorSettingStringToInt(QString colorSettingString);
 #define SETTINGS_SET_COMM_UDPISON(VAL)	settings.setValue("communications/udpIsOn",VAL)
 
 //environment
-#define SETTINGS_ENVIRONMENT_NAME			settings.   value("environment/name", "unnamed").toQString()
+#define SETTINGS_ENVIRONMENT_NAME			settings.   value("environment/name", "unnamed").toString()
 #define SETTINGS_SET_ENVIRONMENT_NAME(VAL)	settings.setValue("environment/name",VAL)
 
+#define SETTINGS_ENVIRONMENT_LASTFIELD			settings.   value("environment/lastField", "unnamed").toString()
+#define SETTINGS_SET_ENVIRONMENT_LASTFIELD(VAL)	settings.setValue("environment/lastField",VAL)
 
 #endif // AOGSETTINGS_H
 

@@ -13,7 +13,7 @@
 #include <QSurfaceFormat>
 #include <QOpenGLFramebufferObject>
 #include <QOpenGLBuffer>
-#include <QQuickView>
+#include <QQmlApplicationEngine>
 #include <QSerialPort>
 
 #include "common.h"
@@ -49,12 +49,11 @@
 
 //forward declare classes referred to below, to break circular
 //references in the code
-class TopLineDisplay;
-
 class QOpenGLShaderProgram;
 class AOGRendererInSG;
+class QQuickCloseEvent;
 
-class FormGPS : public QQuickView
+class FormGPS : public QQmlApplicationEngine
 {
     Q_OBJECT
 public:
@@ -65,7 +64,7 @@ public:
      * Qt-specific things we need to keep track of *
      ***********************************************/
     QLocale locale;
-    QQuickItem *qml_root;
+    QObject *qml_root;
     QSignalMapper *sectionButtonsSignalMapper;
     QTimer *tmrWatchdog;
     QTimer simTimer;
@@ -253,6 +252,8 @@ public:
     CFieldData fd;
     CGeoFence gf;
 
+    bool bootstrap_field = false;
+
 
     /*************************
      *  Position.designer.cs *
@@ -397,7 +398,7 @@ public:
     bool fileOpenTool(QString filename);
     void fileSaveEnvironment(QString filename);
     bool fileOpenEnvironment(QString filename);
-    void fileOpenField(QString fieldDir);
+    bool fileOpenField(QString fieldDir);
     void fileCreateField();
     void fileCreateElevation();
     void fileSaveSections();
@@ -661,6 +662,8 @@ public slots:
     /* CNMEA */
     void onHeadingSource(int);
 
+
+    void fileSaveEverythingBeforeClosingField(QQuickCloseEvent *event);
 };
 
 #endif // FORMGPS_H

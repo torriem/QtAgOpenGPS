@@ -25,32 +25,21 @@
 void FormGPS::setupGui()
 {
     /* Load the QML UI and display it in the main area of the GUI */
-    setTitle(tr("QtAgOpenGPS"));
+    setProperty("title","QtAgOpenGPS");
 
     //Load the QML into a view
-    engine()->rootContext()->setContextProperty("screenPixelDensity",QGuiApplication::primaryScreen()->physicalDotsPerInch() * QGuiApplication::primaryScreen()->devicePixelRatio());
-    setSource(QUrl("qrc:/qml/MainWindow.qml"));
-    setColor(Qt::transparent);
+    rootContext()->setContextProperty("screenPixelDensity",QGuiApplication::primaryScreen()->physicalDotsPerInch() * QGuiApplication::primaryScreen()->devicePixelRatio());
+    load(QUrl("qrc:/qml/MainWindow.qml"));
+    //setColor(Qt::transparent);
 
-    //qmlview->setClearBeforeRendering(false);
-    //connect(qmlview,SIGNAL(beforeRendering()), this, SLOT(openGLControl_Draw()),Qt::DirectConnection);
-    //connect(qmlview,SIGNAL(sceneGraphInitialized()), this, SLOT(openGLControl_Initialized()),Qt::DirectConnection);
-    //connect(qmlview,SIGNAL(sceneGraphInvalidated()), this, SLOT(openGLControl_Shutdown()),Qt::DirectConnection);
-
-    /*
-    qmlcontainer = QWidget::createWindowContainer(qmlview);
-
-
-    //place the widget in our window's layout
-    ui->verticalLayout->addWidget(qmlcontainer);
-
-    //hide the section control lookahead widget; it should still work
-    ui->grnPixels->hide(); //debugging widget, shows lookahead
-    */
     //get pointer to root QML object, which is the OpenGLControl,
     //store in a member variable for future use.
-    qml_root = this->rootObject();
+    qml_root = rootObjects().first();
 
+    qml_root->setProperty("visible",true);
+
+
+    connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
 
     //connect qml button signals to callbacks (it's not automatic with qml)
     btnMenuDrawer = qmlItem(qml_root, "btnMenuDrawer");
@@ -202,8 +191,8 @@ void FormGPS::setupGui()
     connect(openGLControl,SIGNAL(clicked(QVariant)),this,SLOT(onGLControl_clicked(QVariant)));
 
     //TODO: save and restore these numbers from settings
-    setWidth(1000);
-    setHeight(700);
+    qml_root->setProperty("width",1000);
+    qml_root->setProperty("height",700);
 
     tmrWatchdog = new QTimer(this);
     connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(tmrWatchdog_timeout()));
@@ -239,7 +228,7 @@ void FormGPS::onGLControl_clicked(const QVariant &event)
     //Pass the click on to the rendering routine.
     //make the bottom left be 0,0
     mouseX = m->property("x").toInt();
-    mouseY = height() - m->property("y").toInt();
+    mouseY = m->property("height").toInt() - m->property("y").toInt();
     leftMouseDownOnOpenGL = true;
     openGLControl->update();
 }

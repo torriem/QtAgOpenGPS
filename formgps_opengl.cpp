@@ -584,6 +584,7 @@ void FormGPS::openGLControlBack_Draw()
         //I think context has to be active to delete it...
         backFBO = new QOpenGLFramebufferObject(QSize(500,500),format);
     }
+    QSurface *origSurface = glContext->surface();
 
     glContext->makeCurrent(&backSurface);
     backFBO->bind();
@@ -721,8 +722,8 @@ void FormGPS::openGLControlBack_Draw()
     //restore QML's context
     backFBO->bindDefault();
     glContext->doneCurrent();
-    glContext->makeCurrent(this);
-    resetOpenGLState();
+    glContext->makeCurrent(origSurface);
+    //resetOpenGLState();
 }
 
 //Draw section OpenGL window, not visible
