@@ -28,7 +28,7 @@ void FormGPS::startUDPServer()
 {
     AOGSettings s;
     int port = s.value("port/udp_port_num",9999).toInt();
-
+    port = 9999;
     if(udpSocket) stopUDPServer();
 
     udpSocket = new QUdpSocket(this); //should auto delete with the form
@@ -46,8 +46,8 @@ void FormGPS::stopUDPServer()
     }
 }
 
-void FormGPS::sendUDPMessage(uchar *message) //10 bytes
+void FormGPS::sendUDPMessage(uchar *message) //14 bytes
 {
-
+udpSocket->writeDatagram((char*) message, 14, QHostAddress("192.168.1.255"), 8888);
 }
 //TODO: connection to MKR1000 on fixed address.. probably in another module
