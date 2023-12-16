@@ -29,6 +29,7 @@ void FormGPS::setupGui()
 
     //Load the QML into a view
     rootContext()->setContextProperty("screenPixelDensity",QGuiApplication::primaryScreen()->physicalDotsPerInch() * QGuiApplication::primaryScreen()->devicePixelRatio());
+    rootContext()->setContextProperty("mainForm", this);
     load(QUrl("qrc:/qml/MainWindow.qml"));
     //setColor(Qt::transparent);
 

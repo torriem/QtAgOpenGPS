@@ -5,7 +5,7 @@ import AgOpenGPS 1.0
 
 Window {
     //We draw native opengl to this root object
-    id: item1
+    id: mainWindow
     width: 1000
     height: 700
     //objectName: "openGLControl"
