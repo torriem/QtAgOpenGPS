@@ -74,7 +74,6 @@ FormGPS::FormGPS(QWidget *parent) :
         ABLine.refPoint1.easting = 0;
         ABLine.refPoint1.easting = 0;
         ABLine.setABLineByHeading(glm::toRadians(5.0f));
-        ABLine.isBtnABLineOn = true;
 
         CABLines line;
         line.origin = Vec2(0,0);
@@ -86,9 +85,9 @@ FormGPS::FormGPS(QWidget *parent) :
 
         CBoundaryLines boundary;
         boundary.bndLine.append(Vec3(-100,0,0));
-        boundary.bndLine.append(Vec3(-100,250,0));
-        boundary.bndLine.append(Vec3( 100,250,0));
         boundary.bndLine.append(Vec3( 100,0,0));
+        boundary.bndLine.append(Vec3( 100,250,0));
+        boundary.bndLine.append(Vec3(-100,250,0));
         boundary.bndLine.append(Vec3(-100,0,0));
         boundary.isSet = true;
         boundary.calculateBoundaryHeadings();
@@ -111,6 +110,7 @@ FormGPS::FormGPS(QWidget *parent) :
         bootstrap_field=true;
         isJobStarted = true;
     }
+    ABLine.isBtnABLineOn = true;
 
     if (isUDPServerOn) startUDPServer();
 

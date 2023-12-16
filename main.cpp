@@ -2,7 +2,8 @@
 #include <QApplication>
 #include <QCoreApplication>
 #include <QLabel>
-
+#include "cdubins.h"
+#include "vec3.h"
 #include "aogrenderer.h"
 
 QLabel *grnPixelsWindow;
@@ -34,11 +35,41 @@ int main(int argc, char *argv[])
     }
 
     /*
+    CDubinsTurningRadius = 5.25;
+
+    CDubins c;
+    Vec3 start(0,0,0);
+    Vec3 goal (8,0,0);
+    QVector<Vec3> pathlist;
+    pathlist = c.GenerateDubins(start, goal);
+
+    foreach(goal, pathlist) {
+        qDebug() << goal.easting<< ", "<<goal.northing;
+    }
+    return 0;
+    */
+
+    //Test file I/O
+    //w.fileSaveCurveLines();
+    //w.fileSaveBoundary();
+    //w.fileSaveABLines();
+    //w.fileSaveContour();
+    //w.fileSaveVehicle("/tmp/TestVehicle.txt");
+    //w.fileOpenField("49111 1 1 2020.Mar.21 09_58");
+    //w.ABLine.isBtnABLineOn = true;
+    //w.hd.isOn = true;
+    //w.yt.isYouTurnBtnOn = true;
+
+    //w.ABLine.isBtnABLineOn = true;
+    //w.fileOpenTool("/tmp/TestTool1.txt");
+    //w.fileOpenVehicle("/tmp/TestVehicle2.txt");
+    //w.fileSaveTool("/tmp/TestTool.TXT");
+    /*
     //testing to see how locale affects numbers in the stream writer
     QFileInfo testit("/tmp/noexistant/file.txt");
     qDebug() << testit.baseName();
     qDebug() << testit.suffix();
-QFile testFile("/tmp/test.txt");
+    QFile testFile("/tmp/test.txt");
     testFile.open(QIODevice::WriteOnly);
     QTextStream writer(&testFile);
     writer << "Testing" << endl;
