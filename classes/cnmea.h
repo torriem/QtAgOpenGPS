@@ -46,7 +46,7 @@ public:
     double zone=0;
     double centralMeridian, convergenceAngle = 0;
 
-    bool updatedGGA=false, updatedOGI=false, updatedRMC=false;
+    bool updatedGGA=false, updatedOGI=false, updatedNDA=false, updatedRMC=false;
 
     bool isFirstFixPositionSet = false;
 
@@ -85,6 +85,7 @@ public:
 
     void parseGGA();
     void parseOGI();
+    void parseNDA();
     void parseVTG();
     void parseHDT();
     void parseTRA();
