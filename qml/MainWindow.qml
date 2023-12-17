@@ -796,8 +796,8 @@ Window {
                     height: 58
                     icon: "qrc:/images/TurnManualRight.png"
                 }
-                anchors.top: leftColumn.top;
-                anchors.topMargin: 5
+                anchors.top: parent.top;
+                anchors.topMargin: 15
                 spacing: 6
             }
 
@@ -917,6 +917,15 @@ Window {
             Config {
                 id:config
                 objectName: "config"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                height:parent.height
+                width:parent.width - 80
+                visible:false
+            }
+            SteerConfigWindow {
+                id:steerConfigWindow
+                objectName: "steerConfigWindow"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 height:parent.height
