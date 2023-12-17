@@ -27,7 +27,7 @@ bool FormGPS::scanForNMEA()
     pn.parseNMEA(vehicle.fixHeading, ahrs.rollX16);
 
     //time for a frame update with new valid nmea data
-    if (pn.updatedGGA || pn.updatedRMC || pn.updatedOGI)
+    if (pn.updatedGGA || pn.updatedRMC || pn.updatedOGI || pn.updatedNDA)
     {
         //Measure the frequency of the GPS updates
         nowHz = 1000.0 / swFrame.restart(); //millis
@@ -40,6 +40,7 @@ bool FormGPS::scanForNMEA()
         //reset  flags
         pn.updatedGGA = false;
         pn.updatedOGI = false;
+        pn.updatedNDA = false;
         pn.updatedRMC = false;
 
         //update all data for new frame
