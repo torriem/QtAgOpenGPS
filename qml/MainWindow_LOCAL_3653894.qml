@@ -23,11 +23,7 @@ Item {
         id: topLine
         objectName: "topLine"
         width: parent.width
-<<<<<<< HEAD
         height: 50 //.3" tall
-=======
-        height: 75 //.3" tall
->>>>>>> 50f1856c45aa6f52ca77a484b2b8d1288400f44f
         Text {
             id: text1
             text: ""
@@ -96,11 +92,7 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 color: "ghostwhite"
-<<<<<<< HEAD
                 height: 50
-=======
-                height: 75
->>>>>>> 50f1856c45aa6f52ca77a484b2b8d1288400f44f
                 visible: true
                 Text {
                     anchors.top: parent.top
@@ -144,11 +136,7 @@ Item {
                     font.pixelSize: 15
                 }
                     Button{
-<<<<<<< HEAD
                         implicitHeight: 30
-=======
-                        implicitHeight: 55
->>>>>>> 50f1856c45aa6f52ca77a484b2b8d1288400f44f
                         anchors.bottom: parent.bottom
                         anchors.right: topRowWindow.left
                         implicitWidth: 75
@@ -157,11 +145,7 @@ Item {
                             text: qsTr("0")
                             font.bold: true
                             anchors.centerIn: parent
-<<<<<<< HEAD
                             font.pixelSize: 35
-=======
-                            font.pixelSize: 45
->>>>>>> 50f1856c45aa6f52ca77a484b2b8d1288400f44f
                         }
                         color: parent.down ? "gray" : "ghostwhite"
                        }
@@ -202,11 +186,7 @@ Item {
             ColumnLayout {
                 id: leftColumn
                 anchors.top: parent.top
-<<<<<<< HEAD
                 anchors.topMargin: -55
-=======
-                anchors.topMargin: -75
->>>>>>> 50f1856c45aa6f52ca77a484b2b8d1288400f44f
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 width: childrenRect.width + 6
