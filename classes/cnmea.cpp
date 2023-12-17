@@ -611,7 +611,7 @@ void CNMEA::parseNDA()
 
   CHKSUM
 */
-
+}
 void CNMEA::parseRMC() {
     //GPRMC parsing of the sentence
     //make sure there aren't missing coords in sentence
