@@ -438,5 +438,15 @@
         <file>images/YouTurnH.png</file>
         <file>images/Config/ConT_TramOverride.png</file>
         <file>qml/ConfigWhichVehicle.qml</file>
+        <file>qml/SteerConfigWindow.qml</file>
+        <file>images/Steer/Sf_GainTab.png</file>
+        <file>images/Steer/Sf_PP.png</file>
+        <file>images/Steer/Sf_PPTab.png</file>
+        <file>images/Steer/Sf_Stanley.png</file>
+        <file>images/Steer/Sf_SteerTab.png</file>
+        <file>images/Steer/Sf_XTE2.png</file>
+        <file>images/Steer/ST_GainTab.png</file>
+        <file>images/Steer/ST_StanleyTab.png</file>
+        <file>images/Steer/ST_SteerTab.png</file>
     </qresource>
 </RCC>

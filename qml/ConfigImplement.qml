@@ -432,7 +432,6 @@ Item {
                     background: Rectangle{
                         color: parent.down ? "green" : "white"
                         border.color: "black"
-                        implicitWidth: 300
                         implicitHeight: 90
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
