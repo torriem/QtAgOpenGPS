@@ -1,0 +1,3 @@
+My plan-- At this point, I intend to create a GUI that follows AOG. 
+When that is done, catch up the backend with AOG, and make AgIO.
+If you are interested in helping, feel very free to.

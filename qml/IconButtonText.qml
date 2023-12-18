@@ -72,7 +72,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         font.bold: true
         font.pixelSize: parent.height * 0.15
-        z: 1
+        //z: 1
     }
 
     Image {

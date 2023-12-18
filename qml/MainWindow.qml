@@ -1,6 +1,7 @@
 import QtQuick 2.8
 import QtQuick.Window 2.0
 import QtQuick.Controls 2.1
+import QtQuick.Layouts 1.3
 import AgOpenGPS 1.0
 
 Window {
@@ -22,7 +23,7 @@ Window {
         id: topLine
         objectName: "topLine"
         width: parent.width
-        height: screenPixelDensity * 0.3 //.3" tall
+        height: 50 //.3" tall
         Text {
             id: text1
             text: ""
@@ -75,128 +76,307 @@ Window {
             }
         }
 
+        //----------------------------------------------------------------------------------------left column
         Item {
             id: buttonsArea
             anchors.top: parent.top
-            anchors.topMargin: 42 //TODO: convert to scalable
+            anchors.topMargin: 2 //TODO: convert to scalable
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
 
-            Column {
+            //top Row
+            Rectangle{
+                id: topRow
+                anchors.bottom: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                color: "ghostwhite"
+                height: 50
+                visible: true
+                Text {
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.leftMargin: 120
+                    text: qsTr("Field: ")
+                    anchors.bottom: parent.verticalCenter
+                    font.bold: true
+                    font.pixelSize: 15
+                }
+                Text {
+                    anchors.bottom: parent.bottom
+                    anchors.left: parent.left
+                    anchors.leftMargin: 150
+                    text: qsTr("ac")
+                    anchors.top: parent.verticalCenter
+                    font.bold: true
+                    font.pixelSize: 15
+                }
+                Text {
+                    anchors.top: parent.top
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: qsTr("ab")
+                    font.bold: true
+                    font.pixelSize: 15
+                }
+                Text {
+                    anchors.top: parent.top
+                    anchors.right: parent.right
+                    anchors.rightMargin: 300
+                    text: qsTr("Age: ")
+                    font.pixelSize: 15
+                    font.bold: true
+                }
+                Text {
+                    anchors.top: parent.top
+                    anchors.right: parent.right
+                    anchors.rightMargin: 150
+                    text: qsTr("Fixtype")
+                    font.bold: true
+                    font.pixelSize: 15
+                }
+                    Button{
+                        implicitHeight: 30
+                        anchors.bottom: parent.bottom
+                        anchors.right: topRowWindow.left
+                        implicitWidth: 75
+                        background: Rectangle{
+                        Text {
+                            text: qsTr("0")
+                            font.bold: true
+                            anchors.centerIn: parent
+                            font.pixelSize: 35
+                        }
+                        color: parent.down ? "gray" : "ghostwhite"
+                       }
+                    }
+                Row{
+                    id: topRowWindow
+                    width: childrenRect.width
+                    height: parent.height
+                    anchors.top: parent.top
+                    anchors.right: parent.right
+
+                    IconButtonTransparent{
+                        objectName: "btnHelp"
+                        height: parent.height
+                        width: 75
+                        icon: "qrc:/images/Help.png"
+                    }
+                    IconButtonTransparent{
+                        objectName: "btnWindowMinimize"
+                        height: parent.height
+                        icon: "qrc:/images/WindowMinimize.png"
+                        width: 75
+                    }
+                    IconButtonTransparent{
+                        objectName: "btnWindowMaximize"
+                        height: parent.height
+                        icon: "qrc:/images/WindowMaximize.png"
+                        width: 75
+                    }
+                    IconButtonTransparent{
+                        objectName: "btnWindowClose"
+                        height: parent.height
+                        width: 75
+                        icon: "qrc:/images/WindowClose.png"
+                    }
+                }
+            }
+            ColumnLayout {
                 id: leftColumn
                 anchors.top: parent.top
+                anchors.topMargin: -55
+                anchors.bottom: parent.bottom
                 anchors.left: parent.left
-                anchors.leftMargin: 6
-                spacing: 3
+                width: childrenRect.width + 6
 
-                IconButtonText{
-                    id: btnMenuDrawer
-                    objectName: "btnMenuDrawer"
-                    buttonText: qsTr("Menu")
-                    icon: "qrc:/images/ArrowRight.png"
+                IconButtonText {
+                    id: btnfileMenu
+                    objectName: "btnfileMenu"
+                    buttonText: qsTr("FileMenu")
+                    icon: "qrc:/images/fileMenu.png"
 
-                    //pseudo state
-                    property bool hideMenu: true
+                }
+                IconButtonText {
+                    id: btnAcres
+                    objectName: "btnAcres"
+                    buttonText: qsTr("0.00")
+                    icon: "qrc:/images/TripOdometer.png"
 
-                    onHideMenuChanged: {
-                        if (hideMenu == true) {
-                            icon="qrc:/images/ArrowRight.png"
-                            iconPalette.visible = false
-                        } else {
-                            icon="qrc:/images/ArrowLeft.png"
-                            iconPalette.visible = true
+                }
+                IconButtonText {
+                    id: btnnavigationSettings
+                    objectName: "btnnavigationSettings"
+                    buttonText: qsTr("Display")
+                    icon: "qrc:/images/NavigationSettings.png"
+                    property bool hideButtons: true
+
+                    onHideButtonsChanged: {
+                        if (hideButtons == true) {
+                            displayButtons.visible = false
+                        }else{
+                            displayButtons.visible = true
                         }
                     }
 
-                    function toggle_menu() {
-                        if (hideMenu == true) {
-                            hideMenu = false
+                    function toggle_displaybuttons(){
+                        if (hideButtons == true) {
+                            hideButtons = false
+                        }else{
+                            hideButtons = true
+                        }
+                    }
+                    onClicked: {
+                        toggle_displaybuttons()
+                    }
+                }
+                IconButtonText {
+                    id: btnSettings
+                    objectName: "btnSettings"
+                    buttonText: qsTr("Settings")
+                    icon: "qrc:/images/Settings48.png"
+                    onClicked: config.visible = true
+
+                }
+                IconButtonText {
+                    id: btnTools
+                    objectName: "btnTools"
+                    buttonText: qsTr("Tools")
+                    icon: "qrc:/images/SpecialFunctions.png"
+                    //pseudo state
+                    property bool hideTools: true
+
+                    onHideToolsChanged: {
+                        if (hideTools == true) {
+                            toolsWindow.visible = false
                         } else {
-                            hideMenu = true
+                            toolsWindow.visible = true
+                        }
+                    }
+
+                    function toggle_toolsmenu() {
+                        if (hideTools == true) {
+                            hideTools = false
+                        } else {
+                            hideTools = true
                         }
                     }
 
                     onClicked: {
-                        toggle_menu();
+                        toggle_toolsmenu();
                     }
                 }
-
-                IconButton{
-                    id: btnMinMaxZoom
-                    objectName: "btnMinMaxZoom"
-
-                    icon: "qrc:/images/Display.png"
-                }
-
-                IconButtonText {
-                    id: btnPerimeter
-                    objectName: "btnPerimeter"
-                    buttonText: "000.00"
-                    isChecked: false
-                    iconHeightScale: 1.0
-                    icon: "qrc:/images/PeriArea.png"
-                    iconChecked: "qrc:/images/PeriDraw.png"
-                    onPressAndHold: {
-                        if (contextArea.visible) {
-                            contextArea.visible = false;
-                        } else {
-                            contextArea.visible = true;
-                        }
-                    }
-                }
-
-                IconButtonText {
-                    id: btnAutoSteer
-                    objectName: "btnAutoSteer"
-                    icon: "qrc:/images/AutoSteerOff.png"
-                    buttonText: "X"
-                }
-
-                IconButton {
-                    id: btnFlag
-                    objectName: "btnFlag"
-                    icon: "qrc:/images/FlagRed.png"
-                    onPressAndHold: {
-                        if (contextFlag.visible) {
-                            contextFlag.visible = false;
-                        } else {
-                            contextFlag.visible = true;
-                        }
-                    }
-                }
-            }
-
-            Column {
-                id: rightColumn
-                anchors.top: parent.top
-                anchors.right: parent.right
-                anchors.rightMargin: 6
-                spacing: 3
-
                 IconButtonText{
-                    id: btnABLine
-                    objectName: "btnABLine"
-                    buttonText: "X"
-                    icon: "qrc:/images/ABLineOff.png"
+                    id: btnFieldMenu
+                    objectName: "btnFieldMenu"
+                    buttonText: qsTr("Field")
+                    icon: "qrc:/images/JobActive.png"
+                    //pseudo state
+                    property bool hideFieldMenu: true
+
+                    onHideFieldMenuChanged: {
+                        if (hideFieldMenu == true) {
+                            fieldMenu.visible = false
+                        } else {
+                            fieldMenu.visible = true
+                        }
+                    }
+
+                    function toggle_fieldmenu() {
+                        if (hideFieldMenu == true) {
+                            hideFieldMenu = false
+                        } else {
+                            hideFieldMenu = true
+                        }
+                    }
+
+                    onClicked: {
+                        toggle_fieldmenu();
+                    }
+                }
+                IconButtonText {
+                    id: btnAgIO
+                    objectName: "btnAgIO"
+                    buttonText: qsTr("AgIO")
+                    icon: "qrc:/images/AgIO.png"
+                }
+                IconButtonText {
+                    id: btnautoSteerConf
+                    objectName: "btnAutosteerConf"
+                    buttonText: qsTr("Steer config")
+                    icon: "qrc:/images/AutoSteerConf.png"
                 }
 
-                IconButton {
+                IconButtonText {
+                    id: btnautoSteerMode
+                    objectName: "btnAutosteerMode"
+                    isChecked: false
+                    buttonText: qsTr("Steer Mode")
+                    icon: "qrc:/images/ModeStanley.png"
+                    iconChecked: "qrc:/images/ModePurePursuit"
+                }
+
+
+
+            }
+            //------------------------------------------------------------------------------------------right
+
+            ColumnLayout {
+                id: rightColumn
+                anchors.top: topRow.bottom
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.rightMargin: 6
+
+                IconButtonText {
                     id: btnContour
                     objectName: "btnContour"
-                    checkable: true
                     isChecked: false
                     icon: "qrc:/images/ContourOff.png"
                     iconChecked: "qrc:/images/ContourOn.png"
+                    buttonText: "Contour"
+                    color: "white"
+                }
+                IconButtonText{
+                    id: btnABCurve
+                    objectName: "btnABCurve"
+                    isChecked: false
+                    icon: "qrc:/images/CurveOff.png"
+                    iconChecked: "qrc:/images/CurveOn.png"
+                    buttonText: "ABCurve"
+                }
+                IconButtonText{
+                    id: btnABLine
+                    objectName: "btnABLine"
+                    isChecked: true
+                    icon: "qrc:/images/ABLineOff.png"
+                    iconChecked: "qrc:/images/ABLineOn.png"
+                    buttonText: "ABLine"
                 }
 
-                IconButton {
+                IconButton{
+                    id: btnABLineCycle
+                    objectName: "btnABLineCycle"
+                    icon: "qrc:/images/ABLineCycle.png"
+                    width: btnABLine.width
+                    height: btnABLine.height
+                }
+                IconButton{
+                    id: btnABLineCycleBk
+                    objectName: "btnABLineCycleBk"
+                    icon: "qrc:/images/ABLineCycleBk.png"
+                    width: btnABLine.width
+                    height: btnABLine.height
+                }
+
+                IconButtonText {
                     id: btnManualOffOn
                     objectName: "btnManualOffOn"
-                    checkable: true
                     isChecked: false
                     icon: "qrc:/images/ManualOff.png"
                     iconChecked: "qrc:/images/ManualOn.png"
+                    buttonText: "Manual"
                 }
 
                 IconButtonText {
@@ -205,7 +385,21 @@ Window {
                     isChecked: false
                     icon: "qrc:/images/SectionMasterOff.png"
                     iconChecked: "qrc:/images/SectionMasterOn.png"
-                    iconHeightScale: 1.0
+                    buttonText: "Auto"
+                }
+                IconButtonText {
+                    id: btnAutoYouTurn
+                    objectName: "btnAutoYouTurn"
+                    isChecked: false
+                    icon: "qrc:/images/YouTurnNo.png"
+                    iconChecked: "qrc:/images/YouTurn80.png"
+                    buttonText: "AutoUturn"
+                }
+                IconButtonText {
+                    id: btnAutoSteer
+                    objectName: "btnAutoSteer"
+                    icon: "qrc:/images/AutoSteerOff.png"
+                    buttonText: "X"
                 }
 
             }
@@ -213,7 +407,7 @@ Window {
             Column {
                 id: rightSubColumn
                 anchors.top: parent.top
-                anchors.topMargin: btnABLine.height + 3
+                anchors.topMargin: btnContour.height + 3
                 anchors.right: rightColumn.left
                 anchors.rightMargin: 3
                 spacing: 3
@@ -228,13 +422,127 @@ Window {
                     iconChecked: "qrc:/images/ContourPriorityRight.png"
                 }
             }
+            RowLayout{
+                id:bottomButtons
+                anchors.bottom: parent.bottom
+                anchors.left: leftColumn.right
+                anchors.leftMargin: 3
+                anchors.right: rightColumn.left
+                anchors.rightMargin: 3
+                Layout.fillWidth: true
+                //spacing: parent.rowSpacing
+                IconButtonText {
+                    id: btnResetTool
+                    objectName: "btnResetTool"
+                    isChecked: false
+                    icon: "qrc:/images/ResetTool.png"
+                    iconChecked: "qrc:/images/ResetTool.png"
+                    buttonText: "Reset Tool"
+                }
+                IconButtonText {
+                    id: btnHeadland
+                    objectName: "btnHeadland"
+                    isChecked: false
+                    icon: "qrc:/images/HeadlandOff.png"
+                    iconChecked: "qrc:/images/HeadlandOn.png"
+                    buttonText: "Headland"
+                }
+                IconButtonText {
+                    id: btnHydLift
+                    objectName: "btnHydLift"
+                    isChecked: false
+                    icon: "qrc:/images/HydraulicLiftOff.png"
+                    iconChecked: "qrc:/images/HydraulicLiftOn.png"
+                    buttonText: "HydLift"
+                }
+                IconButtonText {
+                    id: btnFlag
+                    objectName: "btnFlag"
+                    isChecked: false
+                    icon: "qrc:/images/FlagRed.png"
+                    onPressAndHold: {
+                        if (contextFlag.visible) {
+                            contextFlag.visible = false;
+                        } else {
+                            contextFlag.visible = true;
+                        }
+                    }
+                    buttonText: "Flag"
+                }
+
+                IconButtonText {
+                    id: btnTramLines
+                    objectName: "btnTramLines"
+                    icon: "qrc:/images/TramLines.png"
+                    buttonText: "Tram Lines"
+                }
+                IconButtonText {
+                    id:btnSectionMapping
+                    Layout.alignment: parent.Center
+                    objectName: "btnSectionMapping"
+                    icon: "qrc:/images/SectionMapping"
+                }
+
+                IconButtonText {
+                    id: btnPointStart
+                    objectName: "btnPointStart"
+                    icon: "qrc:/images/PointStart.png"
+                    buttonText: "LinePicker"
+                }
+                IconButtonText {
+                    id: btnSnaptoPivot
+                    objectName: "btnSnaptoPivot"
+                    icon: "qrc:/images/SnapToPivot.png"
+                    buttonText: ""
+                }
+                IconButtonText {
+                    id: btnABLineEdit
+                    objectName: "btnABLineEdit"
+                    icon: "qrc:/images/ABLineEdit.png"
+                    buttonText: "ABLineEdit"
+                }
+                IconButtonText {
+                    id: btnYouSkip
+                    objectName: "btnYouSkip"
+                    isChecked: false
+                    icon: "qrc:/images/YouSkipOff.png"
+                    iconChecked: "qrc:/images/YouSkipOn.png"
+                    buttonText: "YouSkips"
+                }
+                ComboBox { //if someone knows how to do this right--size and/or model, do a pull request or tell me plz
+                    id: skips
+                    editable: true
+                    model: ListModel {
+                        id: model
+                        ListElement {text: "1"}
+                        ListElement {text: "2"}
+                        ListElement {text: "3"}
+                        ListElement {text: "4"}
+                        ListElement {text: "5"}
+                        ListElement {text: "6"}
+                        ListElement {text: "7"}
+                        ListElement {text: "8"}
+                        ListElement {text: "9"}
+                        ListElement {text: "10"}
+                    }
+                    onAccepted: {
+                        if (skips.find(currentText) === -1){
+                            model.append({text: editText})
+                            curentIndex = skips.find(editText)
+                        }
+                    }
+                    height:parent.height
+                    width: btnYouSkip.width
+                }
+
+            }
 
             Row {
                 id: sectionButtons
                 anchors.horizontalCenter: parent.horizontalCenter
 
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin:15
+                anchors.bottom: bottomButtons.top
+                anchors.bottomMargin:10
 
                 spacing: 15
 
@@ -339,48 +647,132 @@ Window {
                 }
 
             }
-
-            Column {
-                id: tiltButtons
-                spacing: 6
+            Rectangle{
+                id: displayButtons
+                width: childrenRect.width + 10
+                height: childrenRect.height + 10
                 anchors.left: leftColumn.right
                 anchors.leftMargin: 20
                 anchors.top: parent.top
                 anchors.topMargin: 20
+                color: "white"
+                visible: false
+                z:1
+                Grid {
+                    id: tiltButtons
+                    anchors.leftMargin: 5
+                    anchors.topMargin: 5
+                    spacing: 6
+                    flow: Grid.TopToBottom
+                    rows:6
+                    columns:2
 
-                IconButton {
-                    id: btnTiltDown
-                    objectName: "btnTiltDown"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon: "qrc:/images/TiltDown.png"
-                }
+                    IconButton {
+                        id: btnTiltDown
+                        objectName: "btnTiltDown"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/TiltDown.png"
+                    }
+                    IconButton {
+                        id: btnCamera2d
+                        objectName: "btnCamera2d"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/Camera2D64.png"
+                    }
+                    IconButton {
+                        id: btnCameraNorth2d
+                        objectName: "btnCameraNorth2d"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/CameraNorth2D.png"
+                    }
+                    IconButton {
+                        id: btnZoomOut
+                        objectName: "btnZoomOut"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/ZoomOut48.png"
+                    }
+                    IconButton {
+                        id: btnWindowDayNight
+                        objectName: "btnWindowDayNight"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/WindowDayMode.png"
+                    }
+                    IconButton {
+                        id: btnBrightnessDown
+                        objectName: "btnBrightnessDown"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/BrightnessDn.png"
+                    }
+                    IconButton {
+                        id: btnTiltUp
+                        objectName: "btnTiltUp"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/TiltUp.png"
+                    }
+                    IconButton {
+                        id: btnCamera3d
+                        objectName: "btnCamera3d"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/Camera3D64.png"
+                    }
+                    IconButton {
+                        id: btnCameraNorth3d
+                        objectName: "btnCameraNorth3d"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/CameraNorth64.png"
+                    }
+                    IconButton {
+                        id: btnZoomIn
+                        objectName: "btnZoomIn"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/ZoomIn48.png"
+                    }
+                    IconButton {
+                        id: btnempty
+                        objectName: "btnempty"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/.png"
+                    }
+                    IconButton {
+                        id: btnBrightnessUp
+                        objectName: "btnBrightnessUp"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/BrightnessUp.png"
+                    }/*
+                    IconButton {
+                        id: btn
+                        objectName: "btn"
+                        width: 70
+                        height: 70
+                        radius: 10
+                        icon: "qrc:/images/.png"
+                    }*/
 
-                IconButton {
-                    id: btnTiltUp
-                    objectName: "btnTiltUp"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon: "qrc:/images/TiltUp.png"
-                }
-                IconButton {
-                    id: btnZoomIn
-                    objectName: "btnZoomIn"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon: "qrc:/images/ZoomIn48.png"
-                }
 
-                IconButton {
-                    id: btnZoomOut
-                    objectName: "btnZoomOut"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon: "qrc:/images/ZoomOut48.png"
                 }
             }
 
@@ -388,6 +780,8 @@ Window {
                 id: manTurnButtons
                 visible: true
                 objectName: "manUTurnButtons"
+                anchors.left: leftColumn.right
+                anchors.leftMargin: 15
                 IconButtonTransparent {
                     id: manUturnBtnLeft
                     objectName: "btnManUturnLeft"
@@ -402,10 +796,9 @@ Window {
                     height: 58
                     icon: "qrc:/images/TurnManualRight.png"
                 }
-                anchors.left: tiltButtons.right;
-                anchors.top: tiltButtons.top;
+                anchors.top: parent.top;
+                anchors.topMargin: 15
                 spacing: 6
-                anchors.leftMargin: 10
             }
 
             /*
@@ -443,8 +836,10 @@ Window {
             Slider {
                 id: speedSlider
                 objectName: "simSpeed"
-                anchors.bottom: parent.bottom
-                anchors.left: parent.left
+                anchors.bottom: bottomButtons.top
+                anchors.bottomMargin: 3
+                anchors.left:bottomButtons.left
+                anchors.leftMargin: 3
                 width: 200
                 from: -30
                 to: 30
@@ -469,7 +864,8 @@ Window {
                 id: steerSlider
                 objectName: "simSteer"
                 anchors.bottom: simStopButton.top
-                anchors.left: parent.left
+                anchors.leftMargin: 3
+                anchors.left: bottomButtons.left
                 width: 200
                 from: 0
                 to: 600
@@ -488,9 +884,8 @@ Window {
                 }
 
             }
-
-            IconPalette {
-                id: iconPalette
+            FieldMenu {
+                id: fieldMenu
                 objectName: "slideoutMenu"
                 anchors.top: parent.top
                 anchors.topMargin: 20
@@ -499,6 +894,45 @@ Window {
                 visible: false
 
             }
+            FieldWindow {
+                id: fieldWindow
+                objectName: "slideoutMenu"
+                anchors.top: parent.top
+                anchors.topMargin: 20
+                anchors.left: leftColumn.right
+                anchors.leftMargin: 15
+                visible: false
+
+            }
+            ToolsWindow {
+                id: toolsWindow
+                objectName: "slideoutMenu"
+                anchors.top: parent.top
+                anchors.topMargin: 20
+                anchors.left: leftColumn.right
+                anchors.leftMargin: 15
+                visible: false
+
+            }
+            Config {
+                id:config
+                objectName: "config"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                height:parent.height
+                width:parent.width - 80
+                visible:false
+            }
+            SteerConfigWindow {
+                id:steerConfigWindow
+                objectName: "steerConfigWindow"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                height:parent.height
+                width:parent.width - 80
+                visible:false
+            }
+
 
             Rectangle {
                 id: contextArea
@@ -509,8 +943,8 @@ Window {
                 visible: false
                 anchors.top: parent.top
                 anchors.left: parent.left
-                anchors.leftMargin: btnPerimeter.width + 10
-                anchors.topMargin: btnPerimeter.y
+                //anchors.leftMargin: btnPerimeter.width + 10
+                //anchors.topMargin: btnPerimeter.y
                 border.color: "#c3ecc0"
 
                 Grid {
@@ -697,7 +1131,7 @@ Window {
                 radius: (parent.height-10) / 10
                 anchors.verticalCenter: parent.verticalCenter
             }
-           Text {
+            Text {
                 id: stripPortArduino
                 objectName: "stripPortArduino"
                 text: "* *"
