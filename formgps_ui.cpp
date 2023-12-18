@@ -17,6 +17,7 @@
 
 //#include <QtGui/private/qguiapplication_p.h>
 //#include <QtGui/qpa/qplatformintegration.h>
+//hello
 
 #include <functional>
 #include <assert.h>
@@ -43,19 +44,18 @@ void FormGPS::setupGui()
     connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
 
     //connect qml button signals to callbacks (it's not automatic with qml)
-    btnMenuDrawer = qmlItem(qml_root, "btnMenuDrawer");
+    //btnMenuDrawer = qmlItem(qml_root, "btnMenuDrawer");
 
-    btnMinMaxZoom = qmlItem(qml_root,"btnMinMaxZoom");
-    connect(btnMinMaxZoom,SIGNAL(clicked()),this,
 
-            SLOT(onBtnMinMaxZoom_clicked()));
-
-    btnPerimeter = qmlItem(qml_root,"btnPerimeter");
+    /*btnPerimeter = qmlItem(qml_root,"btnPerimeter");
     connect(btnPerimeter,SIGNAL(clicked()),this,
             SLOT(onBtnPerimeter_clicked()));
-
+*/
     contextArea = qmlItem(qml_root, "contextArea");
 
+    btnnavigationSettings = qmlItem(qml_root, "btnNavigationSettings");
+    connect(btnnavigationSettings,SIGNAL(clicked()),this,
+            SLOT(onBtnNavigationSettings_clicked()));
     btnAutoSteer = qmlItem(qml_root,"btnAutoSteer");
     connect(btnAutoSteer,SIGNAL(clicked()),this,
             SLOT(onBtnAutoSteer_clicked()));
@@ -64,9 +64,14 @@ void FormGPS::setupGui()
     connect(btnFlag,SIGNAL(clicked()),this,
             SLOT(onBtnFlag_clicked()));
 
+
     btnABLine = qmlItem(qml_root,"btnABLine");
     connect(btnABLine,SIGNAL(clicked()),this,
             SLOT(onBtnABLine_clicked()));
+
+    btnCurve = qmlItem(qml_root,"btnABCurve");
+    connect(btnCurve,SIGNAL(clicked()),this,
+            SLOT(onBtnABCurve_clicked()));
 
     btnContour = qmlItem(qml_root,"btnContour");
     connect(btnContour,SIGNAL(clicked()),this,
@@ -102,23 +107,13 @@ void FormGPS::setupGui()
             SLOT(onBtnZoomOut_clicked()));
 
     //icon palette
-    btnSnap = qmlItem(qml_root,"btnSnap");
-    connect(btnSnap,SIGNAL(clicked()),this,
-            SLOT(onBtnSnap_clicked()));
 
-    btnTripOdometer = qmlItem(qml_root,"btnTripOdometer");
-    connect(btnTripOdometer,SIGNAL(clicked()),this,
-            SLOT(onBtnTripOdometer_clicked()));
-
-    btnGPSData = qmlItem(qml_root,"btnGPSData");
-    connect(btnGPSData,SIGNAL(clicked()),this,
-            SLOT(onBtnGPSData_clicked()));
 
     btnSettings = qmlItem(qml_root,"btnSettings");
     connect(btnSettings,SIGNAL(clicked()),this,
             SLOT(onBtnSettings_clicked()));
 
-    btnJob = qmlItem(qml_root,"btnJob");
+  /*  btnJob = qmlItem(qml_root,"btnJob");
     connect(btnJob,SIGNAL(clicked()),this,
             SLOT(onBtnJob_clicked()));
 
@@ -141,7 +136,7 @@ void FormGPS::setupGui()
     btnAutoSteerConfig = qmlItem(qml_root,"btnAutoSteerConfig");
     connect(btnAutoSteerConfig,SIGNAL(clicked()),this,
             SLOT(onBtnAutoSteerConfig_clicked()));
-
+*/
     //Any objects we don't need to access later we can just store
     //temporarily
     QObject *temp;
@@ -234,15 +229,58 @@ void FormGPS::onGLControl_clicked(const QVariant &event)
     openGLControl->update();
 }
 
-void FormGPS::onBtnMinMaxZoom_clicked(){
-    if (closeAllMenus()) return;
-    qDebug()<<"Min Max button clicked." ;
+void FormGPS::onBtnAcres_clicked(){
+    qDebug()<<"AcresButton";
+}
+void FormGPS::onBtnNavigationSettings_clicked(){
+    qDebug()<<"Navigation Settings";
+}
+void FormGPS::onBtnSettings_clicked(){
+    qDebug()<<"Settings";
+}
+void FormGPS::onBtnAgIO_clicked(){
+    qDebug()<<"AgIO";
+}
+void FormGPS::onBtnSteerConfig_clicked(){
+    qDebug()<<"Steer config`";
+}
+void FormGPS::onBtnSteerMode_clicked(){
+    qDebug()<<"Steer mode`";
+}
+void FormGPS::onBtnToggleAB_clicked(){
+    qDebug()<<"Toggle AB";
+}
+void FormGPS::onBtnToggleABBack_clicked(){
+    qDebug()<<"toggle AB back";
+}
+void FormGPS::onBtnAutoYouTurn_clicked(){
+    qDebug()<<"activate youturn";
+}
+void FormGPS::onBtnResetTool_clicked(){
+    qDebug()<<"REset tool";
+}
+void FormGPS::onBtnHeadland_clicked(){
+    qDebug()<<"Headland";
+}
+void FormGPS::onBtnHydLift_clicked(){
+    qDebug()<<"Hyd";
+}
+void FormGPS::onBtnTramlines_clicked(){
+    qDebug()<<"tramline";
+}
+void FormGPS::onBtnSectionColor_clicked(){
+    qDebug()<<"Section color";
+}
+void FormGPS::onBtnLinePicker_clicked(){
+    qDebug()<<"Line picker";
+}
+void FormGPS::onBtnSnapToPivot_clicked(){
+    qDebug()<<"snap to pivot";
+}
+void FormGPS::onBtnYouSkip_clicked(){
+    qDebug()<<"you skip";
 }
 
-void FormGPS::onBtnPerimeter_clicked(){
-    if (closeAllMenus()) return;
-    qDebug()<<"Perimeter button clicked." ;
-}
 
 void FormGPS::onBtnAreaSide_clicked() {
     isAreaOnRight = !isAreaOnRight;
@@ -283,11 +321,30 @@ void FormGPS::onBtnFlag_clicked() {
     }
 }
 
+
 void FormGPS::onBtnABLine_clicked(){
     if (closeAllMenus()) return;
     qDebug()<<"abline button clicked." ;
+
+    ABLine.isBtnABLineOn = !ABLine.isBtnABLineOn;
+    if (ABLine.isBtnABLineOn) {
+        qmlItem(qml_root,"btnABLine")->setProperty("isChecked",true);
+    } else {
+        qmlItem(qml_root,"btnABLine")->setProperty("isChecked",false);
+    }
 }
 
+void FormGPS::onBtnABCurve_clicked(){
+    if (closeAllMenus()) return;
+    qDebug()<<"ABCurve button clicked." ;
+    !ABLine.isBtnABLineOn;
+    curve.isBtnCurveOn = !curve.isBtnCurveOn;
+    if (curve.isBtnCurveOn) {
+        qmlItem(qml_root,"btnABCurve")->setProperty("isChecked",true);
+    } else {
+        qmlItem(qml_root,"btnABCurve")->setProperty("isChecked",false);
+    }
+}
 void FormGPS::onBtnContour_clicked(){
     if (closeAllMenus()) return;
     qDebug()<<"contour button clicked." ;
@@ -480,46 +537,6 @@ void FormGPS::onBtnZoomOut_clicked(){
     openGLControl->update();
 }
 
-void FormGPS::onBtnSnap_clicked(){
-    qDebug()<<"Snap button clicked." ;
-}
-
-void FormGPS::onBtnTripOdometer_clicked(){
-    qDebug()<<"TripOdometer button clicked." ;
-}
-
-void FormGPS::onBtnGPSData_clicked(){
-    qDebug()<<"GPSData button clicked." ;
-}
-
-void FormGPS::onBtnSettings_clicked(){
-    qDebug()<<"Settings button clicked." ;
-}
-
-void FormGPS::onBtnJob_clicked(){
-    qDebug()<<"Job button clicked." ;
-}
-
-void FormGPS::onBtnBoundaryMenu_clicked(){
-    qDebug()<<"BoundaryMenu button clicked." ;
-}
-
-void FormGPS::onBtnComm_clicked(){
-    qDebug()<<"Comm button clicked." ;
-}
-
-void FormGPS::onBtnUnits_clicked(){
-    qDebug()<<"Units button clicked." ;
-}
-
-void FormGPS::onBtnFileExplorer_clicked(){
-    qDebug()<<"FileExplorer button clicked." ;
-}
-
-void FormGPS::onBtnAutoSteerConfig_clicked(){
-    qDebug()<<"AutoSteerConfig button clicked." ;
-}
-
 void FormGPS::onBtnRedFlag_clicked()
 {
     flagColor = 0;
@@ -569,7 +586,7 @@ bool FormGPS::closeAllMenus()
 {
     //If any of the popup menus are showing, close them,
     //and cancel the click.
-    if (!btnMenuDrawer->property("hideMenu").toBool() ||
+    /*if (!btnMenuDrawer->property("hideMenu").toBool() ||
         contextArea->property("visible").toBool() ||
         contextFlag->property("visible").toBool()) {
 
@@ -578,7 +595,7 @@ bool FormGPS::closeAllMenus()
         contextFlag->setProperty("visible",false);
         openGLControl->update();
         return true;
-    }
+    }*/
     return false;
 }
 

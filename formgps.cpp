@@ -1120,7 +1120,8 @@ void FormGPS::tmrWatchdog_timeout()
             //counter used for saving field in background
             minuteCounter++;
 
-            qmlItem(qml_root,"btnPerimeter")->setProperty("buttonText", fd.getWorkedHectares());
+            qmlItem(qml_root,"btnAcres")->setProperty("buttonText", fd.getWorkedHectares());
+
 
             /*
             if (panelBatman.Visible)
