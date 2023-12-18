@@ -437,5 +437,6 @@
         <file>qml/ConfigTrams.qml</file>
         <file>images/YouTurnH.png</file>
         <file>images/Config/ConT_TramOverride.png</file>
+        <file>qml/ConfigWhichVehicle.qml</file>
     </qresource>
 </RCC>
