@@ -43,7 +43,7 @@ Item {
                     width: 200
                     IconButtonTransparent{
                         anchors.fill: parent
-                        icon: "qrc:/images/SwitchOn.png"
+                        icon.source: "qrc:/images/SwitchOn.png"
                     }
                 }
                 SpinBox{
@@ -109,7 +109,7 @@ Item {
                 anchors.centerIn: parent
                 width: 150
                 height: 100
-                icon: "qrc:/images/Config/ConSt_InvertRelay.png"
+                icon.source: "qrc:/images/Config/ConSt_InvertRelay.png"
             }
             Text{
                 anchors.left: parent.right

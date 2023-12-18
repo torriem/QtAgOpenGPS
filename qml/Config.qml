@@ -42,7 +42,7 @@ Item {
             IconButtonTransparent{
                 id:vehicleMenu
                 objectName: "btnVehicleMenu"
-                icon: "qrc:/images/Config/Con_VehicleMenu.png"
+                icon.source: "qrc:/images/Config/Con_VehicleMenu.png"
                 width:100
                 height:75
                 function toggle_configTractor(){
@@ -59,7 +59,7 @@ Item {
             IconButtonTransparent{
                 id:implementMenu
                 objectName: "btnImplementMenu"
-                icon: "qrc:/images/Config/Con_ImplementMenu.png"
+                icon.source: "qrc:/images/Config/Con_ImplementMenu.png"
                 width:100
                 height:75
                 function toggle_configImplement(){
@@ -75,7 +75,7 @@ Item {
             IconButtonTransparent{
                 id:sourcesMenu
                 objectName: "btnSourcesMenu"
-                icon: "qrc:/images/Config/Con_SourcesMenu.png"
+                icon.source: "qrc:/images/Config/Con_SourcesMenu.png"
                 width:100
                 function toggle_configSources(){
                     if(configSources.visible == true){
@@ -91,7 +91,7 @@ Item {
             IconButtonTransparent{
                 id:uTurnMenu
                 objectName: "btnUTurnMenu"
-                icon: "qrc:/images/Config/Con_UTurnMenu.png"
+                icon.source: "qrc:/images/Config/Con_UTurnMenu.png"
                 width:100
                 height:75
                 function toggle_configYouTurn(){
@@ -107,7 +107,7 @@ Item {
             IconButtonTransparent{
                 id:modulesMenu
                 objectName: "btnModulesMenu"
-                icon: "qrc:/images/Config/Con_ModulesMenu.png"
+                icon.source: "qrc:/images/Config/Con_ModulesMenu.png"
                 width:100
                 height:75
                 function toggle_configModules(){
@@ -123,7 +123,7 @@ Item {
             IconButtonTransparent{
                 id:tramMenu
                 objectName: "btnTramMenu"
-                icon: "qrc:/images/Config/Con_TramMenu.png"
+                icon.source: "qrc:/images/Config/Con_TramMenu.png"
                 width:100
                 height:75
                 function toggle_configTrams(){
@@ -139,7 +139,7 @@ Item {
             IconButtonTransparent{
                 id:featureMenu
                 objectName: "btnFeatureMenu"
-                icon: "qrc:/images/Config/Con_FeatureMenu.png"
+                icon.source: "qrc:/images/Config/Con_FeatureMenu.png"
                 width:100
                 height:75
                 function toggle_configFeatures(){
@@ -176,7 +176,7 @@ Item {
                 anchors.right: parent.right
                 width:parent.height
                 height: parent.height
-                icon: "qrc:/images/OK64"
+                icon.source: "qrc:/images/OK64"
                 onClicked: config.visible = false
             }
         }

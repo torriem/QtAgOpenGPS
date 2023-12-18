@@ -52,7 +52,7 @@ Item {
             spacing: 4
             anchors.right: childrenRect.right
             IconButton{
-                icon: "qrc:/images/ST_SteerTab.png"
+                icon.source: "qrc:/images/ST_SteerTab.png"
                 function toggle_steertab(){
                     if(steerTab.visible == true){
                         steerTab.visible = false
@@ -63,7 +63,7 @@ Item {
                 onClicked: toggle_steertab
             }
             IconButton{
-                icon: "qrc:/images/ST_GainTab.png"
+                icon.source: "qrc:/images/ST_GainTab.png"
                 function toggle_gaintab(){
                     if(gainTab.visible == true){
                         gainTab.visible = false
@@ -74,7 +74,7 @@ Item {
                 onClicked: toggle_gaintab
             }
             IconButton{
-                icon: "qrc:/images/Sf_StanleyTab.png"
+                icon.source: "qrc:/images/Sf_StanleyTab.png"
                 function toggle_stanleytab(){
                     if(stanleyTab.visible == true){
                         stanleyTab.visible = false
@@ -85,7 +85,7 @@ Item {
                 onClicked: toggle_stanleytab
             }
             IconButton{
-                icon: "qrc:/images/ST_ppTab.png"
+                icon.source: "qrc:/images/ST_ppTab.png"
                 function toggle_pptab(){
                     if(ppTab.visible == true){
                         ppTab.visible = false

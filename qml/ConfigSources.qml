@@ -21,7 +21,7 @@ Item {
                 anchors.fill: parent
                 IconButton{
                     id: configsrcHeading
-                    icon: "qrc:/images/Config/ConS_VehicleConfig.png"
+                    icon.source: "qrc:/images/Config/ConS_VehicleConfig.png"
                     /* function toggle_(){
                     if(configImplement.visible == true){
                         configImplement.visible = false
@@ -34,7 +34,7 @@ Item {
                 }
                 IconButton{
                     id: configsrcRoll
-                    icon: "qrc:/images/Config/ConS_ImplementHitch.png"
+                    icon.source: "qrc:/images/Config/ConS_ImplementHitch.png"
                     function toggle_srcrollwin(){
                         if(configSrcRollWin.visible == true){
                             configSrcRollWin.visible = false
@@ -80,7 +80,7 @@ Item {
                     border.color: "black"
                     id: dual
                     IconButtonTransparent{
-                        icon: "qrc:/images/Config/Con_SourcesGPSDual.png"
+                        icon.source: "qrc:/images/Config/Con_SourcesGPSDual.png"
                         anchors.fill: parent
                         colorHover1: "transparent"
                         checkable: true
@@ -103,7 +103,7 @@ Item {
                     }
                     IconButtonTransparent{
                         anchors.fill:parent
-                        icon: "qrc:/images/Config/Con_SourcesGPSSingle.png"
+                        icon.source: "qrc:/images/Config/Con_SourcesGPSSingle.png"
                         colorHover1: "transparent"
                         checkable: true
                         /* onClicked: {
@@ -143,7 +143,7 @@ Item {
                     border.color: "black"
                     id: alarm
                     IconButtonTransparent{
-                        icon: "qrc:/images/Config/Con_SourcesRTKAlarm.png"
+                        icon.source: "qrc:/images/Config/Con_SourcesRTKAlarm.png"
                         anchors.fill: parent
                         colorHover1: "transparent"
                         checkable: true
@@ -165,7 +165,7 @@ Item {
                     id: killAutoSteer
                     IconButtonTransparent{
                         anchors.fill:parent
-                        icon: "qrc:/images/AutoSteerOff.png"
+                        icon.source: "qrc:/images/AutoSteerOff.png"
                         colorHover1: "transparent"
                         checkable: true
                         /* onClicked:
@@ -400,7 +400,7 @@ Item {
                 border.color: "black"
                 IconButtonTransparent{
                     anchors.fill:parent
-                    icon: "qrc:/images/Config/ConDa_RemoveOffset.png"
+                    icon.source: "qrc:/images/Config/ConDa_RemoveOffset.png"
                     colorHover1: "transparent"
                     checkable: true
                 }
@@ -420,7 +420,7 @@ Item {
                 border.color: "black"
                 IconButtonTransparent{
                     anchors.fill:parent
-                    icon: "qrc:/images/Config/ConDa_RollSetZero.png"
+                    icon.source: "qrc:/images/Config/ConDa_RollSetZero.png"
                     colorHover1: "transparent"
                     checkable: true
                 }
@@ -436,7 +436,7 @@ Item {
             border.color: "black"
             IconButtonTransparent{
                 anchors.fill:parent
-                icon: "qrc:/images/Config/ConDa_ResetIMU.png"
+                icon.source: "qrc:/images/Config/ConDa_ResetIMU.png"
                 colorHover1: "transparent"
                 checkable: true
             }
@@ -455,7 +455,7 @@ Item {
                 border.color: "black"
                 IconButtonTransparent{
                     anchors.fill:parent
-                    icon: "qrc:/images/Config/ConDa_InvertRoll.png"
+                    icon.source: "qrc:/images/Config/ConDa_InvertRoll.png"
                     colorHover1: "transparent"
                     checkable: true
                 }

@@ -142,7 +142,7 @@ Item{
             IconButton {
                 id:close
                 objectName: "btnClose"
-                icon: "qrc:/images/Cancel64.png"
+                icon.source: "qrc:/images/Cancel64.png"
                 property bool hideField: true
                 onClicked: fieldPalette.visible = false
             }
@@ -228,26 +228,26 @@ Item{
             IconButtonText {
                 id: deleteField
                 objectName: "btnDeleteField"
-                icon: "qrc:/images/skull.png"
+                icon.source: "qrc:/images/skull.png"
                 buttonText: "Delete Field"
             }
             IconButtonText {
                 id: sort
                 objectName: "btnSort"
-                icon: "qrc:/images/Sort.png"
+                icon.source: "qrc:/images/Sort.png"
                 buttonText: "Sort"
             }
             IconButtonText {
                 id: cancel
                 objectName: "btnCancel"
-                icon: "qrc:/images/Cancel64.png"
+                icon.source: "qrc:/images/Cancel64.png"
                 buttonText: "Cancel"
                 onClicked: fieldWindow.visible = false
             }
             IconButtonText {
                 id: useSelected
                 objectName: "btnUseSelected"
-                icon: "qrc:/images/FileOpen.png"
+                icon.source: "qrc:/images/FileOpen.png"
                 buttonText: "Use Selected"
             }
 

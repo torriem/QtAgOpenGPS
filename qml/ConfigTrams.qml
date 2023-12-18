@@ -41,7 +41,7 @@ Item {
             radius: 5
             IconButtonTransparent{
                 anchors.fill: parent
-                icon: "qrc:/images/Config/ConT_TramOverride.png"
+                icon.source: "qrc:/images/Config/ConT_TramOverride.png"
             }
         }
     }

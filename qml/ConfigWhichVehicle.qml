@@ -31,7 +31,7 @@ Item {
 
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        icon: "qrc:/images/Config/ConD_FloorTexture.png"
+                        icon.source: "qrc:/images/Config/ConD_FloorTexture.png"
                         colorHover1: "transparent"
                         checkable: true
                         property bool toggleBtn: false
@@ -70,7 +70,7 @@ Item {
 
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        icon: "qrc:/images/Config/ConD_AutoDayNight.png"
+                        icon.source: "qrc:/images/Config/ConD_AutoDayNight.png"
                         colorHover1: "transparent"
                         checkable: true
                         property bool toggleBtn: false
@@ -108,7 +108,7 @@ Item {
                         }
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        icon: "qrc:/images/Config/ConD_FullScreenBegin.png"
+                        icon.source: "qrc:/images/Config/ConD_FullScreenBegin.png"
                         colorHover1: "transparent"
                         checkable: true
                         property bool toggleBtn: false
@@ -146,7 +146,7 @@ Item {
                         }
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        icon: "qrc:/images/Config/ConD_Poligons.png"
+                        icon.source: "qrc:/images/Config/ConD_Poligons.png"
                         colorHover1: "transparent"
                         checkable: true
                         property bool toggleBtn: false
@@ -185,7 +185,7 @@ Item {
 
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        icon: "qrc:/images/Config/ConD_Grid.png"
+                        icon.source: "qrc:/images/Config/ConD_Grid.png"
                         colorHover1: "transparent"
                         checkable: true
                         property bool toggleBtn: false
@@ -224,7 +224,7 @@ Item {
 
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        icon: "qrc:/images/Config/ConD_Sky.png"
+                        icon.source: "qrc:/images/Config/ConD_Sky.png"
                         colorHover1: "transparent"
                         checkable: true
                         property bool toggleBtn: false
@@ -263,7 +263,7 @@ Item {
 
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        icon: "qrc:/images/BrightnessUp.png"
+                        icon.source: "qrc:/images/BrightnessUp.png"
                         colorHover1: "transparent"
                         checkable: true
                         property bool toggleBtn: false
@@ -302,7 +302,7 @@ Item {
 
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        icon: "qrc:/images/Config/ConD_LightBar.png"
+                        icon.source: "qrc:/images/Config/ConD_LightBar.png"
                         colorHover1: "transparent"
                         checkable: true
                         property bool toggleBtn: false
@@ -341,7 +341,7 @@ Item {
 
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        icon: "qrc:/images/Config/ConD_LogNMEA.png"
+                        icon.source: "qrc:/images/Config/ConD_LogNMEA.png"
                         colorHover1: "transparent"
                         checkable: true
                         property bool toggleBtn: false
@@ -380,7 +380,7 @@ Item {
 
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        icon: "qrc:/images/Config/ConD_KeyBoard.png"
+                        icon.source: "qrc:/images/Config/ConD_KeyBoard.png"
                         colorHover1: "transparent"
                         checkable: true
                         property bool toggleBtn: false
@@ -419,7 +419,7 @@ Item {
 
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        icon: "qrc:/images/Config/ConD_ExtraGuides.png"
+                        icon.source: "qrc:/images/Config/ConD_ExtraGuides.png"
                         colorHover1: "transparent"
                         checkable: true
                         property bool toggleBtn: false
@@ -458,7 +458,7 @@ Item {
 
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        icon: "qrc:/images/SvennArrow.png"
+                        icon.source: "qrc:/images/SvennArrow.png"
                         colorHover1: "transparent"
                         checkable: true
                         property bool toggleBtn: false
@@ -500,7 +500,7 @@ Item {
                     IconButtonTransparent{
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        icon: "qrc:/images/Config/ConD_Metric.png"
+                        icon.source: "qrc:/images/Config/ConD_Metric.png"
                         colorHover1: "transparent"
                         checkable: true
                         /* property bool toggleBtn: false
@@ -539,7 +539,7 @@ Item {
                     IconButtonTransparent{
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        icon: "qrc:/images/Config/ConD_Imperial.png"
+                        icon.source: "qrc:/images/Config/ConD_Imperial.png"
                         colorHover1: "transparent"
                         checkable: true
                         /*property bool toggleBtn: true
@@ -619,7 +619,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     width: 75
                     height: 75
-                    icon: "qrc:/images/VehFileSaveAs"
+                    icon.source: "qrc:/images/VehFileSaveAs"
                 }
                 Text {
                     id: saveAs
@@ -649,7 +649,7 @@ Item {
                     anchors.right: entryBox.left
                     anchors.rightMargin: 30
                     anchors.top: vehicleList.top
-                    icon: "qrc:/images/VehFileLoad.png"
+                    icon.source: "qrc:/images/VehFileLoad.png"
                     Text {
                         text: qsTr("Load")
                     }
@@ -659,7 +659,7 @@ Item {
                     anchors.top:load.bottom
                     anchors.topMargin: 50
                     anchors.horizontalCenter: load.horizontalCenter
-                    icon: "qrc:/images/VehFileDelete.png"
+                    icon.source: "qrc:/images/VehFileDelete.png"
                     Text {
                         text: qsTr("Delete")
                     }

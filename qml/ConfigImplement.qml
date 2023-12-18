@@ -23,7 +23,7 @@ Item {
                 anchors.fill: parent
                 IconButton{
                     id: configImpSettings
-                    icon: "qrc:/images/Config/ConS_VehicleConfig.png"
+                    icon.source: "qrc:/images/Config/ConS_VehicleConfig.png"
                     /* function toggle_(){
                     if(configImplement.visible == true){
                         configImplement.visible = false
@@ -36,7 +36,7 @@ Item {
                 }
                 IconButton{
                     id: configImpDim
-                    icon: "qrc:/images/Config/ConS_ImplementHitch.png"
+                    icon.source: "qrc:/images/Config/ConS_ImplementHitch.png"
                     function toggle_impdimwin(){
                         if(configImpDimWin.visible == true){
                             configImpDimWin.visible = false
@@ -49,7 +49,7 @@ Item {
                 }
                 IconButton{
                     id: configImpSection
-                    icon: "qrc:/images/Config/ConS_ImplementSection.png"
+                    icon.source: "qrc:/images/Config/ConS_ImplementSection.png"
                     function toggle_impsecwin(){
                         if(configImpSecWin.visible == true){
                             configImpSecWin.visible = false
@@ -62,7 +62,7 @@ Item {
                 }
                 IconButton{
                     id: configImpTiming
-                    icon: "qrc:/images/Config/ConS_ImplementSettings.png"
+                    icon.source: "qrc:/images/Config/ConS_ImplementSettings.png"
                     function toggle_imptimwin(){
                         if(configImpTimWin.visible == true){
                             configImpTimWin.visible = false
@@ -76,7 +76,7 @@ Item {
                 }
                 IconButton{
                     id: configImpSwitches
-                    icon: "qrc:/images/Config/ConS_ImplementSwitch.png"
+                    icon.source: "qrc:/images/Config/ConS_ImplementSwitch.png"
                     function toggle_impswitchwin(){
                         if(configImpSwitchWin.visible == true){
                             configImpSwitchWin.visible = false
@@ -114,7 +114,7 @@ Item {
                 //I'll do that after the backend is caught up
                 IconButtonTransparent{
                     anchors.fill: parent
-                    icon: "qrc:/images/ToolChkRear.png"
+                    icon.source: "qrc:/images/ToolChkRear.png"
                     colorHover1: "transparent"
                     checkable: true
                     /*property bool toggleBtn: false
@@ -148,7 +148,7 @@ Item {
                 id: i3ptfront
                 IconButtonTransparent{
                     anchors.fill: parent
-                    icon: "qrc:/images/ToolChkFront.png"
+                    icon.source: "qrc:/images/ToolChkFront.png"
                     colorHover1: "transparent"
                     checkable: true
                     property bool toggleBtn: false
@@ -182,7 +182,7 @@ Item {
                 id: itrailed
                 IconButtonTransparent{
                     anchors.fill: parent
-                    icon: "qrc:/images/ToolChkTrailing.png"
+                    icon.source: "qrc:/images/ToolChkTrailing.png"
                     colorHover1: "transparent"
                     checkable: true
                     /*property bool toggleBtn: false
@@ -216,7 +216,7 @@ Item {
                 id: iTBT
                 IconButtonTransparent{
                     anchors.fill: parent
-                    icon: "qrc:/images/ToolChkTBT.png"
+                    icon.source: "qrc:/images/ToolChkTBT.png"
                     colorHover1: "transparent"
                     checkable: true
                     /*property bool toggleBtn: false

@@ -22,7 +22,7 @@ Item {
                 anchors.fill: parent
                 IconButton{
                     id: configTrSettings
-                    icon: "qrc:/images/Config/ConS_VehicleConfig.png"
+                    icon.source: "qrc:/images/Config/ConS_VehicleConfig.png"
                     /* function toggle_(){
                     if(configImplement.visible == true){
                         configImplement.visible = false
@@ -35,7 +35,7 @@ Item {
                 }
                 IconButton{
                     id: configTrDim
-                    icon: "qrc:/images/Config/ConS_ImplementHitch.png"
+                    icon.source: "qrc:/images/Config/ConS_ImplementHitch.png"
                     function toggle_trdimwin(){
                         if(configTrDimWin.visible == true){
                             configTrDimWin.visible = false
@@ -48,7 +48,7 @@ Item {
                 }
                 IconButton{
                     id: btnconfigTrAntDim
-                    icon: "qrc:/images/Config/ConS_ImplementAntenna.png"
+                    icon.source: "qrc:/images/Config/ConS_ImplementAntenna.png"
                     function toggle_trantdim(){
                         if(configTrAntWin.visible == true){
                             configTrAntWin.visible = false
@@ -61,7 +61,7 @@ Item {
                 }
                 IconButton{
                     id: btnconfigTrSteerSett
-                    icon: "qrc:/images/Config/ConS_ModulesSteer.png"
+                    icon.source: "qrc:/images/Config/ConS_ModulesSteer.png"
                     function toggle_trantdim(){
                         if(configTrSteer.visible == true){
                             configTrSteer.visible = false
@@ -96,7 +96,7 @@ Item {
                     radius:5
                     id: harvester
                     IconButtonTransparent{
-                        icon: "qrc:/images/vehiclePageHarvester.png"
+                        icon.source: "qrc:/images/vehiclePageHarvester.png"
                         anchors.fill: parent
                         colorHover1: "transparent"
                         checkable: true
@@ -114,7 +114,7 @@ Item {
                     id: tractor
                     IconButtonTransparent{
                         anchors.fill:parent
-                        icon: "qrc:/images/vehiclePageTractor.png"
+                        icon.source: "qrc:/images/vehiclePageTractor.png"
                         colorHover1: "transparent"
                         checkable: true
                         onClicked: {
@@ -131,7 +131,7 @@ Item {
                     id: tr4wd
                     IconButtonTransparent{
                         anchors.fill: parent
-                        icon: "qrc:/images/vehiclePage4WD.png"
+                        icon.source: "qrc:/images/vehiclePage4WD.png"
                         colorHover1: "transparent"
                         checkable: true
                         onClicked: {
@@ -355,7 +355,7 @@ Item {
                 border.color: "black"
                 IconButtonTransparent{
                     anchors.fill: parent
-                    icon: "qrc:/images/ContourOn.png"
+                    icon.source: "qrc:/images/ContourOn.png"
                 }
                 Text{
                     text: qsTr("Constant Contour
@@ -373,7 +373,7 @@ Recording")
                 border.color: "black"
                 IconButtonTransparent{
                     anchors.fill: parent
-                    icon: "qrc:/images/AutoSteerOn.png"
+                    icon.source: "qrc:/images/AutoSteerOn.png"
                 }
                 Text{
                     text: qsTr("Steer Switch Control")
