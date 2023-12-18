@@ -5,11 +5,13 @@ import QtGraphicalEffects 1.13
 Button {
     width: 100
     height: 100
+    implicitWidth: 100
+    implicitHeight: 100
     id: icon_button
     text: ""
     hoverEnabled: true
     //checkable: true
-    icon.source: "images/AutoSteerOn.png"
+    icon.source: ""
     icon.color: "transparent"
 
     property double iconHeightScaleText: 0.75
@@ -33,13 +35,17 @@ Button {
         checked = isChecked;
     }
 
+    //This is specific to this base type... must be re-implemented in subtypes
     onCheckedChanged: {
         isChecked = checked
 
-        if (checked && useIconChecked)
+        if (checked && useIconChecked) {
             content_image.source = iconChecked
-        else
+            //console.warn("icon should be ", content_image.source)
+        } else {
             content_image.source = icon.source
+            //console.warn("icon should be ", content_image.source)
+        }
 
     }
 
@@ -51,7 +57,6 @@ Button {
         } else {
             useIconChecked = false
         }
-        console.warn(useIconChecked)
     }
 
     property int radius: 10
