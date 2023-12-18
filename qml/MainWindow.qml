@@ -314,6 +314,7 @@ Window {
                     id: btnautoSteerMode
                     objectName: "btnAutosteerMode"
                     isChecked: false
+                    checkable: true
                     buttonText: qsTr("Steer Mode")
                     icon.source: "qrc:/images/ModeStanley.png"
                     iconChecked: "qrc:/images/ModePurePursuit"
@@ -335,6 +336,7 @@ Window {
                     id: btnContour
                     objectName: "btnContour"
                     isChecked: false
+                    checkable: true
                     icon.source: "qrc:/images/ContourOff.png"
                     iconChecked: "qrc:/images/ContourOn.png"
                     buttonText: "Contour"
@@ -344,6 +346,7 @@ Window {
                     id: btnABCurve
                     objectName: "btnABCurve"
                     isChecked: false
+                    checkable: true
                     icon.source: "qrc:/images/CurveOff.png"
                     iconChecked: "qrc:/images/CurveOn.png"
                     buttonText: "ABCurve"
@@ -351,7 +354,10 @@ Window {
                 IconButtonText{
                     id: btnABLine
                     objectName: "btnABLine"
-                    isChecked: true
+                    checkable: true
+                    //TODO: this should be set programmatically
+                    //Also the types of lines are all mutually exclusive
+                    checked: true
                     icon.source: "qrc:/images/ABLineOff.png"
                     iconChecked: "qrc:/images/ABLineOn.png"
                     buttonText: "ABLine"
@@ -376,6 +382,7 @@ Window {
                     id: btnManualOffOn
                     objectName: "btnManualOffOn"
                     isChecked: false
+                    checkable: true
                     icon.source: "qrc:/images/ManualOff.png"
                     iconChecked: "qrc:/images/ManualOn.png"
                     buttonText: "Manual"
@@ -385,6 +392,7 @@ Window {
                     id: btnSectionOffAutoOn
                     objectName: "btnSectionOffAutoOn"
                     isChecked: false
+                    checkable: true
                     icon.source: "qrc:/images/SectionMasterOff.png"
                     iconChecked: "qrc:/images/SectionMasterOn.png"
                     buttonText: "Auto"
@@ -393,6 +401,7 @@ Window {
                     id: btnAutoYouTurn
                     objectName: "btnAutoYouTurn"
                     isChecked: false
+                    checkable: true
                     icon.source: "qrc:/images/YouTurnNo.png"
                     iconChecked: "qrc:/images/YouTurn80.png"
                     buttonText: "AutoUturn"
@@ -436,15 +445,14 @@ Window {
                 IconButtonText {
                     id: btnResetTool
                     objectName: "btnResetTool"
-                    isChecked: false
                     icon.source: "qrc:/images/ResetTool.png"
-                    iconChecked: "qrc:/images/ResetTool.png"
                     buttonText: "Reset Tool"
                 }
                 IconButtonText {
                     id: btnHeadland
                     objectName: "btnHeadland"
                     isChecked: false
+                    checkable: true
                     icon.source: "qrc:/images/HeadlandOff.png"
                     iconChecked: "qrc:/images/HeadlandOn.png"
                     buttonText: "Headland"
@@ -453,6 +461,7 @@ Window {
                     id: btnHydLift
                     objectName: "btnHydLift"
                     isChecked: false
+                    checkable: true
                     icon.source: "qrc:/images/HydraulicLiftOff.png"
                     iconChecked: "qrc:/images/HydraulicLiftOn.png"
                     buttonText: "HydLift"
@@ -479,7 +488,7 @@ Window {
                     buttonText: "Tram Lines"
                 }
                 IconButtonText {
-                    id:btnSectionMapping
+                    id: btnSectionMapping
                     Layout.alignment: parent.Center
                     objectName: "btnSectionMapping"
                     icon.source: "qrc:/images/SectionMapping"
@@ -507,6 +516,7 @@ Window {
                     id: btnYouSkip
                     objectName: "btnYouSkip"
                     isChecked: false
+                    checkable: true
                     icon.source: "qrc:/images/YouSkipOff.png"
                     iconChecked: "qrc:/images/YouSkipOn.png"
                     buttonText: "YouSkips"
