@@ -72,8 +72,8 @@ int main(int argc, char *argv[])
     QFile testFile("/tmp/test.txt");
     testFile.open(QIODevice::WriteOnly);
     QTextStream writer(&testFile);
-    writer << "Testing" << endl;
-    writer << qSetFieldWidth(3) << (double)3.1415926535 << endl;
+    writer << "Testing" << Qt::endl;
+    writer << qSetFieldWidth(3) << (double)3.1415926535 << Qt::endl;
     testFile.close();
     */
 

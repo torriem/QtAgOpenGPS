@@ -13,8 +13,8 @@
 #include <QSurfaceFormat>
 #include <QOpenGLFramebufferObject>
 #include <QOpenGLBuffer>
-//#include <QQuickView>
 #include <QQmlApplicationEngine>
+#include <QSerialPort>
 
 #include "common.h"
 
@@ -75,33 +75,34 @@ public:
     //QQuickView *qmlview;
     QWidget *qmlcontainer;
     AOGRendererInSG *openGLControl;
-    QObject *btnMinMaxZoom;
-    QObject *btnPerimeter;
-    QObject *btnAutoSteer;
-    QObject *btnFlag;
-    QObject *btnABLine;
-    QObject *btnContour;
-    QObject *btnManualOffOn;
-    QObject *btnSectionOffAutoOn;
+    //Left Menu & children
+    QObject *btnAcres;
+    QObject *btnnavigationSettings;
+    QObject *btnSettings;
+    QObject *btnTools;
+    QObject *btnFieldMenu;
+    QObject *btnAgIO;
+    QObject *btnautoSteerConf;
+    QObject *btnAutoSteerMode;
 
     QObject *btnTiltDown;
     QObject *btnTiltUp;
-
     QObject *btnZoomIn;
     QObject *btnZoomOut;
 
-    //menu button and icon palette -- do we need to keep all of these?
-    QObject *btnMenuDrawer;
-    QObject *btnSnap;
-    QObject *btnTripOdometer;
-    QObject *btnGPSData;
-    QObject *btnSettings;
-    QObject *btnJob;
-    QObject *btnBoundaryMenu;
-    QObject *btnComm;
-    QObject *btnUnits;
-    QObject *btnFileExplorer;
-    QObject *btnAutoSteerConfig;
+    //right menu & children
+    QObject *btnContour;
+    QObject *btnCurve;
+    QObject *btnABLine;
+    QObject *btnABLineCycle;
+    QObject *btnABLineCycleBk;
+    QObject *btnManualOffOn;
+    QObject *btnSectionOffAutoOn;
+    QObject *btnAutoSteer;
+
+    QObject *btnContourPriority;
+    //other
+    QObject *btnFlag;
 
     //area context menu
     QObject *contextArea;
@@ -529,6 +530,15 @@ public:
     /**************************
      * SerialComm.Designer.cs *
      **************************/
+private:
+    QString portNameGPS = "COM GPS";
+    int baudRateGPS = QSerialPort::Baud4800;
+
+    //serial port gps is connected to
+    QSerialPort sp;
+
+    void SerialLineReceived(QByteArray sentence);
+
 public:
 
     double actualSteerAngleDisp;
@@ -537,6 +547,8 @@ public:
     void sectionControlOutToPort();
     void sendOutUSBAutoSteerPort(uchar *data, int pgnSentenceLength);
 
+    void SerialPortOpenGPS();
+    void SerialPortCloseGPS();
 
     /***********************
      * FormGPS.Designer.cs *
@@ -558,15 +570,36 @@ public slots:
      *******************/
     void onGLControl_clicked(const QVariant &event);
 
-    void onBtnMinMaxZoom_clicked();
-    void onBtnPerimeter_clicked();
-    //void onBtnPerimeter_pressAndHeld();
-    void onBtnAutoSteer_clicked();
-    void onBtnFlag_clicked();
-    void onBtnABLine_clicked();
+    //left column
+    void onBtnAcres_clicked();
+    void onBtnNavigationSettings_clicked();
+    void onBtnSettings_clicked();
+    void onBtnAgIO_clicked();
+    void onBtnSteerConfig_clicked();
+    void onBtnSteerMode_clicked();
+    //right column
     void onBtnContour_clicked();
+    void onBtnABCurve_clicked();
+    void onBtnABLine_clicked();
+    void onBtnToggleAB_clicked();
+    void onBtnToggleABBack_clicked();
     void onBtnManualOffOn_clicked();
     void onBtnSectionOffAutoOn_clicked();
+    void onBtnAutoYouTurn_clicked();
+    void onBtnAutoSteer_clicked();
+    void onBtnContourPriority_clicked();
+    //bottom row
+    void onBtnResetTool_clicked();
+    void onBtnHeadland_clicked();
+    void onBtnHydLift_clicked();
+    void onBtnFlag_clicked();
+    void onBtnTramlines_clicked();
+    void onBtnSectionColor_clicked();
+    void onBtnLinePicker_clicked();
+    void onBtnSnapToPivot_clicked();
+    //don't need ablineedit
+    void onBtnYouSkip_clicked();
+
 
     void onBtnTiltDown_clicked();
     void onBtnTiltUp_clicked();
@@ -574,16 +607,6 @@ public slots:
     void onBtnZoomIn_clicked();
     void onBtnZoomOut_clicked();
 
-    void onBtnSnap_clicked();
-    void onBtnTripOdometer_clicked();
-    void onBtnGPSData_clicked();
-    void onBtnSettings_clicked();
-    void onBtnJob_clicked();
-    void onBtnBoundaryMenu_clicked();
-    void onBtnComm_clicked();
-    void onBtnUnits_clicked();
-    void onBtnFileExplorer_clicked();
-    void onBtnAutoSteerConfig_clicked();
 
     void onBtnAreaSide_clicked();
 
@@ -629,6 +652,11 @@ public slots:
      * From Position.Designer.cs
      */
     void processSectionLookahead(); //called when section lookahead GL stuff is rendered
+
+    /**************************
+     * SerialComm.Designer.cs *
+     **************************/
+    void sp_DataReceived();
 
     /*
      * simulator
