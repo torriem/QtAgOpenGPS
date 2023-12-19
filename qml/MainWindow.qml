@@ -308,6 +308,29 @@ Window {
                     objectName: "btnAutosteerConf"
                     buttonText: qsTr("Steer config")
                     icon.source: "qrc:/images/AutoSteerConf.png"
+                    /*property bool hideSteerMenu: true
+
+                    onHideSteerMenuChanged: {
+                        if (hideSteerMenu == true) {
+                            steerConfigWindow.visible = false
+                        } else {
+                            steerConfigWindow.visible = true
+                        }
+                    }
+
+                    function toggle_steermenu() {
+                        if (hideSteerMenu == true) {
+                            hideSteerMenu = false
+                        } else {
+                            hideSteerMenu = true
+                        }
+                    }*/
+
+                    onClicked: {
+                            steerConfigWindow.visible = true
+
+                        //toggle_steermenu();
+                    }
                 }
 
                 IconButtonText {
@@ -543,8 +566,8 @@ Window {
                             curentIndex = skips.find(editText)
                         }
                     }
-                    height:parent.height
-                    width: btnYouSkip.width
+                    implicitHeight:parent.height
+                    implicitWidth: btnYouSkip.width
                 }
 
             }
