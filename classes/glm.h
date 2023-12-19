@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <limits>
+#include <QVector>
 #include "vec2.h"
 #include "vec3.h"
 
@@ -151,6 +152,92 @@ namespace glm {
         return lround(number);
     }
 
+    static bool isPointInPolygon(QVector<Vec3> polygon, Vec3 testPoint) {
+        bool result = false;
+        int j = polygon.count() - 1;
+        for (int i = 0; i < polygon.count(); i++)
+        {
+            if ((polygon[i].easting < testPoint.easting &&
+                 polygon[j].easting >= testPoint.easting) ||
+                (polygon[j].easting < testPoint.easting &&
+                 polygon[i].easting >= testPoint.easting))
+            {
+                if (polygon[i].northing + (testPoint.easting - polygon[i].easting) /
+                    (polygon[j].easting - polygon[i].easting) * (polygon[j].northing - polygon[i].northing)
+                    < testPoint.northing)
+                {
+                    result = !result;
+                }
+            }
+            j = i;
+        }
+        return result;
+    }
 
+    static bool isPointInPolygon(QVector<Vec3> polygon, Vec2 testPoint) {
+        bool result = false;
+        int j = polygon.count() - 1;
+        for (int i = 0; i < polygon.count(); i++)
+        {
+            if ((polygon[i].easting < testPoint.easting &&
+                 polygon[j].easting >= testPoint.easting) ||
+                (polygon[j].easting < testPoint.easting &&
+                 polygon[i].easting >= testPoint.easting))
+            {
+                if (polygon[i].northing + (testPoint.easting - polygon[i].easting) /
+                                              (polygon[j].easting - polygon[i].easting) * (polygon[j].northing - polygon[i].northing)
+                    < testPoint.northing)
+                {
+                    result = !result;
+                }
+            }
+            j = i;
+        }
+        return result;
+    }
+
+    static bool isPointInPolygon(QVector<Vec2> polygon, Vec2 testPoint) {
+        bool result = false;
+        int j = polygon.count() - 1;
+        for (int i = 0; i < polygon.count(); i++)
+        {
+            if ((polygon[i].easting < testPoint.easting &&
+                 polygon[j].easting >= testPoint.easting) ||
+                (polygon[j].easting < testPoint.easting &&
+                 polygon[i].easting >= testPoint.easting))
+            {
+                if (polygon[i].northing + (testPoint.easting - polygon[i].easting) /
+                    (polygon[j].easting - polygon[i].easting) * (polygon[j].northing - polygon[i].northing)
+                    < testPoint.northing)
+                {
+                    result = !result;
+                }
+            }
+            j = i;
+        }
+        return result;
+    }
+
+    static bool isPointInPolygon(QVector<Vec2> polygon, Vec3 testPoint) {
+        bool result = false;
+        int j = polygon.count() - 1;
+        for (int i = 0; i < polygon.count(); i++)
+        {
+            if ((polygon[i].easting < testPoint.easting &&
+                 polygon[j].easting >= testPoint.easting) ||
+                (polygon[j].easting < testPoint.easting &&
+                 polygon[i].easting >= testPoint.easting))
+            {
+                if (polygon[i].northing + (testPoint.easting - polygon[i].easting) /
+                                              (polygon[j].easting - polygon[i].easting) * (polygon[j].northing - polygon[i].northing)
+                    < testPoint.northing)
+                {
+                    result = !result;
+                }
+            }
+            j = i;
+        }
+        return result;
+    }
 }
 #endif // GLM_H
