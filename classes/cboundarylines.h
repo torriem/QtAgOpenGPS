@@ -11,22 +11,38 @@ class CBoundaryLines
 {
 public:
     //list of coordinates of boundary line
-    QVector<Vec3> bndLine;
-    //the list of constants and multiples of the boundary
-    QVector<Vec2> calcList;
+    QVector<Vec3> fenceLine;
+    QVector<Vec2> fenceLineEar;
+    QVector<Vec3> hdLine;
+    QVector<Vec3> turnLine;
 
+
+    //the list of constants and multiples of the boundary
+    //QVector<Vec2> calcList;
+
+    //area variable
     double area;
-    bool isSet, isDriveAround, isDriveThru;
+
+    //boundary variables
+    bool isDriveThru;
+
+    //bool isSet, isDriveThru;
 
     CBoundaryLines();
-    void calculateBoundaryHeadings();
-    void fixBoundaryLine(int bndNum, double spacing);
+    void calculateFenceLineHeadings();
+    void fixFenceLine(int bndNum);
     void reverseWinding();
-    void preCalcBoundaryLines();
+    bool calculateFenceArea(int idx);
+
+    void calculateTurnHeadings();
+    void fixTurnLine(double totalHeadWidth, double spacing);
+
+   /*
     bool isPointInsideBoundary(Vec3 testPointv3) const;
     bool isPointInsideBoundary(Vec2 testPointv2) const;
     void drawBoundaryLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, QColor color);
     void calculateBoundaryArea();
+*/
 
 };
 

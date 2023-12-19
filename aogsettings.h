@@ -23,6 +23,10 @@ int colorSettingStringToInt(QString colorSettingString);
 #define USE_SETTINGS AOGSettings settings
 #define SYNC_SETTINGS settings.sync()
 
+//HEADLAND
+#define SETTINGS_HEADLAND_ISSECTIONCONTROLLED          settings.   value("headland/isSectionControlled", false).toBool()
+#define SETTINGS_SET_HEADLAND_ISSECTIONCONTROLLED(VAL) settings.setValue("headland/isSectionControlled",VAL)
+
 // TOOL-related settings
 #define SETTINGS_TOOL_NAME			settings.   value("tool/name", "unnamed").toQString()
 #define SETTINGS_SET_TOOL_NAME(VAL)	settings.setValue("tool/name",VAL)

@@ -9,143 +9,275 @@
 CBoundaryLines::CBoundaryLines()
 {
     area = 0;
-    isSet = false;
-    isDriveAround = false;
     isDriveThru = false;
 }
 
-void CBoundaryLines::calculateBoundaryHeadings()
+void CBoundaryLines::calculateFenceLineHeadings()
 {
     //to calc heading based on next and previous points to give an average heading.
-    int cnt = bndLine.size();
-    QVector<Vec3> arr = bndLine; //make copy of list
+    int cnt = fenceLine.count();
+    QVector<Vec3> arr = fenceLine; //make copy of list
     cnt--;
-    bndLine.clear();
+    fenceLine.clear();
 
     //first point needs last, first, second points
     Vec3 pt3 = arr[0];
-    pt3.heading = atan2(arr[1].easting - arr[cnt].easting, arr[1].northing - arr[cnt].northing);
+    pt3.heading = atan2(arr[1].easting - arr[cnt].easting,
+                        arr[1].northing - arr[cnt].northing);
     if (pt3.heading < 0) pt3.heading += glm::twoPI;
-    bndLine.append(pt3);
+    fenceLine.append(pt3);
 
     //middle points
     for (int i = 1; i < cnt; i++)
     {
         pt3 = arr[i];
-        pt3.heading = atan2(arr[i + 1].easting - arr[i - 1].easting, arr[i + 1].northing - arr[i - 1].northing);
+        pt3.heading = atan2(arr[i + 1].easting - arr[i - 1].easting,
+                            arr[i + 1].northing - arr[i - 1].northing);
         if (pt3.heading < 0) pt3.heading += glm::twoPI;
-        bndLine.append(pt3);
+        fenceLine.append(pt3);
     }
 
     //last and first point
     pt3 = arr[cnt];
-    pt3.heading = atan2(arr[0].easting - arr[cnt - 1].easting, arr[0].northing - arr[cnt - 1].northing);
+    pt3.heading = atan2(arr[0].easting - arr[cnt - 1].easting,
+                        arr[0].northing - arr[cnt - 1].northing);
     if (pt3.heading < 0) pt3.heading += glm::twoPI;
-    bndLine.append(pt3);
+    fenceLine.append(pt3);
 }
 
-void CBoundaryLines::fixBoundaryLine(int bndNum, double spacing)
+void CBoundaryLines::fixFenceLine(int bndNum)
 {
-    //boundary point spacing based on eq width
-    spacing *= 0.25;
+    double spacing;
+    //close if less than 20 ha, 40ha, more
+    if (area < 200000) spacing = 1.1;
+    else if (area < 400000) spacing = 2.2;
+    else spacing = 3.3;
 
-    if (spacing < 1) spacing = 1;
-    if (spacing > 3) spacing = 3;
+    if (bndNum > 0) spacing *= 0.5;
 
-    //first find out which side is inside the boundary
-    double oneSide = glm::PIBy2;
-    Vec3 point(bndLine[2].easting - (sin(oneSide + bndLine[2].heading) * 2.0),
-    bndLine[2].northing - (cos(oneSide + bndLine[2].heading) * 2.0), 0.0);
-
-    //make sure boundaries are wound correctly
-    if (bndNum == 0)
-    {
-        //outside an outer boundary means its wound clockwise
-        if (!isPointInsideBoundary(point)) reverseWinding();
-    }
-    else
-    {
-        //inside an inner boundary means its wound clockwise
-        if (isPointInsideBoundary(point)) reverseWinding();
-        spacing *= 0.66;
-    }
-
-    //make sure distance isn't too small between points on headland
-    int bndCount = bndLine.size();
+    int bndCount = fenceLine.count();
     double distance;
+
+    //make sure distance isn't too big between points on headland
     for (int i = 0; i < bndCount - 1; i++)
     {
-        distance = glm::distance(bndLine[i], bndLine[i + 1]);
+        int j = i + 1;
+
+        if (j == bndCount) j = 0;
+        distance = glm::distance(fenceLine[i], fenceLine[j]);
+        if (distance > spacing * 1.5)
+        {
+            Vec3 pointB((fenceLine[i].easting + fenceLine[j].easting) / 2.0,
+                        (fenceLine[i].northing + fenceLine[j].northing) / 2.0,
+                        fenceLine[i].heading);
+
+            fenceLine.insert(j, pointB);
+            bndCount = fenceLine.count();
+            i--;
+        }
+    }
+
+    //make sure distance isn't too big between points on boundary
+    bndCount = fenceLine.count();
+
+    for (int i = 0; i < bndCount; i++)
+    {
+        int j = i + 1;
+
+        if (j == bndCount) j = 0;
+        distance = glm::distance(fenceLine[i], fenceLine[j]);
+        if (distance > spacing * 1.6)
+        {
+            Vec3 pointB((fenceLine[i].easting + fenceLine[j].easting) / 2.0,
+                        (fenceLine[i].northing + fenceLine[j].northing) / 2.0,
+                        fenceLine[i].heading);
+
+            fenceLine.insert(j, pointB);
+            bndCount = fenceLine.count();
+            i--;
+        }
+    }
+
+    //make sure distance isn't too small between points on boundary
+    spacing *= 0.9;
+    bndCount = fenceLine.count();
+    for (int i = 0; i < bndCount - 1; i++)
+    {
+        distance = glm::distance(fenceLine[i], fenceLine[i + 1]);
         if (distance < spacing)
         {
-            bndLine.removeAt(i + 1);
-            bndCount = bndLine.size();
-            i--;
-        }
-    }
-
-    //make sure distance isn't too big between points on boundary
-    bndCount = bndLine.size();
-    spacing *= 1.33;
-
-    for (int i = 0; i < bndCount; i++)
-    {
-        int j = i + 1;
-
-        if (j == bndCount) j = 0;
-        distance = glm::distance(bndLine[i], bndLine[j]);
-        if (distance > spacing)
-        {
-            Vec3 pointB((bndLine[i].easting + bndLine[j].easting) / 2.0,
-                (bndLine[i].northing + bndLine[j].northing) / 2.0, bndLine[i].heading);
-
-            bndLine.insert(j, pointB);
-            bndCount = bndLine.size();
-            i--;
-        }
-    }
-
-    //make sure distance isn't too big between points on boundary
-    bndCount = bndLine.size();
-    spacing *= 1.33;
-
-    for (int i = 0; i < bndCount; i++)
-    {
-        int j = i + 1;
-
-        if (j == bndCount) j = 0;
-        distance = glm::distance(bndLine[i], bndLine[j]);
-        if (distance > spacing)
-        {
-            Vec3 pointB((bndLine[i].easting + bndLine[j].easting) / 2.0,
-                (bndLine[i].northing + bndLine[j].northing) / 2.0, bndLine[i].heading);
-
-            bndLine.insert(j, pointB);
-            bndCount = bndLine.size();
+            fenceLine.removeAt(i + 1);
+            bndCount = fenceLine.count();
             i--;
         }
     }
 
     //make sure headings are correct for calculated points
-    calculateBoundaryHeadings();
+    calculateFenceLineHeadings();
 
+    double delta = 0;
+    fenceLineEar.clear();
+
+    for (int i = 0; i < fenceLine.count(); i++)
+    {
+        if (i == 0)
+        {
+            fenceLineEar.append(Vec2(fenceLine[i].easting, fenceLine[i].northing));
+            continue;
+        }
+        delta += (fenceLine[i - 1].heading - fenceLine[i].heading);
+        if (fabs(delta) > 0.005)
+        {
+            fenceLineEar.append(Vec2(fenceLine[i].easting, fenceLine[i].northing));
+            delta = 0;
+        }
+    }
 }
 
 void CBoundaryLines::reverseWinding()
 {
     //reverse the boundary
-    int cnt = bndLine.size();
-    QVector<Vec3> arr = bndLine;
+    int cnt = fenceLine.size();
+    QVector<Vec3> arr = fenceLine;
     cnt--;
-    bndLine.clear();
+    fenceLine.clear();
     for (int i = cnt; i >= 0; i--)
     {
         arr[i].heading -= M_PI;
         if (arr[i].heading < 0) arr[i].heading += glm::twoPI;
-        bndLine.append(arr[i]);
+        fenceLine.append(arr[i]);
     }
 }
 
+//obvious
+bool CBoundaryLines::calculateFenceArea(int idx)
+{
+    int ptCount = fenceLine.count();
+    if (ptCount < 1) return false;
+
+    area = 0;         // Accumulates area in the loop
+    int j = ptCount - 1;  // The last vertex is the 'previous' one to the first
+
+    for (int i = 0; i < ptCount; j = i++)
+    {
+        area += (fenceLine[j].easting + fenceLine[i].easting) *
+                (fenceLine[j].northing - fenceLine[i].northing);
+    }
+
+    bool isClockwise = area >= 0;
+
+    area = fabs(area / 2);
+
+    //make sure is clockwise for outer counter clockwise for inner
+    if ((idx == 0 && isClockwise) || (idx > 0 && !isClockwise))
+    {
+        reverseWinding();
+    }
+
+    return isClockwise;
+}
+
+void CBoundaryLines::calculateTurnHeadings()
+{
+    //to calc heading based on next and previous points to give an average heading.
+    int cnt = turnLine.count();
+    QVector<Vec3> arr = turnLine;
+    cnt--;
+    turnLine.clear();
+
+    //first point needs last, first, second points
+    Vec3 pt3(arr[0]);
+    pt3.heading = atan2(arr[1].easting - arr[cnt].easting,
+                        arr[1].northing - arr[cnt].northing);
+    if (pt3.heading < 0) pt3.heading += glm::twoPI;
+    turnLine.append(pt3);
+
+    //middle points
+    for (int i = 1; i < cnt; i++)
+    {
+        pt3 = arr[i];
+        pt3.heading = atan2(arr[i + 1].easting - arr[i - 1].easting,
+                            arr[i + 1].northing - arr[i - 1].northing);
+        if (pt3.heading < 0) pt3.heading += glm::twoPI;
+        turnLine.append(pt3);
+    }
+
+    //last and first point
+    pt3 = arr[cnt];
+    pt3.heading = atan2(arr[0].easting - arr[cnt - 1].easting,
+                        arr[0].northing - arr[cnt - 1].northing);
+    if (pt3.heading < 0) pt3.heading += glm::twoPI;
+    turnLine.append(pt3);
+}
+
+void CBoundaryLines::fixTurnLine(double totalHeadWidth, double spacing)
+{
+    //count the points from the boundary
+    int lineCount = turnLine.count();
+
+    totalHeadWidth *= totalHeadWidth;
+    spacing *= spacing;
+
+    //int headCount = mf.bndArr[inTurnNum].bndLine.Count;
+    double distance;
+
+    //remove the points too close to boundary
+    for (int i = 0; i < fenceLine.count(); i++)
+    {
+        for (int j = 0; j < lineCount; j++)
+        {
+            //make sure distance between headland and boundary is not less then width
+            distance = glm::distanceSquared(fenceLine[i], turnLine[j]);
+            if (distance < (totalHeadWidth * 0.99))
+            {
+                turnLine.removeAt(j);
+                lineCount = turnLine.count();
+                j = -1;
+            }
+        }
+    }
+
+    //make sure distance isn't too big between points on Turn
+    int bndCount = turnLine.count();
+    for (int i = 0; i < bndCount; i++)
+    {
+        int j = i + 1;
+        if (j == bndCount) j = 0;
+        distance = glm::distanceSquared(turnLine[i], turnLine[j]);
+        if (distance > (spacing * 1.8))
+        {
+            Vec3 pointB((turnLine[i].easting + turnLine[j].easting) / 2.0,
+                        (turnLine[i].northing + turnLine[j].northing) / 2.0,
+                        turnLine[i].heading);
+
+            turnLine.insert(j, pointB);
+            bndCount = turnLine.count();
+            i--;
+        }
+    }
+
+    //make sure distance isn't too small between points on turnLine
+    bndCount = turnLine.count();
+    for (int i = 0; i < bndCount - 1; i++)
+    {
+        distance = glm::distanceSquared(turnLine[i], turnLine[i + 1]);
+        if (distance < spacing)
+        {
+            turnLine.removeAt(i + 1);
+            bndCount = turnLine.count();
+            i--;
+        }
+    }
+
+    //make sure headings are correct for calculated points
+    if (turnLine.count() > 0)
+    {
+        calculateTurnHeadings();
+    }
+
+}
+
+#if 0
 void CBoundaryLines::preCalcBoundaryLines()
 {
     int j = bndLine.size() - 1;
@@ -242,3 +374,4 @@ void CBoundaryLines::calculateBoundaryArea()
     }
     area = fabs(area / 2);
 }
+#endif
