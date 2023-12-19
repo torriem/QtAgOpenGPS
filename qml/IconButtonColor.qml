@@ -5,8 +5,8 @@ Rectangle {
     id: iconButtonColor
     x: 0
     y: 0
-    width: 150
-    height: 100
+    width: 120
+    height: 70
 
     property color color1: "#ffffff"
     property color color2: "#ffffff"
@@ -17,7 +17,6 @@ Rectangle {
     property color colorChecked1: "green"
     property color colorChecked2: "green"
     property color colorChecked3: "green"
-    property url iconChecked: "/images/AutoSteerOn.png"
     property string buttonText: "Hello"
     property string leftText: ""
     property string rightText: ""
@@ -29,12 +28,12 @@ Rectangle {
             gradientStop1.color = colorChecked1
             gradientStop2.color = colorChecked2
             gradientStop3.color = colorChecked3
-            image.source = iconChecked
+            //image.source = iconChecked
         } else {
             gradientStop1.color = color1
             gradientStop2.color = color2
             gradientStop3.color = color3
-            image.source = icon
+            //image.source = icon
         }
     }
 

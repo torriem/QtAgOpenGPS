@@ -46,34 +46,34 @@ Item {
                 id:polygons
                 objectName: "btnPolygons"
                 buttonText: qsTr("Polygons")
-                icon.source: "qrc:/images/Config/ConD_Poligons.png"
+                icon: "qrc:/images/Config/ConD_Poligons.png"
                 isChecked: false
             }
             IconButtonColor{
                 id:grid
                 objectName: "btnGrid"
                 buttonText: qsTr("Grid")
-                icon.source: "qrc:/images/Config/ConD_Grid.png"
+                icon: "qrc:/images/Config/ConD_Grid.png"
                 isChecked: false
             }
             IconButtonColor{
                 id:sky
                 objectName: "btnSky"
                 buttonText:qsTr("Sky")
-                icon.source: "qrc:/images/Config/ConD_Sky.png"
+                icon: "qrc:/images/Config/ConD_Sky.png"
             }
             IconButtonColor{
                 id:brightness
                 buttonText:qsTr("Brightness")
                 objectName: "btnBrightness"
-                icon.source: "qrc:/images/BrightnessUp.png"
+                icon: "qrc:/images/BrightnessUp.png"
                 isChecked: false
             }
             IconButtonColor{
                 id:lightBar
                 objectName: "btnLightBar"
                 buttonText:qsTr("Lightbar")
-                icon.source: "qrc:/images/Config/ConD_LightBar.png"
+                icon: "qrc:/images/Config/ConD_LightBar.png"
                 isChecked: false
             }
             IconButtonColor{
@@ -81,27 +81,27 @@ Item {
                 objectName: "btnLonNMEA"
                 buttonText: qsTr("Log NMEA")
                 isChecked: false
-                icon.source: "qrc:/images/Config/ConD_LogNMEA.png"
+                icon: "qrc:/images/Config/ConD_LogNMEA.png"
             }
             IconButtonColor{
                 id:keyboard
                 objectName: "btnKeyboard"
                 buttonText:qsTr("Keyboard")
-                icon.source: "qrc:/images/Config/ConD_KeyBoard.png"
+                icon: "qrc:/images/Config/ConD_KeyBoard.png"
                 isChecked: false
             }
             IconButtonColor{
                 id: guideLines
                 objectName: "btnGuidelines"
                 buttonText: qsTr("GuideLines")
-                icon.source: "qrc:/images/Config/ConD_ExtraGuides.png"
+                icon: "qrc:/images/Config/ConD_ExtraGuides.png"
                 isChecked: false
             }
             IconButtonColor{
                 id:svennArrow
                 objectName: "btnSvennArrow"
                 buttonText: qsTr("Svenn Arrow")
-                icon.source: "qrc:/images/SvennArrow.png"
+                icon: "qrc:/images/SvennArrow.png"
                 isChecked: false
             }
         }
