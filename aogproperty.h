@@ -18,10 +18,12 @@ public:
     operator double() { return settings.value(key,default_value).toDouble(); }
     operator QString() { return settings.value(key,default_value).toString(); }
     operator bool() { return settings.value(key,default_value).toBool(); }
+    operator float() { return settings.value(key,default_value).toFloat(); }
 
     QVariant value(void) { return settings.value(key,default_value); }
 
     AOGProperty &operator=(QVariant newvalue) { settings.setValue(key, newvalue); return *this;}
 };
+#include "properties.h"
 
 #endif // AOGPROPERTY_H
