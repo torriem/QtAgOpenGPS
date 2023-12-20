@@ -5,7 +5,6 @@
 #include <QVariant>
 #include <QList>
 #include <QVector3D>
-
 #include <QColor>
 
 class AOGSettings : public QSettings
@@ -16,7 +15,6 @@ public:
 
 QColor parseColor(QString setcolor);
 QVector3D parseColorVector(QString setcolor);
-
 int colorSettingStringToInt(QString colorSettingString);
 
 //Macros to use settings in a consistant way
@@ -213,11 +211,11 @@ int colorSettingStringToInt(QString colorSettingString);
 #define SETTINGS_VEHICLE_ISMACHINECONTROLTOAUTOSTEER			settings.   value("vehicle/isMachineControlToAutoSteer", false).toBool()
 #define SETTINGS_SET_VEHICLE_ISMACHINECONTROLTOAUTOSTEER(VAL)	settings.setValue("vehicle/isMachineControlToAutoSteer",VAL)
 
-#define SETTINGS_VEHICLE_YOUTURNTRIGGERDISTANCE			settings.   value("vehicle/youTriggerDistance", 8).toDouble()
-#define SETTINGS_SET_VEHICLE_YOUTURNTRIGGERDISTANCE(VAL)	settings.setValue("vehicle/youTriggerDistance",VAL)
-
 #define SETTINGS_VEHICLE_GEOFENCEDIST			settings.   value("vehicle/geoFenceDistance", 0).toDouble()
 #define SETTINGS_SET_VEHICLE_GEOFENCEDIST(VAL)	settings.setValue("vehicle/geoFenceDistance",VAL)
+
+#define SETTINGS_VEHICLE_YOUTURNTRIGGERDISTANCE			settings.   value("vehicle/youTriggerDistance", 8).toDouble()
+#define SETTINGS_SET_VEHICLE_YOUTURNTRIGGERDISTANCE(VAL)	settings.setValue("vehicle/youTriggerDistance",VAL)
 
 #define SETTINGS_VEHICLE_YOUTURNDISTANCE			settings.   value("vehicle/youTurnDistance", 5).toInt()
 #define SETTINGS_SET_VEHICLE_YOUTURNDISTANCE(VAL)	settings.setValue("vehicle/youTurnDistance",VAL)

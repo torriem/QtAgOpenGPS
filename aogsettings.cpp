@@ -2,8 +2,10 @@
 #include <QString>
 #include <QStringList>
 #include <QColor>
-#include "common.h"
+//#include "common.h"
 #include <QDebug>
+
+AOGSettings settings;
 
 QVariant AOGSettings::value(const QString &key, const QVariant &defaultvalue)
 {
@@ -17,6 +19,7 @@ QVariant AOGSettings::value(const QString &key, const QVariant &defaultvalue)
     return val;
 }
 
+//TODO: why are these functions here and not in glutils.cpp?
 QColor parseColor(QString setcolor)
 {
     //qDebug() << setcolor;
