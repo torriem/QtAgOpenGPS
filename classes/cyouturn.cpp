@@ -92,6 +92,7 @@ bool CYouTurn::findCurveTurnPoints(const CABCurve &curve,
     return crossingheading != -20000 && crossingCurvePoint.easting != -20000;
 }
 
+/*
 int CYouTurn::getLineIntersection(double p0x, double p0y, double p1x, double p1y,
                                   double p2x, double p2y, double p3x, double p3y,
                                   double &iEast, double &iNorth)
@@ -121,6 +122,7 @@ int CYouTurn::getLineIntersection(double p0x, double p0y, double p1x, double p1y
 
     return 0; // No collision
 }
+*/
 
 void CYouTurn::addSequenceLines(double head, Vec3 pivot)
 {
@@ -166,7 +168,7 @@ void CYouTurn::addSequenceLines(double head, Vec3 pivot)
 }
 
 bool CYouTurn::buildABLineDubinsYouTurn(CVehicle &vehicle,
-                                        const CBoundary &bnd,
+                                        CBoundary &bnd,
                                         const CABLine &ABLine,
                                         bool isTurnRight)
 {

@@ -18,6 +18,8 @@
 
 namespace glm {
     static const double DOUBLE_EPSILON=std::numeric_limits<double>::epsilon();
+
+static const double DOUBLE_MAX = std::numeric_limits<double>::max();
     //inches to meters
     static const double in2m = 0.0254;
 
@@ -152,7 +154,7 @@ namespace glm {
         return lround(number);
     }
 
-    static bool isPointInPolygon(QVector<Vec3> polygon, Vec3 testPoint) {
+    static inline bool isPointInPolygon(QVector<Vec3> polygon, Vec3 testPoint) {
         bool result = false;
         int j = polygon.count() - 1;
         for (int i = 0; i < polygon.count(); i++)
@@ -174,7 +176,7 @@ namespace glm {
         return result;
     }
 
-    static bool isPointInPolygon(QVector<Vec3> polygon, Vec2 testPoint) {
+    static inline bool isPointInPolygon(QVector<Vec3> polygon, Vec2 testPoint) {
         bool result = false;
         int j = polygon.count() - 1;
         for (int i = 0; i < polygon.count(); i++)
@@ -196,7 +198,7 @@ namespace glm {
         return result;
     }
 
-    static bool isPointInPolygon(QVector<Vec2> polygon, Vec2 testPoint) {
+    static inline bool isPointInPolygon(QVector<Vec2> polygon, Vec2 testPoint) {
         bool result = false;
         int j = polygon.count() - 1;
         for (int i = 0; i < polygon.count(); i++)
@@ -218,7 +220,7 @@ namespace glm {
         return result;
     }
 
-    static bool isPointInPolygon(QVector<Vec2> polygon, Vec3 testPoint) {
+    static inline bool isPointInPolygon(QVector<Vec2> polygon, Vec3 testPoint) {
         bool result = false;
         int j = polygon.count() - 1;
         for (int i = 0; i < polygon.count(); i++)
@@ -238,6 +240,36 @@ namespace glm {
             j = i;
         }
         return result;
+    }
+
+    static inline int getLineIntersection(double p0x, double p0y, double p1x, double p1y,
+                                      double p2x, double p2y, double p3x, double p3y,
+                                      double &iEast, double &iNorth)
+    {
+        double s1x, s1y, s2x, s2y;
+        s1x = p1x - p0x;
+        s1y = p1y - p0y;
+
+        s2x = p3x - p2x;
+        s2y = p3y - p2y;
+
+        double s, t;
+        s = (-s1y * (p0x - p2x) + s1x * (p0y - p2y)) / (-s2x * s1y + s1x * s2y);
+
+        if (s >= 0 && s <= 1)
+        {
+            //check oher side
+            t = (s2x * (p0y - p2y) - s2y * (p0x - p2x)) / (-s2x * s1y + s1x * s2y);
+            if (t >= 0 && t <= 1)
+            {
+                // Collision detected
+                iEast = p0x + (t * s1x);
+                iNorth = p0y + (t * s1y);
+                return 1;
+            }
+        }
+
+        return 0; // No collision
     }
 }
 #endif // GLM_H

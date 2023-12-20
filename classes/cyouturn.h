@@ -95,14 +95,16 @@ public:
     //Finds the point where an AB Curve crosses the turn line
     bool findCurveTurnPoints(const CABCurve &curve, const CBoundary &bnd);
 
+    /* moved to glm
     int getLineIntersection(double p0x, double p0y, double p1x, double p1y,
                             double p2x, double p2y, double p3x, double p3y,
                             double &iEast, double &iNorth);
+    */
 
     void addSequenceLines(double head, Vec3 pivot);
 
     bool buildABLineDubinsYouTurn(CVehicle &vehicle,
-                                  const CBoundary &bnd,
+                                  CBoundary &bnd,
                                   const CABLine &ABLine,
                                   bool isTurnRight);
 
