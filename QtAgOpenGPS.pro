@@ -32,6 +32,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += $$PWD/classes
 
 SOURCES += main.cpp\
+    aogproperty.cpp \
         formgps.cpp \
     classes/cabline.cpp \
     classes/vec2.cpp \
@@ -81,6 +82,7 @@ SOURCES += main.cpp\
     formgps_saveopen.cpp
 
 HEADERS  += formgps.h \
+    aogproperty.h \
     classes/cabline.h \
     classes/vec2.h \
     classes/vec3.h \
@@ -97,6 +99,8 @@ HEADERS  += formgps.h \
     classes/ccontour.h \
     classes/cboundary.h \
     btnenum.h \
+    propdefs.h \
+    properties.h \
     qmlutil.h \
     aogsettings.h \ 
     common.h \
