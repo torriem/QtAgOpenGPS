@@ -381,24 +381,24 @@ Item {
                     isChecked: false
                     icon.source: "qrc:/images/SteerDriveOff.png"
                     iconChecked: "qrc:/images/SteerDriveOn.png"
-                    width: parent.width/4.5
-                    height: parent.height
+                    implicitWidth: parent.width/4.5
+                    implicitHeight: parent.height
                     //border.color: "black"
                     //bordersize: 3
                 }
                 IconButton{
                     objectName: "pwmLeft"
                     icon.source: "qrc:/images/SnapLeft.png"
-                    width: parent.width/4.5
-                    height: parent.height
+                    implicitWidth: parent.width/4.5
+                    implicitHeight: parent.height
                     //border.color: "black"
                     //bordersize: 3
                 }
                 IconButton{
                     objectName: "pwmRight"
                     icon.source: "qrc:/images/SnapRight.png"
-                    width: parent.width/4.5
-                    height: parent.height
+                    implicitWidth: parent.width/4.5
+                    implicitHeight: parent.height
                     //border.color: "black"
                     //bordersize: 3
                 }
@@ -406,8 +406,8 @@ Item {
                     id: pwmZero
                     objectName: "pwmZero"
                     icon.source: "qrc:/images/SteerZeroSmall.png"
-                    width: parent.width/4.5
-                    height: parent.height
+                    implicitWidth: parent.width/4.5
+                    implicitHeight: parent.height
                     //border.color: "black"
                     //bordersize: 3
                 }
