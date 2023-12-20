@@ -53,6 +53,7 @@ public:
     Vec3 toolPos;
     Vec3 tankPos;
     Vec3 hitchPos;
+    Vec2 guidanceLookPos;
 
     //Current fix positions
     double fixEasting = 0.0;
@@ -71,12 +72,18 @@ public:
 
     CSection sections[MAXSECTIONS];
 
-
     //tally counters for display
     double totalSquareMeters = 0, totalUserSquareMeters = 0, userSquareMetersAlarm = 0;
 
+    double distancePivotToTurnLine;
+
+    double modeXTE, modeActualXTE = 0, modeActualHeadingError = 0;
+
+    //from Position.Designer.cs
+    bool isReverse;
+
     explicit CVehicle(QObject *parent = 0);
-    double updateGoalPointDistance(CNMEA &pn, double distanceFromCurrentLine);
+    double updateGoalPointDistance(CNMEA &pn);
     void drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, const CCamera &camera, CBoundary &bnd, CHead &hd, const CContour &ct, const CABCurve &curve, const CABLine &ABLine);
 
 

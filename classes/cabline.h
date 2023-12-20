@@ -37,6 +37,8 @@ public:
     double abHeading = 0.0;
     double angVel = 0;
 
+    bool isABValid, isLateralTriggered;
+
 
     //the current AB guidance line
     Vec2 currentABLineP1 = Vec2(0.0, 0.0);
@@ -54,8 +56,9 @@ public:
     double howManyPathsAway = 0.0, moveDistance;
     bool isABLineBeingSet, isEditing;
     bool isABLineSet, isABLineLoaded;
-    bool isABSameAsVehicleHeading = true;
+    bool isHeadingSameWay = true;
     bool isBtnABLineOn;
+
     bool isOnRightSideCurrentLine = true;
 
     double passNumber;
