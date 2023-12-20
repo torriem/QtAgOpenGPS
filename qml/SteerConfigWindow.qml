@@ -379,37 +379,37 @@ Item {
                     id: pwmSteer
                     objectName: "pwmYesNo"
                     isChecked: false
-                    icon: "qrc:/images/SteerDriveOff.png"
+                    icon.source: "qrc:/images/SteerDriveOff.png"
                     iconChecked: "qrc:/images/SteerDriveOn.png"
                     width: parent.width/4.5
                     height: parent.height
-                    border.color: "black"
-                    bordersize: 3
+                    //border.color: "black"
+                    //bordersize: 3
                 }
                 IconButton{
                     objectName: "pwmLeft"
-                    icon: "qrc:/images/SnapLeft.png"
+                    icon.source: "qrc:/images/SnapLeft.png"
                     width: parent.width/4.5
                     height: parent.height
-                    border.color: "black"
-                    bordersize: 3
+                    //border.color: "black"
+                    //bordersize: 3
                 }
                 IconButton{
                     objectName: "pwmRight"
-                    icon: "qrc:/images/SnapRight.png"
+                    icon.source: "qrc:/images/SnapRight.png"
                     width: parent.width/4.5
                     height: parent.height
-                    border.color: "black"
-                    bordersize: 3
+                    //border.color: "black"
+                    //bordersize: 3
                 }
                 IconButton{
                     id: pwmZero
                     objectName: "pwmZero"
-                    icon: "qrc:/images/SteerZeroSmall.png"
+                    icon.source: "qrc:/images/SteerZeroSmall.png"
                     width: parent.width/4.5
                     height: parent.height
-                    border.color: "black"
-                    bordersize: 3
+                    //border.color: "black"
+                    //bordersize: 3
                 }
             }
             Text{
@@ -432,9 +432,9 @@ Item {
                 isChecked: false
                 width: 75
                 height: 75
-                border.color: "black"
-                bordersize: 3
-                icon: "qrc:/images/BoundaryRecord.png"
+                //border.color: "black"
+                //bordersize: 3
+                icon.source: "qrc:/images/BoundaryRecord.png"
                 iconChecked: "qrc:/images/Stop"
             }
             Text{

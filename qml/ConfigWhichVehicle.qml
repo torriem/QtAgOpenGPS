@@ -179,7 +179,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: 75
                 height: 75
-                icon: "qrc:/images/VehFileSaveAs"
+                icon.source: "qrc:/images/VehFileSaveAs"
             }
             Text {
                 id: saveAs
@@ -209,8 +209,8 @@ Item {
             anchors.right: entryBox.left
             anchors.rightMargin: 30
             anchors.top: vehicleList.top
-            icon: "qrc:/images/VehFileLoad.png"
-            border.width: 3
+            icon.source: "qrc:/images/VehFileLoad.png"
+            //border.width: 3
             buttonText: qsTr("Load")
         }
         IconButtonText{
@@ -218,9 +218,9 @@ Item {
             anchors.top:load.bottom
             anchors.topMargin: 50
             anchors.horizontalCenter: load.horizontalCenter
-            icon: "qrc:/images/VehFileDelete.png"
+            icon.source: "qrc:/images/VehFileDelete.png"
             buttonText: qsTr("Delete")
-            border.width: 3
+            //border.width: 3
         }
     }
 }
