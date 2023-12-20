@@ -449,5 +449,6 @@
         <file>images/Steer/ST_StanleyTab.png</file>
         <file>images/Steer/ST_SteerTab.png</file>
         <file>qml/IconButtonColor.qml</file>
+        <file>qml/SliderCustomized.qml</file>
     </qresource>
 </RCC>
