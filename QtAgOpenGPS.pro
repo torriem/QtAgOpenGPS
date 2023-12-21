@@ -33,6 +33,7 @@ INCLUDEPATH += $$PWD/classes
 
 SOURCES += main.cpp\
     aogproperty.cpp \
+    classes/cguidance.cpp \
         formgps.cpp \
     classes/cabline.cpp \
     classes/vec2.cpp \
@@ -78,6 +79,7 @@ SOURCES += main.cpp\
 HEADERS  += formgps.h \
     aogproperty.h \
     classes/cabline.h \
+    classes/cguidance.h \
     classes/vec2.h \
     classes/vec3.h \
     classes/vec4.h \
