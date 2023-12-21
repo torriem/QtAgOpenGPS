@@ -137,7 +137,7 @@ void CBoundary::drawFenceLines(const CVehicle &v, const CModuleComm &mc,
             gldraw.append(QVector3D(bndBeingMadePts[bndBeingMadePts.size() - 1].easting, bndBeingMadePts[bndBeingMadePts.size() - 1].northing, 0));
         }
         gldraw.draw(gl,mvp,QColor::fromRgbF(0.825f, 0.842f, 0.0f),
-                     GL_LINE_STRIP,1.0f);
+                     GL_LINE_STIPPLE,1.0f);
 
         //boundary points
         gldraw.clear();
