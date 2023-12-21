@@ -1,0 +1,18 @@
+Porting notes 2023
+
+Todo: move distancePivotToTurnLine from main form to cvehicle.  only CYouTurn refers to it in classes
+
+TODO
+- move distancePivotToTurnLine from main form to CVehicle
+- move CDubinsTurningRadius form CYouTurn to CDubins
+- move isOutOfBounds from main form to CVehicle, stop using signal from CYouTurn
+- move guidanceLookPos from main form to CVehicle
+- move isReverse from main form to CVehicle
+- move guidanceLineDistanceOff, guidanceLineSteeringAngle to CVehicle
+
+
+
+Notes
+- CYouTube::youTurnStartOffset not needed; addSequenceLines pulls it directly from settings
+- In CYouTube constructor, originally populated variables from settings. Now
+  we pull from settings inside each method that needs it.
