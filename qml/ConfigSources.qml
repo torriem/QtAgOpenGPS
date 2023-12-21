@@ -11,14 +11,16 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: 300
             anchors.right: parent.left
-            width: 100
+            width: childrenRect.width
             id: subMenuSources
             visible: true
             color: "white"
             height: childrenRect.height
             Column{
                 visible: true
-                anchors.fill: parent
+                anchors.right: parent.right
+                anchors.top:parent.top
+                width: childrenRect.width
                 IconButton{
                     id: configsrcHeading
                     icon.source: "qrc:/images/Config/ConS_VehicleConfig.png"
@@ -237,7 +239,6 @@ Item {
 
                 }
             }
-
             Rectangle{//fusion adjuster
                 id: fusionRow
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -246,61 +247,19 @@ Item {
                 height: 100
                 border.color: "black"
                 color: "ghostwhite"
-                Text{
-                    anchors.verticalCenter: fusionText.verticalCenter
-                    anchors.horizontalCenter: imuFusion.horizontalCenter
-                    text: qsTr("IMU <")
-                    color: "green"
-                }
-                Text{
-                    id: fusionText
-                    anchors.bottom: sliderRectangle.top
-                    anchors.horizontalCenter: sliderRectangle.horizontalCenter
-                    anchors.bottomMargin: 10
-                    text: qsTr("Fusion")
-                }
-                Text{
-                    anchors.verticalCenter: fusionText.verticalCenter
-                    anchors.horizontalCenter: gpsFusion.horizontalCenter
-                    text: qsTr("> GPS")
-                    color: "red"
-                }
-                Text {
-                    id: imuFusion
-                    anchors.right: sliderRectangle.left
-                    anchors.rightMargin: 5
-                    anchors.verticalCenter: sliderRectangle.verticalCenter
-                    objectName: "imuFusion"
-                    text: qsTr("%")
-                    font.bold: true
-                }
-                Rectangle{
-                    id:sliderRectangle
-                    width: 280
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 10
-                    height: 50
-                    //border.color: "black"
-                    color: "lightgray"
-                    Slider{
-                        id: fusionSlider
-                        objectName: "fusionSlider"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 270
-                        from: 90
-                        to: 50
-                        value: 70
-                    }
-                }
-                Text {
-                    id: gpsFusion
-                    anchors.left: sliderRectangle.right
-                    anchors.leftMargin: 5
-                    anchors.verticalCenter: sliderRectangle.verticalCenter
-                    text: qsTr("%")
-                    font.bold: true
+                SliderCustomized{
+                    leftText: value
+                    rightText: value
+                    leftTopText: "IMU <"
+                    colorLeftTopText: "green"
+                    anchors.centerIn: parent
+                    rightTopText: "> GPS"
+                    colorRightTopText: "red"
+                    centerTopText: "Fusion"
+                    from: 50
+                    to: 90
+                    value: 70
+                    stepSize: 1
                 }
             }
             Text{
@@ -461,22 +420,7 @@ Item {
                 }
             }
         }
-        Text{
-            anchors.bottom:  rollFilterSlider.top
-            anchors.left: rollFilterSlider.left
-            text: qsTr("Less")
-        }
-        Text{
-            anchors.bottom: rollFilterSlider.top
-            anchors.horizontalCenter: rollFilterSlider.horizontalCenter
-            text: qsTr("Roll Filter")
-        }
-        Text {
-            anchors.right: rollFilterSlider.right
-            anchors.bottom: rollFilterSlider.top
-            text: qsTr("More")
-        }
-       Rectangle{
+        Rectangle{
             id: rollFilterSlider
             anchors.bottom: parent.bottom
             anchors.left: parent.left
@@ -484,22 +428,25 @@ Item {
             anchors.leftMargin: 50
             width: 270
             height: 50
-            color: "lightgray"
-        Slider{
-            objectName: "rollFilterSlider"
-            anchors.fill: parent
-            from: 0
-            to: 98
-            value: 0
+            //color: "lightgray"
+            SliderCustomized{
+                objectName: "rollFilterSlider"
+                anchors.fill: parent
+                from: 0
+                to: 98
+                value: 0
+                leftTopText: "Less"
+                centerTopText: "Roll Filter"
+                rightTopText: "More"
+            }
         }
-       }
-       Image {
-           source: "qrc:/images/Config/ConD_RollHelper"
-           anchors.right: parent.right
-           anchors.rightMargin: 50
-           width: 150
-           height: 200
-           anchors.verticalCenter: parent.verticalCenter
-       }
+        Image {
+            source: "qrc:/images/Config/ConD_RollHelper"
+            anchors.right: parent.right
+            anchors.rightMargin: 50
+            width: 150
+            height: 200
+            anchors.verticalCenter: parent.verticalCenter
+        }
     }
 }

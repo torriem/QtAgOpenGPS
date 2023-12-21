@@ -13,14 +13,16 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: 200
             anchors.right: parent.left
-            width: 100
+            width: childrenRect.width
             id: subMenuImplement
             visible: true
             color: "white"
             height: childrenRect.height
             Column{
                 visible: true
-                anchors.fill: parent
+                width: childrenRect.width
+                anchors.right: parent.right
+                anchors.top: parent.top
                 IconButton{
                     id: configImpSettings
                     icon.source: "qrc:/images/Config/ConS_VehicleConfig.png"

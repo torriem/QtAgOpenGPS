@@ -3,8 +3,8 @@ import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.13
 
 Button {
-    implicitWidth: 100
-    implicitHeight: 100
+    implicitWidth: 70
+    implicitHeight: 70
     id: icon_button
     text: ""
     hoverEnabled: true
@@ -78,7 +78,7 @@ Button {
             id: text1
             text: icon_button.text
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: parent.height*0.05
+            anchors.bottomMargin: parent.height*0.02
             anchors.horizontalCenter: parent.horizontalCenter
             font.bold: true
             font.pixelSize: parent.height * 0.15
@@ -90,12 +90,12 @@ Button {
             id: content_image
             width: parent.width
             anchors.fill: parent
-            anchors.topMargin: parent.height * 0.05
+            anchors.topMargin: parent.height * 0.00
             anchors.bottomMargin: icon_button.text  ?
-                                      parent.height - parent.height * icon_button.iconHeightScaleText + parent.height * 0.05
-                                    : parent.height * 0.05
-            anchors.leftMargin: parent.width * 0.05
-            anchors.rightMargin: parent.width * 0.05
+                                      parent.height - parent.height * icon_button.iconHeightScaleText + parent.height * 0.00
+                                    : parent.height * 0.02
+            anchors.leftMargin: parent.width * 0.00
+            anchors.rightMargin: parent.width * 0.00
             fillMode: Image.PreserveAspectFit
             source: icon_button.icon.source
         }
