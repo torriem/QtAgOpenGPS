@@ -6,41 +6,48 @@
 #include "vec2.h"
 #include "vec3.h"
 
-class CTool;
 class CBoundary;
 class QOpenGLFunctions;
+class CCamera;
 
 class CTram
 {
 private:
 
 public:
-    CTram();
 
     //the list of constants and multiples of the boundary
     QVector<Vec2> calcList;
 
-    //the outer ring of boundary tram - also used for clipping
-    QVector<Vec3> outArr;
-
     //the triangle strip of the outer tram highlight
-    QVector<Vec2> tramBndArr;
+    QVector<Vec2> tramBndOuterArr;
+
+    QVector<Vec2> tramBndInnerArr;
 
     //tram settings
-    double wheelTrack;
-    double tramWidth, abOffset;
+    /* these are in properties
+    double tramWidth;
     double halfWheelTrack;
     int passes;
+     */
+
+    bool isOuter;
+
+    //tramlines
+    QVector<Vec2> tramArr;
+    QVector<QVector<Vec2>> tramList;
 
     // 0 off, 1 All, 2, Lines, 3 Outer
-    int displayMode;
+    int displayMode, generateMode = 0;
 
-    void drawTramBnd(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
+    int controlByte;
+
+    CTram();
+    void isTramOuterOrInner();
+    void drawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, CCamera &camera);
     void buildTramBnd(const CBoundary &bnd);
-    void createBndTramRef(const CBoundary &bnd);
-    void createOuterTram();
-    bool isPointInTramBndArea(Vec2 testPointv2);
-    void preCalcTurnLines();
+    void createBndInnerTramTrack(const CBoundary &bnd);
+    void createBndOuterTramTrack(const CBoundary &bnd);
 };
 
 #endif // CTRAM_H
