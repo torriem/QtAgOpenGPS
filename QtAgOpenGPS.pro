@@ -62,17 +62,11 @@ SOURCES += main.cpp\
     classes/cyouturn.cpp \
     classes/ctool.cpp \
     classes/ctram.cpp \
-    classes/cturnlines.cpp \
-    classes/cturn.cpp \
     classes/cboundarylines.cpp \
     classes/cheadlines.cpp \
     classes/chead.cpp \
     classes/cahrs.cpp \
     classes/cfielddata.cpp \
-    classes/cgeofencelines.cpp \
-    classes/cmazepath.cpp \
-    classes/cmazegrid.cpp \
-    classes/cgeofence.cpp \
     classes/cabcurve.cpp \
     classes/csim.cpp \
     classes/cpointdata.cpp \
@@ -109,17 +103,11 @@ HEADERS  += formgps.h \
     classes/cyouturn.h \
     classes/ctool.h \
     classes/ctram.h \
-    classes/cturnlines.h \
-    classes/cturn.h \
     classes/cboundarylines.h \
     classes/cheadlines.h \
     classes/chead.h \
     classes/cahrs.h \
     classes/cfielddata.h \
-    classes/cgeofencelines.h \
-    classes/cmazepath.h \
-    classes/cmazegrid.h \
-    classes/cgeofence.h \
     classes/cabcurve.h \
     classes/csim.h \
     classes/cpointdata.h \

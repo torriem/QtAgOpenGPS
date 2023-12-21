@@ -1,6 +1,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <qglobal.h>
+
 // we'll put common constants etc in here.
 const int MAXSECTIONS = 17;
 const int MAXFUNCTIONS = 8;
