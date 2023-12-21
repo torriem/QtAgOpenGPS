@@ -35,6 +35,8 @@ private:
     int A, B, C;
     int rA, rB;
 
+    int counter2;
+
 public:
     //flag for starting stop adding points
     bool isBtnCurveOn, isOkToAddDesPoints, isCurveSet;
@@ -79,6 +81,10 @@ public:
     QVector<Vec3> desList;
     QString desName = "**";
 
+    double pivotDistanceError, pivotDistanceErrorLast, pivotDerivative, pivotDerivativeSmoothed, lastCurveDistance = 10000;
+
+    double inty;
+
     explicit CABCurve(QObject *parent = 0);
 
     void buildCurveCurrentList(Vec3 pivot,
@@ -86,15 +92,17 @@ public:
                                const CBoundary &bnd,
                                const CYouTurn &yt);
     void getCurrentCurveLine(Vec3 pivot,
+                             Vec3 steer,
                              CVehicle &vehicle,
+                             const CBoundary &bnd,
                              const CYouTurn &yt,
                              const CAHRS &ahrs,
-                             const CNMEA &pn);
+                             CNMEA &pn);
 
 
     void drawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                    const CVehicle &vehicle,
-                   CYouTurn &yt, CTram &tram, const CCamera &camera
+                   CYouTurn &yt, const CCamera &camera
                    );
 
     //void drawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
@@ -105,12 +113,11 @@ public:
     void saveSmoothAsRefList();
     void moveABCurve(double dist);
     bool pointOnLine(Vec3 pt1, Vec3 pt2, Vec3 pt);
-    void addFirstLastPoints(QVector<Vec3> &xList);
+    void addFirstLastPoints(QVector<Vec3> &xList, const CBoundary &bnd);
     void resetCurveLine();
 
 
 signals:
-    void doSequence(CYouTurn &yt);
     void timedMessage(QString title, QString message, int timeout);
     void stopAutosteer();
 

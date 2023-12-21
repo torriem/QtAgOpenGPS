@@ -10,7 +10,7 @@
 #include "cyouturn.h"
 #include "cboundary.h"
 #include "cyouturn.h"
-//#include "ctram.h"
+#include "ctram.h"
 #include "ccamera.h"
 #include "cnmea.h"
 #include "cahrs.h"
@@ -275,17 +275,23 @@ void CABCurve::buildCurveCurrentList(Vec3 pivot,
 }
 
 void CABCurve::getCurrentCurveLine(Vec3 pivot,
+                                   Vec3 steer,
                                    CVehicle &vehicle,
+                                   const CBoundary &bnd,
                                    const CYouTurn &yt,
                                    const CAHRS &ahrs,
-                                   const CNMEA &pn)
+                                   CNMEA &pn)
 {
-    if (refList == null || refList.count() < 5) return;
+    double purePursuitGain = property_purePursuitIntegralGainAB;
+    double wheelBase = property_setVehicle_wheelbase;
+    double maxSteerAngle = property_setVehicle_maxSteerAngle;
+
+    if (refList.count() < 5) return;
 
     //build new current ref line if required
     if (!isCurveValid || ((mf.secondsSinceStart - lastSecond) > 0.66
                           && (!mf.isAutoSteerBtnOn || mf.mc.steerSwitchHigh)))
-        BuildCurveCurrentList(pivot);
+        buildCurveCurrentList(pivot,vehicle,bnd,yt);
 
     double dist, dx, dz;
     double minDistA = 1000000, minDistB = 1000000;
@@ -293,7 +299,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
 
     if (ptCount > 0)
     {
-        if (yt.isYouTurnTriggered && yt.DistanceFromYouTurnLine())//do the pure pursuit from youTurn
+        if (yt.isYouTurnTriggered && yt.distanceFromYouTurnLine(vehicle,pn))//do the pure pursuit from youTurn
         {
             //now substitute what it thinks are AB line values with auto turn values
             steerAngleCu = yt.steerAngleYT;
@@ -305,9 +311,9 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
             ppRadiusCu = yt.ppRadiusYT;
             vehicle.modeActualXTE = (distanceFromCurrentLinePivot);
         }
-        else if (vehicle.isStanleyUsed)//Stanley
+        else if (property_setVehicle_isStanleyUsed)//Stanley
         {
-            mf.gyd.StanleyGuidanceCurve(pivot, steer, ref curList);
+            mf.gyd.StanleyGuidanceCurve(pivot, steer, curList);
         }
         else// Pure Pursuit ------------------------------------------
         {
@@ -370,7 +376,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
                                            / sqrt((dz * dz) + (dx * dx));
 
             //integral slider is set to 0
-            if (vehicle.purePursuitIntegralGain != 0 && !vehicle.isReverse)
+            if (purePursuitGain != 0 && !vehicle.isReverse)
             {
                 pivotDistanceError = distanceFromCurrentLinePivot * 0.2 + pivotDistanceError * 0.8;
 
@@ -394,13 +400,13 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
                     //if over the line heading wrong way, rapidly decrease integral
                     if ((inty < 0 && distanceFromCurrentLinePivot < 0) || (inty > 0 && distanceFromCurrentLinePivot > 0))
                     {
-                        inty += pivotDistanceError * vehicle.purePursuitIntegralGain * -0.04;
+                        inty += pivotDistanceError * purePursuitGain * -0.04;
                     }
                     else
                     {
                         if (fabs(distanceFromCurrentLinePivot) > 0.02)
                         {
-                            inty += pivotDistanceError * vehicle.purePursuitIntegralGain * -0.02;
+                            inty += pivotDistanceError * purePursuitGain * -0.02;
                             if (inty > 0.2) inty = 0.2;
                             else if (inty < -0.2) inty = -0.2;
                         }
@@ -480,13 +486,13 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
             ppRadiusCu = goalPointDistanceSquared / (2 * (((goalPointCu.easting - pivot.easting) * cos(localHeading)) + ((goalPointCu.northing - pivot.northing) * sin(localHeading))));
 
             steerAngleCu = glm::toDegrees(atan(2 * (((goalPointCu.easting - pivot.easting) * cos(localHeading))
-                                                        + ((goalPointCu.northing - pivot.northing) * sin(localHeading))) * vehicle.wheelbase / goalPointDistanceSquared));
+                                                        + ((goalPointCu.northing - pivot.northing) * sin(localHeading))) * wheelBase / goalPointDistanceSquared));
 
             if (ahrs.imuRoll != 88888)
                 steerAngleCu += ahrs.imuRoll * -mf.gyd.sideHillCompFactor;
 
-            if (steerAngleCu < -vehicle.maxSteerAngle) steerAngleCu = -vehicle.maxSteerAngle;
-            if (steerAngleCu > vehicle.maxSteerAngle) steerAngleCu = vehicle.maxSteerAngle;
+            if (steerAngleCu < -maxSteerAngle) steerAngleCu = -maxSteerAngle;
+            if (steerAngleCu > maxSteerAngle) steerAngleCu = maxSteerAngle;
 
             if (!isHeadingSameWay)
                 distanceFromCurrentLinePivot *= -1.0;
@@ -509,7 +515,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
             vehicle.modeActualHeadingError = glm::toDegrees(steerHeadingError);
 
             //Convert to centimeters
-            mf.guidanceLineDistanceOff = (short)Math.Round(distanceFromCurrentLinePivot * 1000.0, MidpointRounding.AwayFromZero);
+            mf.guidanceLineDistanceOff = (short)glm::roundMidAwayFromZero(distanceFromCurrentLinePivot * 1000.0);
             mf.guidanceLineSteerAngle = (short)(steerAngleCu * 100);
         }
     }
@@ -523,10 +529,10 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
 
 void CABCurve::drawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                          const CVehicle &vehicle,
-                         CYouTurn &yt, CTram &tram, const CCamera &camera)
+                         CYouTurn &yt, const CCamera &camera)
 {
-    double tool_toolWidth = property_setVehicle_toolWidth;
-    double tool_toolOverlap = property_setVehicle_toolOverlap;
+    //double tool_toolWidth = property_setVehicle_toolWidth;
+    //double tool_toolOverlap = property_setVehicle_toolOverlap;
 
 
     GLHelperColors gldraw_colors;
@@ -559,7 +565,7 @@ void CABCurve::drawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
         ptCount--;
         cv.vertex = QVector3D(refList[ptCount].easting, refList[ptCount].northing, 0);
         gldraw_colors.append(cv);
-        cv.vertex = QVector3D(mf.pivotAxlePos.easting, mf.pivotAxlePos.northing, 0);
+        cv.vertex = QVector3D(vehicle.pivotAxlePos.easting, vehicle.pivotAxlePos.northing, 0);
         gldraw_colors.append(cv);
     }
     gldraw_colors.draw(gl,mvp,GL_LINES,lineWidth);
@@ -621,10 +627,11 @@ void CABCurve::drawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
 
 void CABCurve::buildTram(CBoundary &bnd, CTram &tram)
 {
+    double tool_halfWidth = ((double)property_setVehicle_toolWidth - (double)property_setVehicle_toolOverlap) / 2.0;
     //if all or bnd only then make outer loop pass
     if (tram.generateMode != 1)
     {
-        tram.buildTramBnd();
+        tram.buildTramBnd(bnd);
     }
     else
     {
@@ -651,13 +658,13 @@ void CABCurve::buildTram(CBoundary &bnd, CTram &tram)
     }
     double widd = 0;
 
-    for (int i = cntr; i <= tram.passes; i++)
+    for (int i = cntr; i <= (int)property_setTram_passes; i++)
     {
         tram.tramArr.clear();
         tram.tramList.clear();
         tram.tramList.append(tram.tramArr);
 
-        widd = (double)property_setTram_tramWidth * 0.5 - mf.tool.halfWidth - (double)property_setVehicle_trackWidth*0.5;
+        widd = (double)property_setTram_tramWidth * 0.5 - tool_halfWidth - (double)property_setVehicle_trackWidth*0.5;
         widd += ((double)property_setTram_tramWidth * i);
 
         double distSqAway = widd * widd * 0.999999;
@@ -700,14 +707,14 @@ void CABCurve::buildTram(CBoundary &bnd, CTram &tram)
         }
     }
 
-    for (int i = cntr; i <= tram.passes; i++)
+    for (int i = cntr; i <= (int)property_setTram_passes; i++)
     {
         tram.tramArr.clear();
         tram.tramList.clear();
 
         tram.tramList.append(tram.tramArr);
 
-        widd = (double)property_setTram_tramWidth * 0.5 - mf.tool.halfWidth - (double)property_setVehicle_trackWidth*0.5;
+        widd = (double)property_setTram_tramWidth * 0.5 - tool_halfWidth - (double)property_setVehicle_trackWidth*0.5;
         widd += ((double)property_setTram_tramWidth * i);
 
         double distSqAway = widd * widd * 0.999999;
@@ -853,8 +860,8 @@ void CABCurve::moveABCurve(double dist)
 
     for (int i = 0; i < cnt; i++)
     {
-        arr[i].easting += Math.Cos(arr[i].heading) * (isHeadingSameWay ? dist : -dist);
-        arr[i].northing -= Math.Sin(arr[i].heading) * (isHeadingSameWay ? dist : -dist);
+        arr[i].easting += cos(arr[i].heading) * (isHeadingSameWay ? dist : -dist);
+        arr[i].northing -= sin(arr[i].heading) * (isHeadingSameWay ? dist : -dist);
         refList.append(arr[i]);
     }
 
@@ -886,7 +893,7 @@ bool CABCurve::pointOnLine(Vec3 pt1, Vec3 pt2, Vec3 pt)
 }
 
 void CABCurve::addFirstLastPoints(QVector<Vec3> &xList,
-                                  CBoundary &bnd)
+                                  const CBoundary &bnd)
 {
     int ptCnt = xList.count() - 1;
     Vec3 start(xList[0]);
@@ -913,7 +920,7 @@ void CABCurve::addFirstLastPoints(QVector<Vec3> &xList,
         {
             for (int i = 1; i < 10; i++)
             {
-                vec3 pt(start);
+                Vec3 pt(start);
                 pt.easting -= (sin(pt.heading) * i);
                 pt.northing -= (cos(pt.heading) * i);
                 xList.insert(0, pt);
