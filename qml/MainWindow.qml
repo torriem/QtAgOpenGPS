@@ -868,14 +868,13 @@ Window {
             }
             */
 
-            Slider {
+            SliderCustomized {
                 id: speedSlider
                 objectName: "simSpeed"
                 anchors.bottom: bottomButtons.top
                 anchors.bottomMargin: 3
                 anchors.left:bottomButtons.left
                 anchors.leftMargin: 3
-                width: 200
                 from: -30
                 to: 30
                 value: 5
@@ -895,13 +894,13 @@ Window {
 
             }
 
-            Slider {
+            SliderCustomized {
                 id: steerSlider
                 objectName: "simSteer"
                 anchors.bottom: simStopButton.top
                 anchors.leftMargin: 3
                 anchors.left: bottomButtons.left
-                width: 200
+                multiplicationValue: 10
                 from: 0
                 to: 600
                 value: 300
@@ -913,7 +912,9 @@ Window {
                 width: 50
                 height: 50
                 anchors.left: steerSlider.right
+                anchors.leftMargin: 50
                 anchors.bottom: steerSlider.bottom
+                icon.source: "qrc:/images/AutoSteerOn.png"
                 onClicked: {
                     steerSlider.value = 300;
                 }

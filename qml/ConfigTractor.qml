@@ -11,7 +11,7 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: 100
             anchors.right: parent.left
-            width: 100
+            width: childrenRect.width
             id: subMenuTractor
             visible: true
             color: "white"
@@ -19,7 +19,9 @@ Item {
             z: 15
             Column{
                 visible: true
-                anchors.fill: parent
+                anchors.right: parent.right
+                anchors.top: parent.top
+                width: childrenRect.width
                 IconButton{
                     id: configTrSettings
                     icon.source: "qrc:/images/Config/ConS_VehicleConfig.png"

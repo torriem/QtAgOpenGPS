@@ -6,7 +6,7 @@ Rectangle {
     x: 0
     y: 0
     width: 120
-    height: 70
+    height: 65
 
     property color color1: "#ffffff"
     property color color2: "#ffffff"

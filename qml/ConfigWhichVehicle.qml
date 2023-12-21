@@ -16,7 +16,7 @@ Item {
             anchors.topMargin: 10
             anchors.bottom: units.top
             anchors.left: parent.left
-            anchors.right: vehicleList.left
+            anchors.right: load.left
             rows: 6
             columns:2
             rowSpacing: 10
