@@ -14,6 +14,10 @@
 class QOpenGLFunctions;
 class QMatrix4x4;
 class CVehicle;
+class CABLine;
+class CYouTurn;
+class CModuleComm;
+class CFieldData;
 
 class CBoundary
 {
@@ -27,7 +31,8 @@ private:
 
 public:
     //area of boundaries
-    QVector<CBoundaryLines> bndArr;
+    QVector<CBoundaryLines> bndList;
+
     QVector<Vec3> bndBeingMadePts;
 
     double createBndOffset;
@@ -36,28 +41,36 @@ public:
     bool isDrawRightSide = true;
     bool isOkToAddPoints = false;
 
-    // the list of possible bounds points
-    QVector<Vec4> bndClosestList;
-    int boundarySelected;
-    int closestBoundaryNum;
-
-    //generated box for finding closest point
-    Vec2 boxA = Vec2(9000, 9000);
-    Vec2 boxB = Vec2(9000, 9002);
-
-    Vec2 boxC = Vec2(9001, 9001);
-    Vec2 boxD = Vec2(9002, 9003);
+    int closestFenceNum;
 
     //point at the farthest boundary segment from pivotAxle
-    Vec3 closestBoundaryPt = Vec3(-10000, -10000, 9);
+    Vec3 closestFencePt = Vec3(-10000,-10000, 9);
+
+    // the list of possible bounds points
+    QVector<Vec3> turnClosestList;
+    int turnSelected, closestTurnNum;
+    double iE = 0, iN = 0;
+
+    //point at the farthest turn segment from pivotAxle
+    Vec3 closestTurnPt = Vec3(-10000, -10000, 9);
+    Vec3 closePt;
 
     CBoundary();
 
+    bool isPointInsideFenceArea(Vec3 testPoint) const ;
+    bool isPointInsideFenceArea(Vec2 testPoint) const;
+    void drawFenceLines(const CVehicle &v, const CModuleComm &mc, QOpenGLFunctions *g, const QMatrix4x4 &mvp);
+
+    int isPointInsideTurnArea(Vec3 pt) const;
+    void findClosestTurnPoint(const CABLine &abline, Vec3 fromPt);
+    void buildTurnLines(CFieldData &fd);
+
+
+    /*
     void findClosestBoundaryPoint(Vec2 fromPt, double headAB);
     void resetBoundaries();
-
-    void drawBoundaryLines(const CVehicle &v, QOpenGLFunctions *g, const QMatrix4x4 &mvp);
-    void drawClosestPoint(QOpenGLFunctions *g, const QMatrix4x4 &mvp);
+    */
+    //void drawClosestPoint(QOpenGLFunctions *g, const QMatrix4x4 &mvp);
     //void drawBoundaryLineOnBackBuffer(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
 };
 

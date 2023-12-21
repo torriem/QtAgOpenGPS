@@ -3,8 +3,6 @@
 #include <QMatrix4x4>
 #include <math.h>
 #include "glm.h"
-#include "glutils.h"
-
 
 CBoundaryLines::CBoundaryLines()
 {
