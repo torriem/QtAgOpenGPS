@@ -271,5 +271,44 @@ static const double DOUBLE_MAX = std::numeric_limits<double>::max();
 
         return 0; // No collision
     }
+
+    inline static Vec3 Catmull(double t, Vec3 p0, Vec3 p1, Vec3 p2, Vec3 p3)
+    {
+        double tt = t * t;
+        double ttt = tt * t;
+
+        double q1 = -ttt + 2.0f * tt - t;
+        double q2 = 3.0f * ttt - 5.0f * tt + 2.0f;
+        double q3 = -3.0f * ttt + 4.0f * tt + t;
+        double q4 = ttt - tt;
+
+        double tx = 0.5f * (p0.easting * q1 + p1.easting * q2 + p2.easting * q3 + p3.easting * q4);
+        double ty = 0.5f * (p0.northing * q1 + p1.northing * q2 + p2.northing * q3 + p3.northing * q4);
+
+        return Vec3(tx, ty, 0);
+
+        //f(t) = a_3 * t^3 + a_2 * t^2 + a_1 * t + a_0  cubic polynomial
+        //vec3 a = 2.0 * p1;
+        //vec3 b = p2 - p0;
+        //vec3 c = 2.0 * p0 - 5.0 * p1 + 4.0 * p2 - p3;
+        //vec3 d = -1.0 * p0 + 3.0 * p1 - 3.0 * p2 + p3;
+
+        //return (0.5 * (a + (t * b) + (t * t * c) + (t * t * t * d)));
+        //
+
+        //vec2 p0 = new vec2(1, 0);
+        //vec2 p1 = new vec2(3, 2);
+        //vec2 p2 = new vec2(5, 3);
+        //vec2 p3 = new vec2(6, 1);
+
+        //vec2 a = 2.0 * p1;
+        //vec2 b = p2 - p0;
+        //vec2 c = 2.0 * p0 - 5.0 * p1 + 4.0 * p2 - p3;
+        //vec2 d = -1.0 * p0 + 3.0 * p1 - 3.0 * p2 + p3;
+
+        //double tt = 0.25;
+
+        //vec2 pos = 0.5 * (a + (tt*b) + (tt * tt * c) + (tt * tt * tt * d));
+    }
 }
 #endif // GLM_H
