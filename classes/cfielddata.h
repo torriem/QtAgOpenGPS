@@ -1,19 +1,15 @@
 #ifndef CFIELDDATA_H
 #define CFIELDDATA_H
 
-#include <QObject>
-#include <QString>
-#include <QLocale>
+#include <QVector>
+#include "cboundarylines.h"
 #include "glm.h"
+#include <QLocale>
 
-class CTool;
-class CBoundary;
-class CNMEA;
+class CVehicle;
 
-class CFieldData : public QObject
+class CFieldData
 {
-    Q_OBJECT
-private:
 
 public:
     //all the section area added up;
@@ -24,7 +20,9 @@ public:
 
     //accumulated user distance
     double distanceUser;
+
     double barPercent = 0;
+
     double overlapPercent = 0;
 
     //Outside area minus inner boundaries areas (m)
@@ -39,119 +37,111 @@ public:
     //not really used - but if needed
     double userSquareMetersAlarm;
 
+    CFieldData();
 
-
-    explicit CFieldData(QObject *parent = 0);
-
-    void updateFieldBoundaryGUIAreas(const CBoundary &bnd);
+    void updateFieldBoundaryGUIAreas(QVector<CBoundaryLines> &bndList);
 
     //Area inside Boundary less inside boundary areas
-    inline QString getAreaBoundaryLessInnersHectares() {
-        QLocale locale;
-        return locale.toString(areaBoundaryOuterLessInner * glm::m2ha, 'f', 2);
-    }
-
-    inline QString getAreaBoundaryLessInnersAcres() {
-        QLocale locale;
-        return locale.toString(areaBoundaryOuterLessInner * glm::m2ac, 'f', 2);
-    }
-
-    //USer tally string
-    inline QString getWorkedUserHectares() {
-        QLocale locale;
-        return locale.toString(workedAreaTotalUser * glm::m2ha, 'f', 2);
-    }
-    inline QString getWorkedUserHectares2() {
-        QLocale locale;
-        return locale.toString(workedAreaTotalUser * glm::m2ha, 'f', 2);
-    }
-
-    //user tally string
-    inline QString getWorkedUserAcres() {
-        QLocale locale;
-        return locale.toString(workedAreaTotalUser * glm::m2ac, 'f', 2);
-    }
-    inline QString getWorkedUserAcres2(){
-        QLocale locale;
-        return locale.toString(workedAreaTotalUser * glm::m2ac, 'f', 2);
-    }
-
-    //string of area worked
-    inline QString getWorkedAcres() {
-        QLocale locale;
-        if (workedAreaTotal < 404048)
-            return locale.toString(workedAreaTotal * 0.000247105, 'f', 2);
-        else
-            return locale.toString(workedAreaTotal * 0.000247105, 'f', 2);
-    }
-
-    inline QString getWorkedHectares() {
-        QLocale locale;
-        if (workedAreaTotal < 99000)
-            return locale.toString(workedAreaTotal * 0.0001, 'f', 2);
-        else
-            return locale.toString(workedAreaTotal * 0.0001, 'f', 2);
-    }
-
-    //user distance strings
-    inline QString getDistanceUserMeters() {
-        QLocale locale;
-        return locale.toString((int)distanceUser);
-    }
-    inline QString getDistanceUserFeet(){
-        QLocale locale;
-        return locale.toString((int)(distanceUser * glm::m2ft));
-    }
-
-    //remaining area to be worked
-    inline QString getWorkedAreaRemainHectares(){
-        QLocale locale;
-        return locale.toString((areaBoundaryOuterLessInner - workedAreaTotal) * glm::m2ha, 'f', 2);
-    }
-    inline QString getWorkedAreaRemainAcres(){
-        QLocale locale;
-        return locale.toString((areaBoundaryOuterLessInner - workedAreaTotal) * glm::m2ac, 'f', 2);
-    }
-
-    //overlap strings
-    inline QString getWorkedAreaRemainPercentage(){
-        QLocale locale;
-        if (areaBoundaryOuterLessInner > 10) {
-            barPercent = ((areaBoundaryOuterLessInner - workedAreaTotal) * 100 / areaBoundaryOuterLessInner);
-            return locale.toString( barPercent, 'f', 2) + "%";
+    inline QString areaBoundaryLessInnerHectares() {
+        if (areaBoundaryOuterLessInner < 404048) {
+            return QString("%1").arg(areaBoundaryOuterLessInner * glm::m2ha, 0, 'g', 2);
         } else {
-            barPercent = 0;
-            return locale.toString( (float)0.0, 'f', 2) + "%";
+            return QString("%1").arg(areaBoundaryOuterLessInner * glm::m2ha, 0, 'g', 1);
         }
     }
 
-    inline QString getTimeTillFinished(double toolWidth, double speed) {
-        QLocale locale;
-        if (speed > 0.1)
-            return locale.toString(((areaBoundaryOuterLessInner - workedAreaTotal) * glm::m2ha)
-                / (toolWidth * speed * 0.1), 'f', 1) + " " + tr("Hrs");
+     inline QString areaBoundaryLessInnerAcres() {
+        if (areaBoundaryOuterLessInner < 404048) {
+            return QString("%1").arg(areaBoundaryOuterLessInner * glm::m2ac, 0, 'g', 2);
+        } else {
+            return QString("%1").arg(areaBoundaryOuterLessInner * glm::m2ac, 0, 'g', 1);
+        }
+    }
+
+    //USer tally string
+     inline QString workedUserAcres() {
+        return QString("%1").arg(workedAreaTotalUser * glm::m2ac,0,'g',2);
+     }
+
+     inline QString workedUserHectares() {
+        return QString("%1").arg(workedAreaTotalUser * glm::m2ha,0,'g',2);
+     }
+
+
+    //String of Area worked
+    inline QString workedAcres() {
+        if (workedAreaTotal < 404048) {
+            return QString("%1").arg(workedAreaTotal * glm::m2ac, 0,'g', 2);
+        } else {
+            return QString("%1").arg(workedAreaTotal * glm::m2ac, 0,'g', 1);
+        }
+    }
+
+     inline QString workedHectares() {
+        if (workedAreaTotal < 404048) {
+            return QString("%1").arg(workedAreaTotal * glm::m2ha, 0,'g', 2);
+        } else {
+            return QString("%1").arg(workedAreaTotal * glm::m2ha, 0,'g', 1);
+        }
+    }
+
+     //User Distance strings
+    inline QString DistanceUserMeters() {
+        return QString("%1").arg(distanceUser, 0,'g', 3);
+    }
+
+    inline QString distanceUserFeet() {
+        return QString("%1").arg(distanceUser * glm::m2ft,0,'g', 1);
+    }
+
+    //remaining area to be worked
+    inline QString workedAreaRemainHectares() {
+        return QString("%1").arg((areaBoundaryOuterLessInner - workedAreaTotal) * glm::m2ha, 0,'g', 2);
+    }
+
+    inline QString workedAreaRemainAcres() {
+        return QString("%1").arg((areaBoundaryOuterLessInner - workedAreaTotal) * glm::m2ac, 0,'g', 2);
+    }
+
+    inline QString workedAreaRemainPercentage() {
+        if (areaBoundaryOuterLessInner > 10)
+        {
+            barPercent = ((areaBoundaryOuterLessInner - workedAreaTotal) * 100 / areaBoundaryOuterLessInner);
+            return QString("%1").arg(barPercent, 0,'g',0) + "%";
+        }
         else
-            return QString("\u221E ") + tr("Hrs");
+        {
+            barPercent = 0;
+            return QString ("0%");
+        }
     }
 
-    inline QString getWorkRateHectares(double toolWidth, double speed) {
-        QLocale locale;
-        return locale.toString(speed * toolWidth * 0.1, 'f', 1);
+    //overlap strings
+    inline QString actualAreaWorkedHectares() {
+        return QString("%1").arg(actualAreaCovered * glm::m2ha,0,'g',2);
     }
 
-    inline QString getWorkRateAcres(double toolWidth, double speed)	{
-        QLocale locale;
-        return locale.toString(speed * toolWidth * 0.2471, 'f', 1);
+    inline QString actualAreaWorkedAcres() {
+        return QString("%1").arg(actualAreaCovered * glm::m2ac,0,'g',2);
     }
 
-public slots:
-    void addToTotalArea(double addedArea) {
-        workedAreaTotal += addedArea;
+    inline QString actualRemainHectares() {
+        return QString("%1").arg((areaBoundaryOuterLessInner - actualAreaCovered) * glm::m2ha,0,'g',2);
     }
 
-    void addToUserArea(double addedArea) {
-        workedAreaTotalUser += addedArea;
+    inline QString actualRemainAcres() {
+        return QString("%1").arg((areaBoundaryOuterLessInner - actualAreaCovered) * glm::m2ac,0,'g',2);
     }
+
+    inline QString actualOverlapPercent() {
+        return QString("%1").arg(overlapPercent,0,'g',1) + "%  ";
+    }
+
+    QString timeTillFinished(CVehicle &vehicle);
+
+    QString workRateHectares(CVehicle &vehicle);
+    QString workRateAcres(CVehicle &vehicle);
+
 };
 
 #endif // CFIELDDATA_H
