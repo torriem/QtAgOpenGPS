@@ -13,6 +13,7 @@ Button {
     icon.color: "transparent"
 
     property double iconHeightScaleText: 0.75
+    property int border: 0
 
     property color color1: "#ffffff"
     property color color2: "#ffffff"
@@ -114,6 +115,8 @@ Button {
     }
 
     background: Rectangle {
+        border.width: icon_button.border
+        //border.width: icon_button.border
         radius: 10
         id: icon_button_background
         gradient: Gradient {
@@ -152,10 +155,10 @@ Button {
                     target: gradientStop3
                     color: icon_button.color1
                 }
-                PropertyChanges {
+               /* PropertyChanges {
                     target: icon_button_background
-                    border.width: 1
-                }
+                    border.width: 5
+                }*/
                 /*
                 PropertyChanges {
                     target: content_image
@@ -179,10 +182,10 @@ Button {
                     target: gradientStop3
                     color: icon_button.color1
                 }
-                PropertyChanges {
+             /*   PropertyChanges {
                     target: icon_button_background
                     border.width: 1
-                }
+                }*/
                 PropertyChanges {
                     target: content_image
                     source: icon_button.icon.source
@@ -203,10 +206,10 @@ Button {
                     target: gradientStop3
                     color: icon_button.colorChecked3
                 }
-                PropertyChanges {
+               /* PropertyChanges {
                     target: icon_button_background
                     border.width: 0
-                }
+                }*/
                 /*
                 PropertyChanges {
                     target: content_image
@@ -229,10 +232,10 @@ Button {
                     target: gradientStop3
                     color: icon_button.color3
                 }
-                PropertyChanges {
+                /*PropertyChanges {
                     target: icon_button_background
                     border.width: 0
-                }
+                }*/
                 /*
                 PropertyChanges {
                     target: content_image
@@ -243,10 +246,10 @@ Button {
             State {
                 when: icon_button.hovered
                 name: "hovered"
-                PropertyChanges {
+               /* PropertyChanges {
                     target: icon_button_background
                     border.width: 1
-                }
+                }*/
                 PropertyChanges {
                     target: gradientStop1
                     color: icon_button.colorHover1
