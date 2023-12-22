@@ -118,7 +118,7 @@ public:
 
 
 signals:
-    void timedMessage(QString title, QString message, int timeout);
+    void timedMessage(int timeout, QString title, QString message);
     void stopAutosteer();
 
 public slots:

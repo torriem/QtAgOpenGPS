@@ -458,7 +458,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
                 {
                     if (glm::distance(goalPointCu, curList[(curList.count() - 1)]) < 0.5)
                     {
-                        emit timedMessage(tr("Guidance Stopped"), tr("Past end of curve"), 2000);
+                        emit timedMessage(2000,tr("Guidance Stopped"), tr("Past end of curve"));
                         emit stopAutosteer();
                         //mf.btnAutoSteer.PerformClick();
                     }
@@ -467,7 +467,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
                 {
                     if (glm::distance(goalPointCu, curList[0]) < 0.5)
                     {
-                        emit timedMessage(tr("Guidance Stopped"), tr("Past end of curve"), 2000);
+                        emit timedMessage(2000,tr("Guidance Stopped"), tr("Past end of curve"));
                         emit stopAutosteer();
                     }
                 }
