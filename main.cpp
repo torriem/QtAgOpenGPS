@@ -23,6 +23,8 @@ int main(int argc, char *argv[])
     //from this version of AOG:
     QCoreApplication::setApplicationVersion("4.1.0");
     qmlRegisterType<AOGRendererInSG>("AgOpenGPS",1,0,"AOGRenderer");
+    qRegisterMetaTypeStreamOperators<QList<int> >("QList<int>");
+    qRegisterMetaTypeStreamOperators<QVector<int> >("QVector<int>");
     FormGPS w;
     //w.show();
 

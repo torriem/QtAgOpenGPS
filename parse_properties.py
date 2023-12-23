@@ -13,12 +13,14 @@ add_props = {
 def parse_settings(file):
     cpp = []
     h = []
+    preamble = []
 
     with file:
         parser = bs4.BeautifulSoup(file.read(),'lxml-xml')
         settings = parser.findAll('Setting')
         for s in settings: 
             t = s['Type']
+            n = s['Name']
             #print (t)
             if t == 'System.Int32' or \
                t == 'System.Double' or \
@@ -27,6 +29,9 @@ def parse_settings(file):
                 default_value = s.Value.contents[0]
             elif t == 'System.Boolean':
                 default_value = s.Value.contents[0].lower()
+            elif t == 'System.String' and n == 'setTool_zones':
+                preamble.append('QVector<int> default_zones = { ' + s.Value.contents[0] + ' };')
+                default_value = 'QVariant::fromValue(default_zones)'
             elif t == 'System.String' or \
                  t == 'AgOpenGPS.TBrand' or \
                  t == 'AgOpenGPS.HBrand' or \
@@ -43,9 +48,9 @@ def parse_settings(file):
             elif t == 'System.Drawing.Color':
                 fields = s.Value.contents[0].split(',')
                 if len(fields) > 1:
-                    default_value = 'QColor(%s).rgb()' % s.Value.contents[0]
+                    default_value = 'QColor(%s)' % s.Value.contents[0]
                 else:
-                    default_value = 'QColor("%s").rgb()' % s.Value.contents[0]
+                    default_value = 'QColor("%s")' % s.Value.contents[0]
             else:
                 if s.Value.contents:
                     default_value = '"' + s.Value.contents[0] + '"'
@@ -60,8 +65,9 @@ def parse_settings(file):
 
             cpp.append('AOGProperty property_%s("%s",%s);'% (s['Name'], qs_name, default_value))
             h.append('extern AOGProperty property_%s;' % s['Name'])
+            #preamble.extend(cpp)
 
-    return (cpp, h)
+    return (preamble, cpp, h)
 
 if __name__ == '__main__':
     import argparse
@@ -76,7 +82,7 @@ if __name__ == '__main__':
 
     args = argparser.parse_args()
     
-    cpp,h = parse_settings(open(args.settings_file,'r'))
+    cpp_pre,cpp,h = parse_settings(open(args.settings_file,'r'))
 
     if (args.header):
         print ('#ifndef PROPERTIES_H')
@@ -101,6 +107,9 @@ if __name__ == '__main__':
         
 
     else: 
+        for line in cpp_pre:
+            print (line)
+
         for line in cpp:
             print (line)
 
