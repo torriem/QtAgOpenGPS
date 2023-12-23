@@ -2,6 +2,7 @@
 #define AOGPROPERTY_H
 
 #include "aogsettings.h"
+#include <QVector>
 
 extern AOGSettings settings;
 
@@ -19,6 +20,8 @@ public:
     operator QString() { return settings.value(key,default_value).toString(); }
     operator bool() { return settings.value(key,default_value).toBool(); }
     operator float() { return settings.value(key,default_value).toFloat(); }
+    operator QColor() { return settings.value(key,default_value).value<QColor>(); }
+    operator QVector<int>() { return settings.value(key,default_value).value<QVector<int>>(); }
 
     QVariant value(void) { return settings.value(key,default_value); }
 

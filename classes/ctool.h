@@ -3,69 +3,92 @@
 
 #include <QString>
 #include "csection.h"
+#include "cpatches.h"
 #include "common.h"
+#include <QColor>
 
 class QOpenGLFunctions;
 class QMatrix4x4;
 class CVehicle;
 class CCamera;
+class CTram;
 
 class CTool
 {
 public:
-    //double toolWidth;
-    double toolFarLeftPosition = 0;
-    double toolFarLeftSpeed = 0;
-    double toolFarRightPosition = 0;
-    double toolFarRightSpeed = 0;
-    //double toolFarLeftContourSpeed = 0, toolFarRightContourSpeed = 0;
+    ///---- in settings
+    double width;
+    ///----
+    double halfWidth, contourWidth;
+    double farLeftPosition = 0;
+    double farLeftSpeed = 0;
+    double farRightPosition = 0;
+    double farRightSpeed = 0;
 
-    //double toolOverlap;
-    //double toolTrailingHitchLength, toolTankTrailingHitchLength;
-    //double toolOffset;
+    ///---- in settings
+    double overlap;
+    double trailingHitchLength, tankTrailingHitchLength;
+    double offset;
 
-    //double lookAheadOffSetting, lookAheadOnSetting;
-    //double turnOffDelay;
+    double lookAheadOffSetting, lookAheadOnSetting;
+    double turnOffDelay;
+    ///----
 
     double lookAheadDistanceOnPixelsLeft, lookAheadDistanceOnPixelsRight;
     double lookAheadDistanceOffPixelsLeft, lookAheadDistanceOffPixelsRight;
 
+    ///---- in settings
+    bool isToolTrailing, isToolTBT;
+    bool isToolRearFixed, isToolFrontFixed;
 
-    //double slowSpeedCutoff = 0;
+    bool isMultiColoredSections, isSectionOffWhenOut;
+    ///----
 
-    //bool isToolTrailing, isToolTBT;
-    //bool isToolBehindPivot;
     QString toolAttachType;
 
-    //double hitchLength;
-
+    ///---- in settings
+    double hitchLength;
 
     //how many individual sections
-    //int numOfSections;
-    //int numSuperSection;
+    int numOfSections;
 
     //used for super section off on
-    //int toolMinUnappliedPixels;
+    int minCoverage;
+    ///----
 
-    bool isSuperSectionAllowedOn;
     bool areAllSectionBtnsOn = true;
 
-    bool isLeftSideInHeadland = true, isRightSideInHeadland = true;
+    bool isLeftSideInHeadland = true, isRightSideInHeadland = true, isSectionsNotZones;
 
     //read pixel values
     int rpXPosition;
+
     int rpWidth;
 
+    ///---- in settings
+    QColor secColors[16];
+
+    int zones;
+    QVector<int> zoneRanges;
+    ///----
+
+    //moved the following from the main form to here
     CSection section[MAXSECTIONS+1];
 
     //list of the list of patch data individual triangles for field sections
-    QVector<QSharedPointer<QVector<QVector3D>>> patchSaveList;
+    QVector<QSharedPointer<PatchTriangleList>> patchSaveList;
 
     void sectionCalcWidths();
+    void sectionCalcMulti();
     void sectionSetPositions();
+    void loadSettings();
 
     CTool();
-    void drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection);
+    //this class needs modelview and projection as separate matrices because some
+    //additiona transformations need to be done.
+    void drawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection,
+                  bool isJobStarted,
+                  CVehicle &v, CCamera &camera, CTram &tram);
 };
 
 #endif // CTOOL_H
