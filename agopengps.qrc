@@ -120,7 +120,6 @@
         <file>images/textures/Compass.png</file>
         <file>images/textures/Font.png</file>
         <file>images/textures/speedo.png</file>
-        <file>images/textures/speedo - Copy.png</file>
         <file>images/textures/SpeedoNedle.png</file>
         <file>images/textures/Turn.png</file>
         <file>images/textures/TurnCancel.png</file>
@@ -448,5 +447,16 @@
         <file>images/Steer/ST_GainTab.png</file>
         <file>images/Steer/ST_StanleyTab.png</file>
         <file>images/Steer/ST_SteerTab.png</file>
+        <file>images/textures/bingMap.png</file>
+        <file>images/textures/FrontWheels.png</file>
+        <file>images/textures/Harvester.png</file>
+        <file>images/textures/Tractor4WDFront.png</file>
+        <file>images/textures/Tractor4WDRear.png</file>
+        <file>images/textures/z_NoGPS.png</file>
+        <file>images/textures/z_QuestionMark.png</file>
+        <file>images/textures/z_SteerDot.png</file>
+        <file>images/textures/z_SteerPointer.png</file>
+        <file>images/textures/z_Tractor.png</file>
+        <file>images/textures/z_LateralManual.png</file>
     </qresource>
 </RCC>
