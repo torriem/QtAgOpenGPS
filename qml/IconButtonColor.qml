@@ -17,7 +17,7 @@ Rectangle {
     property color colorChecked1: "green"
     property color colorChecked2: "green"
     property color colorChecked3: "green"
-    property string buttonText: "Hello"
+    property string buttonText: ""
     property string leftText: ""
     property string rightText: ""
 

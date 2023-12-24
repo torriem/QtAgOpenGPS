@@ -212,6 +212,9 @@ Item {
             icon.source: "qrc:/images/VehFileLoad.png"
             //border.width: 3
             buttonText: qsTr("Load")
+            color3: "white"
+            border: 2
+
         }
         IconButtonText{
             id: deletefolder
@@ -220,6 +223,7 @@ Item {
             anchors.horizontalCenter: load.horizontalCenter
             icon.source: "qrc:/images/VehFileDelete.png"
             buttonText: qsTr("Delete")
+            color3: "white"
             //border.width: 3
         }
     }

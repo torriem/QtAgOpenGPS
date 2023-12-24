@@ -21,7 +21,7 @@ Item {
             color: "ghostwhite"
             border.color: "black"
             anchors.top: titleText.bottom
-            anchors.topMargin: 10
+            anchors.topMargin: 20
             anchors.bottom: invertRel.top
             anchors.leftMargin: 10
             width: parent.width * .66
@@ -38,14 +38,12 @@ Item {
                 anchors.leftMargin: 10
                 rows: 2
                 columns: 3
-                Rectangle{
-                    height: 150
-                    width: 200
-                    IconButtonTransparent{
-                        anchors.fill: parent
-                        icon.source: "qrc:/images/SwitchOn.png"
+                    IconButtonColor{
+                        objectName: "btnHydLiftEnable"
+                    height: 130
+                    width: 170
+                        icon: "qrc:/images/SwitchOn.png"
                     }
-                }
                 SpinBox{
                     id: raiseTime
                     from:1
@@ -96,28 +94,14 @@ Item {
                 }
             }
         }
-        Rectangle{
+            IconButtonColor{
             id: invertRel
             anchors.horizontalCenter: hydConfig.horizontalCenter
-            height: 100
-            width: 150
             anchors.bottom: parent.bottom
+            buttonText: "Invert Relays"
             anchors.margins: 10
-            color: "ghostwhite"
-            border.color: "black"
-            IconButton{
-                anchors.centerIn: parent
-                width: 150
-                height: 100
-                icon.source: "qrc:/images/Config/ConSt_InvertRelay.png"
+                icon: "qrc:/images/Config/ConSt_InvertRelay.png"
             }
-            Text{
-                anchors.left: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.leftMargin: 3
-                text: qsTr("Invert Relays")
-            }
-        }
         Rectangle{
             anchors.bottom: parent.bottom
             anchors.left: hydConfig.right

@@ -105,22 +105,25 @@ Radius")
             Row{
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: styleText.bottom
+                width:childrenRect.width
+                anchors.left: parent.left
+                anchors.leftMargin: 10
                 anchors.topMargin: 5
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 5
                 spacing: 20
-                IconButtonTransparent{
-                icon.source: "qrc:/images/YouTurnNo.png"
-                //onClick: childUturn.color = "green"
-               /* background:Rectangle{
+                IconButtonColor{
+                    icon: "qrc:/images/YouTurnNo.png"
+                    //onClick: childUturn.color = "green"
+                    /* background:Rectangle{
                     id: childUturn
                     color: "white"
                     border.color: black
                 }*/
-            }
-            IconButtonTransparent{
-                icon.source: "qrc:/images/YouTurnH.png"
-            }
+                }
+                IconButtonColor{
+                    icon: "qrc:/images/YouTurnH.png"
+                }
             }
         }
     }
