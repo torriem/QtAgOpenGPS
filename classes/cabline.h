@@ -18,6 +18,7 @@ class CNMEA;
 class CTram;
 class CCamera;
 class CAHRS;
+class CGuidance;
 
 class CABLines
 {
@@ -103,16 +104,23 @@ public:
     explicit CABLine(QObject *parent = 0);
 
     void buildCurrentABLineList(Vec3 pivot,
+                                double secondsSinceStart,
                                 const CYouTurn &yt);
     void getCurrentABLine(Vec3 pivot, Vec3 steer,
+                          double secondsSinceStart,
+                          bool isAutoSteerBtnOn,
+                          bool steerSwitchHigh,
                           CVehicle &vehicle,
                           CYouTurn &yt,
-                          CAHRS &ahrs,
+                          const CAHRS &ahrs,
+                          CGuidance &gyd,
                           CNMEA &pn);
     void drawABLines(QOpenGLFunctions *g, const QMatrix4x4 &mvp,
+                     bool isFontOn,
                      CBoundary &bnd,
                      CYouTurn &yt,
-                     const CCamera &camera);
+                     const CCamera &camera,
+                     const CGuidance &gyd);
     void buildTram(CBoundary &bnd, CTram &tram);
     void deleteAB();
     void setABLineByBPoint(const CVehicle &vehicle);

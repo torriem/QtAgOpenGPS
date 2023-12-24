@@ -15,6 +15,7 @@ class CCamera;
 class CBoundary;
 class CNMEA;
 class CAHRS;
+class CGuidance;
 
 
 class CCurveLines
@@ -88,19 +89,25 @@ public:
     explicit CABCurve(QObject *parent = 0);
 
     void buildCurveCurrentList(Vec3 pivot,
+                               double secondsSinceStart,
                                const CVehicle &vehicle,
                                const CBoundary &bnd,
                                const CYouTurn &yt);
     void getCurrentCurveLine(Vec3 pivot,
                              Vec3 steer,
+                             double secondsSinceStart,
+                             bool isAutoSteerBtnOn,
+                             bool steerSwitchHigh,
                              CVehicle &vehicle,
                              const CBoundary &bnd,
-                             const CYouTurn &yt,
+                             CYouTurn &yt,
                              const CAHRS &ahrs,
+                             CGuidance &gyd,
                              CNMEA &pn);
 
 
     void drawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
+                   bool isFontOn,
                    const CVehicle &vehicle,
                    CYouTurn &yt, const CCamera &camera
                    );

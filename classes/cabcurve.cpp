@@ -14,6 +14,7 @@
 #include "ccamera.h"
 #include "cnmea.h"
 #include "cahrs.h"
+#include "cguidance.h"
 #include "aogproperty.h"
 
 CABCurve::CABCurve(QObject *parent) : QObject(parent)
@@ -21,6 +22,7 @@ CABCurve::CABCurve(QObject *parent) : QObject(parent)
 
 }
 void CABCurve::buildCurveCurrentList(Vec3 pivot,
+                                     double secondsSinceStart,
                                      const CVehicle &vehicle,
                                      const CBoundary &bnd,
                                      const CYouTurn &yt)
@@ -270,16 +272,20 @@ void CABCurve::buildCurveCurrentList(Vec3 pivot,
         }
     }
 
-    lastSecond = mf.secondsSinceStart;
+    lastSecond = secondsSinceStart;
 
 }
 
 void CABCurve::getCurrentCurveLine(Vec3 pivot,
                                    Vec3 steer,
+                                   double secondsSinceStart,
+                                   bool isAutoSteerBtnOn,
+                                   bool steerSwitchHigh,
                                    CVehicle &vehicle,
                                    const CBoundary &bnd,
-                                   const CYouTurn &yt,
+                                   CYouTurn &yt,
                                    const CAHRS &ahrs,
+                                   CGuidance &gyd,
                                    CNMEA &pn)
 {
     double purePursuitGain = property_purePursuitIntegralGainAB;
@@ -289,9 +295,9 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
     if (refList.count() < 5) return;
 
     //build new current ref line if required
-    if (!isCurveValid || ((mf.secondsSinceStart - lastSecond) > 0.66
-                          && (!mf.isAutoSteerBtnOn || mf.mc.steerSwitchHigh)))
-        buildCurveCurrentList(pivot,vehicle,bnd,yt);
+    if (!isCurveValid || ((secondsSinceStart - lastSecond) > 0.66
+                          && (!isAutoSteerBtnOn || steerSwitchHigh)))
+        buildCurveCurrentList(pivot,secondsSinceStart,vehicle,bnd,yt);
 
     double dist, dx, dz;
     double minDistA = 1000000, minDistB = 1000000;
@@ -313,7 +319,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
         }
         else if (property_setVehicle_isStanleyUsed)//Stanley
         {
-            mf.gyd.StanleyGuidanceCurve(pivot, steer, curList);
+            gyd.StanleyGuidanceCurve(pivot, steer, curList, vehicle, *this, ahrs);
         }
         else// Pure Pursuit ------------------------------------------
         {
@@ -395,7 +401,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
 
                 //pivotErrorTotal = pivotDistanceError + pivotDerivative;
 
-                if (mf.isAutoSteerBtnOn && vehicle.avgSpeed > 2.5 && fabs(pivotDerivative) < 0.1)
+                if (isAutoSteerBtnOn && vehicle.avgSpeed > 2.5 && fabs(pivotDerivative) < 0.1)
                 {
                     //if over the line heading wrong way, rapidly decrease integral
                     if ((inty < 0 && distanceFromCurrentLinePivot < 0) || (inty > 0 && distanceFromCurrentLinePivot > 0))
@@ -426,7 +432,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
             manualUturnHeading = curList[A].heading;
 
             //update base on autosteer settings and distance from line
-            double goalPointDistance = vehicle.updateGoalPointDistance(pn);
+            double goalPointDistance = vehicle.updateGoalPointDistance();
 
             bool ReverseHeading = vehicle.isReverse ? !isHeadingSameWay : isHeadingSameWay;
 
@@ -452,7 +458,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
                 start = curList[i];
             }
 
-            if (mf.isAutoSteerBtnOn && !vehicle.isReverse)
+            if (isAutoSteerBtnOn && !vehicle.isReverse)
             {
                 if (isHeadingSameWay)
                 {
@@ -460,7 +466,6 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
                     {
                         emit timedMessage(2000,tr("Guidance Stopped"), tr("Past end of curve"));
                         emit stopAutosteer();
-                        //mf.btnAutoSteer.PerformClick();
                     }
                 }
                 else
@@ -489,7 +494,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
                                                         + ((goalPointCu.northing - pivot.northing) * sin(localHeading))) * wheelBase / goalPointDistanceSquared));
 
             if (ahrs.imuRoll != 88888)
-                steerAngleCu += ahrs.imuRoll * -mf.gyd.sideHillCompFactor;
+                steerAngleCu += ahrs.imuRoll * -(double)property_setAS_sideHillComp; /* gyd.sideHillCompFactor*/
 
             if (steerAngleCu < -maxSteerAngle) steerAngleCu = -maxSteerAngle;
             if (steerAngleCu > maxSteerAngle) steerAngleCu = maxSteerAngle;
@@ -528,6 +533,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
 }
 
 void CABCurve::drawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
+                         bool isFontOn,
                          const CVehicle &vehicle,
                          CYouTurn &yt, const CCamera &camera)
 {
@@ -570,7 +576,7 @@ void CABCurve::drawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
     }
     gldraw_colors.draw(gl,mvp,GL_LINES,lineWidth);
 
-    if (mf.font.isFontOn)
+    if (isFontOn)
     {
         color.fromRgbF(0.40f, 0.90f, 0.95f);
         drawText3D(camera, gl, mvp, refList[0].easting, refList[0].northing, "&A", 1.0, true, color);

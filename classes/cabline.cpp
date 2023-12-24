@@ -7,6 +7,7 @@
 #include "ctram.h"
 #include "ccamera.h"
 #include "cahrs.h"
+#include "cguidance.h"
 #include "aogproperty.h"
 #include <QOpenGLFunctions>
 #include <QColor>
@@ -21,6 +22,7 @@ CABLine::CABLine(QObject *parent) : QObject(parent)
 }
 
 void CABLine::buildCurrentABLineList(Vec3 pivot,
+                                     double secondsSinceStart,
                                      const CYouTurn &yt)
 {
     double tool_width = property_setVehicle_toolWidth;
@@ -29,7 +31,7 @@ void CABLine::buildCurrentABLineList(Vec3 pivot,
 
     double dx, dy;
 
-    lastSecond = mf.secondsSinceStart;
+    lastSecond = secondsSinceStart;
 
     //move the ABLine over based on the overlap amount set in
     double widthMinusOverlap = tool_width - tool_overlap;
@@ -77,9 +79,13 @@ void CABLine::buildCurrentABLineList(Vec3 pivot,
 }
 
 void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer,
+                               double secondsSinceStart,
+                               bool isAutoSteerBtnOn,
+                               bool steerSwitchHigh,
                                CVehicle &vehicle,
                                CYouTurn &yt,
-                               CAHRS &ahrs,
+                               const CAHRS &ahrs,
+                               CGuidance &gyd,
                                CNMEA &pn)
 {
     double dx, dy;
@@ -88,9 +94,9 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer,
     double maxSteerAngle = property_setVehicle_maxSteerAngle;
 
     //build new current ref line if required
-    if (!isABValid || ((mf.secondsSinceStart - lastSecond) > 0.66
-                       && (!mf.isAutoSteerBtnOn || mf.mc.steerSwitchHigh)))
-        buildCurrentABLineList(pivot,yt);
+    if (!isABValid || ((secondsSinceStart - lastSecond) > 0.66
+                       && (!isAutoSteerBtnOn || steerSwitchHigh)))
+        buildCurrentABLineList(pivot,secondsSinceStart,yt);
 
     //Check uturn first
     if (yt.isYouTurnTriggered && yt.distanceFromYouTurnLine(vehicle,pn))//do the pure pursuit from youTurn
@@ -110,7 +116,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer,
 
     //Stanley
     else if (property_setVehicle_isStanleyUsed)
-        mf.gyd.StanleyGuidanceABLine(currentABLineP1, currentABLineP2, pivot, steer);
+        gyd.StanleyGuidanceABLine(currentABLineP1, currentABLineP2, pivot, steer, vehicle,*this, ahrs,yt);
 
     //Pure Pursuit
     else
@@ -149,7 +155,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer,
 
             //pivotErrorTotal = pivotDistanceError + pivotDerivative;
 
-            if (mf.isAutoSteerBtnOn
+            if (isAutoSteerBtnOn
                 && fabs(pivotDerivative) < (0.1)
                 && vehicle.avgSpeed > 2.5
                 && !yt.isYouTurnTriggered)
@@ -189,7 +195,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer,
         rNorthAB = currentABLineP1.northing + (U * dy);
 
         //update base on autosteer settings and distance from line
-        double goalPointDistance = vehicle.updateGoalPointDistance(pn);
+        double goalPointDistance = vehicle.updateGoalPointDistance();
 
         if (vehicle.isReverse ? isHeadingSameWay : !isHeadingSameWay)
         {
@@ -220,7 +226,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer,
                                                / goalPointDistanceDSquared));
 
         if (ahrs.imuRoll != 88888)
-            steerAngleAB += ahrs.imuRoll * -mf.gyd.sideHillCompFactor;
+            steerAngleAB += ahrs.imuRoll * -(double)property_setAS_sideHillComp; /*mf.gyd.sideHillCompFactor;*/
 
         //steerAngleAB *= 1.4;
 
@@ -277,13 +283,17 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer,
 }
 
 void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
+                          bool isFontOn,
                           CBoundary &bnd,
                           CYouTurn &yt,
-                          const CCamera &camera)
+                          const CCamera &camera,
+                          const CGuidance &gyd)
 {
     double tool_toolWidth = property_setVehicle_toolWidth;
     double tool_toolOverlap = property_setVehicle_toolOverlap;
     double tool_toolOffset = property_setVehicle_toolOverlap;
+    bool isStanleyUsed = property_setVehicle_isStanleyUsed;
+    bool isSideGuideLines = property_setMenu_isSideGuideLines;
 
     GLHelperOneColor gldraw;
     GLHelperColors gldraw1;
@@ -304,7 +314,7 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
     gldraw1.append(cv);
     gldraw1.draw(gl,mvp,GL_POINTS,8.0f);
 
-    if (mf.font.isFontOn && !isABLineBeingSet)
+    if (isFontOn && !isABLineBeingSet)
     {
         color.fromRgbF(0.00990f, 0.990f, 0.095f);
         drawText3D(camera,gl,mvp, refPoint1.easting, refPoint1.northing, "&A", 1.0, true, color);
@@ -364,7 +374,7 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
         drawText3D(camera,gl,mvp,desPoint2.easting, desPoint2.northing, "&B", 1.0, true, color);
     }
 
-    if (mf.isSideGuideLines && camera.camSetDistance > tool_toolWidth * -120)
+    if (isSideGuideLines && camera.camSetDistance > tool_toolWidth * -120)
     {
         //get the tool offset and width
         double toolOffset = tool_toolOffset * 2;
@@ -413,14 +423,14 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
         gldraw.draw(gl,mvp,color,GL_LINE_STIPPLE,lineWidth);
     }
 
-    if (!mf.isStanleyUsed && mf.camera.camSetDistance > -200)
+    if (!isStanleyUsed && camera.camSetDistance > -200)
     {
         //Draw lookahead Point
         gldraw.clear();
         color.fromRgbF(1.0f, 1.0f, 0.0f);
         gldraw.append(QVector3D(goalPointAB.easting, goalPointAB.northing, 0.0));
-        gldraw.append(QVector3D(mf.gyd.rEastSteer, mf.gyd.rNorthSteer, 0.0));
-        gldraw.append(QVector3D(mf.gyd.rEastPivot, mf.gyd.rNorthPivot, 0.0));
+        gldraw.append(QVector3D(gyd.rEastSteer, gyd.rNorthSteer, 0.0));
+        gldraw.append(QVector3D(gyd.rEastPivot, gyd.rNorthPivot, 0.0));
         gldraw.draw(gl,mvp,color,GL_POINTS,8.0f);
 
         if (ppRadiusAB < 50 && ppRadiusAB > -50)
