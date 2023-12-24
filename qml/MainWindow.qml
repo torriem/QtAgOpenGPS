@@ -954,18 +954,18 @@ Window {
                 id:config
                 objectName: "config"
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                height:parent.height
-                width:parent.width - 80
+                anchors.bottom: parent.bottom
+                height: 768
+                width:1024
                 visible:false
             }
             SteerConfigWindow {
                 id:steerConfigWindow
                 objectName: "steerConfigWindow"
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                height:parent.height
-                width:parent.width - 80
+                anchors.bottom: parent.bottom
+                height: 768
+                width:1024
                 visible:false
             }
 

@@ -2,4 +2,18 @@ My plan-- At this point, I intend to create a GUI that follows AOG.
 When that is done, catch up the backend with AOG, and make AgIO.
 If you are interested in helping, feel very free to.
 
-Todo: at some point, the whole gui needs to be made scalable. And I'm getting a headache just thinking about it.
+Need to finish the tractor steer config page sometime. I apparently forgot about it. (Would help if Brian didn't keep changing the GUI:)
+
+My own Notes:
+
+min gps step
+dual
+reverse det
+remove icon on those 3 but use iconbuttoncolor if possible
+
+set work switch section control buttons correctly
+
+uturn style move over
+hyd enable
+invert relays set margin
+trams

@@ -92,56 +92,26 @@ Item {
             Row{
                 anchors.top: text.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
-                Rectangle{
-                    width:150
-                    height:100
-                    radius:5
+                    IconButtonColor{
                     id: harvester
-                    IconButtonTransparent{
-                        icon.source: "qrc:/images/vehiclePageHarvester.png"
-                        anchors.fill: parent
-                        colorHover1: "transparent"
-                        checkable: true
-                        onClicked: {
-                            harvester.color = "green"
-                            tractor.color = "white"
-                            tr4wd.color = "white"
-                        }
-                    }
-                }
-                Rectangle{
                     width:150
                     height:100
-                    radius:5
+                        icon: "qrc:/images/vehiclePageHarvester.png"
+                        isChecked: false
+                }
+                    IconButtonColor{
+                    width:150
+                    height:100
                     id: tractor
-                    IconButtonTransparent{
-                        anchors.fill:parent
-                        icon.source: "qrc:/images/vehiclePageTractor.png"
-                        colorHover1: "transparent"
-                        checkable: true
-                        onClicked: {
-                            harvester.color = "white"
-                            tractor.color = "green"
-                            tr4wd.color = "white"
-                        }
-                    }
+                        icon: "qrc:/images/vehiclePageTractor.png"
+                        isChecked: false
                 }
-                Rectangle{
+                    IconButtonColor{
                     width:150
                     height:100
-                    radius:5
                     id: tr4wd
-                    IconButtonTransparent{
-                        anchors.fill: parent
-                        icon.source: "qrc:/images/vehiclePage4WD.png"
-                        colorHover1: "transparent"
-                        checkable: true
-                        onClicked: {
-                            harvester.color = "white"
-                            tractor.color = "white"
-                            tr4wd.color = "green"
-                        }
-                    }
+                        icon: "qrc:/images/vehiclePage4WD.png"
+                        isChecked: false
                 }
             }
             Text {

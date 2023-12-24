@@ -31,18 +31,13 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
             }
         }
-        Rectangle{
+            IconButtonColor{
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 100
             width: 200
             height: 200
-            border.color: "black"
-            radius: 5
-            IconButtonTransparent{
-                anchors.fill: parent
-                icon.source: "qrc:/images/Config/ConT_TramOverride.png"
-            }
+                icon: "qrc:/images/Config/ConT_TramOverride.png"
         }
     }
 }

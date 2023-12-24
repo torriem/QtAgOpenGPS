@@ -96,7 +96,7 @@ Item {
             Rectangle{
                 id: steerTab
                 visible: true
-                color: "light gray"
+                color: "white"
                 Column{
                     id: steerColumn
                     anchors.bottom: parent.bottom
@@ -104,47 +104,43 @@ Item {
                     height: childrenRect.height
                     width: childrenRect.width
                     anchors.margins: 5
-                    spacing: 30
-                    Text{
-                        text: "WAS Zero"
-                    }
-                    Slider {
+                    spacing: 45
+                    SliderCustomized {
                         id: wasZeroSlider
                         objectName: "wasZeroSlider"
                         width: 200
+                        leftText: value
                         from: -30
                         to: 30
                         value: 5
+                        centerTopText: "WAS Zero"
                     }
-                    Text{
-                        text: "Counts per Degree"
-                    }
-                    Slider {
+                    SliderCustomized {
                         id: cpDegSlider
                         objectName: "cpDegSlider"
                         width: 200
+                        centerTopText: "Counts per Degree"
                         from: -30
                         to: 30
                         value: 5
+                        leftText: value
                     }
-                    Text{
-                        text: "AckerMann"
-                    }
-                    Slider {
+                    SliderCustomized {
                         id: ackermannSlider
                         objectName: "ackermannSlider"
                         width: 200
+                        centerTopText: "AckerMann"
                         from: -30
                         to: 30
+                        leftText: value
                         value: 5
                     }
-                    Text{
-                        text: "Max Steer Angle"
-                    }
-                    Slider {
+                    SliderCustomized {
                         id: maxSteerSlider
                         objectName: "maxSteerSlider"
                         width: 200
+                        leftText: value
+                        centerTopText:"Max Steer Angle"
                         from: -30
                         to: 30
                         value: 5
@@ -163,7 +159,7 @@ Item {
                 id: gainTab
                 height: parent.height * .66
                 visible: false
-                color: "light gray"
+                color: "white"
                 Column{
                     id: gainColumn
                     anchors.bottom: parent.bottom
@@ -172,38 +168,35 @@ Item {
                     width: childrenRect.width
                     anchors.margins: 5
                     spacing: 30
-                    Text{
-                        text: "Proportional Gain"
-                    }
-                    Slider {
+                    SliderCustomized {
                         id: propGainlider
                         objectName: "progGainSlider"
+                        leftText: value
                         width: 200
                         from: -30
                         to: 30
                         value: 5
+                        centerTopText: "Proportional Gain"
                     }
-                    Text{
-                        text: "Maximum Limit"
-                    }
-                    Slider {
+                    SliderCustomized {
                         id: maxLimitSlider
                         objectName: "maxLimitSlider"
+                        centerTopText: "Maximum Limit"
+                        leftText: value
                         width: 200
                         from: -30
                         to: 30
                         value: 5
                     }
-                    Text{
-                        text: "Minimum to Move"
-                    }
-                    Slider {
+                    SliderCustomized {
                         id: min2moveSlider
                         objectName: "min2moveSlider"
                         width: 200
                         from: -30
                         to: 30
                         value: 5
+                        leftText: value
+                        centerTopText: "Minimum to Move"
                     }
                 }
                 Image {
@@ -219,7 +212,7 @@ Item {
                 id: stanleyTab
                 height: parent.height * .66
                 visible: false
-                color: "light gray"
+                color: "white"
                 Column{
                     id: stanleyColumn
                     anchors.bottom: parent.bottom
@@ -228,38 +221,35 @@ Item {
                     width: childrenRect.width
                     anchors.margins: 5
                     spacing: 30
-                    Text{
-                        text: "Agressiveness"
-                    }
-                    Slider {
+                    SliderCustomized {
                         id: stanleyAggressivenessSlider
                         objectName: "stanleyAgressivenessSlider"
                         width: 200
                         from: -30
                         to: 30
                         value: 5
+                        leftText: value
+                        centerTopText: "Agressiveness"
                     }
-                    Text{
-                        text: "Overshoot Reduction"
-                    }
-                    Slider {
+                    SliderCustomized {
                         id: overShootReductionSlider
                         objectName: "overShootReductionSlider"
                         width: 200
                         from: -30
                         to: 30
                         value: 5
+                        leftText: value
+                        centerTopText: "OverShoot Reduction"
                     }
-                    Text{
-                        text: "Integral"
-                    }
-                    Slider {
+                    SliderCustomized {
                         id: integralStanleySlider
                         objectName: "integralStanleySlider"
                         width: 200
                         from: -30
                         to: 30
                         value: 5
+                        leftText: value
+                        centerTopText: "Integral"
                     }
                 }
                 Image {
@@ -274,7 +264,7 @@ Item {
             Rectangle{
                 id: ppTab
                 visible: false
-                color: "light gray"
+                color: "white"
                 Column{
                     id: ppColumn
                     anchors.bottom: parent.bottom
@@ -283,49 +273,45 @@ Item {
                     width: childrenRect.width
                     anchors.margins: 5
                     spacing: 30
-                    Text{
-                        text: "Acquire Look Ahead"
-                    }
-                    Slider {
+                    SliderCustomized {
                         id: acqLookAheadSlider
                         objectName: "acqLookAheadSlider"
                         width: 200
                         from: -30
                         to: 30
                         value: 5
+                        leftText: value
+                        centerTopText: "Acquire Look Ahead"
                     }
-                    Text{
-                        text: "Hold Look Ahead"
-                    }
-                    Slider {
+                    SliderCustomized {
                         id: holdLookAheadSlider
                         objectName: "holdLookAheadSlider"
                         width: 200
                         from: -30
                         to: 30
                         value: 5
+                        leftText: value
+                        centerTopText: "Hold Look Ahead"
                     }
-                    Text{
-                        text: "Look Ahead Speed Gain"
-                    }
-                    Slider {
+                    SliderCustomized {
                         id: lookAheadSpeedGainSlider
                         objectName: "lookAheadSpeedGainSlider"
                         width: 200
                         from: -30
                         to: 30
                         value: 5
+                        leftText: value
+                        centerTopText: "Look Ahead Speed Gain"
                     }
-                    Text{
-                        text: "Integral"
-                    }
-                    Slider {
+                    SliderCustomized {
                         id: ppIntegralSlider
                         objectName: "ppIntegralSlider"
                         width: 200
                         from: -30
                         to: 30
                         value: 5
+                        leftText: value
+                        centerTopText: "Integral"
                     }
                 }
                 Image {
@@ -508,10 +494,18 @@ Item {
                     isChecked: false
                     buttonText: "Invert Relays"
                 }
-                IconButtonColor{
-                    icon: "qrc:/images/Config/ConSt_InvertRelay.png"
-                    isChecked: false
-                    buttonText: "Panic Stop(love the input box)"
+                SpinBox{
+                    Text{
+                        anchors.bottom: parent.top
+                        font.pixelSize: 10
+                        text: "Panic Stop"
+                    }
+                    implicitWidth: 120
+                    implicitHeight: 65
+                        from: 0
+                        value: 0
+                        to: 10
+                        editable: true
                 }
             }
             ColumnLayout{

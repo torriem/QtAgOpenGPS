@@ -98,7 +98,7 @@ Item {
             anchors.top: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Attachment Style")
-        }//I didn't bother with setting colors here, because IMOthe color should be set by the backend
+        }
         GridLayout{
             anchors.top: text.bottom
             anchors.horizontalCenter: parent.horizontalCenter
@@ -107,143 +107,34 @@ Item {
             rows:2
             columns: 2
             flow:Grid.TopToBottom
-            Rectangle{
+                IconButtonColor{
                 width:200
                 height:150
-                radius:5
                 id: i3pt
-                //I didn't bother with setting colors here, because IMO the color should be set by the backend
-                //I'll do that after the backend is caught up
-                IconButtonTransparent{
-                    anchors.fill: parent
-                    icon.source: "qrc:/images/ToolChkRear.png"
-                    colorHover1: "transparent"
-                    checkable: true
-                    /*property bool toggleBtn: false
-                        onToggleBtnChanged: {
-                            if(toggleBtn == true){
-                                fieldTexture.color = "green"
-                            }else{
-                                fieldTexture.color = "white"
-                            }
-                        }
-
-                        function toggleState(){
-                            if(toggleBtn == true){
-                                toggleBtn = false;
-                            }else{
-                                toggleBtn = true;
-                            }
-                        }
-                        onClicked: {
-                            toggleState()
-                        }*/
-                }
-                color: "white"
-                border.color: "black"
+                    icon: "qrc:/images/ToolChkRear.png"
+                    isChecked: false
             }
 
-            Rectangle{
+                IconButtonColor{
                 width:200
                 height:150
-                radius:5
                 id: i3ptfront
-                IconButtonTransparent{
-                    anchors.fill: parent
-                    icon.source: "qrc:/images/ToolChkFront.png"
-                    colorHover1: "transparent"
-                    checkable: true
-                    property bool toggleBtn: false
-                    /*onToggleBtnChanged: {
-                            if(toggleBtn == true){
-                                fieldTexture.color = "green"
-                            }else{
-                                fieldTexture.color = "white"
-                            }
-                        }
-
-                        function toggleState(){
-                            if(toggleBtn == true){
-                                toggleBtn = false;
-                            }else{
-                                toggleBtn = true;
-                            }
-                        }
-                        onClicked: {
-                            toggleState()
-                        }*/
-                }
-                color: "white"
-                border.color: "black"
-
+                    icon: "qrc:/images/ToolChkFront.png"
+                    isChecked: false
             }
-            Rectangle{
+                IconButtonColor{
                 width:200
                 height:150
-                radius:5
                 id: itrailed
-                IconButtonTransparent{
-                    anchors.fill: parent
-                    icon.source: "qrc:/images/ToolChkTrailing.png"
-                    colorHover1: "transparent"
-                    checkable: true
-                    /*property bool toggleBtn: false
-                        onToggleBtnChanged: {
-                            if(toggleBtn == true){
-                                fieldTexture.color = "green"
-                            }else{
-                                fieldTexture.color = "white"
-                            }
-                        }
-
-                        function toggleState(){
-                            if(toggleBtn == true){
-                                toggleBtn = false;
-                            }else{
-                                toggleBtn = true;
-                            }
-                        }
-                        onClicked: {
-                            toggleState()
-                        }*/
-                }
-                color: "white"
-                border.color: "black"
-
+                    icon: "qrc:/images/ToolChkTrailing.png"
+                    isChecked: false
             }
-            Rectangle{
+                IconButtonColor{
                 width:200
                 height:150
-                radius:5
                 id: iTBT
-                IconButtonTransparent{
-                    anchors.fill: parent
-                    icon.source: "qrc:/images/ToolChkTBT.png"
-                    colorHover1: "transparent"
-                    checkable: true
-                    /*property bool toggleBtn: false
-                        onToggleBtnChanged: {
-                            if(toggleBtn == true){
-                                fieldTexture.color = "green"
-                            }else{
-                                fieldTexture.color = "white"
-                            }
-                        }
-
-                        function toggleState(){
-                            if(toggleBtn == true){
-                                toggleBtn = false;
-                            }else{
-                                toggleBtn = true;
-                            }
-                        }
-                        onClicked: {
-                            toggleState()
-                        }*/
-                }
-                color: "white"
-                border.color: "black"
-
+                    icon: "qrc:/images/ToolChkTBT.png"
+                    isChecked: false
             }
         }
 
@@ -398,6 +289,7 @@ Item {
                 anchors.left: parent.left
                 text: qsTr("Work Switch")
             }
+            //for now I'll leave this like it is... I should maybe create another object, with the icon beside the text
             ColumnLayout{
                 id: workswitchcolumn
                 anchors.top: workTitle.bottom
