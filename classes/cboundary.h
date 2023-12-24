@@ -1,9 +1,8 @@
 #ifndef CBOUNDARY_H
 #define CBOUNDARY_H
 
-#include "vec4.h"
-#include "vec3.h"
 #include "vec2.h"
+#include "vec3.h"
 #include <QVector>
 #include <QVector3D>
 #include <QSharedPointer>
@@ -18,6 +17,7 @@ class CABLine;
 class CYouTurn;
 class CModuleComm;
 class CFieldData;
+class CTool;
 
 class CBoundary
 {
@@ -55,15 +55,29 @@ public:
     Vec3 closestTurnPt = Vec3(-10000, -10000, 9);
     Vec3 closePt;
 
+    bool isHeadlandOn;
+    bool isToolInHeadland, isToolOuterPointsInHeadland, isSectionControlledByHeadland;
+
+
     CBoundary();
 
+    //CFence.cs
     bool isPointInsideFenceArea(Vec3 testPoint) const ;
     bool isPointInsideFenceArea(Vec2 testPoint) const;
     void drawFenceLines(const CVehicle &v, const CModuleComm &mc, QOpenGLFunctions *g, const QMatrix4x4 &mvp);
 
+    //CTurn.sh
     int isPointInsideTurnArea(Vec3 pt) const;
     void findClosestTurnPoint(const CABLine &abline, Vec3 fromPt);
     void buildTurnLines(CFieldData &fd);
+
+    //CHead.cs
+    void SetHydPosition(CVehicle &vehicle); //TODO sounds, p_239
+    void WhereAreToolCorners(CTool &tool);
+    void WhereAreToolLookOnPoints(CVehicle &vehicle, CTool &tool);
+    bool IsPointInsideHeadArea(Vec2 pt);
+
+
 
 
     /*
