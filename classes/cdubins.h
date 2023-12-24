@@ -8,7 +8,6 @@
 #include "vec2.h"
 #include "vec3.h"
 
-class CGeoFence;
 class CBoundary;
 
 using namespace std;
@@ -21,18 +20,6 @@ enum PathType { RSR, LSL, RSL, LSR, RLR, LRL };
 class OneDubinsPath
 {
 public:
-    OneDubinsPath();
-    //OneDubinsPath(const OneDubinsPath &src);
-    OneDubinsPath(double length1, double length2, double length3, const Vec2 &tangent1, const Vec2 &tangent2, PathType pathType);
-
-    //inline bool operator< (OneDubinsPath &rhs) {
-    //    return (totalLength < rhs.totalLength);
-    //}
-    inline friend bool operator< (const OneDubinsPath lhs, const OneDubinsPath rhs) {
-        return (lhs.totalLength < rhs.totalLength);
-    }
-
-    void SetIfTurningRight(bool segment1TurningRight, bool segment2TurningRight, bool segment3TurningRight);
     //Tthe total length of this path
     double totalLength;
 
@@ -53,12 +40,38 @@ public:
 
     //Are we turning right in the particular segment?
     bool segment1TurningRight, segment2TurningRight, segment3TurningRight;
+
+    OneDubinsPath();
+
+    OneDubinsPath(double length1, double length2, double length3,
+                  const Vec2 &tangent1, const Vec2 &tangent2, PathType pathType);
+
+    //inline bool operator< (OneDubinsPath &rhs) {
+    //    return (totalLength < rhs.totalLength);
+    //}
+    inline friend bool operator< (const OneDubinsPath lhs, const OneDubinsPath rhs) {
+        return (lhs.totalLength < rhs.totalLength);
+    }
+
+    void SetIfTurningRight(bool segment1TurningRight,
+                           bool segment2TurningRight,
+                           bool segment3TurningRight);
+
 };
 
 
 class CDubins
 {
 public:
+    //How far we are driving each update, the accuracy will improve if we lower the driveDistance
+    //static float turningRadius // in cpp file
+    //double driveDistance = 0.05; //defined in cpp file
+
+    //The radius the car can turn 360 degrees with
+    //double turningRadius = Properties.Settings.Default.setVehicle_minTurningRadius;
+
+    void loadSettings();
+
     CDubins();
     //To keep track of the different paths when debugging
 
@@ -67,17 +80,20 @@ public:
 
     //takes 2 points and headings to create a path - returns list of vec3 points and headings
     QVector<Vec3> GenerateDubins(Vec3 _start, Vec3 _goal);
-    //takes 2 points and headings to create a path - returns list of vec3 points and headings
-    QVector<Vec3> GenerateDubins(Vec3 _start, Vec3 _goal, const CBoundary &bnd, CGeoFence &fence);
 
 
 private:
     //Position, Heading is in radians
     Vec2 startPos, goalPos;
+
     double startHeading, goalHeading;
-    //The 4 different circles we have that sits to the left/right of the start/goal
-    Vec2 startLeftCircle, startRightCircle, goalLeftCircle, goalRightCircle;
+
     QVector<OneDubinsPath> pathDataList;
+
+    //QVector<Vec3> dubinsShortestPathList;
+
+    Vec2 startLeftCircle, startRightCircle, goalLeftCircle, goalRightCircle;
+
     QVector<OneDubinsPath> GetAllDubinsPaths();
     void PositionLeftRightCircles();
     void CalculateDubinsPathsLengths();
