@@ -1,6 +1,5 @@
 #include "ccontour.h"
 #include "cvehicle.h"
-#include "cvec.h"
 #include <math.h>
 #include <limits>
 #include <QOpenGLFunctions>
@@ -26,7 +25,7 @@ void CContour::setLockToLine()
     if (ctList.count() > 5) isLocked = !isLocked;
 }
 
-void CContour::buildContourGuidanceLine(CVehicle &vehicle, Vec3 pivot)
+void CContour::buildContourGuidanceLine(double secondsSinceStart, CVehicle &vehicle, Vec3 pivot)
 {
     double tool_toolWidth = property_setVehicle_toolWidth;
     double tool_toolOverlap = property_setVehicle_toolOverlap;
@@ -35,14 +34,14 @@ void CContour::buildContourGuidanceLine(CVehicle &vehicle, Vec3 pivot)
 
     if (ctList.count() == 0)
     {
-        if ((mf.secondsSinceStart - lastSecond) < 0.3) return;
+        if ((secondsSinceStart - lastSecond) < 0.3) return;
     }
     else
     {
-        if ((mf.secondsSinceStart - lastSecond) < 2) return;
+        if ((secondsSinceStart - lastSecond) < 2) return;
     }
 
-    lastSecond = mf.secondsSinceStart;
+    lastSecond = secondsSinceStart;
     int ptCount;
     minDistance = glm::DOUBLE_MAX;
     int start, stop;
@@ -285,7 +284,8 @@ void CContour::buildContourGuidanceLine(CVehicle &vehicle, Vec3 pivot)
 
 }
 
-void CContour::distanceFromContourLine(CVehicle &vehicle,
+void CContour::distanceFromContourLine(bool isAutoSteerBtnOn,
+                                       CVehicle &vehicle,
                                        CYouTurn &yt,
                                        CAHRS &ahrs,
                                        CNMEA &pn,
@@ -456,7 +456,7 @@ void CContour::distanceFromContourLine(CVehicle &vehicle,
 
                 //pivotErrorTotal = pivotDistanceError + pivotDerivative;
 
-                if (mf.isAutoSteerBtnOn
+                if (isAutoSteerBtnOn
                     && fabs(pivotDerivative) < (0.1)
                     && vehicle.avgSpeed > 2.5
                     && !yt.isYouTurnTriggered)
@@ -534,7 +534,7 @@ void CContour::distanceFromContourLine(CVehicle &vehicle,
                                                         + ((goalPointCT.northing - pivot.northing) * sin(localHeading))) * wheelbase / goalPointDistanceSquared));
 
             if (ahrs.imuRoll != 88888)
-                steerAngleCT += ahrs.imuRoll * -mf.gyd.sideHillCompFactor;
+                steerAngleCT += ahrs.imuRoll * -(double)property_setAS_sideHillComp;
 
             if (steerAngleCT < -maxSteerAngle) steerAngleCT = -maxSteerAngle;
             if (steerAngleCT > maxSteerAngle) steerAngleCT = maxSteerAngle;
@@ -542,17 +542,17 @@ void CContour::distanceFromContourLine(CVehicle &vehicle,
         }
 
         //used for smooth mode
-        mf.vehicle.modeActualXTE = (distanceFromCurrentLinePivot);
+        vehicle.modeActualXTE = (distanceFromCurrentLinePivot);
 
         //fill in the autosteer variables
-        mf.guidanceLineDistanceOff = (short)glm::roundMidAwayFromZero(distanceFromCurrentLinePivot * 1000.0);
-        mf.guidanceLineSteerAngle = (short)(steerAngleCT * 100);
+        vehicle.guidanceLineDistanceOff = (short)glm::roundMidAwayFromZero(distanceFromCurrentLinePivot * 1000.0);
+        vehicle.guidanceLineSteerAngle = (short)(steerAngleCT * 100);
     }
     else
     {
         //invalid distance so tell AS module
-        distanceFromCurrentLinePivot = 32000;
-        mf.guidanceLineDistanceOff = 32000;
+        distanceFromCurrentLinePivot = 32000; //???
+        vehicle.guidanceLineDistanceOff = 32000;
     }
 
 }
@@ -650,8 +650,8 @@ void CContour::buildFenceContours(CBoundary &bnd, double spacingInt)
         for (int i = ptCount - 1; i >= 0; i--)
         {
             //calculate the point inside the boundary
-            point.easting = bnd.bndList[j].fenceLine[i].easting - (signPass * sin(glm::PIBy2 + mf.bnd.bndList[j].fenceLine[i].heading) * totalHeadWidth);
-            point.northing =bnd.bndList[j].fenceLine[i].northing - (signPass * cos(glm::PIBy2 + mf.bnd.bndList[j].fenceLine[i].heading) * totalHeadWidth);
+            point.easting = bnd.bndList[j].fenceLine[i].easting - (signPass * sin(glm::PIBy2 + bnd.bndList[j].fenceLine[i].heading) * totalHeadWidth);
+            point.northing =bnd.bndList[j].fenceLine[i].northing - (signPass * cos(glm::PIBy2 + bnd.bndList[j].fenceLine[i].heading) * totalHeadWidth);
             point.heading = bnd.bndList[j].fenceLine[i].heading - M_PI;
             if (point.heading < -glm::twoPI) point.heading += glm::twoPI;
 

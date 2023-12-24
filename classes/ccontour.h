@@ -4,8 +4,7 @@
 #include <QVector>
 #include <QSharedPointer>
 #include "vec2.h"
-#include "vec4.h"
-#include "cvec.h"
+#include "vec3.h"
 
 class QOpenGLFunctions;
 class QMatrix4x4;
@@ -64,8 +63,8 @@ public:
 
     explicit CContour(QObject *parent = 0);
     void setLockToLine();
-    void buildContourGuidanceLine(CVehicle &vehicle, Vec3 pivot);
-    void distanceFromContourLine(CVehicle &vehicle, CYouTurn &yt, CAHRS &ahrs,  CNMEA &pn, Vec3 pivot, Vec3 steer);
+    void buildContourGuidanceLine(double secondsSinceStart, CVehicle &vehicle, Vec3 pivot);
+    void distanceFromContourLine(bool isAutoSteerBtnOn, CVehicle &vehicle, CYouTurn &yt, CAHRS &ahrs,  CNMEA &pn, Vec3 pivot, Vec3 steer);
     void startContourLine();
     void addPoint(Vec3 pivot);
     void stopContourLine();

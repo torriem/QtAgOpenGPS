@@ -520,8 +520,8 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
             vehicle.modeActualHeadingError = glm::toDegrees(steerHeadingError);
 
             //Convert to centimeters
-            mf.guidanceLineDistanceOff = (short)glm::roundMidAwayFromZero(distanceFromCurrentLinePivot * 1000.0);
-            mf.guidanceLineSteerAngle = (short)(steerAngleCu * 100);
+            vehicle.guidanceLineDistanceOff = (short)glm::roundMidAwayFromZero(distanceFromCurrentLinePivot * 1000.0);
+            vehicle.guidanceLineSteerAngle = (short)(steerAngleCu * 100);
         }
     }
     else

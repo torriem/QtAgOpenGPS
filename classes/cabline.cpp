@@ -274,8 +274,8 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer,
         vehicle.modeActualHeadingError = glm::toDegrees(steerHeadingError);
 
         //Convert to millimeters
-        mf.guidanceLineDistanceOff = (short)glm::roundMidAwayFromZero(distanceFromCurrentLinePivot * 1000.0);
-        mf.guidanceLineSteerAngle = (short)(steerAngleAB * 100);
+        vehicle.guidanceLineDistanceOff = (short)glm::roundMidAwayFromZero(distanceFromCurrentLinePivot * 1000.0);
+        vehicle.guidanceLineSteerAngle = (short)(steerAngleAB * 100);
     }
 
     //mf.setAngVel = 0.277777 * mf.avgSpeed * (Math.Tan(glm::toRadians(steerAngleAB))) / mf.vehicle.wheelbase;
