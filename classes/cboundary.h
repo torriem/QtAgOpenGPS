@@ -8,6 +8,7 @@
 #include <QSharedPointer>
 #include <QOpenGLBuffer>
 #include "cboundarylines.h"
+#include "btnenum.h"
 
 
 class QOpenGLFunctions;
@@ -72,7 +73,7 @@ public:
     void buildTurnLines(CFieldData &fd);
 
     //CHead.cs
-    void SetHydPosition(CVehicle &vehicle); //TODO sounds, p_239
+    void SetHydPosition(btnStates autoBtnState, CVehicle &vehicle); //TODO sounds, p_239
     void WhereAreToolCorners(CTool &tool);
     void WhereAreToolLookOnPoints(CVehicle &vehicle, CTool &tool);
     bool IsPointInsideHeadArea(Vec2 pt);

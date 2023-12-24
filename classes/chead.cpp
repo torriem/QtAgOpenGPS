@@ -4,16 +4,12 @@
 #include "vec2.h"
 #include "vec3.h"
 #include "glm.h"
-#include "glutils.h"
 #include "cvehicle.h"
 #include "ctool.h"
-#include "cheadlines.h"
-#include "common.h"
-#include "aogsettings.h"
 
-void CBoundary::SetHydPosition(CVehicle &vehicle)
+void CBoundary::SetHydPosition(btnStates autoBtnState, CVehicle &vehicle)
 {
-    if (vehicle.isHydLiftOn && vehicle.avgSpeed > 0.2 && mf.autoBtnState == btnStates::Auto)
+    if (vehicle.isHydLiftOn && vehicle.avgSpeed > 0.2 && autoBtnState == btnStates::Auto)
     {
         if (isToolInHeadland)
         {
@@ -87,8 +83,8 @@ void CBoundary::WhereAreToolLookOnPoints(CVehicle &vehicle, CTool &tool)
             double endHeight = (tool.lookAheadDistanceOnPixelsLeft + (mOn * pos)) * 0.1;
 
             isLookRightIn = IsPointInsideHeadArea(Vec2(
-                mf.section[j].rightPoint.easting + (sinAB * endHeight),
-                mf.section[j].rightPoint.northing + (cosAB * endHeight)));
+                tool.section[j].rightPoint.easting + (sinAB * endHeight),
+                tool.section[j].rightPoint.northing + (cosAB * endHeight)));
 
             tool.section[j].isLookOnInHeadland = !isLookLeftIn && !isLookRightIn;
         }
