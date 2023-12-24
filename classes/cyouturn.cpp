@@ -18,13 +18,25 @@
 CYouTurn::CYouTurn(QObject *parent) : QObject(parent)
 {
     //how far before or after boundary line should turn happen
-    //TODO: these settings
+    loadSettings();
+}
+
+void CYouTurn::loadSettings()
+{
+    uturnDistanceFromBoundary = property_set_youTurnDistanceFromBoundary;
+
+    //how far before or after boundary line should turn happen
+    youTurnStartOffset = property_set_youTurnExtensionLength;
+
+    rowSkipsWidth = property_set_youSkipWidth;
     setAlternateSkips();
 
+    youTurnRadius = property_set_youTurnRadius;
 
-    //youTurnRadius = Properties.Settings.Default.set_youTurnRadius;
-    //uTurnStyle = Properties.Settings.Default.set_uTurnStyle;
-    //uTurnSmoothing = Properties.Settings.Default.setAS_uTurnSmoothing;
+    uTurnStyle = property_set_uTurnStyle;
+
+    uTurnSmoothing = property_setAS_uTurnSmoothing;
+
 }
 
 //needs CABCurve, CBoundary, called from CYouTurn::buildCurvePatternYouTurn
@@ -62,7 +74,7 @@ bool CYouTurn::findCurveTurnPoints(const CABCurve &curve,
 
     for (int i = 0; i < bnd.bndList[turnNum].turnLine.count() - 2; i++)
     {
-        int res = getLineIntersection(
+        int res = glm::getLineIntersection(
             bnd.bndList[turnNum].turnLine[i].easting,
             bnd.bndList[turnNum].turnLine[i].northing,
             bnd.bndList[turnNum].turnLine[i + 1].easting,
@@ -126,8 +138,6 @@ int CYouTurn::getLineIntersection(double p0x, double p0y, double p1x, double p1y
 
 void CYouTurn::addSequenceLines(double head, Vec3 pivot)
 {
-    int youTurnStartOffset = property_set_youTurnExtensionLength;
-
     Vec3 pt;
     for (int a = 0; a < youTurnStartOffset*2; a++)
     {
@@ -172,11 +182,7 @@ bool CYouTurn::buildABLineDubinsYouTurn(CVehicle &vehicle,
                                         const CABLine &ABLine,
                                         bool isTurnRight)
 {
-    //double uturnDistanceFromBoundary = property_set_youTurnDistanceFromBoundary;
-    double youTurnRadius = property_set_youTurnRadius;
-    int uTurnStyle = property_set_uTurnStyle;
     double minTurningRadius = property_setVehicle_minTurningRadius;
-    int rowSkipsWidth = property_set_youSkipWidth;
     double tool_toolWidth = property_setVehicle_toolWidth;
     double tool_toolOverlap = property_setVehicle_toolOverlap;
     double tool_toolOffset = property_setVehicle_toolOffset;
@@ -192,7 +198,7 @@ bool CYouTurn::buildABLineDubinsYouTurn(CVehicle &vehicle,
             Vec3 onPurePoint(ABLine.rEastAB, ABLine.rNorthAB, 0);
 
             //how far are we from any turn boundary
-            bnd.findClosestTurnPoint(onPurePoint);
+            bnd.findClosestTurnPoint(ABLine, onPurePoint);
 
             //or did we lose the turnLine - we are on the highway cuz we left the outer/inner turn boundary
             if ((int)bnd.closestTurnPt.easting != -20000)
@@ -472,7 +478,7 @@ bool CYouTurn::buildABLineDubinsYouTurn(CVehicle &vehicle,
         Vec3 onPurePoint = Vec3(ABLine.rEastAB, ABLine.rNorthAB, 0);
 
         //how far are we from any turn boundary
-        bnd.findClosestTurnPoint(onPurePoint);
+        bnd.findClosestTurnPoint(ABLine,onPurePoint);
 
         //or did we lose the turnLine - we are on the highway cuz we left the outer/inner turn boundary
         if ((int)bnd.closestTurnPt.easting != -20000)
@@ -725,9 +731,7 @@ bool CYouTurn::buildCurveDubinsYouTurn(CVehicle &vehicle,
                                        const CABCurve &curve,
                                        bool isTurnRight, Vec3 pivotPos)
 {
-    double youTurnRadius = property_set_youTurnRadius;
     double minTurningRadius = property_setVehicle_minTurningRadius;
-    int rowSkipsWidth = property_set_youSkipWidth;
     double tool_toolWidth = property_setVehicle_toolWidth;
     double tool_toolOverlap = property_setVehicle_toolOverlap;
     double tool_toolOffset = property_setVehicle_toolOffset;
@@ -1001,9 +1005,6 @@ void CYouTurn::smoothYouTurn(int smPts)
 //called to initiate turn
 void CYouTurn::youTurnTrigger(CVehicle &vehicle, CABLine &ABLine, CABCurve &curve)
 {
-    int uTurnStyle = property_set_uTurnStyle;
-    int rowSkipsWidth = property_set_youSkipWidth;
-
     //trigger pulled
     isYouTurnTriggered = true;
 
@@ -1060,8 +1061,6 @@ void CYouTurn::completeYouTurn()
 
 void CYouTurn::setAlternateSkips()
 {
-    int rowSkipsWidth = property_set_youSkipWidth;
-
     rowSkipsWidth2 = rowSkipsWidth;
     turnSkips = rowSkipsWidth2 * 2 - 1;
     previousBigSkip = false;
@@ -1146,7 +1145,6 @@ void CYouTurn::buildManualYouTurn(CVehicle &vehicle, CABLine &ABLine, CABCurve &
                                   bool isTurnRight, bool isTurnButtonTriggered)
 {
     double minTurningRadius = property_setVehicle_minTurningRadius;
-    int rowSkipsWidth = property_set_youSkipWidth;
     double tool_toolWidth = property_setVehicle_toolWidth;
     double tool_toolOverlap = property_setVehicle_toolOverlap;
     double tool_toolOffset = property_setVehicle_toolOffset;
@@ -1224,10 +1222,8 @@ void CYouTurn::buildManualYouTurn(CVehicle &vehicle, CABLine &ABLine, CABCurve &
 //determine distance from youTurn guidance line
 bool CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
 {
-    int uTurnStyle = property_set_uTurnStyle;
     double maxSteerAngle = property_setVehicle_maxSteerAngle;
     double wheelbase = property_setVehicle_wheelbase;
-    double maxAngularVelocity = property_setVehicle_maxAngularVelocity;
 
     //grab a copy from main - the steer position
     double minDistA = 1000000, minDistB = 1000000;
@@ -1390,7 +1386,7 @@ bool CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
 
             //sharp turns on you turn.
             //update base on autosteer settings and distance from line
-            double goalPointDistance = 0.8 * vehicle.updateGoalPointDistance(pn);
+            double goalPointDistance = 0.8 * vehicle.updateGoalPointDistance();
 
             isHeadingSameWay = true;
             bool reverseHeading = !vehicle.isReverse;

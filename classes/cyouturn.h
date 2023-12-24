@@ -37,21 +37,19 @@ public:
     // Is the youturn button enabled?
     bool isYouTurnBtnOn;
 
-    ///The following application settings:
-    //bool isUsingDubinsTurn;
-    //int rowSkipsWidth = 1;
-    // distance from headland as offset where to start turn shape
-    //int youTurnStartOffset;
-    //guidance values
-    //double distanceFromCurrentLine, triggerDistanceOffset, geoFenceDistance, dxAB, dyAB;
+    double boundaryAngleOffPerpendicular, youTurnRadius;
 
-    double boundaryAngleOffPerpendicular;
-    //int uTurnSmoothing;
+    int rowSkipsWidth = 1, uTurnSmoothing;
+
     bool alternateSkips = false, previousBigSkip = true;
     int rowSkipsWidth2 = 3, turnSkips = 2;
 
+    /// <summary>  /// distance from headland as offset where to start turn shape /// </summary>
+    int youTurnStartOffset;
+
     //guidance values
     double distanceFromCurrentLine, uturnDistanceFromBoundary, dxAB, dyAB;
+
     double distanceFromCurrentLineSteer, distanceFromCurrentLinePivot;
     double steerAngleGu, rEastSteer, rNorthSteer, rEastPivot, rNorthPivot;
     double pivotCurvatureOffset, lastCurveDistance = 10000;
@@ -71,7 +69,8 @@ public:
 
     //for 3Pt turns - second turn
     QVector<Vec3> pt3ListSecondLine;
-    //int uTurnStyle = 0;
+
+    int uTurnStyle = 0;
 
     int pt3Phase = 0;
     Vec3 pt3TurnNewAB = Vec3(0, 0, 0);
@@ -91,6 +90,8 @@ public:
 
     //constructor
     explicit CYouTurn(QObject *parent = 0);
+
+    void loadSettings();
 
     //Finds the point where an AB Curve crosses the turn line
     bool findCurveTurnPoints(const CABCurve &curve, const CBoundary &bnd);
