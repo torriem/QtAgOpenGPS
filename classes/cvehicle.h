@@ -16,7 +16,6 @@ class CYouTurn;
 class CTool;
 class CBoundary;
 class CNMEA;
-class CHead;
 class CCamera;
 class CABCurve;
 class CABLine;
@@ -31,14 +30,43 @@ public:
     bool isSteerAxleAhead;
     bool isPivotBehindAntenna;
 
-    double treeSpacing;
+    double antennaHeight;
+    double antennaPivot;
+    double wheelbase;
+    double minTurningRadius;
+    double antennaOffset, panicStopSpeed;
+    int vehicleType;
+
+    //min vehicle speed allowed before turning shit off
+    double slowSpeedCutoff = 0;
+
+    //autosteer values
+    double goalPointLookAhead, goalPointLookAheadHold, goalPointLookAheadMult;
+
+    double stanleyDistanceErrorGain, stanleyHeadingErrorGain;
+    double minLookAheadDistance = 2.0;
+    double maxSteerAngle, maxSteerSpeed, minSteerSpeed;
+    double maxAngularVelocity;
+    double hydLiftLookAheadTime, trackWidth;
 
     double hydLiftLookAheadDistanceLeft, hydLiftLookAheadDistanceRight;
 
-    //used for super section off on
-    bool isSuperSectionAllowedOn;
-    bool areAllSectionBtnsOn = true;
+    bool isHydLiftOn;
+    double stanleyIntegralDistanceAwayTriggerAB, stanleyIntegralGainAB, purePursuitIntegralGain;
 
+    //flag for free drive window to control autosteer
+    bool isInFreeDriveMode;
+
+    //the trackbar angle for free drive
+    double driveFreeSteerAngle = 0;
+
+    double modeXTE, modeActualXTE = 0, modeActualHeadingError = 0;
+    int modeTime = 0;
+
+    double functionSpeedLimit;
+
+
+    //from pn or main form:
     double avgSpeed;//for average speed
     int ringCounter = 0;
 
@@ -77,14 +105,26 @@ public:
 
     double distancePivotToTurnLine;
 
-    double modeXTE, modeActualXTE = 0, modeActualHeadingError = 0;
+    int modeTimeCounter = 0;
+    double goalDistance = 0;
 
     //from Position.Designer.cs
     bool isReverse;
 
+
+
+    void loadSettings();
+
     explicit CVehicle(QObject *parent = 0);
-    double updateGoalPointDistance(CNMEA &pn);
-    void drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, const CCamera &camera, CBoundary &bnd, CHead &hd, const CContour &ct, const CABCurve &curve, const CABLine &ABLine);
+    double updateGoalPointDistance();
+    void drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection,
+                     double steerAngle,
+                     const CCamera &camera,
+                     const CTool &tool,
+                     CBoundary &bnd,
+                     const CContour &ct,
+                     const CABCurve &curve,
+                     const CABLine &ABLine);
 
 
 signals:
