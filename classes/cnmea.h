@@ -10,9 +10,6 @@
 #include "vec2.h"
 #include "glm.h"
 
-class CVehicle;
-
-
 class CNMEA : public QObject
 {
     Q_OBJECT

@@ -506,8 +506,6 @@ void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
     }
 }
 
-void CVehicle::onNewSpeed(double _speed)
-{
-    avgSpeed = _speed * 0.9 + avgSpeed * 0.1;
+void CVehicle::AverageTheSpeed(double newSpeed) {
+    avgSpeed = newSpeed * 0.75 + avgSpeed * 0.25;
 }
-

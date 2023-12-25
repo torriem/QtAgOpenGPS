@@ -127,11 +127,13 @@ public:
                      const CABLine &ABLine);
 
 
+
+
 signals:
     //void setLookAheadGoal(double);
 
 public slots:
-    void onNewSpeed(double);
+    void AverageTheSpeed(double newSpeed);
     //void settingsChanged(); //notify us that settings changed so buffers need to be redone.
 };
 
