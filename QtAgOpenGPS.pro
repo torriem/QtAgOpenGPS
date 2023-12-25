@@ -38,6 +38,7 @@ SOURCES += main.cpp\
     classes/cheadline.cpp \
     classes/cpatches.cpp \
     classes/cturn.cpp \
+    classes/cturnlines.cpp \
         formgps.cpp \
     classes/cabline.cpp \
     classes/vec2.cpp \

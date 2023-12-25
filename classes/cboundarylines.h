@@ -34,6 +34,7 @@ public:
     void reverseWinding();
     bool calculateFenceArea(int idx);
 
+    /* CTurnLines.cs*/
     void calculateTurnHeadings();
     void fixTurnLine(double totalHeadWidth, double spacing);
 
