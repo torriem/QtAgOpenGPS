@@ -17,45 +17,34 @@ class CSim : public QObject
     Q_OBJECT
 
 public:
-    CSim();
-
-    void CalculateNewPositionFromBearingDistance(double lat, double lng, double bearing, double distance);
-    void CalculateCheckSum(QString Sentence);
-    QString BuildGGA();
-    QString BuildVTG();
-    void DoSimTick(double _st);
-
-    double steerAngle;
-    double latitude, longitude;
     double altitude = 300;
 
-private:
-    QString sbHDT;
-    QString sbOGI;
-    // The entire string to send out
-
-
-    // GPS related properties
-    const double simLat = 35.990525;
-    const double simLon = 127.0197155;
-    QChar EW = 'W';
-    QChar NS = 'N';
-    double latDeg, latMinu, longDeg, longMinu, latNMEA, longNMEA;
-    double speed = 4.0, headingTrue, stepDistance = 0.05;
+    double latitude, longitude;
+    double headingTrue, stepDistance = 0.0, steerAngle, steerangleAve = 0.0;
     double steerAngleScrollBar = 0;
-    double degrees;
-    const int fixQuality = 4, sats = 12;
-    const double HDOP = 0.9;
 
-    // The checksum of an NMEA line
-    QString sumStr = "";
-    int counterForStar = 0;
+    bool isAccelForward, isAccelBack;
 
-    QDateTime time;
+    explicit CSim(QObject *parent = 0);
+
+    void loadSettings();
+
+    void CalculateNewPositionFromBearingDistance(double lat, double lng, double bearing, double distance);
+    void DoSimTick(double _st);
+
+private:
+
 signals:
-    void new_position(QByteArray nmea_data);
+    void setActualSteerAngle(double);
+    void newPosition(double vtgSpeed,
+                     double headingTrue,
+                     double latitude,
+                     double longitude, double hdop,
+                     double altitude,
+                     double satellitesTracked);
 
 public slots:
+    //TODO
     void setSimStepDistance(double);
 
 };
