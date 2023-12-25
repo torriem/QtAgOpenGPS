@@ -1,6 +1,7 @@
 #ifndef CWORLDGRID_H
 #define CWORLDGRID_H
 
+#include <QObject>
 #include <QMatrix4x4>
 #include <QOpenGLBuffer>
 #include <QOpenGLTexture>
@@ -11,8 +12,9 @@ class QOpenGLFunctions;
 class QOpenGLShaderProgram;
 class CCamera;
 
-class CWorldGrid
+class CWorldGrid: public QObject
 {
+    Q_OBJECT
 private:
     QOpenGLShaderProgram *fieldShader=0;
     QOpenGLBuffer fieldBuffer;
@@ -63,12 +65,14 @@ public:
     double Count = 30;
     bool isGeoMap = false;
 
-    CWorldGrid();
+    explicit CWorldGrid(QObject *parent = 0);
     ~CWorldGrid();
     void drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, bool isTextureOn, QColor fieldColor, CCamera &camera);
     void drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, double _gridZoom, QColor gridColor);
-    void checkZoomWorldGrid(double northing, double easting);
     void destroyGLBuffers();
+
+public slots:
+    void checkZoomWorldGrid(double northing, double easting);
 
 };
 

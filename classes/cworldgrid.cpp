@@ -16,7 +16,7 @@ struct SurfaceVertex {
     QVector2D textureCoord;
 };
 
-CWorldGrid::CWorldGrid()
+CWorldGrid::CWorldGrid(QObject *parent) : QObject(parent)
 {
     northingMaxGeo = 300;
     northingMinGeo = -300;
