@@ -183,7 +183,9 @@ FormGPS::FormGPS(QWidget *parent) :
     connect(&seq, SIGNAL(doYouTurnSequenceEvent(int,int)), this, SLOT(DoYouTurnSequenceEvent(int,int)));
     //connect(&seq, SIGNAL(setDistanceToolToTurnLine(double)) //unused
 
+    /* CSim main form connections */
     connect(&sim, SIGNAL(new_position(QByteArray)), this, SLOT(onSimNewPosition(QByteArray)));
+    connect(&sim, SIGNAL(setActualSteerAngle(double)), this, SLOT(onSimNewSteerAngle(double)));
 
 
 }

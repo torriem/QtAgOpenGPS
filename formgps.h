@@ -543,6 +543,7 @@ public:
     /**************************
      * UI/Qt object callbacks *
      **************************/
+
 public slots:
     /*******************
      * from FormGPS.cs *
@@ -639,7 +640,15 @@ public slots:
     /*
      * simulator
      */
-    void onSimNewPosition(QByteArray nmea_data);
+    void onSimNewPosition(double vtgSpeed,
+                     double headingTrue,
+                     double latitude,
+                     double longitude, double hdop,
+                     double altitude,
+                     double satellitesTracked);
+
+    void onSimNewSteerAngle(double steerAngleAve);
+
     void onSimTimerTimeout();
 
     /*

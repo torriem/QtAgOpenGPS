@@ -67,10 +67,10 @@ void CSim::DoSimTick(double _st)
     //Calculate the next Lat Long based on heading and distance
     CalculateNewPositionFromBearingDistance(glm::toRadians(latitude), glm::toRadians(longitude), headingTrue, stepDistance / 1000.0);
 
-    //This is done by main form slot
+    //This is all done by main form slot onSimNewPositon()
     //mf.pn.ConvertWGS84ToLocal(latitude, longitude, out mf.pn.fix.northing, out mf.pn.fix.easting);
 
-    headingTrue = glm::toDegrees(headingTrue);
+    //headingTrue = glm::toDegrees(headingTrue);
 
     //TODO this must be in the main form slot
     //mf.ahrs.imuHeading = mf.pn.headingTrue;

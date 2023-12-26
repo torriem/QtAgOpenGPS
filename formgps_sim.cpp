@@ -2,10 +2,39 @@
 #include "classes/csim.h"
 #include "qmlutil.h"
 
-void FormGPS::onSimNewPosition(QByteArray nmea_data) {
-    pn.rawBuffer.append(nmea_data);
+/* Callback for Simulator new position */
+void FormGPS::onSimNewPosition(double vtgSpeed,
+                     double headingTrue,
+                     double latitude,
+                     double longitude, double hdop,
+                     double altitude,
+                     double satellitesTracked)
+{
+
+    pn.vtgSpeed = vtgSpeed;
+
+    vehicle.AverageTheSpeed(vtgSpeed);
+
+    pn.headingTrue = pn.headingTrueDual = glm::toDegrees(headingTrue);
+    ahrs.imuHeading = pn.headingTrue;
+    if (ahrs.imuHeading > 360) ahrs.imuHeading -= 360;
+
+    pn.latitude = latitude;
+    pn.longitude = longitude;
+
+    pn.hdop = hdop;
+    pn.altitude = altitude;
+    pn.satellitesTracked = satellitesTracked;
+    sentenceCounter = 0;
+    UpdateFixPosition();
 }
 
+void FormGPS::onSimNewSteerAngle(double steerAngleAve)
+{
+    mc.actualSteerAngleDegrees = steerAngleAve;
+}
+
+/* iterate the simulator on a timer */
 void FormGPS::onSimTimerTimeout()
 {
     QObject *qmlobject = qmlItem(qml_root,"simSpeed");
@@ -14,18 +43,5 @@ void FormGPS::onSimTimerTimeout()
 
     qmlobject = qmlItem(qml_root, "simSteer");
     double steerAngle = (qmlobject->property("value").toReal() - 300) * 0.1;
-
-    //if a GPS is connected disable sim
-    if (!sp.isOpen())
-    {
-        if (isAutoSteerBtnOn && (vehicle.guidanceLineDistanceOff != 32000))
-            sim.DoSimTick(vehicle.guidanceLineSteerAngle * 0.01);
-        else if (recPath.isDrivingRecordedPath)
-            sim.DoSimTick(vehicle.guidanceLineSteerAngle * 0.01);
-        //else if (self.isSelfDriving) sim.DoSimTick(guidanceLineSteerAngle * 0.01);
-        else
-            //TODO: sim.DoSimTick(sim.steerAngleScrollBar);
-            sim.DoSimTick(steerAngle); //drive straight for now until UI
-    }
-
+    sim.DoSimTick(steerAngle); //drive straight for now until UI
 }
