@@ -21,7 +21,6 @@ public:
     int angVel;
 
     //torriem: these are in properties, not sure why they must be here too
-    /*
     //actual value in degrees
     double rollZero;
     //property_setIMU_rollZero
@@ -43,16 +42,13 @@ public:
     //property_setGPS_forwardComp
     //property_setGPS_reverseComp
     //property_setIMU_fusionWeight
-    */
 
     //flags for desired sources
     //Roll and heading from the IMU
     int correctionHeadingX16 = 9999, prevCorrectionHeadingX16 = 9999, rollX16 = 9999;
 
-    //is the auto steer in auto turn on mode or not
-    bool isAutoSteerAuto;
-
     explicit CAHRS(QObject *parent = 0);
+    void loadSettings();
 
 signals:
 

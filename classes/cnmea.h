@@ -26,6 +26,7 @@ public:
     double mPerDegreeLat, mPerDegreeLon;
 
     //our current fix
+    //moved to CVehicle
     Vec2 fix = Vec2(0, 0);
 
     Vec2 prefSpeedFix= Vec2(0, 0);
