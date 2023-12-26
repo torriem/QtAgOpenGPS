@@ -195,7 +195,7 @@ void FormGPS::setupGui()
     tmrWatchdog->start(50); //fire every 50ms.
 
     //SIM on
-    connect(&simTimer, SIGNAL(timeout()),this,SLOT(onSimTimerTimeout()));
+    connect(&timerSim, SIGNAL(timeout()),this,SLOT(onSimTimerTimeout()));
     if (SETTINGS_SIM_ON) {
         simTimer.start(100); //fire simulator every 200 ms.
         fixUpdateHz = 10;

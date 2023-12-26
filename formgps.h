@@ -32,20 +32,16 @@
 #include "cvehicle.h"
 #include "ctool.h"
 #include "cboundary.h"
-#include "cturn.h"
 #include "cabline.h"
 #include "ctram.h"
-#include "cmazegrid.h"
 #include "ccontour.h"
 #include "cabcurve.h"
 #include "cyouturn.h"
-#include "chead.h"
 #include "csequence.h"
 #include "cfielddata.h"
 #include "csim.h"
 #include "cahrs.h"
 #include "crecordedpath.h"
-#include "cgeofence.h"
 
 //forward declare classes referred to below, to break circular
 //references in the code
@@ -67,7 +63,7 @@ public:
     QObject *qml_root;
     QSignalMapper *sectionButtonsSignalMapper;
     QTimer *tmrWatchdog;
-    QTimer simTimer;
+    QTimer timerSim;
 
     /***************************
      * Qt and QML GUI elements *
@@ -227,8 +223,6 @@ public:
 
     CTram tram;
 
-    CMazeGrid mazeGrid;
-
     //Contour mode Instance
     //QScopedPointer<CContour> ct;
     CContour ct;
@@ -243,14 +237,11 @@ public:
     //boundary instance
     CBoundary bnd;
 
-    CTurn turn;
-    CHead hd;
     CSequence seq;
     CSim sim;
     CAHRS ahrs;
     CRecordedPath recPath;
     CFieldData fd;
-    CGeoFence gf;
 
     bool bootstrap_field = false;
 
@@ -262,7 +253,8 @@ public:
     double toLongitude;
 
     //very first fix to setup grid etc
-    bool isFirstFixPositionSet = false, isGPSPositionInitialized = false;
+    bool isFirstFixPositionSet = false, isGPSPositionInitialized = false, isFirstHeadingSet = false;
+    bool isReverse = false /*vehicle?*/, isSteerInReverse = true, isSuperSlow = false, isAutoSnaptoPivot = false;
 
     // autosteer variables for sending serial moved to CVehicle
     //short int guidanceLineDistanceOff, guidanceLineSteerAngle;
@@ -368,13 +360,15 @@ public:
 
     bool isBoundAlarming = false;
 
-    void updateFixPosition(); //process a new position
+    void UpdateFixPosition(); //process a new position
     void calculatePositionHeading(); // compute all headings and fixes
     void addBoundaryPoint();
     void addSectionOrContourPathPoints();
     void calculateSectionLookAhead(double northing, double easting, double cosHeading, double sinHeading);
     void initializeFirstFewGPSPositions();
     bool isInsideGeoFence();
+
+    void DoRemoteSwitches();
 
     /************************
      * SaveOpen.Designer.cs *
@@ -456,40 +450,25 @@ private:
     QUdpSocket *udpSocket = NULL;
 
 public:
+    QElapsedTimer udpWatch;
+    int udpWatchLimit = 70;
+    int udpWatchCounts = 0;
+
     bool isUDPServerOn = false;
 
-    void startUDPServer();
+    void StartLoopbackServer();
     void stopUDPServer();
 
-    void sendUDPMessage(uchar *msg);
+    void SendPgnToLoop(QByteArray byteData);
+    void DisableSim();
+    //void ReceiveFromAgIO(); // in slots below
+
 
    /**********************
      * OpenGL.Designer.cs *
      **********************/
-    /*
-    //Simple wrapper to draw primitives using lists of Vec3 or QVector3Ds
-    //with a single color.
-    void glDrawArraysColor(QOpenGLFunctions *gl, QMatrix4x4 mvp,
-                           GLenum operation, QColor &color,
-                           QOpenGLBuffer &vertexBuffer, GLenum glType,
-                           int count,
-                           float pointSize=1.0f);
-    //Simple wrapper to draw primitives using lists of vec3s or QVector3Ds
-    //with a color per vertex. Buffer format is 7 floats per vertice:
-    //x,y,z,r,g,b,a
-    void glDrawArraysColors(QOpenGLFunctions *gl, QMatrix4x4 mvp,
-                           GLenum operation,
-                           QOpenGLBuffer &vertexBuffer, GLenum glType,
-                           int count,
-                           float pointSize=1.0f);
+    int steerModuleConnectedCounter = 0;
 
-    //Buffer format is 5 floats per vertice:
-    //x,y,z,texX,texY
-    void glDrawArraysTexture(QOpenGLFunctions *gl, QMatrix4x4 mvp,
-                             GLenum operation,
-                             QOpenGLBuffer &vertexBuffer, GLenum glType,
-                             int count);
-    */
     void drawManUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
     void drawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
     void makeFlagMark(QOpenGLFunctions *gl);
@@ -640,13 +619,12 @@ public slots:
     void openGLControlBack_Draw();
     void openGLControlBack_Initialized();
 
+    /***
+     * UDPCOMM.Designer.cs
+     * formgps_udpcomm.cpp
+     ***/
+    void ReceiveFromAgIO(); // in slots below
 
-
-    /*
-     * from UDPComm.Designer.cs
-     */
-
-    void udpServerReadDatagrams();
 
     /*
      * From Position.Designer.cs
