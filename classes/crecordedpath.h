@@ -10,10 +10,7 @@
 class QOpenGLFunctions;
 class QMatrix4x4;
 class CVehicle;
-class CGeoFence;
-class CMazeGrid;
-class CNMEA;
-class CBoundary;
+class CYouTurn;
 
 class CRecPathPt
 {
@@ -46,17 +43,7 @@ class CRecordedPath : public QObject
     Q_OBJECT
 private:
     int A, B, C;
-
-    void GetDubinsPath(const CVehicle &vehicle,
-                       const CBoundary &bnd,
-                       CGeoFence &gf,
-                       CMazeGrid &mazeGrid,
-                       double minFieldX,
-                       double minFieldY,
-                       Vec3 goal);
-    void StanleyRecPath(CVehicle &vehicle, const CNMEA &pn, int ptCount);
-    void StanleyDubinsPath(CVehicle &vehicle, const CNMEA &pn, int ptCount);
-
+    int counter2;
 
 public:
     //the recorded path from driving around
@@ -69,29 +56,38 @@ public:
 
     int shuttleListCount;
 
-    QVector<Vec3> mazeList;
-
     //list of vec3 points of Dubins shortest path between 2 points - To be converted to RecPt
     QVector<Vec3> shortestDubinsList;
 
     //generated reference line
     Vec2 refPoint1 = Vec2(1, 1), refPoint2 = Vec2(2, 2);
 
-    double distanceFromRefLine, distanceFromCurrentLine, refLineSide = 1.0;
-    double abFixHeadingDelta, abHeading;
-    bool isABSameAsVehicleHeading = true, isOnRightSideCurrentLine = true;
+    double distanceFromRefLine, distanceFromCurrentLinePivot;
 
-    int lastPointFound = -1, currentPositonIndex;
+    int currentPositonIndex;
 
     //pure pursuit values
-    Vec3 steerAxlePosRP = Vec3(0, 0, 0);
+    Vec3 pivotAxlePosRP = Vec3(0, 0, 0);
 
     Vec3 homePos;
     Vec2 goalPointRP = Vec2(0, 0);
-    double steerAngleRP, rEastRP, rNorthRP;
+    double steerAngleRP, rEastRP, rNorthRP, ppRadiusRP;
+    Vec2 radiusPointRP = Vec2(0,0);
 
     bool isBtnFollowOn, isEndOfTheRecLine, isRecordOn;
-    bool isDrivingRecordedPath, isPausedDrivingRecordedPath, isFollowingDubinsToPath, isFollowingRecPath, isFollowingDubinsHome;
+    bool isDrivingRecordedPath, isFollowingDubinsToPath, isFollowingRecPath, isFollowingDubinsHome;
+
+    double pivotDistanceError, pivotDistanceErrorLast, pivotDerivative, pivotDerivativeSmoothed;
+
+    //derivative counters
+
+    double inty;
+    double steerAngleSmoothed, pivotErrorTotal;
+    double distSteerError, lastDistSteerError, derivativeDistError;
+
+    int resumeState;
+
+    int starPathIndx = 0;
 
     bool trig;
     double north;
@@ -99,19 +95,13 @@ public:
 
 
     explicit CRecordedPath(QObject *parent = 0);
-    bool StartDrivingRecordedPath(const CVehicle &vehicle,
-                                  const CBoundary &bnd,
-                                  CGeoFence &gf,
-                                  CMazeGrid &mazeGrid,
-                                  double minFieldX, double minFieldY);
-    void UpdatePosition(CVehicle &vehicle,
-                        const CBoundary &bnd,
-                        const CNMEA &pn,
-                        CGeoFence &gf,
-                        CMazeGrid &mazeGrid,
-                        double minFieldX,
-                        double minFieldY);
+    bool StartDrivingRecordedPath(CVehicle &vehicle);
+    void UpdatePosition(CVehicle &vehicle, const CYouTurn &yt, bool isAutoSteerBtnOn);
     void StopDrivingRecordedPath();
+    void GetDubinsPath(CVehicle &vehicle, Vec3 goal);
+    void PurePursuitRecPath(CVehicle &vehicle, int ptCount);
+    void PurePursuitDubins(CVehicle &vehicle, const CYouTurn &yt, bool isAutoSteerButtonOn, int ptCount);
+
     void drawRecordedLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
     void drawDubins(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
 
@@ -120,7 +110,8 @@ signals:
     void stoppedDriving();
     //void guidanceLineDistanceOff(int);
     //void guidanceLineSteerAngle(int);
-    void btnSectionSet(btnStates);
+    //void btnSectionSet(btnStates);
+    void turnOffSectionMasterAuto();
 
 public slots:
 };
