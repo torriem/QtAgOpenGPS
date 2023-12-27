@@ -88,12 +88,12 @@ public:
 
     explicit CABCurve(QObject *parent = 0);
 
-    void buildCurveCurrentList(Vec3 pivot,
+    void BuildCurveCurrentList(Vec3 pivot,
                                double secondsSinceStart,
                                const CVehicle &vehicle,
                                const CBoundary &bnd,
                                const CYouTurn &yt);
-    void getCurrentCurveLine(Vec3 pivot,
+    void GetCurrentCurveLine(Vec3 pivot,
                              Vec3 steer,
                              double secondsSinceStart,
                              bool isAutoSteerBtnOn,
@@ -106,7 +106,7 @@ public:
                              CNMEA &pn);
 
 
-    void drawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
+    void DrawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                    bool isFontOn,
                    const CVehicle &vehicle,
                    CYouTurn &yt, const CCamera &camera
@@ -114,18 +114,18 @@ public:
 
     //void drawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
 
-    void buildTram(CBoundary &bnd, CTram &tram);
-    void smoothAB(int smPts);
-    void calculateTurnHeadings();
-    void saveSmoothAsRefList();
-    void moveABCurve(double dist);
-    bool pointOnLine(Vec3 pt1, Vec3 pt2, Vec3 pt);
-    void addFirstLastPoints(QVector<Vec3> &xList, const CBoundary &bnd);
-    void resetCurveLine();
+    void BuildTram(CBoundary &bnd, CTram &tram);
+    void SmoothAB(int smPts);
+    void CalculateTurnHeadings();
+    void SaveSmoothAsRefList();
+    void MoveABCurve(double dist);
+    bool PointOnLine(Vec3 pt1, Vec3 pt2, Vec3 pt);
+    void AddFirstLastPoints(QVector<Vec3> &xList, const CBoundary &bnd);
+    void ResetCurveLine();
 
 
 signals:
-    void timedMessage(int timeout, QString title, QString message);
+    void TimedMessage(int timeout, QString title, QString message);
     void stopAutosteer();
 
 public slots:

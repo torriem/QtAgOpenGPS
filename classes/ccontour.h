@@ -62,20 +62,20 @@ public:
     bool isLocked = false;
 
     explicit CContour(QObject *parent = 0);
-    void setLockToLine();
-    void buildContourGuidanceLine(double secondsSinceStart, CVehicle &vehicle, Vec3 pivot);
-    void distanceFromContourLine(bool isAutoSteerBtnOn, CVehicle &vehicle, CYouTurn &yt, CAHRS &ahrs,  CNMEA &pn, Vec3 pivot, Vec3 steer);
-    void startContourLine();
-    void addPoint(Vec3 pivot);
-    void stopContourLine();
-    void buildFenceContours(CBoundary &bnd, double spacingInt);
-    void drawContourLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
-    void resetContour();
+    void SetLockToLine();
+    void BuildContourGuidanceLine(double secondsSinceStart, CVehicle &vehicle, Vec3 pivot);
+    void DistanceFromContourLine(bool isAutoSteerBtnOn, CVehicle &vehicle, CYouTurn &yt, CAHRS &ahrs,  CNMEA &pn, Vec3 pivot, Vec3 steer);
+    void StartContourLine();
+    void AddPoint(Vec3 pivot);
+    void StopContourLine(QVector<QVector<Vec3>> &contourSaveList);
+    void BuildFenceContours(CBoundary &bnd, double spacingInt, int patchCounter);
+    void DrawContourLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
+    void ResetContour();
 signals:
     //void guidanceLineDistanceOff(int);
     //void distanceDisplay(int);
     //void guidanceLineSteerAngle(int);
-    void timedMessage(int,QString,QString);
+    void TimedMessage(int,QString,QString);
 };
 
 #endif // CCONTOUR_H

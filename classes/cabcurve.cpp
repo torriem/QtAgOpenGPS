@@ -21,7 +21,7 @@ CABCurve::CABCurve(QObject *parent) : QObject(parent)
 {
 
 }
-void CABCurve::buildCurveCurrentList(Vec3 pivot,
+void CABCurve::BuildCurveCurrentList(Vec3 pivot,
                                      double secondsSinceStart,
                                      const CVehicle &vehicle,
                                      const CBoundary &bnd,
@@ -276,7 +276,7 @@ void CABCurve::buildCurveCurrentList(Vec3 pivot,
 
 }
 
-void CABCurve::getCurrentCurveLine(Vec3 pivot,
+void CABCurve::GetCurrentCurveLine(Vec3 pivot,
                                    Vec3 steer,
                                    double secondsSinceStart,
                                    bool isAutoSteerBtnOn,
@@ -297,7 +297,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
     //build new current ref line if required
     if (!isCurveValid || ((secondsSinceStart - lastSecond) > 0.66
                           && (!isAutoSteerBtnOn || steerSwitchHigh)))
-        buildCurveCurrentList(pivot,secondsSinceStart,vehicle,bnd,yt);
+        BuildCurveCurrentList(pivot,secondsSinceStart,vehicle,bnd,yt);
 
     double dist, dx, dz;
     double minDistA = 1000000, minDistB = 1000000;
@@ -319,7 +319,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
         }
         else if (property_setVehicle_isStanleyUsed)//Stanley
         {
-            gyd.StanleyGuidanceCurve(pivot, steer, curList, vehicle, *this, ahrs);
+            gyd.StanleyGuidanceCurve(pivot, steer, curList, isAutoSteerBtnOn, vehicle, *this, ahrs);
         }
         else// Pure Pursuit ------------------------------------------
         {
@@ -464,7 +464,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
                 {
                     if (glm::distance(goalPointCu, curList[(curList.count() - 1)]) < 0.5)
                     {
-                        emit timedMessage(2000,tr("Guidance Stopped"), tr("Past end of curve"));
+                        emit TimedMessage(2000,tr("Guidance Stopped"), tr("Past end of curve"));
                         emit stopAutosteer();
                     }
                 }
@@ -472,7 +472,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
                 {
                     if (glm::distance(goalPointCu, curList[0]) < 0.5)
                     {
-                        emit timedMessage(2000,tr("Guidance Stopped"), tr("Past end of curve"));
+                        emit TimedMessage(2000,tr("Guidance Stopped"), tr("Past end of curve"));
                         emit stopAutosteer();
                     }
                 }
@@ -532,7 +532,7 @@ void CABCurve::getCurrentCurveLine(Vec3 pivot,
     }
 }
 
-void CABCurve::drawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
+void CABCurve::DrawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                          bool isFontOn,
                          const CVehicle &vehicle,
                          CYouTurn &yt, const CCamera &camera)
@@ -631,7 +631,7 @@ void CABCurve::drawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
     }
 }
 
-void CABCurve::buildTram(CBoundary &bnd, CTram &tram)
+void CABCurve::BuildTram(CBoundary &bnd, CTram &tram)
 {
     double tool_halfWidth = ((double)property_setVehicle_toolWidth - (double)property_setVehicle_toolOverlap) / 2.0;
     //if all or bnd only then make outer loop pass
@@ -764,7 +764,7 @@ void CABCurve::buildTram(CBoundary &bnd, CTram &tram)
     }
 }
 
-void CABCurve::smoothAB(int smPts)
+void CABCurve::SmoothAB(int smPts)
 {
     //count the reference list of original curve
     int cnt = refList.count();
@@ -811,7 +811,7 @@ void CABCurve::smoothAB(int smPts)
     }
 }
 
-void CABCurve::calculateTurnHeadings()
+void CABCurve::CalculateTurnHeadings()
 {
     //to calc heading based on next and previous points to give an average heading.
     int cnt = refList.size();
@@ -832,7 +832,7 @@ void CABCurve::calculateTurnHeadings()
     }
 }
 
-void CABCurve::saveSmoothAsRefList()
+void CABCurve::SaveSmoothAsRefList()
 {
     //oops no smooth list generated
     int cnt = smooList.size();
@@ -853,7 +853,7 @@ void CABCurve::saveSmoothAsRefList()
     }
 }
 
-void CABCurve::moveABCurve(double dist)
+void CABCurve::MoveABCurve(double dist)
 {
     isCurveValid = false;
     lastSecond = 0;
@@ -873,7 +873,7 @@ void CABCurve::moveABCurve(double dist)
 
 }
 
-bool CABCurve::pointOnLine(Vec3 pt1, Vec3 pt2, Vec3 pt)
+bool CABCurve::PointOnLine(Vec3 pt1, Vec3 pt2, Vec3 pt)
 {
     Vec2 r(0, 0);
     if (pt1.northing == pt2.northing && pt1.easting == pt2.easting) { pt1.northing -= 0.00001; }
@@ -898,7 +898,7 @@ bool CABCurve::pointOnLine(Vec3 pt1, Vec3 pt2, Vec3 pt)
 
 }
 
-void CABCurve::addFirstLastPoints(QVector<Vec3> &xList,
+void CABCurve::AddFirstLastPoints(QVector<Vec3> &xList,
                                   const CBoundary &bnd)
 {
     int ptCnt = xList.count() - 1;
@@ -957,7 +957,7 @@ void CABCurve::addFirstLastPoints(QVector<Vec3> &xList,
     }
 }
 
-void CABCurve::resetCurveLine()
+void CABCurve::ResetCurveLine()
 {
     curList.clear();
     refList.clear();

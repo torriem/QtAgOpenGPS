@@ -21,9 +21,10 @@ CABLine::CABLine(QObject *parent) : QObject(parent)
 {
 }
 
-void CABLine::buildCurrentABLineList(Vec3 pivot,
+void CABLine::BuildCurrentABLineList(Vec3 pivot,
                                      double secondsSinceStart,
-                                     const CYouTurn &yt)
+                                     const CYouTurn &yt,
+                                     const CVehicle &vehicle)
 {
     double tool_width = property_setVehicle_toolWidth;
     double tool_overlap = property_setVehicle_toolOverlap;
@@ -41,7 +42,7 @@ void CABLine::buildCurrentABLineList(Vec3 pivot,
     //z2-z1
     dy = refABLineP2.northing - refABLineP1.northing;
 
-    distanceFromRefLine = ((dy * mf.guidanceLookPos.easting) - (dx * mf.guidanceLookPos.northing) +
+    distanceFromRefLine = ((dy * vehicle.guidanceLookPos.easting) - (dx * vehicle.guidanceLookPos.northing) +
                            (refABLineP2.easting * refABLineP1.northing) -
                            (refABLineP2.northing * refABLineP1.easting)) /
                           sqrt((dy * dy) + (dx * dx));
@@ -78,7 +79,7 @@ void CABLine::buildCurrentABLineList(Vec3 pivot,
 
 }
 
-void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer,
+void CABLine::GetCurrentABLine(Vec3 pivot, Vec3 steer,
                                double secondsSinceStart,
                                bool isAutoSteerBtnOn,
                                bool steerSwitchHigh,
@@ -96,7 +97,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer,
     //build new current ref line if required
     if (!isABValid || ((secondsSinceStart - lastSecond) > 0.66
                        && (!isAutoSteerBtnOn || steerSwitchHigh)))
-        buildCurrentABLineList(pivot,secondsSinceStart,yt);
+        BuildCurrentABLineList(pivot,secondsSinceStart,yt,vehicle);
 
     //Check uturn first
     if (yt.isYouTurnTriggered && yt.distanceFromYouTurnLine(vehicle,pn))//do the pure pursuit from youTurn
@@ -116,7 +117,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer,
 
     //Stanley
     else if (property_setVehicle_isStanleyUsed)
-        gyd.StanleyGuidanceABLine(currentABLineP1, currentABLineP2, pivot, steer, vehicle,*this, ahrs,yt);
+        gyd.StanleyGuidanceABLine(currentABLineP1, currentABLineP2, pivot, steer, isAutoSteerBtnOn, vehicle,*this, ahrs,yt);
 
     //Pure Pursuit
     else
@@ -282,7 +283,7 @@ void CABLine::getCurrentABLine(Vec3 pivot, Vec3 steer,
     //mf.setAngVel = glm::toDegrees(mf.setAngVel);
 }
 
-void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
+void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                           bool isFontOn,
                           CBoundary &bnd,
                           CYouTurn &yt,
@@ -460,7 +461,7 @@ void CABLine::drawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
     yt.drawYouTurn(gl,mvp);
 }
 
-void CABLine::buildTram(CBoundary &bnd, CTram &tram)
+void CABLine::BuildTram(CBoundary &bnd, CTram &tram)
 {
     double tramWidth = property_setTram_tramWidth;
     double tool_halfWidth = ((double)property_setVehicle_toolWidth - (double)property_setVehicle_toolOverlap) / 2.0;
@@ -567,7 +568,7 @@ void CABLine::buildTram(CBoundary &bnd, CTram &tram)
 }
 
 
-void CABLine::deleteAB() {
+void CABLine::DeleteAB() {
     refPoint1 = Vec2(0.0, 0.0);
     refPoint2 = Vec2(0.0, 1.0);
 
@@ -585,7 +586,7 @@ void CABLine::deleteAB() {
 }
 
 //called from Main form
-void CABLine::setABLineByBPoint(const CVehicle &vehicle)
+void CABLine::SetABLineByBPoint(const CVehicle &vehicle)
 {
     refPoint2.easting = vehicle.fixEasting;
     refPoint2.northing = vehicle.fixNorthing;
@@ -605,7 +606,7 @@ void CABLine::setABLineByBPoint(const CVehicle &vehicle)
     isABLineLoaded = true;
 }
 
-void CABLine::setABLineByHeading(double heading)
+void CABLine::SetABLineByHeading(double heading)
 {
     //heading is set in the AB Form
     refABLineP1.easting = refPoint1.easting - (sin(heading) * abLength);
@@ -621,7 +622,7 @@ void CABLine::setABLineByHeading(double heading)
     isABLineLoaded = true;
 }
 
-void CABLine::moveABLine(double dist)
+void CABLine::MoveABLine(double dist)
 {
     moveDistance += isHeadingSameWay ? dist : -dist;
 

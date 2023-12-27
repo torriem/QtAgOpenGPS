@@ -103,10 +103,11 @@ public:
 public:
     explicit CABLine(QObject *parent = 0);
 
-    void buildCurrentABLineList(Vec3 pivot,
+    void BuildCurrentABLineList(Vec3 pivot,
                                 double secondsSinceStart,
-                                const CYouTurn &yt);
-    void getCurrentABLine(Vec3 pivot, Vec3 steer,
+                                const CYouTurn &yt,
+                                const CVehicle &vehicle);
+    void GetCurrentABLine(Vec3 pivot, Vec3 steer,
                           double secondsSinceStart,
                           bool isAutoSteerBtnOn,
                           bool steerSwitchHigh,
@@ -115,21 +116,21 @@ public:
                           const CAHRS &ahrs,
                           CGuidance &gyd,
                           CNMEA &pn);
-    void drawABLines(QOpenGLFunctions *g, const QMatrix4x4 &mvp,
+    void DrawABLines(QOpenGLFunctions *g, const QMatrix4x4 &mvp,
                      bool isFontOn,
                      CBoundary &bnd,
                      CYouTurn &yt,
                      const CCamera &camera,
                      const CGuidance &gyd);
-    void buildTram(CBoundary &bnd, CTram &tram);
-    void deleteAB();
-    void setABLineByBPoint(const CVehicle &vehicle);
-    void setABLineByHeading(double heading); //do we need to pass in heading somewhere from the main form?
-    void moveABLine(double dist);
+    void BuildTram(CBoundary &bnd, CTram &tram);
+    void DeleteAB();
+    void SetABLineByBPoint(const CVehicle &vehicle);
+    void SetABLineByHeading(double heading); //do we need to pass in heading somewhere from the main form?
+    void MoveABLine(double dist);
 
 signals:
     void stopAutosteer();
-    void timedMessage(int,QString,QString);
+    void TimedMessage(int,QString,QString);
 };
 
 #endif // CABLINE_H

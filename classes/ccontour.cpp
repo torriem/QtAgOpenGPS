@@ -20,12 +20,12 @@ CContour::CContour(QObject *parent)
 
 }
 
-void CContour::setLockToLine()
+void CContour::SetLockToLine()
 {
     if (ctList.count() > 5) isLocked = !isLocked;
 }
 
-void CContour::buildContourGuidanceLine(double secondsSinceStart, CVehicle &vehicle, Vec3 pivot)
+void CContour::BuildContourGuidanceLine(double secondsSinceStart, CVehicle &vehicle, Vec3 pivot)
 {
     double tool_toolWidth = property_setVehicle_toolWidth;
     double tool_toolOverlap = property_setVehicle_toolOverlap;
@@ -284,7 +284,7 @@ void CContour::buildContourGuidanceLine(double secondsSinceStart, CVehicle &vehi
 
 }
 
-void CContour::distanceFromContourLine(bool isAutoSteerBtnOn,
+void CContour::DistanceFromContourLine(bool isAutoSteerBtnOn,
                                        CVehicle &vehicle,
                                        CYouTurn &yt,
                                        CAHRS &ahrs,
@@ -558,7 +558,7 @@ void CContour::distanceFromContourLine(bool isAutoSteerBtnOn,
 }
 
 //start stop and add points to list
-void CContour::startContourLine() {
+void CContour::StartContourLine() {
     qDebug() << "starting contour line.";
     //if (stripList.count() == 0)
     //{
@@ -581,7 +581,7 @@ void CContour::startContourLine() {
 }
 
 //Add current position to stripList
-void CContour::addPoint(Vec3 pivot) {
+void CContour::AddPoint(Vec3 pivot) {
     double tool_toolOffset = property_setVehicle_toolOffset;
 
     ptList.append(Vec3(pivot.easting + cos(pivot.heading) * tool_toolOffset,
@@ -590,14 +590,15 @@ void CContour::addPoint(Vec3 pivot) {
 }
 
 //End the strip
-void CContour::stopContourLine()
+void CContour::StopContourLine(QVector<QVector<Vec3>> &contourSaveList)
 {
     qDebug() << ptList.count() << "Stopping contour line.";
+
     //make sure its long enough to bother
     if (ptList.count() > 5)
     {
         //add the point list to the save list for appending to contour file
-        mf.contourSaveList.append(ptList);
+        contourSaveList.append(ptList);
     }
 
     //delete ptList
@@ -611,7 +612,7 @@ void CContour::stopContourLine()
 }
 
 //build contours for boundaries
-void CContour::buildFenceContours(CBoundary &bnd, double spacingInt)
+void CContour::BuildFenceContours(CBoundary &bnd, double spacingInt, int patchCounter)
 {
     double tool_toolWidth = property_setVehicle_toolWidth;
     double tool_toolOverlap = property_setVehicle_toolOverlap;
@@ -619,13 +620,13 @@ void CContour::buildFenceContours(CBoundary &bnd, double spacingInt)
     spacingInt *= 0.01;
     if (bnd.bndList.count() == 0)
     {
-        emit timedMessage(1500, tr("Boundary Contour Error"), tr("No Boundaries Made"));
+        emit TimedMessage(1500, tr("Boundary Contour Error"), tr("No Boundaries Made"));
         return;
     }
 
-    if (mf.patchCounter != 0)
+    if (patchCounter != 0)
     {
-        emit timedMessage(1500, tr("Section Control On"), tr("Turn Off Section Control"));
+        emit TimedMessage(1500, tr("Section Control On"), tr("Turn Off Section Control"));
         return;
     }
 
@@ -659,11 +660,11 @@ void CContour::buildFenceContours(CBoundary &bnd, double spacingInt)
         }
     }
 
-    emit timedMessage(1500, tr("Boundary Contour"), tr("Contour Path Created"));
+    emit TimedMessage(1500, tr("Boundary Contour"), tr("Contour Path Created"));
 }
 
 //draw the red follow me line
-void CContour::drawContourLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
+void CContour::DrawContourLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
 {
     double lineWidth = property_setDisplay_lineWidth;
     bool isStanleyUsed = property_setVehicle_isStanleyUsed;
@@ -730,7 +731,7 @@ void CContour::drawContourLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
 }
 
 //Reset the contour to zip
-void CContour::resetContour()
+void CContour::ResetContour()
 {
     stripList.clear();
     ptList.clear();
