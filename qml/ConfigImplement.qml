@@ -107,34 +107,34 @@ Item {
             rows:2
             columns: 2
             flow:Grid.TopToBottom
-                IconButtonColor{
+            IconButtonColor{
                 width:200
                 height:150
                 id: i3pt
-                    icon: "qrc:/images/ToolChkRear.png"
-                    isChecked: false
+                icon: "qrc:/images/ToolChkRear.png"
+                isChecked: false
             }
 
-                IconButtonColor{
+            IconButtonColor{
                 width:200
                 height:150
                 id: i3ptfront
-                    icon: "qrc:/images/ToolChkFront.png"
-                    isChecked: false
+                icon: "qrc:/images/ToolChkFront.png"
+                isChecked: false
             }
-                IconButtonColor{
+            IconButtonColor{
                 width:200
                 height:150
                 id: itrailed
-                    icon: "qrc:/images/ToolChkTrailing.png"
-                    isChecked: false
+                icon: "qrc:/images/ToolChkTrailing.png"
+                isChecked: false
             }
-                IconButtonColor{
+            IconButtonColor{
                 width:200
                 height:150
                 id: iTBT
-                    icon: "qrc:/images/ToolChkTBT.png"
-                    isChecked: false
+                icon: "qrc:/images/ToolChkTBT.png"
+                isChecked: false
             }
         }
 
@@ -297,88 +297,37 @@ Item {
                 anchors.left: parent.left
                 width: childrenRect.width
                 anchors.margins: 15
-                Button{
+                IconButtonTextBeside{
+                    icon.source: "qrc:/images/HydraulicLiftOff.png"
                     objectName: "btnWorkSwitch"
-                    background: Rectangle{
-                        color: parent.down ? "green" : "white"
-                        border.color: "black"
-                        implicitWidth: 300
-                        implicitHeight: 90
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: workSwitchbuttonimage.right
-                            text: qsTr("Work Switch")
-                        }
-
-                        Image {
-                            id: workSwitchbuttonimage
-                            anchors.left: parent.left
-                            anchors.top: parent.top
-                            width: parent.height
-                            height: parent.height
-                            source: "qrc:/images/HydraulicLiftOff.png"
-                        }
-                    }
+                    isChecked: false
+                    text: qsTr("Work Switch")
                 }
-
-                Button{
+                IconButtonTextBeside{
+                    icon.source: "qrc:/images/ManualOff.png"
                     objectName: "btnWorkSwitchManual"
-                    background: Rectangle{
-                        color: parent.down ? "green" : "white"
-                        border.color: "black"
-                        implicitHeight: 90
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: manualSectionsbuttonimage.right
-                            text: qsTr("Manual Sections")
-                        }
-
-                        Image {
-                            id: manualSectionsbuttonimage
-                            anchors.left: parent.left
-                            anchors.top: parent.top
-                            width: parent.height
-                            height: parent.height
-                            source: "qrc:/images/ManualOff.png"
-                        }
-                    }
+                    isChecked: false
+                    text: qsTr("Manual Sections")
                 }
-                Button{
+
+                IconButtonTextBeside{
                     objectName: "btnWorkSwitchAuto"
-                    background: Rectangle{
-                        color: parent.down ? "green" : "white"
-                        border.color: "black"
-                        implicitWidth: 300
-                        implicitHeight: 90
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: autoSectionsbuttonimage.right
-                            text: qsTr("Auto Sections")
-                        }
-
-                        Image {
-                            id: autoSectionsbuttonimage
-                            anchors.left: parent.left
-                            anchors.top: parent.top
-                            width: parent.height
-                            height: parent.height
-                            source: "qrc:/images/SectionMasterOff.png"
-                        }
-                    }
+                    icon.source: "qrc:/images/SectionMasterOff.png"
+                    isChecked: false
+                    text: qsTr("Auto Sections")
                 }
-                Button{
+                IconButton{
+                    implicitWidth: 270
+                    implicitHeight: 80
+                    border: 1
+                    id: switchStateButton
                     objectName: "workSwitchstatebutton"
-                    background: Rectangle{
-                        color: parent.down ? "green" : "white"
-                        border.color: "black"
-                        implicitWidth: 300
-                        implicitHeight: 90
-                        Image {
-                            id: workSwitchStateImage
-                            anchors.fill: parent
-                            source: "qrc:/images/SwitchActiveClosed.png"
-                        }
-                    }
+                    isChecked: false
+                    icon.source: "qrc:/images/SwitchActiveClosed.png"
+                    color3: "white"
+                    colorChecked1: "green"
+                    colorChecked2: "green"
+                    colorChecked3: "green"
                 }
             }
         }
@@ -403,75 +352,23 @@ Item {
                 width: childrenRect.width
                 anchors.right: parent.right
                 anchors.margins: 15
-                Button{
+                IconButtonTextBeside{
                     objectName: "btnSteerSwitch"
-                    background: Rectangle{
-                        color: parent.down ? "green" : "white"
-                        border.color: "black"
-                        implicitWidth: 300
-                        implicitHeight: 90
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: steerSwitchbuttonimage.right
-                            text: qsTr("Steer Switch")
-                        }
-
-                        Image {
-                            id: steerSwitchbuttonimage
-                            anchors.left: parent.left
-                            anchors.top: parent.top
-                            width: parent.height
-                            height: parent.height
-                            source: "qrc:/images/AutoSteerOff.png"
-                        }
-                    }
+                    isChecked: false
+                    text: qsTr("Steer Switch")
+                    icon.source: "qrc:/images/AutoSteerOff.png"
                 }
-
-                Button{
+                IconButtonTextBeside{
                     objectName: "btnSteerSwitchManual"
-                    background: Rectangle{
-                        color: parent.down ? "green" : "white"
-                        border.color: "black"
-                        implicitWidth: 300
-                        implicitHeight: 90
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: steermanualSectionsbuttonimage.right
-                            text: qsTr("Manual Sections")
-                        }
-
-                        Image {
-                            id: steermanualSectionsbuttonimage
-                            anchors.left: parent.left
-                            anchors.top: parent.top
-                            width: parent.height
-                            height: parent.height
-                            source: "qrc:/images/ManualOff.png"
-                        }
-                    }
+                    isChecked: false
+                    text: qsTr("Manual Sections")
+                    icon.source: "qrc:/images/ManualOff.png"
                 }
-                Button{
+                IconButtonTextBeside{
                     objectName: "btnSteerSwitchAuto"
-                    background: Rectangle{
-                        color: parent.down ? "green" : "white"
-                        border.color: "black"
-                        implicitWidth: 300
-                        implicitHeight: 90
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: steerautoSectionsbuttonimage.right
-                            text: qsTr("Auto Sections")
-                        }
-
-                        Image {
-                            id: steerautoSectionsbuttonimage
-                            anchors.left: parent.left
-                            anchors.top: parent.top
-                            width: parent.height
-                            height: parent.height
-                            source: "qrc:/images/SectionMasterOff.png"
-                        }
-                    }
+                    isChecked: false
+                    text: qsTr("Auto Sections")
+                    icon.source: "qrc:/images/SectionMasterOff.png"
                 }
             }
         }
