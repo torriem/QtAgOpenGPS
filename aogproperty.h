@@ -16,6 +16,7 @@ public:
     AOGProperty(const QString key, const QVariant &defaultvalue): key(key), default_value(defaultvalue) {}
 
     operator int() { return settings.value(key,default_value).toInt(); }
+    operator char() { return (char)(settings.value(key,default_value).toInt()); }
     operator double() { return settings.value(key,default_value).toDouble(); }
     operator QString() { return settings.value(key,default_value).toString(); }
     operator bool() { return settings.value(key,default_value).toBool(); }
