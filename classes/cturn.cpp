@@ -105,7 +105,7 @@ void CBoundary::BuildTurnLines(CFieldData &fd)
 {
     if (bndList.count() == 0)
     {
-        emit TimedMessageBox(1500, " No Boundaries", "No Turn Lines Made");
+        emit TimedMessage(1500, " No Boundaries", "No Turn Lines Made");
         return;
     }
 

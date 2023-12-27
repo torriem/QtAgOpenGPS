@@ -75,7 +75,6 @@ SOURCES += main.cpp\
     classes/cfielddata.cpp \
     classes/cabcurve.cpp \
     classes/csim.cpp \
-    classes/cpointdata.cpp \
     classes/crecordedpath.cpp \
     classes/cdubins.cpp \
     formgps_saveopen.cpp
@@ -116,7 +115,6 @@ HEADERS  += formgps.h \
     classes/cfielddata.h \
     classes/cabcurve.h \
     classes/csim.h \
-    classes/cpointdata.h \
     classes/crecordedpath.h \
     classes/cdubins.h
 

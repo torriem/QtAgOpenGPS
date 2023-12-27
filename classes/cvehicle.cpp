@@ -108,6 +108,7 @@ double CVehicle::UpdateGoalPointDistance()
 void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
                            QMatrix4x4 projection,
                            double steerAngle,
+                           bool isFirstHeadingSet,
                            const CCamera &camera,
                            const CTool &tool,
                            CBoundary &bnd,
@@ -132,7 +133,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
 
     float vehicleOpacity = 1.0f; //TODO: mf.vehicleOpacity
 
-    if (mf.isFirstHeadingSet && !tool.isToolFrontFixed)
+    if (isFirstHeadingSet && !tool.isToolFrontFixed)
     {
         if (!tool.isToolRearFixed)
         {
@@ -152,16 +153,16 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
         {
             //draw the rigid hitch
             color.fromRgbF(0, 0, 0);
-            gldraw.append(QVector3D(-0.35, mf.tool.hitchLength, 0));
+            gldraw.append(QVector3D(-0.35, tool.hitchLength, 0));
             gldraw.append(QVector3D(-0.350, 0, 0));
-            gldraw.append(QVector3D(0.35, mf.tool.hitchLength, 0));
+            gldraw.append(QVector3D(0.35, tool.hitchLength, 0));
             gldraw.append(QVector3D(0.350, 0, 0));
             gldraw.draw(gl,mvp,color,GL_LINES,4);
 
             color.fromRgbF(1.237f, 0.037f, 0.0397f);
-            gldraw.append(QVector3D(-0.35, mf.tool.hitchLength, 0));
+            gldraw.append(QVector3D(-0.35, tool.hitchLength, 0));
             gldraw.append(QVector3D(-0.35, 0, 0));
-            gldraw.append(QVector3D(0.35, mf.tool.hitchLength, 0));
+            gldraw.append(QVector3D(0.35, tool.hitchLength, 0));
             gldraw.append(QVector3D(0.35, 0, 0));
             gldraw.draw(gl,mvp,color,GL_LINES,1);
         }
@@ -169,7 +170,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
 
     //draw the vehicle Body
 
-    if (!mf.isFirstHeadingSet)
+    if (!isFirstHeadingSet)
     {
 
         //using texture 14, Textures::QUESTION_MARK
@@ -182,7 +183,8 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
     }
 
     //3 vehicle types  tractor=0 harvestor=1 4wd=2
-    if (mf.isVehicleImage)
+    if (
+        property_setDisplay_isVehicleImage)
     {
         if (vehicleType == 0)
         {
@@ -361,7 +363,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
 
     }
 
-    if (camera.camSetDistance > -75 && mf.isFirstHeadingSet)
+    if (camera.camSetDistance > -75 && isFirstHeadingSet)
     {
         //draw the bright antenna dot
         gldraw.clear();
@@ -416,7 +418,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
 
     //Svenn Arrow
 
-    if (mf.isSvennArrowOn && camera.camSetDistance > -1000)
+    if (property_setDisplay_isSvennArrowOn && camera.camSetDistance > -1000)
     {
         //double offs = mf.curve.distanceFromCurrentLinePivot * 0.3;
         double svennDist = camera.camSetDistance * -0.07;

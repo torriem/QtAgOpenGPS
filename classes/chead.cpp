@@ -16,7 +16,7 @@ void CBoundary::SetHydPosition(btnStates autoBtnState, CPGN_EF &p_239, CVehicle 
         {
             p_239.pgn[p_239.hydLift] = 2;
             //TODO: implement sounds
-            emit soundsHydLiftChange(isToolInHeadland);
+            emit soundHydLiftChange(isToolInHeadland);
             /*
             if (mf.sounds.isHydLiftChange != isToolInHeadland)
             {
@@ -29,7 +29,7 @@ void CBoundary::SetHydPosition(btnStates autoBtnState, CPGN_EF &p_239, CVehicle 
         {
             p_239.pgn[p_239.hydLift] = 1;
             //TODO: implement sounds
-            emit soundsHydLiftChange(isToolInHeadland);
+            emit soundHydLiftChange(isToolInHeadland);
             /*
             if (mf.sounds.isHydLiftChange != isToolInHeadland)
             {

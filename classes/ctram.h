@@ -4,7 +4,6 @@
 #include <QVector>
 #include <QMatrix4x4>
 #include "vec2.h"
-#include "vec3.h"
 
 class CBoundary;
 class QOpenGLFunctions;

@@ -33,7 +33,7 @@ void CCamera::SetWorldCam(QMatrix4x4 &modelview,
     modelview.rotate(camPitch, 1.0, 0, 0);
 
     //pan if set
-    modelview.Translate(panX, panY, 0);
+    modelview.translate(panX, panY, 0);
 
     //following game style or N fixed cam
     if(camFollowing) {

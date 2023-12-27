@@ -116,6 +116,7 @@ public:
     double UpdateGoalPointDistance();
     void DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection,
                      double steerAngle,
+                     bool isFirstHeadingSet,
                      const CCamera &camera,
                      const CTool &tool,
                      CBoundary &bnd,

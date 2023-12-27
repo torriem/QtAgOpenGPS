@@ -20,6 +20,6 @@ void CAHRS::loadSettings()
     //the factor for fusion of GPS and IMU
     forwardComp = property_setGPS_forwardComp;
     reverseComp = property_setGPS_reverseComp;
-    fusionWeight = property_setIMU_fusionWeight;
+    fusionWeight = property_setIMU_fusionWeight2;
 
 }
