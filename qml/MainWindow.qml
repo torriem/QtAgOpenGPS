@@ -342,6 +342,7 @@ Window {
                         text: "Tram Lines"
                         icon.source: "qrc:/images/TramLines.png"
                         width: 300
+                        onClicked: tramLinesEditor.visible = true
                     }
                     IconButtonTextBeside{
                         text: "Recorded Path"
@@ -1015,6 +1016,14 @@ Window {
                 objectName: "abLinePicker"
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
+                visible: false
+            }
+            TramLinesEditor{
+                id: tramLinesEditor
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.rightMargin: 150
+                anchors.topMargin: 50
                 visible: false
             }
 
