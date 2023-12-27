@@ -19,6 +19,7 @@ class CYouTurn;
 class CModuleComm;
 class CFieldData;
 class CTool;
+class CPGN_EF;
 
 class CBoundary
 {
@@ -73,7 +74,7 @@ public:
     void buildTurnLines(CFieldData &fd);
 
     //CHead.cs
-    void SetHydPosition(btnStates autoBtnState, CVehicle &vehicle); //TODO sounds, p_239
+    void SetHydPosition(btnStates autoBtnState, CPGN_EF &p_239, CVehicle &vehicle); //TODO sounds, p_239
     void WhereAreToolCorners(CTool &tool);
     void WhereAreToolLookOnPoints(CVehicle &vehicle, CTool &tool);
     bool IsPointInsideHeadArea(Vec2 pt);

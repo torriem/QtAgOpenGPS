@@ -6,28 +6,35 @@
 #include "glm.h"
 #include "cvehicle.h"
 #include "ctool.h"
+#include "cpgn.h"
 
-void CBoundary::SetHydPosition(btnStates autoBtnState, CVehicle &vehicle)
+void CBoundary::SetHydPosition(btnStates autoBtnState, CPGN_EF &p_239, CVehicle &vehicle)
 {
     if (vehicle.isHydLiftOn && vehicle.avgSpeed > 0.2 && autoBtnState == btnStates::Auto)
     {
         if (isToolInHeadland)
         {
-            mf.p_239.pgn[mf.p_239.hydLift] = 2;
+            p_239.pgn[p_239.hydLift] = 2;
+            //TODO: implement sounds
+            /*
             if (mf.sounds.isHydLiftChange != isToolInHeadland)
             {
                 if (mf.sounds.isHydLiftSoundOn) mf.sounds.sndHydLiftUp.Play();
                 mf.sounds.isHydLiftChange = isToolInHeadland;
             }
+            */
         }
         else
         {
-            mf.p_239.pgn[mf.p_239.hydLift] = 1;
+            p_239.pgn[p_239.hydLift] = 1;
+            //TODO: implement sounds
+            /*
             if (mf.sounds.isHydLiftChange != isToolInHeadland)
             {
                 if (mf.sounds.isHydLiftSoundOn) mf.sounds.sndHydLiftDn.Play();
                 mf.sounds.isHydLiftChange = isToolInHeadland;
             }
+            */
         }
     }
 }

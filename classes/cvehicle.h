@@ -86,9 +86,6 @@ public:
     //Current fix positions
     double fixEasting = 0.0;
     double fixNorthing = 3.0;
-    double fixZ = 0.0;
-    double speed = 0.0;
-    double altitude = 0.0;
 
     // autosteer variables for sending serial
     short int guidanceLineDistanceOff, guidanceLineSteerAngle;
