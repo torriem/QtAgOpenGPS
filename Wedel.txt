@@ -25,3 +25,5 @@ They need to open if the AB Line is active, and the line button is clicked
 And need to catch up the UI to Brian's latest.
 
 And add AgIO
+
+Really need to figure out how to change icons to grayscale, when they aren't needed/wanted

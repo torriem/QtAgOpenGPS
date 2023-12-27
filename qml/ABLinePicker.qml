@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.9
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
 import Qt.labs.folderlistmodel 2.2
@@ -104,6 +104,7 @@ Item {
                 IconButtonTransparent{
                     objectName: "btnLineAdd"
                     icon.source: "qrc:/images/AddNew.png"
+                    onClicked: abSetter.visible = true
                 }
                 IconButtonTransparent{
                     objectName: "btnLineLoadFromKML"
@@ -119,9 +120,139 @@ Item {
             anchors.left: picker.left
             z: 1
         }
+        Rectangle{
+            id: abSetter
+            anchors.left: parent.left
+            anchors.top: parent.top
+            width: 300
+            height: 400
+            color: "lightgray"
+            border.width: 1
+            border.color: "black"
+            z: 1
+            visible: false
+            Rectangle{
+                id: settertopLine
+                color: "white"
+                height: 30
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                Text{
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    text: line_Name.title
+                    /*font.pixelsize: 15
+            anchors.leftMargin: 5*/
+                }
+
+                Button{
+                    id: lineHelp
+                    objectName: "lineHelp"
+                    height: parent.height
+                    width: parent.height * 2
+                    text: "?"
+                    //font.pixelsize: 15
+                    anchors.right: close.left
+                    anchors.rightMargin: 10
+                    anchors.verticalCenter: parent.verticalCenter
+                    background: Rectangle{color:"white"}
+                }
+                Button{
+                    id: setterclose
+                    height: parent.height
+                    width: parent.height * 2
+                    text: "×"
+                    //font.pixelSize: 15
+                    anchors.right: parent.right
+                    anchors.rightMargin: 2
+                    anchors.verticalCenter: parent.verticalCenter
+                    background: Rectangle{color: "white"}
+                }
+            }
+            IconButtonTransparent{
+                objectName: "a"
+                id: a
+                anchors.top: settertopLine.bottom
+                anchors.left: parent.left
+                anchors.margins: 5
+                isChecked: false
+                icon.source: "qrc:/images/LetterABlue.png"
+            }
+            IconButtonTransparent{
+                objectName: "b"
+                anchors.top: settertopLine.bottom
+                anchors.right: parent.right
+                anchors.margins: 5
+                isChecked: true
+                icon.source: "qrc:/images/LetterBBlue.png"
+            }
+            Rectangle{
+                    id: headingTextInput
+                    anchors.topMargin: 20
+                anchors.top: a.bottom
+                height: 50
+                width: parent.width -50
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: "white"
+                border.color: "gray"
+                border.width: 1
+                TextInput {
+                    objectName: "heading"
+                    anchors.fill: parent
+                    validator: RegExpValidator {
+                        regExp: /(\d{1,3})([.,]\d{1,5})?$/
+                    }
+                }
+            }
+           IconButtonTransparent{
+               id: fancyEditor
+               anchors.top: headingTextInput.bottom
+               anchors.topMargin: 20
+               anchors.horizontalCenter: parent.horizontalCenter
+               icon.source: "qrc:/images/FileEditName.png"
+           }
+
+           IconButtonTransparent{
+               objectName: "btnCancel"
+               anchors.bottom: parent.bottom
+               anchors.left: parent.left
+               anchors.margins: 20
+               icon.source: "qrc:/images/Cancel64.png"
+               onClicked:{
+                   parent.visible = false
+               }
+           }
+           IconButtonTransparent{
+               objectName: "btnOk"
+               anchors.bottom: parent.bottom
+               anchors.right: parent.right
+               anchors.margins: 20
+               icon.source: "qrc:/images/OK64.png"
+               onClicked: newLineName.visible = true
+           }
+           LineName{
+               id: newLineName
+               objectName: "newLineName"
+               anchors.top: parent.top
+               anchors.left: parent.left
+               title: "AB Line"
+               visible: false
+           }
+        }
 
         LineName{
             id: copyLineName
+            objectName: "copyLineName"
+            anchors.top:parent.top
+            anchors.left: parent.left
+            title: "AB Line"
+            visible: false
+            z: 2
+        }
+        LineName{
+            id: editLineName
+            objectName: "editLineName"
             anchors.top:parent.top
             anchors.left: parent.left
             title: "AB Line"
