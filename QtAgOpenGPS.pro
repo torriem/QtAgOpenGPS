@@ -78,7 +78,6 @@ SOURCES += main.cpp\
     classes/cpointdata.cpp \
     classes/crecordedpath.cpp \
     classes/cdubins.cpp \
-    classes/csequence.cpp \
     formgps_saveopen.cpp
 
 HEADERS  += formgps.h \
@@ -119,8 +118,7 @@ HEADERS  += formgps.h \
     classes/csim.h \
     classes/cpointdata.h \
     classes/crecordedpath.h \
-    classes/cdubins.h \
-    classes/csequence.h
+    classes/cdubins.h
 
 RESOURCES += \
     agopengps.qrc
