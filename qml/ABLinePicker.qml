@@ -153,7 +153,7 @@ Item {
                     width: parent.height * 2
                     text: "?"
                     //font.pixelsize: 15
-                    anchors.right: close.left
+                    anchors.right: setterclose.left
                     anchors.rightMargin: 10
                     anchors.verticalCenter: parent.verticalCenter
                     background: Rectangle{color:"white"}

@@ -198,8 +198,24 @@ Window {
                     objectName: "btnfileMenu"
                     buttonText: qsTr("FileMenu")
                     icon.source: "qrc:/images/fileMenu.png"
-
+                    onClicked: fileMenu.popup()
                 }
+                        Menu{
+                        id: fileMenu
+                        MenuItem{ text: "Languages"}
+                        MenuItem{ text: "Directories"}
+                        MenuItem{ text: "Colors"}
+                        MenuItem{ text: "Section Colors"}
+                        MenuItem{ text: "Top Field View"}
+                        MenuItem{ text: "Enter Sim Coords"}
+                        MenuItem{ text: "Simulator On"}
+                        MenuItem{ text: "Reset All"}
+                        MenuItem{ text: "HotKeys"}
+                        MenuItem{ text: "About..."}
+                        MenuItem{ text: "Help"}
+                        closePolicy: Popup.CloseOnPressOutsideParent
+                    }
+
                 IconButtonText {
                     id: btnAcres
                     objectName: "btnAcres"
@@ -297,6 +313,43 @@ Window {
                         toggle_fieldmenu();
                     }
                 }
+                IconButtonText{
+                    id: btnFieldTools
+                    objectName: "btnFieldTools"
+                    buttonText: qsTr("Field Tools")
+                    icon.source: "qrc:/images/FieldTools.png"
+                    onClicked: fieldTools.popup()
+                }
+                Menu{
+                    id: fieldTools
+                    width: 300
+                    IconButtonTextBeside{
+                        text: "Boundary"
+                        icon.source: "qrc:/images/MakeBoundary.png"
+                        width: 300
+                    }
+                    IconButtonTextBeside{
+                        text: "Headland"
+                        icon.source: "qrc:/images/HeadlandMenu.png"
+                        width: 300
+                    }
+                    IconButtonTextBeside{
+                        text: "Headland (Build)"
+                        icon.source: "qrc:/images/Headache.png"
+                        width: 300
+                    }
+                    IconButtonTextBeside{
+                        text: "Tram Lines"
+                        icon.source: "qrc:/images/TramLines.png"
+                        width: 300
+                    }
+                    IconButtonTextBeside{
+                        text: "Recorded Path"
+                        icon.source: "qrc:/images/RecPath.png"
+                        width: 300
+                    }
+                }
+
                 IconButtonText {
                     id: btnAgIO
                     objectName: "btnAgIO"
@@ -332,19 +385,6 @@ Window {
                         //toggle_steermenu();
                     }
                 }
-
-                IconButtonText {
-                    id: btnautoSteerMode
-                    objectName: "btnAutosteerMode"
-                    isChecked: false
-                    checkable: true
-                    buttonText: qsTr("Steer Mode")
-                    icon.source: "qrc:/images/ModeStanley.png"
-                    iconChecked: "qrc:/images/ModePurePursuit"
-                }
-
-
-
             }
             //------------------------------------------------------------------------------------------right
 
@@ -924,9 +964,10 @@ Window {
             FieldMenu {
                 id: fieldMenu
                 objectName: "slideoutMenu"
+                height: 700
+                width:1024
                 anchors.top: parent.top
-                anchors.topMargin: 20
-                anchors.left: leftColumn.right
+                anchors.horizontalCenter: parent.horizontalCenter
                 anchors.leftMargin: 15
                 visible: false
 

@@ -453,5 +453,11 @@
         <file>qml/ABLinePicker.qml</file>
         <file>qml/ABCurvePicker.qml</file>
         <file>qml/LineName.qml</file>
+        <file>qml/IconButtonTextBeside.qml</file>
+        <file>images/FieldTools.png</file>
+        <file>images/Headache.png</file>
+        <file>images/FileClose.png</file>
+        <file>images/FileExisting.png</file>
+        <file>images/ISOXML.png</file>
     </qresource>
 </RCC>
