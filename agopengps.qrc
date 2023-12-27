@@ -459,5 +459,6 @@
         <file>images/FileClose.png</file>
         <file>images/FileExisting.png</file>
         <file>images/ISOXML.png</file>
+        <file>qml/TramLinesEditor.qml</file>
     </qresource>
 </RCC>
