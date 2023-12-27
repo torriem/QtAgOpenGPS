@@ -27,6 +27,7 @@ Button {
     property color colorChecked2: "#7cc8ff"
     property color colorChecked3: "#467191"
 
+
     //For compatibility with the old IconButton and friends
     property bool isChecked: icon_button.checked
 

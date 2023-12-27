@@ -450,5 +450,8 @@
         <file>images/Steer/ST_SteerTab.png</file>
         <file>qml/IconButtonColor.qml</file>
         <file>qml/SliderCustomized.qml</file>
+        <file>qml/ABLinePicker.qml</file>
+        <file>qml/ABCurvePicker.qml</file>
+        <file>qml/LineName.qml</file>
     </qresource>
 </RCC>
