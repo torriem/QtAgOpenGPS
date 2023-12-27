@@ -86,7 +86,7 @@ public:
     CTool();
     //this class needs modelview and projection as separate matrices because some
     //additiona transformations need to be done.
-    void drawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection,
+    void DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection,
                   bool isJobStarted,
                   CVehicle &v, CCamera &camera, CTram &tram);
 };

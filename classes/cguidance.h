@@ -38,7 +38,7 @@ public:
 
     CGuidance();
 
-    void doSteerAngleCalc(bool isAutoSteerBtnOn,
+    void DoSteerAngleCalc(bool isAutoSteerBtnOn,
                           CVehicle &vehicle,
                           const CAHRS &ahrs
                          );

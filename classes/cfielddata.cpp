@@ -4,7 +4,7 @@
 
 CFieldData::CFieldData() {}
 
-QString CFieldData::timeTillFinished(CVehicle &vehicle)
+QString CFieldData::TimeTillFinished(CVehicle &vehicle)
 {
     if (vehicle.avgSpeed > 2)
     {
@@ -18,15 +18,15 @@ QString CFieldData::timeTillFinished(CVehicle &vehicle)
     else return QString("\u221E Hrs");
  }
 
-QString CFieldData::workRateHectares(CVehicle &vehicle) {
+QString CFieldData::WorkRateHectares(CVehicle &vehicle) {
     return QString("%1 ha/hr").arg((double)property_setVehicle_toolWidth * vehicle.avgSpeed * 0.1,0,'g',1);
 }
 
-QString CFieldData::workRateAcres(CVehicle &vehicle) {
+QString CFieldData::WorkRateAcres(CVehicle &vehicle) {
     return QString("%1 ac/hr").arg((double)property_setVehicle_toolWidth * vehicle.avgSpeed * 0.2471,0,'g',1);
 }
 
-void CFieldData::updateFieldBoundaryGUIAreas(QVector<CBoundaryLines> &bndList)
+void CFieldData::UpdateFieldBoundaryGUIAreas(QVector<CBoundaryLines> &bndList)
 {
     if (bndList.count() > 0)
     {

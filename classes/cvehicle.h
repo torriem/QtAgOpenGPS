@@ -113,8 +113,8 @@ public:
     void loadSettings();
 
     explicit CVehicle(QObject *parent = 0);
-    double updateGoalPointDistance();
-    void drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection,
+    double UpdateGoalPointDistance();
+    void DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection,
                      double steerAngle,
                      const CCamera &camera,
                      const CTool &tool,

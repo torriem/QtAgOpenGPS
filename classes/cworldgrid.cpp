@@ -30,7 +30,7 @@ CWorldGrid::~CWorldGrid() {
     //lives for the full lifetime of QtAOG
 }
 
-void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
+void CWorldGrid::DrawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                                   bool isTextureOn, QColor fieldColor,
                                   CCamera &camera)
 {
@@ -109,7 +109,7 @@ void CWorldGrid::drawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
     */
 }
 
-void CWorldGrid::drawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, double _gridZoom, QColor gridColor)
+void CWorldGrid::DrawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, double _gridZoom, QColor gridColor)
 {
     //draw easting lines and westing lines to produce a grid
     _gridZoom *= 0.5;

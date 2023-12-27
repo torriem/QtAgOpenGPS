@@ -495,7 +495,7 @@ void CContour::DistanceFromContourLine(bool isAutoSteerBtnOn,
             rNorthCT = ctList[A].northing + (U * dy);
 
             //update base on autosteer settings and distance from line
-            double goalPointDistance = vehicle.updateGoalPointDistance();
+            double goalPointDistance = vehicle.UpdateGoalPointDistance();
 
             bool ReverseHeading = vehicle.isReverse ? !isHeadingSameWay : isHeadingSameWay;
 

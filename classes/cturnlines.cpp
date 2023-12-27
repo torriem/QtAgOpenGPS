@@ -4,7 +4,7 @@
 /*****************
  * CTurnLines.cs *
  *****************/
-void CBoundaryLines::calculateTurnHeadings()
+void CBoundaryLines::CalculateTurnHeadings()
 {
     //to calc heading based on next and previous points to give an average heading.
     int cnt = turnLine.count();
@@ -37,7 +37,7 @@ void CBoundaryLines::calculateTurnHeadings()
     turnLine.append(pt3);
 }
 
-void CBoundaryLines::fixTurnLine(double totalHeadWidth, double spacing)
+void CBoundaryLines::FixTurnLine(double totalHeadWidth, double spacing)
 {
     //count the points from the boundary
     int lineCount = turnLine.count();
@@ -99,7 +99,7 @@ void CBoundaryLines::fixTurnLine(double totalHeadWidth, double spacing)
     //make sure headings are correct for calculated points
     if (turnLine.count() > 0)
     {
-        calculateTurnHeadings();
+        CalculateTurnHeadings();
     }
 
 }

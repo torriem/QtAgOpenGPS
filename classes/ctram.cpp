@@ -18,18 +18,18 @@ CTram::CTram()
     tramWidth = property_setTram_tramWidth;
     halfWheelTrack = property_setVehicle_trackWidth * 0.5;
     */
-    isTramOuterOrInner();
+    IsTramOuterOrInner();
     //passes = property_setTram_passes;
     displayMode=0;
 }
 
-void CTram::isTramOuterOrInner()
+void CTram::IsTramOuterOrInner()
 {
     isOuter = ((int)((double)property_setTram_tramWidth / (double)property_setVehicle_toolWidth + 0.5)) % 2 == 0;
     if ((bool)property_setTool_isTramOuterInverted) isOuter = !isOuter;
 }
 
-void CTram::drawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, CCamera &camera)
+void CTram::DrawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, CCamera &camera)
 {
     double lineWidth;
 
@@ -70,14 +70,14 @@ void CTram::drawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, CCamera &camer
     }
 }
 
-void CTram::buildTramBnd(const CBoundary &bnd)
+void CTram::BuildTramBnd(const CBoundary &bnd)
 {
     bool isBndExist = bnd.bndList.count() != 0;
 
     if (isBndExist)
     {
-        createBndOuterTramTrack(bnd);
-        createBndInnerTramTrack(bnd);
+        CreateBndOuterTramTrack(bnd);
+        CreateBndInnerTramTrack(bnd);
     }
     else
     {
@@ -86,7 +86,7 @@ void CTram::buildTramBnd(const CBoundary &bnd)
     }
 }
 
-void CTram::createBndInnerTramTrack(const CBoundary &bnd)
+void CTram::CreateBndInnerTramTrack(const CBoundary &bnd)
 {
     double tramWidth = property_setTram_tramWidth;
     double halfWheelTrack = (double)property_setVehicle_trackWidth * 0.5;
@@ -136,7 +136,7 @@ void CTram::createBndInnerTramTrack(const CBoundary &bnd)
     }
 }
 
-void CTram::createBndOuterTramTrack(const CBoundary &bnd)
+void CTram::CreateBndOuterTramTrack(const CBoundary &bnd)
 {
     double tramWidth = property_setTram_tramWidth;
     double halfWheelTrack = (double)property_setVehicle_trackWidth * 0.5;

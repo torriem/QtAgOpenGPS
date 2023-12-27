@@ -33,11 +33,11 @@ public:
 
     CPatches();
 
-    void turnMappingOn(QVector3D newLeftPoint, QVector3D newRightPoint, QVector3D color);
-    void turnMappingOff(QVector<QSharedPointer<PatchTriangleList>> &patchSaveList,
+    void TurnMappingOn(QVector3D newLeftPoint, QVector3D newRightPoint, QVector3D color);
+    void TurnMappingOff(QVector<QSharedPointer<PatchTriangleList>> &patchSaveList,
                         QVector3D newLeftPoint, QVector3D newRightPoint, QVector3D color,
                         CFieldData &fd);
-    void addMappingPoint(QVector<QSharedPointer<PatchTriangleList>> &patchSaveList,
+    void AddMappingPoint(QVector<QSharedPointer<PatchTriangleList>> &patchSaveList,
                          QVector3D newLeftPoint, QVector3D newRightPoint, QVector3D color,
                          CFieldData &fd);
 

@@ -17,7 +17,7 @@ void CCamera::loadSettings()
     camSmoothFactor = ((double)(property_setDisplay_camSmooth) * 0.004) + 0.2;
 }
 
-void CCamera::setWorldCam(QMatrix4x4 &modelview,
+void CCamera::SetWorldCam(QMatrix4x4 &modelview,
                           double _fixPosX, double _fixPosY,
                           double _fixHeading)
 {

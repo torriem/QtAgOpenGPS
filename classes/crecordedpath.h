@@ -102,8 +102,8 @@ public:
     void PurePursuitRecPath(CVehicle &vehicle, int ptCount);
     void PurePursuitDubins(CVehicle &vehicle, const CYouTurn &yt, bool isAutoSteerButtonOn, int ptCount);
 
-    void drawRecordedLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
-    void drawDubins(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
+    void DrawRecordedLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
+    void DrawDubins(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
 
 signals:
     void setSimStepDistance(double speed);

@@ -29,14 +29,14 @@ public:
     //bool isSet, isDriveThru;
 
     CBoundaryLines();
-    void calculateFenceLineHeadings();
-    void fixFenceLine(int bndNum);
-    void reverseWinding();
-    bool calculateFenceArea(int idx);
+    void CalculateFenceLineHeadings();
+    void FixFenceLine(int bndNum);
+    void ReverseWinding();
+    bool CalculateFenceArea(int idx);
 
     /* CTurnLines.cs*/
-    void calculateTurnHeadings();
-    void fixTurnLine(double totalHeadWidth, double spacing);
+    void CalculateTurnHeadings();
+    void FixTurnLine(double totalHeadWidth, double spacing);
 
    /*
     bool isPointInsideBoundary(Vec3 testPointv3) const;

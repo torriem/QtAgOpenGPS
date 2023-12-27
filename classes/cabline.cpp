@@ -100,7 +100,7 @@ void CABLine::GetCurrentABLine(Vec3 pivot, Vec3 steer,
         BuildCurrentABLineList(pivot,secondsSinceStart,yt,vehicle);
 
     //Check uturn first
-    if (yt.isYouTurnTriggered && yt.distanceFromYouTurnLine(vehicle,pn))//do the pure pursuit from youTurn
+    if (yt.isYouTurnTriggered && yt.DistanceFromYouTurnLine(vehicle,pn))//do the pure pursuit from youTurn
     {
         //now substitute what it thinks are AB line values with auto turn values
         steerAngleAB = yt.steerAngleYT;
@@ -196,7 +196,7 @@ void CABLine::GetCurrentABLine(Vec3 pivot, Vec3 steer,
         rNorthAB = currentABLineP1.northing + (U * dy);
 
         //update base on autosteer settings and distance from line
-        double goalPointDistance = vehicle.updateGoalPointDistance();
+        double goalPointDistance = vehicle.UpdateGoalPointDistance();
 
         if (vehicle.isReverse ? isHeadingSameWay : !isHeadingSameWay)
         {
@@ -458,7 +458,7 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
         }
     }
 
-    yt.drawYouTurn(gl,mvp);
+    yt.DrawYouTurn(gl,mvp);
 }
 
 void CABLine::BuildTram(CBoundary &bnd, CTram &tram)
@@ -469,7 +469,7 @@ void CABLine::BuildTram(CBoundary &bnd, CTram &tram)
 
     if (tram.generateMode != 1)
     {
-        tram.buildTramBnd(bnd);
+        tram.BuildTramBnd(bnd);
     }
     else
     {

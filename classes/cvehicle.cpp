@@ -72,7 +72,7 @@ CVehicle::CVehicle(QObject *parent) : QObject(parent)
 }
 
 //called from various Classes, always needs current speed
-double CVehicle::updateGoalPointDistance()
+double CVehicle::UpdateGoalPointDistance()
 {
     double xTE = fabs(modeActualXTE);
 
@@ -105,7 +105,7 @@ double CVehicle::updateGoalPointDistance()
 
 }
 
-void CVehicle::drawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
+void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
                            QMatrix4x4 projection,
                            double steerAngle,
                            const CCamera &camera,

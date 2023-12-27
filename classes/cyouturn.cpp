@@ -29,7 +29,7 @@ void CYouTurn::loadSettings()
     youTurnStartOffset = property_set_youTurnExtensionLength;
 
     rowSkipsWidth = property_set_youSkipWidth;
-    setAlternateSkips();
+    SetAlternateSkips();
 
     youTurnRadius = property_set_youTurnRadius;
 
@@ -51,7 +51,7 @@ bool CYouTurn::findCurveTurnPoints(const CABCurve &curve,
 
     for (j = curve.currentLocationIndex; j > 0 && j < curve.curList.count(); j += Count)
     {
-        int turnIndex = bnd.isPointInsideTurnArea(curve.curList[j]);
+        int turnIndex = bnd.IsPointInsideTurnArea(curve.curList[j]);
         if (turnIndex != 0)
         {
             crossingCurvePoint.easting = curve.curList[j - Count].easting;
@@ -136,7 +136,7 @@ int CYouTurn::getLineIntersection(double p0x, double p0y, double p1x, double p1y
 }
 */
 
-void CYouTurn::addSequenceLines(double head, Vec3 pivot)
+void CYouTurn::AddSequenceLines(double head, Vec3 pivot)
 {
     Vec3 pt;
     for (int a = 0; a < youTurnStartOffset*2; a++)
@@ -177,7 +177,7 @@ void CYouTurn::addSequenceLines(double head, Vec3 pivot)
     }
 }
 
-bool CYouTurn::buildABLineDubinsYouTurn(CVehicle &vehicle,
+bool CYouTurn::BuildABLineDubinsYouTurn(CVehicle &vehicle,
                                         CBoundary &bnd,
                                         const CABLine &ABLine,
                                         bool isTurnRight)
@@ -198,7 +198,7 @@ bool CYouTurn::buildABLineDubinsYouTurn(CVehicle &vehicle,
             Vec3 onPurePoint(ABLine.rEastAB, ABLine.rNorthAB, 0);
 
             //how far are we from any turn boundary
-            bnd.findClosestTurnPoint(ABLine, onPurePoint);
+            bnd.FindClosestTurnPoint(ABLine, onPurePoint);
 
             //or did we lose the turnLine - we are on the highway cuz we left the outer/inner turn boundary
             if ((int)bnd.closestTurnPt.easting != -20000)
@@ -355,7 +355,7 @@ bool CYouTurn::buildABLineDubinsYouTurn(CVehicle &vehicle,
 
             //generate the turn points
             ytList = dubYouTurnPath.GenerateDubins(start, goal);
-            addSequenceLines(head,vehicle.pivotAxlePos);
+            AddSequenceLines(head,vehicle.pivotAxlePos);
             if (ytList.count() == 0) return false;
             else youTurnPhase = 1;
         }
@@ -394,7 +394,7 @@ bool CYouTurn::buildABLineDubinsYouTurn(CVehicle &vehicle,
 
                 for (int j = 0; j < cnt; j += 2)
                 {
-                    if (bnd.isPointInsideTurnArea(ytList[j]) != 0)
+                    if (bnd.IsPointInsideTurnArea(ytList[j]) != 0)
                     {
                         isOutOfBounds = true;
                         break;
@@ -442,7 +442,7 @@ bool CYouTurn::buildABLineDubinsYouTurn(CVehicle &vehicle,
 
                 for (int j = 0; j < cnt; j += 2)
                 {
-                    if (bnd.isPointInsideTurnArea(ytList[j]) != 0)
+                    if (bnd.IsPointInsideTurnArea(ytList[j]) != 0)
                     {
                         isOutOfBounds = true;
                         break;
@@ -478,7 +478,7 @@ bool CYouTurn::buildABLineDubinsYouTurn(CVehicle &vehicle,
         Vec3 onPurePoint = Vec3(ABLine.rEastAB, ABLine.rNorthAB, 0);
 
         //how far are we from any turn boundary
-        bnd.findClosestTurnPoint(ABLine,onPurePoint);
+        bnd.FindClosestTurnPoint(ABLine,onPurePoint);
 
         //or did we lose the turnLine - we are on the highway cuz we left the outer/inner turn boundary
         if ((int)bnd.closestTurnPt.easting != -20000)
@@ -726,7 +726,7 @@ bool CYouTurn::buildABLineDubinsYouTurn(CVehicle &vehicle,
     }
 }
 
-bool CYouTurn::buildCurveDubinsYouTurn(CVehicle &vehicle,
+bool CYouTurn::BuildCurveDubinsYouTurn(CVehicle &vehicle,
                                        const CBoundary &bnd,
                                        const CABCurve &curve,
                                        bool isTurnRight, Vec3 pivotPos)
@@ -873,7 +873,7 @@ bool CYouTurn::buildCurveDubinsYouTurn(CVehicle &vehicle,
         if (count == 0) return false;
 
         //these are the lead in lead out lines that add to the turn
-        addSequenceLines(head, vehicle.pivotAxlePos);
+        AddSequenceLines(head, vehicle.pivotAxlePos);
     }
 
     int count;
@@ -895,7 +895,7 @@ bool CYouTurn::buildCurveDubinsYouTurn(CVehicle &vehicle,
             isOutOfBounds = false;
             for (int j = 0; j < count; j += 2)
             {
-                if (bnd.isPointInsideTurnArea(ytList[j]) != 0)
+                if (bnd.IsPointInsideTurnArea(ytList[j]) != 0)
                 {
                     isOutOfBounds = true;
                     break;
@@ -953,7 +953,7 @@ bool CYouTurn::buildCurveDubinsYouTurn(CVehicle &vehicle,
     return true;
 }
 
-void CYouTurn::smoothYouTurn(int smPts)
+void CYouTurn::SmoothYouTurn(int smPts)
 {
     //count the reference list of original curve
     int cnt = ytList.count();
@@ -1003,7 +1003,7 @@ void CYouTurn::smoothYouTurn(int smPts)
 }
 
 //called to initiate turn
-void CYouTurn::youTurnTrigger(CVehicle &vehicle, CABLine &ABLine, CABCurve &curve)
+void CYouTurn::YouTurnTrigger(CVehicle &vehicle, CABLine &ABLine, CABCurve &curve)
 {
     //trigger pulled
     isYouTurnTriggered = true;
@@ -1048,10 +1048,10 @@ void CYouTurn::youTurnTrigger(CVehicle &vehicle, CABLine &ABLine, CABCurve &curv
 }
 
 //Normal copmpletion of youturn
-void CYouTurn::completeYouTurn()
+void CYouTurn::CompleteYouTurn()
 {
     isYouTurnTriggered = false;
-    resetCreatedYouTurn();
+    ResetCreatedYouTurn();
     //emit resetSequenceEventTriggers();
     //mf.seq.isSequenceTriggered = false;
     //emit setTriggerSequence(false);
@@ -1059,7 +1059,7 @@ void CYouTurn::completeYouTurn()
     emit turnOffBoundAlarm();
 }
 
-void CYouTurn::setAlternateSkips()
+void CYouTurn::SetAlternateSkips()
 {
     rowSkipsWidth2 = rowSkipsWidth;
     turnSkips = rowSkipsWidth2 * 2 - 1;
@@ -1068,12 +1068,12 @@ void CYouTurn::setAlternateSkips()
 
 
 //something went seriously wrong so reset everything
-void CYouTurn::resetYouTurn()
+void CYouTurn::ResetYouTurn()
 {
     //fix you turn
     isYouTurnTriggered = false;
     ytList.clear();
-    resetCreatedYouTurn();
+    ResetCreatedYouTurn();
     //mf.isBoundAlarming = false;
     emit turnOffBoundAlarm();
 
@@ -1081,7 +1081,7 @@ void CYouTurn::resetYouTurn()
     isTurnCreationNotCrossingError = false;
 }
 
-void CYouTurn::resetCreatedYouTurn()
+void CYouTurn::ResetCreatedYouTurn()
 {
     youTurnPhase = 0;
     ytList.clear();
@@ -1090,7 +1090,7 @@ void CYouTurn::resetCreatedYouTurn()
 }
 
 //build the points and path of youturn to be scaled and transformed
-void CYouTurn::buildManualYouLateral(CVehicle &vehicle, CABLine &ABLine, CABCurve &curve,
+void CYouTurn::BuildManualYouLateral(CVehicle &vehicle, CABLine &ABLine, CABCurve &curve,
                                   bool isTurnRight)
 {
     double tool_toolWidth = property_setVehicle_toolWidth;
@@ -1141,7 +1141,7 @@ void CYouTurn::buildManualYouLateral(CVehicle &vehicle, CABLine &ABLine, CABCurv
 }
 
 //build the points and path of youturn to be scaled and transformed
-void CYouTurn::buildManualYouTurn(CVehicle &vehicle, CABLine &ABLine, CABCurve &curve,
+void CYouTurn::BuildManualYouTurn(CVehicle &vehicle, CABLine &ABLine, CABCurve &curve,
                                   bool isTurnRight, bool isTurnButtonTriggered)
 {
     double minTurningRadius = property_setVehicle_minTurningRadius;
@@ -1220,7 +1220,7 @@ void CYouTurn::buildManualYouTurn(CVehicle &vehicle, CABLine &ABLine, CABCurve &
 }
 
 //determine distance from youTurn guidance line
-bool CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
+bool CYouTurn::DistanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
 {
     double maxSteerAngle = property_setVehicle_maxSteerAngle;
     double wheelbase = property_setVehicle_wheelbase;
@@ -1256,7 +1256,7 @@ bool CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
 
             if (minDistA > 16)
             {
-                completeYouTurn();
+                CompleteYouTurn();
                 return false;
             }
 
@@ -1277,7 +1277,7 @@ bool CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
             //return and reset if too far away or end of the line
             if (B >= ptCount - 8)
             {
-                completeYouTurn();
+                CompleteYouTurn();
                 return false;
             }
 
@@ -1361,7 +1361,7 @@ bool CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
             if (distancePiv > 1 || (B >= ptCount - 1))
             {
                 {
-                    completeYouTurn();
+                    CompleteYouTurn();
                     return false;
                 }
             }
@@ -1386,7 +1386,7 @@ bool CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
 
             //sharp turns on you turn.
             //update base on autosteer settings and distance from line
-            double goalPointDistance = 0.8 * vehicle.updateGoalPointDistance();
+            double goalPointDistance = 0.8 * vehicle.UpdateGoalPointDistance();
 
             isHeadingSameWay = true;
             bool reverseHeading = !vehicle.isReverse;
@@ -1413,13 +1413,13 @@ bool CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
                 start = ytList[i];
                 if (i == ptCount - 1)//goalPointDistance is longer than remaining u-turn
                 {
-                    completeYouTurn();
+                    CompleteYouTurn();
                     return false;
                 }
 
                 if (pt3Phase == 1 && i < 2)
                 {
-                    completeYouTurn();
+                    CompleteYouTurn();
                     return false;
                 }
 
@@ -1432,7 +1432,7 @@ bool CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
 
                 if (uTurnStyle == 1 && pt3Phase == 1 && !isLastFrameForward && !vehicle.isReverse)
                 {
-                    completeYouTurn();
+                    CompleteYouTurn();
                     return false;
                 }
 
@@ -1473,12 +1473,12 @@ bool CYouTurn::distanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
     }
     else
     {
-        completeYouTurn();
+        CompleteYouTurn();
         return false;
     }
 }
 
-void CYouTurn::check3PtSequence(void)
+void CYouTurn::Check3PtSequence(void)
 {
     if (pt3Phase == 0)
     {
@@ -1490,14 +1490,14 @@ void CYouTurn::check3PtSequence(void)
     }
     else
     {
-        completeYouTurn();
+        CompleteYouTurn();
         //mf.sim.stepDistance = 0;
         //mf.sim.isAccelForward = true;
     }
 }
 
 //Duh.... What does this do....
-void CYouTurn::drawYouTurn(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
+void CYouTurn::DrawYouTurn(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
 {
     GLHelperOneColor gldraw;
     QColor color;

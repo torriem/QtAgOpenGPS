@@ -8,7 +8,7 @@
 /*************/
 /* CFence.cs */
 /*************/
-bool CBoundary::isPointInsideFenceArea(Vec3 testPoint) const
+bool CBoundary::IsPointInsideFenceArea(Vec3 testPoint) const
 {
     //first where are we, must be inside outer and outside of inner geofence non drive thru turn borders
     if (glm::isPointInPolygon(bndList[0].fenceLineEar,testPoint))
@@ -29,7 +29,7 @@ bool CBoundary::isPointInsideFenceArea(Vec3 testPoint) const
 }
 
 
-bool CBoundary::isPointInsideFenceArea(Vec2 testPoint) const
+bool CBoundary::IsPointInsideFenceArea(Vec2 testPoint) const
 {
     //first where are we, must be inside outer and outside of inner geofence non drive thru turn borders
     if (glm::isPointInPolygon(bndList[0].fenceLineEar,testPoint))
@@ -50,7 +50,7 @@ bool CBoundary::isPointInsideFenceArea(Vec2 testPoint) const
 
 }
 
-void CBoundary::drawFenceLines(const CVehicle &v, const CModuleComm &mc,
+void CBoundary::DrawFenceLines(const CVehicle &v, const CModuleComm &mc,
                                QOpenGLFunctions *gl,
                                  const QMatrix4x4 &mvp)
 {

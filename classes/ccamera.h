@@ -32,7 +32,7 @@ public:
     CCamera();
     void loadSettings();
 
-    void setWorldCam(QMatrix4x4 &modelview, double _fixPosX, double _fixPosY, double _fixHeading);
+    void SetWorldCam(QMatrix4x4 &modelview, double _fixPosX, double _fixPosY, double _fixHeading);
 
 };
 

@@ -8,7 +8,7 @@
 /* CTurn.cs *
  ************/
 
-int CBoundary::isPointInsideTurnArea(Vec3 pt) const
+int CBoundary::IsPointInsideTurnArea(Vec3 pt) const
 {
     if (bndList.count() > 0 && glm::isPointInPolygon(bndList[0].turnLine, pt))
     {
@@ -25,7 +25,7 @@ int CBoundary::isPointInsideTurnArea(Vec3 pt) const
     return -1; //is outside border turn
 }
 
-void CBoundary::findClosestTurnPoint(const CABLine &ABLine, Vec3 fromPt)
+void CBoundary::FindClosestTurnPoint(const CABLine &ABLine, Vec3 fromPt)
 {
     double eP = fromPt.easting;
     double nP = fromPt.northing;
@@ -101,16 +101,16 @@ void CBoundary::findClosestTurnPoint(const CABLine &ABLine, Vec3 fromPt)
     }
 }
 
-void CBoundary::buildTurnLines(CFieldData &fd)
+void CBoundary::BuildTurnLines(CFieldData &fd)
 {
     if (bndList.count() == 0)
     {
-        //mf.TimedMessageBox(1500, " No Boundaries", "No Turn Lines Made");
+        emit TimedMessageBox(1500, " No Boundaries", "No Turn Lines Made");
         return;
     }
 
     //update the GUI values for boundaries
-    fd.updateFieldBoundaryGUIAreas(bndList);
+    fd.UpdateFieldBoundaryGUIAreas(bndList);
 
     //to fill the list of line points
     Vec3 point;
@@ -141,7 +141,7 @@ void CBoundary::buildTurnLines(CFieldData &fd)
                 bndList[j].turnLine.append(tPnt);
             }
         }
-        bndList[j].fixTurnLine(totalHeadWidth, 2);
+        bndList[j].FixTurnLine(totalHeadWidth, 2);
 
         //count the reference list of original curve
         //int cnt = bndList[j].turnLine.count();

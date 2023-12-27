@@ -7,7 +7,7 @@ CBoundaryLines::CBoundaryLines()
     isDriveThru = false;
 }
 
-void CBoundaryLines::calculateFenceLineHeadings()
+void CBoundaryLines::CalculateFenceLineHeadings()
 {
     //to calc heading based on next and previous points to give an average heading.
     int cnt = fenceLine.count();
@@ -40,7 +40,7 @@ void CBoundaryLines::calculateFenceLineHeadings()
     fenceLine.append(pt3);
 }
 
-void CBoundaryLines::fixFenceLine(int bndNum)
+void CBoundaryLines::FixFenceLine(int bndNum)
 {
     double spacing;
     //close if less than 20 ha, 40ha, more
@@ -108,7 +108,7 @@ void CBoundaryLines::fixFenceLine(int bndNum)
     }
 
     //make sure headings are correct for calculated points
-    calculateFenceLineHeadings();
+    CalculateFenceLineHeadings();
 
     double delta = 0;
     fenceLineEar.clear();
@@ -129,7 +129,7 @@ void CBoundaryLines::fixFenceLine(int bndNum)
     }
 }
 
-void CBoundaryLines::reverseWinding()
+void CBoundaryLines::ReverseWinding()
 {
     //reverse the boundary
     int cnt = fenceLine.size();
@@ -145,7 +145,7 @@ void CBoundaryLines::reverseWinding()
 }
 
 //obvious
-bool CBoundaryLines::calculateFenceArea(int idx)
+bool CBoundaryLines::CalculateFenceArea(int idx)
 {
     int ptCount = fenceLine.count();
     if (ptCount < 1) return false;
@@ -166,7 +166,7 @@ bool CBoundaryLines::calculateFenceArea(int idx)
     //make sure is clockwise for outer counter clockwise for inner
     if ((idx == 0 && isClockwise) || (idx > 0 && !isClockwise))
     {
-        reverseWinding();
+        ReverseWinding();
     }
 
     return isClockwise;

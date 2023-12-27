@@ -44,7 +44,6 @@ signals:
                      double satellitesTracked);
 
 public slots:
-    //TODO
     void setSimStepDistance(double);
 
 };

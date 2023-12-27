@@ -9,7 +9,7 @@
 
 CGuidance::CGuidance() {}
 
-void CGuidance::doSteerAngleCalc(bool isAutoSteerBtnOn,
+void CGuidance::DoSteerAngleCalc(bool isAutoSteerBtnOn,
                                  CVehicle &vehicle,
                                  const CAHRS &ahrs
                                  )
@@ -186,7 +186,7 @@ void CGuidance::StanleyGuidanceABLine(Vec3 curPtA, Vec3 curPtB,
 
     vehicle.modeActualHeadingError = glm::toDegrees(steerHeadingError);
 
-    doSteerAngleCalc(isAutoSteerBtnOn, vehicle,ahrs);
+    DoSteerAngleCalc(isAutoSteerBtnOn, vehicle,ahrs);
 }
 
 /// <summary>
@@ -407,7 +407,7 @@ void CGuidance::StanleyGuidanceCurve(Vec3 pivot, Vec3 steer,
         if (steerHeadingError > glm::PIBy2) steerHeadingError -= M_PI;
         else if (steerHeadingError < -glm::PIBy2) steerHeadingError += M_PI;
 
-        doSteerAngleCalc(isAutoSteerBtnOn, vehicle,ahrs);
+        DoSteerAngleCalc(isAutoSteerBtnOn, vehicle,ahrs);
     }
     else
     {

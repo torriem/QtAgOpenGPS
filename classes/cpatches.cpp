@@ -9,7 +9,7 @@ CPatches::CPatches() {
 /* torriem: modifications. Passing in left, right points, and color, rather than
  * accessing the CSection objects themselves.
  */
-void CPatches::turnMappingOn(QVector3D newLeftPoint, QVector3D newRightPoint, QVector3D color)
+void CPatches::TurnMappingOn(QVector3D newLeftPoint, QVector3D newRightPoint, QVector3D color)
 {
    //bool isMultiColoredSections = property_setColor_isMultiColorSections;
 
@@ -56,13 +56,13 @@ void CPatches::turnMappingOn(QVector3D newLeftPoint, QVector3D newRightPoint, QV
    }
 }
 
-void CPatches::turnMappingOff(QVector<QSharedPointer<PatchTriangleList> > &patchSaveList,
+void CPatches::TurnMappingOff(QVector<QSharedPointer<PatchTriangleList> > &patchSaveList,
                               QVector3D newLeftPoint,
                               QVector3D newRightPoint,
                               QVector3D color,
                               CFieldData &fd)
 {
-   addMappingPoint(patchSaveList,newLeftPoint,newRightPoint,color,fd);
+   AddMappingPoint(patchSaveList,newLeftPoint,newRightPoint,color,fd);
 
    isDrawing = false;
    numTriangles = 0;
@@ -80,7 +80,7 @@ void CPatches::turnMappingOff(QVector<QSharedPointer<PatchTriangleList> > &patch
    }
 }
 
-void CPatches::addMappingPoint(QVector<QSharedPointer<PatchTriangleList> > &patchSaveList,
+void CPatches::AddMappingPoint(QVector<QSharedPointer<PatchTriangleList> > &patchSaveList,
                                QVector3D newLeftPoint,
                                QVector3D newRightPoint,
                                QVector3D color,

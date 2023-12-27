@@ -305,7 +305,7 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
 
     if (ptCount > 0)
     {
-        if (yt.isYouTurnTriggered && yt.distanceFromYouTurnLine(vehicle,pn))//do the pure pursuit from youTurn
+        if (yt.isYouTurnTriggered && yt.DistanceFromYouTurnLine(vehicle,pn))//do the pure pursuit from youTurn
         {
             //now substitute what it thinks are AB line values with auto turn values
             steerAngleCu = yt.steerAngleYT;
@@ -432,7 +432,7 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
             manualUturnHeading = curList[A].heading;
 
             //update base on autosteer settings and distance from line
-            double goalPointDistance = vehicle.updateGoalPointDistance();
+            double goalPointDistance = vehicle.UpdateGoalPointDistance();
 
             bool ReverseHeading = vehicle.isReverse ? !isHeadingSameWay : isHeadingSameWay;
 
@@ -465,7 +465,7 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
                     if (glm::distance(goalPointCu, curList[(curList.count() - 1)]) < 0.5)
                     {
                         emit TimedMessage(2000,tr("Guidance Stopped"), tr("Past end of curve"));
-                        emit stopAutosteer();
+                        emit stopAutoSteer();
                     }
                 }
                 else
@@ -473,7 +473,7 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
                     if (glm::distance(goalPointCu, curList[0]) < 0.5)
                     {
                         emit TimedMessage(2000,tr("Guidance Stopped"), tr("Past end of curve"));
-                        emit stopAutosteer();
+                        emit stopAutoSteer();
                     }
                 }
             }
@@ -626,7 +626,7 @@ void CABCurve::DrawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                 gldraw.draw(gl,mvp,color,GL_POINTS,8.0f);
             }
 
-            yt.drawYouTurn(gl,mvp);
+            yt.DrawYouTurn(gl,mvp);
         }
     }
 }
@@ -637,7 +637,7 @@ void CABCurve::BuildTram(CBoundary &bnd, CTram &tram)
     //if all or bnd only then make outer loop pass
     if (tram.generateMode != 1)
     {
-        tram.buildTramBnd(bnd);
+        tram.BuildTramBnd(bnd);
     }
     else
     {

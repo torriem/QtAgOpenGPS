@@ -21,8 +21,9 @@ class CFieldData;
 class CTool;
 class CPGN_EF;
 
-class CBoundary
+class CBoundary : public QObject
 {
+    Q_OBJECT
 private:
     const double scanWidth = 1.0;
     const double boxLength = 2000;
@@ -61,17 +62,17 @@ public:
     bool isToolInHeadland, isToolOuterPointsInHeadland, isSectionControlledByHeadland;
 
 
-    CBoundary();
+    CBoundary(QObject *parent = 0);
 
     //CFence.cs
-    bool isPointInsideFenceArea(Vec3 testPoint) const ;
-    bool isPointInsideFenceArea(Vec2 testPoint) const;
-    void drawFenceLines(const CVehicle &v, const CModuleComm &mc, QOpenGLFunctions *g, const QMatrix4x4 &mvp);
+    bool IsPointInsideFenceArea(Vec3 testPoint) const ;
+    bool IsPointInsideFenceArea(Vec2 testPoint) const;
+    void DrawFenceLines(const CVehicle &v, const CModuleComm &mc, QOpenGLFunctions *g, const QMatrix4x4 &mvp);
 
     //CTurn.sh
-    int isPointInsideTurnArea(Vec3 pt) const;
-    void findClosestTurnPoint(const CABLine &abline, Vec3 fromPt);
-    void buildTurnLines(CFieldData &fd);
+    int IsPointInsideTurnArea(Vec3 pt) const;
+    void FindClosestTurnPoint(const CABLine &abline, Vec3 fromPt);
+    void BuildTurnLines(CFieldData &fd);
 
     //CHead.cs
     void SetHydPosition(btnStates autoBtnState, CPGN_EF &p_239, CVehicle &vehicle); //TODO sounds, p_239
@@ -88,6 +89,11 @@ public:
     */
     //void drawClosestPoint(QOpenGLFunctions *g, const QMatrix4x4 &mvp);
     //void drawBoundaryLineOnBackBuffer(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
+
+signals:
+    void TimedMessage(int timeout, QString title, QString message);
+    void soundHydLiftChange(bool);
+
 };
 
 #endif // CBOUNDARY_H

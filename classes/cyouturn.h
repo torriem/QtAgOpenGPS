@@ -102,39 +102,39 @@ public:
                             double &iEast, double &iNorth);
     */
 
-    void addSequenceLines(double head, Vec3 pivot);
+    void AddSequenceLines(double head, Vec3 pivot);
 
-    bool buildABLineDubinsYouTurn(CVehicle &vehicle,
+    bool BuildABLineDubinsYouTurn(CVehicle &vehicle,
                                   CBoundary &bnd,
                                   const CABLine &ABLine,
                                   bool isTurnRight);
 
-    bool buildCurveDubinsYouTurn(CVehicle &vehicle,
+    bool BuildCurveDubinsYouTurn(CVehicle &vehicle,
                                   const CBoundary &bnd,
                                   const CABCurve &curve,
                                   bool isTurnRight,
                                   Vec3 pivotPos);
 
-    void smoothYouTurn(int smPts);
+    void SmoothYouTurn(int smPts);
 
     //called to initiate turn
-    void youTurnTrigger(CVehicle &vehicle, CABLine &ABLine, CABCurve &curve);
+    void YouTurnTrigger(CVehicle &vehicle, CABLine &ABLine, CABCurve &curve);
 
     //Normal copmpletion of youturn
-    void completeYouTurn();
+    void CompleteYouTurn();
 
-    void setAlternateSkips();
+    void SetAlternateSkips();
 
     //something went seriously wrong so reset everything
-    void resetYouTurn();
+    void ResetYouTurn();
 
-    void resetCreatedYouTurn();
+    void ResetCreatedYouTurn();
 
     //build the points and path of youturn to be scaled and transformed
-    void buildManualYouLateral(CVehicle &vehicle,
+    void BuildManualYouLateral(CVehicle &vehicle,
                                CABLine &ABLine, CABCurve &curve,
                             bool isTurnRight);
-    void buildManualYouTurn(CVehicle &vehicle,
+    void BuildManualYouTurn(CVehicle &vehicle,
                             CABLine &ABLine, CABCurve &curve,
                             bool isTurnRight, bool isTurnButtonTriggered);
 
@@ -143,14 +143,14 @@ public:
 
 
     //determine distance from youTurn guidance line
-    bool distanceFromYouTurnLine(CVehicle &v, CNMEA &pn);
+    bool DistanceFromYouTurnLine(CVehicle &v, CNMEA &pn);
 
-    void check3PtSequence(void);
+    void Check3PtSequence(void);
 
     //Duh.... What does this do....
-    void drawYouTurn(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
+    void DrawYouTurn(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
 signals:
-    void showMessage(int,QString,QString);
+    void TimedMessage(int,QString,QString);
     void outOfBounds();
     void swapDirection();
     void setTriggerSequence(bool);

@@ -330,7 +330,7 @@ void CRecordedPath::PurePursuitRecPath(CVehicle &vehicle, int ptCount)
     rNorthRP = recList[A].northing + (U * dz);
 
     //update base on autosteer settings and distance from line
-    double goalPointDistance = vehicle.updateGoalPointDistance();
+    double goalPointDistance = vehicle.UpdateGoalPointDistance();
 
     bool ReverseHeading = !vehicle.isReverse;
 
@@ -477,7 +477,7 @@ void CRecordedPath::PurePursuitDubins(CVehicle &vehicle, const CYouTurn &yt, boo
     rNorthRP = shuttleDubinsList[A].northing + (U * dz);
 
     //update base on autosteer settings and distance from line
-    double goalPointDistance = vehicle.updateGoalPointDistance();
+    double goalPointDistance = vehicle.UpdateGoalPointDistance();
 
     bool ReverseHeading = !vehicle.isReverse;
 
@@ -543,7 +543,7 @@ void CRecordedPath::PurePursuitDubins(CVehicle &vehicle, const CYouTurn &yt, boo
 
 }
 
-void CRecordedPath::drawRecordedLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
+void CRecordedPath::DrawRecordedLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
 {
     int ptCount = recList.size();
     if (ptCount < 1) return;
@@ -566,7 +566,7 @@ void CRecordedPath::drawRecordedLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp
     }
    }
 
-void CRecordedPath::drawDubins(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
+void CRecordedPath::DrawDubins(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
 {
     if (shuttleDubinsList.size() > 1)
     {

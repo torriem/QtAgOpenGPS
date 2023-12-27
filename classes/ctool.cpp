@@ -73,7 +73,7 @@ CTool::CTool()
     loadSettings();
 }
 
-void CTool::drawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection,
+void CTool::DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection,
                      bool isJobStarted,
                      CVehicle &v, CCamera &camera, CTram &tram)
 {

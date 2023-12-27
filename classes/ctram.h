@@ -43,11 +43,11 @@ public:
     int controlByte;
 
     CTram();
-    void isTramOuterOrInner();
-    void drawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, CCamera &camera);
-    void buildTramBnd(const CBoundary &bnd);
-    void createBndInnerTramTrack(const CBoundary &bnd);
-    void createBndOuterTramTrack(const CBoundary &bnd);
+    void IsTramOuterOrInner();
+    void DrawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, CCamera &camera);
+    void BuildTramBnd(const CBoundary &bnd);
+    void CreateBndInnerTramTrack(const CBoundary &bnd);
+    void CreateBndOuterTramTrack(const CBoundary &bnd);
 };
 
 #endif // CTRAM_H
