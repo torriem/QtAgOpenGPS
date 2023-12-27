@@ -1,10 +1,8 @@
-My plan-- At this point, I intend to create a GUI that follows AOG. 
-When that is done, catch up the backend with AOG, and make AgIO.
-If you are interested in helping, feel very free to.
+My own notes.
 
-Need to finish the tractor steer config page sometime. I apparently forgot about it. (Would help if Brian didn't keep changing the GUI:)
+Really should wrap the main window area in a mouseclicked area, to stop phantom clicks from carrying through from the config pages.
 
-My own Notes:
+Need to finish the tractor steer config page sometime
 
 min gps step
 dual
@@ -13,7 +11,15 @@ remove icon on those 3 but use iconbuttoncolor if possible
 
 set work switch section control buttons correctly
 
-uturn style move over
-hyd enable
-invert relays set margin
-trams
+add sliders to steer config page(dependant upon the buttons above them)
+
+need to rework the vehicle/field/line picker.
+right now they're coded to /home/[my user]/Documents/QtAgOpenGPS/etc., so they will only work on my computer.
+using ~/Documents/QtAgOpenGPS/etc does not work
+
+Need to change the AB Line/curve(later) editors. 
+Right now they are linked to the AB Line button.
+So you turn off the AB Line when you open the window to pick which line you want. 
+They need to open if the AB Line is active, and the line button is clicked
+
+And need to catch up the UI to Brian's latest.

@@ -13,11 +13,11 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: 200
             anchors.right: parent.left
-            width: childrenRect.width
+            width: children.width
             id: subMenuImplement
             visible: true
             color: "white"
-            height: childrenRect.height
+            height: children.height
             Column{
                 visible: true
                 width: childrenRect.width

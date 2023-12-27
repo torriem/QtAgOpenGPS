@@ -104,6 +104,7 @@ Item {
                     height: childrenRect.height
                     width: childrenRect.width
                     anchors.margins: 5
+                    anchors.leftMargin: 20
                     spacing: 45
                     SliderCustomized {
                         id: wasZeroSlider
@@ -167,7 +168,8 @@ Item {
                     height: childrenRect.height
                     width: childrenRect.width
                     anchors.margins: 5
-                    spacing: 30
+                    spacing: 45
+                    anchors.leftMargin: 20
                     SliderCustomized {
                         id: propGainlider
                         objectName: "progGainSlider"
@@ -220,7 +222,8 @@ Item {
                     height: childrenRect.height
                     width: childrenRect.width
                     anchors.margins: 5
-                    spacing: 30
+                    spacing: 45
+                    anchors.leftMargin: 20
                     SliderCustomized {
                         id: stanleyAggressivenessSlider
                         objectName: "stanleyAgressivenessSlider"
@@ -272,7 +275,8 @@ Item {
                     height: childrenRect.height
                     width: childrenRect.width
                     anchors.margins: 5
-                    spacing: 30
+                    spacing: 45
+                    anchors.leftMargin: 20
                     SliderCustomized {
                         id: acqLookAheadSlider
                         objectName: "acqLookAheadSlider"
@@ -369,24 +373,24 @@ Item {
                     iconChecked: "qrc:/images/SteerDriveOn.png"
                     implicitWidth: parent.width/4.5
                     implicitHeight: parent.height
-                    //border.color: "black"
-                    //bordersize: 3
+                    color3: "white"
+                    border: 2
                 }
                 IconButton{
                     objectName: "pwmLeft"
                     icon.source: "qrc:/images/SnapLeft.png"
                     implicitWidth: parent.width/4.5
                     implicitHeight: parent.height
-                    //border.color: "black"
-                    //bordersize: 3
+                    color3: "white"
+                    border: 2
                 }
                 IconButton{
                     objectName: "pwmRight"
                     icon.source: "qrc:/images/SnapRight.png"
                     implicitWidth: parent.width/4.5
                     implicitHeight: parent.height
-                    //border.color: "black"
-                    //bordersize: 3
+                    color3: "white"
+                    border: 2
                 }
                 IconButton{
                     id: pwmZero
@@ -394,8 +398,8 @@ Item {
                     icon.source: "qrc:/images/SteerZeroSmall.png"
                     implicitWidth: parent.width/4.5
                     implicitHeight: parent.height
-                    //border.color: "black"
-                    //bordersize: 3
+                    color3: "white"
+                    border: 2
                 }
             }
             Text{
@@ -418,8 +422,8 @@ Item {
                 isChecked: false
                 width: 75
                 height: 75
-                //border.color: "black"
-                //bordersize: 3
+                    color3: "white"
+                    border: 2
                 icon.source: "qrc:/images/BoundaryRecord.png"
                 iconChecked: "qrc:/images/Stop"
             }

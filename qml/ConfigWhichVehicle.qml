@@ -145,6 +145,7 @@ Item {
 
             ListView {
                 anchors.fill: parent
+                anchors.margins: 1
 
                 property Component mycomponent: fileName
                 model :FolderListModel{
@@ -154,13 +155,27 @@ Item {
                 }
 
                 delegate: RadioButton{
+                    id: control
+                        indicator: Rectangle{
+                            anchors.fill: parent
+                            anchors.margins: 2
+                            color: control.down ? "white" : "blue"
+                            visible: control.checked
+                        }
+
                     width:parent.width
                     height:50
+                    //anchors.fill: parent
                     //color: "light gray"
                     Text{
                         anchors.left: parent.left
+                        anchors.leftMargin: 5
                         anchors.verticalCenter: parent.verticalCenter
                         text: fileName
+                        font.pixelSize: 25
+                        font.bold: true
+                        color: control.checked ? "white" : "black"
+                        z: 2
                     }
                 }
             }
@@ -210,11 +225,9 @@ Item {
             anchors.rightMargin: 30
             anchors.top: vehicleList.top
             icon.source: "qrc:/images/VehFileLoad.png"
-            //border.width: 3
             buttonText: qsTr("Load")
             color3: "white"
             border: 2
-
         }
         IconButtonText{
             id: deletefolder
@@ -224,7 +237,7 @@ Item {
             icon.source: "qrc:/images/VehFileDelete.png"
             buttonText: qsTr("Delete")
             color3: "white"
-            //border.width: 3
+            border: 2
         }
     }
 }

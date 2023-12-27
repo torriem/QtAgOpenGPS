@@ -11,7 +11,7 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: 300
             anchors.right: parent.left
-            width: childrenRect.width
+            width: children.width
             id: subMenuSources
             visible: true
             color: "white"
@@ -20,7 +20,7 @@ Item {
                 visible: true
                 anchors.right: parent.right
                 anchors.top:parent.top
-                width: childrenRect.width
+                width: children.width
                 IconButton{
                     id: configsrcHeading
                     icon.source: "qrc:/images/Config/ConS_VehicleConfig.png"
