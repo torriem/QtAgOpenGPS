@@ -360,13 +360,17 @@ public:
 
     bool isBoundAlarming = false;
 
+    /***********************
+     * Postion.Designer.cs *
+     ***********************/
+
     void UpdateFixPosition(); //process a new position
-    void calculatePositionHeading(); // compute all headings and fixes
-    void addBoundaryPoint();
-    void addSectionOrContourPathPoints();
-    void calculateSectionLookAhead(double northing, double easting, double cosHeading, double sinHeading);
-    void initializeFirstFewGPSPositions();
-    bool isInsideGeoFence();
+    void CalculatePositionHeading(); // compute all headings and fixes
+    void AddBoundaryPoint();
+    void AddContourPoints();
+    void AddSectionOrPathPoints();
+    void CalculateSectionLookAhead(double northing, double easting, double cosHeading, double sinHeading);
+    void InitializeFirstFewGPSPositions();
 
     void DoRemoteSwitches();
 
@@ -380,7 +384,7 @@ public:
 
     //moved to CContour.
     //list of the list of patch data individual triangles for contour tracking
-    QVector<QSharedPointer<QVector<Vec3>>> contourSaveList;
+    QVector<QVector<Vec3>> contourSaveList;
 
     void fileSaveCurveLines();
     void fileLoadCurveLines();
@@ -540,6 +544,17 @@ public:
     bool closeAllMenus();
 
 
+    /******************************
+     * formgps_classcallbacks.cpp *
+     ******************************/
+    void connect_classes();
+
+
+    /****************
+     * form_sim.cpp *
+     ****************/
+    void simConnectSlots();
+
     /**************************
      * UI/Qt object callbacks *
      **************************/
@@ -549,6 +564,8 @@ public slots:
      * from FormGPS.cs *
      *******************/
     void onGLControl_clicked(const QVariant &event);
+
+    void TimedMessageBox(int timeout, QString s1, QString s2);
 
     //left column
     void onBtnAcres_clicked();
@@ -637,9 +654,10 @@ public slots:
      **************************/
     void sp_DataReceived();
 
-    /*
-     * simulator
-     */
+    /*******************
+     * simulator       *
+     * formgps_sim.cpp *
+     *******************/
     void onSimNewPosition(double vtgSpeed,
                      double headingTrue,
                      double latitude,
@@ -651,16 +669,24 @@ public slots:
 
     void onSimTimerTimeout();
 
+    /* CNMEA */
+    void onHeadingSource(int);
+
     /*
      * misc
      */
     void onClearRecvCounter();
-
-    /* CNMEA */
-    void onHeadingSource(int);
-
-
     void fileSaveEverythingBeforeClosingField(QQuickCloseEvent *event);
+
+    /* formgps_classcallbacks.cpp */
+    void onStopAutoSteer(); //cancel autosteer and ensure button state
+    void onSectionMasterAutoOff();
+    void onSectionMasterManualOff();
+    void onStoppedDriving();
+
+
+
+
 };
 
 #endif // FORMGPS_H

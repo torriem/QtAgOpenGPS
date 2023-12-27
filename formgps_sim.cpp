@@ -1,8 +1,21 @@
 #include "formgps.h"
 #include "classes/csim.h"
 #include "qmlutil.h"
+#include "aogproperty.h"
 
 /* Callback for Simulator new position */
+void FormGPS::simConnectSlots()
+{
+    connect(&sim,SIGNAL(setActualSteerAngle(double)),this,SLOT(onSimNewSteerAngle(double)));
+    connect(&sim,SIGNAL(newPosition(double,double,double,double,double,double,double)),this,SLOT(onSimNewPosition(double,double,double,double,double,double,double)));
+    connect(&timerSim,SIGNAL(timeout()),this,SLOT(onSimTimerTimeout()));
+
+    if (property_setMenu_isSimulatorOn) {
+        simTimer.start(100); //fire simulator every 100 ms.
+        fixUpdateHz = 10;
+    }
+}
+
 void FormGPS::onSimNewPosition(double vtgSpeed,
                      double headingTrue,
                      double latitude,
@@ -19,6 +32,7 @@ void FormGPS::onSimNewPosition(double vtgSpeed,
     ahrs.imuHeading = pn.headingTrue;
     if (ahrs.imuHeading > 360) ahrs.imuHeading -= 360;
 
+    pn.ConvertWGS84ToLocal(latitude,longitude,pn.fix.northing,pn.fix.easting);
     pn.latitude = latitude;
     pn.longitude = longitude;
 

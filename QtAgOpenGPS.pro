@@ -50,6 +50,7 @@ SOURCES += main.cpp\
     classes/cworldgrid.cpp \
     classes/cmodulecomm.cpp \
     classes/csection.cpp \
+    formgps_classcallbacks.cpp \
     testlists.cpp \
     classes/cnmea.cpp \
     classes/cvehicle.cpp \
