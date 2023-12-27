@@ -11,7 +11,7 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: 100
             anchors.right: parent.left
-            width: childrenRect.width
+            width: children.width
             id: subMenuTractor
             visible: true
             color: "white"

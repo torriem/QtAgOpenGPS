@@ -189,7 +189,7 @@ Window {
                 anchors.topMargin: -55
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
-                width: childrenRect.width + 6
+                width: children.width + 6
 
 
                 IconButtonText {
@@ -383,6 +383,7 @@ Window {
                     checked: true
                     icon.source: "qrc:/images/ABLineOff.png"
                     iconChecked: "qrc:/images/ABLineOn.png"
+                    onClicked: abLinePicker.visible = true
                     buttonText: "ABLine"
                 }
 
@@ -967,6 +968,13 @@ Window {
                 height: 768
                 width:1024
                 visible:false
+            }
+            ABLinePicker{
+                id: abLinePicker
+                objectName: "abLinePicker"
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                visible: false
             }
 
 

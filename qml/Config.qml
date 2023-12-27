@@ -163,6 +163,7 @@ Item {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 8
             anchors.horizontalCenter: parent.horizontalCenter
+            z: 3
             Text{
                 id: vehicle
                 text:qsTr("vehicle, units and tool width all not working")
