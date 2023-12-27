@@ -103,11 +103,11 @@ void CBoundary::WhereAreToolLookOnPoints(CVehicle &vehicle, CTool &tool)
 bool CBoundary::IsPointInsideHeadArea(Vec2 pt)
 {
     //if inside outer boundary, then potentially add
-    if (glm::isPointInPolygon(bndList[0].hdLine, pt))
+    if (glm::IsPointInPolygon(bndList[0].hdLine, pt))
     {
         for (int i = 1; i < bndList.count(); i++)
         {
-            if (glm::isPointInPolygon(bndList[i].hdLine,pt))
+            if (glm::IsPointInPolygon(bndList[i].hdLine,pt))
             {
                 //point is in an inner turn area but inside outer
                 return false;

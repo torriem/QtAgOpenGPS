@@ -5,7 +5,7 @@
 #include <limits>
 #include <QVector>
 #include "vec2.h"
-#include "vec2fix2fix.h"
+#include "vecfix2fix.h"
 #include "vec3.h"
 
 
@@ -69,55 +69,55 @@ namespace glm {
     static const double Gal2L = 3.785412534258;
 
     //Distance calcs of all kinds
-    static inline double distance(double east1, double north1, double east2, double north2)
+    static inline double Distance(double east1, double north1, double east2, double north2)
     {
         return sqrt( (east1 - east2) * (east1 - east2) +
                      (north1 - north2) * (north1 - north2) );
     }
 
-    static inline double distance(Vec2 first, Vec2 second)
+    static inline double Distance(Vec2 first, Vec2 second)
     {
         return sqrt(pow(first.easting - second.easting, 2) +
                     pow(first.northing - second.northing, 2));
     }
 
-    static inline double distance(Vec2 first, Vec3 second)
+    static inline double Distance(Vec2 first, Vec3 second)
     {
         return sqrt(pow(first.easting - second.easting, 2) +
                     pow(first.northing - second.northing, 2));
     }
 
-    static inline double distance(Vec3 first, Vec2 second)
+    static inline double Distance(Vec3 first, Vec2 second)
     {
         return sqrt(pow(first.easting - second.easting, 2) +
                     pow(first.northing - second.northing, 2));
     }
 
-    static inline double distance(Vec3 first, Vec3 second)
+    static inline double Distance(Vec3 first, Vec3 second)
     {
         return sqrt(pow(first.easting - second.easting, 2) +
                     pow(first.northing - second.northing, 2));
     }
 
-    static inline double distance(Vec2 first, double east, double north)
+    static inline double Distance(Vec2 first, double east, double north)
     {
         return sqrt(pow(first.easting - east, 2)+
                     pow(first.northing - north, 2));
     }
 
-    static inline double distance(Vec3 first, double east, double north)
+    static inline double Distance(Vec3 first, double east, double north)
     {
         return sqrt(pow(first.easting - east, 2) +
                     pow(first.northing - north, 2));
     }
 
-    static inline double distance(Vec2Fix2Fix first, Vec2 second)
+    static inline double Distance(VecFix2Fix first, Vec2 second)
     {
         return sqrt(pow(first.easting - second.easting, 2) +
                     pow(first.northing - second.northing, 2));
     }
 
-    static inline double distance(Vec2Fix2Fix first, Vec2Fix2Fix second)
+    static inline double Distance(VecFix2Fix first, VecFix2Fix second)
     {
         return sqrt(pow(first.easting - second.easting, 2) +
                     pow(first.northing - second.northing, 2));
@@ -125,35 +125,35 @@ namespace glm {
 
 
     //not normalized distance, no square root
-    static inline double distanceSquared(double northing1, double easting1, double northing2, double easting2)
+    static inline double DistanceSquared(double northing1, double easting1, double northing2, double easting2)
     {
         return pow(easting1 - easting2, 2) + pow(northing1 - northing2, 2);
     }
 
-    static inline double distanceSquared(Vec3 first, Vec2 second)
+    static inline double DistanceSquared(Vec3 first, Vec2 second)
     {
         return (pow(first.easting - second.easting, 2) +
                 pow(first.northing - second.northing, 2));
     }
 
-    static inline double distanceSquared(Vec2 first, Vec3 second)
+    static inline double DistanceSquared(Vec2 first, Vec3 second)
     {
         return (pow(first.easting - second.easting, 2) +
                 pow(first.northing - second.northing, 2));
     }
 
-    static inline double distanceSquared(Vec3 first, Vec3 second)
+    static inline double DistanceSquared(Vec3 first, Vec3 second)
     {
         return (pow(first.easting - second.easting, 2) +
                 pow(first.northing - second.northing, 2));
     }
-    static inline double distanceSquared(Vec2 first, Vec2 second)
+    static inline double DistanceSquared(Vec2 first, Vec2 second)
     {
         return (pow(first.easting - second.easting, 2) +
                 pow(first.northing - second.northing, 2));
     }
 
-    static inline double distanceSquared(Vec2Fix2Fix first, Vec2 second)
+    static inline double DistanceSquared(VecFix2Fix first, Vec2 second)
     {
         return (pow(first.easting - second.easting, 2) +
                 pow(first.northing - second.northing, 2));
@@ -183,7 +183,7 @@ namespace glm {
         return lround(number);
     }
 
-    static inline bool isPointInPolygon(QVector<Vec3> polygon, Vec3 testPoint) {
+    static inline bool IsPointInPolygon(QVector<Vec3> polygon, Vec3 testPoint) {
         bool result = false;
         int j = polygon.count() - 1;
         for (int i = 0; i < polygon.count(); i++)
@@ -205,7 +205,7 @@ namespace glm {
         return result;
     }
 
-    static inline bool isPointInPolygon(QVector<Vec3> polygon, Vec2 testPoint) {
+    static inline bool IsPointInPolygon(QVector<Vec3> polygon, Vec2 testPoint) {
         bool result = false;
         int j = polygon.count() - 1;
         for (int i = 0; i < polygon.count(); i++)
@@ -227,7 +227,7 @@ namespace glm {
         return result;
     }
 
-    static inline bool isPointInPolygon(QVector<Vec2> polygon, Vec2 testPoint) {
+    static inline bool IsPointInPolygon(QVector<Vec2> polygon, Vec2 testPoint) {
         bool result = false;
         int j = polygon.count() - 1;
         for (int i = 0; i < polygon.count(); i++)
@@ -249,7 +249,7 @@ namespace glm {
         return result;
     }
 
-    static inline bool isPointInPolygon(QVector<Vec2> polygon, Vec3 testPoint) {
+    static inline bool IsPointInPolygon(QVector<Vec2> polygon, Vec3 testPoint) {
         bool result = false;
         int j = polygon.count() - 1;
         for (int i = 0; i < polygon.count(); i++)
@@ -271,7 +271,7 @@ namespace glm {
         return result;
     }
 
-    static inline int getLineIntersection(double p0x, double p0y, double p1x, double p1y,
+    static inline int GetLineIntersection(double p0x, double p0y, double p1x, double p1y,
                                       double p2x, double p2y, double p3x, double p3y,
                                       double &iEast, double &iNorth)
     {

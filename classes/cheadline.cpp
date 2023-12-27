@@ -55,7 +55,7 @@ void CHeadLine::AddFirstLastPoints(QVector<Vec3> &xList, const CBoundary &bnd)
     if (bnd.bndList.count() > 0)
     {
         //end
-        while (glm::isPointInPolygon(bnd.bndList[0].fenceLineEar, xList[xList.count() - 1]))
+        while (glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar, xList[xList.count() - 1]))
         {
             for (int i = 1; i < 10; i++)
             {
@@ -70,7 +70,7 @@ void CHeadLine::AddFirstLastPoints(QVector<Vec3> &xList, const CBoundary &bnd)
         //and the beginning
         start = Vec3(xList[0]);
 
-        while (glm::isPointInPolygon(bnd.bndList[0].fenceLineEar,xList[0]))
+        while (glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar,xList[0]))
         {
             for (int i = 1; i < 10; i++)
             {

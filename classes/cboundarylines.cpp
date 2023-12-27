@@ -59,7 +59,7 @@ void CBoundaryLines::FixFenceLine(int bndNum)
         int j = i + 1;
 
         if (j == bndCount) j = 0;
-        distance = glm::distance(fenceLine[i], fenceLine[j]);
+        distance = glm::Distance(fenceLine[i], fenceLine[j]);
         if (distance > spacing * 1.5)
         {
             Vec3 pointB((fenceLine[i].easting + fenceLine[j].easting) / 2.0,
@@ -80,7 +80,7 @@ void CBoundaryLines::FixFenceLine(int bndNum)
         int j = i + 1;
 
         if (j == bndCount) j = 0;
-        distance = glm::distance(fenceLine[i], fenceLine[j]);
+        distance = glm::Distance(fenceLine[i], fenceLine[j]);
         if (distance > spacing * 1.6)
         {
             Vec3 pointB((fenceLine[i].easting + fenceLine[j].easting) / 2.0,
@@ -98,7 +98,7 @@ void CBoundaryLines::FixFenceLine(int bndNum)
     bndCount = fenceLine.count();
     for (int i = 0; i < bndCount - 1; i++)
     {
-        distance = glm::distance(fenceLine[i], fenceLine[i + 1]);
+        distance = glm::Distance(fenceLine[i], fenceLine[i + 1]);
         if (distance < spacing)
         {
             fenceLine.removeAt(i + 1);

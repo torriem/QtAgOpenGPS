@@ -100,6 +100,7 @@ HEADERS  += formgps.h \
     classes/ccontour.h \
     classes/cboundary.h \
     btnenum.h \
+    classes/vecfix2fix.h \
     propdefs.h \
     properties.h \
     qmlutil.h \

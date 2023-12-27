@@ -113,7 +113,7 @@ void CTram::CreateBndInnerTramTrack(const CBoundary &bnd)
 
         for (int j = 0; j < ptCount; j++)
         {
-            double check = glm::distanceSquared(pt3.northing, pt3.easting,
+            double check = glm::DistanceSquared(pt3.northing, pt3.easting,
                                 bnd.bndList[0].fenceLine[j].northing, bnd.bndList[0].fenceLine[j].easting);
             if (check < distSq)
             {
@@ -164,7 +164,7 @@ void CTram::CreateBndOuterTramTrack(const CBoundary &bnd)
 
         for (int j = 0; j < ptCount; j++)
         {
-            double check = glm::distanceSquared(pt3.northing, pt3.easting,
+            double check = glm::DistanceSquared(pt3.northing, pt3.easting,
                                                bnd.bndList[0].fenceLine[j].northing, bnd.bndList[0].fenceLine[j].easting);
             if (check < distSq)
             {

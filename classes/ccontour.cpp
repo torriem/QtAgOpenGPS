@@ -242,7 +242,7 @@ void CContour::BuildContourGuidanceLine(double secondsSinceStart, CVehicle &vehi
                 //make sure its not closer then 1 eq width
                 for (int j = start; j < stop; j++)
                 {
-                    double check = glm::distanceSquared(point.northing, point.easting,
+                    double check = glm::DistanceSquared(point.northing, point.easting,
                                                        stripList[stripNum][j].northing, stripList[stripNum][j].easting);
                     if (check < distSqAway)
                     {
@@ -506,7 +506,7 @@ void CContour::DistanceFromContourLine(bool isAutoSteerBtnOn,
             for (int i = ReverseHeading ? B : A; i < ptCount && i >= 0; i += count)
             {
                 // used for calculating the length squared of next segment.
-                double tempDist = glm::distance(start, ctList[i]);
+                double tempDist = glm::Distance(start, ctList[i]);
 
                 //will we go too far?
                 if ((tempDist + distSoFar) > goalPointDistance)
@@ -522,7 +522,7 @@ void CContour::DistanceFromContourLine(bool isAutoSteerBtnOn,
             }
 
             //calc "D" the distance from pivot axle to lookahead point
-            double goalPointDistanceSquared = glm::distanceSquared(goalPointCT.northing, goalPointCT.easting, pivot.northing, pivot.easting);
+            double goalPointDistanceSquared = glm::DistanceSquared(goalPointCT.northing, goalPointCT.easting, pivot.northing, pivot.easting);
 
             //calculate the the delta x in local coordinates and steering angle degrees based on wheelbase
             double localHeading;// = glm::twoPI - mf.fixHeading;

@@ -108,7 +108,7 @@ void CRecordedPath::UpdatePosition(CVehicle &vehicle, const CYouTurn &yt, bool i
         pathCount = cnt - B;
         if (pathCount < 8)
         {
-            double distSqr = glm::distanceSquared(pivotAxlePosRP.northing, pivotAxlePosRP.easting, recList[0].northing, recList[0].easting);
+            double distSqr = glm::DistanceSquared(pivotAxlePosRP.northing, pivotAxlePosRP.easting, recList[0].northing, recList[0].easting);
             if (distSqr < 2)
             {
                 isFollowingRecPath = true;
@@ -358,7 +358,7 @@ void CRecordedPath::PurePursuitRecPath(CVehicle &vehicle, int ptCount)
     }
 
     //calc "D" the distance from pivotAxlePosRP axle to lookahead point
-    double goalPointDistanceSquared = glm::distanceSquared(goalPointRP.northing, goalPointRP.easting, pivotAxlePosRP.northing, pivotAxlePosRP.easting);
+    double goalPointDistanceSquared = glm::DistanceSquared(goalPointRP.northing, goalPointRP.easting, pivotAxlePosRP.northing, pivotAxlePosRP.easting);
 
     //calculate the the delta x in local coordinates and steering angle degrees based on wheelbase
     double localHeading = glm::twoPI - vehicle.fixHeading + inty;
@@ -505,7 +505,7 @@ void CRecordedPath::PurePursuitDubins(CVehicle &vehicle, const CYouTurn &yt, boo
     }
 
     //calc "D" the distance from pivotAxlePosRP axle to lookahead point
-    double goalPointDistanceSquared = glm::distanceSquared(goalPointRP.northing, goalPointRP.easting, pivotAxlePosRP.northing, pivotAxlePosRP.easting);
+    double goalPointDistanceSquared = glm::DistanceSquared(goalPointRP.northing, goalPointRP.easting, pivotAxlePosRP.northing, pivotAxlePosRP.easting);
 
     //calculate the the delta x in local coordinates and steering angle degrees based on wheelbase
     //double localHeading = glm::twoPI - vehicle.fixHeading;

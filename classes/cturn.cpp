@@ -10,12 +10,12 @@
 
 int CBoundary::IsPointInsideTurnArea(Vec3 pt) const
 {
-    if (bndList.count() > 0 && glm::isPointInPolygon(bndList[0].turnLine, pt))
+    if (bndList.count() > 0 && glm::IsPointInPolygon(bndList[0].turnLine, pt))
     {
         for (int i = 1; i < bndList.count(); i++)
         {
             if (bndList[i].isDriveThru) continue;
-            if (glm::isPointInPolygon(bndList[i].turnLine,pt))
+            if (glm::IsPointInPolygon(bndList[i].turnLine,pt))
             {
                 return i;
             }
@@ -48,7 +48,7 @@ void CBoundary::FindClosestTurnPoint(const CABLine &ABLine, Vec3 fromPt)
     {
         for (int i = 0; i < bndList[j].turnLine.count() - 1; i++)
         {
-            int res = glm::getLineIntersection(
+            int res = glm::GetLineIntersection(
                 bndList[j].turnLine[i].easting,
                 bndList[j].turnLine[i].northing,
                 bndList[j].turnLine[i + 1].easting,
@@ -135,7 +135,7 @@ void CBoundary::BuildTurnLines(CFieldData &fd)
             if (point.heading < -glm::twoPI) point.heading += glm::twoPI;
 
             //only add if outside actual field boundary
-            if ((j == 0) && (0 == glm::isPointInPolygon(bndList[j].fenceLineEar,point)))
+            if ((j == 0) && (0 == glm::IsPointInPolygon(bndList[j].fenceLineEar,point)))
             {
                 Vec3 tPnt(point.easting, point.northing, point.heading);
                 bndList[j].turnLine.append(tPnt);

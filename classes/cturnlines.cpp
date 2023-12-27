@@ -54,7 +54,7 @@ void CBoundaryLines::FixTurnLine(double totalHeadWidth, double spacing)
         for (int j = 0; j < lineCount; j++)
         {
             //make sure distance between headland and boundary is not less then width
-            distance = glm::distanceSquared(fenceLine[i], turnLine[j]);
+            distance = glm::DistanceSquared(fenceLine[i], turnLine[j]);
             if (distance < (totalHeadWidth * 0.99))
             {
                 turnLine.removeAt(j);
@@ -70,7 +70,7 @@ void CBoundaryLines::FixTurnLine(double totalHeadWidth, double spacing)
     {
         int j = i + 1;
         if (j == bndCount) j = 0;
-        distance = glm::distanceSquared(turnLine[i], turnLine[j]);
+        distance = glm::DistanceSquared(turnLine[i], turnLine[j]);
         if (distance > (spacing * 1.8))
         {
             Vec3 pointB((turnLine[i].easting + turnLine[j].easting) / 2.0,
@@ -87,7 +87,7 @@ void CBoundaryLines::FixTurnLine(double totalHeadWidth, double spacing)
     bndCount = turnLine.count();
     for (int i = 0; i < bndCount - 1; i++)
     {
-        distance = glm::distanceSquared(turnLine[i], turnLine[i + 1]);
+        distance = glm::DistanceSquared(turnLine[i], turnLine[i + 1]);
         if (distance < spacing)
         {
             turnLine.removeAt(i + 1);

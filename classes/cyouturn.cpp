@@ -74,7 +74,7 @@ bool CYouTurn::findCurveTurnPoints(const CABCurve &curve,
 
     for (int i = 0; i < bnd.bndList[turnNum].turnLine.count() - 2; i++)
     {
-        int res = glm::getLineIntersection(
+        int res = glm::GetLineIntersection(
             bnd.bndList[turnNum].turnLine[i].easting,
             bnd.bndList[turnNum].turnLine[i].northing,
             bnd.bndList[turnNum].turnLine[i + 1].easting,
@@ -161,7 +161,7 @@ void CYouTurn::AddSequenceLines(double head, Vec3 pivot)
     count = ytList.size();
     for (int i = 0; i < count; i += 2)
     {
-        distancePivotToTurnLine = glm::distance(ytList[i], pivot);
+        distancePivotToTurnLine = glm::Distance(ytList[i], pivot);
         if (distancePivotToTurnLine > 3)
         {
             isTurnCreationTooClose = false;
@@ -203,7 +203,7 @@ bool CYouTurn::BuildABLineDubinsYouTurn(CVehicle &vehicle,
             //or did we lose the turnLine - we are on the highway cuz we left the outer/inner turn boundary
             if ((int)bnd.closestTurnPt.easting != -20000)
             {
-                vehicle.distancePivotToTurnLine = glm::distance(vehicle.pivotAxlePos, bnd.closestTurnPt);
+                vehicle.distancePivotToTurnLine = glm::Distance(vehicle.pivotAxlePos, bnd.closestTurnPt);
             }
             else
             {
@@ -377,7 +377,7 @@ bool CYouTurn::BuildABLineDubinsYouTurn(CVehicle &vehicle,
         {
             case 1:
                 //the temp array
-                vehicle.distancePivotToTurnLine = glm::distance(ytList[0], vehicle.pivotAxlePos);
+                vehicle.distancePivotToTurnLine = glm::Distance(ytList[0], vehicle.pivotAxlePos);
                 cosHead = cos(headAB);
                 sinHead = sin(headAB);
 
@@ -425,7 +425,7 @@ bool CYouTurn::BuildABLineDubinsYouTurn(CVehicle &vehicle,
             //move again out of bounds
             case 2:
                 //the temp array
-                vehicle.distancePivotToTurnLine = glm::distance(ytList[0], vehicle.pivotAxlePos);
+                vehicle.distancePivotToTurnLine = glm::Distance(ytList[0], vehicle.pivotAxlePos);
                 cosHead = cos(headAB);
                 sinHead = sin(headAB);
 
@@ -483,7 +483,7 @@ bool CYouTurn::BuildABLineDubinsYouTurn(CVehicle &vehicle,
         //or did we lose the turnLine - we are on the highway cuz we left the outer/inner turn boundary
         if ((int)bnd.closestTurnPt.easting != -20000)
         {
-                vehicle.distancePivotToTurnLine = glm::distance(vehicle.pivotAxlePos, bnd.closestTurnPt);
+                vehicle.distancePivotToTurnLine = glm::Distance(vehicle.pivotAxlePos, bnd.closestTurnPt);
         }
         else
         {
@@ -939,7 +939,7 @@ bool CYouTurn::BuildCurveDubinsYouTurn(CVehicle &vehicle,
             crossingCurvePoint.northing = curve.curList[crossingCurvePoint.index].northing;
             crossingCurvePoint.heading = curve.curList[crossingCurvePoint.index].heading;
 
-            tooClose = glm::distance(ytList[0], pivotPos);
+            tooClose = glm::Distance(ytList[0], pivotPos);
             isTurnCreationTooClose = tooClose < 3;
 
             //set the flag to Critical stop machine
@@ -1356,7 +1356,7 @@ bool CYouTurn::DistanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
             if (A > B) { C = A; A = B; B = C; }
 
             onA = A;
-            double distancePiv = glm::distance(ytList[A], vehicle.pivotAxlePos);
+            double distancePiv = glm::Distance(ytList[A], vehicle.pivotAxlePos);
 
             if (distancePiv > 1 || (B >= ptCount - 1))
             {
@@ -1398,7 +1398,7 @@ bool CYouTurn::DistanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
             for (int i = reverseHeading ? B : A; i < ptCount && i >= 0; i += count)
             {
                 // used for calculating the length squared of next segment.
-                double tempDist = glm::distance(start, ytList[i]);
+                double tempDist = glm::Distance(start, ytList[i]);
 
                 //will we go too far?
                 if ((tempDist + distSoFar) > goalPointDistance)
@@ -1440,7 +1440,7 @@ bool CYouTurn::DistanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
             }
 
             //calc "D" the distance from pivot axle to lookahead point
-            double goalPointDistanceSquared = glm::distanceSquared(goalPointYT.northing, goalPointYT.easting, pivot.northing, pivot.easting);
+            double goalPointDistanceSquared = glm::DistanceSquared(goalPointYT.northing, goalPointYT.easting, pivot.northing, pivot.easting);
 
             //calculate the the delta x in local coordinates and steering angle degrees based on wheelbase
             double localHeading = glm::twoPI - vehicle.fixHeading;

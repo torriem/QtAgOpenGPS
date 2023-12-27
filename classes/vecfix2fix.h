@@ -1,7 +1,7 @@
-#ifndef VEC2FIX2FIX_H
-#define VEC2FIX2FIX_H
+#ifndef VECFIX2FIX_H
+#define VECFIX2FIX_H
 
-class Vec2Fix2Fix
+class VecFix2Fix
 {
 public:
     double easting; //easting
@@ -9,10 +9,10 @@ public:
     double northing; //norting
     int isSet;    //altitude
 
-    Vec2Fix2Fix(double _easting, double _northing, double _distance, int _isSet) :
+    VecFix2Fix(double _easting, double _northing, double _distance, int _isSet) :
         easting(_easting), distance(_distance), northing(_northing), isSet(_isSet)
     { }
 
 };
 
-#endif // VEC2FIX2FIX_H
+#endif // VECFIX2FIX_H

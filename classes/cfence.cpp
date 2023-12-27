@@ -11,13 +11,13 @@
 bool CBoundary::IsPointInsideFenceArea(Vec3 testPoint) const
 {
     //first where are we, must be inside outer and outside of inner geofence non drive thru turn borders
-    if (glm::isPointInPolygon(bndList[0].fenceLineEar,testPoint))
+    if (glm::IsPointInPolygon(bndList[0].fenceLineEar,testPoint))
     {
         for (int i = 1; i < bndList.count(); i++)
         {
             //make sure not inside a non drivethru boundary
             if (bndList[i].isDriveThru) continue;
-            if (glm::isPointInPolygon(bndList[i].fenceLineEar,testPoint))
+            if (glm::IsPointInPolygon(bndList[i].fenceLineEar,testPoint))
             {
                 return false;
             }
@@ -32,13 +32,13 @@ bool CBoundary::IsPointInsideFenceArea(Vec3 testPoint) const
 bool CBoundary::IsPointInsideFenceArea(Vec2 testPoint) const
 {
     //first where are we, must be inside outer and outside of inner geofence non drive thru turn borders
-    if (glm::isPointInPolygon(bndList[0].fenceLineEar,testPoint))
+    if (glm::IsPointInPolygon(bndList[0].fenceLineEar,testPoint))
     {
         for (int i = 1; i < bndList.count(); i++)
         {
             //make sure not inside a non drivethru boundary
             if (bndList[i].isDriveThru) continue;
-            if (glm::isPointInPolygon(bndList[i].fenceLineEar,testPoint))
+            if (glm::IsPointInPolygon(bndList[i].fenceLineEar,testPoint))
             {
                 return false;
             }

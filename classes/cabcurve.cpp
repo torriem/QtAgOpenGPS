@@ -195,7 +195,7 @@ void CABCurve::BuildCurveCurrentList(Vec3 pivot,
             // add p1
             curList.append(arr[i + 1]);
 
-            distance = glm::distance(arr[i + 1], arr[i + 2]);
+            distance = glm::Distance(arr[i + 1], arr[i + 2]);
 
             if (distance > spacing)
             {
@@ -242,7 +242,7 @@ void CABCurve::BuildCurveCurrentList(Vec3 pivot,
             int ptCnt = curList.count() - 1;
 
             //end
-            while (glm::isPointInPolygon(bnd.bndList[0].fenceLineEar,curList[curList.count() - 1]))
+            while (glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar,curList[curList.count() - 1]))
             {
                 for (int i = 1; i < 10; i++)
                 {
@@ -257,7 +257,7 @@ void CABCurve::BuildCurveCurrentList(Vec3 pivot,
             //and the beginning
             pt33 = Vec3(curList[0]);
 
-            while (glm::isPointInPolygon(bnd.bndList[0].fenceLineEar,curList[0]))
+            while (glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar,curList[0]))
             {
                 pt33 = Vec3(curList[0]);
 
@@ -329,7 +329,7 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
 
             for (int j = 0; j < curList.count(); j += 10)
             {
-                dist = glm::distanceSquared(pivot, curList[j]);
+                dist = glm::DistanceSquared(pivot, curList[j]);
                 if (dist < minDistA)
                 {
                     minDistA = dist;
@@ -345,7 +345,7 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
             //find the closest 2 points to current close call
             for (int j = cc; j < dd; j++)
             {
-                dist = glm::distanceSquared(pivot, curList[j]);
+                dist = glm::DistanceSquared(pivot, curList[j]);
                 if (dist < minDistA)
                 {
                     minDistB = minDistA;
@@ -443,7 +443,7 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
             for (int i = ReverseHeading ? B : A; i < ptCount && i >= 0; i += count)
             {
                 // used for calculating the length squared of next segment.
-                double tempDist = glm::distance(start, curList[i]);
+                double tempDist = glm::Distance(start, curList[i]);
 
                 //will we go too far?
                 if ((tempDist + distSoFar) > goalPointDistance)
@@ -462,7 +462,7 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
             {
                 if (isHeadingSameWay)
                 {
-                    if (glm::distance(goalPointCu, curList[(curList.count() - 1)]) < 0.5)
+                    if (glm::Distance(goalPointCu, curList[(curList.count() - 1)]) < 0.5)
                     {
                         emit TimedMessage(2000,tr("Guidance Stopped"), tr("Past end of curve"));
                         emit stopAutoSteer();
@@ -470,7 +470,7 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
                 }
                 else
                 {
-                    if (glm::distance(goalPointCu, curList[0]) < 0.5)
+                    if (glm::Distance(goalPointCu, curList[0]) < 0.5)
                     {
                         emit TimedMessage(2000,tr("Guidance Stopped"), tr("Past end of curve"));
                         emit stopAutoSteer();
@@ -479,7 +479,7 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
             }
 
             //calc "D" the distance from pivot axle to lookahead point
-            double goalPointDistanceSquared = glm::distanceSquared(goalPointCu.northing, goalPointCu.easting, pivot.northing, pivot.easting);
+            double goalPointDistanceSquared = glm::DistanceSquared(goalPointCu.northing, goalPointCu.easting, pivot.northing, pivot.easting);
 
             //calculate the the delta x in local coordinates and steering angle degrees based on wheelbase
             //double localHeading = glm::twoPI - mf.fixHeading;
@@ -704,7 +704,7 @@ void CABCurve::BuildTram(CBoundary &bnd, CTram &tram)
                 if (dist > 2)
                 {
                     //if inside the boundary, add
-                    if (!isBndExist || glm::isPointInPolygon(bnd.bndList[0].fenceLineEar,point))
+                    if (!isBndExist || glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar,point))
                     {
                         tram.tramArr.append(point);
                     }
@@ -754,7 +754,7 @@ void CABCurve::BuildTram(CBoundary &bnd, CTram &tram)
                 if (dist > 2)
                 {
                     //if inside the boundary, add
-                    if (!isBndExist || glm::isPointInPolygon(bnd.bndList[0].fenceLineEar,point))
+                    if (!isBndExist || glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar,point))
                     {
                         tram.tramArr.append(point);
                     }
@@ -907,7 +907,7 @@ void CABCurve::AddFirstLastPoints(QVector<Vec3> &xList,
     if (bnd.bndList.count() > 0)
     {
         //end
-        while (glm::isPointInPolygon(bnd.bndList[0].fenceLineEar, xList[xList.count() - 1]))
+        while (glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar, xList[xList.count() - 1]))
         {
             for (int i = 1; i < 10; i++)
             {
@@ -922,7 +922,7 @@ void CABCurve::AddFirstLastPoints(QVector<Vec3> &xList,
         //and the beginning
         start = Vec3(xList[0]);
 
-        while (glm::isPointInPolygon(bnd.bndList[0].fenceLineEar,xList[0]))
+        while (glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar,xList[0]))
         {
             for (int i = 1; i < 10; i++)
             {

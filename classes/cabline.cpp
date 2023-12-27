@@ -211,7 +211,7 @@ void CABLine::GetCurrentABLine(Vec3 pivot, Vec3 steer,
 
         //calc "D" the distance from pivot axle to lookahead point
         double goalPointDistanceDSquared
-            = glm::distanceSquared(goalPointAB.northing, goalPointAB.easting, pivot.northing, pivot.easting);
+            = glm::DistanceSquared(goalPointAB.northing, goalPointAB.easting, pivot.northing, pivot.easting);
 
         //calculate the the new x in local coordinates and steering angle degrees based on wheelbase
         double localHeading;
@@ -531,7 +531,7 @@ void CABLine::BuildTram(CBoundary &bnd, CTram &tram)
             P1.easting = hsin * widd + tramRef[j].easting;
             P1.northing = (hcos * widd) + tramRef[j].northing;
 
-            if (!isBndExist || glm::isPointInPolygon(bnd.bndList[0].fenceLineEar,P1))
+            if (!isBndExist || glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar,P1))
             {
                 tram.tramArr.append(P1);
             }
@@ -551,7 +551,7 @@ void CABLine::BuildTram(CBoundary &bnd, CTram &tram)
             P1.easting = (hsin * widd) + tramRef[j].easting;
             P1.northing = (hcos * widd) + tramRef[j].northing;
 
-            if (!isBndExist || glm::isPointInPolygon(bnd.bndList[0].fenceLineEar,P1))
+            if (!isBndExist || glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar,P1))
             {
                 tram.tramArr.append(P1);
             }
