@@ -9,7 +9,8 @@
 
 CGuidance::CGuidance() {}
 
-void CGuidance::doSteerAngleCalc(CVehicle &vehicle,
+void CGuidance::doSteerAngleCalc(bool isAutoSteerBtnOn,
+                                 CVehicle &vehicle,
                                  const CAHRS &ahrs
                                  )
 {
@@ -51,7 +52,7 @@ void CGuidance::doSteerAngleCalc(CVehicle &vehicle,
     //pivotErrorTotal = pivotDistanceError + pivotDerivative;
 
     if (vehicle.avgSpeed > 1
-        && mf.isAutoSteerBtnOn
+        && isAutoSteerBtnOn
         && fabs(derivativeDistError) < 1
         && fabs(pivotDistanceError) < 0.25)
     {
@@ -82,8 +83,8 @@ void CGuidance::doSteerAngleCalc(CVehicle &vehicle,
     vehicle.modeActualXTE = (distanceFromCurrentLinePivot);
 
     //Convert to millimeters from meters
-    mf.guidanceLineDistanceOff = (short)glm::roundMidAwayFromZero(distanceFromCurrentLinePivot * 1000.0);
-    mf.guidanceLineSteerAngle = (short)(steerAngleGu * 100);
+    vehicle.guidanceLineDistanceOff = (short)glm::roundMidAwayFromZero(distanceFromCurrentLinePivot * 1000.0);
+    vehicle.guidanceLineSteerAngle = (short)(steerAngleGu * 100);
 }
 
 /// <summary>
@@ -97,6 +98,7 @@ void CGuidance::doSteerAngleCalc(CVehicle &vehicle,
 /// <param name="isValid"></param>
 void CGuidance::StanleyGuidanceABLine(Vec3 curPtA, Vec3 curPtB,
                                       Vec3 pivot, Vec3 steer,
+                                      bool isAutoSteerBtnOn,
                                       CVehicle &vehicle,
                                       CABLine &ABLine,
                                       const CAHRS &ahrs,
@@ -184,7 +186,7 @@ void CGuidance::StanleyGuidanceABLine(Vec3 curPtA, Vec3 curPtB,
 
     vehicle.modeActualHeadingError = glm::toDegrees(steerHeadingError);
 
-    doSteerAngleCalc(vehicle,ahrs);
+    doSteerAngleCalc(isAutoSteerBtnOn, vehicle,ahrs);
 }
 
 /// <summary>
@@ -195,6 +197,7 @@ void CGuidance::StanleyGuidanceABLine(Vec3 curPtA, Vec3 curPtB,
 /// <param name="curList">the current list of guidance points</param>
 void CGuidance::StanleyGuidanceCurve(Vec3 pivot, Vec3 steer,
                                      QVector<Vec3> &curList,
+                                     bool isAutoSteerBtnOn,
                                      CVehicle &vehicle,
                                      CABCurve &curve,
                                      const CAHRS &ahrs)
@@ -404,13 +407,13 @@ void CGuidance::StanleyGuidanceCurve(Vec3 pivot, Vec3 steer,
         if (steerHeadingError > glm::PIBy2) steerHeadingError -= M_PI;
         else if (steerHeadingError < -glm::PIBy2) steerHeadingError += M_PI;
 
-        doSteerAngleCalc(vehicle,ahrs);
+        doSteerAngleCalc(isAutoSteerBtnOn, vehicle,ahrs);
     }
     else
     {
         //invalid distance so tell AS module
         distanceFromCurrentLineSteer = 32000;
-        mf.guidanceLineDistanceOff = 32000;
+        vehicle.guidanceLineDistanceOff = 32000;
     }
 }
 

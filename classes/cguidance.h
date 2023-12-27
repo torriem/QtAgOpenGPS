@@ -38,12 +38,14 @@ public:
 
     CGuidance();
 
-    void doSteerAngleCalc(CVehicle &vehicle,
+    void doSteerAngleCalc(bool isAutoSteerBtnOn,
+                          CVehicle &vehicle,
                           const CAHRS &ahrs
                          );
 
     void StanleyGuidanceABLine(Vec3 curPtA, Vec3 curPtB,
                                Vec3 pivot, Vec3 steer,
+                               bool isAutoSteerBtnOn,
                                CVehicle &vehicle,
                                CABLine &CABLine,
                                const CAHRS &ahrs,
@@ -52,6 +54,7 @@ public:
 
     void StanleyGuidanceCurve(Vec3 pivot, Vec3 steer,
                               QVector<Vec3> &curList,
+                              bool isAutoSteerBtnOn,
                               CVehicle &vehicle,
                               CABCurve &curve,
                               const CAHRS &ahrs);
