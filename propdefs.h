@@ -1,3 +1,4 @@
+QVector<int> default_relay_pinConfig = { 1,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 QVector<int> default_zones = { 2,10,20,0,0,0,0,0,0 };
 AOGProperty property_setwin("display/camPitch",-62);
 AOGProperty property_setWindow_Location("display/windowLocation",QPoint(30, 30));
@@ -107,7 +108,7 @@ AOGProperty property_setDisplay_customSectionColors("display/customSectionColors
 AOGProperty property_setBrand_TBrand("display/TBrand","AGOpenGPS");
 AOGProperty property_setHeadland_isSectionControlled("todo/headlandIsSectionControlled",true);
 AOGProperty property_setSound_isAutoSteerOn("display/autoSteerSound",true);
-AOGProperty property_setRelay_pinConfig("todo/relayPinConfig","1,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0");
+AOGProperty property_setRelay_pinConfig("todo/relayPinConfig",QVariant::fromValue(default_relay_pinConfig));
 AOGProperty property_setDisplay_camSmooth("display/camSmooth",50);
 AOGProperty property_setGPS_dualHeadingOffset("gps/dualHeadingOffset",0);
 AOGProperty property_setF_isSteerWorkSwitchEnabled("tool/isSteerWorkSwitchEnabled",false);

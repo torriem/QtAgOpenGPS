@@ -32,6 +32,9 @@ def parse_settings(file):
             elif t == 'System.String' and n == 'setTool_zones':
                 preamble.append('QVector<int> default_zones = { ' + s.Value.contents[0] + ' };')
                 default_value = 'QVariant::fromValue(default_zones)'
+            elif t == 'System.String' and n == 'setRelay_pinConfig':
+                preamble.append('QVector<int> default_relay_pinConfig = { ' + s.Value.contents[0] + ' };')
+                default_value = 'QVariant::fromValue(default_relay_pinConfig)'
             elif t == 'System.String' or \
                  t == 'AgOpenGPS.TBrand' or \
                  t == 'AgOpenGPS.HBrand' or \
