@@ -5,6 +5,7 @@
 #include <limits>
 #include <QVector>
 #include "vec2.h"
+#include "vec2fix2fix.h"
 #include "vec3.h"
 
 
@@ -110,6 +111,19 @@ namespace glm {
                     pow(first.northing - north, 2));
     }
 
+    static inline double distance(Vec2Fix2Fix first, Vec2 second)
+    {
+        return sqrt(pow(first.easting - second.easting, 2) +
+                    pow(first.northing - second.northing, 2));
+    }
+
+    static inline double distance(Vec2Fix2Fix first, Vec2Fix2Fix second)
+    {
+        return sqrt(pow(first.easting - second.easting, 2) +
+                    pow(first.northing - second.northing, 2));
+    }
+
+
     //not normalized distance, no square root
     static inline double distanceSquared(double northing1, double easting1, double northing2, double easting2)
     {
@@ -134,6 +148,12 @@ namespace glm {
                 pow(first.northing - second.northing, 2));
     }
     static inline double distanceSquared(Vec2 first, Vec2 second)
+    {
+        return (pow(first.easting - second.easting, 2) +
+                pow(first.northing - second.northing, 2));
+    }
+
+    static inline double distanceSquared(Vec2Fix2Fix first, Vec2 second)
     {
         return (pow(first.easting - second.easting, 2) +
                 pow(first.northing - second.northing, 2));
