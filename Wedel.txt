@@ -29,3 +29,4 @@ And add AgIO
 Really need to figure out how to change icons to grayscale, when they aren't needed/wanted
 That is done in the Colorize section of the button file.
 
+I also haven't figured out how to solve the "ReferenceError:etc." warning
