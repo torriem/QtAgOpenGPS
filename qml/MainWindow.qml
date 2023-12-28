@@ -180,6 +180,7 @@ Window {
                         height: parent.height
                         width: 75
                         icon.source: "qrc:/images/WindowClose.png"
+                        onClicked: closeDialog.visible = true
                     }
                 }
             }
@@ -745,7 +746,7 @@ Window {
                     rows:6
                     columns:2
 
-                    IconButton {
+                    IconButtonTransparent {
                         id: btnTiltDown
                         objectName: "btnTiltDown"
                         width: 70
@@ -753,7 +754,7 @@ Window {
                         radius: 10
                         icon.source: "qrc:/images/TiltDown.png"
                     }
-                    IconButton {
+                    IconButtonTransparent {
                         id: btnCamera2d
                         objectName: "btnCamera2d"
                         width: 70
@@ -761,7 +762,7 @@ Window {
                         radius: 10
                         icon.source: "qrc:/images/Camera2D64.png"
                     }
-                    IconButton {
+                    IconButtonTransparent {
                         id: btnCameraNorth2d
                         objectName: "btnCameraNorth2d"
                         width: 70
@@ -769,7 +770,7 @@ Window {
                         radius: 10
                         icon.source: "qrc:/images/CameraNorth2D.png"
                     }
-                    IconButton {
+                    IconButtonTransparent {
                         id: btnZoomOut
                         objectName: "btnZoomOut"
                         width: 70
@@ -777,7 +778,7 @@ Window {
                         radius: 10
                         icon.source: "qrc:/images/ZoomOut48.png"
                     }
-                    IconButton {
+                    IconButtonTransparent {
                         id: btnWindowDayNight
                         objectName: "btnWindowDayNight"
                         width: 70
@@ -785,7 +786,7 @@ Window {
                         radius: 10
                         icon.source: "qrc:/images/WindowDayMode.png"
                     }
-                    IconButton {
+                    IconButtonTransparent {
                         id: btnBrightnessDown
                         objectName: "btnBrightnessDown"
                         width: 70
@@ -793,7 +794,7 @@ Window {
                         radius: 10
                         icon.source: "qrc:/images/BrightnessDn.png"
                     }
-                    IconButton {
+                    IconButtonTransparent {
                         id: btnTiltUp
                         objectName: "btnTiltUp"
                         width: 70
@@ -801,7 +802,7 @@ Window {
                         radius: 10
                         icon.source: "qrc:/images/TiltUp.png"
                     }
-                    IconButton {
+                    IconButtonTransparent {
                         id: btnCamera3d
                         objectName: "btnCamera3d"
                         width: 70
@@ -809,7 +810,7 @@ Window {
                         radius: 10
                         icon.source: "qrc:/images/Camera3D64.png"
                     }
-                    IconButton {
+                    IconButtonTransparent {
                         id: btnCameraNorth3d
                         objectName: "btnCameraNorth3d"
                         width: 70
@@ -817,7 +818,7 @@ Window {
                         radius: 10
                         icon.source: "qrc:/images/CameraNorth64.png"
                     }
-                    IconButton {
+                    IconButtonTransparent {
                         id: btnZoomIn
                         objectName: "btnZoomIn"
                         width: 70
@@ -825,7 +826,7 @@ Window {
                         radius: 10
                         icon.source: "qrc:/images/ZoomIn48.png"
                     }
-                    IconButton {
+                    IconButtonTransparent {
                         id: btnempty
                         objectName: "btnempty"
                         width: 70
@@ -833,24 +834,14 @@ Window {
                         radius: 10
                         icon.source: "qrc:/images/.png"
                     }
-                    IconButton {
+                    IconButtonTransparent {
                         id: btnBrightnessUp
                         objectName: "btnBrightnessUp"
                         width: 70
                         height: 70
                         radius: 10
                         icon.source: "qrc:/images/BrightnessUp.png"
-                    }/*
-                    IconButton {
-                        id: btn
-                        objectName: "btn"
-                        width: 70
-                        height: 70
-                        radius: 10
-                        icon.source: "qrc:/images/.png"
-                    }*/
-
-
+                    }
                 }
             }
 
@@ -878,38 +869,6 @@ Window {
                 anchors.topMargin: 15
                 spacing: 6
             }
-
-            /*
-            Column {
-                id: zoomButtons
-                spacing: 6
-                anchors.right: rightColumn.left
-                anchors.rightMargin: 20
-                anchors.top: parent.top
-                anchors.topMargin: 20
-
-            }
-            */
-            /*
-            Rectangle {
-                width: 104
-                height: 104
-                color: "#00000000"
-                Image {
-                    id: compassPic
-                    source: "qrc:/images/textures/Compass.png"
-                    transform: Rotation {
-                        origin.x: 52
-                        origin.y: 52
-                        angle: 45
-                    }
-                    fillMode: Image.PreserveAspectFit
-                    anchors.fill: parent
-                }
-                anchors.right: zoomButtons.left
-                anchors.top: zoomButtons.top
-            }
-            */
 
             SliderCustomized {
                 id: speedSlider
@@ -1034,7 +993,35 @@ Window {
                 anchors.topMargin: 50
                 visible: false
             }
-
+            Rectangle{
+                id: closeDialog
+                width: 500
+                height: 100
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                color: "gray"
+                border.color: "aqua"
+                border.width: 2
+                visible: false
+                IconButtonText{
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    color1: "transparent"
+                    color2: "transparent"
+                    color3: "transparent"
+                    icon.source: "qrc:/images/back-button.png"
+                    onClicked: parent.visible = false
+                }
+                IconButtonText{
+                    objectName: "btnExitAOG"
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    color1: "transparent"
+                    color2: "transparent"
+                    color3: "transparent"
+                    icon.source: "qrc:/images/ExitAOG.png"
+                }
+            }
 
             Rectangle {
                 id: contextArea
