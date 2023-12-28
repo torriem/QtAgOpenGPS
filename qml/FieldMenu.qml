@@ -95,7 +95,7 @@ Item{
                 isChecked: false
                 text: "Open"
                 icon.source: "qrc:/images/FileOpen"
-                onClicked: openFieldWindow.visible = true;
+                onClicked: fieldOpen.visible = true;
             }
         }
         IconButtonTransparent{
@@ -109,7 +109,7 @@ Item{
             height: 75
         }
 
-        OpenFieldWindow{
+        FieldOpen{
             anchors.top:parent.top
             anchors.horizontalCenter: parent.horizontalCenter
             visible: false

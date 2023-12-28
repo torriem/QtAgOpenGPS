@@ -948,8 +948,8 @@ Window {
                 visible: false
 
             }
-            OpenFieldWindow {
-                id: openFieldWindow
+            FieldOpen {
+                id: fieldOpen
                 objectName: "slideoutMenu"
                 anchors.top: parent.top
                 anchors.topMargin: 20

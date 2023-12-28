@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.3
 import Qt.labs.folderlistmodel 2.2
 
 Rectangle{
-    id:openFieldWindow
+    id:fieldOpen
     color: "white"
     visible: false
     width: 800
@@ -123,7 +123,7 @@ Rectangle{
                 objectName: "btnCancel"
                 icon.source: "qrc:/images/Cancel64.png"
                 buttonText: "Cancel"
-                onClicked: fieldWindow.visible = false
+                onClicked: fieldOpen.visible = false
                 color3: "white"
                 border: 1
                 height: 75
