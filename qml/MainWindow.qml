@@ -590,16 +590,11 @@ Window {
                     buttonText: "LinePicker"
                 }
                 IconButtonText {
-                    id: btnSnaptoPivot
-                    objectName: "btnSnaptoPivot"
-                    icon.source: "qrc:/images/SnapToPivot.png"
-                    buttonText: ""
-                }
-                IconButtonText {
                     id: btnABLineEdit
                     objectName: "btnABLineEdit"
                     icon.source: "qrc:/images/ABLineEdit.png"
                     buttonText: "ABLineEdit"
+                    onClicked: lineEditor.visible = true
                 }
                 IconButtonText {
                     id: btnYouSkip
@@ -1013,6 +1008,15 @@ Window {
                 anchors.topMargin: 50
                 visible: false
             }
+            LineEditor{
+                id: lineEditor
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.rightMargin: 150
+                anchors.topMargin: 50
+                visible: false
+            }
+
             Rectangle{
                 id: recordButtons
                 anchors.bottom: bottomButtons.top
