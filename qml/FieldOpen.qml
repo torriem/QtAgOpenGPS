@@ -5,22 +5,21 @@ import Qt.labs.folderlistmodel 2.2
 
 Rectangle{
     id:fieldOpen
-    color: "white"
+    color: "ghostwhite"
     visible: false
-    width: 800
-    height: 500
+    width: 1024
+    height: 700
     z:3
     Rectangle {
         id: topLine
         objectName: "topLine"
         width: parent.width
         height: screenPixelDensity * 0.3 //.3" tall
-        color: "black"
+        color: "ghostwhite"
         z: 4
         Text {
             id: field
             text: "Field"
-            color: "white"
             anchors.left: topLine.left
             anchors.leftMargin: 15
             anchors.verticalCenter: topLine.verticalCenter
@@ -28,7 +27,6 @@ Rectangle{
         Text {
             id: distance
             text: qsTr("Distance")
-            color: "White"
             anchors.right: area.left
             anchors.verticalCenter: topLine.verticalCenter
             anchors.rightMargin: 100
@@ -36,7 +34,6 @@ Rectangle{
         Text {
             id: area
             text: qsTr("Area")
-            color: "white"
             anchors.right: parent.right
             anchors.verticalCenter: topLine.verticalCenter
             anchors.rightMargin: 30
@@ -62,6 +59,7 @@ Rectangle{
                 border.width: 1
                 border.color: "black"
                 anchors.fill: parent
+                color: "lightgray"
                 Rectangle{
                     anchors.fill: parent
                     anchors.margins: 1
