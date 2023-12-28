@@ -91,11 +91,11 @@ Item{
                 icon.source: "qrc:/images/FileClose.png"
             }
             IconButtonTextBeside{
-                objectName: "btnFeldOpen"
+                objectName: "btnFieldOpen"
                 isChecked: false
                 text: "Open"
                 icon.source: "qrc:/images/FileOpen"
-                onClicked: fieldWindow.visible = true;
+                onClicked: openFieldWindow.visible = true;
             }
         }
         IconButtonTransparent{
@@ -109,7 +109,7 @@ Item{
             height: 75
         }
 
-        FieldWindow{
+        OpenFieldWindow{
             anchors.top:parent.top
             anchors.horizontalCenter: parent.horizontalCenter
             visible: false

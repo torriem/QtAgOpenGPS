@@ -131,7 +131,7 @@
         <file>images/textures/LandscapeNight.png</file>
         <file>images/textures/Lift.png</file>
         <file>qml/FieldMenu.qml</file>
-        <file>qml/FieldWindow.qml</file>
+        <file>qml/OpenFieldWindow.qml</file>
         <file>qml/ToolsWindow.qml</file>
         <file>images/fileMenu.png</file>
         <file>images/SpecialFunctions.png</file>

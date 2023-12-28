@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.3
 import Qt.labs.folderlistmodel 2.2
 
 Rectangle{
-    id:fieldWindow
+    id:openFieldWindow
     color: "white"
     visible: false
     width: 800
