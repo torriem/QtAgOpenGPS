@@ -414,6 +414,7 @@ Window {
                     icon.source: "qrc:/images/CurveOff.png"
                     iconChecked: "qrc:/images/CurveOn.png"
                     buttonText: "ABCurve"
+                    onClicked: abCurvePicker.visible = true
                 }
                 IconButtonText{
                     id: btnABLine
@@ -1010,6 +1011,13 @@ Window {
                 height: 768
                 width:1024
                 visible:false
+            }
+            ABCurvePicker{
+                id: abCurvePicker
+                objectName: "abCurvePicker"
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                visible: false
             }
             ABLinePicker{
                 id: abLinePicker
