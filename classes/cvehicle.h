@@ -75,7 +75,6 @@ public:
 
     //storage for the cos and sin of heading
     double cosSectionHeading = 1.0, sinSectionHeading = 0.0;
-    double fixHeadingSection = 0.0, fixHeadingTank = 0.0;
     Vec3 pivotAxlePos;
     Vec3 steerAxlePos;
     Vec3 toolPos;

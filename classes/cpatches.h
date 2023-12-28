@@ -8,6 +8,7 @@
 typedef QVector<QVector3D> PatchTriangleList;
 
 class CFieldData;
+class CTool;
 
 class CPatches
 {
@@ -34,12 +35,11 @@ public:
     CPatches();
 
     void TurnMappingOn(QVector3D newLeftPoint, QVector3D newRightPoint, QVector3D color);
-    void TurnMappingOff(QVector<QSharedPointer<PatchTriangleList>> &patchSaveList,
-                        QVector3D newLeftPoint, QVector3D newRightPoint, QVector3D color,
+    void TurnMappingOff(CTool &tool,
                         CFieldData &fd);
-    void AddMappingPoint(QVector<QSharedPointer<PatchTriangleList>> &patchSaveList,
-                         QVector3D newLeftPoint, QVector3D newRightPoint, QVector3D color,
-                         CFieldData &fd);
+    void AddMappingPoint(CTool &tool,
+                         CFieldData &fd,
+                         int j);
 
 
 

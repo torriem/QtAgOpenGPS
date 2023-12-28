@@ -1,5 +1,6 @@
 #include "cpatches.h"
 #include "cfielddata.h"
+#include "ctool.h"
 #include "aogproperty.h"
 
 CPatches::CPatches() {
@@ -56,13 +57,10 @@ void CPatches::TurnMappingOn(QVector3D newLeftPoint, QVector3D newRightPoint, QV
    }
 }
 
-void CPatches::TurnMappingOff(QVector<QSharedPointer<PatchTriangleList> > &patchSaveList,
-                              QVector3D newLeftPoint,
-                              QVector3D newRightPoint,
-                              QVector3D color,
+void CPatches::TurnMappingOff(CTool &tool,
                               CFieldData &fd)
 {
-   AddMappingPoint(patchSaveList,newLeftPoint,newRightPoint,color,fd);
+   AddMappingPoint(tool, fd, 0);
 
    isDrawing = false;
    numTriangles = 0;
@@ -70,7 +68,7 @@ void CPatches::TurnMappingOff(QVector<QSharedPointer<PatchTriangleList> > &patch
    if (triangleList->count() > 4)
    {
        //save the triangle list in a patch list to add to saving file
-       patchSaveList.append(triangleList);
+       tool.patchSaveList.append(triangleList);
    }
    else
    {
@@ -80,14 +78,17 @@ void CPatches::TurnMappingOff(QVector<QSharedPointer<PatchTriangleList> > &patch
    }
 }
 
-void CPatches::AddMappingPoint(QVector<QSharedPointer<PatchTriangleList> > &patchSaveList,
-                               QVector3D newLeftPoint,
-                               QVector3D newRightPoint,
-                               QVector3D color,
-                               CFieldData &fd)
+void CPatches::AddMappingPoint(CTool &tool,
+                               CFieldData &fd,
+                               int j)
 {
-   leftPoint = newLeftPoint;
-   rightPoint = newRightPoint;
+   Vec2 vleftPoint = tool.section[currentStartSectionNum].leftPoint;
+   Vec2 vrightPoint = tool.section[currentEndSectionNum].rightPoint;
+   QVector3D leftPoint(vleftPoint.easting,vleftPoint.northing,0);
+   QVector3D rightPoint(vrightPoint.easting,vrightPoint.northing,0);
+   QVector3D color;
+   QColor color_prop;
+
 
    //add two triangles for next step.
    //left side
@@ -127,22 +128,21 @@ void CPatches::AddMappingPoint(QVector<QSharedPointer<PatchTriangleList> > &patc
        numTriangles = 0;
 
        //save the cutoff patch to be saved later
-       patchSaveList.append(triangleList);
+       tool.patchSaveList.append(triangleList);
 
        triangleList = QSharedPointer<PatchTriangleList>(new PatchTriangleList);
 
        patchList.append(triangleList);
 
        //Add Patch colour
-       triangleList->append(color);
-       /* put this in the caller
-       if (!mf.tool.isMultiColoredSections)
-           triangleList.Add(new vec3(mf.sectionColorDay.R, mf.sectionColorDay.G, mf.sectionColorDay.B));
+       if (!tool.isMultiColoredSections)
+           color_prop = property_setDisplay_colorSectionsDay;
        else
-           triangleList.Add(new vec3(mf.tool.secColors[j].R, mf.tool.secColors[j].G, mf.tool.secColors[j].B));
+           color_prop = tool.secColors[j];
 
-       */
+       color = QVector3D(color_prop.redF(), color_prop.greenF(), color_prop.blueF());
        //add the points to List, yes its more points, but breaks up patches for culling
+       triangleList->append(color);
 
        triangleList->append(leftPoint);
        triangleList->append(rightPoint);
