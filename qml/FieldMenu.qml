@@ -68,6 +68,7 @@ Item{
                 isChecked: false
                 text: "New"
                 icon.source: "qrc:/images/FileNew.png"
+                onClicked: fieldNew.visible = true
             }
         }
         ColumnLayout{
@@ -111,6 +112,13 @@ Item{
 
         FieldFromExisting{
             id: fieldFromExisting
+            anchors.top:parent.top
+            anchors.topMargin: -50
+            anchors.horizontalCenter: parent.horizontalCenter
+            visible: false
+        }
+        FieldNew{
+            id: fieldNew
             anchors.top:parent.top
             anchors.topMargin: -50
             anchors.horizontalCenter: parent.horizontalCenter

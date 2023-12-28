@@ -463,5 +463,6 @@
         <file>qml/LineEditor.qml</file>
         <file>qml/FieldFromExisting.qml</file>
         <file>images/BackSpace.png</file>
+        <file>qml/FieldNew.qml</file>
     </qresource>
 </RCC>

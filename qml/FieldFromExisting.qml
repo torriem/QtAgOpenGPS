@@ -119,7 +119,7 @@ Rectangle{
             text: qsTr("---")
         }
         TextInput{
-            objectName: "lineNudgeDistance"
+            objectName: "fieldFromExisting"
             anchors.fill: parent
         }
         Text {
@@ -162,6 +162,7 @@ Rectangle{
             icon.source: "qrc:/images/Config/Con_VehicleMenu.png"
             Text{
                 anchors.right: parent.left
+                anchors.verticalCenter: parent.verticalCenter
                 text: "+"
             }
         }
@@ -171,6 +172,7 @@ Rectangle{
             icon.source: "qrc:/images/JobNameCalendar.png"
             Text{
                 anchors.right: parent.left
+                anchors.verticalCenter: parent.verticalCenter
                 text: "+"
             }
         }
@@ -179,6 +181,7 @@ Rectangle{
             icon.source: "qrc:/images/JobNameTime.png"
             Text{
                 anchors.right: parent.left
+                anchors.verticalCenter: parent.verticalCenter
                 text: "+"
             }
         }
