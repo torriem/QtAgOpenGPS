@@ -11,7 +11,7 @@ void FormGPS::simConnectSlots()
     connect(&timerSim,SIGNAL(timeout()),this,SLOT(onSimTimerTimeout()));
 
     if (property_setMenu_isSimulatorOn) {
-        simTimer.start(100); //fire simulator every 100 ms.
+        timerSim.start(100); //fire simulator every 100 ms.
         fixUpdateHz = 10;
     }
 }

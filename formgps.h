@@ -19,8 +19,9 @@
 #include "common.h"
 
 #include "vec2.h"
+#include "vecfix2fix.h"
+
 #include "vec3.h"
-#include "vec4.h"
 #include "cflag.h"
 #include "cmodulecomm.h"
 #include "ccamera.h"
@@ -37,11 +38,11 @@
 #include "ccontour.h"
 #include "cabcurve.h"
 #include "cyouturn.h"
-#include "csequence.h"
 #include "cfielddata.h"
 #include "csim.h"
 #include "cahrs.h"
 #include "crecordedpath.h"
+#include "cguidance.h"
 
 //forward declare classes referred to below, to break circular
 //references in the code
@@ -143,6 +144,8 @@ public:
     //for animated submenu
     bool isMenuHid = true;
 
+    bool isDayTime = true;
+
     //Flag stuff
     uchar flagColor = 0;
     bool leftMouseDownOnOpenGL = false; //mousedown event in opengl window
@@ -152,17 +155,21 @@ public:
     //following are in settings now:
     //isGridOn, isMetric
     bool isIn3D = true, isLightbarOn = true, isSideGuideLines = true;
-    //bool isPureOn = true; //refer to QtSettings instead
+    bool isPureOn = true; //refer to QtSettings instead
+    bool isMetric = true;
+    bool isStanleyUsed = false;
 
     //bool for whether or not a job is active
     bool isJobStarted = false, isAreaOnRight = true, isAutoSteerBtnOn = false;
+
+
 
     //master Manual and Auto, 3 states possible
     btnStates manualBtnState = btnStates::Off;
     btnStates autoBtnState = btnStates::Off;
 
     //if we are saving a file
-    bool isSavingFile = false, isLogNMEA = false;
+    bool isSavingFile = false, isLogElevation = false;
 
     //Zoom variables
     double gridZoom;
@@ -180,9 +187,14 @@ public:
 
     //Time to do fix position update and draw routine
     double frameTime = 0;
+    double gpsHz = 10;
+
+    double secondsSinceStart;
 
     //Time to do fix position update and draw routine
     double HzTime = 5;
+
+    QVector<CPatches> triStrip = QVector<CPatches>( { CPatches() } );
 
 private:
     //for the NTRIP CLient counting
@@ -220,6 +232,7 @@ public:
     CABLine ABLine;
     CABCurve curve;
 
+    CGuidance gyd;
 
     CTram tram;
 
@@ -237,7 +250,6 @@ public:
     //boundary instance
     CBoundary bnd;
 
-    CSequence seq;
     CSim sim;
     CAHRS ahrs;
     CRecordedPath recPath;
@@ -249,122 +261,109 @@ public:
     /*************************
      *  Position.designer.cs *
      *************************/
-    double toLatitude;
-    double toLongitude;
-
     //very first fix to setup grid etc
     bool isFirstFixPositionSet = false, isGPSPositionInitialized = false, isFirstHeadingSet = false;
-    bool isReverse = false /*vehicle?*/, isSteerInReverse = true, isSuperSlow = false, isAutoSnaptoPivot = false;
+    bool /*isReverse = false (CVehicle),*/ isSteerInReverse = true, isSuperSlow = false, isAutoSnaptoPivot = false;
+    double startGPSHeading = 0;
 
-    // autosteer variables for sending serial moved to CVehicle
-    //short int guidanceLineDistanceOff, guidanceLineSteerAngle;
-
-    //how many fix updates per sec
-    int fixUpdateHz = 5;
-    double fixUpdateTime = 0.2;
-
-    QString headingFromSource;
-    QString headingFromSourceBak;
-
-    /*
-    double fixHeadingSection = 0.0, fixHeadingTank = 0.0;
-    Vec2 pivotAxlePos;
-    Vec2 toolPos;
-    Vec2 tankPos;
-    Vec2 hitchPos;*/
-
-    Vec2 prevFix;
-
-    //headings
-    double gpsHeading = 0.0, prevGPSHeading = 0.0;
-
-
-    //a distance between previous and current fix
-    double distance = 0.0;
-    double treeSpacingCounter = 0.0;
-    int treeTrigger = 0;
-
-    //how far travelled since last section was added, section points
-    double sectionTriggerDistance = 0, sectionTriggerStepDistance = 0;
-    Vec2 prevSectionPos = Vec2(0, 0);
-
-    Vec2 prevBoundaryPos = Vec2(0, 0);
-
+    //string to record fixes for elevation maps
     QByteArray sbFix;
 
+    // autosteer variables for sending serial moved to CVehicle
+    //short guidanceLineDistanceOff, guidanceLineSteerAngle; --> CVehicle
+    double avGuidanceSteerAngle;
+
+    short errorAngVel;
+    double setAngVel, actAngVel;
+    bool isConstantContourOn;
+
+    //guidance line look ahead
+    double guidanceLookAheadTime = 2;
+    Vec2 guidanceLookPos;
+
+    //for heading or Atan2 as camera
+    QString headingFromSource, headingFromSourceBak;
+
+    /* moved to CVehicle:
+    Vec3 pivotAxlePos;
+    Vec3 steerAxlePos;
+    Vec3 toolPos;
+    Vec3 tankPos;
+    Vec3 hitchPos;
+    */
+
+    //history
+    Vec2 prevFix;
+    Vec2 prevDistFix;
+    Vec2 lastReverseFix;
 
     //headings
-    //double fixHeading = 0.0;
-    double fixHeadingCam = 0.0;
+    double fixHeading = 0.0, camHeading = 0.0, smoothCamHeading = 0, gpsHeading = 10.0, prevGPSHeading = 0.0;
 
     //storage for the cos and sin of heading
-    //double cosSectionHeading = 1.0, sinSectionHeading = 0.0;
+    double cosSectionHeading = 1.0, sinSectionHeading = 0.0;
 
-    //are we still getting valid data from GPS, resets to 0 in NMEA RMC block, watchdog
-    int recvCounter = 20;
+    //how far travelled since last section was added, section points
+    double sectionTriggerDistance = 0, contourTriggerDistance = 0, sectionTriggerStepDistance = 0;
+    Vec2 prevSectionPos;
+    Vec2 prevContourPos;
+    int patchCounter = 0;
+
+    Vec2 prevBoundaryPos;
 
     //Everything is so wonky at the start
     int startCounter = 0;
 
     //individual points for the flags in a list
     QVector<CFlag> flagPts;
-    bool flagsBufferCurrent = false;
+
+    //tally counters for display
+    //public double totalSquareMetersWorked = 0, totalUserSquareMeters = 0, userSquareMetersAlarm = 0;
 
 
-
-    //used to determine NMEA sentence frequency
-    int timerPn = 1;
-    double et = 0, hzTime = 0;
-
+    double /*avgSpeed --> CVehicle,*/ previousSpeed;//for average speed
     double crossTrackError; //for average cross track error
 
     //youturn
     double distancePivotToTurnLine = -2222;
     double distanceToolToTurnLine = -2222;
 
-
+    //the value to fill in you turn progress bar
+    int youTurnProgressBar = 0;
 
     //IMU
-    double rollDistance = 0;
-    double roll = 0; //, pitch = 0, angVel = 0;
-    double avgRoll = 0; //, avgPitch = 0, avgAngVel = 0;
     double rollCorrectionDistance = 0;
-    double gyroCorrection, gyroCorrected;
+    double imuGPS_Offset, imuCorrected;
 
-    double rollUsed;
+    //step position - slow speed spinner killer
+    int currentStepFix = 0;
+    int totalFixSteps = 10;
+    VecFix2Fix stepFixPts[10];
+    double distanceCurrentStepFix = 0, distanceCurrentStepFixDisplay = 0, minHeadingStepDist = 1, startSpeed = 0.5;
+    double fixToFixHeadingDistance = 0, gpsMinimumStepDistance = 0.05;
+
+    bool isChangingDirection, isReverseWithIMU;
+
+    double nowHz = 0, filteredDelta = 0, delta = 0;
+
+    bool isRTK, isRTK_KillAutosteer;
+
     double headlandDistanceDelta = 0, boundaryDistanceDelta = 0;
 
+    Vec2 lastGPS;
 
-    //cautosteer
-    //flag for free drive window to control autosteer
-    bool isInFreeDriveMode = false;
-    int driveFreeSteerAngle = 0;
+    double uncorrectedEastingGraph = 0;
+    double correctionDistanceGraph = 0;
 
+    double frameTimeRough = 3;
+    double timeSliceOfLastFix = 0;
 
+    bool isMaxAngularVelocity = false;
 
-
-    int times;
-
-    int totalFixSteps = 10, currentStepFix = 0;
-    Vec3 vHold;
-    Vec3 stepFixPts[60];
-    //int fence = 0x0ff;
-    double distanceCurrentStepFix = 0, fixStepDist=0; //, minFixStepDist = 0;
-    bool isFixHolding = false, isFixHoldLoaded = false;
-
-    double rollZero = 0, pitchZero = 0;
-    double rollAngle = 0, pitchAngle = 0;
-
-    //step distances and positions for boundary, 6 meters before next point
-    double boundaryTriggerDistance = 6.0;
-
-    bool isBoundAlarming = false;
-
-    /***********************
-     * Postion.Designer.cs *
-     ***********************/
+    int minSteerSpeedTimer = 0;
 
     void UpdateFixPosition(); //process a new position
+    void TheRest();
     void CalculatePositionHeading(); // compute all headings and fixes
     void AddBoundaryPoint();
     void AddContourPoints();
@@ -416,6 +415,12 @@ public:
     void fileMakeKMLFromCurrentPosition(double lat, double lon);
     void fileSaveFieldKML();
 
+    /************************
+     * formgps_settomgs.cpp *
+     ************************/
+
+    void loadSettings();
+
     /**********************
      * OpenGL.Designer.cs *
      **********************/
@@ -448,7 +453,7 @@ public:
 
 
     /***********************
-     * UDPComm.designer.cs *
+     * formgps_udpcomm.cpp *
      ***********************/
 private:
     QUdpSocket *udpSocket = NULL;
@@ -467,6 +472,19 @@ public:
     void DisableSim();
     //void ReceiveFromAgIO(); // in slots below
 
+    /******************
+     * formgps_ui.cpp *
+     ******************/
+    //or should be under formgps_settings.cpp?
+
+    bool isUTurnOn = false;
+    bool isLateralOn = false;
+
+    QColor frameDayColor;
+    QColor frameNightColor;
+    QColor sectionColorDay;
+    QColor fieldColorDay;
+    QColor fieldColorNight;
 
    /**********************
      * OpenGL.Designer.cs *
@@ -491,7 +509,7 @@ public:
     void calculateMinMax();
 
 
-    void setZoom();
+    void SetZoom();
     void loadGLTextures();
 
 private:
@@ -619,9 +637,7 @@ public slots:
     void tmrWatchdog_timeout();
 
     void swapDirection();
-    void turnOffBoundAlarm() {
-        isBoundAlarming = false;
-    }
+    void turnOffBoundAlarm();
 
     void onBtnManUTurnLeft_clicked();
     void onBtnManUTurnRight_clicked();
