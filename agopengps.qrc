@@ -461,5 +461,7 @@
         <file>images/ISOXML.png</file>
         <file>qml/TramLinesEditor.qml</file>
         <file>qml/LineEditor.qml</file>
+        <file>qml/FieldFromExisting.qml</file>
+        <file>images/BackSpace.png</file>
     </qresource>
 </RCC>

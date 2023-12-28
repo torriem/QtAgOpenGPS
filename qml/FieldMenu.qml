@@ -13,7 +13,6 @@ Item{
         anchors.margins: 1
         height: 30
         color: "white"
-        z: 1
         Text {
             text: qsTr("Start New Field")
             font.pixelSize: 20
@@ -62,6 +61,7 @@ Item{
                 isChecked: false
                 text: "From Existing"
                 icon.source: "qrc:/images/FileExisting.png"
+                onClicked: fieldFromExisting.visible = true
             }
             IconButtonTextBeside{
                 objectName: "New"
@@ -109,11 +109,17 @@ Item{
             height: 75
         }
 
+        FieldFromExisting{
+            id: fieldFromExisting
+            anchors.top:parent.top
+            anchors.topMargin: -50
+            anchors.horizontalCenter: parent.horizontalCenter
+            visible: false
+        }
         FieldOpen{
             anchors.top:parent.top
             anchors.horizontalCenter: parent.horizontalCenter
             visible: false
-
         }
     }
 }
