@@ -460,5 +460,6 @@
         <file>images/FileExisting.png</file>
         <file>images/ISOXML.png</file>
         <file>qml/TramLinesEditor.qml</file>
+        <file>qml/LineEditor.qml</file>
     </qresource>
 </RCC>

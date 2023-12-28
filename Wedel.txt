@@ -30,3 +30,5 @@ Really need to figure out how to change icons to grayscale, when they aren't nee
 That is done in the Colorize section of the button file.
 
 I also haven't figured out how to solve the "ReferenceError:etc." warning
+
+Need to set steerconfigwindow/line editor to their own windows, so we can move them around on the screen, instead of being anchored to one spot
