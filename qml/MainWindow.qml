@@ -349,6 +349,29 @@ Window {
                         text: "Recorded Path"
                         icon.source: "qrc:/images/RecPath.png"
                         width: 300
+                    //pseudo state
+                    property bool hideRecordMenu: true
+
+                    onHideRecordMenuChanged: {
+                        if (hideRecordMenu == true) {
+                            recordButtons.visible = false
+                        } else {
+                            recordButtons.visible = true
+                        }
+                    }
+
+                    function toggle_recordmenu() {
+                        if (hideRecordMenu == true) {
+                            hideRecordMenu = false
+                        } else {
+                            hideRecordMenu = true
+                        }
+                    }
+
+                    onClicked: {
+                        toggle_recordmenu();
+                    }
+
                     }
                 }
 
@@ -556,7 +579,6 @@ Window {
                 }
                 IconButtonText {
                     id: btnSectionMapping
-                    Layout.alignment: parent.Center
                     objectName: "btnSectionMapping"
                     icon.source: "qrc:/images/SectionMapping"
                 }
@@ -588,7 +610,7 @@ Window {
                     iconChecked: "qrc:/images/YouSkipOn.png"
                     buttonText: "YouSkips"
                 }
-                ComboBox { //if someone knows how to do this right--size and/or model, do a pull request or tell me plz
+                ComboBox {
                     id: skips
                     editable: true
                     model: ListModel {
@@ -826,13 +848,11 @@ Window {
                         radius: 10
                         icon.source: "qrc:/images/ZoomIn48.png"
                     }
-                    IconButtonTransparent {
-                        id: btnempty
-                        objectName: "btnempty"
+                    Rectangle {
+                        id: btnHZ
                         width: 70
                         height: 70
                         radius: 10
-                        icon.source: "qrc:/images/.png"
                     }
                     IconButtonTransparent {
                         id: btnBrightnessUp
@@ -993,6 +1013,40 @@ Window {
                 anchors.topMargin: 50
                 visible: false
             }
+            Rectangle{
+                id: recordButtons
+                anchors.bottom: bottomButtons.top
+                anchors.bottomMargin: 50
+                anchors.left: leftColumn.right
+                anchors.leftMargin: 50
+                width: childrenRect.width
+                height: children.height
+                visible: false
+                Column{
+                    width: children.width
+                    height: children.height
+                    anchors.left: parent.left
+                    anchors.bottom: parent.bottom
+                    IconButtonTransparent{
+                        objectName: "recordPlay"
+                        icon.source: "qrc:/images/Play.png"
+                        iconChecked: "qrc:/images/Stop.png"
+                    }
+                    IconButtonTransparent{
+                        objectName: "recordStartPoint"
+                        icon.source: "qrc:/images/pathResumeClose.png"
+                    }
+                    IconButtonTransparent{
+                        objectName: "recordRecord"
+                        icon.source: "qrc:/images/BoundaryRecord.png"
+                    }
+                    IconButtonTransparent{
+                        objectName: "recordOpenFile"
+                        icon.source: "qrc:/images/FileOpen.png"
+                    }
+                }
+            }
+
             Rectangle{
                 id: closeDialog
                 width: 500

@@ -141,7 +141,7 @@ Item {
                 Text{
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
-                    text: line_Name.title
+                    text: "AB Curve"
                     /*font.pixelsize: 15
             anchors.leftMargin: 5*/
                 }
