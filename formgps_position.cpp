@@ -1097,8 +1097,10 @@ void FormGPS::UpdateFixPosition()
     renderer->update();
 
     //since we're in the main thread we can directly call processSectionLookahead()
-    //Do we need to move this somewhere else? I don't think so.
-    //processSectionLookahead();
+    //the code in processSectionLookahead was moved from AOG's oglBack_Paint because
+    //opengl drawing occurs in a separate thread in Qt.  So I broke the code out into
+    //its own function so we can call it from here.
+    processSectionLookahead();
 
 
     //end of UppdateFixPosition
