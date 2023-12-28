@@ -144,6 +144,7 @@ public:
 //Relay Config
 class CPGN_EC
 {
+public:
     QByteArray pgn;
     //where in the pgn is which pin
     int pin0 = 5;
@@ -182,6 +183,7 @@ class CPGN_EC
 
 class CPGN_EB
 {
+public:
     QByteArray pgn;
     //where in the pgn is which pin
     int sec0Lo  = 5;
@@ -224,6 +226,13 @@ class CPGN_EB
     void Reset() {}
 };
 
+extern CPGN_FE p_254;
+extern CPGN_FC p_252;
+extern CPGN_FB p_251;
+extern CPGN_EF p_239;
+extern CPGN_EE p_238;
+extern CPGN_EC p_236;
+extern CPGN_EB p_235;
 
 
 #endif // CPGN_H

@@ -1,6 +1,15 @@
 #include "cpgn.h"
 #include "aogproperty.h"
 
+CPGN_FE p_254;
+CPGN_FC p_252;
+CPGN_FB p_251;
+CPGN_EF p_239;
+CPGN_EE p_238;
+CPGN_EC p_236;
+CPGN_EB p_235;
+
+
 
 CPGN_FC::CPGN_FC(): pgn(QByteArray( "\x80\x81\x7f\xfc\x08\x00\x00\x00\x00\x00\x00\x00\x00\xCC", 14))
 {
