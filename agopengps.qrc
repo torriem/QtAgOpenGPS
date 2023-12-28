@@ -464,5 +464,6 @@
         <file>qml/FieldFromExisting.qml</file>
         <file>images/BackSpace.png</file>
         <file>qml/FieldNew.qml</file>
+        <file>qml/FieldFromKML.qml</file>
     </qresource>
 </RCC>

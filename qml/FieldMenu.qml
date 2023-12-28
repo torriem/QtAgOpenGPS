@@ -55,6 +55,7 @@ Item{
                 isChecked: false
                 text: "From KML"
                 icon.source: "qrc:/images/BoundaryLoadFromGE.png"
+                onClicked: fieldFromKML.visible = true
             }
             IconButtonTextBeside{
                 objectName: "btnFieldFromExisting"
@@ -119,6 +120,13 @@ Item{
         }
         FieldNew{
             id: fieldNew
+            anchors.top:parent.top
+            anchors.topMargin: -50
+            anchors.horizontalCenter: parent.horizontalCenter
+            visible: false
+        }
+        FieldFromKML{
+            id: fieldFromKML
             anchors.top:parent.top
             anchors.topMargin: -50
             anchors.horizontalCenter: parent.horizontalCenter
