@@ -51,6 +51,7 @@ SOURCES += main.cpp\
     classes/cmodulecomm.cpp \
     classes/csection.cpp \
     formgps_classcallbacks.cpp \
+    formgps_sections.cpp \
     formgps_settings.cpp \
     testlists.cpp \
     classes/cnmea.cpp \
