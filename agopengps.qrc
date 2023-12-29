@@ -466,5 +466,7 @@
         <file>qml/FieldNew.qml</file>
         <file>qml/FieldFromKML.qml</file>
         <file>qml/BoundaryMenu.qml</file>
+        <file>qml/LineDrawer.qml</file>
+        <file>qml/TopLine.qml</file>
     </qresource>
 </RCC>

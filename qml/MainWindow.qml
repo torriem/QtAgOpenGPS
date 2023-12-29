@@ -589,6 +589,7 @@ Window {
                     objectName: "btnPointStart"
                     icon.source: "qrc:/images/PointStart.png"
                     buttonText: "LinePicker"
+                    onClicked: lineDrawer.visible = true
                 }
                 IconButtonText {
                     id: btnABLineEdit
@@ -1026,6 +1027,14 @@ Window {
                 visible: false
             }
 
+            LineDrawer {
+                id:lineDrawer
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                height: 768
+                width:1024
+                visible:false
+            }
             Rectangle{
                 id: recordButtons
                 anchors.bottom: bottomButtons.top
