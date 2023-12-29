@@ -5,7 +5,7 @@
 #include "ccamera.h"
 #include <assert.h>
 #include <math.h>
-#include "aogsettings.h"
+#include "aogproperty.h"
 
 //module-level symbols
 QOpenGLShaderProgram *simpleColorShader = 0;
@@ -15,7 +15,7 @@ QOpenGLShaderProgram *interpColorShader = 0;
 QVector<QOpenGLTexture *> texture;
 
 static int GlyphsPerLine = 16;
-static int GlyphLineCount = 16;
+//static int GlyphLineCount = 16;
 static int GlyphWidth = 16;
 static int GlyphHeight = 32;
 static int CharXSpacing = 14;
@@ -349,8 +349,6 @@ void drawText3D(const CCamera &camera, QOpenGLFunctions *gl,
                 QMatrix4x4 mvp, double x1, double y1, QString text,
                 double size, bool colorize, QColor color)
 {
-    USE_SETTINGS;
-
     GLHelperTexture gldraw;
     VertexTexcoord vt;
 
@@ -358,7 +356,7 @@ void drawText3D(const CCamera &camera, QOpenGLFunctions *gl,
 
     mvp.translate(x1, y1, 0);
 
-    if (SETTINGS_DISPLAY_CAMPITCH < -45)
+    if ((double)property_setwin < -45)
     {
         mvp.rotate(90, 1, 0, 0);
         if (camera.camFollowing) mvp.rotate(-camera.camHeading, 0, 1, 0);
@@ -411,7 +409,6 @@ void drawText3D(const CCamera &camera, QOpenGLFunctions *gl,
 void drawTextVehicle(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp,
                      double x, double y, QString text, double size, bool colorize, QColor color)
 {
-    USE_SETTINGS;
     GLHelperTexture gldraw;
     VertexTexcoord vt;
 
@@ -419,7 +416,7 @@ void drawTextVehicle(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp
     size = pow(size, 0.8)/800;
 
     //2d
-    if (SETTINGS_DISPLAY_CAMPITCH > -58)
+    if ((double)property_setwin > -58)
     {
         if (!camera.camFollowing)
         {
@@ -444,7 +441,7 @@ void drawTextVehicle(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp
         }
         else
         {
-            mvp.rotate(-SETTINGS_DISPLAY_CAMPITCH, 1, 0, 0);
+            mvp.rotate(-(double)property_setwin, 1, 0, 0);
             y *= 0.3;
         }
     }

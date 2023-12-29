@@ -12,7 +12,7 @@ void FormGPS::simConnectSlots()
 
     if (property_setMenu_isSimulatorOn) {
         timerSim.start(100); //fire simulator every 100 ms.
-        fixUpdateHz = 10;
+        gpsHz = 10;
     }
 }
 
@@ -52,7 +52,7 @@ void FormGPS::onSimNewSteerAngle(double steerAngleAve)
 void FormGPS::onSimTimerTimeout()
 {
     QObject *qmlobject = qmlItem(qml_root,"simSpeed");
-    double stepDistance = qmlobject->property("value").toReal() / 10.0 /fixUpdateHz;
+    double stepDistance = qmlobject->property("value").toReal() / 10.0 /gpsHz;
     sim.setSimStepDistance(stepDistance);
 
     qmlobject = qmlItem(qml_root, "simSteer");

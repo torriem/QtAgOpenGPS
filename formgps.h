@@ -494,9 +494,9 @@ public:
     void IndividualZoneAndButtonToState(btnStates state, int zoneNumber);
     void IndividualSectionsAndButtonToState(btnStates state, int sectNumber);
     void LineUpAllZoneButtons();
-    void SectionSetPosition();
-    void SectionCalcWidths();
-    void SectionCalcMulti();
+    //void SectionSetPosition();
+    //void SectionCalcWidths();
+    //void SectionCalcMulti();
     void BuildMachineByte();
     void DoRemoteSwitches();
 
@@ -601,29 +601,6 @@ public:
 
     void jobNew();
     void JobClose();
-
-    /**************************
-     * SerialComm.Designer.cs *
-     **************************/
-private:
-    QString portNameGPS = "COM GPS";
-    int baudRateGPS = QSerialPort::Baud4800;
-
-    //serial port gps is connected to
-    QSerialPort sp;
-
-    void SerialLineReceived(QByteArray sentence);
-
-public:
-
-    double actualSteerAngleDisp;
-    void autoSteerDataOutToPort();
-    void sendSteerSettingsOutAutoSteerPort();
-    void sectionControlOutToPort();
-    void sendOutUSBAutoSteerPort(uchar *data, int pgnSentenceLength);
-
-    void SerialPortOpenGPS();
-    void SerialPortCloseGPS();
 
     /***********************
      * FormGPS.Designer.cs *

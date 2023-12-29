@@ -72,7 +72,7 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
         boundary.fenceLine.append(Vec3( 100,250,0));
         boundary.fenceLine.append(Vec3(-100,250,0));
         boundary.fenceLine.append(Vec3(-100,0,0));
-        boundary.CalculateFenceArea(boundary.fencLine.count());
+        boundary.CalculateFenceArea(boundary.fenceLine.count());
         boundary.FixFenceLine(bnd.bndList.count());
         bnd.bndList.append(boundary);
         fd.UpdateFieldBoundaryGUIAreas(bnd.bndList);
