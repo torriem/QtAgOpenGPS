@@ -18,9 +18,8 @@
 
 #include "common.h"
 
-#include "vec2.h"
 #include "vecfix2fix.h"
-
+#include "vec2.h"
 #include "vec3.h"
 #include "cflag.h"
 #include "cmodulecomm.h"
@@ -125,51 +124,145 @@ public:
     /*******************
      * from FormGPS.cs *
      *******************/
-    //current directory of field;
-    QString currentFieldDirectory = "";
-    QString workingDirectory = "";
-    QString vehicleFileName = "";
-    QString toolFileName = "";
+    //The base directory where AgOpenGPS will be stored and fields and vehicles branch from
+    QString baseDirectory;
 
-    //colors for sections and field background
-    //uchar redSections, grnSections, bluSections;
-    //keep these in QSettings
-    //QColor sectionColor;
-    //QColor fieldColor;
-    //uchar redField, grnField, bluField;
+    //current directory of vehicle
+    QString vehiclesDirectory, vehicleFileName = "";
 
-    //polygon mode for section drawing
-    bool isDrawPolygons = false;
+    //current directory of tools
+    QString toolsDirectory, toolFileName = "";
 
-    //for animated submenu
-    bool isMenuHid = true;
+    //current directory of Environments
+    QString envDirectory, envFileName = "";
 
-    bool isDayTime = true;
+    //current fields and field directory
+    QString fieldsDirectory, currentFieldDirectory, displayFieldName;
 
-    //Flag stuff
-    uchar flagColor = 0;
-    bool leftMouseDownOnOpenGL = false; //mousedown event in opengl window
+
+    bool leftMouseDownOnOpenGL; //mousedown event in opengl window
     int flagNumberPicked = 0;
-
-    //Is it in 2D or 3D, metric, or imperial, display lightbar, display grid
-    //following are in settings now:
-    //isGridOn, isMetric
-    bool isIn3D = true, isLightbarOn = true, isSideGuideLines = true;
-    bool isPureOn = true; //refer to QtSettings instead
-    bool isMetric = true;
-    bool isStanleyUsed = false;
 
     //bool for whether or not a job is active
     bool isJobStarted = false, isAreaOnRight = true, isAutoSteerBtnOn = false;
 
+    //if we are saving a file
+    bool isSavingFile = false, isLogElevation = false;
+
+    //the currentversion of software
+    QString currentVersionStr, inoVersionStr;
+
+    int inoVersionInt;
+
+    //create instance of a stopwatch for timing of frames and NMEA hz determination
+    QElapsedTimer swFrame;
+
+    double secondsSinceStart;
+
+    //Time to do fix position update and draw routine
+    double frameTime = 0;
+
+    //Time to do fix position update and draw routine
+    double gpsHz = 10;
+
+    bool isStanleyUsed = false;
+
+    int pbarSteer, pbarRelay, pbarUDP;
+
+    double nudNumber = 0;
+
+    double m2InchOrCm, inchOrCm2m, m2FtOrM, ftOrMtoM, cm2CmOrIn, inOrCm2Cm;
+    QString unitsFtM, unitsInCm;
+
+    //used by filePicker Form to return picked file and directory
+    //QString filePickerFileAndDirectory;
+
+    //the position of the GPS Data window within the FormGPS window
+    //int GPSDataWindowLeft = 76, GPSDataWindowTopOffset = 220;
+
+    //the autoManual drive button. Assume in Auto
+    bool isInAutoDrive = true;
+
+    //isGPSData form up
+    bool isGPSSentencesOn = false, isKeepOffsetsOn = false;
+
+    void tmrWatchdog_timeout();
+
+private:
+    //For field saving in background
+    int minuteCounter = 1;
+
+    int tenMinuteCounter = 1;
+
+    //used to update the screen status bar etc
+    int displayUpdateHalfSecondCounter = 0, displayUpdateOneSecondCounter = 0, displayUpdateOneFifthCounter = 0, displayUpdateThreeSecondCounter = 0;
+    int tenSecondCounter = 0, tenSeconds = 0;
+    int threeSecondCounter = 0, threeSeconds = 0;
+    int oneSecondCounter = 0, oneSecond = 0;
+    int oneHalfSecondCounter = 0, oneHalfSecond = 0;
+    int oneFifthSecondCounter = 0, oneFifthSecond = 0;
+
+
+     /*******************
+     * GUI.Designer.cs *
+     *******************/
+public:
+    //ABLines directory
+    QString ablinesdirectory;
+
+    //colors for sections and field background
+    uchar flagColor = 0;
+
+    //how many cm off line per big pixel
+    int lightbarCmPerPixel = 2;
+
+    //polygon mode for section drawing
+    bool isDrawPolygons = false;
+
+    QColor frameDayColor;
+    QColor frameNightColor;
+    QColor sectionColorDay;
+    QColor fieldColorDay;
+    QColor fieldColorNight;
+
+    QColor textColorDay;
+    QColor textColorNight;
+
+    QColor vehicleColor;
+    double vehicleOpacity;
+    uchar vehicleOpacityByte;
+    bool isVehicleImage;
+
+    //Is it in 2D or 3D, metric or imperial, display lightbar, display grid etc
+    bool isMetric = true, isLightbarOn = true, isGridOn, isFullScreen;
+    bool isUTurnAlwaysOn, isCompassOn, isSpeedoOn, isSideGuideLines = true;
+    bool isPureDisplayOn = true, isSkyOn = true, isRollMeterOn = false, isTextureOn = true;
+    bool isDay = true, isDayTime = true, isBrightnessOn = true;
+    bool isKeyboardOn = true, isAutoStartAgIO = true, isSvennArrowOn = true;
+
+    bool isUTurnOn = true, isLateralOn = true;
+
+    //sunrise, sunset
+
+    bool isFlashOnOff = false;
+    //makes nav panel disappear after 6 seconds
+    int navPanelCounter = 0;
+
+    uint sentenceCounter = 0;
 
 
     //master Manual and Auto, 3 states possible
     btnStates manualBtnState = btnStates::Off;
     btnStates autoBtnState = btnStates::Off;
 
-    //if we are saving a file
-    bool isSavingFile = false, isLogElevation = false;
+private:
+   /************************
+     * Controls.Designer.cs *
+     ************************/
+
+public:
+    //for animated submenu
+    //bool isMenuHid = true;
 
     //Zoom variables
     double gridZoom;
@@ -180,37 +273,15 @@ public:
     // Storage For Our Tractor, implement, background etc Textures
     //Texture particleTexture;
 
-    //create instance of a stopwatch for timing of frames and NMEA hz determination
-    QElapsedTimer swFrame;
     QElapsedTimer stopwatch; //general stopwatch for debugging purposes.
     //readonly Stopwatch swFrame = new Stopwatch();
 
-    //Time to do fix position update and draw routine
-    double frameTime = 0;
-    double gpsHz = 10;
 
-    double secondsSinceStart;
 
     //Time to do fix position update and draw routine
     double HzTime = 5;
 
     QVector<CPatches> triStrip = QVector<CPatches>( { CPatches() } );
-
-private:
-    //for the NTRIP CLient counting
-    int ntripCounter = 10;
-
-    //used to update the screen status bar etc
-     int displayUpdateHalfSecondCounter = 0, displayUpdateOneSecondCounter = 0, displayUpdateOneFifthCounter = 0, displayUpdateThreeSecondCounter = 0;
-
-     int threeSecondCounter = 0, threeSeconds = 0;
-     int oneSecondCounter = 0, oneSecond = 0;
-     int oneHalfSecondCounter = 0, oneHalfSecond = 0;
-     int oneFifthSecondCounter = 0, oneFifthSecond = 0;
-     int minuteCounter = 1;
-public:
-     int pbarSteer, pbarRelay, pbarUDP;
-     double nudNumber = 0;
 
 
     //used to update the screen status bar etc
@@ -434,8 +505,6 @@ public:
     double maxFieldX, maxFieldY, minFieldX, minFieldY, fieldCenterX, fieldCenterY, maxFieldDistance;
     double offX = 0.0, offY = 0.0;
 
-    bool isDay;
-
     //data buffer for pixels read from off screen buffer
     //uchar grnPixels[80001];
     LookAheadPixels grnPixels[80001];
@@ -448,9 +517,6 @@ public:
     */
     QOpenGLBuffer skyBuffer;
     QOpenGLBuffer flagsBuffer;
-
-    uint sentenceCounter = 0;
-
 
     /***********************
      * formgps_udpcomm.cpp *
@@ -476,15 +542,6 @@ public:
      * formgps_ui.cpp *
      ******************/
     //or should be under formgps_settings.cpp?
-
-    bool isUTurnOn = false;
-    bool isLateralOn = false;
-
-    QColor frameDayColor;
-    QColor frameNightColor;
-    QColor sectionColorDay;
-    QColor fieldColorDay;
-    QColor fieldColorNight;
 
    /**********************
      * OpenGL.Designer.cs *
@@ -634,8 +691,6 @@ public slots:
     void onBtnDeleteFlag_clicked();
     void onBtnDeleteAllFlags_clicked();
 
-    void tmrWatchdog_timeout();
-
     void swapDirection();
     void turnOffBoundAlarm();
 
@@ -685,13 +740,9 @@ public slots:
 
     void onSimTimerTimeout();
 
-    /* CNMEA */
-    void onHeadingSource(int);
-
     /*
      * misc
      */
-    void onClearRecvCounter();
     void fileSaveEverythingBeforeClosingField(QQuickCloseEvent *event);
 
     /* formgps_classcallbacks.cpp */
