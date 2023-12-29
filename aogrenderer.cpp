@@ -3,8 +3,6 @@
 #include <QQuickWindow>
 #include <QOpenGLFramebufferObject>
 
-#include "formgps.h"
-
 void AOGRenderer::render()
 {
     //update();
