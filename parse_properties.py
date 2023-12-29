@@ -5,9 +5,9 @@ import sys
 from props import props
 
 add_props = {
-    'displayShowBack' : [ 'display/showBack', 
-                          'AOGProperty property_displayShowBack("display/showBack",false);',
-                          'extern AOGProperty property_displayShowBack;' ]
+#    'displayShowBack' : [ 'display/showBack', 
+#                          'AOGProperty property_displayShowBack("display/showBack",false);',
+#                          'extern AOGProperty property_displayShowBack;' ]
 }
 
 def parse_settings(file):
