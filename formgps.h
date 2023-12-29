@@ -387,6 +387,7 @@ public:
 
     //individual points for the flags in a list
     QVector<CFlag> flagPts;
+    bool flagsBufferCurrent = false;
 
     //tally counters for display
     //public double totalSquareMetersWorked = 0, totalUserSquareMeters = 0, userSquareMetersAlarm = 0;
@@ -488,6 +489,7 @@ public:
      * formgps_sections.cpp *
      ************************/
     void LineUpIndividualSectionBtns();
+    void AllSectionsAndButtonsToState(btnStates state);
     void AllZonesAndButtonsToState(btnStates state);
     void IndividualZoneAndButtonToState(btnStates state, int sectionStartNumber, int sectionEndNumber);
     void LineUpAllZoneButtons();
