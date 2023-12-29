@@ -34,3 +34,4 @@ I also haven't figured out how to solve the "ReferenceError:etc." warning
 Need to set steerconfigwindow/line editor to their own windows, so we can move them around on the screen, instead of being anchored to one spot
 
 Field picker for drive in field is basically the field open menu, except it is populated with the closest 4 fields unless you're in one. with one or two buttons hidden.
+

@@ -328,6 +328,7 @@ Window {
                         text: "Boundary"
                         icon.source: "qrc:/images/MakeBoundary.png"
                         width: 300
+                        onClicked: boundaryMenu.visible = true
                     }
                     IconButtonTextBeside{
                         text: "Headland"
@@ -1010,6 +1011,14 @@ Window {
             }
             LineEditor{
                 id: lineEditor
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.rightMargin: 150
+                anchors.topMargin: 50
+                visible: false
+            }
+            BoundaryMenu{
+                id: boundaryMenu
                 anchors.right: parent.right
                 anchors.top: parent.top
                 anchors.rightMargin: 150
