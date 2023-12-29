@@ -1,7 +1,7 @@
 #ifndef PROPERTIES_H
 #define PROPERTIES_H
 
-#include "aogproperty.h"
+#include "aogsettings.h"
 
 extern AOGProperty property_setwin;
 extern AOGProperty property_setWindow_Location;
@@ -230,5 +230,27 @@ extern AOGProperty property_setWindow_abLineEditLocation;
 extern AOGProperty property_setWindow_steerSettingsLocation;
 extern AOGProperty property_setWindow_abCurveCreate;
 extern AOGProperty property_setWindow_abLineCreate;
+extern AOGProperty property_setFeature_isHeadlandOn;
+extern AOGProperty property_setFeature_isTramOn;
+extern AOGProperty property_setFeature_isBoundaryOn;
+extern AOGProperty property_setFeature_isBndContourOn;
+extern AOGProperty property_setFeature_isRecPathOn;
+extern AOGProperty property_setFeature_isABSmoothOn;
+extern AOGProperty property_setFeature_isHideContourOn;
+extern AOGProperty property_setFeature_isWebCamOn;
+extern AOGProperty property_setFeature_isOffsetFixOn;
+extern AOGProperty property_setFeature_isAgIOOn;
+extern AOGProperty property_setFeature_isContourOn;
+extern AOGProperty property_setFeature_isYouTurnOn;
+extern AOGProperty property_setFeature_isSteerModeOn;
+extern AOGProperty property_setFeature_isManualSectionOn;
+extern AOGProperty property_setFeature_isAutoSectionOn;
+extern AOGProperty property_setFeature_isCycleLinesOn;
+extern AOGProperty property_setFeature_isABLineOn;
+extern AOGProperty property_setFeature_isCurveOn;
+extern AOGProperty property_setFeature_isAutoSteerOn;
+extern AOGProperty property_setFeature_isUTurnOn;
+extern AOGProperty property_setFeature_isLateralOn;
+extern AOGProperty property_displayShowBack;
 
 #endif // PROPERTIES_H

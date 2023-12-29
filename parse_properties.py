@@ -17,11 +17,15 @@ def parse_settings(file):
 
     with file:
         parser = bs4.BeautifulSoup(file.read(),'lxml-xml')
+
         settings = parser.findAll('Setting')
         for s in settings: 
             t = s['Type']
             n = s['Name']
             #print (t)
+            if t == 'setFeatures':
+                #we'll parse these separately
+                pass 
             if t == 'System.Int32' or \
                t == 'System.Double' or \
                t == 'system.Decimal' or \
@@ -72,6 +76,28 @@ def parse_settings(file):
 
     return (preamble, cpp, h)
 
+def parse_csettings(file):
+    with file:
+        for line in file.readlines():
+            if 'public bool' in line and 'is' in line:
+                line = line.strip()[12:]
+                line = line.split(';')[0]
+                parts = [x.strip() for x in line.split('=')]
+                name = 'setFeature_%s' % parts[0]
+
+                if name in props:
+                    qs_name = props[name]
+                else:
+                    props[name] = 'displayFeatures/%s' % parts[0]
+                    qs_name = 'displayFeatures/%s' % parts[0]
+                cpp.append('AOGProperty property_%s("%s",%s);'% (name, qs_name, parts[1]))
+                h.append('extern AOGProperty property_%s;' % name)
+
+    return ([], cpp, h)
+                
+
+
+
 if __name__ == '__main__':
     import argparse
 
@@ -82,10 +108,16 @@ if __name__ == '__main__':
     argparser.add_argument('-d','--dict', action = "store_true", help = 'output python dict of names to help with this script.')
 
     argparser.add_argument('settings_file', help = 'path to AOG C# Settings.settings file')
+    argparser.add_argument('csettings_file', help = 'path to the AOG C# Classes/CSettings.cs file')
+
 
     args = argparser.parse_args()
     
     cpp_pre,cpp,h = parse_settings(open(args.settings_file,'r'))
+
+    cpp_pre1,cpp1,h1 = parse_csettings(open(args.csettings_file,'r'))
+
+
 
     if (args.header):
         print ('#ifndef PROPERTIES_H')

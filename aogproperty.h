@@ -28,6 +28,8 @@ public:
 
     AOGProperty &operator=(QVariant newvalue) { settings.setValue(key, newvalue); return *this;}
 };
+
+extern AOGProperty property_environment_last_name;
 #include "properties.h"
 
 #endif // AOGPROPERTY_H

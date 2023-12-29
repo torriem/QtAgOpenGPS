@@ -4,6 +4,9 @@
 AOGSettings settings;
 
 AOGProperty test_property("test/test", false);
+//QtAOG-specific setting properties
+AOGProperty property_environment_last_name("environment/name");
+
 
 bool test(void) {
     bool t;
