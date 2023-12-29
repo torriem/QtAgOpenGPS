@@ -39,6 +39,9 @@ namespace glm {
     //meters to feet
     static const double m2ft = 3.28084;
 
+    //feet to meters
+    static const double ft2m = 0.3048;
+
     //the pi's
     static const double twoPI = 6.28318530717958647692;
 
@@ -122,7 +125,6 @@ namespace glm {
         return sqrt(pow(first.easting - second.easting, 2) +
                     pow(first.northing - second.northing, 2));
     }
-
 
     //not normalized distance, no square root
     static inline double DistanceSquared(double northing1, double easting1, double northing2, double easting2)

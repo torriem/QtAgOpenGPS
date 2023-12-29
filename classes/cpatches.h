@@ -34,7 +34,8 @@ public:
 
     CPatches();
 
-    void TurnMappingOn(QVector3D newLeftPoint, QVector3D newRightPoint, QVector3D color);
+    void TurnMappingOn(CTool &tool,
+                       int j);
     void TurnMappingOff(CTool &tool,
                         CFieldData &fd);
     void AddMappingPoint(CTool &tool,

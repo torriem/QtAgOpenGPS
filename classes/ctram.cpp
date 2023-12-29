@@ -14,18 +14,21 @@
 
 CTram::CTram()
 {
-    /*
+    loadSettings();
+    IsTramOuterOrInner();
+    displayMode=0;
+}
+
+void CTram::loadSettings()
+{
     tramWidth = property_setTram_tramWidth;
     halfWheelTrack = property_setVehicle_trackWidth * 0.5;
-    */
-    IsTramOuterOrInner();
-    //passes = property_setTram_passes;
-    displayMode=0;
+    passes = property_setTram_passes;
 }
 
 void CTram::IsTramOuterOrInner()
 {
-    isOuter = ((int)((double)property_setTram_tramWidth / (double)property_setVehicle_toolWidth + 0.5)) % 2 == 0;
+    isOuter = ((int)(tramWidth / (double)property_setVehicle_toolWidth + 0.5)) % 2 == 0;
     if ((bool)property_setTool_isTramOuterInverted) isOuter = !isOuter;
 }
 

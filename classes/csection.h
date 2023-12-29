@@ -73,7 +73,7 @@ public:
     int numTriangles = 0;
 
     //used to determine state of Manual section button - Off Auto On
-    btnStates manBtnState=btnStates::Off; //default to Off (see enum in formgps.h)
+    btnStates sectionBtnState=btnStates::Off; //default to Off (see enum in formgps.h)
 
     CSection();
 };

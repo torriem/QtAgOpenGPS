@@ -10,51 +10,45 @@ CPatches::CPatches() {
 /* torriem: modifications. Passing in left, right points, and color, rather than
  * accessing the CSection objects themselves.
  */
-void CPatches::TurnMappingOn(QVector3D newLeftPoint, QVector3D newRightPoint, QVector3D color)
+void CPatches::TurnMappingOn(CTool &tool, int j)
 {
-   //bool isMultiColoredSections = property_setColor_isMultiColorSections;
+    QColor color_prop;
+    numTriangles = 0;
 
+    //do not tally square meters on inital point, that would be silly
+    if (!isDrawing)   {
+        //set the section bool to on
+        isDrawing = true;
 
-   //do not tally square meters on inital point, that would be silly
-   if (!isDrawing)
-   {
-       //set the section bool to on
-       isDrawing = true;
+        //starting a new patch chunk so create a new triangle list
+        triangleList = QSharedPointer<PatchTriangleList>( new PatchTriangleList);
 
-       //starting a new patch chunk so create a new triangle list
-       triangleList = QSharedPointer<PatchTriangleList>( new PatchTriangleList);
+        patchList.append(triangleList);
 
-       patchList.append(triangleList);
+        //Add Patch colour
+        if (!tool.isMultiColoredSections)
+        {
+            color_prop = property_setDisplay_colorSectionsDay;
+        }
+        else
+        {
+            if (tool.isSectionsNotZones)
+                color_prop = tool.secColors[j];
+            else
+                color_prop = property_setDisplay_colorSectionsDay;
+        }
 
-       //torriem: multicolored sections dealt with by the caller who
-       //specifies what color to use here.
-       /*
-       if (!isMultiColoredSections)
-       {
-           triangleList.Add(new vec3(mf.sectionColorDay.R, mf.sectionColorDay.G, mf.sectionColorDay.B));
-       }
-       else
-       {
-           if (mf.tool.isSectionsNotZones)
-               triangleList.Add(new vec3(mf.tool.secColors[j].R, mf.tool.secColors[j].G, mf.tool.secColors[j].B));
-           else
-               triangleList.Add(new vec3(mf.sectionColorDay.R, mf.sectionColorDay.G, mf.sectionColorDay.B));
-       }
-       */
+        triangleList->append(QVector3D(color_prop.redF(), color_prop.greenF(), color_prop.blueF()));
 
-       //first Vector is actually a color, determined by the caller
-       triangleList->append(color);
+        leftPoint = tool.section[currentStartSectionNum].leftPoint;
+        rightPoint = tool.section[currentEndSectionNum].rightPoint;
 
+        //left side of triangle
+        triangleList->append(leftPoint);
 
-       leftPoint = newLeftPoint;
-       rightPoint = newRightPoint;
-
-       //left side of triangle
-       triangleList->append(leftPoint);
-
-       //Right side of triangle
-       triangleList->append(rightPoint);
-   }
+        //Right side of triangle
+        triangleList->append(rightPoint);
+    }
 }
 
 void CPatches::TurnMappingOff(CTool &tool,

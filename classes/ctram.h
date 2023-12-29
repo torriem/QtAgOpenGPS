@@ -24,11 +24,9 @@ public:
     QVector<Vec2> tramBndInnerArr;
 
     //tram settings
-    /* these are in properties
     double tramWidth;
     double halfWheelTrack;
     int passes;
-     */
 
     bool isOuter;
 
@@ -42,6 +40,7 @@ public:
     int controlByte;
 
     CTram();
+    void loadSettings();
     void IsTramOuterOrInner();
     void DrawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, CCamera &camera);
     void BuildTramBnd(const CBoundary &bnd);
