@@ -648,100 +648,117 @@ Window {
                     id: btnSection1Man
                     objectName: "section0"
                     state: "on"
+                    buttonText: "1"
                 }
 
                 SectionButton {
                     id: btnSection2Man
                     objectName: "section1"
                     state: "auto"
+                    buttonText: "2"
                 }
 
                 SectionButton {
                     id: btnSection3Man
                     objectName: "section2"
+                    buttonText: "3"
                 }
 
                 SectionButton {
                     id: btnSection4Man
                     objectName: "section3"
+                    buttonText: "4"
                 }
 
                 SectionButton {
                     id: btnSection5Man
                     visible: false
                     objectName: "section4"
+                    buttonText: "5"
                 }
 
                 SectionButton {
                     id: btnSection6Man
                     visible: false
                     objectName: "section5"
+                    buttonText: "6"
                 }
 
                 SectionButton {
                     id: btnSection7Man
                     visible: false
                     objectName: "section6"
+                    buttonText: "7"
                 }
 
                 SectionButton {
                     id: btnSection8Man
                     visible: false
                     objectName: "section7"
+                    buttonText: "8"
                 }
 
                 SectionButton {
                     id: btnSection9Man
                     visible: false
                     objectName: "section8"
+                    buttonText: "9"
                 }
 
                 SectionButton {
                     id: btnSection10Man
                     visible: false
                     objectName: "section9"
+                    buttonText: "10"
                 }
 
                 SectionButton {
                     id: btnSection11Man
                     visible: false
                     objectName: "section10"
+                    buttonText: "11"
                 }
 
                 SectionButton {
                     id: btnSection12Man
                     visible: false
                     objectName: "section11"
+                    buttonText: "12"
                 }
 
                 SectionButton {
                     id: btnSection13Man
                     visible: false
                     objectName: "section12"
+                    buttonText: "13"
                 }
 
                 SectionButton {
                     id: btnSection14Man
                     visible: false
                     objectName: "section13"
+                    buttonText: "14"
                 }
 
                 SectionButton {
                     id: btnSection15Man
                     visible: false
                     objectName: "section14"
+                    buttonText: "15"
                 }
 
                 SectionButton {
                     id: btnSection16Man
                     visible: false
                     objectName: "section15"
+                    buttonText: "16"
                 }
 
                 SectionButton {
                     id: btnSection17Man
                     visible: false
                     objectName: "section16"
+                    buttonText: "17"
                 }
 
             }

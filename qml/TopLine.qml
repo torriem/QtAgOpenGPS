@@ -1,5 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
+//the top line on most of the little windows. Basically
+//a title, help button, and close button
 
 Rectangle{
     property string titleText: ""

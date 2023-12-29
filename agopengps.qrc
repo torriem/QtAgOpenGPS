@@ -108,7 +108,6 @@
         <file>qml/MainWindowTest.qml</file>
         <file>images/textures/floor.png</file>
         <file>images/textures/Landscape.png</file>
-        <file>qml/JobMenu.qml</file>
         <file>qml/PortLight.qml</file>
         <file>shaders/color_vshader.vsh</file>
         <file>shaders/color_fshader.fsh</file>
