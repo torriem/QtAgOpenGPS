@@ -13,6 +13,7 @@ extern QLabel *grnPixelsWindow;
 
 FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
 {
+    connect_classes(); //make all the inter-class connections
     loadSettings();
     setupGui();
 
@@ -41,10 +42,11 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
     tool.sectionSetPositions();
     tool.sectionCalcWidths();
 
+
     //turn on the right number of section buttons.
     //we don't need to do this on resize, but we will need
     //to call it when settings change.
-    lineUpManualBtns();
+    LineUpIndividualSectionBtns();
 
     //hard wire this on for testing
     //fileCreateField();
@@ -64,29 +66,21 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
         line.Name = "Test AB Line";
         ABLine.lineArr.append( line );
 
-        /*
         CBoundaryLines boundary;
-        boundary.bndLine.append(Vec3(-100,0,0));
-        boundary.bndLine.append(Vec3( 100,0,0));
-        boundary.bndLine.append(Vec3( 100,250,0));
-        boundary.bndLine.append(Vec3(-100,250,0));
-        boundary.bndLine.append(Vec3(-100,0,0));
-        boundary.isSet = true;
-        boundary.CalculateBoundaryHeadings();
-        boundary.PreCalcBoundaryLines();
-        boundary.FixBoundaryLine(0,SETTINGS_TOOL_WIDTH);
-        boundary.CalculateBoundaryArea();
-        boundary.PreCalcBoundaryLines();
+        boundary.fenceLine.append(Vec3(-100,0,0));
+        boundary.fenceLine.append(Vec3( 100,0,0));
+        boundary.fenceLine.append(Vec3( 100,250,0));
+        boundary.fenceLine.append(Vec3(-100,250,0));
+        boundary.fenceLine.append(Vec3(-100,0,0));
+        boundary.CalculateFenceArea(boundary.fencLine.count());
+        boundary.FixFenceLine(bnd.bndList.count());
+        bnd.bndList.append(boundary);
+        fd.UpdateFieldBoundaryGUIAreas(bnd.bndList);
 
-        bnd.bndArr.append(boundary);
+        calculateMinMax();
+        FileSaveBoundary();
+        bnd.BuildTurnLines(fd);
 
-        turn.turnArr.append(CTurnLines());
-        gf.geoFenceArr.append(CGeoFenceLines());
-        gf.buildGeoFenceLines(bnd);
-
-        turn.buildTurnLines(bnd, fd);
-        mazeGrid.buildMazeGridArray(bnd,gf, minFieldX, maxFieldX, minFieldY, maxFieldY);
-        */
         currentFieldDirectory = "TestField";
         property_setF_CurrentDir = currentFieldDirectory;
         bootstrap_field=true;
@@ -94,14 +88,12 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
     }
     ABLine.isBtnABLineOn = true;
 
-    connect_classes(); //make all the inter-class connections
     StartLoopbackServer();
 
     simConnectSlots();
     if ((bool)property_setMenu_isSimulatorOn == false) {
         timerSim.stop();
     }
-
 }
 
 FormGPS::~FormGPS()
