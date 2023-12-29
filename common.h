@@ -4,8 +4,9 @@
 #include <qglobal.h>
 
 // we'll put common constants etc in here.
-const int MAXSECTIONS = 17;
-const int MAXFUNCTIONS = 8;
+const int MAXSECTIONS = 64;
+const int MAXBOUNDARIES = 6;
+const int MAXHEADS = 6;
 
 #pragma pack(push,1)
 struct LookAheadPixels {
