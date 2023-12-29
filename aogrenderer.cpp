@@ -8,13 +8,13 @@
 void AOGRenderer::render()
 {
     //update();
-    if(mf) {
+    if(callback_object && initCallback) {
         if (!isInitialized) {
             //call the main form initialize gl function
-            mf->openGLControl_Initialized();
+            initCallback( callback_object );
             isInitialized = true;
         }
-        mf->openGLControl_Draw();
+        paintCallback( callback_object );
     }
     //win->resetOpenGLState();
 }
@@ -22,6 +22,11 @@ void AOGRenderer::render()
 AOGRenderer::AOGRenderer():
     isInitialized(false),win(0),calledInit(false), samples(0)
 {
+    callback_object = NULL;
+    initCallback = NULL;
+    paintCallback = NULL;
+    cleanupCallback = NULL;
+
     qDebug() << "AOGRenderer constructor here.";
 }
 
@@ -35,9 +40,24 @@ void AOGRenderer::synchronize(QQuickFramebufferObject *fbo)
     //get window
     win = fbo->window();
 
-    QVariant prop = fbo->property("mainform");
+    QVariant prop = fbo->property("callbackObject");
     if (prop.isValid()) {
-        mf = (FormGPS *)prop.value<void *>();
+        callback_object = (void *)prop.value<void *>();
+    }
+
+    prop = fbo->property("initCallback");
+    if (prop.isValid()) {
+        initCallback = (void (*)(void *))prop.value<void *>();
+    }
+
+    prop = fbo->property("paintCallback");
+    if (prop.isValid()) {
+        paintCallback = (void (*)(void *))prop.value<void *>();
+    }
+
+    prop = fbo->property("cleanupCallback");
+    if (prop.isValid()) {
+        cleanupCallback = (void (*)(void *))prop.value<void *>();
     }
 
     prop = fbo->property("samples");

@@ -7,7 +7,7 @@
 
 #include <functional>
 
-class FormGPS;
+//class FormGPS;
 
 class AOGRenderer : public QQuickFramebufferObject::Renderer
 {
@@ -33,15 +33,14 @@ public:
 private:
     QQuickWindow *win;
     bool calledInit;
-    FormGPS *mf;
+    //FormGPS *mf;
     int samples;
 
     //callback in main form to do actual rendering
-    /*
-    std::function<void ()> paintCallback;
-    std::function<void ()> initCallback;
-    std::function<void ()> cleanupCallback;
-    */
+    void *callback_object;
+    std::function<void (void *)> paintCallback;
+    std::function<void (void *)> initCallback;
+    std::function<void (void *)> cleanupCallback;
 };
 
 class AOGRendererInSG : public QQuickFramebufferObject
