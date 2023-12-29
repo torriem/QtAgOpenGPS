@@ -7,6 +7,7 @@
 const int MAXSECTIONS = 64;
 const int MAXBOUNDARIES = 6;
 const int MAXHEADS = 6;
+const int MAXZONES  = 8;
 
 #pragma pack(push,1)
 struct LookAheadPixels {

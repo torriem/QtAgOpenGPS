@@ -491,7 +491,8 @@ public:
     void LineUpIndividualSectionBtns();
     void AllSectionsAndButtonsToState(btnStates state);
     void AllZonesAndButtonsToState(btnStates state);
-    void IndividualZoneAndButtonToState(btnStates state, int sectionStartNumber, int sectionEndNumber);
+    void IndividualZoneAndButtonToState(btnStates state, int zoneNumber);
+    void IndividualSectionsAndButtonToState(btnStates state, int sectNumber);
     void LineUpAllZoneButtons();
     void SectionSetPosition();
     void SectionCalcWidths();
@@ -671,8 +672,8 @@ public slots:
     void onBtnABLine_clicked();
     void onBtnToggleAB_clicked();
     void onBtnToggleABBack_clicked();
-    void onBtnManualOffOn_clicked();
-    void onBtnSectionOffAutoOn_clicked();
+    void btnSectionMasterManual_Click();
+    void btnSectionMasterAuto_Click();
     void onBtnAutoYouTurn_clicked();
     void onBtnAutoSteer_clicked();
     void onBtnContourPriority_clicked();
@@ -699,7 +700,7 @@ public slots:
     void onBtnAreaSide_clicked();
 
     //was btnSection#Man_Click in c#
-    void onBtnSectionMan_clicked(int sectNumber);
+    void btnSectionMan_Click(int sectNumber);
 
     void onBtnRedFlag_clicked();
     void onBtnGreenFlag_clicked();

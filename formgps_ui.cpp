@@ -83,11 +83,11 @@ void FormGPS::setupGui()
 
     btnManualOffOn = qmlItem(qml_root,"btnManualOffOn");
     connect(btnManualOffOn,SIGNAL(clicked()),this,
-            SLOT(onBtnManualOffOn_clicked()));
+            SLOT(btnSectionMasterManual_Click()));
 
     btnSectionOffAutoOn = qmlItem(qml_root,"btnSectionOffAutoOn");
     connect(btnSectionOffAutoOn,SIGNAL(clicked()),this,
-            SLOT(onBtnSectionOffAutoOn_clicked()));
+            SLOT(btnSectionMasterAuto_Click()));
 
 
     btnTiltDown = qmlItem(qml_root,"btnTiltDown");
@@ -155,7 +155,7 @@ void FormGPS::setupGui()
 
     //connnect section buttons to callbacks
     sectionButtonsSignalMapper = new QSignalMapper(this);
-    for(int i=0; i < MAXSECTIONS-1; i++){
+    for(int i=0; i < 16; i++){ //16 total onscreen buttons
         sectionButton[i] = qmlItem(qml_root,QString("section")+QString::number(i));
         sectionButton[i]->setProperty("state","off");
         connect(sectionButton[i],SIGNAL(clicked()),
@@ -164,7 +164,7 @@ void FormGPS::setupGui()
         sectionButtonsSignalMapper->setMapping(sectionButton[i], i);
     }
     connect(sectionButtonsSignalMapper,SIGNAL(mapped(int)),this,
-            SLOT(onBtnSectionMan_clicked(int)));
+            SLOT(btnSectionMan_Click(int)));
 
     txtDistanceOffABLine = qmlItem(qml_root,"txtDistanceOffABLine");
 

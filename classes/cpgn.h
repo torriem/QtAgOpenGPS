@@ -94,6 +94,8 @@ public:
     int hydLift = 7;
     int tram = 8;
     int geoStop = 9; //out of bounds etc
+    int sc1to8 = 11;
+    int sc9to16 = 12;
 
     CPGN_EF() : pgn(QByteArray( "\x80\x81\x7f\xef\x08\x00\x00\x00\x00\x00\x00\x00\x00\xCC", 14)) { }
     void Reset() { }
@@ -233,6 +235,6 @@ extern CPGN_EF p_239;
 extern CPGN_EE p_238;
 extern CPGN_EC p_236;
 extern CPGN_EB p_235;
-
+extern CPGN_E5 p_229;
 
 #endif // CPGN_H
