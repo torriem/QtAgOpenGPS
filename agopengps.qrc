@@ -458,5 +458,6 @@
         <file>images/textures/z_SteerPointer.png</file>
         <file>images/textures/z_Tractor.png</file>
         <file>images/textures/z_LateralManual.png</file>
+        <file>qml/GuiInterface.qml</file>
     </qresource>
 </RCC>
