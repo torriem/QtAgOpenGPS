@@ -63,7 +63,7 @@ void FormGPS::openGLControl_Draw()
     //gl->glDisable(GL_CULL_FACE);
 
     //set the camera to right distance
-    setZoom();
+    SetZoom();
 
     //now move the "camera" to the calculated zoom settings
     //I had to move these functions here because if setZoom is called
@@ -92,7 +92,7 @@ void FormGPS::openGLControl_Draw()
         //position the camera
         //back the camera up
         camera.camSetDistance = -40;
-        setZoom();
+        SetZoom();
 
         modelview.translate(0.0, 0.0, -20);
         //rotate the camera down to look at fix
@@ -203,7 +203,7 @@ void FormGPS::openGLControl_Draw()
             modelview.setToIdentity();
 
             //camera does translations and rotations
-            camera.setWorldCam(modelview, vehicle.pivotAxlePos.easting + offX, vehicle.pivotAxlePos.northing + offY, camera.camHeading);
+            camera.SetWorldCam(modelview, vehicle.pivotAxlePos.easting + offX, vehicle.pivotAxlePos.northing + offY, camera.camHeading);
 
             //calculate the frustum planes for culling
             calcFrustum(projection*modelview);
@@ -215,14 +215,14 @@ void FormGPS::openGLControl_Draw()
                 fieldcolor = parseColor(SETTINGS_DISPLAY_FIELDCOLORNIGHT);
             }
             //draw the field ground images
-            worldGrid.drawFieldSurface(gl, projection *modelview, fieldcolor);
+            worldGrid.DrawFieldSurface(gl, projection *modelview, fieldcolor);
 
             ////Draw the world grid based on camera position
             gl->glDisable(GL_DEPTH_TEST);
             gl->glDisable(GL_TEXTURE_2D);
 
             ////if grid is on draw it
-            if (SETTINGS_DISPLAY_SHOWGRID) worldGrid.drawWorldGrid(gl,projection*modelview,gridZoom, QColor::fromRgbF(0,0,0));
+            if (SETTINGS_DISPLAY_SHOWGRID) worldGrid.DrawWorldGrid(gl,projection*modelview,gridZoom, QColor::fromRgbF(0,0,0));
 
             //turn on blend for paths
             gl->glEnable(GL_BLEND);
@@ -381,17 +381,17 @@ void FormGPS::openGLControl_Draw()
             //draw contour line if button on
             if (ct.isContourBtnOn)
             {
-                ct.drawContourLine(gl, projection*modelview);
+                ct.DrawContourLine(gl, projection*modelview);
             }
             else// draw the current and reference AB Lines or CurveAB Ref and line
             {
-                if (ABLine.isABLineSet | ABLine.isABLineBeingSet) ABLine.drawABLines(gl, projection*modelview, yt, tram, camera);
-                if (curve.isBtnCurveOn) curve.drawCurve(gl, projection*modelview, vehicle, yt, tram, camera);
+                if (ABLine.isABLineSet | ABLine.isABLineBeingSet) ABLine.DrawABLines(gl, projection*modelview, yt, tram, camera);
+                if (curve.isBtnCurveOn) curve.DrawCurve(gl, projection*modelview, vehicle, yt, tram, camera);
             }
 
             //if (recPath.isRecordOn)
-            recPath.drawRecordedLine(gl, projection*modelview);
-            recPath.drawDubins(gl, projection*modelview);
+            recPath.DrawRecordedLine(gl, projection*modelview);
+            recPath.DrawDubins(gl, projection*modelview);
 
             //draw Boundaries
             bnd.drawBoundaryLines(vehicle, gl, projection*modelview);
@@ -433,8 +433,8 @@ void FormGPS::openGLControl_Draw()
 
 
             //draw the vehicle/implement
-            tool.drawTool(vehicle, camera, gl, modelview, projection);
-            vehicle.drawVehicle(gl, modelview, projection, camera, bnd, hd, ct, curve, ABLine);
+            tool.DrawTool(vehicle, camera, gl, modelview, projection);
+            vehicle.DrawVehicle(gl, modelview, projection, camera, bnd, hd, ct, curve, ABLine);
 
             // 2D Ortho --------------------------
             //no need to "push" matrix since it will be regenerated next time
@@ -1325,7 +1325,7 @@ void FormGPS::calcFrustum(const QMatrix4x4 &mvp)
 
 //take the distance from object and convert to camera data
 //TODO, move Projection matrix stuff into here when OpenGL ES migration is complete
-void FormGPS::setZoom()
+void FormGPS::SetZoom()
 {
     //match grid to cam distance and redo perspective
     if (camera.camSetDistance <= -20000) gridZoom = 2000;

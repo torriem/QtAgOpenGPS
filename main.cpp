@@ -5,6 +5,7 @@
 #include "cdubins.h"
 #include "vec3.h"
 #include "aogrenderer.h"
+#include "aogproperty.h"
 
 QLabel *grnPixelsWindow;
 
@@ -28,8 +29,7 @@ int main(int argc, char *argv[])
     FormGPS w;
     //w.show();
 
-    USE_SETTINGS;
-    if (SETTINGS_DISPLAY_SHOWBACK) {
+    if (property_displayShowBack) {
         grnPixelsWindow = new QLabel("Back Buffer");
         grnPixelsWindow->setFixedWidth(500);
         grnPixelsWindow->setFixedHeight(500);

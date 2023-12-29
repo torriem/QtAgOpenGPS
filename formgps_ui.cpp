@@ -192,17 +192,10 @@ void FormGPS::setupGui()
 
     tmrWatchdog = new QTimer(this);
     connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(tmrWatchdog_timeout()));
-    tmrWatchdog->start(50); //fire every 50ms.
+    tmrWatchdog->start(250); //fire every 50ms.
 
     //SIM on
-    connect(&timerSim, SIGNAL(timeout()),this,SLOT(onSimTimerTimeout()));
-    if (SETTINGS_SIM_ON) {
-        simTimer.start(100); //fire simulator every 200 ms.
-        fixUpdateHz = 10;
-    } else {
-        fixUpdateHz = 5;
-        //TODO! NMEA update settings
-    }
+    connect_classes();
 
     fixUpdateTime = 1.0 / fixUpdateHz;
 
@@ -521,7 +514,7 @@ void FormGPS::onBtnZoomIn_clicked(){
     }
 
     camera.camSetDistance = zoomValue * zoomValue * -1;
-    setZoom();
+    SetZoom();
     openGLControl->update();
 }
 
@@ -533,7 +526,7 @@ void FormGPS::onBtnZoomOut_clicked(){
     else
         zoomValue += zoomValue*0.05;
     camera.camSetDistance = zoomValue * zoomValue * -1;
-    setZoom();
+    SetZoom();
     openGLControl->update();
 }
 
@@ -602,19 +595,19 @@ bool FormGPS::closeAllMenus()
 void FormGPS::onBtnManUTurnLeft_clicked()
 {
     if (yt.isYouTurnTriggered) {
-        yt.resetYouTurn();
+        yt.ResetYouTurn();
     }else {
         yt.isYouTurnTriggered = true;
-        yt.buildManualYouTurn(ABLine, curve, false, true);
+        yt.BuildManualYouTurn(ABLine, curve, false, true);
    }
 }
 
 void FormGPS::onBtnManUTurnRight_clicked()
 {
     if (yt.isYouTurnTriggered) {
-        yt.resetYouTurn();
+        yt.ResetYouTurn();
     }else {
         yt.isYouTurnTriggered = true;
-        yt.buildManualYouTurn(ABLine, curve, true, true);
+        yt.BuildManualYouTurn(ABLine, curve, true, true);
    }
 }

@@ -442,8 +442,6 @@ public:
     void CalculateSectionLookAhead(double northing, double easting, double cosHeading, double sinHeading);
     void InitializeFirstFewGPSPositions();
 
-    void DoRemoteSwitches();
-
     /************************
      * SaveOpen.Designer.cs *
      ************************/
@@ -456,38 +454,52 @@ public:
     //list of the list of patch data individual triangles for contour tracking
     QVector<QVector<Vec3>> contourSaveList;
 
-    void fileSaveCurveLines();
-    void fileLoadCurveLines();
-    void fileSaveABLines();
-    void fileLoadABLines();
-    void fileSaveVehicle(QString filename);
-    bool fileOpenVehicle(QString filename);
-    void fileSaveTool(QString filename);
-    bool fileOpenTool(QString filename);
-    void fileSaveEnvironment(QString filename);
-    bool fileOpenEnvironment(QString filename);
-    bool fileOpenField(QString fieldDir);
-    void fileCreateField();
-    void fileCreateElevation();
-    void fileSaveSections();
-    void fileCreateSections();
-    void fileCreateFlags();
-    void fileCreateContour();
-    void fileSaveContour();
-    void fileSaveBoundary();
-    void fileCreateRecPath();
-    void fileSaveHeadland();
-    void fileSaveRecPath();
-    void fileSaveFlags();
-    void fileSaveNMEA();
-    void fileSaveElevation();
-    void fileSaveSingleFlagKML2(int flagNumber);
-    void fileSaveSingleFlagKML(int flagNumber);
-    void fileMakeKMLFromCurrentPosition(double lat, double lon);
-    void fileSaveFieldKML();
+    void FileSaveCurveLines();
+    void FileLoadCurveLines();
+    void FileSaveABLines();
+    void FileLoadABLines();
+    void FileSaveVehicle(QString filename);
+    bool FileOpenVehicle(QString filename);
+    void FileSaveTool(QString filename);
+    bool FileOpenTool(QString filename);
+    void FileSaveEnvironment(QString filename);
+    bool FileOpenEnvironment(QString filename);
+    bool FileOpenField(QString fieldDir);
+    void FileCreateField();
+    void FileCreateElevation();
+    void FileSaveSections();
+    void FileCreateSections();
+    void FileCreateFlags();
+    void FileCreateContour();
+    void FileSaveContour();
+    void FileSaveBoundary();
+    void FileCreateRecPath();
+    void FileSaveHeadland();
+    void FileSaveRecPath();
+    void FileSaveFlags();
+    void FileSaveNMEA();
+    void FileSaveElevation();
+    void FileSaveSingleFlagKML2(int flagNumber);
+    void FileSaveSingleFlagKML(int flagNumber);
+    void FileMakeKMLFromCurrentPosition(double lat, double lon);
+    void ExportFieldAs_KML();
 
     /************************
-     * formgps_settomgs.cpp *
+     * formgps_sections.cpp *
+     ************************/
+    void LineUpIndividualSectionBtns();
+    void AllZonesAndButtonsToState(btnStates state);
+    void IndividualZoneAndButtonToState(btnStates state, int sectionStartNumber, int sectionEndNumber);
+    void LineUpAllZoneButtons();
+    void SectionSetPosition();
+    void SectionCalcWidths();
+    void SectionCalcMulti();
+    void BuildMachineByte();
+    void DoRemoteSwitches();
+
+
+    /************************
+     * formgps_settimgs.cpp *
      ************************/
 
     void loadSettings();
@@ -546,6 +558,10 @@ public:
    /**********************
      * OpenGL.Designer.cs *
      **********************/
+    ulong number = 0, lastNumber = 0;
+
+    bool isHeadlandClose = false;
+
     int steerModuleConnectedCounter = 0;
 
     void drawManUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
@@ -579,11 +595,9 @@ private:
 public:
     QString speedMPH();
     QString speedKPH();
-    void processSectionOnOffRequests(bool isMapping);
-    bool scanForNMEA();
 
     void jobNew();
-    void jobClose();
+    void JobClose();
 
     /**************************
      * SerialComm.Designer.cs *

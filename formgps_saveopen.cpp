@@ -22,7 +22,7 @@ QString caseInsensitiveFilename(QString directory, QString filename)
 
 }
 
-void FormGPS::fileSaveCurveLines()
+void FormGPS::FileSaveCurveLines()
 {
     curve.moveDistance = 0;
 
@@ -84,7 +84,7 @@ void FormGPS::fileSaveCurveLines()
     curveFile.close();
 }
 
-void FormGPS::fileLoadCurveLines()
+void FormGPS::FileLoadCurveLines()
 {
     curve.moveDistance = 0;
     curve.curveArr.clear();
@@ -166,7 +166,7 @@ void FormGPS::fileLoadCurveLines()
     curveFile.close();
 }
 
-void FormGPS::fileSaveABLines()
+void FormGPS::FileSaveABLines()
 {
     ABLine.moveDistance = 0;
 
@@ -213,7 +213,7 @@ void FormGPS::fileSaveABLines()
     lineFile.close();
 }
 
-void FormGPS::fileLoadABLines()
+void FormGPS::FileLoadABLines()
 {
     ABLine.moveDistance = 0;
 
@@ -279,7 +279,7 @@ void FormGPS::fileLoadABLines()
     linesFile.close();
 }
 
-void FormGPS::fileSaveVehicle(QString filename)
+void FormGPS::FileSaveVehicle(QString filename)
 {
     USE_SETTINGS;
 
@@ -411,7 +411,7 @@ void FormGPS::fileSaveVehicle(QString filename)
     saveFile.close();
 }
 
-bool FormGPS::fileOpenVehicle(QString filename)
+bool FormGPS::FileOpenVehicle(QString filename)
 {
     USE_SETTINGS;
 
@@ -727,7 +727,7 @@ bool FormGPS::fileOpenVehicle(QString filename)
 
 }
 
-void FormGPS::fileSaveTool(QString filename)
+void FormGPS::FileSaveTool(QString filename)
 {
     USE_SETTINGS;
     QFileInfo toolFile(filename);
@@ -834,7 +834,7 @@ void FormGPS::fileSaveTool(QString filename)
 
 }
 
-bool FormGPS::fileOpenTool(QString filename)
+bool FormGPS::FileOpenTool(QString filename)
 {
     USE_SETTINGS;
 
@@ -1027,7 +1027,7 @@ bool FormGPS::fileOpenTool(QString filename)
     }
 }
 
-void FormGPS::fileSaveEnvironment(QString filename)
+void FormGPS::FileSaveEnvironment(QString filename)
 {
     USE_SETTINGS;
     QFileInfo envFile(filename);
@@ -1125,7 +1125,7 @@ void FormGPS::fileSaveEnvironment(QString filename)
     //TODO: message indicating success
 }
 
-bool FormGPS::fileOpenEnvironment(QString filename)
+bool FormGPS::FileOpenEnvironment(QString filename)
 {
     USE_SETTINGS;
 
@@ -1374,7 +1374,7 @@ bool FormGPS::fileOpenEnvironment(QString filename)
 
 }
 
-bool FormGPS::fileOpenField(QString fieldDir)
+bool FormGPS::FileOpenField(QString fieldDir)
 {
     QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
             + "/" + QCoreApplication::applicationName() + "/Fields/" + fieldDir;
@@ -1392,7 +1392,7 @@ bool FormGPS::fileOpenField(QString fieldDir)
     QTextStream reader(&fieldFile);
 
     //close the existing job and reset everything
-    jobClose();
+    JobClose();
 
     //and open a new job
     jobNew();
@@ -1460,7 +1460,7 @@ bool FormGPS::fileOpenField(QString fieldDir)
 
 
     // ABLine -------------------------------------------------------------------------------------------------
-    fileLoadABLines();
+    FileLoadABLines();
 
     if (ABLine.lineArr.count() > 0)
     {
@@ -1468,7 +1468,7 @@ bool FormGPS::fileOpenField(QString fieldDir)
         ABLine.refPoint1 = ABLine.lineArr[ABLine.numABLineSelected - 1].origin;
         //ABLine.refPoint2 = ABLine.lineArr[ABLine.numABLineSelected - 1].ref2;
         ABLine.abHeading = ABLine.lineArr[ABLine.numABLineSelected - 1].heading;
-        ABLine.setABLineByHeading(ABLine.abHeading);
+        ABLine.SetABLineByHeading(ABLine.abHeading);
         //ABLine.isABLineSet = false;
         ABLine.isABLineSet = true;
         ABLine.isABLineLoaded = true;
@@ -1481,7 +1481,7 @@ bool FormGPS::fileOpenField(QString fieldDir)
 
 
     //CurveLines
-    fileLoadCurveLines();
+    FileLoadCurveLines();
     if (curve.curveArr.count() > 0)
     {
         curve.numCurveLineSelected = 1;
@@ -1869,7 +1869,7 @@ bool FormGPS::fileOpenField(QString fieldDir)
     return true;
 }
 
-void FormGPS::fileCreateField()
+void FormGPS::FileCreateField()
 {
     if( ! isJobStarted)
     {
@@ -1924,7 +1924,7 @@ void FormGPS::fileCreateField()
     fieldFile.close();
 }
 
-void FormGPS::fileCreateElevation()
+void FormGPS::FileCreateElevation()
 {
     //Why is this the same as field.txt?
 
@@ -1975,7 +1975,7 @@ void FormGPS::fileCreateElevation()
     fieldFile.close();
 }
 
-void FormGPS::fileSaveSections()
+void FormGPS::FileSaveSections()
 {
     if (tool.patchSaveList.count() == 0) return;
 
@@ -2016,24 +2016,24 @@ void FormGPS::fileSaveSections()
     sectionFile.close();
 }
 
-void FormGPS::fileCreateSections()
+void FormGPS::FileCreateSections()
 {
     //not needed. fileSaveSections() will create the file for us.
     //no longer using $Sections header
 
 }
 
-void FormGPS::fileCreateFlags()
+void FormGPS::FileCreateFlags()
 {
 
 }
 
-void FormGPS::fileCreateContour()
+void FormGPS::FileCreateContour()
 {
 
 }
 
-void FormGPS::fileSaveContour()
+void FormGPS::FileSaveContour()
 {
     if (contourSaveList.count() == 0) return;
 
@@ -2074,7 +2074,7 @@ void FormGPS::fileSaveContour()
     contourFile.close();
 }
 
-void FormGPS::fileSaveBoundary()
+void FormGPS::FileSaveBoundary()
 {
     QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
             + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
@@ -2122,7 +2122,7 @@ void FormGPS::fileSaveBoundary()
 
 }
 
-void FormGPS::fileSaveHeadland()
+void FormGPS::FileSaveHeadland()
 {
     QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
             + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
@@ -2165,7 +2165,7 @@ void FormGPS::fileSaveHeadland()
 
 }
 
-void FormGPS::fileCreateRecPath()
+void FormGPS::FileCreateRecPath()
 {
     QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
             + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
@@ -2197,7 +2197,7 @@ void FormGPS::fileCreateRecPath()
 
 }
 
-void FormGPS::fileSaveRecPath()
+void FormGPS::FileSaveRecPath()
 {
     QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
             + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
@@ -2242,7 +2242,7 @@ void FormGPS::fileSaveRecPath()
 
 }
 
-void FormGPS::fileSaveFlags()
+void FormGPS::FileSaveFlags()
 {
     QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
             + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
@@ -2288,7 +2288,7 @@ void FormGPS::fileSaveFlags()
 
 }
 
-void FormGPS::fileSaveNMEA()
+void FormGPS::FileSaveNMEA()
 {
     QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
             + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
@@ -2320,7 +2320,7 @@ void FormGPS::fileSaveNMEA()
     nmeafile.close();
 }
 
-void FormGPS::fileSaveElevation()
+void FormGPS::FileSaveElevation()
 {
     QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
             + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
@@ -2352,22 +2352,22 @@ void FormGPS::fileSaveElevation()
     elevfile.close();
 }
 
-void FormGPS::fileSaveSingleFlagKML2(int flagNumber)
+void FormGPS::FileSaveSingleFlagKML2(int flagNumber)
 {
 
 }
 
-void FormGPS::fileSaveSingleFlagKML(int flagNumber)
+void FormGPS::FileSaveSingleFlagKML(int flagNumber)
 {
 
 }
 
-void FormGPS::fileMakeKMLFromCurrentPosition(double lat, double lon)
+void FormGPS::FileMakeKMLFromCurrentPosition(double lat, double lon)
 {
 
 }
 
-void FormGPS::fileSaveFieldKML()
+void FormGPS::ExportFieldAs_KML()
 {
 
 }
