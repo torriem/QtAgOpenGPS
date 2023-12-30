@@ -42,6 +42,7 @@
 #include "cahrs.h"
 #include "crecordedpath.h"
 #include "cguidance.h"
+#include "cheadline.h"
 
 //forward declare classes referred to below, to break circular
 //references in the code
@@ -326,6 +327,8 @@ public:
     CRecordedPath recPath;
     CFieldData fd;
 
+    CHeadLine hdl;
+
     bool bootstrap_field = false;
 
 
@@ -453,18 +456,14 @@ public:
 
     //moved to CContour.
     //list of the list of patch data individual triangles for contour tracking
-    QVector<QVector<Vec3>> contourSaveList;
+    QVector<QSharedPointer<QVector<Vec3>>> contourSaveList;
 
+    void FileSaveHeadLines();
+    void FileLoadHeadLines();
     void FileSaveCurveLines();
     void FileLoadCurveLines();
     void FileSaveABLines();
     void FileLoadABLines();
-    void FileSaveVehicle(QString filename);
-    bool FileOpenVehicle(QString filename);
-    void FileSaveTool(QString filename);
-    bool FileOpenTool(QString filename);
-    void FileSaveEnvironment(QString filename);
-    bool FileOpenEnvironment(QString filename);
     bool FileOpenField(QString fieldDir);
     void FileCreateField();
     void FileCreateElevation();
@@ -484,6 +483,9 @@ public:
     void FileSaveSingleFlagKML(int flagNumber);
     void FileMakeKMLFromCurrentPosition(double lat, double lon);
     void ExportFieldAs_KML();
+    void ExportFieldAs_ISOXMLv3();
+    void ExportFieldAs_ISOXMLv4();
+
 
     /************************
      * formgps_sections.cpp *

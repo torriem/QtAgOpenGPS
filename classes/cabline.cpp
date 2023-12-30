@@ -478,7 +478,7 @@ void CABLine::BuildTram(CBoundary &bnd, CTram &tram)
     }
 
     tram.tramList.clear();
-    tram.tramArr.clear();
+    tram.tramArr->clear();
 
     if (tram.generateMode == 2) return;
 
@@ -504,7 +504,7 @@ void CABLine::BuildTram(CBoundary &bnd, CTram &tram)
     hcos = cos(headingCalc);
 
     tram.tramList.clear();
-    tram.tramArr.clear();
+    tram.tramArr->clear();
 
     //no boundary starts on first pass
     int cntr = 0;
@@ -520,7 +520,7 @@ void CABLine::BuildTram(CBoundary &bnd, CTram &tram)
 
     for (int i = cntr; i < (int)property_setTram_passes; i++)
     {
-        tram.tramArr.clear();
+        tram.tramArr = QSharedPointer<QVector<Vec2>>(new QVector<Vec2>());
         tram.tramList.append(tram.tramArr);
 
         widd = (tramWidth * 0.5) - tool_halfWidth - halfWheelTrack;
@@ -533,14 +533,14 @@ void CABLine::BuildTram(CBoundary &bnd, CTram &tram)
 
             if (!isBndExist || glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar,P1))
             {
-                tram.tramArr.append(P1);
+                tram.tramArr->append(P1);
             }
         }
     }
 
     for (int i = cntr; i < (int)property_setTram_passes; i++)
     {
-        tram.tramArr.clear();
+        tram.tramArr = QSharedPointer<QVector<Vec2>>(new QVector<Vec2>());
         tram.tramList.append(tram.tramArr);
 
         widd = (tramWidth * 0.5) - tool_halfWidth + halfWheelTrack;
@@ -553,7 +553,7 @@ void CABLine::BuildTram(CBoundary &bnd, CTram &tram)
 
             if (!isBndExist || glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar,P1))
             {
-                tram.tramArr.append(P1);
+                tram.tramArr->append(P1);
             }
         }
     }

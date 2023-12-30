@@ -51,10 +51,10 @@ public:
     double distSteerError, lastDistSteerError, derivativeDistError;
 
     //list of strip data individual points
-    QVector<Vec3> ptList;
+    QSharedPointer<QVector<Vec3>> ptList;
 
     //list of the list of individual Lines for entire field
-    QVector<QVector<Vec3>> stripList;
+    QVector<QSharedPointer<QVector<Vec3>>> stripList;
 
     //list of points for the new contour line
     QVector<Vec3> ctList;
@@ -67,7 +67,7 @@ public:
     void DistanceFromContourLine(bool isAutoSteerBtnOn, CVehicle &vehicle, CYouTurn &yt, CAHRS &ahrs,  CNMEA &pn, Vec3 pivot, Vec3 steer);
     void StartContourLine();
     void AddPoint(Vec3 pivot);
-    void StopContourLine(QVector<QVector<Vec3>> &contourSaveList);
+    void StopContourLine(QVector<QSharedPointer<QVector<Vec3>>> &contourSaveList);
     void BuildFenceContours(CBoundary &bnd, double spacingInt, int patchCounter);
     void DrawContourLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
     void ResetContour();

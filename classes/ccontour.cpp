@@ -73,22 +73,22 @@ void CContour::BuildContourGuidanceLine(double secondsSinceStart, CVehicle &vehi
         for (int s = 0; s < stripCount; s++)
         {
             int p;
-            ptCount = stripList[s].count();
+            ptCount = stripList[s]->count();
             if (ptCount == 0) continue;
             double dist;
             for (p = 0; p < ptCount; p += 3)
             {
                 //if (s == stripCount - 1)
                 {
-                    if ((((boxA.easting - boxB.easting) * (stripList[s][p].northing - boxB.northing))
-                         - ((boxA.northing - boxB.northing) * (stripList[s][p].easting - boxB.easting))) > 0)
+                    if ((((boxA.easting - boxB.easting) * ((*stripList[s])[p].northing - boxB.northing))
+                         - ((boxA.northing - boxB.northing) * ((*stripList[s])[p].easting - boxB.easting))) > 0)
                     {
                         continue;
                     }
                 }
 
-                dist = ((pivot.easting - stripList[s][p].easting) * (pivot.easting - stripList[s][p].easting))
-                       + ((pivot.northing - stripList[s][p].northing) * (pivot.northing - stripList[s][p].northing));
+                dist = ((pivot.easting - (*stripList[s])[p].easting) * (pivot.easting - (*stripList[s])[p].easting))
+                       + ((pivot.northing - (*stripList[s])[p].northing) * (pivot.northing - (*stripList[s])[p].northing));
                 if (dist < minDistance)
                 {
                     minDistance = dist;
@@ -100,7 +100,7 @@ void CContour::BuildContourGuidanceLine(double secondsSinceStart, CVehicle &vehi
         }
         minDistance = sqrt(minDistance);
 
-        if (stripNum < 0 || minDistance > toolContourDistance || stripList[stripNum].count() < 4)
+        if (stripNum < 0 || minDistance > toolContourDistance || stripList[stripNum]->count() < 4)
         {
             //no points in the box, exit
             ctList.clear();
@@ -113,7 +113,7 @@ void CContour::BuildContourGuidanceLine(double secondsSinceStart, CVehicle &vehi
     else
     {
         //no points in the box, exit
-        ptCount = stripList[stripNum].count();
+        ptCount = stripList[stripNum]->count();
 
         if (ptCount < 2)
         {
@@ -133,8 +133,8 @@ void CContour::BuildContourGuidanceLine(double secondsSinceStart, CVehicle &vehi
         //if (stripNum == stripCount) currentStripBox = 10;
         for (int i = start; i < stop; i += 3)
         {
-            double dist = ((pivot.easting - stripList[stripNum][i].easting) * (pivot.easting - stripList[stripNum][i].easting))
-                          + ((pivot.northing - stripList[stripNum][i].northing) * (pivot.northing - stripList[stripNum][i].northing));
+            double dist = ((pivot.easting - (*stripList[stripNum])[i].easting) * (pivot.easting - (*stripList[stripNum])[i].easting))
+                          + ((pivot.northing - (*stripList[stripNum])[i].northing) * (pivot.northing - (*stripList[stripNum])[i].northing));
 
             if (minDistance >= dist)
             {
@@ -154,35 +154,37 @@ void CContour::BuildContourGuidanceLine(double secondsSinceStart, CVehicle &vehi
     }
 
     //now we have closest point, the distance squared from it, and which patch and point its from
-    refX = stripList[stripNum][pt].easting;
-    refZ = stripList[stripNum][pt].northing;
+    refX = (*stripList[stripNum])[pt].easting;
+    refZ = (*stripList[stripNum])[pt].northing;
 
     double dx, dz, distanceFromRefLine;
 
-    if (pt < stripList[stripNum].count() - 1)
+    if (pt < stripList[stripNum]->count() - 1)
     {
-        dx = stripList[stripNum][pt + 1].easting - refX;
-        dz = stripList[stripNum][pt + 1].northing - refZ;
+        dx = (*stripList[stripNum])[pt + 1].easting - refX;
+        dz = (*stripList[stripNum])[pt + 1].northing - refZ;
 
         //how far are we away from the reference line at 90 degrees - 2D cross product and distance
-        distanceFromRefLine = ((dz * pivot.easting) - (dx * pivot.northing) + (stripList[stripNum][pt + 1].easting
-                                                                               * refZ) - (stripList[stripNum][pt + 1].northing * refX))
+        distanceFromRefLine = ((dz * pivot.easting) - (dx * pivot.northing) +
+                               ((*stripList[stripNum])[pt + 1].easting * refZ) -
+                               ((*stripList[stripNum])[pt + 1].northing * refX))
                               / sqrt((dz * dz) + (dx * dx));
     }
     else if (pt > 0)
     {
-        dx = refX - stripList[stripNum][pt - 1].easting;
-        dz = refZ - stripList[stripNum][pt - 1].northing;
+        dx = refX - (*stripList[stripNum])[pt - 1].easting;
+        dz = refZ - (*stripList[stripNum])[pt - 1].northing;
 
         //how far are we away from the reference line at 90 degrees - 2D cross product and distance
-        distanceFromRefLine = ((dz * pivot.easting) - (dx * pivot.northing) + (refX
-                                                                               * stripList[stripNum][pt - 1].northing) - (refZ * stripList[stripNum][pt - 1].easting))
+        distanceFromRefLine = ((dz * pivot.easting) - (dx * pivot.northing) +
+                               (refX * (*stripList[stripNum])[pt - 1].northing) -
+                               (refZ * (*stripList[stripNum])[pt - 1].easting))
                               / sqrt((dz * dz) + (dx * dx));
     }
     else return;
 
     //are we going same direction as stripList was created?
-    bool isSameWay = M_PI - fabs(fabs(vehicle.fixHeading - stripList[stripNum][pt].heading) - M_PI) < 1.57;
+    bool isSameWay = M_PI - fabs(fabs(vehicle.fixHeading - (*stripList[stripNum])[pt].heading) - M_PI) < 1.57;
 
     double RefDist = (distanceFromRefLine + (isSameWay ? tool_toolOffset : -tool_toolOffset))
                      / (tool_toolWidth - tool_toolOverlap);
@@ -211,7 +213,7 @@ void CContour::BuildContourGuidanceLine(double secondsSinceStart, CVehicle &vehi
         //return;
 
         //make the new guidance line list called guideList
-        ptCount = stripList[stripNum].count();
+        ptCount = stripList[stripNum]->count();
 
         //shorter behind you
         if (isSameWay)
@@ -234,16 +236,17 @@ void CContour::BuildContourGuidanceLine(double secondsSinceStart, CVehicle &vehi
             for (int i = start; i < stop; i++)
             {
                 Vec3 point(
-                    stripList[stripNum][i].easting + (cos(stripList[stripNum][i].heading) * distAway),
-                    stripList[stripNum][i].northing - (sin(stripList[stripNum][i].heading) * distAway),
-                    stripList[stripNum][i].heading);
+                    (*stripList[stripNum])[i].easting + (cos((*stripList[stripNum])[i].heading) * distAway),
+                    (*stripList[stripNum])[i].northing - (sin((*stripList[stripNum])[i].heading) * distAway),
+                    (*stripList[stripNum])[i].heading);
 
                 bool isOkToAdd = true;
                 //make sure its not closer then 1 eq width
                 for (int j = start; j < stop; j++)
                 {
                     double check = glm::DistanceSquared(point.northing, point.easting,
-                                                       stripList[stripNum][j].northing, stripList[stripNum][j].easting);
+                                                        (*stripList[stripNum])[j].northing,
+                                                        (*stripList[stripNum])[j].easting);
                     if (check < distSqAway)
                     {
                         isOkToAdd = false;
@@ -563,7 +566,7 @@ void CContour::StartContourLine() {
     //if (stripList.count() == 0)
     //{
     //make new ptList
-    ptList.clear();
+    ptList = QSharedPointer<QVector<Vec3>>(new QVector<Vec3>());
     //ptList.append(new vec3(pivot.easting + cos(pivot.heading)
     //    * mf.tool.toolOffset, pivot.northing - sin(pivot.heading) * mf.tool.toolOffset, pivot.heading));
     stripList.append(ptList); //append empty list
@@ -584,18 +587,18 @@ void CContour::StartContourLine() {
 void CContour::AddPoint(Vec3 pivot) {
     double tool_toolOffset = property_setVehicle_toolOffset;
 
-    ptList.append(Vec3(pivot.easting + cos(pivot.heading) * tool_toolOffset,
+    ptList->append(Vec3(pivot.easting + cos(pivot.heading) * tool_toolOffset,
                         pivot.northing - sin(pivot.heading) * tool_toolOffset,
                         pivot.heading));
 }
 
 //End the strip
-void CContour::StopContourLine(QVector<QVector<Vec3>> &contourSaveList)
+void CContour::StopContourLine(QVector<QSharedPointer <QVector<Vec3>>> &contourSaveList)
 {
-    qDebug() << ptList.count() << "Stopping contour line.";
+    qDebug() << ptList->count() << "Stopping contour line.";
 
     //make sure its long enough to bother
-    if (ptList.count() > 5)
+    if (ptList->count() > 5)
     {
         //add the point list to the save list for appending to contour file
         contourSaveList.append(ptList);
@@ -604,7 +607,7 @@ void CContour::StopContourLine(QVector<QVector<Vec3>> &contourSaveList)
     //delete ptList
     else
     {
-        ptList.clear();
+        ptList->clear();
     }
 
     //turn it off
@@ -645,7 +648,7 @@ void CContour::BuildFenceContours(CBoundary &bnd, double spacingInt, int patchCo
         //count the points from the boundary
         int ptCount = bnd.bndList[j].fenceLine.count();
 
-        ptList.clear();
+        ptList = QSharedPointer<QVector<Vec3>>(new QVector<Vec3>());
         stripList.append(ptList);
 
         for (int i = ptCount - 1; i >= 0; i--)
@@ -656,7 +659,7 @@ void CContour::BuildFenceContours(CBoundary &bnd, double spacingInt, int patchCo
             point.heading = bnd.bndList[j].fenceLine[i].heading - M_PI;
             if (point.heading < -glm::twoPI) point.heading += glm::twoPI;
 
-            ptList.append(point);
+            ptList->append(point);
         }
     }
 
@@ -710,15 +713,15 @@ void CContour::DrawContourLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
     {
         gldraw.clear();
 
-        for (int h = 0; h < stripList[stripNum].count(); h++)
-            gldraw.append(QVector3D(stripList[stripNum][h].easting, stripList[stripNum][h].northing, 0));
+        for (int h = 0; h < stripList[stripNum]->count(); h++)
+            gldraw.append(QVector3D((*stripList[stripNum])[h].easting, (*stripList[stripNum])[h].northing, 0));
 
         gldraw.draw(gl,mvp,color,GL_POINTS,useWidth);
     }
 
     color.setRgbF(0.35f, 0.30f, 0.90f);
     gldraw.clear();
-    gldraw.append(QVector3D(stripList[stripNum][pt].easting, stripList[stripNum][pt].northing, 0));
+    gldraw.append(QVector3D((*stripList[stripNum])[pt].easting, (*stripList[stripNum])[pt].northing, 0));
     gldraw.draw(gl,mvp,color,GL_POINTS,6.0f);
 
     if (isPureDisplayOn && distanceFromCurrentLinePivot != 32000 && !isStanleyUsed)
@@ -734,6 +737,6 @@ void CContour::DrawContourLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
 void CContour::ResetContour()
 {
     stripList.clear();
-    ptList.clear();
+    ptList->clear();
     ctList.clear();
 }

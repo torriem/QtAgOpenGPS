@@ -22,7 +22,7 @@ CTram::CTram()
 void CTram::loadSettings()
 {
     tramWidth = property_setTram_tramWidth;
-    halfWheelTrack = property_setVehicle_trackWidth * 0.5;
+    halfWheelTrack = (double)property_setVehicle_trackWidth * 0.5;
     passes = property_setTram_passes;
 }
 
@@ -50,8 +50,8 @@ void CTram::DrawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, CCamera &camer
             for (int i = 0; i < tramList.count(); i++)
             {
                 gldraw.clear();
-                for (int h = 0; h < tramList[i].count(); h++)
-                    gldraw.append(QVector3D(tramList[i][h].easting, tramList[i][h].northing, 0));
+                for (int h = 0; h < (*tramList[i]).count(); h++)
+                    gldraw.append(QVector3D((*tramList[i])[h].easting, (*tramList[i])[h].northing, 0));
                 gldraw.draw(gl,mvp,color,GL_LINE_STRIP,lineWidth);
             }
         }

@@ -646,7 +646,7 @@ void CABCurve::BuildTram(CBoundary &bnd, CTram &tram)
     }
 
     tram.tramList.clear();
-    tram.tramArr.clear();
+    tram.tramArr->clear();
 
     if (tram.generateMode == 2) return;
 
@@ -666,8 +666,7 @@ void CABCurve::BuildTram(CBoundary &bnd, CTram &tram)
 
     for (int i = cntr; i <= (int)property_setTram_passes; i++)
     {
-        tram.tramArr.clear();
-        tram.tramList.clear();
+        tram.tramArr = QSharedPointer<QVector<Vec2>>(new QVector<Vec2>());
         tram.tramList.append(tram.tramArr);
 
         widd = (double)property_setTram_tramWidth * 0.5 - tool_halfWidth - (double)property_setVehicle_trackWidth*0.5;
@@ -699,14 +698,14 @@ void CABCurve::BuildTram(CBoundary &bnd, CTram &tram)
             if (Add)
             {
                 //a new point only every 2 meters
-                double dist = (tram.tramArr.count() > 0 ? ((point.easting - tram.tramArr[tram.tramArr.count() - 1].easting) * (point.easting - tram.tramArr[tram.tramArr.count() - 1].easting))
-                                                              + ((point.northing - tram.tramArr[tram.tramArr.count() - 1].northing) * (point.northing - tram.tramArr[tram.tramArr.count() - 1].northing)) : 3.0);
+                double dist = (tram.tramArr->count() > 0 ? ((point.easting - (*tram.tramArr)[tram.tramArr->count() - 1].easting) * (point.easting - (*tram.tramArr)[tram.tramArr->count() - 1].easting))
+                                                               + ((point.northing - (*tram.tramArr)[tram.tramArr->count() - 1].northing) * (point.northing - (*tram.tramArr)[tram.tramArr->count() - 1].northing)) : 3.0);
                 if (dist > 2)
                 {
                     //if inside the boundary, add
                     if (!isBndExist || glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar,point))
                     {
-                        tram.tramArr.append(point);
+                        tram.tramArr->append(point);
                     }
                 }
             }
@@ -715,9 +714,7 @@ void CABCurve::BuildTram(CBoundary &bnd, CTram &tram)
 
     for (int i = cntr; i <= (int)property_setTram_passes; i++)
     {
-        tram.tramArr.clear();
-        tram.tramList.clear();
-
+        tram.tramArr = QSharedPointer<QVector<Vec2>>(new QVector<Vec2>());
         tram.tramList.append(tram.tramArr);
 
         widd = (double)property_setTram_tramWidth * 0.5 - tool_halfWidth - (double)property_setVehicle_trackWidth*0.5;
@@ -749,14 +746,14 @@ void CABCurve::BuildTram(CBoundary &bnd, CTram &tram)
             if (Add)
             {
                 //a new point only every 2 meters
-                double dist = tram.tramArr.count() > 0 ? ((point.easting - tram.tramArr[tram.tramArr.count() - 1].easting) * (point.easting - tram.tramArr[tram.tramArr.count() - 1].easting))
-                                                              + ((point.northing - tram.tramArr[tram.tramArr.count() - 1].northing) * (point.northing - tram.tramArr[tram.tramArr.count() - 1].northing)) : 3.0;
+                double dist = tram.tramArr->count() > 0 ? ((point.easting - (*tram.tramArr)[tram.tramArr->count() - 1].easting) * (point.easting - (*tram.tramArr)[tram.tramArr->count() - 1].easting))
+                                                              + ((point.northing - (*tram.tramArr)[tram.tramArr->count() - 1].northing) * (point.northing - (*tram.tramArr)[tram.tramArr->count() - 1].northing)) : 3.0;
                 if (dist > 2)
                 {
                     //if inside the boundary, add
                     if (!isBndExist || glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar,point))
                     {
-                        tram.tramArr.append(point);
+                        tram.tramArr->append(point);
                     }
                 }
             }

@@ -4,7 +4,7 @@
 #include "aogproperty.h"
 
 CPatches::CPatches() {
-   // triangleList = QSharedPointer<TriangleList>( new TriangleList);
+   triangleList = QSharedPointer<PatchTriangleList>( new PatchTriangleList);
 }
 
 /* torriem: modifications. Passing in left, right points, and color, rather than

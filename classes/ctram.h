@@ -31,8 +31,8 @@ public:
     bool isOuter;
 
     //tramlines
-    QVector<Vec2> tramArr;
-    QVector<QVector<Vec2>> tramList;
+    QSharedPointer<QVector<Vec2>> tramArr;
+    QVector<QSharedPointer<QVector<Vec2>>> tramList;
 
     // 0 off, 1 All, 2, Lines, 3 Outer
     int displayMode, generateMode = 0;
