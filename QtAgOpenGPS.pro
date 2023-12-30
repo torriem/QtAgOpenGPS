@@ -33,6 +33,7 @@ INCLUDEPATH += $$PWD/classes
 
 SOURCES += main.cpp\
     aogproperty.cpp \
+    classes/cboundarylist.cpp \
     classes/cfence.cpp \
     classes/cguidance.cpp \
     classes/cheadline.cpp \
@@ -70,7 +71,6 @@ SOURCES += main.cpp\
     classes/cyouturn.cpp \
     classes/ctool.cpp \
     classes/ctram.cpp \
-    classes/cboundarylines.cpp \
     classes/chead.cpp \
     classes/cahrs.cpp \
     classes/cfielddata.cpp \
@@ -83,6 +83,7 @@ SOURCES += main.cpp\
 HEADERS  += formgps.h \
     aogproperty.h \
     classes/cabline.h \
+    classes/cboundarylist.h \
     classes/cguidance.h \
     classes/cheadline.h \
     classes/cpatches.h \
@@ -112,7 +113,6 @@ HEADERS  += formgps.h \
     classes/cyouturn.h \
     classes/ctool.h \
     classes/ctram.h \
-    classes/cboundarylines.h \
     classes/cahrs.h \
     classes/cfielddata.h \
     classes/cabcurve.h \

@@ -1,5 +1,5 @@
-#ifndef CBOUNDARYLINES_H
-#define CBOUNDARYLINES_H
+#ifndef CBOUNDARYLIST_H
+#define CBOUNDARYLIST_H
 #include "vec3.h"
 #include "vec2.h"
 #include <QVector>
@@ -7,7 +7,7 @@
 class QOpenGLFunctions;
 class QMatrix4x4;
 
-class CBoundaryLines
+class CBoundaryList
 {
 public:
     //list of coordinates of boundary line
@@ -28,7 +28,7 @@ public:
 
     //bool isSet, isDriveThru;
 
-    CBoundaryLines();
+    CBoundaryList();
     void CalculateFenceLineHeadings();
     void FixFenceLine(int bndNum);
     void ReverseWinding();
@@ -47,4 +47,4 @@ public:
 
 };
 
-#endif // CBOUNDARYLINES_H
+#endif // CBOUNDARYLIST_H

@@ -2,7 +2,7 @@
 #define CFIELDDATA_H
 
 #include <QVector>
-#include "cboundarylines.h"
+#include "cboundarylist.h"
 #include "glm.h"
 #include <QLocale>
 
@@ -39,7 +39,7 @@ public:
 
     CFieldData();
 
-    void UpdateFieldBoundaryGUIAreas(QVector<CBoundaryLines> &bndList);
+    void UpdateFieldBoundaryGUIAreas(QVector<CBoundaryList> &bndList);
 
     //Area inside Boundary less inside boundary areas
     inline QString AreaBoundaryLessInnerHectares() {

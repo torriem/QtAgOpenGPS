@@ -1,13 +1,13 @@
-#include "cboundarylines.h"
+#include "cboundarylist.h"
 #include "glm.h"
 
-CBoundaryLines::CBoundaryLines()
+CBoundaryList::CBoundaryList()
 {
     area = 0;
     isDriveThru = false;
 }
 
-void CBoundaryLines::CalculateFenceLineHeadings()
+void CBoundaryList::CalculateFenceLineHeadings()
 {
     //to calc heading based on next and previous points to give an average heading.
     int cnt = fenceLine.count();
@@ -40,7 +40,7 @@ void CBoundaryLines::CalculateFenceLineHeadings()
     fenceLine.append(pt3);
 }
 
-void CBoundaryLines::FixFenceLine(int bndNum)
+void CBoundaryList::FixFenceLine(int bndNum)
 {
     double spacing;
     //close if less than 20 ha, 40ha, more
@@ -129,7 +129,7 @@ void CBoundaryLines::FixFenceLine(int bndNum)
     }
 }
 
-void CBoundaryLines::ReverseWinding()
+void CBoundaryList::ReverseWinding()
 {
     //reverse the boundary
     int cnt = fenceLine.size();
@@ -145,7 +145,7 @@ void CBoundaryLines::ReverseWinding()
 }
 
 //obvious
-bool CBoundaryLines::CalculateFenceArea(int idx)
+bool CBoundaryList::CalculateFenceArea(int idx)
 {
     int ptCount = fenceLine.count();
     if (ptCount < 1) return false;

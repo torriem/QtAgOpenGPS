@@ -7,7 +7,7 @@
 #include <QVector3D>
 #include <QSharedPointer>
 #include <QOpenGLBuffer>
-#include "cboundarylines.h"
+#include "cboundarylist.h"
 #include "btnenum.h"
 
 
@@ -34,7 +34,7 @@ private:
 
 public:
     //area of boundaries
-    QVector<CBoundaryLines> bndList;
+    QVector<CBoundaryList> bndList;
 
     QVector<Vec3> bndBeingMadePts;
 

@@ -66,7 +66,7 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
         line.Name = "Test AB Line";
         ABLine.lineArr.append( line );
 
-        CBoundaryLines boundary;
+        CBoundaryList boundary;
         boundary.fenceLine.append(Vec3(-100,0,0));
         boundary.fenceLine.append(Vec3( 100,0,0));
         boundary.fenceLine.append(Vec3( 100,250,0));
