@@ -467,5 +467,30 @@
         <file>qml/BoundaryMenu.qml</file>
         <file>qml/LineDrawer.qml</file>
         <file>qml/TopLine.qml</file>
+        <file>images/Images/VehicleOpacity.png</file>
+        <file>images/Images/z_4WDFront.png</file>
+        <file>images/Images/z_4WDRear.png</file>
+        <file>images/Images/z_bingMap.png</file>
+        <file>images/Images/z_Compass.png</file>
+        <file>images/Images/z_Floor.png</file>
+        <file>images/Images/z_Font.png</file>
+        <file>images/Images/z_FrontWheels.png</file>
+        <file>images/Images/z_Harvester.png</file>
+        <file>images/Images/z_LateralManual.png</file>
+        <file>images/Images/z_Lift.png</file>
+        <file>images/Images/z_NoGPS.png</file>
+        <file>images/Images/z_QuestionMark.png</file>
+        <file>images/Images/z_SkyDay.png</file>
+        <file>images/Images/z_SkyNight.png</file>
+        <file>images/Images/z_Speedo.png</file>
+        <file>images/Images/z_SpeedoNeedle.png</file>
+        <file>images/Images/z_SteerDot.png</file>
+        <file>images/Images/z_SteerPointer.png</file>
+        <file>images/Images/z_Tool.png</file>
+        <file>images/Images/z_Tractor.png</file>
+        <file>images/Images/z_Turn.png</file>
+        <file>images/Images/z_TurnCancel.png</file>
+        <file>images/Images/z_TurnManual.png</file>
+        <file>qml/PinButtons.qml</file>
     </qresource>
 </RCC>

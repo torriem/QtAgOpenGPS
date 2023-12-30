@@ -1,4 +1,5 @@
 import QtQuick 2.8
+import QtGraphicalEffects 1.15
 import QtQuick.Window 2.0
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
@@ -501,6 +502,7 @@ Window {
                     id: btnAutoSteer
                     objectName: "btnAutoSteer"
                     icon.source: "qrc:/images/AutoSteerOff.png"
+                    iconChecked: "qrc:/images/AutoSteerOn.png"
                     buttonText: "X"
                 }
 
@@ -879,9 +881,84 @@ Window {
                 }
             }
 
-            Row {
-                id: manTurnButtons
+            Item{
+                 objectName: "manUTurnButtons"
+               id: manualUturnLateral
+                anchors.top: parent.top
+                anchors.left: leftColumn.right
+                anchors.topMargin: 50
+                anchors.leftMargin: 150
                 visible: true
+                width: childrenRect.width
+                height: childrenRect.height
+                ColorOverlay{
+                    color: "#e6e600"
+                    anchors.fill: uturn
+                    source: uturn
+
+                    Button{
+                        background: Rectangle{color: "transparent"}
+                        objectName: "btnManUturnLeft"
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.left: parent.left
+                        anchors.right: parent.horizontalCenter
+                    }
+                    Button{
+                        background: Rectangle{color: "transparent"}
+                        objectName: "btnManUturnRight"
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.right: parent.right
+                        anchors.left: parent.horizontalCenter
+                    }
+                }
+                Image{
+                    id: uturn
+                    anchors.top: parent.top
+                    height: 60
+                    anchors.left: parent.left
+                    width: 150
+                    source: 'qrc:/images/Images/z_TurnManual.png'
+                    visible: false
+                }
+                ColorOverlay{
+                    color: "#80aaff"
+                    anchors.fill: lateral
+                    source: lateral
+                }
+
+                Image{
+                    visible: false
+                    id: lateral
+                    anchors.top: uturn.bottom
+                    height: 60
+                    anchors.left: parent.left
+                    width: 150
+                    source: 'qrc:/images/Images/z_LateralManual.png'
+                    Button{
+                        background: Rectangle{color: "transparent"}
+                        objectName: "btnManLateralLeft"
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.left: parent.left
+                        anchors.right: parent.horizontalCenter
+                    }
+                    Button{
+                        background: Rectangle{color: "transparent"}
+                        objectName: "btnManLateralRight"
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.right: parent.right
+                        anchors.left: parent.horizontalCenter
+                    }
+                }
+            }
+
+
+            /*Row {
+                id: manTurnButtons
+                visible: False
                 objectName: "manUTurnButtons"
                 anchors.left: leftColumn.right
                 anchors.leftMargin: 15
@@ -902,7 +979,7 @@ Window {
                 anchors.top: parent.top;
                 anchors.topMargin: 15
                 spacing: 6
-            }
+            }*/
 
             SliderCustomized {
                 id: speedSlider

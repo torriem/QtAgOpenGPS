@@ -75,7 +75,7 @@ Item {
             icon.source: "qrc:/images/BoundaryCurveLine.png"
             anchors.right: parent.right
             anchors.bottom: curveRow.top
-            anchors.margins: 5
+            anchors.margins: 15
             Text{
                 anchors.right: parent.left
                 anchors.verticalCenter: parent.verticalCenter
@@ -91,7 +91,7 @@ Item {
             anchors.bottom: curveNameInput.top
             anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width -10
-            anchors.margins: 5
+            anchors.margins: 15
             spacing: 20
             IconButtonTransparent{
                 id: marker
@@ -111,7 +111,7 @@ Item {
         Rectangle{
             id: curveNameInput
             width: parent.width - 10
-            anchors.margins: 5
+            anchors.margins: 15
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: lineRow.top
             color: "ghostwhite"
@@ -128,7 +128,7 @@ Item {
             anchors.bottom: lineNameInput.top
             anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width -10
-            anchors.margins: 5
+            anchors.margins: 15
             spacing: 20
             IconButtonTransparent{
                 objectName: "btnDrawerCreateLine"
@@ -147,7 +147,7 @@ Item {
         Rectangle{
             id: lineNameInput
             width: parent.width - 10
-            anchors.margins: 5
+            anchors.margins: 15
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: bottomRow.top
             color: "ghostwhite"
@@ -165,7 +165,7 @@ Item {
             anchors.bottom: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width -10
-            anchors.margins: 5
+            anchors.margins: 15
             spacing: 20
             IconButtonTransparent{
                 objectName: "btnDrawerDeletePoints"
