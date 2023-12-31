@@ -5,6 +5,16 @@ import QtQuick.Extras 1.4
 import Qt.labs.folderlistmodel 2.2
 
 Item {
+    function closeAllConfig(){
+        configWhichVehicle.visible = false
+        configTractor.visible = false
+        configImplement.visible = false
+        configSources.visible = false
+        configModules.visible = false
+        configYouTurn.visible = false
+        configTrams.visible = false
+        configFeatures.visible = false
+    }
     Rectangle{
         id: configMain
         color: "light gray"
@@ -32,6 +42,7 @@ Item {
                 anchors.right: parent.right
             }
         }
+
         ColumnLayout{
             id:leftColumn
             anchors.top:topLine.bottom
@@ -39,22 +50,26 @@ Item {
             width: childrenRect.width
             anchors.bottom: bottomLine.top
             visible: true
+
             IconButtonTransparent{
                 id:vehicleMenu
                 objectName: "btnVehicleMenu"
                 icon.source: "qrc:/images/Config/Con_VehicleMenu.png"
                 width:100
                 height:75
+
                 function toggle_configTractor(){
                     if(configTractor.visible == true){
-                        configTractor.visible = false
+                        closeAllConfig()
+                        configWhichVehicle.visible = true
                     }else{
+                        closeAllConfig()
                         configTractor.visible = true
-
                     }
                 }
-
-                onClicked: toggle_configTractor()
+                onClicked: {
+                    toggle_configTractor()
+                }
             }
             IconButtonTransparent{
                 id:implementMenu
@@ -62,30 +77,20 @@ Item {
                 icon.source: "qrc:/images/Config/Con_ImplementMenu.png"
                 width:100
                 height:75
-                function toggle_configImplement(){
-                    if(configImplement.visible == true){
-                        configImplement.visible = false
-                    }else{
-                        configImplement.visible = true
-                    }
+                onClicked:{
+                    closeAllConfig()
+                    configImplement.visible = true
                 }
-
-                onClicked: toggle_configImplement()
             }
             IconButtonTransparent{
                 id:sourcesMenu
                 objectName: "btnSourcesMenu"
                 icon.source: "qrc:/images/Config/Con_SourcesMenu.png"
                 width:100
-                function toggle_configSources(){
-                    if(configSources.visible == true){
-                        configSources.visible = false
-                    }else{
-                        configSources.visible = true
-                    }
+                onClicked:{
+                    closeAllConfig()
+                    configSources.visible = true
                 }
-
-                onClicked: toggle_configSources()
                 height:75
             }
             IconButtonTransparent{
@@ -94,15 +99,10 @@ Item {
                 icon.source: "qrc:/images/Config/Con_UTurnMenu.png"
                 width:100
                 height:75
-                function toggle_configYouTurn(){
-                    if(configYouTurn.visible == true){
-                        configYouTurn.visible = false
-                    }else{
-                        configYouTurn.visible = true
-                    }
+                onClicked:{
+                    closeAllConfig()
+                    configYouTurn.visible = true
                 }
-
-                onClicked: toggle_configYouTurn()
             }
             IconButtonTransparent{
                 id:modulesMenu
@@ -110,15 +110,10 @@ Item {
                 icon.source: "qrc:/images/Config/Con_ModulesMenu.png"
                 width:100
                 height:75
-                function toggle_configModules(){
-                    if(configModules.visible == true){
-                        configModules.visible = false
-                    }else{
-                        configModules.visible = true
-                    }
+                onClicked:{
+                    closeAllConfig()
+                    configModules.visible = true
                 }
-
-                onClicked: toggle_configModules()
             }
             IconButtonTransparent{
                 id:tramMenu
@@ -126,15 +121,10 @@ Item {
                 icon.source: "qrc:/images/Config/Con_TramMenu.png"
                 width:100
                 height:75
-                function toggle_configTrams(){
-                    if(configTrams.visible == true){
-                        configTrams.visible = false
-                    }else{
-                        configTrams.visible = true
-                    }
+                onClicked: {
+                    closeAllConfig()
+                    configTrams.visible = true
                 }
-
-                onClicked: toggle_configTrams()
             }
             IconButtonTransparent{
                 id:featureMenu
@@ -142,15 +132,10 @@ Item {
                 icon.source: "qrc:/images/Config/Con_FeatureMenu.png"
                 width:100
                 height:75
-                function toggle_configFeatures(){
-                    if(configFeatures.visible == true){
-                        configFeatures.visible = false
-                    }else{
-                        configFeatures.visible = true
-                    }
+                onClicked:{
+                    closeAllConfig()
+                    configFeatures.visible = true
                 }
-
-                onClicked: toggle_configFeatures()
             }
         }
 
