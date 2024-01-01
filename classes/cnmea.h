@@ -9,6 +9,7 @@
 #include <QBuffer>
 #include "vec2.h"
 #include "glm.h"
+#include <QTextStream>
 
 class CNMEA : public QObject
 {
@@ -41,6 +42,8 @@ public:
 
     int fixQuality, ageAlarm;
     int satellitesTracked;
+
+    QString logNMEASentence;
 
     //StringBuilder logNMEASentence = new StringBuilder();
 

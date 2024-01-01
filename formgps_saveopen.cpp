@@ -2,6 +2,7 @@
 #include <QDir>
 #include "aogsettings.h"
 #include "cmodulecomm.h"
+#include "cboundarylist.h"
 
 QString caseInsensitiveFilename(QString directory, QString filename)
 {
@@ -19,6 +20,17 @@ QString caseInsensitiveFilename(QString directory, QString filename)
         return findDir[0];
     else
         return filename;
+
+}
+
+void FormGPS::ExportFieldAs_ISOXMLv3()
+{
+    //TODO use xml library
+}
+
+void FormGPS::ExportFieldAs_ISOXMLv4()
+{
+    //TODO use xml library
 
 }
 
@@ -742,7 +754,6 @@ bool FormGPS::FileOpenField(QString fieldDir)
         flagsFile.close();
 
     }
-#if 0
 
     //Boundaries
     //Either exit or update running save
@@ -764,10 +775,7 @@ bool FormGPS::FileOpenField(QString fieldDir)
         for (int k = 0; true; k++)
         {
             if (reader.atEnd()) break;
-
-            bnd.bndArr.append(CBoundaryLines());
-            turn.turnArr.append(CTurnLines());
-            gf.geoFenceArr.append(CGeoFenceLines());
+            CBoundaryList New;
 
             //True or False OR points from older boundary files
             line = reader.readLine();
@@ -775,23 +783,18 @@ bool FormGPS::FileOpenField(QString fieldDir)
             //Check for older boundary files, then above line string is num of points
             if (line == "True")
             {
-                bnd.bndArr[k].isDriveThru = true;
+                New.isDriveThru = true;
                 line = reader.readLine();
             } else if (line == "False")
             {
-                bnd.bndArr[k].isDriveThru = false;
+                New.isDriveThru = false;
                 line = reader.readLine(); //number of points
             }
 
             //Check for latest boundary files, then above line string is num of points
-            if (line == "True")
+            if (line == "True" || line == "False")
             {
-                bnd.bndArr[k].isDriveAround = true;
-                line = reader.readLine(); //number of points
-            } else if( line == "False")
-            {
-                bnd.bndArr[k].isDriveAround = false;
-                line = reader.readLine(); //number of points
+               line = reader.readLine(); //number of points
             }
 
             int numPoints = line.toInt();
@@ -811,32 +814,40 @@ bool FormGPS::FileOpenField(QString fieldDir)
                     //{
                     //    vecPt.heading = vecPt.heading + Math.PI;
                     //}
-                    bnd.bndArr[k].bndLine.append(vecPt);
+                    New.fenceLine.append(vecPt);
                 }
 
-                bnd.bndArr[k].calculateBoundaryArea();
-                bnd.bndArr[k].preCalcBoundaryLines();
-                if (bnd.bndArr[k].area > 0) bnd.bndArr[k].isSet = true;
-                else bnd.bndArr[k].isSet = false;
+                New.CalculateFenceArea(k);
+
+                double delta = 0;
+                New.fenceLineEar.clear();
+
+                for (int i = 0; i < New.fenceLine.count(); i++)
+                {
+                    if (i == 0)
+                    {
+                        New.fenceLineEar.append(Vec2(New.fenceLine[i].easting, New.fenceLine[i].northing));
+                        continue;
+                    }
+                    delta += (New.fenceLine[i - 1].heading - New.fenceLine[i].heading);
+                    if (fabs(delta) > 0.005)
+                    {
+                        New.fenceLineEar.append(Vec2(New.fenceLine[i].easting, New.fenceLine[i].northing));
+                        delta = 0;
+                    }
+                }
+                bnd.bndList.append(New);
             }
-            else
-            {
-                bnd.bndArr.removeAt(bnd.bndArr.count() - 1);
-                turn.turnArr.removeAt(bnd.bndArr.count() - 1);
-                gf.geoFenceArr.removeAt(bnd.bndArr.count() - 1);
-                k = k - 1;
-            }
-            if (reader.atEnd()) break;
         }
-
         calculateMinMax();
-        turn.buildTurnLines(bnd, fd);
-        gf.buildGeoFenceLines(bnd);
-        mazeGrid.buildMazeGridArray(bnd,gf, minFieldX, maxFieldX, minFieldY, maxFieldY);
+        bnd.BuildTurnLines(fd);
 
+        if(bnd.bndList.count() > 0)
+        {
+            //TODO: inform GUI btnABDraw can be seen
+        }
         boundariesFile.close();
     }
-
     // Headland  -------------------------------------------------------------------------------------------------
     filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Headland.txt");
 
@@ -855,43 +866,144 @@ bool FormGPS::FileOpenField(QString fieldDir)
         {
             if (reader.atEnd()) break;
 
-            hd.headArr[0].hdLine.clear();
+            if (bnd.bndList.count() > k)
+            {
+                bnd.bndList[k].hdLine.clear();
 
-            //read the number of points
-            line = reader.readLine();
+                //read the number of points
+                line = reader.readLine();
+                int numPoints = line.toInt();
+
+                if (numPoints > 0)
+                {
+                    //load the line
+                    for (int i = 0; i < numPoints; i++)
+                    {
+                        line = reader.readLine();
+                        QStringList words = line.split(',');
+                        Vec3 vecPt(words[0].toDouble(),
+                                   words[1].toDouble(),
+                                   words[2].toDouble());
+                        bnd.bndList[k].hdLine.append(vecPt);
+                    }
+                }
+            }
+        }
+    }
+
+    if (bnd.bndList.count() > 0 && bnd.bndList[0].hdLine.count() > 0)
+    {
+        bnd.isHeadlandOn = true;
+        //TODO: tell GUI to enable headlands
+        //btnHeadlandOnOff.Image = Properties.Resources.HeadlandOn;
+        //btnHeadlandOnOff.Visible = true;
+        //btnHydLift.Visible = true;
+        //btnHydLift.Image = Properties.Resources.HydraulicLiftOff;
+
+    }
+    else
+    {
+        bnd.isHeadlandOn = false;
+        //TODO: tell GUI
+        //btnHeadlandOnOff.Image = Properties.Resources.HeadlandOff;
+        //btnHeadlandOnOff.Visible = false;
+        //btnHydLift.Visible = false;
+    }
+
+    //trams ---------------------------------------------------------------------------------
+    filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Tram.txt");
+
+    tram.tramBndOuterArr.clear();
+    tram.tramBndInnerArr.clear();
+    tram.tramList.clear();
+    tram.displayMode = 0;
+    //btnTramDisplayMode.Visible = false;
+
+    QFile tramFile(filename);
+    if (!tramFile.open(QIODevice::ReadOnly))
+    {
+        qWarning() << "Couldn't open headland " << filename << "for reading!";
+        //TODO timed messagebox
+    } else {
+        reader.setDevice(&tramFile);
+            //read header
+        line = reader.readLine();//$Tram
+
+        //outer track of boundary tram
+        line = reader.readLine();
+        if (!line.isNull())
+        {
             int numPoints = line.toInt();
 
-            if (numPoints > 0 && bnd.bndArr.count() >= hd.headArr.count())
+            if (numPoints > 0)
             {
-
-                hd.headArr[k].hdLine.clear();
-                hd.headArr[k].calcList.clear();
-
                 //load the line
                 for (int i = 0; i < numPoints; i++)
                 {
                     line = reader.readLine();
                     QStringList words = line.split(',');
-                    Vec3 vecPt(words[0].toDouble(),
-                               words[1].toDouble(),
-                               words[2].toDouble());
-                    hd.headArr[k].hdLine.append(vecPt);
+                    Vec2 vecPt(
+                        words[0].toDouble(),
+                        words[1].toDouble());
 
-                    if (gf.geoFenceArr[0].isPointInGeoFenceArea(vecPt)) hd.headArr[0].isDrawList.append(true);
-                    else hd.headArr[0].isDrawList.append(false);
+                    tram.tramBndOuterArr.append(vecPt);
                 }
-                hd.headArr[k].preCalcHeadLines();
+                tram.displayMode = 1;
+            }
+
+            //inner track of boundary tram
+            line = reader.readLine();
+            numPoints = line.toInt();
+
+            if (numPoints > 0)
+            {
+                //load the line
+                for (int i = 0; i < numPoints; i++)
+                {
+                    line = reader.readLine();
+                    QStringList words = line.split(',');
+                    Vec2 vecPt(
+                        words[0].toDouble(),
+                        words[1].toDouble());
+
+                    tram.tramBndInnerArr.append(vecPt);
+                }
+            }
+
+            if (!reader.atEnd())
+            {
+                line = reader.readLine();
+                int numLines = line.toInt();
+
+                for (int k = 0; k < numLines; k++)
+                {
+                    line = reader.readLine();
+                    numPoints = line.toInt();
+
+                    tram.tramArr = QSharedPointer<QVector<Vec2>>(new QVector<Vec2>);
+                    tram.tramList.append(tram.tramArr);
+
+                    for (int i = 0; i < numPoints; i++)
+                    {
+                        line = reader.readLine();
+                        QStringList words = line.split(',');
+                        Vec2 vecPt(
+                            words[0].toDouble(),
+                            words[1].toDouble());
+
+                        tram.tramArr->append(vecPt);
+                    }
+                }
             }
         }
 
-        //if (hd.headArr[0].hdLine.count() > 0) hd.isOn = true;
-        hd.isOn = false;
-
-        //if (hd.isOn) btnHeadlandOnOff.Image = Properties.Resources.HeadlandOn;
-        //TODO: btnHeadlandOnOff.Image = Properties.Resources.HeadlandOff;
-
-        headlandFile.close();
+        FixTramModeButton();
     }
+
+    FixPanelsAndMenus();
+    SetZoom();
+
+
 
     //Recorded Path
     filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "RecPath.txt");
@@ -928,16 +1040,64 @@ bool FormGPS::FileOpenField(QString fieldDir)
                 recPath.recList.append(point);
             }
         }
-        recpathFile.close();
+
+        if (recPath.recList.count() > 0)
+        {
+            //TODO: panelDrag.Visible = true;
+        } else {
+            //TODO: panelDrag.Visible = false;
+        }
     }
+
+    worldGrid.isGeoMap = false;
+
+    filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "BackPic.txt");
+
+    QFile backPic(filename);
+    if (backPic.open(QIODevice::ReadOnly))
+    {
+        reader.setDevice(&backPic);
+
+        //read header
+        line = reader.readLine();
+
+        line = reader.readLine();
+        worldGrid.isGeoMap = (line == "True" ? true : false);
+
+        line = reader.readLine();
+        worldGrid.eastingMaxGeo = line.toDouble();
+        line = reader.readLine();
+        worldGrid.eastingMinGeo = line.toDouble();
+        line = reader.readLine();
+        worldGrid.northingMaxGeo = line.toDouble();
+        line = reader.readLine();
+        worldGrid.northingMinGeo = line.toDouble();
+
+
+        if (worldGrid.isGeoMap)
+        {
+            //TODO: load map texture
+            worldGrid.isGeoMap = false;
+        }
+        //Refresh GL view
+
+    }
+
     return true;
 }
 
 void FormGPS::FileCreateField()
 {
+    //Saturday, February 11, 2017  -->  7:26:52 AM
+    //$FieldDir
+    //Bob_Feb11
+    //$Offsets
+    //533172,5927719,12 - offset easting, northing, zone
+
     if( ! isJobStarted)
     {
         qDebug() << "field not open";
+        TimedMessageBox(3000, tr("Field Not Open"), tr("Create a new field."));
         return;
     }
 
@@ -978,23 +1138,24 @@ void FormGPS::FileCreateField()
 
     //write out the easting and northing Offsets
     writer << "$Offsets" << Qt::endl;
-    writer << pn.utmEast << "," << pn.utmNorth << "," << pn.zone << Qt::endl;
+    writer << "0,0" << Qt::endl;
 
     writer << "Convergence" << Qt::endl;
-    writer << pn.convergenceAngle << Qt::endl;
+    writer << "0" << Qt::endl;
 
     writer << "StartFix" << Qt::endl;
     writer << pn.latitude << "," << pn.longitude << Qt::endl;
 
     fieldFile.close();
-#endif
-    return true;
 }
 
-#if 0
 void FormGPS::FileCreateElevation()
 {
-    //Why is this the same as field.txt?
+    //Saturday, February 11, 2017  -->  7:26:52 AM
+    //$FieldDir
+    //Bob_Feb11
+    //$Offsets
+    //533172,5927719,12 - offset easting, northing, zone
 
     QString myFilename;
 
@@ -1033,10 +1194,10 @@ void FormGPS::FileCreateElevation()
 
     //write out the easting and northing Offsets
     writer << "$Offsets" << Qt::endl;
-    writer << pn.utmEast << "," << pn.utmNorth << "," << pn.zone << Qt::endl;
+    writer << "0,0" << Qt::endl;
 
     writer << "Convergence" << Qt::endl;
-    writer << pn.convergenceAngle << Qt::endl;
+    writer << "0" << Qt::endl;
 
     writer << "StartFix" << Qt::endl;
     writer << pn.latitude << "," << pn.longitude << Qt::endl;
@@ -1044,6 +1205,7 @@ void FormGPS::FileCreateElevation()
     fieldFile.close();
 }
 
+//save field Patches
 void FormGPS::FileSaveSections()
 {
     if (tool.patchSaveList.count() == 0) return;
@@ -1088,19 +1250,101 @@ void FormGPS::FileSaveSections()
 
 void FormGPS::FileCreateSections()
 {
-    //not needed. fileSaveSections() will create the file for us.
-    //no longer using $Sections header
+    //FileSaveSections appends; we must create the file, overwriting any existing vesion
+    QString myFilename;
 
+    //get the directory and make sure it exists, create if not
+
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+
+    myFilename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Sections.txt");
+    QFile sectionFile(myFilename);
+    if (!sectionFile.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "Couldn't open " << myFilename << "for appending!";
+        return;
+    }
+    //file should now exist; we can close it.
+    sectionFile.close();
+
+}
+
+void FormGPS::FileCreateBoundary()
+{
+    //Create Boundary.txt, overwriting it if it exists.
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+
+    QDir saveDir(directoryName);
+    if (!saveDir.exists()) {
+        bool ok = saveDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Boundary.txt");
+
+    QFile boundfile(filename);
+    if (!boundfile.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "Couldn't open " << filename << "for writing!";
+        return;
+    }
+
+    QTextStream writer(&boundfile);
+    writer.setLocale(QLocale::C);
+    writer << "$Boundary" << Qt::endl;
 }
 
 void FormGPS::FileCreateFlags()
 {
+    //create a new flags file, overwriting if it alraedy existis.
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
 
+    QDir saveDir(directoryName);
+    if (!saveDir.exists()) {
+        bool ok = saveDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Flags.txt");
+
+    QFile flagsFile(filename);
+    if (!flagsFile.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "Couldn't open " << filename << "for writing!";
+        return;
+    }
 }
 
 void FormGPS::FileCreateContour()
 {
+    QString myFilename;
 
+    //get the directory and make sure it exists, create if not
+
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+
+    myFilename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Contour.txt");
+    QFile contourFile(myFilename);
+    if (!contourFile.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "Couldn't open " << myFilename << "for appending!";
+        return;
+    }
+
+    QTextStream writer(&contourFile);
+    writer.setLocale(QLocale::C);
+
+    writer << "$Contour" << Qt::endl;
 }
 
 void FormGPS::FileSaveContour()
@@ -1171,27 +1415,145 @@ void FormGPS::FileSaveBoundary()
     QTextStream writer(&boundfile);
     writer.setLocale(QLocale::C);
     writer << "$Boundary" << Qt::endl;
-    for(int i = 0; i < bnd.bndArr.count(); i++)
+    for(int i = 0; i < bnd.bndList.count(); i++)
     {
-        writer << (bnd.bndArr[i].isDriveThru ? "True" : "False") << Qt::endl;
-        writer << (bnd.bndArr[i].isDriveAround ? "True" : "False") << Qt::endl;
-        //writer.WriteLine(bnd.bndArr[i].isOwnField);
+        writer << (bnd.bndList[i].isDriveThru ? "True" : "False") << Qt::endl;
 
-        writer << bnd.bndArr[i].bndLine.count() << Qt::endl;
-        if (bnd.bndArr[i].bndLine.count() > 0)
+        writer << bnd.bndList[i].fenceLine.count() << Qt::endl;
+        if (bnd.bndList[i].fenceLine.count() > 0)
         {
-            for (int j = 0; j < bnd.bndArr[i].bndLine.count(); j++)
+            for (int j = 0; j < bnd.bndList[i].fenceLine.count(); j++)
                 writer << qSetRealNumberPrecision(3)
-                       << bnd.bndArr[i].bndLine[j].easting << ","
-                       << bnd.bndArr[i].bndLine[j].northing << ","
+                       << bnd.bndList[i].fenceLine[j].easting << ","
+                       << bnd.bndList[i].fenceLine[j].northing << ","
                        << qSetRealNumberPrecision(5)
-                       << bnd.bndArr[i].bndLine[j].heading << Qt::endl;
+                       << bnd.bndList[i].fenceLine[j].heading << Qt::endl;
         }
     }
 
-
     boundfile.close();
 
+}
+
+void FormGPS::FileSaveTram()
+{
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+
+    QDir saveDir(directoryName);
+    if (!saveDir.exists()) {
+        bool ok = saveDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Tram.txt");
+
+    QFile tramFile(filename);
+    if (!tramFile.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "Couldn't open " << filename << "for writing!";
+        return;
+    }
+
+    QTextStream writer(&tramFile);
+    writer.setLocale(QLocale::C);
+
+    writer << "$Tram" << Qt::endl;
+
+    if (tram.tramBndOuterArr.count() > 0)
+    {
+        //outer track of outer boundary tram
+        writer << tram.tramBndOuterArr.count() << Qt::endl;
+
+        for (int i = 0; i < tram.tramBndOuterArr.count(); i++)
+        {
+            writer << qSetRealNumberPrecision(3)
+                   << tram.tramBndOuterArr[i].easting << ","
+                   << tram.tramBndOuterArr[i].northing << Qt::endl;
+        }
+
+        //inner track of outer boundary tram
+        writer << tram.tramBndInnerArr.count();
+
+        for (int i = 0; i < tram.tramBndInnerArr.count(); i++)
+        {
+            writer << qSetRealNumberPrecision(3)
+                   << tram.tramBndInnerArr[i].easting << ","
+                   << tram.tramBndInnerArr[i].northing << Qt::endl;
+        }
+    }
+
+    //no outer bnd
+    else
+    {
+        writer << "0" << Qt::endl;
+        writer << "0" << Qt::endl;
+    }
+
+    if (tram.tramList.count() > 0)
+    {
+        writer << tram.tramList.count() << Qt::endl;
+        for (int i = 0; i < tram.tramList.count(); i++)
+        {
+            writer << tram.tramList[i]->count() << Qt::endl;
+
+            for (int h = 0; h < tram.tramList[i]->count(); h++)
+            {
+            writer << qSetRealNumberPrecision(3)
+                       << (*tram.tramList[i])[h].easting << ","
+                       << (*tram.tramList[i])[h].northing << Qt::endl;
+            }
+        }
+    }
+}
+
+void FormGPS::FileSaveBackPic()
+{
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+
+    QDir saveDir(directoryName);
+    if (!saveDir.exists()) {
+        bool ok = saveDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "BackPic.txt");
+
+    QFile backFile(filename);
+    if (!backFile.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "Couldn't open " << filename << "for writing!";
+        return;
+    }
+
+    QTextStream writer(&backFile);
+    writer.setLocale(QLocale::C);
+
+    writer << "$BackPic" << Qt::endl;
+
+    if (worldGrid.isGeoMap)
+    {
+        writer << "True" << Qt::endl;
+        writer << worldGrid.eastingMaxGeo << Qt::endl;
+        writer << worldGrid.eastingMinGeo << Qt::endl;
+        writer << worldGrid.northingMaxGeo << Qt::endl;
+        writer << worldGrid.northingMinGeo << Qt::endl;
+    }
+    else
+    {
+        writer << "False" << Qt::endl;
+        writer << 300 << Qt::endl;
+        writer << -300 << Qt::endl;
+        writer << 300 << Qt::endl;
+        writer << -300 << Qt::endl;
+    }
 }
 
 void FormGPS::FileSaveHeadland()
@@ -1220,17 +1582,19 @@ void FormGPS::FileSaveHeadland()
     QTextStream writer(&headfile);
     writer.setLocale(QLocale::C);
     writer << "$Headland" << Qt::endl;
-    for(int i = 0; i < hd.headArr.count(); i++)
+    if (bnd.bndList.count() > 0 && bnd.bndList[0].hdLine.count() > 0)
     {
-        writer << hd.headArr[i].hdLine.count() << Qt::endl;
-        if (hd.headArr[i].hdLine.count() > 0)
+        for(int i = 0; i < bnd.bndList.count(); i++)
         {
-            for (int j = 0; j < hd.headArr[i].hdLine.count(); j++)
-                writer << qSetRealNumberPrecision(3)
-                       << hd.headArr[i].hdLine[j].easting << ","
-                       << hd.headArr[i].hdLine[j].northing << ","
-                       << qSetRealNumberPrecision(5)
-                       << hd.headArr[i].hdLine[j].heading << Qt::endl;
+            writer << bnd.bndList[i].hdLine.count() << Qt::endl;
+            if (bnd.bndList[i].hdLine.count() > 0)
+            {
+                for (int j = 0; j < bnd.bndList[i].hdLine.count(); j++)
+                    writer << qSetRealNumberPrecision(3)
+                           << bnd.bndList[i].hdLine[j].easting << ","
+                           << bnd.bndList[i].hdLine[j].northing << ","
+                           << bnd.bndList[i].hdLine[j].heading << Qt::endl;
+            }
         }
     }
 
@@ -1317,8 +1681,67 @@ void FormGPS::FileSaveRecPath()
 
 }
 
+void FormGPS::FileLoadRecPath()
+{
+    //current field directory should already exist
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+
+    QDir loadDir(directoryName);
+    if (!loadDir.exists()) {
+        bool ok = loadDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "RecPath.txt");
+
+    QFile recFile(filename);
+    if (!recFile.open(QIODevice::ReadOnly))
+    {
+        qWarning() << "Couldn't open " << filename << "for reading!";
+        //TODO timed messagebox
+        return;
+    }
+
+    QTextStream reader(&recFile);
+    reader.setLocale(QLocale::C);
+
+    //read header
+    QString line = reader.readLine();
+    line = reader.readLine();
+    int numPoints = line.toInt();
+    recPath.recList.clear();
+
+    while (!reader.atEnd())
+    {
+        for (int v = 0; v < numPoints; v++)
+        {
+            line = reader.readLine();
+            QStringList words = line.split(',');
+            CRecPathPt point(
+                words[0].toDouble(),
+                words[1].toDouble(),
+                words[2].toDouble(),
+                words[3].toDouble(),
+                (words[4] == "True" ? true : false));
+
+            //add the point
+            recPath.recList.append(point);
+        }
+    }
+}
+
 void FormGPS::FileSaveFlags()
 {
+    //Saturday, February 11, 2017  -->  7:26:52 AM
+    //$FlagsDir
+    //Bob_Feb11
+    //$Offsets
+    //533172,5927719,12 - offset easting, northing, zone
+
     QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
             + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
 
@@ -1432,21 +1855,184 @@ void FormGPS::FileSaveElevation()
 
 void FormGPS::FileSaveSingleFlagKML2(int flagNumber)
 {
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
 
+    QDir saveDir(directoryName);
+    if (!saveDir.exists()) {
+        bool ok = saveDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, QString("Flag%1.kml").arg(flagNumber));
+
+
+    QFile kmlFile(filename);
+    if (!kmlFile.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "Couldn't open " << filename << "for writing!";
+        return;
+    }
+
+    QTextStream writer(&kmlFile);
+    writer.setLocale(QLocale::C);
+
+    writer << "<?xml version=""1.0"" encoding=""UTF-8""?" << Qt::endl;
+    writer << "<kml xmlns=""http://www.opengis.net/kml/2.2""> " << Qt::endl;
+
+    //int count2 = flagPts.count();
+    double lat, lon;
+
+    pn.ConvertLocalToWGS84(flagPts[flagNumber - 1].northing, flagPts[flagNumber - 1].easting, lat, lon);
+
+    writer << "<Document>" << Qt::endl;
+
+    writer << "<Placemark>"  << Qt::endl;;
+    writer << "<Style><IconStyle>" << Qt::endl;
+    if (flagPts[flagNumber - 1].color == 0)  //red - xbgr
+        writer << "<color>ff4400ff</color>" << Qt::endl;
+    if (flagPts[flagNumber - 1].color == 1)  //grn - xbgr
+        writer << "<color>ff44ff00</color>" << Qt::endl;
+    if (flagPts[flagNumber - 1].color == 2)  //yel - xbgr
+        writer << "<color>ff44ffff</color>" << Qt::endl;
+    writer << "</IconStyle></Style>" << Qt::endl;
+    writer << "<name>" << flagNumber << "</name>" << Qt::endl;
+    writer << "<Point><coordinates>" << lon << "," << lat << ",0"
+           << "</coordinates></Point>" << Qt::endl;
+    writer << "</Placemark>" << Qt::endl;
+    writer << "</Document>" << Qt::endl;
+    writer << "</kml>" << Qt::endl;
 }
 
 void FormGPS::FileSaveSingleFlagKML(int flagNumber)
 {
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
 
+    QDir saveDir(directoryName);
+    if (!saveDir.exists()) {
+        bool ok = saveDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, QString("Flag%1.kml").arg(flagNumber));
+
+
+    QFile kmlFile(filename);
+    if (!kmlFile.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "Couldn't open " << filename << "for writing!";
+        return;
+    }
+
+    QTextStream writer(&kmlFile);
+    writer.setLocale(QLocale::C);
+
+    writer << "<?xml version=""1.0"" encoding=""UTF-8""?" << Qt::endl;
+    writer << "<kml xmlns=""http://www.opengis.net/kml/2.2""> " << Qt::endl;
+
+    //int count2 = flagPts.count();
+
+    writer << "<Document>" << Qt::endl;
+
+    writer << "<Placemark>"  << Qt::endl;;
+    writer << "<Style><IconStyle>" << Qt::endl;
+    if (flagPts[flagNumber - 1].color == 0)  //red - xbgr
+        writer << "<color>ff4400ff</color>" << Qt::endl;
+    if (flagPts[flagNumber - 1].color == 1)  //grn - xbgr
+        writer << "<color>ff44ff00</color>" << Qt::endl;
+    if (flagPts[flagNumber - 1].color == 2)  //yel - xbgr
+        writer << "<color>ff44ffff</color>" << Qt::endl;
+    writer << "</IconStyle></Style>" << Qt::endl;
+    writer << "<name>" << flagNumber << "</name>" << Qt::endl;
+    writer << "<Point><coordinates>"
+           << flagPts[flagNumber-1].longitude << ","
+           << flagPts[flagNumber-1].latitude << ",0"
+           << "</coordinates></Point>" << Qt::endl;
+    writer << "</Placemark>" << Qt::endl;
+    writer << "</Document>" << Qt::endl;
+    writer << "</kml>" << Qt::endl;
 }
 
 void FormGPS::FileMakeKMLFromCurrentPosition(double lat, double lon)
 {
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+
+    QDir saveDir(directoryName);
+    if (!saveDir.exists()) {
+        bool ok = saveDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "CurrentPosition.kml");
+
+
+    QFile kmlFile(filename);
+    if (!kmlFile.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "Couldn't open " << filename << "for writing!";
+        return;
+    }
+
+    QTextStream writer(&kmlFile);
+    writer.setLocale(QLocale::C);
+
+    writer << "<?xml version=""1.0"" encoding=""UTF-8""?>     " << Qt::endl;
+    writer << "<kml xmlns=""http://www.opengis.net/kml/2.2""> " << Qt::endl;
+
+    writer << "<Document>" << Qt::endl;
+    writer << "<Placemark>" << Qt::endl;
+    writer << "<Style> <IconStyle>" << Qt::endl;
+    writer << "<color>ff4400ff</color>" << Qt::endl;
+    writer << "</IconStyle></Style>" << Qt::endl;
+    writer << "<name>Your Current Position</name>" << Qt::endl;
+    writer << "<Point><coordinates> "
+           << lon << "," << lat << ",0"
+           << "</coordinates></Point>" << Qt::endl;
+    writer << "</Placemark>" << Qt::endl;
+    writer << "</Document>" << Qt::endl;
+    writer << "</kml>" << Qt::endl;
+
 
 }
 
 void FormGPS::ExportFieldAs_KML()
 {
-
+    //TODO:  use XML library
 }
-#endif
+
+QString FormGPS::GetBoundaryPointsLatLon(int bndNum)
+{
+    QString sb;
+    QTextStream sb_writer(&sb);
+    double lat = 0;
+    double lon = 0;
+
+    for (int i = 0; i < bnd.bndList[bndNum].fenceLine.count(); i++)
+    {
+        pn.ConvertLocalToWGS84(bnd.bndList[bndNum].fenceLine[i].northing, bnd.bndList[bndNum].fenceLine[i].easting, lat, lon);
+        sb_writer << qSetRealNumberPrecision(7)
+                  << lon << ','
+                  << lat << ",0 "
+                  << Qt::endl; // TODO: should this be here?
+    }
+
+    return sb;
+}
+
+void FormGPS::FileUpdateAllFieldsKML()
+{
+    //Update or add the current field to the Field.kml file
+    //TODO: use XML library
+}
+

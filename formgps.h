@@ -256,11 +256,9 @@ public:
     btnStates manualBtnState = btnStates::Off;
     btnStates autoBtnState = btnStates::Off;
 
-private:
-   /************************
-     * Controls.Designer.cs *
-     ************************/
+    void FixPanelsAndMenus();
 
+private:
 public:
     //for animated submenu
     //bool isMenuHid = true;
@@ -330,11 +328,25 @@ public:
     CHeadLine hdl;
 
     bool bootstrap_field = false;
+   /************************
+     * Controls.Designer.cs *
+     ************************/
+public:
+    bool isTT;
+    bool isABCyled = false;
 
+    void GetHeadland();
+    void CloseTopMosts();
+    void SnapToPivot();
+    void getAB();
+    void FixTramModeButton();
+
+    //other things will be in slots
 
     /*************************
      *  Position.designer.cs *
      *************************/
+public:
     //very first fix to setup grid etc
     bool isFirstFixPositionSet = false, isGPSPositionInitialized = false, isFirstHeadingSet = false;
     bool /*isReverse = false (CVehicle),*/ isSteerInReverse = true, isSuperSlow = false, isAutoSnaptoPivot = false;
@@ -472,10 +484,14 @@ public:
     void FileCreateFlags();
     void FileCreateContour();
     void FileSaveContour();
+    void FileCreateBoundary();
     void FileSaveBoundary();
+    void FileSaveTram();
+    void FileSaveBackPic();
     void FileCreateRecPath();
     void FileSaveHeadland();
     void FileSaveRecPath();
+    void FileLoadRecPath();
     void FileSaveFlags();
     void FileSaveNMEA();
     void FileSaveElevation();
@@ -483,6 +499,8 @@ public:
     void FileSaveSingleFlagKML(int flagNumber);
     void FileMakeKMLFromCurrentPosition(double lat, double lon);
     void ExportFieldAs_KML();
+    void FileUpdateAllFieldsKML();
+    QString GetBoundaryPointsLatLon(int bndNum);
     void ExportFieldAs_ISOXMLv3();
     void ExportFieldAs_ISOXMLv4();
 
