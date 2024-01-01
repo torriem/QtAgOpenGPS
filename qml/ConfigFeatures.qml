@@ -5,6 +5,7 @@ Item {
     Rectangle{
         anchors.fill: parent
         color: "ghostwhite"
+        //I want to finish this, but I have a little cleanup work to do elsewhere
       /*  Text{
             id: fieldMenuText
             anchors.top: parent.top

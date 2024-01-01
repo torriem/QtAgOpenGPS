@@ -12,43 +12,11 @@ Item {
         border.width: 1
         border.color: "black"
         color: "lightgray"
-        Rectangle{
+        TopLine{
             id: topLine
-            anchors.top:parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.margins: 1
-            height: 30
-            color: "white"
-            z: 1
-            Text {
-                text: qsTr("AB Curve")
-                font.pixelSize: 20
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                anchors.leftMargin: 5
-            }
-            Button{
-                objectName: "lineHelp"
-                height: parent.height
-                width: parent.height * 2
-                text: "?"
-                font.pixelSize: 15
-                anchors.right: close.left
-                anchors.rightMargin: 10
-                anchors.verticalCenter: parent.verticalCenter
-            }
-            Button{
-                id: close
-                height: parent.height
-                width: parent.height * 2
-                text: "×"
-                font.pixelSize: 15
-                anchors.right: parent.right
-                anchors.rightMargin: 2
-                anchors.verticalCenter: parent.verticalCenter
-            }
+            titleText: "AB Curve"
         }
+
         ColumnLayout{
             id: rightColumn
             anchors.top: topLine.bottom
@@ -133,44 +101,9 @@ Item {
             border.color: "black"
             z: 1
             visible: false
-            Rectangle{
+            TopLine{
                 id: settertopLine
-                color: "white"
-                height: 30
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                Text{
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.left
-                    text: "AB Curve"
-                    /*font.pixelsize: 15
-            anchors.leftMargin: 5*/
-                }
-
-                Button{
-                    id: lineHelp
-                    objectName: "lineHelp"
-                    height: parent.height
-                    width: parent.height * 2
-                    text: "?"
-                    //font.pixelsize: 15
-                    anchors.right: setterclose.left
-                    anchors.rightMargin: 10
-                    anchors.verticalCenter: parent.verticalCenter
-                    background: Rectangle{color:"white"}
-                }
-                Button{
-                    id: setterclose
-                    height: parent.height
-                    width: parent.height * 2
-                    text: "×"
-                    //font.pixelSize: 15
-                    anchors.right: parent.right
-                    anchors.rightMargin: 2
-                    anchors.verticalCenter: parent.verticalCenter
-                    background: Rectangle{color: "white"}
-                }
+                titleText: "AB Curve"
             }
             IconButtonTransparent{
                 objectName: "a"

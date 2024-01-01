@@ -5,42 +5,9 @@ Item {
     width: 340
     height: 550
         id: mainWindowTram
-        Rectangle{
+        TopLine{
             id: topLine
-            anchors.top:parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.margins: 1
-            height: 30
-            color: "white"
-            z: 1
-            Text {
-                text: qsTr("Tram Lines")
-                font.pixelSize: 20
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                anchors.leftMargin: 5
-            }
-            Button{
-                objectName: "lineHelp"
-                height: parent.height
-                width: parent.height * 2
-                text: "?"
-                font.pixelSize: 15
-                anchors.right: close.left
-                anchors.rightMargin: 10
-                anchors.verticalCenter: parent.verticalCenter
-            }
-            Button{
-                id: close
-                height: parent.height
-                width: parent.height * 2
-                text: "×"
-                font.pixelSize: 15
-                anchors.right: parent.right
-                anchors.rightMargin: 2
-                anchors.verticalCenter: parent.verticalCenter
-            }
+            titleText: "Tram Lines"
         }
     Rectangle{
         anchors.left: parent.left

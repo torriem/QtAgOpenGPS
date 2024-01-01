@@ -7,42 +7,9 @@ Item {
     id: boundaryMenu
     width: 500
     height: 400
-    Rectangle{
+    TopLine{
         id: topLine
-        anchors.top:parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: 1
-        height: 30
-        color: "white"
-        z: 1
-        Text {
-            text: qsTr("Start or Delete A Boundary")
-            font.pixelSize: 15
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
-            anchors.leftMargin: 5
-        }
-        Button{
-            objectName: "lineHelp"
-            height: parent.height
-            width: parent.height * 2
-            text: "?"
-            font.pixelSize: 15
-            anchors.right: close.left
-            anchors.rightMargin: 10
-            anchors.verticalCenter: parent.verticalCenter
-        }
-        Button{
-            id: close
-            height: parent.height
-            width: parent.height * 2
-            text: "×"
-            font.pixelSize: 15
-            anchors.right: parent.right
-            anchors.rightMargin: 2
-            anchors.verticalCenter: parent.verticalCenter
-        }
+        titleText: "Start or Delete A Boundary"
     }
     Rectangle{
         id: boundaryMain
@@ -172,6 +139,7 @@ Item {
             }
         }
     }
+    //----------pick whether to import kml or record------------------------------------
     Item{
         id: boundaryType
         anchors.top: parent.top
@@ -258,6 +226,7 @@ Item {
             }
         }
     }
+        //----------------Window for picking whether to import 1 or several kml files
     Item{
         id: boundaryKMLType
         anchors.top: parent.top
@@ -348,7 +317,7 @@ Item {
             }
         }
     }
-    Item{
+    Item{//--------window for recording boundary-------------------------------------------
 
         id: boundaryRecord
         anchors.top: parent.top

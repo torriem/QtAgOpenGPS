@@ -9,47 +9,10 @@ Rectangle{
             border.width: 1
             border.color: "black"
     property string title: ""
-    Rectangle{
-        id: topLine
-        color: "white"
-        height: 30
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        Text{
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
-            text: line_Name.title
-            /*font.pixelsize: 15
-            anchors.leftMargin: 5*/
-        }
-
-        Button{
-            id: lineHelp
-            objectName: "lineHelp"
-            height: parent.height
-            width: parent.height * 2
-            text: "?"
-            //font.pixelsize: 15
-            anchors.right: close.left
-            anchors.rightMargin: 10
-            anchors.verticalCenter: parent.verticalCenter
-            background: Rectangle{
-                color:"white"
+            TopLine{
+                id: topLine
+                titleText: line_Name.title
             }
-        }
-        Button{
-            id: close
-            height: parent.height
-            width: parent.height * 2
-            text: "×"
-            //font.pixelSize: 15
-            anchors.right: parent.right
-            anchors.rightMargin: 2
-            anchors.verticalCenter: parent.verticalCenter
-            background: Rectangle{color: "white"}
-        }
-    }
     Rectangle{
         id: textInputRect
         width: parent.width -20
