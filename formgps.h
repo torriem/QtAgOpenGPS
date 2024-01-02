@@ -586,22 +586,28 @@ public:
     bool isHeadlandClose = false;
 
     int steerModuleConnectedCounter = 0;
+    double avgPivDistance, lightbarDistance;
+    QString strHeading;
+    int lenth = 4;
 
-    void drawManUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
-    void drawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
-    void makeFlagMark(QOpenGLFunctions *gl);
-    void drawFlags(QOpenGLFunctions *gl, QMatrix4x4 mvp);
+    void DrawManUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
+    void DrawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
+    void MakeFlagMark(QOpenGLFunctions *gl);
+    void DrawFlags(QOpenGLFunctions *gl, QMatrix4x4 mvp);
+    void DrawSteerCircle(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection);
 
-    void drawLightBar(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height, double offlineDistance);
-    void drawLightBarText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height);
-    void drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection);
-    void drawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int height);
-    void drawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);
-    void drawCompass(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width);
+    void DrawLightBar(QOpenGLFunctions *gl, QMatrix4x4 mvp, double offlineDistance);
+    void DrawLightBarText(QOpenGLFunctions *gl, QMatrix4x4 mvp);
+    //void drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection);
+    void DrawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int height);
+    void DrawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height);
+    void DrawCompass(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width);
+    void DrawReverse(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width, double Height);
     void drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width, double Height);
-    //void drawFieldText();
-    void drawLiftIndicator(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, int Width, int Height);
-    void calcFrustum(const QMatrix4x4 &mvp);
+    void DrawLiftIndicator(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, int Width, int Height);
+    void DrawLostRTK(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);
+    void DrawAge(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);
+    void CalcFrustum(const QMatrix4x4 &mvp);
     void calculateMinMax();
 
 
@@ -714,12 +720,12 @@ public slots:
     /***************************
      * from OpenGL.Designer.cs *
      ***************************/
-    void openGLControl_Draw();
+    void oglMain_Paint();
     void openGLControl_Initialized();
     void openGLControl_Shutdown();
     //void openGLControl_Resize();
 
-    void openGLControlBack_Draw();
+    void oglBack_Paint();
     void openGLControlBack_Initialized();
 
     /***

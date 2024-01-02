@@ -182,7 +182,7 @@ void FormGPS::setupGui()
     //we have to give it a way of calling our initialize and draw functions
     openGLControl->setProperty("callbackObject",QVariant::fromValue((void *) this));
     openGLControl->setProperty("initCallback",QVariant::fromValue((void *) &FormGPS::openGLControl_Initialized));
-    openGLControl->setProperty("paintCallback",QVariant::fromValue((void *) &FormGPS::openGLControl_Draw));
+    openGLControl->setProperty("paintCallback",QVariant::fromValue((void *) &FormGPS::oglMain_Paint));
 
     openGLControl->setProperty("samples",settings.value("display/antiAliasSamples", 0));
     openGLControl->setMirrorVertically(true);
