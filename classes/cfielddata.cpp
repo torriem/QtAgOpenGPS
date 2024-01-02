@@ -26,7 +26,7 @@ QString CFieldData::WorkRateAcres(CVehicle &vehicle) {
     return QString("%1 ac/hr").arg((double)property_setVehicle_toolWidth * vehicle.avgSpeed * 0.2471,0,'g',1);
 }
 
-void CFieldData::UpdateFieldBoundaryGUIAreas(QVector<CBoundaryLines> &bndList)
+void CFieldData::UpdateFieldBoundaryGUIAreas(QVector<CBoundaryList> &bndList)
 {
     if (bndList.count() > 0)
     {

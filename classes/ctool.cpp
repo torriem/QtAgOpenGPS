@@ -195,7 +195,7 @@ void CTool::DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 pro
         //if section is on, green, if off, red color
         if (section[j].isSectionOn)
         {
-            if (section[j].manBtnState == btnStates::Auto)
+            if (section[j].sectionBtnState == btnStates::Auto)
             {
                 if (section[j].isMappingOn) color.fromRgbF(0.0f, 0.95f, 0.0f, 1.0f);
                 else color.fromRgbF(0.970f, 0.30f, 0.970f);
