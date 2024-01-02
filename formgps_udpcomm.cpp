@@ -323,6 +323,6 @@ void FormGPS::SendPgnToLoop(QByteArray byteData) //10 bytes
         }
         byteData[byteData.length() - 1] = (char)crc;
 
-        udpSocket->write(byteData);
+        //TODO udpSocket->write(byteData);
     }
 }

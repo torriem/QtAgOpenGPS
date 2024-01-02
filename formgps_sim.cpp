@@ -28,7 +28,8 @@ void FormGPS::onSimNewPosition(double vtgSpeed,
 
     vehicle.AverageTheSpeed(vtgSpeed);
 
-    pn.headingTrue = pn.headingTrueDual = glm::toDegrees(headingTrue);
+    pn.headingTrue = pn.headingTrueDual = headingTrue;
+    qDebug() << qSetRealNumberPrecision(9) << headingTrue << vtgSpeed;
     ahrs.imuHeading = pn.headingTrue;
     if (ahrs.imuHeading > 360) ahrs.imuHeading -= 360;
 

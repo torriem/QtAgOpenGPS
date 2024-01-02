@@ -126,8 +126,23 @@ void FormGPS::loadSettings()
     //gyd pulls directly from settings
     //gyd.sideHillCompFactor = property_setAS_sideHillComp;
 
+    fd.UpdateFieldBoundaryGUIAreas(bnd.bndList);
+
     isStanleyUsed = property_setVehicle_isStanleyUsed;
     isDay = property_setDisplay_isDayMode;
+
+    if (tool.isSectionsNotZones){
+        tool.sectionSetPositions();
+        tool.sectionCalcWidths();
+        LineUpIndividualSectionBtns();
+    } else {
+        tool.sectionCalcMulti();
+        LineUpAllZoneButtons();
+    }
+
+    //disable youturn buttons
+    headingFromSource = (QString)property_setGPS_headingFromWhichSource;
+
 
     //load various saved settings or properties into the support classes
     ahrs.loadSettings();

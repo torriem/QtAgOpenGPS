@@ -14,9 +14,6 @@ extern QLabel *grnPixelsWindow;
 FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
 {
     connect_classes(); //make all the inter-class connections
-    loadSettings();
-    setupGui();
-
     /* test data to see if drawing routines are working. */
 
     //fieldColor = QColor(s.value("display/fieldColor", "#82781E").toString());
@@ -37,11 +34,11 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
     property_setTool_isToolTrailing = true;
     property_setVehicle_minTurningRadius = 5.25;
     property_setVehicle_maxSteerAngle = 55;
+    settings.setValue("test/test", "My test.");
+    settings.sync();
 
-    tool.loadSettings(); //load from preferences
-    tool.sectionSetPositions();
-    tool.sectionCalcWidths();
-
+    setupGui();
+    loadSettings();
 
     //turn on the right number of section buttons.
     //we don't need to do this on resize, but we will need
@@ -49,11 +46,14 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
     LineUpIndividualSectionBtns();
 
     //hard wire this on for testing
+    isJobStarted = true;
     //fileCreateField();
     if (! FileOpenField((QString)property_setF_CurrentDir))
     {
         //set up default field to play in for debugging purposes
-
+        currentFieldDirectory = "TestField";
+        property_setF_CurrentDir = currentFieldDirectory;
+        FileCreateField();
 
         ABLine.refPoint1.easting = 0;
         ABLine.refPoint1.easting = 0;
@@ -65,6 +65,7 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
         line.heading = glm::toRadians(5.0f);
         line.Name = "Test AB Line";
         ABLine.lineArr.append( line );
+        FileSaveABLines();
 
         CBoundaryList boundary;
         boundary.fenceLine.append(Vec3(-100,0,0));
@@ -81,8 +82,6 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
         FileSaveBoundary();
         bnd.BuildTurnLines(fd);
 
-        currentFieldDirectory = "TestField";
-        property_setF_CurrentDir = currentFieldDirectory;
         bootstrap_field=true;
         isJobStarted = true;
     }
@@ -898,7 +897,7 @@ void FormGPS::tmrWatchdog_timeout()
         if (isMetric)  //metric or imperial
         {
             //status strip values
-            qmlItem(qml_root,"btnPerimeter")->setProperty("buttonText", fd.WorkedUserHectares());
+            //TODO: qmlItem(qml_root,"btnPerimeter")->setProperty("buttonText", fd.WorkedUserHectares());
             //TODO: distanceToolBtn.Text = fd.DistanceUserMeters + "\r\n" + fd.WorkedUserHectares;
 
         }
@@ -906,7 +905,7 @@ void FormGPS::tmrWatchdog_timeout()
         {
             //acres on the master section soft control and sections
             //status strip values
-            qmlItem(qml_root,"btnPerimeter")->setProperty("buttonText", fd.WorkedUserAcres());
+            //TODO: qmlItem(qml_root,"btnPerimeter")->setProperty("buttonText", fd.WorkedUserAcres());
             //TODO: distanceToolBtn.Text = fd.DistanceUserFeet + "\r\n" + fd.WorkedUserAcres;
         }
 

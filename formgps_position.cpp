@@ -110,7 +110,7 @@ void FormGPS::UpdateFixPosition()
                 if (gpsHeading < 0) gpsHeading += glm::twoPI;
                 else if (gpsHeading > glm::twoPI) gpsHeading -= glm::twoPI;
 
-                fixHeading = gpsHeading;
+                vehicle.fixHeading = gpsHeading;
 
                 //set the imu to gps heading offset
                 if (ahrs.imuHeading != 99999)
@@ -147,11 +147,11 @@ void FormGPS::UpdateFixPosition()
                     if (imuCorrected > glm::twoPI) imuCorrected -= glm::twoPI;
                     else if (imuCorrected < 0) imuCorrected += glm::twoPI;
 
-                    fixHeading = imuCorrected;
+                    vehicle.fixHeading = imuCorrected;
                 }
 
                 //set the camera
-                camHeading = glm::toDegrees(gpsHeading);
+                camera.camHeading = glm::toDegrees(gpsHeading);
 
                 //now we have a heading, fix the first 3
                 if (vehicle.antennaOffset != 0)
@@ -328,7 +328,7 @@ void FormGPS::UpdateFixPosition()
             else if (imuCorrected < 0) imuCorrected += glm::twoPI;
 
             //use imu as heading when going slow
-            fixHeading = imuCorrected;
+            vehicle.fixHeading = imuCorrected;
 
             //#endregion
         }
@@ -402,7 +402,7 @@ void FormGPS::UpdateFixPosition()
             else if (newGPSHeading >= glm::twoPI) newGPSHeading -= glm::twoPI;
 
             //set the headings
-            fixHeading = gpsHeading = newGPSHeading;
+            vehicle.fixHeading = gpsHeading = newGPSHeading;
         }
 
         //save current fix and set as valid
@@ -415,7 +415,7 @@ void FormGPS::UpdateFixPosition()
 
         //#region Camera
 
-        camDelta = fixHeading - smoothCamHeading;
+        camDelta = vehicle.fixHeading - smoothCamHeading;
 
         if (camDelta < 0) camDelta += glm::twoPI;
         else if (camDelta > glm::twoPI) camDelta -= glm::twoPI;
@@ -435,7 +435,7 @@ void FormGPS::UpdateFixPosition()
         if (smoothCamHeading > glm::twoPI) smoothCamHeading -= glm::twoPI;
         else if (smoothCamHeading < -glm::twoPI) smoothCamHeading += glm::twoPI;
 
-        camHeading = glm::toDegrees(smoothCamHeading);
+        camera.camHeading = glm::toDegrees(smoothCamHeading);
 
         //#endregion
 
@@ -449,10 +449,10 @@ void FormGPS::UpdateFixPosition()
             else if (imuCorrected < 0) imuCorrected += glm::twoPI;
 
             //use imu as heading when going slow
-            fixHeading = imuCorrected;
+            vehicle.fixHeading = imuCorrected;
         }
 
-        camDelta = fixHeading - smoothCamHeading;
+        camDelta = vehicle.fixHeading - smoothCamHeading;
 
         if (camDelta < 0) camDelta += glm::twoPI;
         else if (camDelta > glm::twoPI) camDelta -= glm::twoPI;
@@ -472,7 +472,7 @@ void FormGPS::UpdateFixPosition()
         if (smoothCamHeading > glm::twoPI) smoothCamHeading -= glm::twoPI;
         else if (smoothCamHeading < -glm::twoPI) smoothCamHeading += glm::twoPI;
 
-        camHeading = glm::toDegrees(smoothCamHeading);
+        camera.camHeading = glm::toDegrees(smoothCamHeading);
 
         TheRest();
     } else if (headingFromSource == "VTG")
@@ -481,9 +481,9 @@ void FormGPS::UpdateFixPosition()
         if (vehicle.avgSpeed > 1)
         {
             //use NMEA headings for camera and tractor graphic
-            fixHeading = glm::toRadians(pn.headingTrue);
-            camHeading = pn.headingTrue;
-            gpsHeading = fixHeading;
+            vehicle.fixHeading = glm::toRadians(pn.headingTrue);
+            camera.camHeading = pn.headingTrue;
+            gpsHeading = vehicle.fixHeading;
         }
 
         //grab the most current fix to last fix distance
@@ -493,8 +493,8 @@ void FormGPS::UpdateFixPosition()
 
         if (vehicle.antennaOffset != 0)
         {
-            pn.fix.easting = (cos(-fixHeading) * vehicle.antennaOffset) + pn.fix.easting;
-            pn.fix.northing = (sin(-fixHeading) * vehicle.antennaOffset) + pn.fix.northing;
+            pn.fix.easting = (cos(-vehicle.fixHeading) * vehicle.antennaOffset) + pn.fix.easting;
+            pn.fix.northing = (sin(-vehicle.fixHeading) * vehicle.antennaOffset) + pn.fix.northing;
         }
         //#endregion
 
@@ -541,11 +541,11 @@ void FormGPS::UpdateFixPosition()
             if (imuCorrected > glm::twoPI) imuCorrected -= glm::twoPI;
             if (imuCorrected < 0) imuCorrected += glm::twoPI;
 
-            fixHeading = imuCorrected;
+            vehicle.fixHeading = imuCorrected;
 
-            camHeading = fixHeading;
-            if (camHeading > glm::twoPI) camHeading -= glm::twoPI;
-            camHeading = glm::toDegrees(camHeading);
+            camera.camHeading = vehicle.fixHeading;
+            if (camera.camHeading > glm::twoPI) camera.camHeading -= glm::twoPI;
+            camera.camHeading = glm::toDegrees(camera.camHeading);
         }
 
 
@@ -559,8 +559,8 @@ void FormGPS::UpdateFixPosition()
 
             // roll to left is positive  **** important!!
             // not any more - April 30, 2019 - roll to right is positive Now! Still Important
-            pn.fix.easting = (cos(-fixHeading) * rollCorrectionDistance) + pn.fix.easting;
-            pn.fix.northing = (sin(-fixHeading) * rollCorrectionDistance) + pn.fix.northing;
+            pn.fix.easting = (cos(-vehicle.fixHeading) * rollCorrectionDistance) + pn.fix.easting;
+            pn.fix.northing = (sin(-vehicle.fixHeading) * rollCorrectionDistance) + pn.fix.northing;
         }
 
         //#endregion Roll
@@ -574,15 +574,15 @@ void FormGPS::UpdateFixPosition()
     {
         isFirstHeadingSet = true;
         //use Dual Antenna heading for camera and tractor graphic
-        fixHeading = glm::toRadians(pn.headingTrueDual);
-        gpsHeading = fixHeading;
+        vehicle.fixHeading = glm::toRadians(pn.headingTrueDual);
+        gpsHeading = vehicle.fixHeading;
 
         uncorrectedEastingGraph = pn.fix.easting;
 
         if (vehicle.antennaOffset != 0)
         {
-            pn.fix.easting = (cos(-fixHeading) * vehicle.antennaOffset) + pn.fix.easting;
-            pn.fix.northing = (sin(-fixHeading) * vehicle.antennaOffset) + pn.fix.northing;
+            pn.fix.easting = (cos(-vehicle.fixHeading) * vehicle.antennaOffset) + pn.fix.easting;
+            pn.fix.northing = (sin(-vehicle.fixHeading) * vehicle.antennaOffset) + pn.fix.northing;
         }
 
         if (ahrs.imuRoll != 88888 && vehicle.antennaHeight != 0)
@@ -615,7 +615,7 @@ void FormGPS::UpdateFixPosition()
 
 
             //what is angle between the last reverse heading and current dual heading
-            double delta = fabs(M_PI - fabs(fabs(newHeading - fixHeading) - M_PI));
+            double delta = fabs(M_PI - fabs(fabs(newHeading - vehicle.fixHeading) - M_PI));
 
             //are we going backwards
             vehicle.isReverse = delta > 2 ? true : false;
@@ -624,7 +624,7 @@ void FormGPS::UpdateFixPosition()
             lastReverseFix = pn.fix;
         }
 
-        double camDelta = fixHeading - smoothCamHeading;
+        double camDelta = vehicle.fixHeading - smoothCamHeading;
 
         if (camDelta < 0) camDelta += glm::twoPI;
         else if (camDelta > glm::twoPI) camDelta -= glm::twoPI;
@@ -644,7 +644,7 @@ void FormGPS::UpdateFixPosition()
         if (smoothCamHeading > glm::twoPI) smoothCamHeading -= glm::twoPI;
         else if (smoothCamHeading < -glm::twoPI) smoothCamHeading += glm::twoPI;
 
-        camHeading = glm::toDegrees(smoothCamHeading);
+        camera.camHeading = glm::toDegrees(smoothCamHeading);
 
         TheRest();
     }
@@ -1171,26 +1171,26 @@ void FormGPS::CalculatePositionHeading()
 
     //translate from pivot position to steer axle and pivot axle position
     //translate world to the pivot axle
-    vehicle.pivotAxlePos.easting = pn.fix.easting - (sin(fixHeading) * vehicle.antennaPivot);
-    vehicle.pivotAxlePos.northing = pn.fix.northing - (cos(fixHeading) * vehicle.antennaPivot);
-    vehicle.pivotAxlePos.heading = fixHeading;
+    vehicle.pivotAxlePos.easting = pn.fix.easting - (sin(vehicle.fixHeading) * vehicle.antennaPivot);
+    vehicle.pivotAxlePos.northing = pn.fix.northing - (cos(vehicle.fixHeading) * vehicle.antennaPivot);
+    vehicle.pivotAxlePos.heading = vehicle.fixHeading;
 
-    vehicle.steerAxlePos.easting = vehicle.pivotAxlePos.easting + (sin(fixHeading) * vehicle.wheelbase);
-    vehicle.steerAxlePos.northing = vehicle.pivotAxlePos.northing + (cos(fixHeading) * vehicle.wheelbase);
-    vehicle.steerAxlePos.heading = fixHeading;
+    vehicle.steerAxlePos.easting = vehicle.pivotAxlePos.easting + (sin(vehicle.fixHeading) * vehicle.wheelbase);
+    vehicle.steerAxlePos.northing = vehicle.pivotAxlePos.northing + (cos(vehicle.fixHeading) * vehicle.wheelbase);
+    vehicle.steerAxlePos.heading = vehicle.fixHeading;
 
     if (!ABLine.isLateralTriggered && !curve.isLateralTriggered)
     {
         double speed1 = tool.width * 0.5;
         double speed2 = vehicle.avgSpeed * 0.277777 * guidanceLookAheadTime;
         double guidanceLookDist = (speed1 < speed2 ? speed2 : speed1);
-        vehicle.guidanceLookPos.easting = vehicle.pivotAxlePos.easting + (sin(fixHeading) * guidanceLookDist);
-        vehicle.guidanceLookPos.northing = vehicle.pivotAxlePos.northing + (cos(fixHeading) * guidanceLookDist);
+        vehicle.guidanceLookPos.easting = vehicle.pivotAxlePos.easting + (sin(vehicle.fixHeading) * guidanceLookDist);
+        vehicle.guidanceLookPos.northing = vehicle.pivotAxlePos.northing + (cos(vehicle.fixHeading) * guidanceLookDist);
     }
 
     //determine where the rigid vehicle hitch ends
-    vehicle.hitchPos.easting = pn.fix.easting + (sin(fixHeading) * (tool.hitchLength - vehicle.antennaPivot));
-    vehicle.hitchPos.northing = pn.fix.northing + (cos(fixHeading) * (tool.hitchLength - vehicle.antennaPivot));
+    vehicle.hitchPos.easting = pn.fix.easting + (sin(vehicle.fixHeading) * (tool.hitchLength - vehicle.antennaPivot));
+    vehicle.hitchPos.northing = pn.fix.northing + (cos(vehicle.fixHeading) * (tool.hitchLength - vehicle.antennaPivot));
 
     //tool attached via a trailing hitch
     if (tool.isToolTrailing)
@@ -1210,7 +1210,7 @@ void FormGPS::CalculatePositionHeading()
             }
 
             ////the tool is seriously jacknifed or just starting out so just spring it back.
-            over = fabs(M_PI - fabs(fabs(vehicle.tankPos.heading - fixHeading) - M_PI));
+            over = fabs(M_PI - fabs(fabs(vehicle.tankPos.heading - vehicle.fixHeading) - M_PI));
 
             if ((over < 2.0) && (startCounter > 50))
             {
@@ -1221,7 +1221,7 @@ void FormGPS::CalculatePositionHeading()
             //criteria for a forced reset to put tool directly behind vehicle
             if (over > 2.0 || startCounter < 51 )
             {
-                vehicle.tankPos.heading = fixHeading;
+                vehicle.tankPos.heading = vehicle.fixHeading;
                 vehicle.tankPos.easting = vehicle.hitchPos.easting + (sin(vehicle.tankPos.heading) * (tool.tankTrailingHitchLength));
                 vehicle.tankPos.northing = vehicle.hitchPos.northing + (cos(vehicle.tankPos.heading) * (tool.tankTrailingHitchLength));
             }
@@ -1230,7 +1230,7 @@ void FormGPS::CalculatePositionHeading()
 
         else
         {
-            vehicle.tankPos.heading = fixHeading;
+            vehicle.tankPos.heading = vehicle.fixHeading;
             vehicle.tankPos.easting = vehicle.hitchPos.easting;
             vehicle.tankPos.northing = vehicle.hitchPos.northing;
         }
@@ -1265,7 +1265,7 @@ void FormGPS::CalculatePositionHeading()
     //rigidly connected to vehicle
     else
     {
-        vehicle.toolPos.heading = fixHeading;
+        vehicle.toolPos.heading = vehicle.fixHeading;
         vehicle.toolPos.easting = vehicle.hitchPos.easting;
         vehicle.toolPos.northing = vehicle.hitchPos.northing;
     }
@@ -1552,8 +1552,8 @@ void FormGPS::InitializeFirstFewGPSPositions()
         }
 
         //in radians
-        fixHeading = 0;
-        vehicle.toolPos.heading = fixHeading;
+        vehicle.fixHeading = 0;
+        vehicle.toolPos.heading = vehicle.fixHeading;
 
         //send out initial zero settings
         if (isGPSPositionInitialized)

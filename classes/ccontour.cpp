@@ -12,12 +12,12 @@
 #include "cahrs.h"
 #include "aogproperty.h"
 #include "cnmea.h"
-#include "common.h"
+//#include "common.h"
 
 CContour::CContour(QObject *parent)
     : QObject(parent)
 {
-
+    ptList = QSharedPointer<QVector<Vec3>>(new QVector<Vec3>());
 }
 
 void CContour::SetLockToLine()

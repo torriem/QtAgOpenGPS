@@ -10,7 +10,7 @@ void FormGPS::connect_classes()
 {
     simConnectSlots();
 
-    connect(&curve,SIGNAL(stopAutosteer()),this,SLOT(onStopAutoSteer()));
+    connect(&curve,SIGNAL(stopAutoSteer()),this,SLOT(onStopAutoSteer()));
     connect(&curve,SIGNAL(TimedMessage(int,QString,QString)),this,SLOT(TimedMessageBox(int,QString,QString)));
 
     connect(&ct,SIGNAL(TimedMessage(int,QString,QString)),this,SLOT(TimedMessageBox(int,QString,QString)));

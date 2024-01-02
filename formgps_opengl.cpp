@@ -80,13 +80,14 @@ void FormGPS::oglMain_Paint()
 
     int deadCam = 0;
 
+    gl->glEnable(GL_BLEND);
+    gl->glClearColor(0.25122f, 0.258f, 0.275f, 1.0f);
+    gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    gl->glDisable(GL_DEPTH_TEST);
+    gl->glDisable(GL_TEXTURE_2D);
+
     if(sentenceCounter > 299)
     {
-        gl->glEnable(GL_BLEND);
-
-        gl->glClearColor(0.25122f, 0.258f, 0.275f, 1.0f);
-
-        gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         modelview.setToIdentity();
         modelview.translate(0,0.3,-10);
         //rotate the camera down to look at fix
@@ -152,19 +153,17 @@ void FormGPS::oglMain_Paint()
                 fieldcolor = fieldColorNight;
             }
             //draw the field ground images
-            worldGrid.DrawFieldSurface(gl, projection *modelview, isTextureOn, fieldcolor, camera);
+            //worldGrid.DrawFieldSurface(gl, projection *modelview, isTextureOn, fieldcolor, camera);
 
             ////if grid is on draw it
-            if (isGridOn) worldGrid.DrawWorldGrid(gl,projection*modelview,gridZoom, QColor::fromRgbF(0,0,0));
+            if (isGridOn)
+                worldGrid.DrawWorldGrid(gl,projection*modelview,gridZoom, QColor::fromRgbF(1.0,0,0));
 
             //OpenGL ES does not support wireframe in this way. If we want wireframe,
             //we'll have to do it with LINES
             //if (isDrawPolygons) gl->glPolygonMode(GL_FRONT, GL_LINE);
             //turn on blend for paths
             gl->glEnable(GL_BLEND);
-
-            //draw patches of sections
-
 
             //draw patches of sections
             for (int j = 0; j < triStrip.count(); j++)
@@ -544,7 +543,7 @@ void FormGPS::oglBack_Paint()
     modelview.translate(0, 0, -500);
 
     //rotate camera so heading matched fix heading in the world
-    //gl->glRotated(toDegrees(fixHeadingSection), 0, 0, 1);
+    //gl->glRotated(toDegrees(vehicle.fixHeadingSection), 0, 0, 1);
     modelview.rotate(glm::toDegrees(vehicle.toolPos.heading), 0, 0, 1);
 
     modelview.translate(-vehicle.toolPos.easting - sin(vehicle.toolPos.heading) * 15,
@@ -1164,7 +1163,7 @@ void FormGPS::DrawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int heigh
             tex = Textures::SKYNIGHT;
         }
 
-        double u = (fixHeading)/glm::twoPI;
+        double u = (vehicle.fixHeading)/glm::twoPI;
 
         gldrawtex.append( { QVector3D( winRightPos,0,0 ),             QVector2D(u+0.25, 0) } );
         gldrawtex.append( { QVector3D( winLeftPos,0,0 ),              QVector2D(u, 0) } );
@@ -1245,7 +1244,7 @@ void FormGPS::DrawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width
     */
     int center = Width / 2 - 10;
     color.fromRgbF( 0.9852f, 0.982f, 0.983f);
-    strHeading = locale.toString(glm::toDegrees(fixHeading),'g',1);
+    strHeading = locale.toString(glm::toDegrees(vehicle.fixHeading),'g',1);
     lenth = 15 * strHeading.length();
     drawText(gl, mvp, Width / 2 - lenth, 10, strHeading, 0.8);
 

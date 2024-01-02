@@ -228,6 +228,7 @@ public:
     void Reset() {}
 };
 
+/*
 extern CPGN_FE p_254;
 extern CPGN_FC p_252;
 extern CPGN_FB p_251;
@@ -236,5 +237,6 @@ extern CPGN_EE p_238;
 extern CPGN_EC p_236;
 extern CPGN_EB p_235;
 extern CPGN_E5 p_229;
+*/
 
 #endif // CPGN_H

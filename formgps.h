@@ -43,6 +43,7 @@
 #include "crecordedpath.h"
 #include "cguidance.h"
 #include "cheadline.h"
+#include "cpgn.h"
 
 //forward declare classes referred to below, to break circular
 //references in the code
@@ -187,7 +188,6 @@ public:
     //isGPSData form up
     bool isGPSSentencesOn = false, isKeepOffsetsOn = false;
 
-    void tmrWatchdog_timeout();
 
 private:
     //For field saving in background
@@ -327,6 +327,18 @@ public:
 
     CHeadLine hdl;
 
+    /*
+     * PGNs *
+     */
+    CPGN_FE p_254;
+    CPGN_FC p_252;
+    CPGN_FB p_251;
+    CPGN_EF p_239;
+    CPGN_EE p_238;
+    CPGN_EC p_236;
+    CPGN_EB p_235;
+    CPGN_E5 p_229;
+
     bool bootstrap_field = false;
    /************************
      * Controls.Designer.cs *
@@ -384,7 +396,7 @@ public:
     Vec2 lastReverseFix;
 
     //headings
-    double fixHeading = 0.0, camHeading = 0.0, smoothCamHeading = 0, gpsHeading = 10.0, prevGPSHeading = 0.0;
+    double smoothCamHeading = 0, gpsHeading = 10.0, prevGPSHeading = 0.0;
 
     //storage for the cos and sin of heading
     double cosSectionHeading = 1.0, sinSectionHeading = 0.0;
@@ -658,6 +670,7 @@ public slots:
     /*******************
      * from FormGPS.cs *
      *******************/
+    void tmrWatchdog_timeout();
     void onGLControl_clicked(const QVariant &event);
 
     void TimedMessageBox(int timeout, QString s1, QString s2);
@@ -765,9 +778,6 @@ public slots:
     void onSectionMasterAutoOff();
     void onSectionMasterManualOff();
     void onStoppedDriving();
-
-
-
 
 };
 

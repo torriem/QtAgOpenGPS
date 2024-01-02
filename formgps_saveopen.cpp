@@ -1,7 +1,7 @@
 #include "formgps.h"
 #include <QDir>
-#include "aogsettings.h"
-#include "cmodulecomm.h"
+//#include "aogsettings.h"
+//#include "cmodulecomm.h"
 #include "cboundarylist.h"
 
 QString caseInsensitiveFilename(QString directory, QString filename)

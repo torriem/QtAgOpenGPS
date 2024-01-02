@@ -9,14 +9,16 @@
 CSim::CSim(QObject *parent) : QObject(parent)
 {
     loadSettings();
+    headingTrue = 0;
+    stepDistance = 0;
 }
 
 void CSim::loadSettings()
 {
     latitude = property_setGPS_SimLatitude;
     longitude = property_setGPS_SimLongitude;
-
 }
+
 void CSim::DoSimTick(double _st)
 {
     QByteArray sbSendText;
@@ -66,6 +68,7 @@ void CSim::DoSimTick(double _st)
 
     //Calculate the next Lat Long based on heading and distance
     CalculateNewPositionFromBearingDistance(glm::toRadians(latitude), glm::toRadians(longitude), headingTrue, stepDistance / 1000.0);
+    //qDebug() << qSetRealNumberPrecision(9) << latitude << ", " << longitude << ", " << headingTrue << ", " << stepDistance;
 
     //This is all done by main form slot onSimNewPositon()
     //mf.pn.ConvertWGS84ToLocal(latitude, longitude, out mf.pn.fix.northing, out mf.pn.fix.easting);
@@ -83,7 +86,7 @@ void CSim::DoSimTick(double _st)
     //mf.pn.altitude = 732;
     //mf.pn.satellitesTracked = 12;
 
-    emit newPosition(vtgSpeed, headingTrue, latitude, longitude, 0.7f, 732, 12);
+    emit newPosition(vtgSpeed, glm::toDegrees(headingTrue), latitude, longitude, 0.7f, 732, 12);
 
     //done in main form slot:
     //mf.sentenceCounter = 0;
@@ -108,21 +111,19 @@ void CSim::CalculateNewPositionFromBearingDistance(double lat, double lng, doubl
 {
     // 1 degree = 0.0175 radian = M_PI / 180
 
-    const double R = 6371; // Earth Radius in Km
+    const double R = distance / 6371; // Earth Radius in Km
 
-    double lat2 = asin((sin(M_PI / 180 * lat) * cos(distance / R))
-        + (cos(M_PI / 180 * lat) * sin(distance / R) * cos(M_PI / 180 * bearing)));
+    double lat2 = asin((sin(lat) * cos(R)) + (cos(lat) * sin(R) * cos(bearing)));
 
-    double lon2 = (M_PI / 180 * lng) + atan2(sin(M_PI / 180 * bearing) * sin(distance / R)
-        * cos(M_PI / 180 * lat), cos(distance / R) - (sin(M_PI / 180 * lat) * sin(lat2)));
+    double lon2 = lng + atan2(sin(bearing) * sin(R) * cos(lat), cos(R) - (sin(lat) * sin(lat2)));
 
 
     //double lat2 = qAsin((qSin(M_PI / 180 * lat) * qCos(distance / R)) + (qCos(M_PI / 180 * lat) * qSin(distance / R)
     //                                                                     *qCos(M_PI / 180 * bearing)));
     //double lon2 = (M_PI / 180 * lng) + qAtan2(qSin(M_PI / 180 * bearing) * qSin(distance / R) *
     //                                          qCos(M_PI / 180 * lat), qCos(distance / R) - (qSin(M_PI / 180 * lat) * qSin(lat2)));
-    latitude = 180 / M_PI * lat2;
-    longitude = 180 / M_PI * lon2;
+    latitude = glm::toDegrees(lat2);
+    longitude = glm::toDegrees(lon2);
 }
 
 void CSim::setSimStepDistance(double _stepDistance)
