@@ -740,11 +740,6 @@ public slots:
      */
     void processSectionLookahead(); //called when section lookahead GL stuff is rendered
 
-    /**************************
-     * SerialComm.Designer.cs *
-     **************************/
-    void sp_DataReceived();
-
     /*******************
      * simulator       *
      * formgps_sim.cpp *

@@ -1264,6 +1264,111 @@ void FormGPS::JobClose()
 
 }
 
+void FormGPS::jobNew()
+{
+    isJobStarted = true;
+    startCounter = 0;
+
+    //btnFieldStats.Visible = true;
+
+    //btnSectionMasterManual.Enabled = true;
+    manualBtnState = btnStates::Off;
+    //btnSectionMasterManual.Image = Properties.Resources.ManualOff;
+
+    //btnSectionMasterAuto.Enabled = true;
+    autoBtnState = btnStates::Off;
+    //btnSectionMasterAuto.Image = Properties.Resources.SectionMasterOff;
+
+    //btnSection1Man.BackColor = Color.Red;
+    //btnSection2Man.BackColor = Color.Red;
+    //btnSection3Man.BackColor = Color.Red;
+    //btnSection4Man.BackColor = Color.Red;
+    //btnSection5Man.BackColor = Color.Red;
+    //btnSection6Man.BackColor = Color.Red;
+    //btnSection7Man.BackColor = Color.Red;
+    //btnSection8Man.BackColor = Color.Red;
+    //btnSection9Man.BackColor = Color.Red;
+    //btnSection10Man.BackColor = Color.Red;
+    //btnSection11Man.BackColor = Color.Red;
+    //btnSection12Man.BackColor = Color.Red;
+    //btnSection13Man.BackColor = Color.Red;
+    //btnSection14Man.BackColor = Color.Red;
+    //btnSection15Man.BackColor = Color.Red;
+    //btnSection16Man.BackColor = Color.Red;
+
+    //btnSection1Man.Enabled = true;
+    //btnSection2Man.Enabled = true;
+    //btnSection3Man.Enabled = true;
+    //btnSection4Man.Enabled = true;
+    //btnSection5Man.Enabled = true;
+    //btnSection6Man.Enabled = true;
+    //btnSection7Man.Enabled = true;
+    //btnSection8Man.Enabled = true;
+    //btnSection9Man.Enabled = true;
+    //btnSection10Man.Enabled = true;
+    //btnSection11Man.Enabled = true;
+    //btnSection12Man.Enabled = true;
+    //btnSection13Man.Enabled = true;
+    //btnSection14Man.Enabled = true;
+    //btnSection15Man.Enabled = true;
+    //btnSection16Man.Enabled = true;
+
+    /*
+    btnZone1.BackColor = Color.Red;
+    btnZone2.BackColor = Color.Red;
+    btnZone3.BackColor = Color.Red;
+    btnZone4.BackColor = Color.Red;
+    btnZone5.BackColor = Color.Red;
+    btnZone6.BackColor = Color.Red;
+    btnZone7.BackColor = Color.Red;
+    btnZone8.BackColor = Color.Red;
+
+    btnZone1.Enabled = true;
+    btnZone2.Enabled = true;
+    btnZone3.Enabled = true;
+    btnZone4.Enabled = true;
+    btnZone5.Enabled = true;
+    btnZone6.Enabled = true;
+    btnZone7.Enabled = true;
+    btnZone8.Enabled = true;
+
+    btnABLine.Enabled = true;
+    btnContour.Enabled = true;
+    btnCurve.Enabled = true;
+    btnABDraw.Enabled = true;
+    btnCycleLines.Image = Properties.Resources.ABLineCycle;
+    btnCycleLinesBk.Image = Properties.Resources.ABLineCycleBk;
+    */
+
+    ABLine.abHeading = 0.00;
+    //btnAutoSteer.Enabled = true;
+
+    //TODO: call QML javascrip to do this DisableYouTurnButtons();
+    //btnFlag.Enabled = true;
+
+    if (tool.isSectionsNotZones)
+    {
+        LineUpIndividualSectionBtns();
+    }
+    else
+    {
+        LineUpAllZoneButtons();
+    }
+
+    //update the menu
+    //this.menustripLanguage.Enabled = false;
+    //panelRight.Enabled = true;
+    //boundaryToolStripBtn.Enabled = true;
+    //isPanelABHidden = false;
+
+    //FieldMenuButtonEnableDisable(true);
+    FixPanelsAndMenus();
+    SetZoom();
+    minuteCounter = 25;
+
+
+}
+
 void FormGPS::fileSaveEverythingBeforeClosingField(QQuickCloseEvent *event)
 {
     qDebug() << "shutting down, saving field items.";

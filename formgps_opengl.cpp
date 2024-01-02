@@ -697,7 +697,7 @@ void  FormGPS::DrawManUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp)
     GLHelperTexture gldraw;
     VertexTexcoord vt;
 
-    int two3 = qmlItem(qml_root, "openglcontrol")->property("width").toReal() / 6;
+    int two3 = qmlItem(qml_root, "openglcontrol")->property("width").toReal() / 4;
     //int two3 = 0;
 
     vt.texcoord = QVector2D(0,0); vt.vertex = QVector3D(-82 - two3, 45, 0);
@@ -709,7 +709,20 @@ void  FormGPS::DrawManUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp)
     vt.texcoord = QVector2D(1,1); vt.vertex = QVector3D(82 - two3, 120, 0);
     gldraw.append(vt);
 
-    gldraw.draw(gl, mvp, Textures::TURNMANUAL, GL_TRIANGLE_STRIP, true, QColor::fromRgbF(0.90f, 0.90f, 0.293f));
+    gldraw.draw(gl, mvp, Textures::TURNMANUAL, GL_QUADS, true, QColor::fromRgbF(0.90f, 0.90f, 0.293f));
+
+    if (isLateralOn)
+    {
+        vt.texcoord = QVector2D(0,0); vt.vertex = QVector3D(-82 - two3, 90, 0);
+        gldraw.append(vt);
+        vt.texcoord = QVector2D(1,0); vt.vertex = QVector3D(82 - two3, 90, 0);
+        gldraw.append(vt);
+        vt.texcoord = QVector2D(0,1); vt.vertex = QVector3D(-82 - two3, 150, 0);
+        gldraw.append(vt);
+        vt.texcoord = QVector2D(1,1); vt.vertex = QVector3D(82 - two3, 150, 0);
+        gldraw.append(vt);
+        gldraw.draw(gl, mvp, Textures::LATERAL_MANUAL, GL_QUADS, true, QColor::fromRgbF(0.190f, 0.90f, 0.93f));
+    }
 }
 
 void FormGPS::DrawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp)

@@ -1,7 +1,7 @@
 #include "aogproperty.h"
 #include "propdefs.h"
 
-AOGSettings settings;
+//AOGSettings settings;
 
 AOGProperty test_property("test/test", false);
 //QtAOG-specific setting properties

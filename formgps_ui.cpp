@@ -494,3 +494,40 @@ void FormGPS::onBtnManUTurnRight_clicked()
         yt.BuildManualYouTurn(vehicle, ABLine, curve, true, true);
    }
 }
+
+void FormGPS::TimedMessageBox(int timeout, QString s1, QString s2)
+{
+    qDebug() << s1 << ", " << s2 << Qt::endl;
+    //TODO ask QML to display a message
+}
+
+void FormGPS::turnOffBoundAlarm()
+{
+    qDebug() << "Bound alarm should be off" << Qt::endl;
+    //TODO implement sounds
+}
+
+void FormGPS::FixPanelsAndMenus()
+{
+    //TODO QML, perhaps not much needed to do here
+
+    if (tool.isSectionsNotZones)
+        LineUpIndividualSectionBtns();
+    else
+        LineUpAllZoneButtons();
+
+}
+
+void FormGPS::FixTramModeButton()
+{
+    //TODO QML
+    //unhide button if it should be seen
+    if (tram.tramList.count() > 0 || tram.tramBndOuterArr.count() > 0)
+    {
+        //btnTramDisplayMode.Visible = true;
+        tram.displayMode = 1;
+    }
+
+    //make sure tram has right icon.  DO this through javascript
+
+}
