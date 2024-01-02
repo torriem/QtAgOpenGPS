@@ -305,6 +305,32 @@ void glDrawArraysTexture(QOpenGLFunctions *gl,
     texShader->release();
     gl->glDisable(GL_TEXTURE_2D);
 }
+void DrawPolygon(QOpenGLFunctions *gl, QMatrix4x4 mvp, QVector<Vec2> &polygon, float size, QColor color)
+{
+    GLHelperOneColor gldraw;
+    if (polygon.count() > 2)
+    {
+        for (int i = 0; i < polygon.count() ; i++)
+        {
+            gldraw.append(QVector3D(polygon[i].easting, polygon[i].northing, 0));
+        }
+        gldraw.draw(gl, mvp, color, GL_LINE_LOOP, size);
+    }
+}
+
+void DrawPolygon(QOpenGLFunctions *gl, QMatrix4x4 mvp, QVector<Vec3> &polygon, float size, QColor color)
+{
+    GLHelperOneColor gldraw;
+    if (polygon.count() > 2)
+    {
+        for (int i = 0; i < polygon.count() ; i++)
+        {
+            gldraw.append(QVector3D(polygon[i].easting, polygon[i].northing, 0));
+        }
+        gldraw.draw(gl, mvp, color, GL_LINE_LOOP, size);
+    }
+}
+
 
 void drawText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString text, double size, bool colorize, QColor color)
 {
