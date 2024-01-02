@@ -5,8 +5,6 @@
 //#include "common.h"
 #include <QDebug>
 
-AOGSettings settings;
-
 QVariant AOGSettings::value(const QString &key, const QVariant &defaultvalue)
 {
     QVariant val;
