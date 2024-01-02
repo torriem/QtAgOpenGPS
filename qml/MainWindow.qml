@@ -882,6 +882,63 @@ Window {
             }
 
             Item{
+                objectName: "autoUTurnButton"
+                id: autoUturn
+                anchors.top: parent.top
+                anchors.right: rightColumn.left
+                anchors.topMargin: 50
+                anchors.rightMargin: 150
+                visible: true
+                width: childrenRect.width
+                height: childrenRect.height
+                ColorOverlay{
+                    id: myOverlay
+                    color: "#40ff00"
+                    anchors.fill: autoTurn
+                    source: autoTurn
+                    visible: true
+                    Text{
+                        anchors.top: myOverlay.bottom
+                        anchors.topMargin: -25
+                        anchors.left: myOverlay.left
+                        text: " however ft"
+                        color: myOverlay.color
+                        font.pixelSize: 20
+                        visible: true
+                    }
+                    MouseArea{
+                        anchors.fill: parent
+                        id: mouseToggle
+                        onClicked:{
+                            function imageMirror(){
+                                if(autoTurnImage.mirror == true){
+                                    autoTurnImage.mirror = false
+                                }else{
+                                    autoTurnImage.mirror = true
+                                }
+                            }
+                            imageMirror()
+                        }
+                    }
+                }
+                Item{
+                    id: autoTurn
+                    anchors.top:parent.top
+                    anchors.left: parent.left
+                    width: 100
+                    height: 100
+                    visible: false
+                    Image {
+                        id: autoTurnImage
+                        mirror: false
+                        signal clicked(var mouse)
+                        source: "qrc:/images/Images/z_Turn.png"
+                        visible: true
+                        anchors.fill: parent
+                    }
+                }
+            }
+            Item{
                  objectName: "manUTurnButtons"
                id: manualUturnLateral
                 anchors.top: parent.top
