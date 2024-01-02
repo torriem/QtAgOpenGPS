@@ -41,7 +41,7 @@ void CTram::DrawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, CCamera &camer
 
     if (camera.camSetDistance > -250) lineWidth = 4.0f;
     else lineWidth=2.0f;
-    color.fromRgbF(0.30f, 0.93692f, 0.7520f, 0.3);
+    color.setRgbF(0.30f, 0.93692f, 0.7520f, 0.3);
 
     if (displayMode == 1 || displayMode == 2)
     {

@@ -552,7 +552,7 @@ void CRecordedPath::DrawRecordedLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp
     QColor color;
     GLHelperColors gldraw1;
 
-    color.fromRgbF(0.98f, 0.92f, 0.460f);
+    color.setRgbF(0.98f, 0.92f, 0.460f);
     for (int h = 0; h < ptCount; h++)
         gldraw.append(QVector3D(recList[h].easting, recList[h].northing, 0));
     gldraw.draw(gl,mvp,color,GL_LINE_STRIP,1.0f);

@@ -135,7 +135,7 @@ void CBoundary::BuildTurnLines(CFieldData &fd)
             if (point.heading < -glm::twoPI) point.heading += glm::twoPI;
 
             //only add if outside actual field boundary
-            if ((j == 0) && (0 == glm::IsPointInPolygon(bndList[j].fenceLineEar,point)))
+            if ((j == 0) == glm::IsPointInPolygon(bndList[j].fenceLineEar,point))
             {
                 Vec3 tPnt(point.easting, point.northing, point.heading);
                 bndList[j].turnLine.append(tPnt);

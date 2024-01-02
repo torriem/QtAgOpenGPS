@@ -189,15 +189,17 @@ void CTool::DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 pro
         {
             if (section[j].sectionBtnState == btnStates::Auto)
             {
-                if (section[j].isMappingOn) color.fromRgbF(0.0f, 0.95f, 0.0f, 1.0f);
-                else color.fromRgbF(0.970f, 0.30f, 0.970f);
+                if (section[j].isMappingOn) color.setRgbF(0.0f, 0.95f, 0.0f, 1.0f);
+                else color.setRgbF(0.970f, 0.30f, 0.970f);
             }
-            else color.fromRgbF(0.97, 0.97, 0, 1.0f);
+            else color.setRgbF(0.97, 0.97, 0, 1.0f);
         }
         else
         {
-            if (!section[j].isMappingOn) color.fromRgbF(0.950f, 0.2f, 0.2f, 1.0f);
-            else color.fromRgbF(0.0f, 0.250f, 0.97f, 1.0f);
+            if (!section[j].isMappingOn)
+                color.setRgbF(0.950f, 0.2f, 0.2f, 1.0f);
+            else
+                color.setRgbF(0.0f, 0.250f, 0.97f, 1.0f);
         }
 
         double mid = (section[j].positionRight - section[j].positionLeft) / 2 + section[j].positionLeft;
@@ -215,16 +217,8 @@ void CTool::DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 pro
 
         if (camera.camSetDistance > -150)
         {
-            gldraw.clear();
-            color.fromRgbF(0.0, 0.0, 0.0);
-            gldraw.append(QVector3D(section[j].positionLeft, trailingTool, 0));
-            gldraw.append(QVector3D(section[j].positionLeft, trailingTool - hite, 0));
-
-            gldraw.append(QVector3D(mid, trailingTool - hite * 1.5, 0));
-
-            gldraw.append(QVector3D(section[j].positionRight, trailingTool - hite, 0));
-            gldraw.append(QVector3D(section[j].positionRight, trailingTool, 0));
-            gldraw.draw(gl,projection * mv, color, GL_LINE_LOOP, 2.0);
+            color.setRgbF(0.0, 0.0, 0.0);
+            gldraw.draw(gl,projection * mv, color, GL_LINE_LOOP, 1.0);
         }
     }
 
@@ -232,7 +226,7 @@ void CTool::DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 pro
     if (!isSectionsNotZones && zones > 0 && camera.camSetDistance > -150)
     {
         gldraw.clear();
-        color.fromRgbF(0.5f, 0.80f, 0.950f);
+        color.setRgbF(0.5f, 0.80f, 0.950f);
         for (int i = 1; i < zones; i++)
         {
             gldraw.append(QVector3D(section[zoneRanges[i]].positionLeft, trailingTool - 0.4, 0));

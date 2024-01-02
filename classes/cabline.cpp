@@ -19,6 +19,7 @@
 
 CABLine::CABLine(QObject *parent) : QObject(parent)
 {
+    abLength = property_setAB_lineLength;
 }
 
 void CABLine::BuildCurrentABLineList(Vec3 pivot,
@@ -317,13 +318,13 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
 
     if (isFontOn && !isABLineBeingSet)
     {
-        color.fromRgbF(0.00990f, 0.990f, 0.095f);
+        color.setRgbF(0.00990f, 0.990f, 0.095f);
         drawText3D(camera,gl,mvp, refPoint1.easting, refPoint1.northing, "&A", 1.0, true, color);
         drawText3D(camera,gl,mvp, refPoint2.easting, refPoint2.northing, "&B", 1.0, true, color);
     }
 
     //Draw reference AB line
-    color.fromRgbF(0.930f, 0.2f, 0.2f);
+    color.setRgbF(0.930f, 0.2f, 0.2f);
     gldraw.append(QVector3D(refABLineP1.easting, refABLineP1.northing, 0));
     gldraw.append(QVector3D(refABLineP2.easting, refABLineP2.northing, 0));
     gldraw.draw(gl,mvp,color,GL_LINE_STIPPLE,lineWidth);
@@ -334,7 +335,7 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
     double cosHL = cos(abHeading + glm::PIBy2) * (widthMinusOverlap * 0.5 - shadowOffset);
 
     //shadow
-    color.fromRgbF(0.5, 0.5, 0.5, 0.3);
+    color.setRgbF(0.5, 0.5, 0.5, 0.3);
 
     gldraw.clear();
     gldraw.append(QVector3D(currentABLineP1.easting - sinHL, currentABLineP1.northing - cosHL, 0));
@@ -345,7 +346,7 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
     gldraw.draw(gl,mvp,color,GL_TRIANGLE_FAN,lineWidth);
 
     //shadow lines
-    color.fromRgbF(0.55, 0.55, 0.55, 0.3);
+    color.setRgbF(0.55, 0.55, 0.55, 0.3);
     gldraw.clear();
 
     gldraw.append(QVector3D(currentABLineP1.easting - sinHL, currentABLineP1.northing - cosHL, 0));
@@ -356,7 +357,7 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
 
     //draw current AB Line
     gldraw.clear();
-    color.fromRgbF(0.95f, 0.20f, 0.950f);
+    color.setRgbF(0.95f, 0.20f, 0.950f);
 
     gldraw.append(QVector3D(currentABLineP1.easting, currentABLineP1.northing, 0.0));
     gldraw.append(QVector3D(currentABLineP2.easting, currentABLineP2.northing, 0.0));
@@ -365,12 +366,12 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
     //ABLine currently being designed
     if (isABLineBeingSet)
     {
-        color.fromRgbF(0.95f, 0.20f, 0.950f);
+        color.setRgbF(0.95f, 0.20f, 0.950f);
         gldraw.append(QVector3D(desP1.easting, desP1.northing, 0.0));
         gldraw.append(QVector3D(desP2.easting, desP2.northing, 0.0));
         gldraw.draw(gl,mvp,color,GL_LINES,lineWidth);
 
-        color.fromRgbF(0.2f, 0.950f, 0.20f);
+        color.setRgbF(0.2f, 0.950f, 0.20f);
         drawText3D(camera,gl,mvp,desPoint1.easting, desPoint1.northing, "&A", 1.0, true, color);
         drawText3D(camera,gl,mvp,desPoint2.easting, desPoint2.northing, "&B", 1.0, true, color);
     }
@@ -383,7 +384,7 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
         double cosHeading = cos(-abHeading);
         double sinHeading = sin(-abHeading);
 
-        color.fromRgbF(0.756f, 0.7650f, 0.7650f);
+        color.setRgbF(0.756f, 0.7650f, 0.7650f);
         gldraw.clear();
 
         /*
@@ -428,7 +429,7 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
     {
         //Draw lookahead Point
         gldraw.clear();
-        color.fromRgbF(1.0f, 1.0f, 0.0f);
+        color.setRgbF(1.0f, 1.0f, 0.0f);
         gldraw.append(QVector3D(goalPointAB.easting, goalPointAB.northing, 0.0));
         gldraw.append(QVector3D(gyd.rEastSteer, gyd.rNorthSteer, 0.0));
         gldraw.append(QVector3D(gyd.rEastPivot, gyd.rNorthPivot, 0.0));
@@ -445,7 +446,7 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
             double y = 0;
 
             gldraw.clear();
-            color.fromRgbF(0.53f, 0.530f, 0.950f);
+            color.setRgbF(0.53f, 0.530f, 0.950f);
             for (int ii = 0; ii < numSegments - 15; ii++)
             {
                 //glVertex2f(x + cx, y + cy);//output vertex

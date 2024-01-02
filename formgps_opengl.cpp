@@ -98,7 +98,7 @@ void FormGPS::oglMain_Paint()
         //draw with NoGPS texture 21
         VertexTexcoord tc;
 
-        color.fromRgbF(1.25f, 1.25f, 1.275f, 0.75);
+        color.setRgbF(1.25f, 1.25f, 1.275f, 0.75);
         gldrawtex.append( { QVector3D(2.5, 2.5, 0), QVector2D(1,0) } ); //Top Right
         gldrawtex.append( { QVector3D(-2.5, 2.5, 0), QVector2D(0,0) } ); //Top Left
         gldrawtex.append( { QVector3D(2.5, -2.5, 0), QVector2D(1,1) } ); //Bottom Right
@@ -118,7 +118,7 @@ void FormGPS::oglMain_Paint()
         //  Create the appropriate modelview matrix.
         modelview.setToIdentity();
 
-        color.fromRgbF(0.98f, 0.98f, 0.70f);
+        color.setRgbF(0.98f, 0.98f, 0.70f);
         int edge = -(double)width / 2 + 10;
 
         drawText(gl,projection * modelview,edge,height - 240, "<-- AgIO ?",1.0,true,color);
@@ -153,11 +153,11 @@ void FormGPS::oglMain_Paint()
                 fieldcolor = fieldColorNight;
             }
             //draw the field ground images
-            //worldGrid.DrawFieldSurface(gl, projection *modelview, isTextureOn, fieldcolor, camera);
+            worldGrid.DrawFieldSurface(gl, projection *modelview, isTextureOn, fieldcolor, camera);
 
             ////if grid is on draw it
             if (isGridOn)
-                worldGrid.DrawWorldGrid(gl,projection*modelview,gridZoom, QColor::fromRgbF(1.0,0,0));
+                worldGrid.DrawWorldGrid(gl,projection*modelview,gridZoom, QColor::fromRgbF(0,0,0));
 
             //OpenGL ES does not support wireframe in this way. If we want wireframe,
             //we'll have to do it with LINES
@@ -214,7 +214,7 @@ void FormGPS::oglMain_Paint()
 
                         if (isDraw)
                         {
-                            color.fromRgbF((*triList)[0].x(), (*triList)[0].y(), (*triList)[0].z(), 0.596 );
+                            color.setRgbF((*triList)[0].x(), (*triList)[0].y(), (*triList)[0].z(), 0.596 );
                             //QVector<QVector3D> vertices;
                             QOpenGLBuffer triBuffer;
 
@@ -306,7 +306,7 @@ void FormGPS::oglMain_Paint()
                 {
                     bnd.DrawFenceLines(vehicle,mc,gl,projection*modelview);
 
-                    color.fromRgbF(0.0f, 0.95f, 0.95f); //TODO: not sure what color turnLines should actually be
+                    color.setRgbF(0.0f, 0.95f, 0.95f); //TODO: not sure what color turnLines should actually be
 
                     for (int i = 0; i < bnd.bndList.count(); i++)
                     {
@@ -317,7 +317,7 @@ void FormGPS::oglMain_Paint()
                 //Draw headland
                 if (bnd.isHeadlandOn)
                 {
-                    color.fromRgbF(0.960f, 0.96232f, 0.30f);
+                    color.setRgbF(0.960f, 0.96232f, 0.30f);
                     DrawPolygon(gl,projection*modelview,bnd.bndList[0].hdLine,(float)property_setDisplay_lineWidth,color);
                 }
             }
@@ -344,7 +344,7 @@ void FormGPS::oglMain_Paint()
             if (camera.camSetDistance > -150)
             {
                 gldraw1.clear();
-                color.fromRgbF(0.98, 0.98, 0.098);
+                color.setRgbF(0.98, 0.98, 0.098);
                 if (ABLine.isBtnABLineOn)
                 {
                     gldraw1.clear();
@@ -815,16 +815,16 @@ void FormGPS::DrawSteerCircle(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatri
 
     //texture 11, SteerPointer
     if (mc.steerSwitchHigh)
-        color.fromRgbF(0.9752f, 0.0f, 0.03f, 0.98);
+        color.setRgbF(0.9752f, 0.0f, 0.03f, 0.98);
     else if (isAutoSteerBtnOn)
-        color.fromRgbF(0.052f, 0.970f, 0.03f, 0.97);
+        color.setRgbF(0.052f, 0.970f, 0.03f, 0.97);
     else
-        color.fromRgbF(0.952f, 0.750f, 0.03f, 0.97);
+        color.setRgbF(0.952f, 0.750f, 0.03f, 0.97);
 
     //we have lost connection to steer module
     if (steerModuleConnectedCounter++ > 30)
     {
-        color.fromRgbF(0.952f, 0.093570f, 0.93f, 0.97);
+        color.setRgbF(0.952f, 0.093570f, 0.93f, 0.97);
     }
 
     modelview.translate(center, bottomSide, 0);
@@ -1031,12 +1031,12 @@ void FormGPS::DrawLightBarText(QOpenGLFunctions *gl, QMatrix4x4 mvp)
 
     if (avgPivotDistance > 0.0)
     {
-        color.fromRgbF(0.9752f, 0.50f, 0.3f);
+        color.setRgbF(0.9752f, 0.50f, 0.3f);
         hede = QString("%1").arg(fabs(avgPivotDistance),0,'g',0);
     }
     else
     {
-        color.fromRgbF(0.50f, 0.952f, 0.3f);
+        color.setRgbF(0.50f, 0.952f, 0.3f);
         hede = QString("%1").arg(fabs(avgPivotDistance),0,'g',0);
     }
 
@@ -1154,12 +1154,12 @@ void FormGPS::DrawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int heigh
 
         if (isDay)
         {
-            color.fromRgbF(0.75, 0.75, 0.75);
+            color.setRgbF(0.75, 0.75, 0.75);
             tex = Textures::SKY;
         }
         else
         {
-            color.fromRgbF(0.5, 0.5, 0.5);
+            color.setRgbF(0.5, 0.5, 0.5);
             tex = Textures::SKYNIGHT;
         }
 
@@ -1243,30 +1243,30 @@ void FormGPS::DrawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width
     gldrawtex.draw(gl,mvp,Texture::
     */
     int center = Width / 2 - 10;
-    color.fromRgbF( 0.9852f, 0.982f, 0.983f);
+    color.setRgbF( 0.9852f, 0.982f, 0.983f);
     strHeading = locale.toString(glm::toDegrees(vehicle.fixHeading),'g',1);
     lenth = 15 * strHeading.length();
     drawText(gl, mvp, Width / 2 - lenth, 10, strHeading, 0.8);
 
     //GPS Step
     if(distanceCurrentStepFixDisplay < 0.03*100)
-        color.fromRgbF(0.98f, 0.82f, 0.653f);
+        color.setRgbF(0.98f, 0.82f, 0.653f);
     drawText(gl, mvp, center, 10, locale.toString(distanceCurrentStepFixDisplay,'g',1) + tr("cm"),0.8, true, color);
 
     if (isMaxAngularVelocity)
     {
-        color.fromRgbF(0.98f, 0.4f, 0.4f);
+        color.setRgbF(0.98f, 0.4f, 0.4f);
         drawText(gl,mvp,center-10, Height-260, "*", 2, true, color);
     }
 
-    color.fromRgbF(0.9752f, 0.62f, 0.325f);
+    color.setRgbF(0.9752f, 0.62f, 0.325f);
     if (timerSim.isActive()) drawText(gl, mvp, -110, Height - 130, "Simulator On", 1, true, color);
 
     if (ct.isContourBtnOn)
     {
         if (isFlashOnOff && ct.isLocked)
         {
-            color.fromRgbF(0.9652f, 0.752f, 0.75f);
+            color.setRgbF(0.9652f, 0.752f, 0.75f);
             drawText(gl, mvp, -center - 100, Height / 2.3, "Locked", 1,true, color);
         }
     }
@@ -1300,7 +1300,7 @@ void FormGPS::DrawReverse(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4
 
     if (isReverseWithIMU)
     {
-        color.fromRgbF(0.952f, 0.9520f, 0.0f);
+        color.setRgbF(0.952f, 0.9520f, 0.0f);
 
         modelview.translate(-Width / 12, Height / 2 - 20, 0);
         modelview.rotate(180, 0, 0, 1);
@@ -1313,15 +1313,15 @@ void FormGPS::DrawReverse(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4
     }
     else
     {
-        color.fromRgbF(0.952f, 0.980f, 0.980f);
+        color.setRgbF(0.952f, 0.980f, 0.980f);
         QString msg(tr("If Wrong Direction Tap Vehicle"));
         int lenny = (msg.length() * 12) / 2;
         drawText(gl,projection*modelview,-lenny, 150, msg, 0.8f, true, color);
 
-        if (vehicle.isReverse) color.fromRgbF(0.952f, 0.0f, 0.0f);
-        else color.fromRgbF(0.952f, 0.0f, 0.0f);
+        if (vehicle.isReverse) color.setRgbF(0.952f, 0.0f, 0.0f);
+        else color.setRgbF(0.952f, 0.0f, 0.0f);
 
-        if (isChangingDirection) color.fromRgbF(0.952f, 0.990f, 0.0f);
+        if (isChangingDirection) color.setRgbF(0.952f, 0.990f, 0.0f);
 
         modelview.translate(-Width / 12, Height / 2 - 20, 0);
 
@@ -1411,7 +1411,7 @@ void FormGPS::DrawLostRTK(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width)
 {
     //TODO: move to QML
     QColor color;
-    color.fromRgbF(0.9752f, 0.752f, 0.40f);
+    color.setRgbF(0.9752f, 0.752f, 0.40f);
     drawText(gl, mvp, -Width / 6, 125, "LOST RTK", 2.0, true, color);
 }
 
@@ -1419,7 +1419,7 @@ void FormGPS::DrawAge(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width)
 {
     //TODO move to QML
     QColor color;
-    color.fromRgbF(0.9752f, 0.52f, 0.0f);
+    color.setRgbF(0.9752f, 0.52f, 0.0f);
     drawText(gl, mvp, Width / 4, 60, "Age:" + QString("%1").arg(pn.age,0,'g',1), 1.5, true, color);
 
 }

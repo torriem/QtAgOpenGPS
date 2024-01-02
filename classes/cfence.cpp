@@ -73,12 +73,7 @@ void CBoundary::DrawFenceLines(const CVehicle &v, const CModuleComm &mc,
 
     for (int i = 0; i < bndList.count(); i++)
     {
-        gldraw.clear();
-        for (int j = 0; j < bndList[i].fenceLineEar.count(); j++) {
-            gldraw.append(QVector3D(bndList[i].fenceLineEar[j].easting,
-                                    bndList[i].fenceLineEar[j].northing, 0));
-        }
-        gldraw.draw(gl, mvp, color, GL_TRIANGLE_STRIP, line_width);
+        DrawPolygon(gl,mvp,bndList[i].fenceLineEar,line_width,color);
     }
 
 
@@ -127,7 +122,7 @@ void CBoundary::DrawFenceLines(const CVehicle &v, const CModuleComm &mc,
             gldraw.append(QVector3D(bndBeingMadePts[bndBeingMadePts.size() - 1].easting, bndBeingMadePts[bndBeingMadePts.size() - 1].northing, 0));
         }
         gldraw.draw(gl,mvp,QColor::fromRgbF(0.825f, 0.842f, 0.0f),
-                     GL_LINE_STIPPLE,1.0f);
+                     GL_LINE_STRIP,1.0f);
 
         //boundary points
         gldraw.clear();

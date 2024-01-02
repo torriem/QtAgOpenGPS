@@ -11,6 +11,10 @@ void FormGPS::simConnectSlots()
     connect(&timerSim,SIGNAL(timeout()),this,SLOT(onSimTimerTimeout()));
 
     if (property_setMenu_isSimulatorOn) {
+        pn.latitude = sim.latitude;
+        pn.longitude = sim.longitude;
+        pn.headingTrue = 0;
+
         timerSim.start(100); //fire simulator every 100 ms.
         gpsHz = 10;
     }

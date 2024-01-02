@@ -137,13 +137,13 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
         if (!tool.isToolRearFixed)
         {
             //draw the rigid hitch
-            color.fromRgbF(0, 0, 0);
+            color.setRgbF(0, 0, 0);
             gldraw.append(QVector3D(0, tool.hitchLength, 0));
             gldraw.append(QVector3D(0, 0, 0));
             gldraw.draw(gl,mvp,color,GL_LINES,4);
 
             gldraw.clear();
-            color.fromRgbF(1.237f, 0.037f, 0.0397f);
+            color.setRgbF(1.237f, 0.037f, 0.0397f);
             gldraw.append(QVector3D(0, tool.hitchLength, 0));
             gldraw.append(QVector3D(0, 0, 0));
             gldraw.draw(gl,mvp,color,GL_LINES,1);
@@ -151,14 +151,14 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
         else
         {
             //draw the rigid hitch
-            color.fromRgbF(0, 0, 0);
+            color.setRgbF(0, 0, 0);
             gldraw.append(QVector3D(-0.35, tool.hitchLength, 0));
             gldraw.append(QVector3D(-0.350, 0, 0));
             gldraw.append(QVector3D(0.35, tool.hitchLength, 0));
             gldraw.append(QVector3D(0.350, 0, 0));
             gldraw.draw(gl,mvp,color,GL_LINES,4);
 
-            color.fromRgbF(1.237f, 0.037f, 0.0397f);
+            color.setRgbF(1.237f, 0.037f, 0.0397f);
             gldraw.append(QVector3D(-0.35, tool.hitchLength, 0));
             gldraw.append(QVector3D(-0.35, 0, 0));
             gldraw.append(QVector3D(0.35, tool.hitchLength, 0));
@@ -190,7 +190,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
             //vehicle body
             //texture is 13, or Textures::TRACTOR, Wheel is 15
 
-            //TODO: color.fromRgbF(mf.vehicleColor.R, mf.vehicleColor.G, mf.vehicleColor.B, mf.vehicleOpacityByte);
+            //TODO: color.setRgbF(mf.vehicleColor.R, mf.vehicleColor.G, mf.vehicleColor.B, mf.vehicleOpacityByte);
 
             double leftAckerman, rightAckerman;
 
@@ -247,7 +247,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
         }
         else if (vehicleType == 1) //Harvester
         {
-            //TODO: color.fromRgbF(0.078, 0.078, 0.078, mf.vehicleOpacityByte / 255.0);
+            //TODO: color.setRgbF(0.078, 0.078, 0.078, mf.vehicleOpacityByte / 255.0);
 
             double leftAckerman, rightAckerman;
 
@@ -295,7 +295,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
             modelview = savedModelView; //pop matrix
             //harvester body
             //TODO colorize
-            //color.fromRgbF(mf.vehicleColor.R, mf.vehicleColor.G, mf.vehicleColor.B, mf.vehicleOpacityByte);
+            //color.setRgbF(mf.vehicleColor.R, mf.vehicleColor.G, mf.vehicleColor.B, mf.vehicleOpacityByte);
             gltex.clear();
             gltex.append( { QVector3D(trackWidth, wheelbase * 1.5, 0.0),   QVector2D(1, 0) } );
             gltex.append( { QVector3D(-trackWidth, wheelbase * 1.5, 0.0),  QVector2D(0, 0) } );
@@ -308,7 +308,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
         {
 
             double modelSteerAngle = 0.5 * steerAngle;
-            //TODO: color.fromRgbF(mf.vehicleColor.R, mf.vehicleColor.G, mf.vehicleColor.B, mf.vehicleOpacityByte);
+            //TODO: color.setRgbF(mf.vehicleColor.R, mf.vehicleColor.G, mf.vehicleColor.B, mf.vehicleOpacityByte);
 
             //tractor rear
             //push modelview... nop because savedModelView already has a copy
@@ -345,7 +345,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
     }
     else
     { //just draw a triangle
-        color.fromRgbF(1.2, 1.20, 0.0, vehicleOpacity);
+        color.setRgbF(1.2, 1.20, 0.0, vehicleOpacity);
         glcolors.clear();
         glcolors.append( { QVector3D(0, antennaPivot, -0.0), QVector4D(0.0, 1.20, 1.22, vehicleOpacity) } );
         glcolors.append( { QVector3D(0, wheelbase, 0.0),     QVector4D(1.220, 0.0, 1.2, vehicleOpacity) } );
@@ -354,7 +354,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
         glcolors.draw(gl,mvp,GL_TRIANGLE_FAN,1.0f);
 
         gldraw.clear();
-        color.fromRgbF(0.12, 0.12, 0.12);
+        color.setRgbF(0.12, 0.12, 0.12);
         gldraw.append(QVector3D(-1.0, 0, 0));
         gldraw.append(QVector3D(1.0, 0, 0));
         gldraw.append(QVector3D(0, wheelbase, 0));
@@ -366,12 +366,12 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
     {
         //draw the bright antenna dot
         gldraw.clear();
-        color.fromRgbF(0,0,0);
+        color.setRgbF(0,0,0);
         gldraw.append(QVector3D(0, antennaPivot, 0.1));
         gldraw.draw(gl,mvp,color,GL_POINTS,16.0f);
 
         gldraw.clear();
-        color.fromRgbF(0.2,0.98,0.98);
+        color.setRgbF(0.2,0.98,0.98);
         gldraw.append(QVector3D(0, antennaPivot, 0.1));
         gldraw.draw(gl,mvp,color,GL_POINTS,10.0f);
     }
@@ -424,7 +424,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
         double svennWidth = svennDist * 0.22;
 
         gldraw.clear();
-        color.fromRgbF(1.2, 1.25, 0.10);
+        color.setRgbF(1.2, 1.25, 0.10);
         gldraw.append(QVector3D(svennWidth, wheelbase + svennDist, 0.0));
         gldraw.append(QVector3D(0, wheelbase + svennWidth + 0.5 + svennDist, 0.0));
         gldraw.append(QVector3D(-svennWidth, wheelbase + svennDist, 0.0));
@@ -432,7 +432,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
         gldraw.draw(gl,mvp,color,GL_LINE_STRIP,property_setDisplay_lineWidth);
     }
 
-    color.fromRgbF(1.269, 1.25, 1.2510, 0.87); //?? why over 1.0?
+    color.setRgbF(1.269, 1.25, 1.2510, 0.87); //?? why over 1.0?
     if (curve.isBtnCurveOn && !ct.isContourBtnOn)
     {
         if (curve.howManyPathsAway == 0) {

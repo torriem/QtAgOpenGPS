@@ -544,7 +544,6 @@ bool FormGPS::FileOpenField(QString fieldDir)
         //ABLine.refPoint2 = ABLine.lineArr[ABLine.numABLineSelected - 1].ref2;
         ABLine.abHeading = ABLine.lineArr[ABLine.numABLineSelected - 1].heading;
         ABLine.SetABLineByHeading(ABLine.abHeading);
-        //ABLine.isABLineSet = false;
         ABLine.isABLineSet = false;
         ABLine.isABLineLoaded = true;
     }
@@ -1145,6 +1144,7 @@ void FormGPS::FileCreateField()
 
     writer << "StartFix" << Qt::endl;
     writer << pn.latitude << "," << pn.longitude << Qt::endl;
+    pn.SetLocalMetersPerDegree();
 
     fieldFile.close();
 }

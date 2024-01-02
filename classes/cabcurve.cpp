@@ -578,7 +578,7 @@ void CABCurve::DrawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
 
     if (isFontOn)
     {
-        color.fromRgbF(0.40f, 0.90f, 0.95f);
+        color.setRgbF(0.40f, 0.90f, 0.95f);
         drawText3D(camera, gl, mvp, refList[0].easting, refList[0].northing, "&A", 1.0, true, color);
         drawText3D(camera, gl, mvp, refList[refList.count() - 1].easting, refList[refList.count() - 1].northing, "&B", 1.0, true, color);
     }
@@ -599,7 +599,7 @@ void CABCurve::DrawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
     {
         if (curList.count() > 0 && isCurveSet)
         {
-            color.fromRgbF(0.95f, 0.2f, 0.95f);
+            color.setRgbF(0.95f, 0.2f, 0.95f);
             gldraw.clear();
             for (int h = 0; h < curList.count(); h++)
                 gldraw.append(QVector3D(curList[h].easting, curList[h].northing, 0));
@@ -620,7 +620,7 @@ void CABCurve::DrawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
             {
                 gldraw.clear();
                 //Draw lookahead Point
-                color.fromRgbF(1.0f, 0.95f, 0.195f);
+                color.setRgbF(1.0f, 0.95f, 0.195f);
 
                 gldraw.append(QVector3D(goalPointCu.easting, goalPointCu.northing, 0.0));
                 gldraw.draw(gl,mvp,color,GL_POINTS,8.0f);

@@ -53,6 +53,9 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
         //set up default field to play in for debugging purposes
         currentFieldDirectory = "TestField";
         property_setF_CurrentDir = currentFieldDirectory;
+        pn.latitude = sim.latitude;
+        pn.longitude = sim.longitude;
+
         FileCreateField();
 
         ABLine.refPoint1.easting = 0;
@@ -68,13 +71,33 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
         FileSaveABLines();
 
         CBoundaryList boundary;
+        boundary.isDriveThru = true;
+
         boundary.fenceLine.append(Vec3(-100,0,0));
-        boundary.fenceLine.append(Vec3( 100,0,0));
-        boundary.fenceLine.append(Vec3( 100,250,0));
-        boundary.fenceLine.append(Vec3(-100,250,0));
+        boundary.fenceLine.append(Vec3(-100,250,glm::toRadians((double)90)));
+        boundary.fenceLine.append(Vec3( 100,250,glm::toRadians((double)180)));
+        boundary.fenceLine.append(Vec3( 100,0,glm::toRadians((double)270)));
         boundary.fenceLine.append(Vec3(-100,0,0));
-        boundary.CalculateFenceArea(boundary.fenceLine.count());
-        boundary.FixFenceLine(bnd.bndList.count());
+
+        boundary.CalculateFenceArea(0);
+
+        double delta = 0;
+        boundary.fenceLineEar.clear();
+
+        for (int i = 0; i < boundary.fenceLine.count(); i++)
+        {
+            if (i == 0)
+            {
+                boundary.fenceLineEar.append(Vec2(boundary.fenceLine[i].easting, boundary.fenceLine[i].northing));
+                continue;
+            }
+            delta += (boundary.fenceLine[i - 1].heading - boundary.fenceLine[i].heading);
+            if (fabs(delta) > 0.005)
+            {
+                boundary.fenceLineEar.append(Vec2(boundary.fenceLine[i].easting, boundary.fenceLine[i].northing));
+                delta = 0;
+            }
+        }
         bnd.bndList.append(boundary);
         fd.UpdateFieldBoundaryGUIAreas(bnd.bndList);
 
@@ -85,6 +108,7 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
         bootstrap_field=true;
         isJobStarted = true;
     }
+    ABLine.isABLineSet = true;
     ABLine.isBtnABLineOn = true;
 
     StartLoopbackServer();

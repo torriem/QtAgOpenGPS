@@ -114,27 +114,36 @@ void CWorldGrid::DrawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, doub
     //draw easting lines and westing lines to produce a grid
     _gridZoom *= 0.5;
 
-    if (_gridZoom != lastGridZoom) { //use epsilon here?
+    GLHelperOneColor gldraw;
+
+    //if (_gridZoom != lastGridZoom) { //use epsilon here?
         // if the grid has changed, regenerate the buffer to save
         // us time later.
-        QVector<QVector3D> vertices;
-        lastGridZoom = _gridZoom;
+        //QVector<QVector3D> vertices;
+        //lastGridZoom = _gridZoom;
 
 
         for (double num = glm::roundMidAwayFromZero(eastingMin / _gridZoom) * _gridZoom; num < eastingMax; num += _gridZoom)
         {
             if (num < eastingMin) continue;
-            vertices.append(QVector3D(num,northingMax, 0.1));
-            vertices.append(QVector3D(num,northingMin, 0.1));
+            //vertices.append(QVector3D(num,northingMax, 0.1));
+            //vertices.append(QVector3D(num,northingMin, 0.1));
+            gldraw.append(QVector3D(num,northingMax, 0.1));
+            gldraw.append(QVector3D(num,northingMin, 0.1));
         }
 
         for (double num2 = glm::roundMidAwayFromZero(northingMin / _gridZoom) * _gridZoom; num2 < northingMax; num2 += _gridZoom)
         {
             if (num2 < northingMin) continue;
-            vertices.append(QVector3D(eastingMax,num2, 0.1));
-            vertices.append(QVector3D(eastingMin,num2, 0.1));
+            //vertices.append(QVector3D(eastingMax,num2, 0.1));
+            //vertices.append(QVector3D(eastingMin,num2, 0.1));
+            gldraw.append(QVector3D(eastingMax,num2, 0.1));
+            gldraw.append(QVector3D(eastingMin,num2, 0.1));
         }
 
+        gldraw.draw(gl, mvp, gridColor, GL_LINES, 1.0f);
+
+/*
         if (gridBuffer.isCreated())
             gridBuffer.destroy();
         gridBuffer.create();
@@ -149,6 +158,7 @@ void CWorldGrid::DrawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, doub
                       GL_LINES, gridColor,
                       gridBuffer,GL_FLOAT,
                       gridBufferCount);
+*/
 }
 
 void CWorldGrid::checkZoomWorldGrid(double northing, double easting) {
