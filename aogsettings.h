@@ -10,10 +10,16 @@
 Q_DECLARE_METATYPE(QList<int>)
 Q_DECLARE_METATYPE(QVector<int>)
 
+class QJsonObject;
+
 class AOGSettings : public QSettings
 {
 public:
     QVariant value(const QString &key, const QVariant &defaultvalue);
+
+    QJsonObject toJson();
+    bool saveJson(QString filename);
+    bool loadJson(QString filename);
 };
 
 QColor parseColor(QString setcolor);
