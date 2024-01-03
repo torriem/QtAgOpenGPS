@@ -347,7 +347,7 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
     gldraw.draw(gl,mvp,color,GL_TRIANGLE_FAN,lineWidth);
 
     //shadow lines
-    color.setRgbF(0.95, 0.55, 0.55, 0.5);
+    color.setRgbF(0.55, 0.55, 0.55, 0.3);
     //use the same vertices as the shadow
     gldraw.draw(gl,mvp,color,GL_LINE_LOOP,1.0f);
 

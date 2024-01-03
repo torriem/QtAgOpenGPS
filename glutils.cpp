@@ -242,7 +242,7 @@ void glDrawArraysColors(QOpenGLFunctions *gl,
                               GL_type, //type of data GL_FLAOT or GL_DOUBLE
                               GL_FALSE, //not normalized vertices!
                               7*sizeof(float), //vertex+color
-                              ((float *)0) + 3 //start at 3rd float in buffer
+                              (void *)(sizeof(float) * 3) //start at 3rd float in buffer
                              );
 
     //draw primitive
@@ -294,7 +294,7 @@ void glDrawArraysTexture(QOpenGLFunctions *gl,
                               GL_type, //type of data GL_FLAOT or GL_DOUBLE
                               GL_FALSE, //not normalized vertices!
                               5*sizeof(float), //vertex+color
-                              ((float *)0) + 3 //start at 3rd float in buffer
+                              (void *)(sizeof(float) * 3) //start at 3rd float in buffer
                              );
 
     //draw primitive

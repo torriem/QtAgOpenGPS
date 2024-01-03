@@ -34,7 +34,6 @@ void FormGPS::oglMain_Paint()
     QColor color;
     GLHelperTexture gldrawtex;
     GLHelperColors gldrawcolors;
-    ColorVertex cv;
     GLHelperOneColor gldraw1;
 
     int width = qmlItem(qml_root, "openglcontrol")->property("width").toReal();
@@ -96,8 +95,6 @@ void FormGPS::oglMain_Paint()
         deadCam += 5;
 
         //draw with NoGPS texture 21
-        VertexTexcoord tc;
-
         color.setRgbF(1.25f, 1.25f, 1.275f, 0.75);
         gldrawtex.append( { QVector3D(2.5, 2.5, 0), QVector2D(1,0) } ); //Top Right
         gldrawtex.append( { QVector3D(-2.5, 2.5, 0), QVector2D(0,0) } ); //Top Left
@@ -800,8 +797,8 @@ void FormGPS::DrawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp)
 void FormGPS::DrawSteerCircle(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection)
 {
     int sizer = 60;
-    int center = qmlItem(qml_root, "openglcontrol")->property("width").toReal() / 2 - 60;
-    int bottomSide = qmlItem(qml_root, "openglcontrol")->property("height").toReal() - 30;
+    int center = qmlItem(qml_root, "openglcontrol")->property("width").toReal() / 2 - 160;
+    int bottomSide = qmlItem(qml_root, "openglcontrol")->property("height").toReal() - 130;
 
     QMatrix4x4 saved_modelview = modelview;
 
@@ -908,7 +905,7 @@ void FormGPS::DrawFlags(QOpenGLFunctions *gl, QMatrix4x4 mvp)
         gldraw.draw(gl, mvp, color, GL_POINTS, 8.0f);
         flagColor += flagPts[f].notes;
 
-        drawText3D(camera, gl, mvp, flagPts[f].easting, flagPts[f].northing, flagColor);
+        drawText3D(camera, gl, mvp, flagPts[f].easting, flagPts[f].northing, flagColor,1,true,color);
     }
 
     if (flagNumberPicked != 0)
@@ -1366,9 +1363,9 @@ void FormGPS::drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 
 {
     GLHelperTexture gldraw1;
 
-    int bottomSide = Height - 55;
+    int bottomSide = Height - 165;
 
-    modelview.translate(Width / 2 - 60, bottomSide, 0);
+    modelview.translate(Width / 2 - 160, bottomSide, 0);
 
     gldraw1.append({ QVector3D(-58, -58, 0), QVector2D(0, 0) }); //bottom left
     gldraw1.append({ QVector3D(58, -58.0, 0), QVector2D(1, 0) }); //bottom right
