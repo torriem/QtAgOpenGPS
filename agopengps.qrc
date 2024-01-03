@@ -495,5 +495,6 @@
         <file>qml/SectionWidth.qml</file>
         <file>qml/TextFieldCustomized.qml</file>
         <file>qml/NumberInputWindow.qml</file>
+        <file>qml/WarningWindow.qml</file>
     </qresource>
 </RCC>

@@ -6,6 +6,20 @@ import QtQuick.Layouts 1.3
 import AgOpenGPS 1.0
 
 Window {
+    function warningWindowJS(text){
+        warningWindow.visible = true;
+        warningWindow.text = text;
+        console.log("Warning sent to screen ", text);
+     /*   timer = new Timer();
+        timer.interval = 1000;
+        timer.repeat = false;
+        timer.triggered.connect(function () {
+            warningWindow.visible = false;
+            console.log("triggered");
+        })
+        timer.start();*/
+    }
+
     //We draw native opengl to this root object
     id: mainWindow
     width: 1000
@@ -79,6 +93,7 @@ Window {
 
         //----------------------------------------------------------------------------------------left column
         Item {
+
             id: buttonsArea
             anchors.top: parent.top
             anchors.topMargin: 2 //TODO: convert to scalable
@@ -163,6 +178,7 @@ Window {
                         height: parent.height
                         width: 75
                         icon.source: "qrc:/images/Help.png"
+                        onClicked: warningWindowJS("yo")
                     }
                     IconButtonTransparent{
                         objectName: "btnWindowMinimize"
@@ -558,6 +574,7 @@ Window {
                     icon.source: "qrc:/images/HydraulicLiftOff.png"
                     iconChecked: "qrc:/images/HydraulicLiftOn.png"
                     buttonText: "HydLift"
+                    onClicked: warningWindow.visible = true
                 }
                 IconButtonText {
                     id: btnFlag
@@ -1186,6 +1203,14 @@ Window {
                 width:1024
                 visible:false
             }
+            WarningWindow{
+                id: warningWindow
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: 20
+                visible: false
+            }
+
             Rectangle{
                 id: recordButtons
                 anchors.bottom: bottomButtons.top
