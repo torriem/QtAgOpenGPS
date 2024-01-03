@@ -23,7 +23,7 @@ Item {
                 width: children.width
                 IconButton{
                     id: configsrcHeading
-                    icon.source: "qrc:/images/Config/ConS_VehicleConfig.png"
+                    icon.source: "/images/Config/ConS_VehicleConfig.png"
                     /* function toggle_(){
                     if(configImplement.visible == true){
                         configImplement.visible = false
@@ -36,7 +36,7 @@ Item {
                 }
                 IconButton{
                     id: configsrcRoll
-                    icon.source: "qrc:/images/Config/ConS_ImplementHitch.png"
+                    icon.source: "/images/Config/ConS_ImplementHitch.png"
                     function toggle_srcrollwin(){
                         if(configSrcRollWin.visible == true){
                             configSrcRollWin.visible = false
@@ -77,7 +77,7 @@ Item {
                     height:100
                     buttonText: "Dual"
                     id: dual
-                    icon: "qrc:/images/Config/Con_SourcesGPSDual.png"
+                    icon: "/images/Config/Con_SourcesGPSDual.png"
                     isChecked: false
                 }
                 IconButtonColor{
@@ -86,7 +86,7 @@ Item {
                     id: fix
                     buttonText: "Fix"
                     isChecked: false
-                    icon: "qrc:/images/Config/Con_SourcesGPSSingle.png"
+                    icon: "/images/Config/Con_SourcesGPSSingle.png"
                 }
             }
         }
@@ -115,7 +115,7 @@ Item {
                         width:150
                         height:100
                         id: alarm
-                        icon: "qrc:/images/Config/Con_SourcesRTKAlarm.png"
+                        icon: "/images/Config/Con_SourcesRTKAlarm.png"
                         isChecked: false
                     }
                     Text{
@@ -125,7 +125,7 @@ Item {
                         width:150
                         height:100
                         id: killAutoSteer
-                        icon: "qrc:/images/AutoSteerOff.png"
+                        icon: "/images/AutoSteerOff.png"
                         isChecked: false
                     }
                 }
@@ -250,7 +250,7 @@ Item {
                 }
                 Image {
                     id: head
-                    source: "qrc:images/Config/Con_SourcesHead.png"
+                    source: "/images/Config/Con_SourcesHead.png"
                     height: 100
                     width: 100
                     anchors.top: parent.top
@@ -302,7 +302,7 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: 20
                 buttonText: qsTr("Remove Offset")
-                        icon: "qrc:/images/Config/ConDa_RemoveOffset.png"
+                        icon: "/images/Config/ConDa_RemoveOffset.png"
                         isChecked: false
                     }
                     IconButtonColor{
@@ -311,7 +311,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 anchors.leftMargin: 20
-                        icon: "qrc:/images/Config/ConDa_RollSetZero.png"
+                        icon: "/images/Config/ConDa_RollSetZero.png"
                         isChecked: false
                     }
                 IconButtonColor{
@@ -319,7 +319,7 @@ Item {
                 anchors.left: parent.horizontalCenter
                 anchors.top: parent.top
                 anchors.topMargin: 20
-                    icon: "qrc:/images/Config/ConDa_ResetIMU.png"
+                    icon: "/images/Config/ConDa_ResetIMU.png"
                     isChecked: false
                 }
 
@@ -329,7 +329,7 @@ Item {
                 anchors.left: parent.horizontalCenter
                 anchors.topMargin: 20
                 buttonText: qsTr("Invert Roll")
-                        icon: "qrc:/images/Config/ConDa_InvertRoll.png"
+                        icon: "/images/Config/ConDa_InvertRoll.png"
                         isChecked: false
                     }
             Rectangle{
@@ -353,7 +353,7 @@ Item {
                 }
             }
             Image {
-                source: "qrc:/images/Config/ConD_RollHelper"
+                source: "/images/Config/ConD_RollHelper"
                 anchors.right: parent.right
                 anchors.rightMargin: 50
                 width: 150

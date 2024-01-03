@@ -7,7 +7,7 @@ Item {
         anchors.fill: parent
         color: "ghostwhite"
         Image {
-            source: "qrc:/images/Config/ConT_TramSpacing.png"
+            source: "/images/Config/ConT_TramSpacing.png"
             id: imageTram
             anchors.right: parent.horizontalCenter
             anchors.top: parent.top
@@ -37,7 +37,7 @@ Item {
             anchors.bottomMargin: 100
             width: 200
             height: 200
-                icon: "qrc:/images/Config/ConT_TramOverride.png"
+                icon: "/images/Config/ConT_TramOverride.png"
         }
     }
 }

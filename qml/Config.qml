@@ -56,7 +56,7 @@ Item {
             IconButtonTransparent{
                 id:vehicleMenu
                 objectName: "btnVehicleMenu"
-                icon.source: "qrc:/images/Config/Con_VehicleMenu.png"
+                icon.source: "/images/Config/Con_VehicleMenu.png"
                 width:100
                 height:75
 
@@ -82,7 +82,7 @@ Item {
 
                 IconButton{
                     id: configTrSettings
-                    icon.source: "qrc:/images/Config/ConS_VehicleConfig.png"
+                    icon.source: "/images/Config/ConS_VehicleConfig.png"
                     onClicked:{
                         closeAllConfig()
                         configTractor.visible = true
@@ -90,7 +90,7 @@ Item {
                 }
                 IconButton{
                     id: configTrDim
-                    icon.source: "qrc:/images/Config/ConS_ImplementHitch.png"
+                    icon.source: "/images/Config/ConS_ImplementHitch.png"
 
                     onClicked: {
                         closeAllConfig()
@@ -99,7 +99,7 @@ Item {
                 }
                 IconButton{
                     id: btnconfigTrAntDim
-                    icon.source: "qrc:/images/Config/ConS_ImplementAntenna.png"
+                    icon.source: "/images/Config/ConS_ImplementAntenna.png"
 
                     onClicked: {
                         closeAllConfig()
@@ -108,7 +108,7 @@ Item {
                 }
                 IconButton{
                     id: btnconfigTrSteerSett
-                    icon.source: "qrc:/images/Config/ConS_ModulesSteer.png"
+                    icon.source: "/images/Config/ConS_ModulesSteer.png"
 
                     onClicked: {
                         closeAllConfig()
@@ -120,7 +120,7 @@ Item {
             IconButtonTransparent{
                 id:implementMenu
                 objectName: "btnImplementMenu"
-                icon.source: "qrc:/images/Config/Con_ImplementMenu.png"
+                icon.source: "/images/Config/Con_ImplementMenu.png"
                 width:100
                 height:75
                 onClicked:{
@@ -131,7 +131,7 @@ Item {
             IconButtonTransparent{
                 id:sourcesMenu
                 objectName: "btnSourcesMenu"
-                icon.source: "qrc:/images/Config/Con_SourcesMenu.png"
+                icon.source: "/images/Config/Con_SourcesMenu.png"
                 width:100
                 onClicked:{
                     closeAllConfig()
@@ -142,7 +142,7 @@ Item {
             IconButtonTransparent{
                 id:uTurnMenu
                 objectName: "btnUTurnMenu"
-                icon.source: "qrc:/images/Config/Con_UTurnMenu.png"
+                icon.source: "/images/Config/Con_UTurnMenu.png"
                 width:100
                 height:75
                 onClicked:{
@@ -153,7 +153,7 @@ Item {
             IconButtonTransparent{
                 id:modulesMenu
                 objectName: "btnModulesMenu"
-                icon.source: "qrc:/images/Config/Con_ModulesMenu.png"
+                icon.source: "/images/Config/Con_ModulesMenu.png"
                 width:100
                 height:75
                 onClicked:{
@@ -164,7 +164,7 @@ Item {
             IconButtonTransparent{
                 id:tramMenu
                 objectName: "btnTramMenu"
-                icon.source: "qrc:/images/Config/Con_TramMenu.png"
+                icon.source: "/images/Config/Con_TramMenu.png"
                 width:100
                 height:75
                 onClicked: {
@@ -175,7 +175,7 @@ Item {
             IconButtonTransparent{
                 id:featureMenu
                 objectName: "btnFeatureMenu"
-                icon.source: "qrc:/images/Config/Con_FeatureMenu.png"
+                icon.source: "/images/Config/Con_FeatureMenu.png"
                 width:100
                 height:75
                 onClicked:{
@@ -208,7 +208,7 @@ Item {
                 anchors.right: parent.right
                 width:parent.height
                 height: parent.height
-                icon.source: "qrc:/images/OK64"
+                icon.source: "/images/OK64"
                 onClicked: config.visible = false
             }
         }

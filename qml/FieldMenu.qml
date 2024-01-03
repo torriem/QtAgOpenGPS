@@ -42,33 +42,33 @@ Item{
                 objectName: "btnFieldDriveIn"
                 isChecked: false
                 text: "Drive In"
-                icon.source: "qrc:/images/AutoManualIsAuto.png"
+                icon.source: "/images/AutoManualIsAuto.png"
             }
             IconButtonTextBeside{
                 objectName: "btnFieldISOXML"
                 isChecked: false
                 text: "ISO-XML"
-                icon.source: "qrc:/images/ISOXML.png"
+                icon.source: "/images/ISOXML.png"
             }
             IconButtonTextBeside{
                 objectName: "btnFieldFromKML"
                 isChecked: false
                 text: "From KML"
-                icon.source: "qrc:/images/BoundaryLoadFromGE.png"
+                icon.source: "/images/BoundaryLoadFromGE.png"
                 onClicked: fieldFromKML.visible = true
             }
             IconButtonTextBeside{
                 objectName: "btnFieldFromExisting"
                 isChecked: false
                 text: "From Existing"
-                icon.source: "qrc:/images/FileExisting.png"
+                icon.source: "/images/FileExisting.png"
                 onClicked: fieldFromExisting.visible = true
             }
             IconButtonTextBeside{
                 objectName: "New"
                 isChecked: false
                 text: "New"
-                icon.source: "qrc:/images/FileNew.png"
+                icon.source: "/images/FileNew.png"
                 onClicked: fieldNew.visible = true
             }
         }
@@ -84,19 +84,19 @@ Item{
                 objectName: "btnFieldResume"
                 isChecked: false
                 text: "Resume"
-                icon.source: "qrc:/images/FilePrevious.png"
+                icon.source: "/images/FilePrevious.png"
             }
             IconButtonTextBeside{
                 objectName: "btnFieldClose"
                 isChecked: false
                 text: "Close"
-                icon.source: "qrc:/images/FileClose.png"
+                icon.source: "/images/FileClose.png"
             }
             IconButtonTextBeside{
                 objectName: "btnFieldOpen"
                 isChecked: false
                 text: "Open"
-                icon.source: "qrc:/images/FileOpen"
+                icon.source: "/images/FileOpen"
                 onClicked: fieldOpen.visible = true;
             }
         }
@@ -105,7 +105,7 @@ Item{
             anchors.right: parent.right
             anchors.margins: 10
             id: fieldCancel
-            icon.source: "qrc:/images/Cancel64.png"
+            icon.source: "/images/Cancel64.png"
             //buttonText: "Cancel"
             onClicked: fieldMenu.visible = false
             height: 75

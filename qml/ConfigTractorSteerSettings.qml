@@ -23,7 +23,7 @@ Rectangle{
 
         Image {
             id: lightbarimage
-            source: "qrc:/images/Config/ConV_CmPixel.png"
+            source: "/images/Config/ConV_CmPixel.png"
             anchors.left: parent.left
             anchors.top: lightbartitletxt.bottom
             anchors.bottom: parent.bottom
@@ -65,7 +65,7 @@ Rectangle{
 
         Image {
             id: linelengthimage
-            source: "qrc:/images/Config/ConV_ABLineLength.png"
+            source: "/images/Config/ConV_ABLineLength.png"
             anchors.left: parent.left
             anchors.top: linelengthtitletxt.bottom
             anchors.bottom: parent.bottom
@@ -106,7 +106,7 @@ Rectangle{
             border.color: "black"
             IconButtonTransparent{
                 anchors.fill: parent
-                icon.source: "qrc:/images/ContourOn.png"
+                icon.source: "/images/ContourOn.png"
             }
             Text{
                 text: qsTr("Constant Contour
@@ -124,7 +124,7 @@ Recording")
             border.color: "black"
             IconButtonTransparent{
                 anchors.fill: parent
-                icon.source: "qrc:/images/AutoSteerOn.png"
+                icon.source: "/images/AutoSteerOn.png"
             }
             Text{
                 text: qsTr("Steer Switch Control")
@@ -151,7 +151,7 @@ Recording")
 
         Image {
             id: linewidthimage
-            source: "qrc:/images/Config/ConV_LineWith.png"
+            source: "/images/Config/ConV_LineWith.png"
             anchors.left: parent.left
             anchors.top: linewidthtitletxt.bottom
             anchors.bottom: parent.bottom
@@ -193,7 +193,7 @@ Recording")
 
         Image {
             id: nudgedistimage
-            source: "qrc:/images/Config/ConV_SnapDistance.png"
+            source: "/images/Config/ConV_SnapDistance.png"
             anchors.left: parent.left
             anchors.top: nudgedisttitletxt.bottom
             anchors.bottom: parent.bottom
@@ -235,7 +235,7 @@ Recording")
 
         Image {
             id: lineacqLAheadimage
-            source: "qrc:/images/Config/ConV_GuidanceLookAhead.png"
+            source: "/images/Config/ConV_GuidanceLookAhead.png"
             anchors.left: parent.left
             anchors.top: lineacqLAheadtitletxt.bottom
             anchors.bottom: parent.bottom

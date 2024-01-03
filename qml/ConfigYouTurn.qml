@@ -16,22 +16,22 @@ Item {
             height: parent.height /2
 
             Image {
-                source: "qrc:images/Config/ConU_UturnRadius.png"
+                source: "/images/Config/ConU_UturnRadius.png"
                 height: 150
                 width: 150
             }
             Image {
-                source: "qrc:images/Config/ConU_UturnDistance.png"
+                source: "/images/Config/ConU_UturnDistance.png"
                 height: 150
                 width: 150
             }
             Image {
-                source: "qrc:images/Config/ConU_UturnLength.png"
+                source: "/images/Config/ConU_UturnLength.png"
                 height: 150
                 width: 150
             }
             Image {
-                source: "qrc:images/Config/ConU_UturnSmooth.png"
+                source: "/images/Config/ConU_UturnSmooth.png"
                 height: 150
                 width: 150
             }
@@ -113,7 +113,7 @@ Radius")
                 anchors.bottomMargin: 5
                 spacing: 20
                 IconButtonColor{
-                    icon: "qrc:/images/YouTurnNo.png"
+                    icon: "/images/YouTurnNo.png"
                     //onClick: childUturn.color = "green"
                     /* background:Rectangle{
                     id: childUturn
@@ -122,7 +122,7 @@ Radius")
                 }*/
                 }
                 IconButtonColor{
-                    icon: "qrc:/images/YouTurnH.png"
+                    icon: "/images/YouTurnH.png"
                 }
             }
         }

@@ -26,7 +26,7 @@ Item {
                 anchors.top: parent.top
                 IconButton{
                     id: configImpSettings
-                    icon.source: "qrc:/images/Config/ConS_VehicleConfig.png"
+                    icon.source: "/images/Config/ConS_VehicleConfig.png"
                     /* function toggle_(){
                     if(configImplement.visible == true){
                         configImplement.visible = false
@@ -39,7 +39,7 @@ Item {
                 }
                 IconButton{
                     id: configImpDim
-                    icon.source: "qrc:/images/Config/ConS_ImplementHitch.png"
+                    icon.source: "/images/Config/ConS_ImplementHitch.png"
                     function toggle_impdimwin(){
                         if(configImpDimWin.visible == true){
                             configImpDimWin.visible = false
@@ -52,7 +52,7 @@ Item {
                 }
                 IconButton{
                     id: configImpSection
-                    icon.source: "qrc:/images/Config/ConS_ImplementSection.png"
+                    icon.source: "/images/Config/ConS_ImplementSection.png"
                     function toggle_impsecwin(){
                         if(configImpSecWin.visible == true){
                             configImpSecWin.visible = false
@@ -65,7 +65,7 @@ Item {
                 }
                 IconButton{
                     id: configImpTiming
-                    icon.source: "qrc:/images/Config/ConS_ImplementSettings.png"
+                    icon.source: "/images/Config/ConS_ImplementSettings.png"
                     function toggle_imptimwin(){
                         if(configImpTimWin.visible == true){
                             configImpTimWin.visible = false
@@ -79,7 +79,7 @@ Item {
                 }
                 IconButton{
                     id: configImpSwitches
-                    icon.source: "qrc:/images/Config/ConS_ImplementSwitch.png"
+                    icon.source: "/images/Config/ConS_ImplementSwitch.png"
                     function toggle_impswitchwin(){
                         if(configImpSwitchWin.visible == true){
                             configImpSwitchWin.visible = false
@@ -112,7 +112,7 @@ Item {
                 width:200
                 height:150
                 id: i3pt
-                icon: "qrc:/images/ToolChkRear.png"
+                icon: "/images/ToolChkRear.png"
                 isChecked: false
             }
 
@@ -120,21 +120,21 @@ Item {
                 width:200
                 height:150
                 id: i3ptfront
-                icon: "qrc:/images/ToolChkFront.png"
+                icon: "/images/ToolChkFront.png"
                 isChecked: false
             }
             IconButtonColor{
                 width:200
                 height:150
                 id: itrailed
-                icon: "qrc:/images/ToolChkTrailing.png"
+                icon: "/images/ToolChkTrailing.png"
                 isChecked: false
             }
             IconButtonColor{
                 width:200
                 height:150
                 id: iTBT
-                icon: "qrc:/images/ToolChkTBT.png"
+                icon: "/images/ToolChkTBT.png"
                 isChecked: false
             }
         }
@@ -146,7 +146,7 @@ Item {
         color: "ghostwhite"
         visible: false
         Image{
-            source: "qrc:/images/ToolHitchPageTrailing.png"
+            source: "/images/ToolHitchPageTrailing.png"
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
@@ -277,7 +277,7 @@ Item {
                 }
                 IconButtonTransparent{
                     id: cancel
-                    icon.source: "qrc:/images/Cancel64.png"
+                    icon.source: "/images/Cancel64.png"
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
                     anchors.margins: 10
@@ -285,7 +285,7 @@ Item {
                 }
                 IconButtonTransparent{
                     objectName: "btnNumberWindowSave"
-                    icon.source: "qrc:/images/OK64.png"
+                    icon.source: "/images/OK64.png"
                     anchors.bottom: parent.bottom
                     anchors.right: parent.right
                     anchors.margins: 10
@@ -475,10 +475,10 @@ Item {
                 spacing: 90
                 Button{
                     function toggleZones(){
-                        if(image.source == "qrc:/images/Config/ConT_Asymmetric.png"){
-                            image.source = "qrc:/images/Config/ConT_Symmetric.png"
+                        if(image.source == "/images/Config/ConT_Asymmetric.png"){
+                            image.source = "/images/Config/ConT_Symmetric.png"
                         }else{
-                            image.source ="qrc:/images/Config/ConT_Asymmetric.png"
+                            image.source ="/images/Config/ConT_Asymmetric.png"
                         }
                     }
                     width: 180
@@ -495,7 +495,7 @@ Item {
                         Image{
                             id: image
 
-                            source:"qrc:/images/Config/ConT_Asymmetric.png"
+                            source:"/images/Config/ConT_Asymmetric.png"
                             anchors.fill: parent
                         }
                     }
@@ -514,8 +514,8 @@ Item {
                 }
                IconButton{
                    objectName: "boundaryOff"
-                   icon.source: "qrc:images/SectionOffBoundary.png"
-                   iconChecked: "qrc:images/SectionOnBounary.png"
+                   icon.source: "/images/SectionOffBoundary.png"
+                   iconChecked: "/images/SectionOnBounary.png"
                     anchors.bottom: parent.bottom
                     implicitWidth: 100
                     implicitHeight: 100
@@ -536,7 +536,7 @@ Item {
                        anchors.bottom: parent.top
                        width: parent.width
                        height: parent.height +30
-                       source: "qrc:/images/SectionOffBelow.png"
+                       source: "/images/SectionOffBelow.png"
                    }
                }
             }
@@ -563,7 +563,7 @@ Item {
             anchors.rightMargin: 30
             anchors.leftMargin: 200
             anchors.topMargin: 100
-            source: "qrc:/images/ImplementSettings.png"
+            source: "/images/ImplementSettings.png"
 
             SpinBox{
                 anchors.right: parent.left
@@ -664,13 +664,13 @@ Item {
                 width: childrenRect.width
                 anchors.margins: 15
                 IconButtonTextBeside{
-                    icon.source: "qrc:/images/HydraulicLiftOff.png"
+                    icon.source: "/images/HydraulicLiftOff.png"
                     objectName: "btnWorkSwitch"
                     isChecked: false
                     text: qsTr("Work Switch")
                 }
                 IconButtonTextBeside{
-                    icon.source: "qrc:/images/ManualOff.png"
+                    icon.source: "/images/ManualOff.png"
                     objectName: "btnWorkSwitchManual"
                     isChecked: false
                     text: qsTr("Manual Sections")
@@ -678,7 +678,7 @@ Item {
 
                 IconButtonTextBeside{
                     objectName: "btnWorkSwitchAuto"
-                    icon.source: "qrc:/images/SectionMasterOff.png"
+                    icon.source: "/images/SectionMasterOff.png"
                     isChecked: false
                     text: qsTr("Auto Sections")
                 }
@@ -689,7 +689,7 @@ Item {
                     id: switchStateButton
                     objectName: "workSwitchstatebutton"
                     isChecked: false
-                    icon.source: "qrc:/images/SwitchActiveClosed.png"
+                    icon.source: "/images/SwitchActiveClosed.png"
                     color3: "white"
                     colorChecked1: "green"
                     colorChecked2: "green"
@@ -722,19 +722,19 @@ Item {
                     objectName: "btnSteerSwitch"
                     isChecked: false
                     text: qsTr("Steer Switch")
-                    icon.source: "qrc:/images/AutoSteerOff.png"
+                    icon.source: "/images/AutoSteerOff.png"
                 }
                 IconButtonTextBeside{
                     objectName: "btnSteerSwitchManual"
                     isChecked: false
                     text: qsTr("Manual Sections")
-                    icon.source: "qrc:/images/ManualOff.png"
+                    icon.source: "/images/ManualOff.png"
                 }
                 IconButtonTextBeside{
                     objectName: "btnSteerSwitchAuto"
                     isChecked: false
                     text: qsTr("Auto Sections")
-                    icon.source: "qrc:/images/SectionMasterOff.png"
+                    icon.source: "/images/SectionMasterOff.png"
                 }
             }
         }

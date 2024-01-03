@@ -27,21 +27,21 @@ Item {
             width: childrenRect.width
             IconButtonTransparent{
                 objectName: "btnLineCopy"
-                icon.source: "qrc:/images/FileCopy.png"
+                icon.source: "/images/FileCopy.png"
                 onClicked: copyCurveName.visible = true
             }
             IconButtonTransparent{
                 objectName: "btnLineEdit"
                  onClicked: editCurveName.visible = true
-               icon.source: "qrc:/images/FileEditName.png"
+               icon.source: "/images/FileEditName.png"
             }
             IconButtonTransparent{
                 objectName: "btnLineSwapPoints"
-                icon.source: "qrc:/images/ABSwapPoints.png"
+                icon.source: "/images/ABSwapPoints.png"
             }
             IconButtonTransparent{
                 objectName: "btnLineExit"
-                icon.source: "qrc:/images/OK64.png"
+                icon.source: "/images/OK64.png"
                 onClicked: abCurvePicker.visible = false
             }
         }
@@ -64,21 +64,21 @@ Item {
                 IconButtonTransparent{
                     id: btnLineDelete
                     objectName: "btnLineDelete"
-                    icon.source: "qrc:/images/ABLineDelete.png"
+                    icon.source: "/images/ABLineDelete.png"
                 }
                 IconButtonTransparent{
                     objectName: "btnLineExit"
-                    icon.source: "qrc:/images/SwitchOff.png"
+                    icon.source: "/images/SwitchOff.png"
                     onClicked: abCurvePicker.visible = false
                 }
                 IconButtonTransparent{
                     objectName: "btnLineAdd"
-                    icon.source: "qrc:/images/AddNew.png"
+                    icon.source: "/images/AddNew.png"
                     onClicked: abSetter.visible = true
                 }
                 IconButtonTransparent{
                     objectName: "btnLineLoadFromKML"
-                    icon.source: "qrc:/images/BoundaryLoadFromGE.png"
+                    icon.source: "/images/BoundaryLoadFromGE.png"
                 }
             }
         }
@@ -112,7 +112,7 @@ Item {
                 anchors.left: parent.left
                 anchors.margins: 5
                 isChecked: false
-                icon.source: "qrc:/images/LetterABlue.png"
+                icon.source: "/images/LetterABlue.png"
             }
             IconButtonTransparent{
                 objectName: "b"
@@ -121,21 +121,21 @@ Item {
                 anchors.margins: 5
                 isChecked: true
                 onClicked: newLineName.visible = true
-                icon.source: "qrc:/images/LetterBBlue.png"
+                icon.source: "/images/LetterBBlue.png"
             }
             IconButtonTransparent{
                 objectName: "btnRecord"
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 anchors.margins: 20
-                icon.source: "qrc:/images/boundaryPause.png"
+                icon.source: "/images/boundaryPause.png"
             }
             IconButtonTransparent{
                 objectName: "btnCancel"
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
                 anchors.margins: 20
-                icon.source: "qrc:/images/Cancel64.png"
+                icon.source: "/images/Cancel64.png"
                 onClicked:{
                     parent.visible = false
                 }

@@ -53,26 +53,26 @@ Item {
             flow: Grid.TopToBottom
             IconButtonTransparent{
                 objectName: "btnDrawer"
-                icon.source: "qrc:/images/.png"
+                icon.source: "/images/.png"
             }
             IconButtonTransparent{
                 objectName: "btnDrawer"
-                icon.source: "qrc:/images/.png"
+                icon.source: "/images/.png"
             }
             IconButtonTransparent{
                 objectName: "btnDrawer"
-                icon.source: "qrc:/images/.png"
+                icon.source: "/images/.png"
             }
             IconButtonTransparent{
                 objectName: "btnDrawer"
-                icon.source: "qrc:/images/.png"
+                icon.source: "/images/.png"
             }
         }*/
 
         IconButtonTransparent{
             id: boundaryCurve
             objectName: "btnDrawerGenerateBoundaryCurve"
-            icon.source: "qrc:/images/BoundaryCurveLine.png"
+            icon.source: "/images/BoundaryCurveLine.png"
             anchors.right: parent.right
             anchors.bottom: curveRow.top
             anchors.margins: 15
@@ -96,16 +96,16 @@ Item {
             IconButtonTransparent{
                 id: marker
                 objectName: "btnDrawerCreateCurve"
-                icon.source: "qrc:/images/CurveOn.png"
+                icon.source: "/images/CurveOn.png"
             }
             IconButtonTransparent{
                 objectName: "btnDrawerCurveCycle"
-                icon.source: "qrc:/images/ABLineCycle.png"
+                icon.source: "/images/ABLineCycle.png"
             }
 
             IconButtonTransparent{
                 objectName: "btnDrawerDeleteLine"
-                icon.source: "qrc:/images/HideContour.png"
+                icon.source: "/images/HideContour.png"
             }
         }
         Rectangle{
@@ -132,16 +132,16 @@ Item {
             spacing: 20
             IconButtonTransparent{
                 objectName: "btnDrawerCreateLine"
-                icon.source: "qrc:/images/ABLineOn.png"
+                icon.source: "/images/ABLineOn.png"
             }
             IconButtonTransparent{
                 objectName: "btnDrawerLineCycle"
-                icon.source: "qrc:/images/ABLineCycle.png"
+                icon.source: "/images/ABLineCycle.png"
             }
 
             IconButtonTransparent{
                 objectName: "btnDrawerDeleteLine"
-                icon.source: "qrc:/images/ABLineDelete.png"
+                icon.source: "/images/ABLineDelete.png"
             }
         }
         Rectangle{
@@ -169,21 +169,21 @@ Item {
             spacing: 20
             IconButtonTransparent{
                 objectName: "btnDrawerDeletePoints"
-                icon.source: "qrc:/images/HeadlandDeletePoints.png"
+                icon.source: "/images/HeadlandDeletePoints.png"
             }
             IconButtonTransparent{
                 objectName: "btnDrawerShowMapping"
                 text: "Mapping"
                 isChecked: false
-                icon.source: "qrc:/images/MappingOff.png"
-                iconChecked: "qrc:/images/MappingOn.png"
+                icon.source: "/images/MappingOff.png"
+                iconChecked: "/images/MappingOn.png"
                 width: marker.width
                 height: marker.height
             }
 
             IconButtonTransparent{
                 objectName: "btnDrawerSave"
-                icon.source: "qrc:/images/OK64.png"
+                icon.source: "/images/OK64.png"
                 onClicked: lineDrawer.visible = false
             }
         }

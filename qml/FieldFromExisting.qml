@@ -135,7 +135,7 @@ Rectangle{
         anchors.left: editFieldName.right
         anchors.leftMargin: 5
         objectName: "btnBackSpace"
-        icon.source: "qrc:/images/BackSpace.png"
+        icon.source: "/images/BackSpace.png"
     }
 
     IconButtonTextBeside{
@@ -143,7 +143,7 @@ Rectangle{
         anchors.right: parent.right
         anchors.rightMargin: 5
         objectName: "btnSort"
-        icon.source: "qrc:/images/Sort.png"
+        icon.source: "/images/Sort.png"
         buttonText: "Sort"
     }
 
@@ -159,7 +159,7 @@ Rectangle{
         height: children.height
         IconButtonTransparent{
             objectName: "btnAddVehicleName"
-            icon.source: "qrc:/images/Config/Con_VehicleMenu.png"
+            icon.source: "/images/Config/Con_VehicleMenu.png"
             Text{
                 anchors.right: parent.left
                 anchors.verticalCenter: parent.verticalCenter
@@ -169,7 +169,7 @@ Rectangle{
         IconButtonTransparent{
             objectName: "btnAddDate"
             id: marker
-            icon.source: "qrc:/images/JobNameCalendar.png"
+            icon.source: "/images/JobNameCalendar.png"
             Text{
                 anchors.right: parent.left
                 anchors.verticalCenter: parent.verticalCenter
@@ -178,7 +178,7 @@ Rectangle{
         }
         IconButtonTransparent{
             objectName: "btnAddTime"
-            icon.source: "qrc:/images/JobNameTime.png"
+            icon.source: "/images/JobNameTime.png"
             Text{
                 anchors.right: parent.left
                 anchors.verticalCenter: parent.verticalCenter
@@ -190,7 +190,7 @@ Rectangle{
             isChecked: false
             width: marker.width
             height: marker.height
-            icon: "qrc:/images/FlagRed.png"
+            icon: "/images/FlagRed.png"
             buttonText: "Flags"
         }
         IconButtonColor{
@@ -198,7 +198,7 @@ Rectangle{
             isChecked: false
             width: marker.width
             height: marker.height
-            icon: "qrc:/images/ManualOff.png"
+            icon: "/images/ManualOff.png"
             buttonText: "Mapping"
         }
         IconButtonColor{
@@ -206,7 +206,7 @@ Rectangle{
             isChecked: false
             width: marker.width
             height: marker.height
-            icon: "qrc:/images/HeadlandMenu.png"
+            icon: "/images/HeadlandMenu.png"
             buttonText: "Headland"
         }
         IconButtonColor{
@@ -214,7 +214,7 @@ Rectangle{
             isChecked: false
             width: marker.width
             height: marker.height
-            icon: "qrc:/images/ABLineEdit.png"
+            icon: "/images/ABLineEdit.png"
             buttonText: "Lines"
         }
     }
@@ -228,11 +228,11 @@ Rectangle{
         spacing: 10
         IconButtonTransparent{
             onClicked: fieldFromExisting.visible = false
-            icon.source: "qrc:/images/Cancel64.png"
+            icon.source: "/images/Cancel64.png"
         }
         IconButtonTransparent{
             objectName: "btnSave"
-            icon.source: "qrc:/images/OK64.png"
+            icon.source: "/images/OK64.png"
         }
     }
 }

@@ -177,26 +177,26 @@ Window {
                         objectName: "btnHelp"
                         height: parent.height
                         width: 75
-                        icon.source: "qrc:/images/Help.png"
+                        icon.source: "/images/Help.png"
                         onClicked: warningWindowJS("yo")
                     }
                     IconButtonTransparent{
                         objectName: "btnWindowMinimize"
                         height: parent.height
-                        icon.source: "qrc:/images/WindowMinimize.png"
+                        icon.source: "/images/WindowMinimize.png"
                         width: 75
                     }
                     IconButtonTransparent{
                         objectName: "btnWindowMaximize"
                         height: parent.height
-                        icon.source: "qrc:/images/WindowMaximize.png"
+                        icon.source: "/images/WindowMaximize.png"
                         width: 75
                     }
                     IconButtonTransparent{
                         objectName: "btnWindowClose"
                         height: parent.height
                         width: 75
-                        icon.source: "qrc:/images/WindowClose.png"
+                        icon.source: "/images/WindowClose.png"
                         onClicked: closeDialog.visible = true
                     }
                 }
@@ -215,7 +215,7 @@ Window {
                     width: 75
                     objectName: "btnfileMenu"
                     buttonText: qsTr("FileMenu")
-                    icon.source: "qrc:/images/fileMenu.png"
+                    icon.source: "/images/fileMenu.png"
                     onClicked: fileMenu.popup()
                 }
                         Menu{
@@ -238,14 +238,14 @@ Window {
                     id: btnAcres
                     objectName: "btnAcres"
                     buttonText: qsTr("0.00")
-                    icon.source: "qrc:/images/TripOdometer.png"
+                    icon.source: "/images/TripOdometer.png"
 
                 }
                 IconButtonText {
                     id: btnnavigationSettings
                     objectName: "btnnavigationSettings"
                     buttonText: qsTr("Display")
-                    icon.source: "qrc:/images/NavigationSettings.png"
+                    icon.source: "/images/NavigationSettings.png"
                     property bool hideButtons: true
 
                     onHideButtonsChanged: {
@@ -271,7 +271,7 @@ Window {
                     id: btnSettings
                     objectName: "btnSettings"
                     buttonText: qsTr("Settings")
-                    icon.source: "qrc:/images/Settings48.png"
+                    icon.source: "/images/Settings48.png"
                     onClicked: config.visible = true
 
                 }
@@ -279,7 +279,7 @@ Window {
                     id: btnTools
                     objectName: "btnTools"
                     buttonText: qsTr("Tools")
-                    icon.source: "qrc:/images/SpecialFunctions.png"
+                    icon.source: "/images/SpecialFunctions.png"
                     //pseudo state
                     property bool hideTools: true
 
@@ -307,7 +307,7 @@ Window {
                     id: btnFieldMenu
                     objectName: "btnFieldMenu"
                     buttonText: qsTr("Field")
-                    icon.source: "qrc:/images/JobActive.png"
+                    icon.source: "/images/JobActive.png"
                     //pseudo state
                     property bool hideFieldMenu: true
 
@@ -335,7 +335,7 @@ Window {
                     id: btnFieldTools
                     objectName: "btnFieldTools"
                     buttonText: qsTr("Field Tools")
-                    icon.source: "qrc:/images/FieldTools.png"
+                    icon.source: "/images/FieldTools.png"
                     onClicked: fieldTools.popup()
                 }
                 Menu{
@@ -343,29 +343,29 @@ Window {
                     width: 300
                     IconButtonTextBeside{
                         text: "Boundary"
-                        icon.source: "qrc:/images/MakeBoundary.png"
+                        icon.source: "/images/MakeBoundary.png"
                         width: 300
                         onClicked: boundaryMenu.visible = true
                     }
                     IconButtonTextBeside{
                         text: "Headland"
-                        icon.source: "qrc:/images/HeadlandMenu.png"
+                        icon.source: "/images/HeadlandMenu.png"
                         width: 300
                     }
                     IconButtonTextBeside{
                         text: "Headland (Build)"
-                        icon.source: "qrc:/images/Headache.png"
+                        icon.source: "/images/Headache.png"
                         width: 300
                     }
                     IconButtonTextBeside{
                         text: "Tram Lines"
-                        icon.source: "qrc:/images/TramLines.png"
+                        icon.source: "/images/TramLines.png"
                         width: 300
                         onClicked: tramLinesEditor.visible = true
                     }
                     IconButtonTextBeside{
                         text: "Recorded Path"
-                        icon.source: "qrc:/images/RecPath.png"
+                        icon.source: "/images/RecPath.png"
                         width: 300
                     //pseudo state
                     property bool hideRecordMenu: true
@@ -397,13 +397,13 @@ Window {
                     id: btnAgIO
                     objectName: "btnAgIO"
                     buttonText: qsTr("AgIO")
-                    icon.source: "qrc:/images/AgIO.png"
+                    icon.source: "/images/AgIO.png"
                 }
                 IconButtonText {
                     id: btnautoSteerConf
                     objectName: "btnAutosteerConf"
                     buttonText: qsTr("Steer config")
-                    icon.source: "qrc:/images/AutoSteerConf.png"
+                    icon.source: "/images/AutoSteerConf.png"
                     /*property bool hideSteerMenu: true
 
                     onHideSteerMenuChanged: {
@@ -443,8 +443,8 @@ Window {
                     objectName: "btnContour"
                     isChecked: false
                     checkable: true
-                    icon.source: "qrc:/images/ContourOff.png"
-                    iconChecked: "qrc:/images/ContourOn.png"
+                    icon.source: "/images/ContourOff.png"
+                    iconChecked: "/images/ContourOn.png"
                     buttonText: "Contour"
                     //color: "white"
                 }
@@ -453,8 +453,8 @@ Window {
                     objectName: "btnABCurve"
                     isChecked: false
                     checkable: true
-                    icon.source: "qrc:/images/CurveOff.png"
-                    iconChecked: "qrc:/images/CurveOn.png"
+                    icon.source: "/images/CurveOff.png"
+                    iconChecked: "/images/CurveOn.png"
                     buttonText: "ABCurve"
                     onClicked: abCurvePicker.visible = true
                 }
@@ -465,8 +465,8 @@ Window {
                     //TODO: this should be set programmatically
                     //Also the types of lines are all mutually exclusive
                     checked: true
-                    icon.source: "qrc:/images/ABLineOff.png"
-                    iconChecked: "qrc:/images/ABLineOn.png"
+                    icon.source: "/images/ABLineOff.png"
+                    iconChecked: "/images/ABLineOn.png"
                     onClicked: abLinePicker.visible = true
                     buttonText: "ABLine"
                 }
@@ -474,14 +474,14 @@ Window {
                 IconButton{
                     id: btnABLineCycle
                     objectName: "btnABLineCycle"
-                    icon.source: "qrc:/images/ABLineCycle.png"
+                    icon.source: "/images/ABLineCycle.png"
                     width: btnABLine.width
                     height: btnABLine.height
                 }
                 IconButton{
                     id: btnABLineCycleBk
                     objectName: "btnABLineCycleBk"
-                    icon.source: "qrc:/images/ABLineCycleBk.png"
+                    icon.source: "/images/ABLineCycleBk.png"
                     width: btnABLine.width
                     height: btnABLine.height
                 }
@@ -491,8 +491,8 @@ Window {
                     objectName: "btnManualOffOn"
                     isChecked: false
                     checkable: true
-                    icon.source: "qrc:/images/ManualOff.png"
-                    iconChecked: "qrc:/images/ManualOn.png"
+                    icon.source: "/images/ManualOff.png"
+                    iconChecked: "/images/ManualOn.png"
                     buttonText: "Manual"
                 }
 
@@ -501,8 +501,8 @@ Window {
                     objectName: "btnSectionOffAutoOn"
                     isChecked: false
                     checkable: true
-                    icon.source: "qrc:/images/SectionMasterOff.png"
-                    iconChecked: "qrc:/images/SectionMasterOn.png"
+                    icon.source: "/images/SectionMasterOff.png"
+                    iconChecked: "/images/SectionMasterOn.png"
                     buttonText: "Auto"
                 }
                 IconButtonText {
@@ -510,15 +510,15 @@ Window {
                     objectName: "btnAutoYouTurn"
                     isChecked: false
                     checkable: true
-                    icon.source: "qrc:/images/YouTurnNo.png"
-                    iconChecked: "qrc:/images/YouTurn80.png"
+                    icon.source: "/images/YouTurnNo.png"
+                    iconChecked: "/images/YouTurn80.png"
                     buttonText: "AutoUturn"
                 }
                 IconButtonText {
                     id: btnAutoSteer
                     objectName: "btnAutoSteer"
-                    icon.source: "qrc:/images/AutoSteerOff.png"
-                    iconChecked: "qrc:/images/AutoSteerOn.png"
+                    icon.source: "/images/AutoSteerOff.png"
+                    iconChecked: "/images/AutoSteerOn.png"
                     buttonText: "X"
                 }
 
@@ -538,8 +538,8 @@ Window {
                     checkable: true
                     isChecked: true
                     visible: false
-                    icon.source: "qrc:/images/ContourPriorityLeft.png"
-                    iconChecked: "qrc:/images/ContourPriorityRight.png"
+                    icon.source: "/images/ContourPriorityLeft.png"
+                    iconChecked: "/images/ContourPriorityRight.png"
                 }
             }
             RowLayout{
@@ -554,7 +554,7 @@ Window {
                 IconButtonText {
                     id: btnResetTool
                     objectName: "btnResetTool"
-                    icon.source: "qrc:/images/ResetTool.png"
+                    icon.source: "/images/ResetTool.png"
                     buttonText: "Reset Tool"
                 }
                 IconButtonText {
@@ -562,8 +562,8 @@ Window {
                     objectName: "btnHeadland"
                     isChecked: false
                     checkable: true
-                    icon.source: "qrc:/images/HeadlandOff.png"
-                    iconChecked: "qrc:/images/HeadlandOn.png"
+                    icon.source: "/images/HeadlandOff.png"
+                    iconChecked: "/images/HeadlandOn.png"
                     buttonText: "Headland"
                 }
                 IconButtonText {
@@ -571,8 +571,8 @@ Window {
                     objectName: "btnHydLift"
                     isChecked: false
                     checkable: true
-                    icon.source: "qrc:/images/HydraulicLiftOff.png"
-                    iconChecked: "qrc:/images/HydraulicLiftOn.png"
+                    icon.source: "/images/HydraulicLiftOff.png"
+                    iconChecked: "/images/HydraulicLiftOn.png"
                     buttonText: "HydLift"
                     onClicked: warningWindow.visible = true
                 }
@@ -580,7 +580,7 @@ Window {
                     id: btnFlag
                     objectName: "btnFlag"
                     isChecked: false
-                    icon.source: "qrc:/images/FlagRed.png"
+                    icon.source: "/images/FlagRed.png"
                     onPressAndHold: {
                         if (contextFlag.visible) {
                             contextFlag.visible = false;
@@ -594,26 +594,26 @@ Window {
                 IconButtonText {
                     id: btnTramLines
                     objectName: "btnTramLines"
-                    icon.source: "qrc:/images/TramLines.png"
+                    icon.source: "/images/TramLines.png"
                     buttonText: "Tram Lines"
                 }
                 IconButtonText {
                     id: btnSectionMapping
                     objectName: "btnSectionMapping"
-                    icon.source: "qrc:/images/SectionMapping"
+                    icon.source: "/images/SectionMapping"
                 }
 
                 IconButtonText {
                     id: btnPointStart
                     objectName: "btnPointStart"
-                    icon.source: "qrc:/images/PointStart.png"
+                    icon.source: "/images/PointStart.png"
                     buttonText: "LinePicker"
                     onClicked: lineDrawer.visible = true
                 }
                 IconButtonText {
                     id: btnABLineEdit
                     objectName: "btnABLineEdit"
-                    icon.source: "qrc:/images/ABLineEdit.png"
+                    icon.source: "/images/ABLineEdit.png"
                     buttonText: "ABLineEdit"
                     onClicked: lineEditor.visible = true
                 }
@@ -622,8 +622,8 @@ Window {
                     objectName: "btnYouSkip"
                     isChecked: false
                     checkable: true
-                    icon.source: "qrc:/images/YouSkipOff.png"
-                    iconChecked: "qrc:/images/YouSkipOn.png"
+                    icon.source: "/images/YouSkipOff.png"
+                    iconChecked: "/images/YouSkipOn.png"
                     buttonText: "YouSkips"
                 }
                 ComboBox {
@@ -807,7 +807,7 @@ Window {
                         width: 70
                         height: 70
                         radius: 10
-                        icon.source: "qrc:/images/TiltDown.png"
+                        icon.source: "/images/TiltDown.png"
                     }
                     IconButtonTransparent {
                         id: btnCamera2d
@@ -815,7 +815,7 @@ Window {
                         width: 70
                         height: 70
                         radius: 10
-                        icon.source: "qrc:/images/Camera2D64.png"
+                        icon.source: "/images/Camera2D64.png"
                     }
                     IconButtonTransparent {
                         id: btnCameraNorth2d
@@ -823,7 +823,7 @@ Window {
                         width: 70
                         height: 70
                         radius: 10
-                        icon.source: "qrc:/images/CameraNorth2D.png"
+                        icon.source: "/images/CameraNorth2D.png"
                     }
                     IconButtonTransparent {
                         id: btnZoomOut
@@ -831,7 +831,7 @@ Window {
                         width: 70
                         height: 70
                         radius: 10
-                        icon.source: "qrc:/images/ZoomOut48.png"
+                        icon.source: "/images/ZoomOut48.png"
                     }
                     IconButtonTransparent {
                         id: btnWindowDayNight
@@ -839,7 +839,7 @@ Window {
                         width: 70
                         height: 70
                         radius: 10
-                        icon.source: "qrc:/images/WindowDayMode.png"
+                        icon.source: "/images/WindowDayMode.png"
                     }
                     IconButtonTransparent {
                         id: btnBrightnessDown
@@ -847,7 +847,7 @@ Window {
                         width: 70
                         height: 70
                         radius: 10
-                        icon.source: "qrc:/images/BrightnessDn.png"
+                        icon.source: "/images/BrightnessDn.png"
                     }
                     IconButtonTransparent {
                         id: btnTiltUp
@@ -855,7 +855,7 @@ Window {
                         width: 70
                         height: 70
                         radius: 10
-                        icon.source: "qrc:/images/TiltUp.png"
+                        icon.source: "/images/TiltUp.png"
                     }
                     IconButtonTransparent {
                         id: btnCamera3d
@@ -863,7 +863,7 @@ Window {
                         width: 70
                         height: 70
                         radius: 10
-                        icon.source: "qrc:/images/Camera3D64.png"
+                        icon.source: "/images/Camera3D64.png"
                     }
                     IconButtonTransparent {
                         id: btnCameraNorth3d
@@ -871,7 +871,7 @@ Window {
                         width: 70
                         height: 70
                         radius: 10
-                        icon.source: "qrc:/images/CameraNorth64.png"
+                        icon.source: "/images/CameraNorth64.png"
                     }
                     IconButtonTransparent {
                         id: btnZoomIn
@@ -879,7 +879,7 @@ Window {
                         width: 70
                         height: 70
                         radius: 10
-                        icon.source: "qrc:/images/ZoomIn48.png"
+                        icon.source: "/images/ZoomIn48.png"
                     }
                     Rectangle {
                         id: btnHZ
@@ -893,7 +893,7 @@ Window {
                         width: 70
                         height: 70
                         radius: 10
-                        icon.source: "qrc:/images/BrightnessUp.png"
+                        icon.source: "/images/BrightnessUp.png"
                     }
                 }
             }
@@ -949,7 +949,7 @@ Window {
                         id: autoTurnImage
                         mirror: false
                         signal clicked(var mouse)
-                        source: "qrc:/images/Images/z_Turn.png"
+                        source: "/images/Images/z_Turn.png"
                         visible: true
                         anchors.fill: parent
                     }
@@ -993,7 +993,7 @@ Window {
                     height: 60
                     anchors.left: parent.left
                     width: 150
-                    source: 'qrc:/images/Images/z_TurnManual.png'
+                    source: '/images/Images/z_TurnManual.png'
                     visible: false
                 }
                 ColorOverlay{
@@ -1009,7 +1009,7 @@ Window {
                     height: 60
                     anchors.left: parent.left
                     width: 150
-                    source: 'qrc:/images/Images/z_LateralManual.png'
+                    source: '/images/Images/z_LateralManual.png'
                     Button{
                         background: Rectangle{color: "transparent"}
                         objectName: "btnManLateralLeft"
@@ -1041,14 +1041,14 @@ Window {
                     objectName: "btnManUturnLeft"
                     width: 58
                     height: 58
-                    icon.source: "qrc:/images/TurnManualLeft.png"
+                    icon.source: "/images/TurnManualLeft.png"
                 }
                 IconButtonTransparent {
                     id: manUturnBtnRight
                     objectName: "btnManUturnRight"
                     width: 58
                     height: 58
-                    icon.source: "qrc:/images/TurnManualRight.png"
+                    icon.source: "/images/TurnManualRight.png"
                 }
                 anchors.top: parent.top;
                 anchors.topMargin: 15
@@ -1070,7 +1070,7 @@ Window {
             IconButton {
                 id: simStopButton
                 objectName: "simStopButton"
-                icon.source: "qrc:/images/Stop.png"
+                icon.source: "/images/Stop.png"
                 width: 50
                 height: 50
                 anchors.left: speedSlider.right
@@ -1101,7 +1101,7 @@ Window {
                 anchors.left: steerSlider.right
                 anchors.leftMargin: 50
                 anchors.bottom: steerSlider.bottom
-                icon.source: "qrc:/images/AutoSteerOn.png"
+                icon.source: "/images/AutoSteerOn.png"
                 onClicked: {
                     steerSlider.value = 300;
                 }
@@ -1227,20 +1227,20 @@ Window {
                     anchors.bottom: parent.bottom
                     IconButtonTransparent{
                         objectName: "recordPlay"
-                        icon.source: "qrc:/images/Play.png"
-                        iconChecked: "qrc:/images/Stop.png"
+                        icon.source: "/images/Play.png"
+                        iconChecked: "/images/Stop.png"
                     }
                     IconButtonTransparent{
                         objectName: "recordStartPoint"
-                        icon.source: "qrc:/images/pathResumeClose.png"
+                        icon.source: "/images/pathResumeClose.png"
                     }
                     IconButtonTransparent{
                         objectName: "recordRecord"
-                        icon.source: "qrc:/images/BoundaryRecord.png"
+                        icon.source: "/images/BoundaryRecord.png"
                     }
                     IconButtonTransparent{
                         objectName: "recordOpenFile"
-                        icon.source: "qrc:/images/FileOpen.png"
+                        icon.source: "/images/FileOpen.png"
                     }
                 }
             }
@@ -1261,7 +1261,7 @@ Window {
                     color1: "transparent"
                     color2: "transparent"
                     color3: "transparent"
-                    icon.source: "qrc:/images/back-button.png"
+                    icon.source: "/images/back-button.png"
                     onClicked: parent.visible = false
                 }
                 IconButtonText{
@@ -1271,7 +1271,7 @@ Window {
                     color1: "transparent"
                     color2: "transparent"
                     color3: "transparent"
-                    icon.source: "qrc:/images/ExitAOG.png"
+                    icon.source: "/images/ExitAOG.png"
                 }
             }
 
@@ -1302,7 +1302,7 @@ Window {
                     IconButton {
                         id: areaSideBtn
                         objectName: "btnAreaSide"
-                        icon.source: "qrc:/images/AreaSide.png";
+                        icon.source: "/images/AreaSide.png";
                     }
                 }
             }
@@ -1337,28 +1337,28 @@ Window {
                     IconButton {
                         id: redFlag
                         objectName: "btnRedFlag"
-                        icon.source: "qrc:/images/FlagRed.png";
+                        icon.source: "/images/FlagRed.png";
                     }
                     IconButton {
                         id: greenFlag
                         objectName: "btnGreenFlag"
-                        icon.source: "qrc:/images/FlagGrn.png";
+                        icon.source: "/images/FlagGrn.png";
                     }
                     IconButton {
                         id: yellowFlag
                         objectName: "btnYellowFlag"
-                        icon.source: "qrc:/images/FlagYel.png";
+                        icon.source: "/images/FlagYel.png";
                     }
                     IconButton {
                         id: deleteFlag
                         objectName: "btnDeleteFlag"
-                        icon.source: "qrc:/images/FlagDelete.png"
+                        icon.source: "/images/FlagDelete.png"
                         enabled: false
                     }
                     IconButton {
                         id: deleteAllFlags
                         objectName: "btnDeleteAllFlags"
-                        icon.source: "qrc:/images/FlagDeleteAll.png"
+                        icon.source: "/images/FlagDeleteAll.png"
                         enabled: false
                     }
                 }

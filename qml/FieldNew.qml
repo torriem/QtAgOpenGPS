@@ -35,7 +35,7 @@ Rectangle{
         IconButtonTransparent{
             objectName: "btnAddDate"
             id: marker
-            icon.source: "qrc:/images/JobNameCalendar.png"
+            icon.source: "/images/JobNameCalendar.png"
             Text{
                 anchors.right: parent.left
                 anchors.verticalCenter: parent.verticalCenter
@@ -44,7 +44,7 @@ Rectangle{
         }
         IconButtonTransparent{
             objectName: "btnAddTime"
-            icon.source: "qrc:/images/JobNameTime.png"
+            icon.source: "/images/JobNameTime.png"
             Text{
                 anchors.right: parent.left
                 anchors.verticalCenter: parent.verticalCenter
@@ -63,11 +63,11 @@ Rectangle{
         spacing: 10
         IconButtonTransparent{
             onClicked: fieldNew.visible = false
-            icon.source: "qrc:/images/Cancel64.png"
+            icon.source: "/images/Cancel64.png"
         }
         IconButtonTransparent{
             objectName: "btnSave"
-            icon.source: "qrc:/images/OK64.png"
+            icon.source: "/images/OK64.png"
         }
     }
 }

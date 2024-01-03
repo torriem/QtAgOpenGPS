@@ -61,26 +61,26 @@ Item {
 
                 Image {
                     anchors.fill: parent
-                    source: "qrc:/images/Steer/ST_SteerTab.png"
+                    source: "/images/Steer/ST_SteerTab.png"
                 }
             }
             TabButton{
                 Image{
                     anchors.fill: parent
-                    source: "qrc:/images/Steer/ST_GainTab.png"
+                    source: "/images/Steer/ST_GainTab.png"
                 }
             }
             TabButton{
                 Image{
                     anchors.fill: parent
 
-                    source: "qrc:/images/Steer/ST_StanleyTab.png"
+                    source: "/images/Steer/ST_StanleyTab.png"
                 }
             }
             TabButton{
                 Image{
                     anchors.fill: parent
-                    source: "qrc:/images/Steer/Sf_PPTab.png"
+                    source: "/images/Steer/Sf_PPTab.png"
                 }
             }
         }
@@ -152,7 +152,7 @@ Item {
                     anchors.left: parent.left
                     anchors.bottom: parent.bottom
                     height: ppColumn.height
-                    source: "qrc:/images/Steer/Sf_SteerTab.png"
+                    source: "/images/Steer/Sf_SteerTab.png"
                 }
 
             }
@@ -206,7 +206,7 @@ Item {
                     anchors.left: parent.left
                     anchors.bottom: parent.bottom
                     height: ppColumn.height
-                    source: "qrc:/images/Steer/Sf_GainTab.png"
+                    source: "/images/Steer/Sf_GainTab.png"
                 }
 
             }
@@ -260,7 +260,7 @@ Item {
                     anchors.left: parent.left
                     anchors.bottom: parent.bottom
                     height: ppColumn.height
-                    source: "qrc:/images/Steer/Sf_Stanley.png"
+                    source: "/images/Steer/Sf_Stanley.png"
                 }
 
             }
@@ -323,7 +323,7 @@ Item {
                     anchors.left: parent.left
                     anchors.bottom: parent.bottom
                     height: ppColumn.height
-                    source: "qrc:/images/Steer/Sf_PP.png"
+                    source: "/images/Steer/Sf_PP.png"
                 }
             }
         }
@@ -369,8 +369,8 @@ Item {
                     id: pwmSteer
                     objectName: "pwmYesNo"
                     isChecked: false
-                    icon.source: "qrc:/images/SteerDriveOff.png"
-                    iconChecked: "qrc:/images/SteerDriveOn.png"
+                    icon.source: "/images/SteerDriveOff.png"
+                    iconChecked: "/images/SteerDriveOn.png"
                     implicitWidth: parent.width/4.5
                     implicitHeight: parent.height
                     color3: "white"
@@ -378,7 +378,7 @@ Item {
                 }
                 IconButton{
                     objectName: "pwmLeft"
-                    icon.source: "qrc:/images/SnapLeft.png"
+                    icon.source: "/images/SnapLeft.png"
                     implicitWidth: parent.width/4.5
                     implicitHeight: parent.height
                     color3: "white"
@@ -386,7 +386,7 @@ Item {
                 }
                 IconButton{
                     objectName: "pwmRight"
-                    icon.source: "qrc:/images/SnapRight.png"
+                    icon.source: "/images/SnapRight.png"
                     implicitWidth: parent.width/4.5
                     implicitHeight: parent.height
                     color3: "white"
@@ -395,7 +395,7 @@ Item {
                 IconButton{
                     id: pwmZero
                     objectName: "pwmZero"
-                    icon.source: "qrc:/images/SteerZeroSmall.png"
+                    icon.source: "/images/SteerZeroSmall.png"
                     implicitWidth: parent.width/4.5
                     implicitHeight: parent.height
                     color3: "white"
@@ -424,8 +424,8 @@ Item {
                 height: 75
                     color3: "white"
                     border: 2
-                icon.source: "qrc:/images/BoundaryRecord.png"
-                iconChecked: "qrc:/images/Stop"
+                icon.source: "/images/BoundaryRecord.png"
+                iconChecked: "/images/Stop"
             }
             Text{
                 anchors.top: steerRecord.top
@@ -457,43 +457,43 @@ Item {
                 spacing: 20
                 flow: Grid.TopToBottom
                 IconButtonColor{
-                    icon: "qrc:/images/Config/ConST_Danfoss.png"
+                    icon: "/images/Config/ConST_Danfoss.png"
                     objectName: "btnDanfoss"
                     isChecked: false
                     buttonText: "Danfoss"
                 }
                 IconButtonColor{
-                    icon: "qrc:/images/Config/ConSt_TurnSensor.png"
+                    icon: "/images/Config/ConSt_TurnSensor.png"
                     objectName: "btnTurnSensor"
                     isChecked: false
                     buttonText: "Turn Sensor"
                 }
                 IconButtonColor{
-                    icon: "qrc:/images/Config/ConSt_TurnSensorPressure.png"
+                    icon: "/images/Config/ConSt_TurnSensorPressure.png"
                     isChecked: false
                     objectName: "btnPressureTurnSensor"
                     buttonText: "Pressure Turn Sensor"
                 }
                 IconButtonColor{
-                    icon: "qrc:/images/Config/ConSt_TurnSensorCurrent.png"
+                    icon: "/images/Config/ConSt_TurnSensorCurrent.png"
                     objectName: "btnCurrentTurnSensor"
                     isChecked: false
                     buttonText: "Current Turn Sensor"
                 }
                 IconButtonColor{
-                    icon: "qrc:/images/Config/ConSt_InvertWAS.png"
+                    icon: "/images/Config/ConSt_InvertWAS.png"
                     objectName: "btnInvertWAS"
                     isChecked: false
                     buttonText: "Invert WAS"
                 }
                 IconButtonColor{
-                    icon: "qrc:/images/Config/ConSt_InvertDirection.png"
+                    icon: "/images/Config/ConSt_InvertDirection.png"
                     objectName: "btnInvertMotorDirection"
                     isChecked: false
                     buttonText: "Invert Motor Dir"
                 }
                 IconButtonColor{
-                    icon: "qrc:/images/Config/ConSt_InvertRelay.png"
+                    icon: "/images/Config/ConSt_InvertRelay.png"
                     objectName: "btnSteerInvertRelays"
                     isChecked: false
                     buttonText: "Invert Relays"

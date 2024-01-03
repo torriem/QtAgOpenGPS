@@ -9,7 +9,7 @@ Rectangle{
     visible: false
     Image {
         id: dimImage
-        source: "qrc:/images/RadiusWheelBase.png"
+        source: "/images/RadiusWheelBase.png"
         width: 350
         height: 350
         anchors.centerIn: parent

@@ -23,7 +23,7 @@ Item {
                 anchors.top: parent.top
                 IconButton{
                     id: configModulesSettings
-                    icon.source: "qrc:/images/Config/ConS_ModulesMachine.png"
+                    icon.source: "/images/Config/ConS_ModulesMachine.png"
                     /* function toggle_(){
                     if(configImplement.visible == true){
                         configImplement.visible = false
@@ -36,7 +36,7 @@ Item {
                 }
                 IconButton{
                     id: configModulesPins
-                    icon.source: "qrc:/images/Config/ConS_ImplementSection.png"
+                    icon.source: "/images/Config/ConS_ImplementSection.png"
                     function toggle_modulespinswin(){
                         if(configModulesPinsWin.visible == true){
                             configModulesPinsWin.visible = false
@@ -84,7 +84,7 @@ Item {
                     objectName: "btnHydLiftEnable"
                     height: 130
                     width: 170
-                    icon: "qrc:/images/SwitchOn.png"
+                    icon: "/images/SwitchOn.png"
                 }
                 SpinBox{
                     id: raiseTime
@@ -99,7 +99,7 @@ Item {
                     }
                 }
                 Image{
-                    source: "qrc:/images/Config/ConMa_LiftRaiseTime"
+                    source: "/images/Config/ConMa_LiftRaiseTime"
                     width: 200
                     height: 200
                 }
@@ -130,7 +130,7 @@ Item {
                     }
                 }
                 Image{
-                    source: "qrc:/images/Config/ConMa_LiftLowerTime"
+                    source: "/images/Config/ConMa_LiftLowerTime"
                     width: 200
                     height: 200
                 }
@@ -142,7 +142,7 @@ Item {
             anchors.bottom: parent.bottom
             buttonText: "Invert Relays"
             anchors.margins: 10
-            icon: "qrc:/images/Config/ConSt_InvertRelay.png"
+            icon: "/images/Config/ConSt_InvertRelay.png"
         }
         Rectangle{
             anchors.bottom: parent.bottom
@@ -210,7 +210,7 @@ Item {
             anchors.right: parent.right
             anchors.margins: 20
             anchors.bottom: parent.bottom
-            icon.source: "qrc:/images/ToolAcceptChange.png"
+            icon.source: "/images/ToolAcceptChange.png"
             Text{
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.left
@@ -335,20 +335,20 @@ Item {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.margins: 20
-            icon.source: "qrc:/images/back-button.png"
+            icon.source: "/images/back-button.png"
         }
         IconButtonTransparent{
             anchors.bottom: parent.bottom
             anchors.left: back.right
             anchors.margins: 20
-            icon.source: "qrc:/images/UpArrow64.png"
+            icon.source: "/images/UpArrow64.png"
         }
         IconButtonTransparent{
             objectName: "btnPinsSave"
             anchors.right: mandatory.left
             anchors.margins: 20
             anchors.bottom: parent.bottom
-            icon.source: "qrc:/images/ToolAcceptChange.png"
+            icon.source: "/images/ToolAcceptChange.png"
             Text{
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.left
@@ -363,7 +363,7 @@ Item {
             anchors.bottom: parent.bottom
             anchors.margins: 20
             visible: false
-            source: "qrc:/images/Config/ConSt_Mandatory.png"
+            source: "/images/Config/ConSt_Mandatory.png"
             width: back.width
             height: back.height
         }

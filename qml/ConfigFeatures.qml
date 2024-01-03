@@ -25,22 +25,22 @@ Item {
             height: children.height
             IconButtonColor{
                 objectName: "btnFeaturesTrams"
-                icon.source: "qrc:/images/TramAll.png"
+                icon.source: "/images/TramAll.png"
                 buttonText: "Tram Lines"
             }
             IconButtonColor{
                 objectName: "btnFeaturesHeadland"
-                icon.source: "qrc:/images/HeadlandOn.png"
+                icon.source: "/images/HeadlandOn.png"
                 buttonText: "Headland"
             }
             IconButtonColor{
                 objectName: "btnFeaturesBoundary"
-                icon.source: "qrc:/images/BoundaryOuter.png"
+                icon.source: "/images/BoundaryOuter.png"
                 buttonText: "Boundary"
             }
             IconButtonColor{
                 objectName: "btnFeaturesRecPath"
-                icon.source: "qrc:/images/RecPath.png"
+                icon.source: "/images/RecPath.png"
             }
         }
         Text{
@@ -61,22 +61,22 @@ Item {
             height: children.height
             IconButtonColor{
                 objectName: "btnFeaturesABSmooth"
-                icon.source: "qrc:/images/ABSmooth.png"
+                icon.source: "/images/ABSmooth.png"
                 buttonText: "AB Smooth"
             }
             IconButtonColor{
                 objectName: "btnFeaturesHideContour"
-                icon.source: "qrc:/images/HideContour.png"
+                icon.source: "/images/HideContour.png"
                 buttonText: "Hide Contour"
             }
             IconButtonColor{
                 objectName: "btnFeaturesWebCam"
-                icon.source: "qrc:/images/Webcam.png"
+                icon.source: "/images/Webcam.png"
                 buttonText: "WebCam"
             }
             IconButtonColor{
                 objectName: "btnFeaturesRecPath"
-                icon.source: "qrc:/images/RecPath.png"
+                icon.source: "/images/RecPath.png"
             }
         }
 */    }

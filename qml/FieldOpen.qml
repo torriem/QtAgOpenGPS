@@ -101,7 +101,7 @@ Rectangle{
             IconButtonText {
                 id: deleteField
                 objectName: "btnDeleteField"
-                icon.source: "qrc:/images/skull.png"
+                icon.source: "/images/skull.png"
                 buttonText: "Delete Field"
                 color3: "white"
                 border: 1
@@ -110,7 +110,7 @@ Rectangle{
             IconButtonText {
                 id: sort
                 objectName: "btnSort"
-                icon.source: "qrc:/images/Sort.png"
+                icon.source: "/images/Sort.png"
                 buttonText: "Sort"
                 color3: "white"
                 border: 1
@@ -119,7 +119,7 @@ Rectangle{
             IconButtonText {
                 id: cancel
                 objectName: "btnCancel"
-                icon.source: "qrc:/images/Cancel64.png"
+                icon.source: "/images/Cancel64.png"
                 buttonText: "Cancel"
                 onClicked: fieldOpen.visible = false
                 color3: "white"
@@ -129,7 +129,7 @@ Rectangle{
             IconButtonText {
                 id: useSelected
                 objectName: "btnUseSelected"
-                icon.source: "qrc:/images/FileOpen.png"
+                icon.source: "/images/FileOpen.png"
                 buttonText: "Use Selected"
                 color3: "white"
                 border: 1

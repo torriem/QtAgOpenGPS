@@ -24,7 +24,7 @@ Item {
             height: children.height
             IconButtonTransparent{
                 objectName: "tramHalfNudgeLeft"
-                icon.source: "qrc:/images/SnapLeftHalf.png"
+                icon.source: "/images/SnapLeftHalf.png"
             }
             Text{
                 text: "2.00 m"
@@ -35,7 +35,7 @@ Item {
 
             IconButtonTransparent{
                 objectName: "tramHalfNudgeRight"
-                icon.source: "qrc:/images/SnapRightHalf.png"
+                icon.source: "/images/SnapRightHalf.png"
             }
         }
         Row{
@@ -48,7 +48,7 @@ Item {
             height: children.height
             IconButtonTransparent{
                 objectName: "tramSmallNudgeLeft"
-                icon.source: "qrc:/images/ArrowLeft.png"
+                icon.source: "/images/ArrowLeft.png"
             }
             Text{
                 text: "10 cm"
@@ -59,7 +59,7 @@ Item {
 
             IconButtonTransparent{
                 objectName: "tramSmallNudgeRight"
-                icon.source: "qrc:/images/ArrowRight.png"
+                icon.source: "/images/ArrowRight.png"
             }
         }
         IconButtonTransparent{
@@ -69,7 +69,7 @@ Item {
             anchors.topMargin: 20
             anchors.left: parent.left
             anchors.leftMargin: 60
-            icon.source: "qrc:/images/ABSwapPoints.png"
+            icon.source: "/images/ABSwapPoints.png"
         }
         IconButtonTransparent{
             id: tramSwapMode
@@ -78,7 +78,7 @@ Item {
             anchors.topMargin: 10
             anchors.left: tramSwapAB.right
             anchors.leftMargin: 60
-            icon.source: "qrc:/images/TramLines.png"
+            icon.source: "/images/TramLines.png"
         }
         Text {
             text: qsTr("Mode")
@@ -97,7 +97,7 @@ Item {
             IconButtonTransparent{
                 id: tramPassesDown
                 objectName: "btnTramPassesDown"
-                icon.source: "qrc:/images/DnArrow64.png"
+                icon.source: "/images/DnArrow64.png"
             }
             Rectangle{
                 id: passesRow
@@ -123,7 +123,7 @@ Item {
             }
             IconButtonTransparent{
                 objectName: "btnTramPassesUp"
-                icon.source: "qrc:/images/UpArrow64.png"
+                icon.source: "/images/UpArrow64.png"
             }
         }
 
@@ -132,7 +132,7 @@ Item {
             anchors.leftMargin: 10
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 10
-            icon.source: "qrc:/images/SwitchOff.png"
+            icon.source: "/images/SwitchOff.png"
             onClicked: tramLinesEditor.visible = false
         }
         IconButtonTransparent{
@@ -141,7 +141,7 @@ Item {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 10
             objectName: "btnTramSave"
-            icon.source: "qrc:/images/VehFileSave.png"
+            icon.source: "/images/VehFileSave.png"
         }
         Column{
             anchors.horizontalCenter: parent.horizontalCenter

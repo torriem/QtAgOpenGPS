@@ -8,7 +8,7 @@ Rectangle{
     visible: false
     Image {
         id: antImage
-        source: "qrc:/images/AntennaTractor.png"
+        source: "/images/AntennaTractor.png"
         width: 350
         height: 350
         anchors.centerIn: parent

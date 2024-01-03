@@ -36,7 +36,7 @@ Rectangle{
         anchors.top: textInputRect.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.margins: 20
-        icon.source: "qrc:/images/Time.png"
+        icon.source: "/images/Time.png"
         Text{
             anchors.right: parent.left
             anchors.rightMargin: 30
@@ -51,7 +51,7 @@ Rectangle{
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.margins: 20
-        icon.source: "qrc:/images/Cancel64.png"
+        icon.source: "/images/Cancel64.png"
         onClicked:{
             parent.visible = false
         }
@@ -61,7 +61,7 @@ Rectangle{
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         anchors.margins: 20
-        icon.source: "qrc:/images/OK64.png"
+        icon.source: "/images/OK64.png"
 
     }
 }

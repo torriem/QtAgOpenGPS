@@ -114,27 +114,27 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             IconButtonTransparent{
                 objectName: "btnBoundaryDeleteCurrent"
-                icon.source: "qrc:/images/BoundaryDelete.png"
+                icon.source: "/images/BoundaryDelete.png"
             }
             IconButtonTransparent{
                 objectName: "btnBoundaryDeleteAll"
-                icon.source: "qrc:/images/BoundaryDeleteAll.png"
+                icon.source: "/images/BoundaryDeleteAll.png"
             }
             IconButtonTransparent{
                 objectName: "btnBoundaryOpenGE"
-                icon.source: "qrc:/images/GoogleEarth.png"
+                icon.source: "/images/GoogleEarth.png"
             }
             IconButtonTransparent{
                 objectName: "btnBoundaryFancyDrawer"
-                icon.source: "qrc:/images/bing.png"
+                icon.source: "/images/bing.png"
             }
             IconButtonTransparent{
-                icon.source: "qrc:/images/AddNew.png"
+                icon.source: "/images/AddNew.png"
                 onClicked: boundaryType.visible = true
 
             }
             IconButtonTransparent{
-                icon.source: "qrc:/images/OK64.png"
+                icon.source: "/images/OK64.png"
                 onClicked: boundaryMenu.visible = false
             }
         }
@@ -202,11 +202,11 @@ Item {
                 spacing: 60
                 IconButtonTransparent{
                     objectName: "btnBoundaryFromKML"
-                    icon.source: "qrc:/images/BoundaryLoadFromGE.png"
+                    icon.source: "/images/BoundaryLoadFromGE.png"
                     onClicked: boundaryKMLType.visible = true
                 }
                 IconButtonTransparent{
-                    icon.source: "qrc:/images/SteerRight.png"
+                    icon.source: "/images/SteerRight.png"
                     onClicked: boundaryRecord.visible = true
                     Text{
                         anchors.bottom: parent.top
@@ -221,7 +221,7 @@ Item {
                 anchors.margins: 10
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
-                icon.source: "qrc:/images/Cancel64.png"
+                icon.source: "/images/Cancel64.png"
                 onClicked: boundaryType.visible = false
             }
         }
@@ -289,7 +289,7 @@ Item {
                 spacing: 60
                 IconButtonTransparent{
                     objectName: "btnOneKML"
-                    icon.source: "qrc:/images/BoundaryLoadFromGE.png"
+                    icon.source: "/images/BoundaryLoadFromGE.png"
                     Text{
                         anchors.left: parent.right
                         anchors.verticalCenter: parent.verticalCenter
@@ -299,7 +299,7 @@ Item {
                 }
                 IconButtonTransparent{
                     objectName: "btnMultiKML"
-                    icon.source: "qrc:/images/BoundaryLoadMultiFromGE.png"
+                    icon.source: "/images/BoundaryLoadMultiFromGE.png"
                     Text{
                         anchors.left: parent.right
                         anchors.verticalCenter: parent.verticalCenter
@@ -312,7 +312,7 @@ Item {
                 anchors.margins: 10
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
-                icon.source: "qrc:/images/Cancel64.png"
+                icon.source: "/images/Cancel64.png"
                 onClicked: boundaryKMLType.visible = false
             }
         }
@@ -397,8 +397,8 @@ Item {
             IconButtonTransparent{
                 id: side2Record
                 objectName: "btnBoundarySide2Record"
-                icon.source: "qrc:/images/BoundaryRight.png"
-                iconChecked: "qrc:/images/BoundaryLeft.png"
+                icon.source: "/images/BoundaryRight.png"
+                iconChecked: "/images/BoundaryLeft.png"
                 anchors.top: recordBoundaryWindow.top
                 anchors.right: parent.right
                 anchors.margins: 5
@@ -417,7 +417,7 @@ Item {
                     border: 1
                     id: boundaryDelete
                     objectName: "recordBoundaryDelete"
-                    icon.source: "qrc:/images/BoundaryDelete.png"
+                    icon.source: "/images/BoundaryDelete.png"
                     width: 80
                     height: 80
                 }
@@ -448,27 +448,27 @@ Item {
                 IconButtonTransparent{
                     border: 1
                     objectName: "btnBoundaryRecordAddPoint"
-                    icon.source: "qrc:/images/PointAdd.png"
+                    icon.source: "/images/PointAdd.png"
                     width: 80
                     height: 80
                 }
                 IconButtonTransparent{
                     border: 1
                     objectName: "btnBoundaryRecordDeleteLastPoint"
-                    icon.source: "qrc:/images/PointDelete.png"
+                    icon.source: "/images/PointDelete.png"
                     width: 80
                     height: 80
                 }
                 IconButtonTransparent{
                     objectName: "btnBoundaryRecordRecord"
-                    icon.source: "qrc:/images/BoundaryRecord.png"
+                    icon.source: "/images/BoundaryRecord.png"
                     width: 80
                     height: 80
                     border: 1
                 }
                 IconButtonTransparent{
                     objectName: "btnBoundaryRecordSave"
-                    icon.source: "qrc:/images/OK64.png"
+                    icon.source: "/images/OK64.png"
                     onClicked: boundaryRecord.visible = false
                     width: 80
                     height: 80

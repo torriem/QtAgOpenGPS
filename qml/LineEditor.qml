@@ -23,7 +23,7 @@ Rectangle {
         IconButtonTransparent{
             id: leftNudger
             objectName: "btnLineNudgeLeft"
-            icon.source: "qrc:/images/ArrowLeft.png"
+            icon.source: "/images/ArrowLeft.png"
         }
         Rectangle{
             width: leftNudger.width
@@ -50,7 +50,7 @@ Rectangle {
 
         IconButtonTransparent{
             objectName: "btnLineNudgeRight"
-            icon.source: "qrc:/images/ArrowRight.png"
+            icon.source: "/images/ArrowRight.png"
         }
     }
     Row{
@@ -63,11 +63,11 @@ Rectangle {
         height: children.height
         IconButtonTransparent{
             objectName: "btnLineSwapAB"
-            icon.source: "qrc:/images/ABSwapPoints.png"
+            icon.source: "/images/ABSwapPoints.png"
         }
         IconButtonTransparent{
             objectName: "btnLineSnap2Pivot"
-            icon.source: "qrc:/images/SnapToPivot.png"
+            icon.source: "/images/SnapToPivot.png"
         }
 
     }
@@ -80,7 +80,7 @@ Rectangle {
         spacing: 15
         height: children.height
         IconButtonText{
-            icon.source: "qrc:/images/Cancel64.png"
+            icon.source: "/images/Cancel64.png"
             onClicked: lineEditor.visible = false
             color1: "transparent"
             color2: "transparent"
@@ -91,7 +91,7 @@ Rectangle {
         }
         IconButtonText{
             objectName: "btnLineSaveforNow"
-            icon.source: "qrc:/images/FileDontSave.png"
+            icon.source: "/images/FileDontSave.png"
             color1: "transparent"
             color2: "transparent"
             color3: "transparent"
@@ -102,7 +102,7 @@ Rectangle {
         }
         IconButtonText{
             objectName: "btnLineSave"
-            icon.source: "qrc:/images/FileSave.png"
+            icon.source: "/images/FileSave.png"
             color1: "transparent"
             color2: "transparent"
             color3: "transparent"

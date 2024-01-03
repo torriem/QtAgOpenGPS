@@ -39,7 +39,7 @@ Rectangle{
         }
         IconButtonTransparent{
             id: cancel
-            icon.source: "qrc:/images/Cancel64.png"
+            icon.source: "/images/Cancel64.png"
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.margins: 10
@@ -47,7 +47,7 @@ Rectangle{
         }
         IconButtonTransparent{
             objectName: "btnNumberWindowSave"
-            icon.source: "qrc:/images/OK64.png"
+            icon.source: "/images/OK64.png"
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.margins: 10
