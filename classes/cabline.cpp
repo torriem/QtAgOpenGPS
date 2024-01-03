@@ -36,7 +36,7 @@ void CABLine::BuildCurrentABLineList(Vec3 pivot,
     lastSecond = secondsSinceStart;
 
     //move the ABLine over based on the overlap amount set in
-    double widthMinusOverlap = tool_width - tool_overlap;
+    widthMinusOverlap = tool_width - tool_overlap;
 
     //x2-x1
     dx = refABLineP2.easting - refABLineP1.easting;
@@ -296,6 +296,7 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
     double tool_toolOffset = property_setVehicle_toolOverlap;
     bool isStanleyUsed = property_setVehicle_isStanleyUsed;
     bool isSideGuideLines = property_setMenu_isSideGuideLines;
+    widthMinusOverlap = tool_toolWidth - tool_toolOverlap;
 
     GLHelperOneColor gldraw;
     GLHelperColors gldraw1;
@@ -327,7 +328,7 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
     color.setRgbF(0.930f, 0.2f, 0.2f);
     gldraw.append(QVector3D(refABLineP1.easting, refABLineP1.northing, 0));
     gldraw.append(QVector3D(refABLineP2.easting, refABLineP2.northing, 0));
-    gldraw.draw(gl,mvp,color,GL_LINE_STIPPLE,lineWidth);
+    gldraw.draw(gl,mvp,color,GL_LINES,lineWidth);
 
     double sinHR = sin(abHeading + glm::PIBy2) * (widthMinusOverlap * 0.5 + shadowOffset);
     double cosHR = cos(abHeading + glm::PIBy2) * (widthMinusOverlap * 0.5 + shadowOffset);
@@ -346,13 +347,8 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
     gldraw.draw(gl,mvp,color,GL_TRIANGLE_FAN,lineWidth);
 
     //shadow lines
-    color.setRgbF(0.55, 0.55, 0.55, 0.3);
-    gldraw.clear();
-
-    gldraw.append(QVector3D(currentABLineP1.easting - sinHL, currentABLineP1.northing - cosHL, 0));
-    gldraw.append(QVector3D(currentABLineP1.easting + sinHR, currentABLineP1.northing + cosHR, 0));
-    gldraw.append(QVector3D(currentABLineP2.easting + sinHR, currentABLineP2.northing + cosHR, 0));
-    gldraw.append(QVector3D(currentABLineP2.easting - sinHL, currentABLineP2.northing - cosHR, 0));
+    color.setRgbF(0.95, 0.55, 0.55, 0.5);
+    //use the same vertices as the shadow
     gldraw.draw(gl,mvp,color,GL_LINE_LOOP,1.0f);
 
     //draw current AB Line
@@ -422,7 +418,7 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
             gldraw.append(QVector3D((cosHeading * (-toolWidth)) + currentABLineP2.easting, (sinHeading * (-toolWidth)) + currentABLineP2.northing, 0));
         }
 
-        gldraw.draw(gl,mvp,color,GL_LINE_STIPPLE,lineWidth);
+        gldraw.draw(gl,mvp,color,GL_LINES,lineWidth);
     }
 
     if (!isStanleyUsed && camera.camSetDistance > -200)
