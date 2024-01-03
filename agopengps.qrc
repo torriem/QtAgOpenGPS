@@ -492,5 +492,8 @@
         <file>images/Images/z_TurnCancel.png</file>
         <file>images/Images/z_TurnManual.png</file>
         <file>qml/PinButtons.qml</file>
+        <file>qml/SectionWidth.qml</file>
+        <file>qml/TextFieldCustomized.qml</file>
+        <file>qml/NumberInputWindow.qml</file>
     </qresource>
 </RCC>
