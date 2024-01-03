@@ -628,7 +628,7 @@ void FormGPS::oglBack_Paint()
                 gldraw.clear();
                 for (int h = 0; h < tram.tramList[i]->count(); h++)
                     gldraw.append(QVector3D((*tram.tramList[i])[h].easting, (*tram.tramList[i])[h].northing, 0));
-                gldraw.draw(gl,projection*modelview,QColor::fromRgba64(0,245,0),GL_LINE_STRIP,8);
+                gldraw.draw(gl,projection*modelview,QColor::fromRgb(0,245,0),GL_LINE_STRIP,8);
             }
         }
 
@@ -639,7 +639,7 @@ void FormGPS::oglBack_Paint()
                 gldraw.append(QVector3D(tram.tramBndOuterArr[h].easting, tram.tramBndOuterArr[h].northing, 0));
             for (int h = 0; h < tram.tramBndInnerArr.count(); h++)
                 gldraw.append(QVector3D(tram.tramBndInnerArr[h].easting, tram.tramBndInnerArr[h].northing, 0));
-            gldraw.draw(gl,projection*modelview,QColor::fromRgba64(0,245,0),GL_LINE_STRIP,8);
+            gldraw.draw(gl,projection*modelview,QColor::fromRgb(0,245,0),GL_LINE_STRIP,8);
         }
     }
 
@@ -649,14 +649,14 @@ void FormGPS::oglBack_Paint()
         ////draw the bnd line
         if (bnd.bndList[0].fenceLine.count() > 3)
         {
-            DrawPolygon(gl,projection*modelview,bnd.bndList[0].fenceLine,3,QColor::fromRgba64(0,240,0));
+            DrawPolygon(gl,projection*modelview,bnd.bndList[0].fenceLine,3,QColor::fromRgb(0,240,0));
         }
 
 
         //draw 250 green for the headland
         if (bnd.isHeadlandOn && bnd.isSectionControlledByHeadland)
         {
-            DrawPolygon(gl,projection*modelview,bnd.bndList[0].hdLine,3,QColor::fromRgba64(0,250,0));
+            DrawPolygon(gl,projection*modelview,bnd.bndList[0].hdLine,3,QColor::fromRgb(0,250,0));
         }
     }
 

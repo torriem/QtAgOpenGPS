@@ -131,6 +131,9 @@ FormGPS::~FormGPS()
 //broken out here.  So the lookaheadPixels array has been populated already
 //by the rendering routine.
 void FormGPS::processSectionLookahead() {
+    if (property_displayShowBack)
+        grnPixelsWindow->setPixmap(QPixmap::fromImage(grnPix.mirrored()));
+
     //determine where the tool is wrt to headland
     if (bnd.isHeadlandOn) bnd.WhereAreToolCorners(tool);
 
