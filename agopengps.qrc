@@ -496,5 +496,8 @@
         <file>qml/TextFieldCustomized.qml</file>
         <file>qml/NumberInputWindow.qml</file>
         <file>qml/WarningWindow.qml</file>
+        <file>qml/ConfigTractorDimensions.qml</file>
+        <file>qml/ConfigTractorAntenna.qml</file>
+        <file>qml/ConfigTractorSteerSettings.qml</file>
     </qresource>
 </RCC>

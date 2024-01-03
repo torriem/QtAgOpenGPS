@@ -8,6 +8,9 @@ Item {
     function closeAllConfig(){
         configWhichVehicle.visible = false
         configTractor.visible = false
+        configTractorAntenna.visible = false
+        configTractorDimensions.visible = false
+        configTractorSteerSettings.visible = false
         configImplement.visible = false
         configSources.visible = false
         configModules.visible = false
@@ -43,14 +46,13 @@ Item {
             }
         }
 
-        ColumnLayout{
+        Column{
             id:leftColumn
             anchors.top:topLine.bottom
             anchors.left: topLine.left
             width: childrenRect.width
-            anchors.bottom: bottomLine.top
             visible: true
-
+            spacing: 20
             IconButtonTransparent{
                 id:vehicleMenu
                 objectName: "btnVehicleMenu"
@@ -59,16 +61,60 @@ Item {
                 height:75
 
                 function toggle_configTractor(){
-                    if(configTractor.visible == true){
+                    if(tractorMenu.visible == true){
                         closeAllConfig()
                         configWhichVehicle.visible = true
+                        tractorMenu.visible = false
                     }else{
                         closeAllConfig()
                         configTractor.visible = true
+                        tractorMenu.visible = true
                     }
                 }
                 onClicked: {
                     toggle_configTractor()
+                }
+            }
+            Column{
+                id: tractorMenu
+                visible: false
+                height: children.height
+
+                IconButton{
+                    id: configTrSettings
+                    icon.source: "qrc:/images/Config/ConS_VehicleConfig.png"
+                    onClicked:{
+                        closeAllConfig()
+                        configTractor.visible = true
+                    }
+                }
+                IconButton{
+                    id: configTrDim
+                    icon.source: "qrc:/images/Config/ConS_ImplementHitch.png"
+
+                    onClicked: {
+                        closeAllConfig()
+                        configTractorDimensions.visible = true
+                    }
+                }
+                IconButton{
+                    id: btnconfigTrAntDim
+                    icon.source: "qrc:/images/Config/ConS_ImplementAntenna.png"
+
+                    onClicked: {
+                        closeAllConfig()
+                        configTractorAntenna.visible = true
+                    }
+                }
+                IconButton{
+                    id: btnconfigTrSteerSett
+                    icon.source: "qrc:/images/Config/ConS_ModulesSteer.png"
+
+                    onClicked: {
+                        closeAllConfig()
+                        configTractorSteerSettings.visible = true
+                    }
+
                 }
             }
             IconButtonTransparent{
@@ -185,6 +231,24 @@ Item {
 
         ConfigTractor{
             id:configTractor
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: false
+        }
+        ConfigTractorAntenna{
+            id:configTractorAntenna
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: false
+        }
+        ConfigTractorDimensions{
+            id:configTractorDimensions
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: false
+        }
+        ConfigTractorSteerSettings{
+            id:configTractorSteerSettings
             anchors.fill: mainConfig
             anchors.margins:1
             visible: false
