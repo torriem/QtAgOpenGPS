@@ -505,5 +505,7 @@
         <file>qml/ConfigImplementSwitches.qml</file>
         <file>qml/ConfigImplementTiming.qml</file>
         <file>qml/ConfigSourcesRoll.qml</file>
+        <file>qml/ConfigImplementSectionsSection.qml</file>
+        <file>qml/ConfigImplementSectionsZones.qml</file>
     </qresource>
 </RCC>
