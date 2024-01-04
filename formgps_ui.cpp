@@ -364,14 +364,16 @@ void FormGPS::onBtnContourPriority_clicked(){
 }
 
 void FormGPS::onBtnTiltDown_clicked(){
-    double camPitch = property_setwin;
 
     if (closeAllMenus()) return;
     qDebug()<<"TiltDown button clicked.";
-    camPitch -= (camPitch*0.03-1);
-    if (camPitch > 0) camPitch = 0;
+
+    if (camera.camPitch > -59) camera.camPitch = -60;
+    camera.camPitch += ((camera.camPitch * 0.012) - 1);
+    if (camera.camPitch < -76) camera.camPitch = -76;
+
     lastHeight = -1; //redraw the sky
-    property_setwin = camPitch;
+    property_setwin = camera.camPitch;
     openGLControl->update();
 }
 
@@ -380,36 +382,41 @@ void FormGPS::onBtnTiltUp_clicked(){
 
     if (closeAllMenus()) return;
     qDebug()<<"TiltUp button clicked.";
-    camPitch += (camPitch*0.03-1);
-    if (camPitch < -80) camPitch = -80;
+
     lastHeight = -1; //redraw the sky
-    property_setwin = camPitch;
+    camera.camPitch -= ((camera.camPitch * 0.012) - 1);
+    if (camera.camPitch > -58) camera.camPitch = 0;
+
+    property_setwin = camera.camPitch;
     openGLControl->update();
 }
 
 void FormGPS::onBtnZoomIn_clicked(){
     if (closeAllMenus()) return;
     qDebug() <<"ZoomIn button clicked.";
-    if (zoomValue <= 20) {
-        if ((zoomValue -= zoomValue * 0.1) < 6.0) zoomValue = 6.0;
+    if (camera.zoomValue <= 20) {
+        if ((camera.zoomValue -= camera.zoomValue * 0.1) < 3.0)
+            camera.zoomValue = 3.0;
     } else {
-        if ((zoomValue -= zoomValue*0.05) < 6.0) zoomValue = 6.0;
+        if ((camera.zoomValue -= camera.zoomValue * 0.05) < 3.0)
+            camera.zoomValue = 3.0;
     }
-
-    camera.camSetDistance = zoomValue * zoomValue * -1;
+    camera.camSetDistance = camera.zoomValue * camera.zoomValue * -1;
     SetZoom();
+    //TODO save zoom to properties
     openGLControl->update();
 }
 
 void FormGPS::onBtnZoomOut_clicked(){
     if (closeAllMenus()) return;
     qDebug() <<"ZoomOut button clicked.";
-    if (zoomValue <= 20)
-        zoomValue += zoomValue*0.1;
-    else
-        zoomValue += zoomValue*0.05;
-    camera.camSetDistance = zoomValue * zoomValue * -1;
+    if (camera.zoomValue <= 20) camera.zoomValue += camera.zoomValue * 0.1;
+    else camera.zoomValue += camera.zoomValue * 0.05;
+    if (camera.zoomValue > 220) camera.zoomValue = 220;
+    camera.camSetDistance = camera.zoomValue * camera.zoomValue * -1;
     SetZoom();
+
+    //todo save to properties
     openGLControl->update();
 }
 
