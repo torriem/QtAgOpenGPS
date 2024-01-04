@@ -22,18 +22,25 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
     property_setMenu_isSpeedoOn = true;
 
     //just for debugging I think, force sections to be set
-    property_setSection_position1 = -4;
-    property_setSection_position2 = -1;
-    property_setSection_position3 = 1;
-    property_setSection_position4 = 4;
-    property_setSection_position5 = 8;
+    property_setSection_position1 = -3.3528;
+    property_setSection_position2 = -2.2352;
+    property_setSection_position3 = -1.1176;
+    property_setSection_position4 = 0;
+    property_setSection_position5 = 1.1176;
+    property_setSection_position6 = 2.2352;
+    property_setSection_position7 = 3.3528;
 
-    property_setVehicle_numSections = 3;
 
-    property_setVehicle_hitchLength = -2;
+    property_setVehicle_numSections = 6;
+    property_setVehicle_toolWidth = 6.7056;
+
+
+    property_setVehicle_trackWidth = 2.286;
+    property_setVehicle_hitchLength = -2.54;
     property_setTool_isToolTrailing = true;
+    property_setTool_toolTrailingHitchLength = -4.572;
     property_setVehicle_minTurningRadius = 5.25;
-    property_setVehicle_maxSteerAngle = 55;
+    property_setVehicle_maxSteerAngle = 30;
     settings.setValue("test/test", "My test.");
     settings.sync();
 
