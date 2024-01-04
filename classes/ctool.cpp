@@ -9,6 +9,8 @@
 void CTool::loadSettings()
 {
     //from settings grab the vehicle specifics
+    trailingToolToPivotLength = property_setTool_trailingToolToPivotLength;
+
     width = property_setVehicle_toolWidth;
     overlap = property_setVehicle_toolOverlap;
 
@@ -140,6 +142,9 @@ void CTool::DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 pro
 
         gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.7f, 0.4f, 0.2f),GL_LINE_STRIP, 1.0f);
     }
+
+    //draw trailer axle here
+    trailingTool -= trailingToolToPivotLength;
 
     //look ahead lines
     GLHelperColors gldrawcolors;

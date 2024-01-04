@@ -28,6 +28,7 @@ public:
     ///---- in settings
     double overlap;
     double trailingHitchLength, tankTrailingHitchLength;
+    double trailingToolToPivotLength;
     double offset;
 
     double lookAheadOffSetting, lookAheadOnSetting;
