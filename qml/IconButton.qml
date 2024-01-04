@@ -3,10 +3,8 @@ import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.13
 
 Button {
-    width: 100
-    height: 100
-    implicitWidth: 100
-    implicitHeight: 100
+    implicitWidth: 70
+    implicitHeight: 70
     id: icon_button
     text: ""
     hoverEnabled: true
@@ -15,6 +13,7 @@ Button {
     icon.color: "transparent"
 
     property double iconHeightScaleText: 0.75
+    property int border: 0
 
     property color color1: "#ffffff"
     property color color2: "#ffffff"
@@ -27,6 +26,7 @@ Button {
     property color colorChecked1: "#c8e8ff"
     property color colorChecked2: "#7cc8ff"
     property color colorChecked3: "#467191"
+
 
     //For compatibility with the old IconButton and friends
     property bool isChecked: icon_button.checked
@@ -80,7 +80,7 @@ Button {
             id: text1
             text: icon_button.text
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: parent.height*0.05
+            anchors.bottomMargin: parent.height*0.02
             anchors.horizontalCenter: parent.horizontalCenter
             font.bold: true
             font.pixelSize: parent.height * 0.15
@@ -92,12 +92,12 @@ Button {
             id: content_image
             width: parent.width
             anchors.fill: parent
-            anchors.topMargin: parent.height * 0.05
+            anchors.topMargin: parent.height * 0.00
             anchors.bottomMargin: icon_button.text  ?
-                                      parent.height - parent.height * icon_button.iconHeightScaleText + parent.height * 0.05
-                                    : parent.height * 0.05
-            anchors.leftMargin: parent.width * 0.05
-            anchors.rightMargin: parent.width * 0.05
+                                      parent.height - parent.height * icon_button.iconHeightScaleText + parent.height * 0.00
+                                    : parent.height * 0.02
+            anchors.leftMargin: parent.width * 0.00
+            anchors.rightMargin: parent.width * 0.00
             fillMode: Image.PreserveAspectFit
             source: icon_button.icon.source
         }
@@ -116,6 +116,8 @@ Button {
     }
 
     background: Rectangle {
+        border.width: icon_button.border
+        //border.width: icon_button.border
         radius: 10
         id: icon_button_background
         gradient: Gradient {
@@ -154,10 +156,10 @@ Button {
                     target: gradientStop3
                     color: icon_button.color1
                 }
-                PropertyChanges {
+               /* PropertyChanges {
                     target: icon_button_background
-                    border.width: 1
-                }
+                    border.width: 5
+                }*/
                 /*
                 PropertyChanges {
                     target: content_image
@@ -181,10 +183,10 @@ Button {
                     target: gradientStop3
                     color: icon_button.color1
                 }
-                PropertyChanges {
+             /*   PropertyChanges {
                     target: icon_button_background
                     border.width: 1
-                }
+                }*/
                 PropertyChanges {
                     target: content_image
                     source: icon_button.icon.source
@@ -205,10 +207,10 @@ Button {
                     target: gradientStop3
                     color: icon_button.colorChecked3
                 }
-                PropertyChanges {
+               /* PropertyChanges {
                     target: icon_button_background
                     border.width: 0
-                }
+                }*/
                 /*
                 PropertyChanges {
                     target: content_image
@@ -231,10 +233,10 @@ Button {
                     target: gradientStop3
                     color: icon_button.color3
                 }
-                PropertyChanges {
+                /*PropertyChanges {
                     target: icon_button_background
                     border.width: 0
-                }
+                }*/
                 /*
                 PropertyChanges {
                     target: content_image
@@ -245,10 +247,10 @@ Button {
             State {
                 when: icon_button.hovered
                 name: "hovered"
-                PropertyChanges {
+               /* PropertyChanges {
                     target: icon_button_background
                     border.width: 1
-                }
+                }*/
                 PropertyChanges {
                     target: gradientStop1
                     color: icon_button.colorHover1

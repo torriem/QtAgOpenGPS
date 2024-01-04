@@ -108,7 +108,6 @@
         <file>qml/MainWindowTest.qml</file>
         <file>images/textures/floor.png</file>
         <file>images/textures/Landscape.png</file>
-        <file>qml/JobMenu.qml</file>
         <file>qml/PortLight.qml</file>
         <file>shaders/color_vshader.vsh</file>
         <file>shaders/color_fshader.fsh</file>
@@ -130,7 +129,7 @@
         <file>images/textures/LandscapeNight.png</file>
         <file>images/textures/Lift.png</file>
         <file>qml/FieldMenu.qml</file>
-        <file>qml/FieldWindow.qml</file>
+        <file>qml/FieldOpen.qml</file>
         <file>qml/ToolsWindow.qml</file>
         <file>images/fileMenu.png</file>
         <file>images/SpecialFunctions.png</file>
@@ -458,6 +457,65 @@
         <file>images/textures/z_SteerPointer.png</file>
         <file>images/textures/z_Tractor.png</file>
         <file>images/textures/z_LateralManual.png</file>
-        <file>qml/GuiInterface.qml</file>
+        <file>qml/IconButtonColor.qml</file>
+        <file>qml/SliderCustomized.qml</file>
+        <file>qml/ABLinePicker.qml</file>
+        <file>qml/ABCurvePicker.qml</file>
+        <file>qml/LineName.qml</file>
+        <file>qml/IconButtonTextBeside.qml</file>
+        <file>images/FieldTools.png</file>
+        <file>images/Headache.png</file>
+        <file>images/FileClose.png</file>
+        <file>images/FileExisting.png</file>
+        <file>images/ISOXML.png</file>
+        <file>qml/TramLinesEditor.qml</file>
+        <file>qml/LineEditor.qml</file>
+        <file>qml/FieldFromExisting.qml</file>
+        <file>images/BackSpace.png</file>
+        <file>qml/FieldNew.qml</file>
+        <file>qml/FieldFromKML.qml</file>
+        <file>qml/BoundaryMenu.qml</file>
+        <file>qml/LineDrawer.qml</file>
+        <file>qml/TopLine.qml</file>
+        <file>images/Images/VehicleOpacity.png</file>
+        <file>images/Images/z_4WDFront.png</file>
+        <file>images/Images/z_4WDRear.png</file>
+        <file>images/Images/z_bingMap.png</file>
+        <file>images/Images/z_Compass.png</file>
+        <file>images/Images/z_Floor.png</file>
+        <file>images/Images/z_Font.png</file>
+        <file>images/Images/z_FrontWheels.png</file>
+        <file>images/Images/z_Harvester.png</file>
+        <file>images/Images/z_LateralManual.png</file>
+        <file>images/Images/z_Lift.png</file>
+        <file>images/Images/z_NoGPS.png</file>
+        <file>images/Images/z_QuestionMark.png</file>
+        <file>images/Images/z_SkyDay.png</file>
+        <file>images/Images/z_SkyNight.png</file>
+        <file>images/Images/z_Speedo.png</file>
+        <file>images/Images/z_SpeedoNeedle.png</file>
+        <file>images/Images/z_SteerDot.png</file>
+        <file>images/Images/z_SteerPointer.png</file>
+        <file>images/Images/z_Tool.png</file>
+        <file>images/Images/z_Tractor.png</file>
+        <file>images/Images/z_Turn.png</file>
+        <file>images/Images/z_TurnCancel.png</file>
+        <file>images/Images/z_TurnManual.png</file>
+        <file>qml/PinButtons.qml</file>
+        <file>qml/SectionWidth.qml</file>
+        <file>qml/TextFieldCustomized.qml</file>
+        <file>qml/NumberInputWindow.qml</file>
+        <file>qml/WarningWindow.qml</file>
+        <file>qml/ConfigTractorDimensions.qml</file>
+        <file>qml/ConfigTractorAntenna.qml</file>
+        <file>qml/ConfigTractorSteerSettings.qml</file>
+        <file>qml/ConfigModulesPins.qml</file>
+        <file>qml/ConfigImplementDimensions.qml</file>
+        <file>qml/ConfigImplementSections.qml</file>
+        <file>qml/ConfigImplementSwitches.qml</file>
+        <file>qml/ConfigImplementTiming.qml</file>
+        <file>qml/ConfigSourcesRoll.qml</file>
+        <file>qml/ConfigImplementSectionsSection.qml</file>
+        <file>qml/ConfigImplementSectionsZones.qml</file>
     </qresource>
 </RCC>

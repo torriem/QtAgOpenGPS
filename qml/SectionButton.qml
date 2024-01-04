@@ -44,6 +44,7 @@ Rectangle {
 
     //property color buttonColor: "white"
     //property string buttonText: "Ok"
+    property string buttonText: ""
     signal clicked
 
     color: "red"
@@ -60,7 +61,7 @@ Rectangle {
     Text {
         id: label
         anchors.fill: parent
-        text: "Off"
+        text: rect.buttonText
         font.bold: true
         fontSizeMode: Text.Fit
         minimumPixelSize: 10
@@ -78,7 +79,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: label
-                text:  "On"
+                //text:  "On"
             }
         },
         State {
@@ -90,7 +91,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: label
-                text:  "Auto"
+                //text:  "Auto"
             }
         },
         State {
@@ -101,7 +102,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: label
-                text:  "Off"
+                //text:  "Off"
             }
        }
     ]

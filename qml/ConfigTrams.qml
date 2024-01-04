@@ -7,7 +7,7 @@ Item {
         anchors.fill: parent
         color: "ghostwhite"
         Image {
-            source: "qrc:/images/Config/ConT_TramSpacing.png"
+            source: "/images/Config/ConT_TramSpacing.png"
             id: imageTram
             anchors.right: parent.horizontalCenter
             anchors.top: parent.top
@@ -31,18 +31,13 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
             }
         }
-        Rectangle{
+            IconButtonColor{
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 100
             width: 200
             height: 200
-            border.color: "black"
-            radius: 5
-            IconButtonTransparent{
-                anchors.fill: parent
-                icon.source: "qrc:/images/Config/ConT_TramOverride.png"
-            }
+                icon: "/images/Config/ConT_TramOverride.png"
         }
     }
 }

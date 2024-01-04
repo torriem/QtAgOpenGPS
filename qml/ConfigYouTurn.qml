@@ -16,22 +16,22 @@ Item {
             height: parent.height /2
 
             Image {
-                source: "qrc:images/Config/ConU_UturnRadius.png"
+                source: "/images/Config/ConU_UturnRadius.png"
                 height: 150
                 width: 150
             }
             Image {
-                source: "qrc:images/Config/ConU_UturnDistance.png"
+                source: "/images/Config/ConU_UturnDistance.png"
                 height: 150
                 width: 150
             }
             Image {
-                source: "qrc:images/Config/ConU_UturnLength.png"
+                source: "/images/Config/ConU_UturnLength.png"
                 height: 150
                 width: 150
             }
             Image {
-                source: "qrc:images/Config/ConU_UturnSmooth.png"
+                source: "/images/Config/ConU_UturnSmooth.png"
                 height: 150
                 width: 150
             }
@@ -105,22 +105,25 @@ Radius")
             Row{
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: styleText.bottom
+                width:childrenRect.width
+                anchors.left: parent.left
+                anchors.leftMargin: 10
                 anchors.topMargin: 5
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 5
                 spacing: 20
-                IconButtonTransparent{
-                icon.source: "qrc:/images/YouTurnNo.png"
-                //onClick: childUturn.color = "green"
-               /* background:Rectangle{
+                IconButtonColor{
+                    icon: "/images/YouTurnNo.png"
+                    //onClick: childUturn.color = "green"
+                    /* background:Rectangle{
                     id: childUturn
                     color: "white"
                     border.color: black
                 }*/
-            }
-            IconButtonTransparent{
-                icon.source: "qrc:/images/YouTurnH.png"
-            }
+                }
+                IconButtonColor{
+                    icon: "/images/YouTurnH.png"
+                }
             }
         }
     }
