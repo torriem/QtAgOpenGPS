@@ -533,13 +533,13 @@ void FormGPS::oglBack_Paint()
         format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
         //TODO: backFBO is leaking... delete it in the destructor?
         //I think context has to be active to delete it...
-        backFBO = new QOpenGLFramebufferObject(QSize(500,500),format);
+        backFBO = new QOpenGLFramebufferObject(QSize(500,300),format);
     }
     QSurface *origSurface = glContext->surface();
 
     glContext->makeCurrent(&backSurface);
     backFBO->bind();
-    glContext->functions()->glViewport(0,0,500,500);
+    glContext->functions()->glViewport(0,0,500,300);
     QOpenGLFunctions *gl = glContext->functions();
 
     //int width = glContext->surface()->size().width();
@@ -551,7 +551,7 @@ void FormGPS::oglBack_Paint()
     projection.setToIdentity();
 
     //projection.perspective(6.0f,1,1,6000);
-    projection.perspective(glm::toDegrees((double)0.104719758f), 1.0f, 50.0f, 520.0f);
+    projection.perspective(glm::toDegrees((double)0.06f), 1.666666666666f, 50.0f, 520.0f);
 
     gl->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
@@ -695,6 +695,8 @@ void FormGPS::oglBack_Paint()
     //QImage temp = grnPix.copy(tool.rpXPosition, 250, tool.rpWidth, 290 /*(int)rpHeight*/);
     //TODO: is thisn right?
     QImage temp = grnPix.copy(tool.rpXPosition, 0, tool.rpWidth, 290 /*(int)rpHeight*/);
+    temp.setPixelColor(0,0,QColor::fromRgb(255,128,0));
+    grnPix = temp; //only show clipped image
     memcpy(grnPixels, temp.constBits(), temp.size().width() * temp.size().height() * 4);
     //grnPix = temp;
 
