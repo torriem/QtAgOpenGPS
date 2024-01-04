@@ -36,6 +36,25 @@ void FormGPS::oglMain_Paint()
     GLHelperColors gldrawcolors;
     GLHelperOneColor gldraw1;
 
+    //synchronize with the position code in the main thread
+    if (!lock.tryLockForRead())
+        return;
+
+    //if there's no new position to draw, just return so we don't
+    //waste time redrawing.  Frame rate is at most gpsHz.  And if we
+    //need to redraw part of the window on a resize, it will just have
+    //to wait until the next position comes in.  Although if there is
+    //no simulator running and no positions coming in, the GL background
+    //will not update, which isn't what we want either.  Some kind of timeout?
+
+    //if (!newframe) {
+    //    lock.unlock();
+    //    return;
+    //}
+
+    newframe = false;
+
+
     int width = qmlItem(qml_root, "openglcontrol")->property("width").toReal();
     int height = qmlItem(qml_root, "openglcontrol")->property("height").toReal();
     gl->glViewport(0,0,width,height);
@@ -328,15 +347,17 @@ void FormGPS::oglMain_Paint()
                 gldraw1.append(QVector3D(flagPts[flagNumberPicked-1].easting, flagPts[flagNumberPicked-1].northing, 0));
                 gldraw1.draw(gl, projection*modelview,
                              QColor::fromRgbF(0.930f, 0.72f, 0.32f),
-                             GL_LINE_STIPPLE, property_setDisplay_lineWidth);
+                             GL_LINE, property_setDisplay_lineWidth);
             }
 
             //draw the vehicle/implement
+            QMatrix4x4 mv = modelview; //push matrix
             tool.DrawTool(gl,modelview, projection,isJobStarted,vehicle, camera,tram);
             double steerangle;
             if(timerSim.isActive()) steerangle = sim.steerangleAve;
             else steerangle = mc.actualSteerAngleDegrees;
             vehicle.DrawVehicle(gl, modelview, projection,steerangle,isFirstHeadingSet,camera,tool,bnd,ct,curve,ABLine);
+            modelview = mv; //pop matrix
 
             if (camera.camSetDistance > -150)
             {
@@ -373,7 +394,7 @@ void FormGPS::oglMain_Paint()
                 DrawLightBarText(gl, projection*modelview);
             }
 
-            //Moved to QML
+            //Moved to QML, set a flag or something.
             //if (bnd.bndList.size() > 0 && yt.isYouTurnBtnOn) drawUTurnBtn(gl, projection*modelview);
 
             //Manual UTurn buttons are now in QML and are manipulated
@@ -431,6 +452,7 @@ void FormGPS::oglMain_Paint()
         oglBack_Paint();
         gl->glFlush();
     }
+    lock.unlock();
 }
 
 /// Handles the OpenGLInitialized event of the openGLControl control.
@@ -613,6 +635,12 @@ void FormGPS::oglBack_Paint()
             }
         }
     }
+
+    //draw tool bar for debugging
+    //gldraw.clear();
+    //gldraw.append(QVector3D(tool.section[0].leftPoint.easting, tool.section[0].leftPoint.northing,0.5));
+    //gldraw.append(QVector3D(tool.section[tool.numOfSections-1].rightPoint.easting, tool.section[tool.numOfSections-1].rightPoint.northing,0.5));
+    //gldraw.draw(gl,projection*modelview,QColor::fromRgb(255,0,0),GL_LINE_STRIP,1);
 
     //draw 245 green for the tram tracks
 
@@ -836,7 +864,7 @@ void FormGPS::DrawSteerCircle(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatri
 
     if ((ahrs.imuRoll != 88888))
     {
-        QString head = QString("%1").arg(ahrs.imuRoll,0,'g', 1);
+        QString head = QString("%1").arg(ahrs.imuRoll,0,'f', 1);
         drawText(gl,projection*modelview,(int)(((head.length()) * -7)), -30, head, 0.8,true,color);
     }
 
@@ -1026,15 +1054,15 @@ void FormGPS::DrawLightBarText(QOpenGLFunctions *gl, QMatrix4x4 mvp)
 
     DrawLightBar(gl,mvp, avgPivotDistance);
 
-    if (avgPivotDistance > 0.0)
+    if (avgPivotDistance > 0.01)
     {
         color.setRgbF(0.9752f, 0.50f, 0.3f);
-        hede = QString("%1").arg(fabs(avgPivotDistance),0,'g',0);
+        hede = QString("%1").arg(fabs(avgPivotDistance),0,'f',0);
     }
     else
     {
         color.setRgbF(0.50f, 0.952f, 0.3f);
-        hede = QString("%1").arg(fabs(avgPivotDistance),0,'g',0);
+        hede = QString("%1").arg(fabs(avgPivotDistance),0,'f',0);
     }
 
     int center = -(int)(((double)(hede.length()) * 0.5) * 16);
@@ -1241,14 +1269,14 @@ void FormGPS::DrawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width
     */
     int center = Width / 2 - 10;
     color.setRgbF( 0.9852f, 0.982f, 0.983f);
-    strHeading = locale.toString(glm::toDegrees(vehicle.fixHeading),'g',1);
+    strHeading = locale.toString(glm::toDegrees(vehicle.fixHeading),'f',1);
     lenth = 15 * strHeading.length();
     drawText(gl, mvp, Width / 2 - lenth, 10, strHeading, 0.8);
 
     //GPS Step
     if(distanceCurrentStepFixDisplay < 0.03*100)
         color.setRgbF(0.98f, 0.82f, 0.653f);
-    drawText(gl, mvp, center, 10, locale.toString(distanceCurrentStepFixDisplay,'g',1) + tr("cm"),0.8, true, color);
+    drawText(gl, mvp, center, 10, locale.toString(distanceCurrentStepFixDisplay,'f',1) + tr("cm"),0.8, true, color);
 
     if (isMaxAngularVelocity)
     {
@@ -1417,7 +1445,7 @@ void FormGPS::DrawAge(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width)
     //TODO move to QML
     QColor color;
     color.setRgbF(0.9752f, 0.52f, 0.0f);
-    drawText(gl, mvp, Width / 4, 60, "Age:" + QString("%1").arg(pn.age,0,'g',1), 1.5, true, color);
+    drawText(gl, mvp, Width / 4, 60, "Age:" + QString("%1").arg(pn.age,0,'f',1), 1.5, true, color);
 
 }
 
