@@ -57,21 +57,23 @@ QJsonObject AOGSettings::toJson()
 
     for (const auto &key : keys)
     {
-        b = value(key,QVariant::Invalid);
 
+        b = value(key,QVariant::Invalid);
         type = b.typeName();
 
-        /*
-        if (type == "double" ||
-            type == "int" ||
-            type == "char" ||
-            type == "QString" ||
-            type == "bool" ||
-            type == "float"
-            )
+        if (type == "QStringList" ||
+            type == "QVariantList" )
         {
-        */
+            QVector<int> list = value(key,QVector<int>());
+            json_value="@List:";
+            for(int i=0; i < list.length(); i++){
+                json_value += QString("%1").arg(list[i]);
+                if (i < list.length() -1)
+                    json_value +=",";
+            }
+        } else {
             json_value = b.toString();
+        }
         qWarning() << key <<", " << type << ", " << json_value;
         /*
         } else {
@@ -124,12 +126,20 @@ bool AOGSettings::loadJson(QString filename)
 
             raw_data = new_value.toLatin1().mid(9);
             ds >> v;
-        } else
-        {
-            v = QVariant(new_value);
-        }
+            QSettings::setValue(key, v);
+        } else if(new_value.startsWith("@List:")) {
+            new_value = new_value.mid(6);
+            QStringList parts = new_value.split(",");
+            QVector<int> list;
+            foreach(QString part, parts) {
+                list.append(part.toInt());
+            }
 
-        QSettings::setValue(key, v);
+            setValue(key,list);
+        } else {
+            v = QVariant(new_value);
+            QSettings::setValue(key, v);
+        }
     }
 
     return true;
