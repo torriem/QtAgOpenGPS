@@ -339,6 +339,10 @@ public:
     CPGN_EB p_235;
     CPGN_E5 p_229;
 
+    /* GUI synchronization lock */
+    QReadWriteLock lock;
+    bool newframe = false;
+
     bool bootstrap_field = false;
    /************************
      * Controls.Designer.cs *
@@ -399,7 +403,8 @@ public:
     double smoothCamHeading = 0, gpsHeading = 10.0, prevGPSHeading = 0.0;
 
     //storage for the cos and sin of heading
-    double cosSectionHeading = 1.0, sinSectionHeading = 0.0;
+    //moved to vehicle
+    //double cosSectionHeading = 1.0, sinSectionHeading = 0.0;
 
     //how far travelled since last section was added, section points
     double sectionTriggerDistance = 0, contourTriggerDistance = 0, sectionTriggerStepDistance = 0;
@@ -598,7 +603,7 @@ public:
     bool isHeadlandClose = false;
 
     int steerModuleConnectedCounter = 0;
-    double avgPivDistance, lightbarDistance;
+    double avgPivDistance=0, lightbarDistance=0;
     QString strHeading;
     int lenth = 4;
 

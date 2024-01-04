@@ -77,6 +77,7 @@ public:
     double cosSectionHeading = 1.0, sinSectionHeading = 0.0;
     Vec3 pivotAxlePos;
     Vec3 steerAxlePos;
+    Vec3 toolPivotPos;
     Vec3 toolPos;
     Vec3 tankPos;
     Vec3 hitchPos;

@@ -440,11 +440,11 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
                             true, color);
         } else if (curve.howManyPathsAway > 0) {
             drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
-                            QString("%1").arg(curve.howManyPathsAway,0,'g',0), 1,
+                            QString("%1").arg(curve.howManyPathsAway,0,'f',0), 1,
                             true, color);
         }else {
             drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
-                            QString("%1L").arg(curve.howManyPathsAway,0,'g',0) + "L", 1,
+                            QString("%1L").arg(curve.howManyPathsAway,0,'f',0) + "L", 1,
                             true, color);
         }
     }
@@ -455,11 +455,11 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
                             true, color);
         } else if (ABLine.howManyPathsAway > 0) {
             drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
-                            QString("%1L").arg(ABLine.howManyPathsAway,0,'g',0) + "R", 1,
+                            QString("%1R").arg(ABLine.howManyPathsAway,0,'f',0), 1,
                             true, color);
         }else {
             drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
-                            QString("%1L").arg(ABLine.howManyPathsAway,0,'g',0) + "L", 1,
+                            QString("%1L").arg(ABLine.howManyPathsAway,0,'f',0), 1,
                             true, color);
         }
     }
