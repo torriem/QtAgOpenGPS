@@ -62,9 +62,9 @@ void FormGPS::btnSectionMasterAuto_Click(){
 
     //go set the butons and section states
     if (tool.isSectionsNotZones)
-        AllSectionsAndButtonsToState(manualBtnState);
+        AllSectionsAndButtonsToState(autoBtnState);
     else
-        AllZonesAndButtonsToState(manualBtnState);
+        AllZonesAndButtonsToState(autoBtnState);
     closeAllMenus();
 }
 

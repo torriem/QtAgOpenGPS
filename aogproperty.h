@@ -31,6 +31,7 @@ public:
     QVariant value(void) { return settings->value(key,default_value); }
 
     AOGProperty &operator=(QVariant newvalue) { settings->setValue(key, newvalue); return *this;}
+    AOGProperty &operator=(QVector<int> newvalue) { settings->setValue(key, newvalue); return *this;}
 };
 
 extern AOGProperty property_environment_last_name;

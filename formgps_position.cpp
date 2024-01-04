@@ -1427,7 +1427,7 @@ void FormGPS::CalculateSectionLookAhead(double northing, double easting, double 
     double leftSpeed = 0, rightSpeed = 0;
 
     //speed max for section kmh*0.277 to m/s * 10 cm per pixel * 1.7 max speed
-    double meterPerSecPerPixel = fabs(pn.speed) * 4.5;
+    double meterPerSecPerPixel = fabs(vehicle.avgSpeed) * 4.5;
     //qDebug() << pn.speed << ", m/s per pixel is " << meterPerSecPerPixel;
 
     //now loop all the section rights and the one extreme left

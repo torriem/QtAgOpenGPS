@@ -29,10 +29,14 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
     property_setSection_position5 = 1.1176;
     property_setSection_position6 = 2.2352;
     property_setSection_position7 = 3.3528;
-
-
     property_setVehicle_numSections = 6;
     property_setVehicle_toolWidth = 6.7056;
+
+
+    property_setTool_zones = QVector<int>( { 6,2,4,6,8,10,12,0,0 }); //2 rows per zone
+    property_setTool_numSectionsMulti = 12; //12 rows
+    property_setTool_sectionWidthMulti = .5588; //22" rows
+    property_setTool_isSectionsNotZones = false; //enable zones
 
 
     property_setVehicle_wheelbase = 3.1496;
@@ -40,7 +44,7 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
     property_setVehicle_hitchLength = -2.54;
     property_setTool_isToolTrailing = true;
     property_setTool_toolTrailingHitchLength = -4.572;
-    property_setVehicle_minTurningRadius = 5.25;
+    property_setVehicle_minTurningRadius = 8;
     property_setVehicle_maxSteerAngle = 30;
     settings.setValue("test/test", "My test.");
     settings.sync();

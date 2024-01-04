@@ -64,7 +64,7 @@ void CTool::loadSettings()
 
     zoneRanges = property_setTool_zones;
     zones = zoneRanges[0];
-    zoneRanges.removeAt(0); //remove first element since it was a count
+    //zoneRanges.removeAt(0); //remove first element since it was a count
 
 
 }
