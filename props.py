@@ -245,4 +245,5 @@ props = {'setwin': 'display/camPitch',
  'setFeature_isCurveOn': 'displayFeatures/isCurveOn',
  'setFeature_isAutoSteerOn': 'displayFeatures/isAutoSteerOn',
  'setFeature_isUTurnOn': 'displayFeatures/isUTurnOn',
- 'setFeature_isLateralOn': 'displayFeatures/isLateralOn'}
+ 'setFeature_isLateralOn': 'displayFeatures/isLateralOn',
+ 'setTool_trailingToolToPivotLength': 'tool/trailingToPivotLength'}

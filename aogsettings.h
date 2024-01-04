@@ -15,12 +15,35 @@ class QJsonObject;
 class AOGSettings : public QSettings
 {
 public:
-    QVariant value(const QString &key, const QVariant &defaultvalue);
+    QVariant value(const QString &key, const QVariant &defaultvalue = QVariant::Invalid);
+    QVector<int> value(const QString &key, const QVector<int> &defaultvalue = QVector<int> {});
+    void setValue(const QString &key, const QVector<int> &value_list);
+    void setValue(const QString &key, const QVariant &value);
 
     QJsonObject toJson();
     bool saveJson(QString filename);
     bool loadJson(QString filename);
 };
+
+template <class T> static QVariant toVariant(const QVector<T> &list)
+{
+    QVariantList variantList;
+    variantList.reserve(list.size());
+    for (const auto& v : list)
+    {
+        variantList.append(v);
+    }
+    return variantList;
+}
+
+template <class T> static QVector<T> toVector(const QVariant &qv)
+{
+    QVector <T> dataList;
+    foreach(QVariant v, qv.value<QVariantList>()) {
+        dataList << v.value<T>();
+    }
+    return dataList;
+}
 
 QColor parseColor(QString setcolor);
 QVector3D parseColorVector(QString setcolor);

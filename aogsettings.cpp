@@ -15,11 +15,34 @@ QVariant AOGSettings::value(const QString &key, const QVariant &defaultvalue)
     QVariant val;
     val = QSettings::value(key,QVariant::Invalid);
     if (val == QVariant::Invalid) {
-        setValue(key,defaultvalue);
+        QSettings::setValue(key,defaultvalue);
         return defaultvalue;
     }
 
     return val;
+}
+
+QVector<int> AOGSettings::value(const QString &key, const QVector<int> &defaultvalue)
+{
+    QVariant val;
+    val = QSettings::value(key,QVariant::Invalid);
+    if (val == QVariant::Invalid) {
+        QSettings::setValue(key,toVariant(defaultvalue));
+        return defaultvalue;
+    }
+
+    return toVector<int>(val);
+}
+
+
+void AOGSettings::setValue(const QString &key, const QVector<int> &value_list)
+{
+    QSettings::setValue(key,toVariant(value_list));
+}
+
+void AOGSettings::setValue(const QString &key, const QVariant &value)
+{
+    QSettings::setValue(key,value);
 }
 
 QJsonObject AOGSettings::toJson()
@@ -38,6 +61,7 @@ QJsonObject AOGSettings::toJson()
 
         type = b.typeName();
 
+        /*
         if (type == "double" ||
             type == "int" ||
             type == "char" ||
@@ -46,7 +70,10 @@ QJsonObject AOGSettings::toJson()
             type == "float"
             )
         {
+        */
             json_value = b.toString();
+        qWarning() << key <<", " << type << ", " << json_value;
+        /*
         } else {
             QByteArray raw_value;
             QDataStream ds(&raw_value,QIODevice::WriteOnly);
@@ -57,7 +84,7 @@ QJsonObject AOGSettings::toJson()
             json_value += QString::fromLatin1(raw_value.constData(), raw_value.size());
             json_value += ")";
         }
-
+        */
 
         blah[key] = json_value;
     }
@@ -102,7 +129,7 @@ bool AOGSettings::loadJson(QString filename)
             v = QVariant(new_value);
         }
 
-        setValue(key, v);
+        QSettings::setValue(key, v);
     }
 
     return true;

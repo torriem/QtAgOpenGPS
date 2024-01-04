@@ -108,7 +108,7 @@ AOGProperty property_setDisplay_customSectionColors("display/customSectionColors
 AOGProperty property_setBrand_TBrand("display/TBrand","AGOpenGPS");
 AOGProperty property_setHeadland_isSectionControlled("todo/headlandIsSectionControlled",true);
 AOGProperty property_setSound_isAutoSteerOn("display/autoSteerSound",true);
-AOGProperty property_setRelay_pinConfig("todo/relayPinConfig",QVariant::fromValue(default_relay_pinConfig));
+AOGProperty property_setRelay_pinConfig("todo/relayPinConfig",default_relay_pinConfig);
 AOGProperty property_setDisplay_camSmooth("display/camSmooth",50);
 AOGProperty property_setGPS_dualHeadingOffset("gps/dualHeadingOffset",0);
 AOGProperty property_setF_isSteerWorkSwitchEnabled("tool/isSteerWorkSwitchEnabled",false);
@@ -203,7 +203,7 @@ AOGProperty property_set_youTurnRadius("uturn/radius",8.1);
 AOGProperty property_setDisplay_brightnessSystem("display/brightnessSystem",80);
 AOGProperty property_setTool_isSectionsNotZones("tool/sectionsNotZones",true);
 AOGProperty property_setTool_numSectionsMulti("tool/numSectionsMulti",20);
-AOGProperty property_setTool_zones("tool/zones",QVariant::fromValue(default_zones));
+AOGProperty property_setTool_zones("tool/zones",default_zones);
 AOGProperty property_setTool_sectionWidthMulti("tool/sectionWidthMulti",0.5);
 AOGProperty property_setDisplay_isBrightnessOn("display/brightnessOn",true);
 AOGProperty property_setKey_hotkeys("display/hotKeys","ACFGMNPTYVW12345678");
@@ -227,6 +227,7 @@ AOGProperty property_setWindow_abLineEditLocation("display/abLineEditLocation",Q
 AOGProperty property_setWindow_steerSettingsLocation("display/steerSettingsLocation",QPoint(40, 40));
 AOGProperty property_setWindow_abCurveCreate("display/ABCurveCreate",QPoint(40, 40));
 AOGProperty property_setWindow_abLineCreate("display/ABLineCreate",QPoint(40, 40));
+AOGProperty property_setTool_trailingToolToPivotLength("tool/trailingToPivotLength",1.5);
 AOGProperty property_setFeature_isHeadlandOn("displayFeatures/isHeadlandOn",true);
 AOGProperty property_setFeature_isTramOn("displayFeatures/isTramOn",true);
 AOGProperty property_setFeature_isBoundaryOn("displayFeatures/isBoundaryOn",true);

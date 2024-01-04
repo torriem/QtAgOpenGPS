@@ -230,6 +230,7 @@ extern AOGProperty property_setWindow_abLineEditLocation;
 extern AOGProperty property_setWindow_steerSettingsLocation;
 extern AOGProperty property_setWindow_abCurveCreate;
 extern AOGProperty property_setWindow_abLineCreate;
+extern AOGProperty property_setTool_trailingToolToPivotLength;
 extern AOGProperty property_setFeature_isHeadlandOn;
 extern AOGProperty property_setFeature_isTramOn;
 extern AOGProperty property_setFeature_isBoundaryOn;
