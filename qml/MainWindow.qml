@@ -1143,8 +1143,8 @@ Window {
                 objectName: "config"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                height: 768
-                width:1024
+                height: parent.height + 50
+                width:parent.width
                 visible:false
             }
             SteerConfigWindow {

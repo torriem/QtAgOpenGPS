@@ -499,5 +499,11 @@
         <file>qml/ConfigTractorDimensions.qml</file>
         <file>qml/ConfigTractorAntenna.qml</file>
         <file>qml/ConfigTractorSteerSettings.qml</file>
+        <file>qml/ConfigModulesPins.qml</file>
+        <file>qml/ConfigImplementDimensions.qml</file>
+        <file>qml/ConfigImplementSections.qml</file>
+        <file>qml/ConfigImplementSwitches.qml</file>
+        <file>qml/ConfigImplementTiming.qml</file>
+        <file>qml/ConfigSourcesRoll.qml</file>
     </qresource>
 </RCC>
