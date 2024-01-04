@@ -26,6 +26,7 @@ void FormGPS::UpdateFixPosition()
     //Measure the frequency of the GPS updates
     //timeSliceOfLastFix = (double)(swFrame.elapsed()) / 1000;
     swFrame.restart();
+    lock.lockForWrite(); //stop GL from updating while we calculate a new position
 
     //get Hz from timeslice
     //nowHz = 1 / timeSliceOfLastFix;
@@ -42,6 +43,7 @@ void FormGPS::UpdateFixPosition()
     if (!isGPSPositionInitialized)
     {
         InitializeFirstFewGPSPositions();
+        lock.unlock();
         return;
     }
 
@@ -85,6 +87,7 @@ void FormGPS::UpdateFixPosition()
                     stepFixPts[0].easting = pn.fix.easting;
                     stepFixPts[0].northing = pn.fix.northing;
                     stepFixPts[0].isSet = 1;
+                    lock.unlock();
                     return;
                 }
 
@@ -95,6 +98,7 @@ void FormGPS::UpdateFixPosition()
                     stepFixPts[0].easting = pn.fix.easting;
                     stepFixPts[0].northing = pn.fix.northing;
                     stepFixPts[0].isSet = 1;
+                    lock.unlock();
                     return;
                 }
 
@@ -187,6 +191,7 @@ void FormGPS::UpdateFixPosition()
 
                 lastGPS = pn.fix;
 
+                lock.unlock();
                 return;
             }
         }
@@ -851,7 +856,7 @@ void FormGPS::UpdateFixPosition()
         //mc.machineControlData[mc.cnSpeed] = mc.autoSteerData[mc.sdSpeed];
 
         //save distance for display
-        //lightbarDistance = vehicle.guidanceLineDistanceOff;
+        lightbarDistance = vehicle.guidanceLineDistanceOff;
 
         if (!isAutoSteerBtnOn) //32020 means auto steer is off
         {
@@ -1110,6 +1115,9 @@ void FormGPS::UpdateFixPosition()
 
     if (frameTimeRough > 50) frameTimeRough = 50;
     frameTime = frameTime * 0.90 + frameTimeRough * 0.1;
+    lock.unlock();
+    newframe = true;
+
 }
 
 void FormGPS::TheRest()
@@ -1118,7 +1126,7 @@ void FormGPS::TheRest()
     CalculatePositionHeading();
 
     //calculate lookahead at full speed, no sentence misses
-    CalculateSectionLookAhead(vehicle.toolPos.northing, vehicle.toolPos.easting, cosSectionHeading, sinSectionHeading);
+    CalculateSectionLookAhead(vehicle.toolPos.northing, vehicle.toolPos.easting, vehicle.cosSectionHeading, vehicle.sinSectionHeading);
 
     //To prevent drawing high numbers of triangles, determine and test before drawing vertex
     sectionTriggerDistance = glm::Distance(pn.fix, prevSectionPos);
@@ -1239,27 +1247,35 @@ void FormGPS::CalculatePositionHeading()
         if (distanceCurrentStepFix != 0)
         {
             double t = (tool.trailingHitchLength) / distanceCurrentStepFix;
-            vehicle.toolPos.easting = vehicle.tankPos.easting + t * (vehicle.tankPos.easting - vehicle.toolPos.easting);
-            vehicle.toolPos.northing = vehicle.tankPos.northing + t * (vehicle.tankPos.northing - vehicle.toolPos.northing);
-            vehicle.toolPos.heading = atan2(vehicle.tankPos.easting - vehicle.toolPos.easting, vehicle.tankPos.northing - vehicle.toolPos.northing);
+            vehicle.toolPivotPos.easting = vehicle.tankPos.easting + t * (vehicle.tankPos.easting - vehicle.toolPivotPos.easting);
+            vehicle.toolPivotPos.northing = vehicle.tankPos.northing + t * (vehicle.tankPos.northing - vehicle.toolPivotPos.northing);
+            vehicle.toolPivotPos.heading = atan2(vehicle.tankPos.easting - vehicle.toolPivotPos.easting, vehicle.tankPos.northing - vehicle.toolPivotPos.northing);
+            if (vehicle.toolPivotPos.heading < 0) vehicle.toolPivotPos.heading += glm::twoPI;
         }
 
         ////the tool is seriously jacknifed or just starting out so just spring it back.
-        over = fabs(M_PI - fabs(fabs(vehicle.toolPos.heading - vehicle.tankPos.heading) - M_PI));
+        over = fabs(M_PI - fabs(fabs(vehicle.toolPivotPos.heading - vehicle.tankPos.heading) - M_PI));
 
         if ((over < 1.9) && (startCounter > 50))
         {
-            vehicle.toolPos.easting = vehicle.tankPos.easting + (sin(vehicle.toolPos.heading) * (tool.trailingHitchLength));
-            vehicle.toolPos.northing = vehicle.tankPos.northing + (cos(vehicle.toolPos.heading) * (tool.trailingHitchLength));
+            vehicle.toolPivotPos.easting = vehicle.tankPos.easting + (sin(vehicle.toolPivotPos.heading) * (tool.trailingHitchLength));
+            vehicle.toolPivotPos.northing = vehicle.tankPos.northing + (cos(vehicle.toolPivotPos.heading) * (tool.trailingHitchLength));
         }
 
         //criteria for a forced reset to put tool directly behind vehicle
         if (over > 1.9 || startCounter < 51 )
         {
-            vehicle.toolPos.heading = vehicle.tankPos.heading;
-            vehicle.toolPos.easting = vehicle.tankPos.easting + (sin(vehicle.toolPos.heading) * (tool.trailingHitchLength));
-            vehicle.toolPos.northing = vehicle.tankPos.northing + (cos(vehicle.toolPos.heading) * (tool.trailingHitchLength));
+            vehicle.toolPivotPos.heading = vehicle.tankPos.heading;
+            vehicle.toolPivotPos.easting = vehicle.tankPos.easting + (sin(vehicle.toolPivotPos.heading) * (tool.trailingHitchLength));
+            vehicle.toolPivotPos.northing = vehicle.tankPos.northing + (cos(vehicle.toolPivotPos.heading) * (tool.trailingHitchLength));
         }
+
+        vehicle.toolPos.heading = vehicle.toolPivotPos.heading;
+        vehicle.toolPos.easting = vehicle.tankPos.easting +
+                          (sin(vehicle.toolPivotPos.heading) * (tool.trailingHitchLength - tool.trailingToolToPivotLength));
+        vehicle.toolPos.northing = vehicle.tankPos.northing +
+                           (cos(vehicle.toolPivotPos.heading) * (tool.trailingHitchLength - tool.trailingToolToPivotLength));
+
     }
 
     //rigidly connected to vehicle
