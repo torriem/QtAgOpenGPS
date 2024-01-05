@@ -122,7 +122,7 @@ void CTool::DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 pro
         //move down the tank hitch, unwind, rotate to section heading
         mv.translate(0.0, trailingTank, 0.0);
         mv.rotate(glm::toDegrees(v.tankPos.heading), 0.0, 0.0, 1.0);
-        mv.rotate(glm::toDegrees(v.toolPos.heading), 0.0, 0.0, 1.0);
+        mv.rotate(glm::toDegrees(-v.toolPos.heading), 0.0, 0.0, 1.0);
     }
 
     //no tow between hitch
@@ -141,9 +141,16 @@ void CTool::DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 pro
         gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.0f, 0.0f, 0.0f),GL_LINE_STRIP, 6.0f);
 
         gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.7f, 0.4f, 0.2f),GL_LINE_STRIP, 1.0f);
+
+        GLHelperTexture gldrawtex;
+
+        gldrawtex.append( { QVector3D(1.5, trailingTool + 1, 0), QVector2D(1,0) } ); //Top Right
+        gldrawtex.append( { QVector3D(-1.5, trailingTool + 1, 0), QVector2D(0,0) } ); //Top Left
+        gldrawtex.append( { QVector3D(1.5, trailingTool - 1, 0), QVector2D(1,1) } ); //Bottom Right
+        gldrawtex.append( { QVector3D(-1.5, trailingTool - 1, 0), QVector2D(0,1) } ); //Bottom LEft
+        gldrawtex.draw(gl, projection*mv,Textures::TOOLWHEELS, GL_TRIANGLE_STRIP, true, QColor::fromRgbF(1,1,1,0.75));
     }
 
-    //draw trailer axle here
     trailingTool -= trailingToolToPivotLength;
 
     //look ahead lines

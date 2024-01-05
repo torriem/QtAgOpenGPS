@@ -134,6 +134,9 @@ void initializeTextures() {
 
     t = new QOpenGLTexture(QImage(":/images/textures/bingMap.png"));
     texture.append(t); //position 24 PAN
+
+    t = new QOpenGLTexture(QImage(":/images/textures/z_Tool.png"));
+    texture.append(t); //position 25 TOOLWHEELS
 }
 
 void destroyShaders() {

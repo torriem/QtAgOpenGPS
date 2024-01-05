@@ -49,7 +49,8 @@ enum Textures {
     NOGPS=21,
     ZOOM_IN=22,
     ZOOM_OUT=23,
-    PAN=24
+    PAN=24,
+    TOOLWHEELS=25
 };
 
 extern bool isFontOn;
