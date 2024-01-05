@@ -54,7 +54,8 @@ that supports OpenGL ES 2 or newer, or DirectX on Windows.
 Why this Port?
 --------------
 This port is mainly for my own entertainment, to allow me to run AOG
-on Linux, including SBCs like the Raspberry Pi, or even Android. 
+on Linux, including SBCs like the Raspberry Pi.  But I think the 
+most desirable target will be Android some day.
 
 Notes on the Port
 -----------------
@@ -68,10 +69,11 @@ are a lot of forward references to the main FormGPS class.  Since
 formgps.h is required by just about class in the project, changes to
 formgps.h require a rebuild of every single object file.
 
-Some symbols like function names have been changed to lower case letter
-first, following the convention Qt uses, and is often common in C++.
-Capital first letters are reserved for class names.  However most
-variables, functions, and methods, retain the AOG names, unless
+Earlier I changed the case of methods to be more standard C++. I've
+started to undo that and make the method calls as close to AOG's
+original names as possible.
+
+Mmost variables, functions, and methods, retain the AOG names, unless
 architectural differences require moving code into different sections.
 For example, the OpenGL code runs in a different thread than the main
 GUI loop, the logic to set UI state has been pulled out of the function
@@ -81,23 +83,37 @@ each time we draw the frame we have to set all the variables including
 the model view and perspective matrices.  Of course in OpenGL ES we
 must manage those matrices ourselves anyway.
 
+AgIO has not yet been ported, so once UDP functionality is working,
+AgIO will be required for now.  It does not yet run under Wine on
+Linux.  The simulator works, though.
+
 Status of the Port
 ------------------
-As of March 23, 2020, the backend code is tracking lastest (of this
-date) commit of the master branch of AOG, which is tagged v4.1.0.
+As of Jan 4, 2023, the backend code is now tracking pretty closely to the
+progress being made on AgOpenGPS/isoxml branch, at least as of Dec 20,
+2023.  UDP is not yet working.
 
-UI is still mostly non-present, but works with the built-in simulator,
-UDP data stream, or a serial port. For testing purposes, a job and field
-is automatically started, and a demo AB line is defined at 5 degrees.
+David Wedel is working on the QML gui which we plan to get working during
+the month of January.
+
+UI is still mostly non-present, but works with the built-in simulator.
+For testing purposes, a job and field is automatically started, and a 
+demo AB line is defined at 5 degrees.  You should be able to copy 
+Boundary.txt, Sections.txt, ABLines.txt, etc from AgOpenGPS into the
+QtAgOpenGS/Fields/TestField folder and work with previously-saved
+data.
 
 Coverage works, boundaries work, u-turn works, automatic u-turn works (but
 has no button to enable it).  AB Line following works. Headland mode works.
 
-Bugs
-----
-- GL font drawing has issues, but only with the AB Line number display
-- demo border creates very strange geofence. Suspect I need to change order
-  of coordinates
+Bugs and TODOs
+--------------
+- GL font drawing has issues, but only with the AB Line number display.  
+  A lot of UI stuff currently drawn with GL should be drawn with QML
+  widgets instead.
+- Dashed lines are not possible in OpenGL ES, but I think a shader script
+  can do it.  Also there's no easy way to do thick lines in opengl ES either.
+- Hook in the GUI that David Wedel is contributing.
 
 
 
