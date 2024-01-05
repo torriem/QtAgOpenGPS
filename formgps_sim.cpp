@@ -7,8 +7,11 @@
 void FormGPS::simConnectSlots()
 {
     connect(&sim,SIGNAL(setActualSteerAngle(double)),this,SLOT(onSimNewSteerAngle(double)));
-    connect(&sim,SIGNAL(newPosition(double,double,double,double,double,double,double)),this,SLOT(onSimNewPosition(double,double,double,double,double,double,double)));
-    connect(&timerSim,SIGNAL(timeout()),this,SLOT(onSimTimerTimeout()));
+    connect(&sim,SIGNAL(newPosition(double,double,double,double,double,double,double)),
+            this,SLOT(onSimNewPosition(double,double,double,double,double,double,double)),
+            Qt::UniqueConnection);
+    connect(&timerSim,SIGNAL(timeout()),this,SLOT(onSimTimerTimeout()),Qt::UniqueConnection);
+    connect(&timerSim,SIGNAL(timeout()),this,SLOT(onSimTimerTimeout()),Qt::UniqueConnection);
 
     if (property_setMenu_isSimulatorOn) {
         pn.latitude = sim.latitude;
@@ -44,6 +47,7 @@ void FormGPS::onSimNewPosition(double vtgSpeed,
     pn.altitude = altitude;
     pn.satellitesTracked = satellitesTracked;
     sentenceCounter = 0;
+    //qWarning() << "Acted on new position.";
     UpdateFixPosition();
 }
 
@@ -55,6 +59,7 @@ void FormGPS::onSimNewSteerAngle(double steerAngleAve)
 /* iterate the simulator on a timer */
 void FormGPS::onSimTimerTimeout()
 {
+    //qWarning() << "sim tick.";
     QObject *qmlobject = qmlItem(qml_root,"simSpeed");
     double stepDistance = qmlobject->property("value").toReal() / 10.0 /gpsHz;
     sim.setSimStepDistance(stepDistance);

@@ -25,7 +25,6 @@ void FormGPS::UpdateFixPosition()
     //swFrame.Stop();
     //Measure the frequency of the GPS updates
     //timeSliceOfLastFix = (double)(swFrame.elapsed()) / 1000;
-    swFrame.restart();
     lock.lockForWrite(); //stop GL from updating while we calculate a new position
 
     //get Hz from timeslice
@@ -46,6 +45,10 @@ void FormGPS::UpdateFixPosition()
         lock.unlock();
         return;
     }
+
+    //qDebug() << "Easting " <<  pn.fix.easting << "Northing" <<  pn.fix.northing << "Time " << swFrame.elapsed() << nowHz;
+
+    swFrame.restart();
 
     pn.speed = pn.vtgSpeed;
     vehicle.AverageTheSpeed(pn.speed);
@@ -1508,14 +1511,15 @@ void FormGPS::CalculateSectionLookAhead(double northing, double easting, double 
             sped = (leftSpeed * 0.1);
             if (sped < 0.1) sped = 0.1;
             tool.farLeftSpeed = tool.farLeftSpeed * 0.7 + sped * 0.3;
+            //qWarning() << sped << tool.farLeftSpeed << vehicle.avgSpeed;
         }
+
         if (j == tool.numOfSections - 1)
         {
             sped = (rightSpeed * 0.1);
             if(sped < 0.1) sped = 0.1;
             tool.farRightSpeed = tool.farRightSpeed * 0.7 + sped * 0.3;
         }
-
         //choose fastest speed
         if (leftSpeed > rightSpeed)
         {
