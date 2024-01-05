@@ -146,6 +146,8 @@ FormGPS::~FormGPS()
 //broken out here.  So the lookaheadPixels array has been populated already
 //by the rendering routine.
 void FormGPS::processSectionLookahead() {
+    lock.lockForWrite();
+
     if (property_displayShowBack)
         grnPixelsWindow->setPixmap(QPixmap::fromImage(grnPix.mirrored()));
 
@@ -677,6 +679,15 @@ void FormGPS::processSectionLookahead() {
         //oglZoom.Refresh();
 
     }
+
+    //stop the timer and calc how long it took to do calcs and draw
+    frameTimeRough = swFrame.elapsed();
+
+    if (frameTimeRough > 50) frameTimeRough = 50;
+    frameTime = frameTime * 0.90 + frameTimeRough * 0.1;
+
+    lock.unlock();
+
     //this is the end of the "frame". Now we wait for next NMEA sentence with a valid fix.
 }
 

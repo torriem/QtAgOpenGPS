@@ -1104,22 +1104,13 @@ void FormGPS::UpdateFixPosition()
     AOGRendererInSG *renderer = qml_root->findChild<AOGRendererInSG *>("openglcontrol");
     renderer->update();
 
-    //since we're in the main thread we can directly call processSectionLookahead()
-    //the code in processSectionLookahead was moved from AOG's oglBack_Paint because
-    //opengl drawing occurs in a separate thread in Qt.  So I broke the code out into
-    //its own function so we can call it from here.
-    processSectionLookahead();
-
+    //oglBack_Paint will schedule processSectionLookAhead() once it's done drawing.
+    //processSectionLookahead();
 
     //end of UppdateFixPosition
 
-    //stop the timer and calc how long it took to do calcs and draw
-    frameTimeRough = swFrame.elapsed();
-
-    if (frameTimeRough > 50) frameTimeRough = 50;
-    frameTime = frameTime * 0.90 + frameTimeRough * 0.1;
-    lock.unlock();
     newframe = true;
+    lock.unlock();
 
 }
 

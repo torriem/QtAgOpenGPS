@@ -38,22 +38,13 @@ void FormGPS::oglMain_Paint()
 
     //synchronize with the position code in the main thread
     if (!lock.tryLockForRead())
-        return;
-
-    //if there's no new position to draw, just return so we don't
-    //waste time redrawing.  Frame rate is at most gpsHz.  And if we
-    //need to redraw part of the window on a resize, it will just have
-    //to wait until the next position comes in.  Although if there is
-    //no simulator running and no positions coming in, the GL background
-    //will not update, which isn't what we want either.  Some kind of timeout?
-
-    //if (!newframe) {
-    //    lock.unlock();
-    //    return;
-    //}
-
-    newframe = false;
-
+        //if there's no new position to draw, just return so we don't
+        //waste time redrawing.  Frame rate is at most gpsHz.  And if we
+        //need to redraw part of the window on a resize, it will just have
+        //to wait until the next position comes in.  Although if there is
+        //no simulator running and no positions coming in, the GL background
+        //will not update, which isn't what we want either.  Some kind of timeout?
+     return;
 
     int width = qmlItem(qml_root, "openglcontrol")->property("width").toReal();
     int height = qmlItem(qml_root, "openglcontrol")->property("height").toReal();
@@ -449,10 +440,23 @@ void FormGPS::oglMain_Paint()
         //qmlview->resetOpenGLState();
 
         //directly call section lookahead GL stuff from here
+        if (! newframe) {
+            //No new position, so no need to repaint the back buffer
+            //and do section look-ahead
+            lock.unlock();
+            //qWarning() << "rendered but skipping section lookahead processing.";
+            return;
+        }
         oglBack_Paint();
         gl->glFlush();
     }
     lock.unlock();
+    if(newframe) {
+        //if we just had a new position and updated the back buffer then
+        //proecss the section lookaheads:
+        QTimer::singleShot(0,this, &FormGPS::processSectionLookahead);
+    }
+    newframe = false;
 }
 
 /// Handles the OpenGLInitialized event of the openGLControl control.

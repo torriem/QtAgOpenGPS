@@ -676,6 +676,8 @@ public slots:
      * from FormGPS.cs *
      *******************/
     void tmrWatchdog_timeout();
+    void processSectionLookahead(); //called when section lookahead GL stuff is rendered
+
     void onGLControl_clicked(const QVariant &event);
 
     void TimedMessageBox(int timeout, QString s1, QString s2);
@@ -756,7 +758,8 @@ public slots:
     /*
      * From Position.Designer.cs
      */
-    void processSectionLookahead(); //called when section lookahead GL stuff is rendered
+    //moved to public slots
+    //void processSectionLookahead(); //called when section lookahead GL stuff is rendered
 
     /*******************
      * simulator       *
