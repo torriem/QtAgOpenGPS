@@ -1,191 +1,134 @@
 #include "formgps.h"
-#include "aogsettings.h"
+#include "aogproperty.h"
 #include <QColor>
 #include <QRgb>
 #include "qmlutil.h"
 #include "glm.h"
+#include "cpgn.h"
 #include <QLocale>
 #include <QLabel>
 #include <QQuickWindow>
 
 extern QLabel *grnPixelsWindow;
 
-
-
-FormGPS::FormGPS(QWidget *parent) :
-    QQmlApplicationEngine(parent)
+FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
 {
-    USE_SETTINGS;
-    setupGui();
-    AOGSettings s;
-
-    /**************************
-     * SerialComm.Designer.cs *
-     **************************/
-    sp.setDataBits(QSerialPort::Data8);
-    sp.setParity(QSerialPort::NoParity);
-    sp.setStopBits(QSerialPort::OneStop);
-
-
-    isUDPServerOn = s.value("port/udp_on", true).toBool();
-
+    connect_classes(); //make all the inter-class connections
     /* test data to see if drawing routines are working. */
-
-    isAreaOnRight = s.value("vehicle/isAreaOnRight",false).toBool();
 
     //fieldColor = QColor(s.value("display/fieldColor", "#82781E").toString());
     //sectionColor = QColor(s.value("display/sectionColor", "#32DCC8").toString());
-    SETTINGS_SET_DISPLAY_COMPASS(true);
-    SETTINGS_SET_DISPLAY_SPEEDO(true);
+    property_setMenu_isCompassOn = true;
+    property_setMenu_isSpeedoOn = true;
 
-    SETTINGS_SET_TOOL_SECTIONPOSITION1(-4);
-    SETTINGS_SET_TOOL_SECTIONPOSITION2(-1);
-    SETTINGS_SET_TOOL_SECTIONPOSITION3(1);
-    SETTINGS_SET_TOOL_SECTIONPOSITION4(4);
-    SETTINGS_SET_TOOL_SECTIONPOSITION5(8);
+    //just for debugging I think, force sections to be set
+    property_setSection_position1 = -3.3528;
+    property_setSection_position2 = -2.2352;
+    property_setSection_position3 = -1.1176;
+    property_setSection_position4 = 0;
+    property_setSection_position5 = 1.1176;
+    property_setSection_position6 = 2.2352;
+    property_setSection_position7 = 3.3528;
+    property_setVehicle_numSections = 6;
+    property_setVehicle_toolWidth = 6.7056;
 
-    /*
-    tool.section[0].positionLeft = -8;
-    tool.section[0].positionRight = -4;
-    tool.section[1].positionLeft = -4;
-    tool.section[1].positionRight = 0.0;
-    tool.section[2].positionLeft = 0.0;
-    tool.section[2].positionRight = 4;
-    tool.section[3].positionLeft = 4;
-    tool.section[3].positionRight = 8;
-    */
-    SETTINGS_SET_TOOL_NUMSECTIONS(3);
-    //tool.numSuperSection = 5;
-    SETTINGS_SET_TOOL_TRAILINGHITCHLENGTH(-2);
-    SETTINGS_SET_TOOL_HITCHLENGTH(-0.5);
-    SETTINGS_SET_VEHICLE_MINTURNINGRADIUS(5.25);
-    SETTINGS_SET_VEHICLE_MAXSTEERANGLE(55);
-    tool.sectionSetPositions();
-    tool.sectionCalcWidths();
+
+    property_setTool_zones = QVector<int>( { 6,2,4,6,8,10,12,0,0 }); //2 rows per zone
+    property_setTool_numSectionsMulti = 12; //12 rows
+    property_setTool_sectionWidthMulti = .5588; //22" rows
+    property_setTool_isSectionsNotZones = false; //enable zones
+
+
+    property_setVehicle_wheelbase = 3.1496;
+    property_setVehicle_trackWidth = 2.286;
+    property_setVehicle_hitchLength = -2.54;
+    property_setTool_isToolTrailing = true;
+    property_setTool_toolTrailingHitchLength = -4.572;
+    property_setVehicle_minTurningRadius = 8;
+    property_setVehicle_maxSteerAngle = 30;
+    settings.setValue("test/test", "My test.");
+    settings.sync();
+
+    setupGui();
+    loadSettings();
 
     //turn on the right number of section buttons.
     //we don't need to do this on resize, but we will need
     //to call it when settings change.
-    lineUpManualBtns();
+    LineUpIndividualSectionBtns();
 
     //hard wire this on for testing
+    isJobStarted = true;
     //fileCreateField();
-    if (! fileOpenField(SETTINGS_ENVIRONMENT_LASTFIELD))
+    if (! FileOpenField((QString)property_setF_CurrentDir))
     {
-        //set up default field to play in
-        tool.section[0].isAllowedOn = true;
-        tool.section[1].isAllowedOn = true;
-        tool.section[2].isAllowedOn = true;
-        tool.section[3].isAllowedOn = true;
+        //set up default field to play in for debugging purposes
+        currentFieldDirectory = "TestField";
+        property_setF_CurrentDir = currentFieldDirectory;
+        pn.latitude = sim.latitude;
+        pn.longitude = sim.longitude;
+
+        FileCreateField();
 
         ABLine.refPoint1.easting = 0;
         ABLine.refPoint1.easting = 0;
-        ABLine.setABLineByHeading(glm::toRadians(5.0f));
+        ABLine.SetABLineByHeading(glm::toRadians(5.0f));
 
         CABLines line;
         line.origin = Vec2(0,0);
-        line.ref1 = Vec2(0,0);
-        line.ref2 = Vec2(0,0);
+        line.origin = Vec2(0,0);
         line.heading = glm::toRadians(5.0f);
         line.Name = "Test AB Line";
         ABLine.lineArr.append( line );
+        FileSaveABLines();
 
-        CBoundaryLines boundary;
-        boundary.bndLine.append(Vec3(-100,0,0));
-        boundary.bndLine.append(Vec3( 100,0,0));
-        boundary.bndLine.append(Vec3( 100,250,0));
-        boundary.bndLine.append(Vec3(-100,250,0));
-        boundary.bndLine.append(Vec3(-100,0,0));
-        boundary.isSet = true;
-        boundary.calculateBoundaryHeadings();
-        boundary.preCalcBoundaryLines();
-        boundary.fixBoundaryLine(0,SETTINGS_TOOL_WIDTH);
-        boundary.calculateBoundaryArea();
-        boundary.preCalcBoundaryLines();
+        CBoundaryList boundary;
+        boundary.isDriveThru = true;
 
-        bnd.bndArr.append(boundary);
+        boundary.fenceLine.append(Vec3(-100,0,0));
+        boundary.fenceLine.append(Vec3(-100,250,glm::toRadians((double)90)));
+        boundary.fenceLine.append(Vec3( 100,250,glm::toRadians((double)180)));
+        boundary.fenceLine.append(Vec3( 100,0,glm::toRadians((double)270)));
+        boundary.fenceLine.append(Vec3(-100,0,0));
 
-        turn.turnArr.append(CTurnLines());
-        gf.geoFenceArr.append(CGeoFenceLines());
-        gf.buildGeoFenceLines(bnd);
+        boundary.CalculateFenceArea(0);
 
-        turn.buildTurnLines(bnd, fd);
-        mazeGrid.buildMazeGridArray(bnd,gf, minFieldX, maxFieldX, minFieldY, maxFieldY);
+        double delta = 0;
+        boundary.fenceLineEar.clear();
 
-        currentFieldDirectory = "TestField";
-        SETTINGS_SET_ENVIRONMENT_LASTFIELD(currentFieldDirectory);
+        for (int i = 0; i < boundary.fenceLine.count(); i++)
+        {
+            if (i == 0)
+            {
+                boundary.fenceLineEar.append(Vec2(boundary.fenceLine[i].easting, boundary.fenceLine[i].northing));
+                continue;
+            }
+            delta += (boundary.fenceLine[i - 1].heading - boundary.fenceLine[i].heading);
+            if (fabs(delta) > 0.005)
+            {
+                boundary.fenceLineEar.append(Vec2(boundary.fenceLine[i].easting, boundary.fenceLine[i].northing));
+                delta = 0;
+            }
+        }
+        bnd.bndList.append(boundary);
+        fd.UpdateFieldBoundaryGUIAreas(bnd.bndList);
+
+        calculateMinMax();
+        FileSaveBoundary();
+        bnd.BuildTurnLines(fd);
+
         bootstrap_field=true;
         isJobStarted = true;
     }
+    ABLine.isABLineSet = true;
     ABLine.isBtnABLineOn = true;
 
-    /*****************************
-     * FormGPS.cs:FormGPS_Load() *
-     *****************************/
-    //set baud and port from last time run
-    // TODO QAOG load setting
-    portNameGPS = s.value("port/portNameGPS", "ttyACM0").toString();
-    baudRateGPS = s.value("port/baudRateGPS", QSerialPort::Baud115200).toInt();
+    StartLoopbackServer();
 
-    //try and open
-    SerialPortOpenGPS();
-
-    if (sp.isOpen())
-    {
-        // TODO QAOG simulatorOnToolStripMenuItem.Checked = false;
-        qmlItem(qml_root,"simSpeed")->setProperty("visible", false);
-        qmlItem(qml_root,"simStopButton")->setProperty("visible", false);
-        qmlItem(qml_root,"simSteer")->setProperty("visible", false);
-        qmlItem(qml_root,"simSteerCenter")->setProperty("visible", false);
-
-        // TODO QAOG Settings.Default.setMenu_isSimulatorOn = simulatorOnToolStripMenuItem.Checked;
-        // TODO QAOG Settings.Default.Save();
+    simConnectSlots();
+    if ((bool)property_setMenu_isSimulatorOn == false) {
+        timerSim.stop();
     }
-
-
-    if (isUDPServerOn) startUDPServer();
-
-    //TODO: connect signals from various classes
-    connect(&pn, SIGNAL(setRollX16(int)), &ahrs, SLOT(setRollX16(int)));
-    connect(&pn, SIGNAL(setCorrectionHeadingX16(int)), &ahrs,SLOT(setCorrectionHeadingX16(int)));
-    connect(&pn, SIGNAL(clearRecvCounter()), this, SLOT(onClearRecvCounter()));
-    connect(&pn, SIGNAL(newSpeed(double)), &vehicle, SLOT(onNewSpeed(double)));
-    connect(&pn, SIGNAL(headingSource(int)), this, SLOT(onHeadingSource(int)));
-
-    connect(&curve, SIGNAL(doSequence(CYouTurn&)), &seq, SLOT(DoSequenceEvent(CYouTurn&)));
-
-    connect(&ABLine, SIGNAL(doSequence(CYouTurn&)), &seq, SLOT(DoSequenceEvent(CYouTurn&)));
-    //connect(&ABLine,SIGNAL(showMessage(int,QString,QString)),...
-
-    //connnect(&ct, SIGNAL(showMessage(int,QString,QString))
-
-    for(int i=0; i < MAXSECTIONS+1 ; i++) {
-        //connect sections so they can increment area counters
-        connect(&tool.section[i], SIGNAL(addToTotalArea(double)), &fd, SLOT(addToTotalArea(double)));
-        connect(&tool.section[i], SIGNAL(addToUserArea(double)), &fd, SLOT(addToUserArea(double)));
-    }
-
-    connect(&hd, SIGNAL(moveHydraulics(int)), &mc, SLOT(setHydLift(int)));
-
-    //connect(&mc, SIGNAL(sendOutUSBAutoSteerPort(uchar*,int)),
-    //connect(&mc, SIGNAL(sendOutUSBMachinePort(uchar*,int)),
-
-    connect(&yt, SIGNAL(outOfBounds()), &mc, SLOT(setOutOfBounds()));
-    connect(&yt, SIGNAL(resetSequenceEventTriggers()), &seq, SLOT(ResetSequenceEventTriggers()));
-    //connect(&yt, SIGNAL(showMessage(int,QString,QString))
-    connect(&yt, SIGNAL(swapDirection()), this, SLOT(swapDirection()));
-    connect(&yt, SIGNAL(setTriggerSequence(bool)), &seq, SLOT(setIsSequenceTriggered(bool)));
-    connect(&yt, SIGNAL(turnOffBoundAlarm()), this, SLOT(turnOffBoundAlarm()));
-
-    connect(&recPath, SIGNAL(setSimStepDistance(double)),&sim,SLOT(setSimStepDistance(double)));
-    //connect(&recPath,SIGNAL(stoppedDriving())
-
-    connect(&seq, SIGNAL(doYouTurnSequenceEvent(int,int)), this, SLOT(DoYouTurnSequenceEvent(int,int)));
-    //connect(&seq, SIGNAL(setDistanceToolToTurnLine(double)) //unused
-
-    connect(&sim, SIGNAL(new_position(QByteArray)), this, SLOT(onSimNewPosition(QByteArray)));
-
-
 }
 
 FormGPS::~FormGPS()
@@ -200,52 +143,70 @@ FormGPS::~FormGPS()
 //broken out here.  So the lookaheadPixels array has been populated already
 //by the rendering routine.
 void FormGPS::processSectionLookahead() {
-    USE_SETTINGS;
-
-    int tool_numOfSections = SETTINGS_TOOL_NUMSECTIONS;
-    double tool_minUnappliedPixels = SETTINGS_TOOL_MINAPPLIED;
-
-    //not using regular Qt Widgets in the main window anymore.  For
-    //debugging purposes, this could go in another popup window
-    if (SETTINGS_DISPLAY_SHOWBACK)
+    if (property_displayShowBack)
         grnPixelsWindow->setPixmap(QPixmap::fromImage(grnPix.mirrored()));
 
-    bool isHeadlandClose = false, isBoundaryClose = false, isMapping = true;
+    //determine where the tool is wrt to headland
+    if (bnd.isHeadlandOn) bnd.WhereAreToolCorners(tool);
+
+    //set the look ahead for hyd Lift in pixels per second
+    vehicle.hydLiftLookAheadDistanceLeft = tool.farLeftSpeed * vehicle.hydLiftLookAheadTime * 10;
+    vehicle.hydLiftLookAheadDistanceRight = tool.farRightSpeed * vehicle.hydLiftLookAheadTime * 10;
+
+    if (vehicle.hydLiftLookAheadDistanceLeft > 200) vehicle.hydLiftLookAheadDistanceLeft = 200;
+    if (vehicle.hydLiftLookAheadDistanceRight > 200) vehicle.hydLiftLookAheadDistanceRight = 200;
+
+    tool.lookAheadDistanceOnPixelsLeft = tool.farLeftSpeed * tool.lookAheadOnSetting * 10;
+    tool.lookAheadDistanceOnPixelsRight = tool.farRightSpeed * tool.lookAheadOnSetting * 10;
+
+    if (tool.lookAheadDistanceOnPixelsLeft > 200) tool.lookAheadDistanceOnPixelsLeft = 200;
+    if (tool.lookAheadDistanceOnPixelsRight > 200) tool.lookAheadDistanceOnPixelsRight = 200;
+
+    tool.lookAheadDistanceOffPixelsLeft = tool.farLeftSpeed * tool.lookAheadOffSetting * 10;
+    tool.lookAheadDistanceOffPixelsRight = tool.farRightSpeed * tool.lookAheadOffSetting * 10;
+
+    if (tool.lookAheadDistanceOffPixelsLeft > 160) tool.lookAheadDistanceOffPixelsLeft = 160;
+    if (tool.lookAheadDistanceOffPixelsRight > 160) tool.lookAheadDistanceOffPixelsRight = 160;
+
+    //determine if section is in boundary and headland using the section left/right positions
+    bool isLeftIn = true, isRightIn = true;
+
+    if (bnd.bndList.count() > 0)
+    {
+        for (int j = 0; j < tool.numOfSections; j++)
+        {
+            //only one first left point, the rest are all rights moved over to left
+            isLeftIn = j == 0 ? bnd.IsPointInsideFenceArea(tool.section[j].leftPoint) : isRightIn;
+            isRightIn = bnd.IsPointInsideFenceArea(tool.section[j].rightPoint);
+
+            if (tool.isSectionOffWhenOut)
+            {
+                //merge the two sides into in or out
+                if (isLeftIn || isRightIn) tool.section[j].isInBoundary = true;
+                else tool.section[j].isInBoundary = false;
+            }
+            else
+            {
+                //merge the two sides into in or out
+                if (!isLeftIn || !isRightIn) tool.section[j].isInBoundary = false;
+                else tool.section[j].isInBoundary = true;
+            }
+        }
+    }
 
     //determine farthest ahead lookahead - is the height of the readpixel line
     double rpHeight = 0;
-
-    //assume all sections are on and super can be on, if not set false to turn off.
-    tool.isSuperSectionAllowedOn = true;
     double rpOnHeight = 0;
     double rpToolHeight = 0;
 
     //pick the larger side
-    if (vehicle.hydLiftLookAheadDistanceLeft > vehicle.hydLiftLookAheadDistanceRight)
-        rpToolHeight = vehicle.hydLiftLookAheadDistanceLeft;
+    if (vehicle.hydLiftLookAheadDistanceLeft > vehicle.hydLiftLookAheadDistanceRight) rpToolHeight = vehicle.hydLiftLookAheadDistanceLeft;
     else rpToolHeight = vehicle.hydLiftLookAheadDistanceRight;
 
     if (tool.lookAheadDistanceOnPixelsLeft > tool.lookAheadDistanceOnPixelsRight) rpOnHeight = tool.lookAheadDistanceOnPixelsLeft;
     else rpOnHeight = tool.lookAheadDistanceOnPixelsRight;
 
-    //assume all sections are on and super can be on, if not set false to turn off.
-    tool.isSuperSectionAllowedOn = true;
     isHeadlandClose = false;
-    isBoundaryClose = false;
-
-    //find any off buttons, any outside of boundary, going backwards, and the farthest lookahead
-    for (int j = 0; j < tool_numOfSections; j++)
-    {
-        if (tool.section[j].manBtnState == btnStates::Off) tool.isSuperSectionAllowedOn = false;
-        if (!tool.section[j].isInBoundary) tool.isSuperSectionAllowedOn = false;
-
-        //check if any sections going backwards
-        if (tool.section[j].speedPixels < 0) tool.isSuperSectionAllowedOn = false;
-    }
-
-    //if only one section, or going slow no need for super section
-    if (tool_numOfSections == 1 || pn.speed <= SETTINGS_TOOL_SLOWSPEEDCUTOFF)
-            tool.isSuperSectionAllowedOn = false;
 
     //clamp the height after looking way ahead, this is for switching off super section only
     rpOnHeight = fabs(rpOnHeight);
@@ -254,319 +215,153 @@ void FormGPS::processSectionLookahead() {
     //10 % min is required for overlap, otherwise it never would be on.
     int pixLimit = (int)((double)(tool.section[0].rpSectionWidth * rpOnHeight) / (double)(5.0));
 
-    if ((rpOnHeight < rpToolHeight && hd.isOn)) rpHeight = rpToolHeight + 2;
+    if ((rpOnHeight < rpToolHeight && bnd.isHeadlandOn && bnd.isSectionControlledByHeadland)) rpHeight = rpToolHeight + 2;
     else rpHeight = rpOnHeight + 2;
 
-    if (rpHeight > 240) rpHeight = 240;
+    if (rpHeight > 290) rpHeight = 290;
     if (rpHeight < 8) rpHeight = 8;
-    //qDebug() << rpHeight;
 
-    //is applied area coming up?
-    int totalPixs = 0;
+    //read the whole block of pixels up to max lookahead, one read only
+    //pixels are already read
+    //GL.ReadPixels(tool.rpXPosition, 0, tool.rpWidth, (int)rpHeight, OpenTK.Graphics.OpenGL.PixelFormat.Green, PixelType.UnsignedByte, grnPixels);
+
+    //Paint to context for troubleshooting
+    //oglBack.MakeCurrent();
+    //oglBack.SwapBuffers();
 
     //determine if headland is in read pixel buffer left middle and right.
-    int start = 0, end = 0, tagged = 0;
+    int start = 0, end = 0, tagged = 0, totalPixel = 0;
 
     //slope of the look ahead line
-    double mOn = 0, mOff=0;
+    double mOn = 0, mOff = 0;
 
-    if (bnd.bndArr.count() > 0)
+    //tram and hydraulics
+    if (tram.displayMode > 0 && tool.width > vehicle.trackWidth)
     {
-        //are there enough pixels in buffer array to warrant turning off supersection
-        for (int a = 0; a < (tool.rpWidth * rpOnHeight); a++)
+        tram.controlByte = 0;
+        //1 pixels in is there a tram line?
+        if (tram.isOuter)
         {
-            if (grnPixels[a].green != 0)
+            if (grnPixels[(int)(tram.halfWheelTrack * 10)].green == 245) tram.controlByte += 2;
+            if (grnPixels[tool.rpWidth - (int)(tram.halfWheelTrack * 10)].green == 245) tram.controlByte += 1;
+        }
+        else
+        {
+            if (grnPixels[tool.rpWidth / 2 - (int)(tram.halfWheelTrack * 10)].green == 245) tram.controlByte += 2;
+            if (grnPixels[tool.rpWidth / 2 + (int)(tram.halfWheelTrack * 10)].green == 245) tram.controlByte += 1;
+        }
+    }
+
+    //determine if in or out of headland, do hydraulics if on
+    if (bnd.isHeadlandOn)
+    {
+        //calculate the slope
+        double m = (vehicle.hydLiftLookAheadDistanceRight - vehicle.hydLiftLookAheadDistanceLeft) / tool.rpWidth;
+        int height = 1;
+
+        for (int pos = 0; pos < tool.rpWidth; pos++)
+        {
+            height = (int)(vehicle.hydLiftLookAheadDistanceLeft + (m * pos)) - 1;
+            for (int a = pos; a < height * tool.rpWidth; a += tool.rpWidth)
             {
-                if (tool.isSuperSectionAllowedOn && totalPixs++ > pixLimit)
+                if (grnPixels[a].green == 250)
                 {
-                    tool.isSuperSectionAllowedOn = false;
-                    break;
+                    isHeadlandClose = true;
+                    goto GetOutTool;
                 }
             }
         }
 
-        //5 pixels in is there a boundary line?
-        for (int a = 0; a < (tool.rpWidth * 5); a++)
-        {
-            if (grnPixels[a].green == 240)
-            {
-                tool.isSuperSectionAllowedOn = false;
-                isBoundaryClose = true;
-                break;
-            }
-        }
+    GetOutTool: //goto
 
-        //determine if in or out of headland, do hydraulics if on
-        if (hd.isOn)
-        {
-            //calculate the slope
-            double m = (vehicle.hydLiftLookAheadDistanceRight - vehicle.hydLiftLookAheadDistanceLeft) / tool.rpWidth;
-            int height = 1;
+        //is the tool completely in the headland or not
+        bnd.isToolInHeadland = bnd.isToolOuterPointsInHeadland && !isHeadlandClose;
 
-            for (int pos = 0; pos < tool.rpWidth; pos++)
-            {
-                height = (int)(vehicle.hydLiftLookAheadDistanceLeft + (m * pos)) - 1;
-                for (int a = pos; a < height*tool.rpWidth; a+=tool.rpWidth)
-                {
-                    if (grnPixels[a].green == 250)
-                    {
-                        isHeadlandClose = true;
-                        goto GetOutTool;
-                    }
-                }
-            }
-GetOutTool:
-
-            //is the tool completely in the headland or not
-            hd.isToolInHeadland = hd.isToolOuterPointsInHeadland && !isHeadlandClose;
-
-            if (isHeadlandClose || hd.isToolInHeadland) tool.isSuperSectionAllowedOn = false;
-
-            //set hydraulics based on tool in headland or not
-            hd.setHydPosition(pn.speed); //TODO: pass in button state
-
-            ////
-            //if (hd.isToolInHeadland) lblInHead.Text = "Headland";
-            //else lblInHead.Text = "Work";
-            //if (hd.isToolUp) lblIsHdClose.Text = "Up";
-            //else lblIsHdClose.Text = "Down";
-        }
-    }
-    else  //supersection check by applied only
-    {
-        for (int a = 0; a < (tool.rpWidth * rpOnHeight); a++)
-        {
-            if (grnPixels[a].green != 0)
-            {
-                if (tool.isSuperSectionAllowedOn && totalPixs++ > pixLimit)
-                {
-                    tool.isSuperSectionAllowedOn = false;
-                    break;
-                }
-            }
-        }
+        //set hydraulics based on tool in headland or not
+        bnd.SetHydPosition(autoBtnState, p_239, vehicle);
     }
 
-    //if all manual and all on go supersection
-    if (manualBtnState == btnStates::On)
-    {
-        tool.isSuperSectionAllowedOn = true;
-        for (int j = 0; j < tool_numOfSections; j++)
-        {
-            if (tool.section[j].manBtnState == btnStates::Off) tool.isSuperSectionAllowedOn = false;
-        }
-    }
+    ///////////////////////////////////////////   Section control        ssssssssssssssssssssss
 
-    // If ALL sections are required on, No buttons are off, within boundary, turn super section on, normal sections off
-    if (tool.isSuperSectionAllowedOn)
+    int endHeight = 1, startHeight = 1;
+
+    if (bnd.isHeadlandOn && bnd.isSectionControlledByHeadland) bnd.WhereAreToolLookOnPoints(vehicle, tool);
+
+    for (int j = 0; j < tool.numOfSections; j++)
     {
-        for (int j = 0; j < tool_numOfSections; j++)
+        //Off or too slow or going backwards
+        if (tool.section[j].sectionBtnState == btnStates::Off || vehicle.avgSpeed < vehicle.slowSpeedCutoff || tool.section[j].speedPixels < 0)
         {
-            if (tool.section[j].isMappingOn)
+            tool.section[j].sectionOnRequest = false;
+            tool.section[j].sectionOffRequest = true;
+
+            // Manual on, force the section On
+            if (tool.section[j].sectionBtnState == btnStates::On)
             {
-                tool.section[j].mappingOffRequest = true;
-                tool.section[j].mappingOnRequest = false;
-                tool.section[j].mappingOffTimer = 0;
-                tool.section[j].mappingOnTimer = 0;
+                tool.section[j].sectionOnRequest = true;
+                tool.section[j].sectionOffRequest = false;
+                continue;
             }
-            if (tool.section[j].isSectionOn)
+            continue;
+        }
+
+        // Manual on, force the section On
+        if (tool.section[j].sectionBtnState == btnStates::On)
+        {
+            tool.section[j].sectionOnRequest = true;
+            tool.section[j].sectionOffRequest = false;
+            continue;
+        }
+
+
+        //AutoSection - If any nowhere applied, send OnRequest, if its all green send an offRequest
+        tool.section[j].isSectionRequiredOn = false;
+
+        //calculate the slopes of the lines
+        mOn = (tool.lookAheadDistanceOnPixelsRight - tool.lookAheadDistanceOnPixelsLeft) / tool.rpWidth;
+        mOff = (tool.lookAheadDistanceOffPixelsRight - tool.lookAheadDistanceOffPixelsLeft) / tool.rpWidth;
+
+        start = tool.section[j].rpSectionPosition - tool.section[0].rpSectionPosition;
+        end = tool.section[j].rpSectionWidth - 1 + start;
+
+        if (end >= tool.rpWidth)
+            end = tool.rpWidth - 1;
+
+        totalPixel = 1;
+        tagged = 0;
+
+        for (int pos = start; pos <= end; pos++)
+        {
+            startHeight = (int)(tool.lookAheadDistanceOffPixelsLeft + (mOff * pos)) * tool.rpWidth + pos;
+            endHeight = (int)(tool.lookAheadDistanceOnPixelsLeft + (mOn * pos)) * tool.rpWidth + pos;
+
+            for (int a = startHeight; a <= endHeight; a += tool.rpWidth)
             {
+                totalPixel++;
+                if (grnPixels[a].green == 0) tagged++;
+            }
+        }
+
+        //determine if meeting minimum coverage
+        tool.section[j].isSectionRequiredOn = ((tagged * 100) / totalPixel > (100 - tool.minCoverage));
+
+        //logic if in or out of boundaries or headland
+        if (bnd.bndList.count() > 0)
+        {
+            //if out of boundary, turn it off
+            if (!tool.section[j].isInBoundary)
+            {
+                tool.section[j].isSectionRequiredOn = false;
                 tool.section[j].sectionOffRequest = true;
                 tool.section[j].sectionOnRequest = false;
                 tool.section[j].sectionOffTimer = 0;
                 tool.section[j].sectionOnTimer = 0;
+                continue;
             }
-        }
-
-        //turn on super section
-        tool.section[tool_numOfSections].mappingOnRequest = true;
-        tool.section[tool_numOfSections].mappingOffRequest = false;
-
-        tool.section[tool_numOfSections].sectionOnRequest = true;
-        tool.section[tool_numOfSections].sectionOffRequest = false;
-    }
-
-    /* Below is priority based. The last if statement is the one that is
-        * applied and takes the highest priority. Digital input controls
-        * have the highest priority and overide all buttons except
-        * the manual button which exits the loop and just turns sections on....
-        * Because isn't that what manual means! */
-
-    //turn on indivdual sections as super section turn off
-    else
-    {
-        //if the superSection is on, turn it off
-        if (tool.section[tool_numOfSections].isSectionOn)
-        {
-            tool.section[tool_numOfSections].sectionOffRequest = true;
-            tool.section[tool_numOfSections].sectionOnRequest = false;
-            tool.section[tool_numOfSections].sectionOffTimer = 0;
-            tool.section[tool_numOfSections].sectionOnTimer = 0;
-        }
-
-        //if the superSection is on, turn it off
-        if (tool.section[tool_numOfSections].isMappingOn)
-        {
-            tool.section[tool_numOfSections].mappingOffRequest = true;
-            tool.section[tool_numOfSections].mappingOnRequest = false;
-            tool.section[tool_numOfSections].mappingOffTimer = 0;
-            tool.section[tool_numOfSections].mappingOnTimer = 0;
-        }
-
-        //Mapping   ---------------------------------------------------------------------------------------------------
-        int endHeight = 1, startHeight =1;
-
-        for (int j = 0; j < tool_numOfSections; j++)
-        {
-            tool.section[j].isMappingRequiredOn = false;
-
-            //calculate slope
-            mOn = (tool.lookAheadDistanceOnPixelsRight - tool.lookAheadDistanceOnPixelsLeft) / tool.rpWidth;
-
-            //start and end point to scan across buffer
-            start = tool.section[j].rpSectionPosition - tool.section[0].rpSectionPosition;
-            end = tool.section[j].rpSectionWidth - 1 + start;
-            tagged = 0;
-
-            for (int pos = start; pos <= end; pos++)
+            else
             {
-                //block 5 pixels high (50 cm look ahead)
-                    endHeight = 5 * tool.rpWidth + pos;
-
-                for (int a = pos; a <= endHeight; a += tool.rpWidth)
-                {
-                    if (grnPixels[a].green == 0)
-                    {
-                        tagged++;
-                        if (tagged > tool_minUnappliedPixels)
-                        {
-                            tool.section[j].isMappingRequiredOn = true;
-                            goto GetOutMappingOn;
-                        }
-                    }
-                }
-            }
-GetOutMappingOn:
-            start = 0;
-
-            if (bnd.bndArr.count() > 0)
-            {
-                //if out of boundary, turn it off
-                if (!tool.section[j].isInBoundary)
-                {
-                    tool.section[j].isMappingRequiredOn = false;
-                    tool.section[j].mappingOffRequest = true;
-                    tool.section[j].mappingOnRequest = false;
-                    tool.section[j].mappingOffTimer = 0;
-                    tool.section[j].mappingOnTimer = 0;
-                }
-
-                else if (tool.section[j].isInHeadlandArea & hd.isOn)
-                {
-                    // if headland is on and out, turn off
-                        tool.section[j].isMappingRequiredOn = false;
-                        tool.section[j].mappingOffRequest = true;
-                        tool.section[j].mappingOnRequest = false;
-                        tool.section[j].mappingOffTimer = 0;
-                        tool.section[j].mappingOnTimer = 0;
-                }
-            }
-        }
-
-        ///////////////////////////////////////////   Section control        ssssssssssssssssssssss
-        ///
-
-        if (hd.isOn) hd.whereAreToolLookOnPoints(vehicle, tool);
-
-        for (int j = 0; j < tool_numOfSections; j++)
-        {
-            //If any nowhere applied, send OnRequest, if its all green send an offRequest
-            //ensure it starts off
-            tool.section[j].isSectionRequiredOn = false;
-
-            if (bnd.bndArr.count() > 0)
-            {
-                //if out of boundary, turn it off
-                if (!tool.section[j].isInBoundary)
-                {
-                    tool.section[j].isSectionRequiredOn = false;
-                    tool.section[j].sectionOffRequest = true;
-                    tool.section[j].sectionOnRequest = false;
-                    tool.section[j].sectionOffTimer = 0;
-                    tool.section[j].sectionOnTimer = 0;
-                }
-                else
-                {
-                    mOn = (tool.lookAheadDistanceOnPixelsRight - tool.lookAheadDistanceOnPixelsLeft) / tool.rpWidth;
-                    start = tool.section[j].rpSectionPosition - tool.section[0].rpSectionPosition;
-                    end = tool.section[j].rpSectionWidth - 1 + start;
-                    tagged = 0;
-
-                    for (int pos = start; pos <= end; pos++)
-                    {
-                        if (isBoundaryClose) endHeight = tool.rpWidth + pos;
-                        else endHeight = (int)(tool.lookAheadDistanceOnPixelsLeft + (mOn * pos)) * tool.rpWidth + pos;
-
-                        for (int a = pos; a <= endHeight; a += tool.rpWidth)
-                        {
-                            if (grnPixels[a].green == 0)
-                            {
-                                tagged++;
-                                if (tagged > tool_minUnappliedPixels)
-                                {
-                                    tool.section[j].isSectionRequiredOn = true;
-                                    goto GetOutSectionOn;
-                                }
-                            }
-                        }
-
-                    }
-GetOutSectionOn:
-                    tagged = 0;
-
-                //only turn off if on
-                if (tool.section[j].isSectionRequiredOn == true)
-                {
-                    tool.section[j].isSectionRequiredOn = false;
-                    //calculate the slopes of the lines
-                    mOn = (tool.lookAheadDistanceOnPixelsRight - tool.lookAheadDistanceOnPixelsLeft) / tool.rpWidth;
-                    mOff = (tool.lookAheadDistanceOffPixelsRight - tool.lookAheadDistanceOffPixelsLeft) / tool.rpWidth;
-                    start = tool.section[j].rpSectionPosition - tool.section[0].rpSectionPosition;
-                    end = tool.section[j].rpSectionWidth - 1 + start;
-                    tagged = 0;
-
-                    for (int pos = start; pos <= end; pos++)
-                    {
-                        if (isBoundaryClose)
-                        {
-                            endHeight = tool.rpWidth + pos;
-                            startHeight = pos;
-                        }
-                        else
-                        {
-                            startHeight = (int)(tool.lookAheadDistanceOffPixelsLeft + (mOff * pos)) * tool.rpWidth + pos;
-                            endHeight = (int)(tool.lookAheadDistanceOnPixelsLeft + (mOn * pos)) * tool.rpWidth + pos;
-                        }
-
-                        for (int a = startHeight; a <= endHeight; a += tool.rpWidth)
-                        {
-                            if (grnPixels[a].green == 0)
-                            {
-                                tagged++;
-                                if (tagged > tool_minUnappliedPixels)
-                                {
-                                    tool.section[j].isSectionRequiredOn = true;
-                                    goto GetOutSectionOff;
-                                }
-                            }
-                        }
-                    }
-GetOutSectionOff:
-                    start = 0;
-                }
-
                 //is headland coming up
-                if (hd.isOn)
+                if (bnd.isHeadlandOn && bnd.isSectionControlledByHeadland)
                 {
                     bool isHeadlandInLookOn = false;
 
@@ -577,6 +372,10 @@ GetOutSectionOff:
                     start = tool.section[j].rpSectionPosition - tool.section[0].rpSectionPosition;
 
                     end = tool.section[j].rpSectionWidth - 1 + start;
+
+                    if (end >= tool.rpWidth)
+                        end = tool.rpWidth - 1;
+
                     tagged = 0;
 
                     for (int pos = start; pos <= end; pos++)
@@ -590,281 +389,277 @@ GetOutSectionOff:
                                 mOn = 0;
                             if (grnPixels[a].green == 250)
                             {
-                                //tagged++;
-                                //if (tagged > tool_minUnappliedPixels)
-                                {
-                                    isHeadlandInLookOn = true;
-                                    goto GetOutHdOn;
-                                }
+                                isHeadlandInLookOn = true;
+                                goto GetOutHdOn;
                             }
                         }
                     }
-GetOutHdOn:
-                    //    //is headline in base to off area
-                    //    tagged = 0;
-                    //    mOn = (tool.lookAheadDistanceOffPixelsRight - tool.lookAheadDistanceOffPixelsLeft) / tool.rpWidth;
+                GetOutHdOn:
 
-                    //    start = tool.section[j].rpSectionPosition - tool.section[0].rpSectionPosition;
-                    //    end = tool.section[j].rpSectionWidth - 1 + start;
-
-                    //    for (int pos = start; pos <= end; pos++)
-                    //    {
-                    //        endHeight = (int)(tool.lookAheadDistanceOffPixelsLeft + (mOn * pos)) * tool.rpWidth + pos;
-
-                    //        for (int a = pos; a <= endHeight; a += tool.rpWidth)
-                    //        {
-                    //            if (grnPixels[a].green == 250)
-                    //            {
-                    //                //tagged++;
-                    //                //if (tagged > tool_minUnappliedPixels)
-                    //                {
-                    //                    isHeadlandInLookOff = true;
-                    //                    goto GetOutHdOff;
-                    //                }
-                    //            }
-                    //        }
-                    //    }
-                    //GetOutHdOff:
-
-                        //determine if look ahead points are completely in headland
-
-                        if (tool.section[j].isSectionRequiredOn && tool.section[j].isLookOnInHeadland && !isHeadlandInLookOn)
-                        {
-                            tool.section[j].isSectionRequiredOn = false;
-                            tool.section[j].sectionOffRequest = true;
-                            tool.section[j].sectionOnRequest = false;
-                        }
-
-                        if (tool.section[j].isSectionRequiredOn && !tool.section[j].isLookOnInHeadland && isHeadlandInLookOn)
-                        {
-                            tool.section[j].isSectionRequiredOn = true;
-                            tool.section[j].sectionOffRequest = false;
-                            tool.section[j].sectionOnRequest = true;
-                        }
-                    }
-                }
-            }
-            else  //Section Control in no boundary field
-            {
-                tagged = 0;
-                mOn = (tool.lookAheadDistanceOnPixelsRight - tool.lookAheadDistanceOnPixelsLeft) / tool.rpWidth;
-
-                start = tool.section[j].rpSectionPosition - tool.section[0].rpSectionPosition;
-                end = tool.section[j].rpSectionWidth - 1 + start;
-
-                for (int pos = start; pos <= end; pos++)
-                {
-                    endHeight = (int)(tool.lookAheadDistanceOnPixelsLeft + (mOn * pos)) * tool.rpWidth + pos;
-
-                    for (int a = pos; a <= endHeight; a += tool.rpWidth)
+                    //determine if look ahead points are completely in headland
+                    if (tool.section[j].isSectionRequiredOn && tool.section[j].isLookOnInHeadland && !isHeadlandInLookOn)
                     {
-                        if (grnPixels[a].green == 0)
-                        {
-                            tagged++;
-                            if (tagged > tool_minUnappliedPixels)
-                            {
-                                tool.section[j].isSectionRequiredOn = true;
-                                goto GetOutSectionOn1;
-                            }
-                        }
+                        tool.section[j].isSectionRequiredOn = false;
+                        tool.section[j].sectionOffRequest = true;
+                        tool.section[j].sectionOnRequest = false;
                     }
-                }
-GetOutSectionOn1:
-                //only turn off if on
-                if (tool.section[j].isSectionRequiredOn == true)
-                {
-                    tool.section[j].isSectionRequiredOn = false;
-                    //calculate the slopes of the lines
-                    mOn = (tool.lookAheadDistanceOnPixelsRight - tool.lookAheadDistanceOnPixelsLeft) / tool.rpWidth;
-                    mOff = (tool.lookAheadDistanceOffPixelsRight - tool.lookAheadDistanceOffPixelsLeft) / tool.rpWidth;
 
-                    start = tool.section[j].rpSectionPosition - tool.section[0].rpSectionPosition;
-
-                    end = tool.section[j].rpSectionWidth - 1 + start;
-                    tagged = 0;
-
-                    for (int pos = start; pos <= end; pos++)
+                    if (tool.section[j].isSectionRequiredOn && !tool.section[j].isLookOnInHeadland && isHeadlandInLookOn)
                     {
-                        startHeight = (int)(tool.lookAheadDistanceOffPixelsLeft + (mOff * pos)) * tool.rpWidth + pos;
-                        endHeight = (int)(tool.lookAheadDistanceOnPixelsLeft + (mOn * pos)) * tool.rpWidth + pos;
-
-                        for (int a = startHeight; a <= endHeight; a += tool.rpWidth)
-                        {
-                            if (a < 0)
-                                mOn = 0;
-                            if (grnPixels[a].green == 0)
-                            {
-                                tagged++;
-                                if (tagged > tool_minUnappliedPixels)
-                                {
-                                    tool.section[j].isSectionRequiredOn = true;
-                                    goto GetOutSectionOff1;
-                                }
-                            }
-                        }
+                        tool.section[j].isSectionRequiredOn = true;
+                        tool.section[j].sectionOffRequest = false;
+                        tool.section[j].sectionOnRequest = true;
                     }
-GetOutSectionOff1:
-                    start = 0;
                 }
-
-                start = 0; end = 0;
-            }
-
-            if (tool.section[j].speedPixels < 0)
-            {
-                tool.section[j].isSectionRequiredOn = false;
-
-                tool.section[j].isMappingRequiredOn = false;
-                tool.section[j].mappingOffRequest = true;
-                tool.section[j].mappingOnRequest = false;
-            }
-        }  // end of go thru all sections "for"
-        //if Master Auto is on
-        for (int j = 0; j < tool_numOfSections; j++)
-        {
-            if (tool.section[j].isSectionRequiredOn && tool.section[j].isAllowedOn)
-            {
-                //global request to turn on section
-                tool.section[j].sectionOnRequest = true;
-                tool.section[j].sectionOffRequest = false;
-            }
-
-            else if (!tool.section[j].isSectionRequiredOn)
-            {
-                //global request to turn off section
-                tool.section[j].sectionOffRequest = true;
-                tool.section[j].sectionOnRequest = false;
-            }
-
-            // Manual on, force the section On and exit loop so digital is also overidden
-            if (tool.section[j].manBtnState == btnStates::On)
-            {
-                tool.section[j].sectionOnRequest = true;
-                tool.section[j].sectionOffRequest = false;
-                continue;
-            }
-
-            if (tool.section[j].manBtnState == btnStates::Off)
-            {
-                tool.section[j].sectionOnRequest = false;
-                tool.section[j].sectionOffRequest = true;
-            }
-
-            //if going too slow turn off sections
-            if (pn.speed <= SETTINGS_TOOL_SLOWSPEEDCUTOFF)
-            {
-                tool.section[j].sectionOnRequest = false;
-                tool.section[j].sectionOffRequest = true;
             }
         }
 
-        for (int j = 0; j < tool_numOfSections; j++)
-        {
-            //now for  mapping
-            if (tool.section[j].isMappingRequiredOn && tool.section[j].isAllowedOn)
-            {
-                //global request to turn on section
-                tool.section[j].mappingOnRequest = true;
-                tool.section[j].mappingOffRequest = false;
-            }
 
-            else if (!tool.section[j].isMappingRequiredOn)
-            {
-                //global request to turn off section
-                tool.section[j].mappingOffRequest = true;
-                tool.section[j].mappingOnRequest = false;
-            }
+        //global request to turn on section
+        tool.section[j].sectionOnRequest = tool.section[j].isSectionRequiredOn;
+        tool.section[j].sectionOffRequest = !tool.section[j].sectionOnRequest;
 
-            // Manual on, force the section On and exit loop so digital is also overidden
-            if (tool.section[j].manBtnState == btnStates::On)
-            {
-                tool.section[j].mappingOnRequest = true;
-                tool.section[j].mappingOffRequest = false;
-                continue;
-            }
+    }  // end of go thru all sections "for"
 
-            if (tool.section[j].manBtnState == btnStates::Off)
-            {
-                tool.section[j].mappingOnRequest = false;
-                tool.section[j].mappingOffRequest = true;
-            }
-
-            //if going too slow turn off sections
-            if (pn.speed <= SETTINGS_TOOL_SLOWSPEEDCUTOFF)
-            {
-                tool.section[j].mappingOnRequest = false;
-                tool.section[j].mappingOffRequest = true;
-            }
-
-        }
-    } // end of supersection is off
-    //Checks the workswitch if required
-    if (isJobStarted && SETTINGS_TOOL_ISWORKSWITCHENABLED)
+    //Set all the on and off times based from on off section requests
+    for (int j = 0; j < tool.numOfSections; j++)
     {
-        //TODO: workSwitch.checkWorkSwitch();
+        //SECTION timers
+
+        if (tool.section[j].sectionOnRequest)
+            tool.section[j].isSectionOn = true;
+
+        //turn off delay
+        if (tool.turnOffDelay > 0)
+        {
+            if (!tool.section[j].sectionOffRequest) tool.section[j].sectionOffTimer = (int)(gpsHz / 2.0 * tool.turnOffDelay);
+
+            if (tool.section[j].sectionOffTimer > 0) tool.section[j].sectionOffTimer--;
+
+            if (tool.section[j].sectionOffRequest && tool.section[j].sectionOffTimer == 0)
+            {
+                if (tool.section[j].isSectionOn) tool.section[j].isSectionOn = false;
+            }
+        }
+        else
+        {
+            if (tool.section[j].sectionOffRequest)
+                tool.section[j].isSectionOn = false;
+        }
+
+        //Mapping timers
+        if (tool.section[j].sectionOnRequest && !tool.section[j].isMappingOn && tool.section[j].mappingOnTimer == 0)
+        {
+            tool.section[j].mappingOnTimer = (int)(tool.lookAheadOnSetting * (gpsHz / 2) - 1);
+        }
+        else if (tool.section[j].sectionOnRequest && tool.section[j].isMappingOn && tool.section[j].mappingOffTimer > 1)
+        {
+            tool.section[j].mappingOffTimer = 0;
+            tool.section[j].mappingOnTimer = (int)(tool.lookAheadOnSetting * (gpsHz / 2) - 1);
+        }
+
+        if (tool.lookAheadOffSetting > 0)
+        {
+            if (tool.section[j].sectionOffRequest && tool.section[j].isMappingOn && tool.section[j].mappingOffTimer == 0)
+            {
+                tool.section[j].mappingOffTimer = (int)(tool.lookAheadOffSetting * (gpsHz / 2) + 4);
+            }
+        }
+        else if (tool.turnOffDelay > 0)
+        {
+            if (tool.section[j].sectionOffRequest && tool.section[j].isMappingOn && tool.section[j].mappingOffTimer == 0)
+                tool.section[j].mappingOffTimer = (int)(tool.turnOffDelay * gpsHz / 2);
+        }
+        else
+        {
+            tool.section[j].mappingOffTimer = 0;
+        }
+
+        //MAPPING - Not the making of triangle patches - only status - on or off
+        if (tool.section[j].sectionOnRequest)
+        {
+            tool.section[j].mappingOffTimer = 0;
+            if (tool.section[j].mappingOnTimer > 1)
+                tool.section[j].mappingOnTimer--;
+            else
+            {
+                tool.section[j].isMappingOn = true;
+            }
+        }
+
+        if (tool.section[j].sectionOffRequest)
+        {
+            tool.section[j].mappingOnTimer = 0;
+            if (tool.section[j].mappingOffTimer > 1)
+                tool.section[j].mappingOffTimer--;
+            else
+            {
+                tool.section[j].isMappingOn = false;
+            }
+        }
     }
 
-    //Determine if sections want to be on or off
-    processSectionOnOffRequests(isMapping);
+    //Checks the workswitch or steerSwitch if required
+    if (ahrs.isAutoSteerAuto || mc.isRemoteWorkSystemOn)
+        mc.CheckWorkAndSteerSwitch(ahrs,isAutoSteerBtnOn);
+
+    // check if any sections have changed status
+    number = 0;
+
+    for (int j = 0; j < tool.numOfSections; j++)
+    {
+        if (tool.section[j].isMappingOn)
+        {
+            number |= 1ul << j;
+        }
+    }
+
+    //there has been a status change of section on/off
+    if (number != lastNumber)
+    {
+        int sectionOnOffZones = 0, patchingZones = 0;
+
+        //everything off
+        if (number == 0)
+        {
+            for (int j = 0; j < triStrip.count(); j++)
+            {
+                if (triStrip[j].isDrawing)
+                    triStrip[j].TurnMappingOff(tool, fd);
+            }
+        }
+        else if (!tool.isMultiColoredSections)
+        {
+            //set the start and end positions from section points
+            for (int j = 0; j < tool.numOfSections; j++)
+            {
+                //skip till first mapping section
+                if (!tool.section[j].isMappingOn) continue;
+
+                //do we need more patches created
+                if (triStrip.count() < sectionOnOffZones + 1)
+                    triStrip.append(CPatches());
+
+                //set this strip start edge to edge of this section
+                triStrip[sectionOnOffZones].newStartSectionNum = j;
+
+                while ((j + 1) < tool.numOfSections && tool.section[j + 1].isMappingOn)
+                {
+                    j++;
+                }
+
+                //set the edge of this section to be end edge of strp
+                triStrip[sectionOnOffZones].newEndSectionNum = j;
+                sectionOnOffZones++;
+            }
+
+            //count current patch strips being made
+            for (int j = 0; j < triStrip.count(); j++)
+            {
+                if (triStrip[j].isDrawing) patchingZones++;
+            }
+
+            //tests for creating new strips or continuing
+            bool isOk = (patchingZones == sectionOnOffZones && sectionOnOffZones < 3);
+
+            if (isOk)
+            {
+                for (int j = 0; j < sectionOnOffZones; j++)
+                {
+                    if (triStrip[j].newStartSectionNum > triStrip[j].currentEndSectionNum
+                        || triStrip[j].newEndSectionNum < triStrip[j].currentStartSectionNum)
+                        isOk = false;
+                }
+            }
+
+            if (isOk)
+            {
+                for (int j = 0; j < sectionOnOffZones; j++)
+                {
+                    if (triStrip[j].newStartSectionNum != triStrip[j].currentStartSectionNum
+                        || triStrip[j].newEndSectionNum != triStrip[j].currentEndSectionNum)
+                    {
+                        //if (tool.isSectionsNotZones)
+                        {
+                            triStrip[j].AddMappingPoint(tool,fd, 0);
+                        }
+
+                        triStrip[j].currentStartSectionNum = triStrip[j].newStartSectionNum;
+                        triStrip[j].currentEndSectionNum = triStrip[j].newEndSectionNum;
+                        triStrip[j].AddMappingPoint(tool,fd, 0);
+                    }
+                }
+            }
+            else
+            {
+                //too complicated, just make new strips
+                for (int j = 0; j < triStrip.count(); j++)
+                {
+                    if (triStrip[j].isDrawing)
+                        triStrip[j].TurnMappingOff(tool, fd);
+                }
+
+                for (int j = 0; j < sectionOnOffZones; j++)
+                {
+                    triStrip[j].currentStartSectionNum = triStrip[j].newStartSectionNum;
+                    triStrip[j].currentEndSectionNum = triStrip[j].newEndSectionNum;
+                    triStrip[j].TurnMappingOn(tool, 0);
+                }
+            }
+        }
+        else if (tool.isMultiColoredSections) //could be else only but this is more clear
+        {
+            //set the start and end positions from section points
+            for (int j = 0; j < tool.numOfSections; j++)
+            {
+                //do we need more patches created
+                if (triStrip.count() < sectionOnOffZones + 1)
+                    triStrip.append(CPatches());
+
+                //set this strip start edge to edge of this section
+                triStrip[sectionOnOffZones].newStartSectionNum = j;
+
+                //set the edge of this section to be end edge of strp
+                triStrip[sectionOnOffZones].newEndSectionNum = j;
+                sectionOnOffZones++;
+
+                if (!tool.section[j].isMappingOn)
+                {
+                    if (triStrip[j].isDrawing)
+                        triStrip[j].TurnMappingOff(tool, fd);
+                }
+                else
+                {
+                    triStrip[j].currentStartSectionNum = triStrip[j].newStartSectionNum;
+                    triStrip[j].currentEndSectionNum = triStrip[j].newEndSectionNum;
+                    triStrip[j].TurnMappingOn(tool,j);
+                }
+            }
+        }
+
+
+        lastNumber = number;
+    }
 
     //send the byte out to section machines
-    //TODO: buildMachineByte();
-
-    //send the machine out to port
-    //TODO: sendOutUSBMachinePort(mc.machineData, CModuleComm.pgnSentenceLength);
-
-    ////send machine data to autosteer if checked
-    if (mc.isMachineDataSentToAutoSteer)
-    {
-        //TODO: SendOutUSBAutoSteerPort(mc.machineData, CModuleComm.pgnSentenceLength);
-    }
-
+    BuildMachineByte();
 
     //if a minute has elapsed save the field in case of crash and to be able to resume
-    if (minuteCounter > 60 && sentenceCounter < 20)
+    if (minuteCounter > 30 && sentenceCounter < 20)
     {
-        //tmrWatchdog->stop();
+        tmrWatchdog->stop();
 
         //don't save if no gps
-        if (isJobStarted )
+        if (isJobStarted)
         {
             //auto save the field patches, contours accumulated so far
-            fileSaveSections();
-            fileSaveContour();
+            FileSaveSections();
+            FileSaveContour();
 
             //NMEA log file
-            if (SETTINGS_GPS_LOGNMEA) fileSaveNMEA();
-            if (SETTINGS_GPS_LOGELEVATION) fileSaveElevation();
-            fileSaveFieldKML();
-            qDebug() << "Saving to field " << currentFieldDirectory;
+            //TODO: if (isLogElevation) FileSaveElevation();
+            //ExportFieldAs_KML();
         }
-
-        /*
-         TODO:
-        if (isAutoDayNight && tenMinuteCounter > 600)
-        {
-            tenMinuteCounter = 0;
-            isDayTime = (DateTime.Now.Ticks < sunset.Ticks && DateTime.Now.Ticks > sunrise.Ticks);
-
-            if (isDayTime != isDay)
-            {
-                isDay = isDayTime;
-                isDay = !isDay;
-                SwapDayNightMode();
-            }
-
-            if (sunrise.Date != DateTime.Today)
-            {
-                IsBetweenSunriseSunset(pn.latitude, pn.longitude);
-
-                //set display accordingly
-                isDayTime = (DateTime.Now.Ticks < sunset.Ticks && DateTime.Now.Ticks > sunrise.Ticks);
-
-                lblSunrise.Text = sunrise.ToString("HH:mm");
-                lblSunset.Text = sunset.ToString("HH:mm");
-            }
-        }
-        */
 
         //if its the next day, calc sunrise sunset for next day
         minuteCounter = 0;
@@ -873,405 +668,321 @@ GetOutSectionOff1:
         isSavingFile = false;
 
         //go see if data ready for draw and position updates
-        //tmrWatchdog->start();
+        tmrWatchdog->start();
+
+        //calc overlap
+        //oglZoom.Refresh();
 
     }
     //this is the end of the "frame". Now we wait for next NMEA sentence with a valid fix.
 }
 
-//Does the logic to process section on off requests
-void FormGPS::processSectionOnOffRequests(bool isMapping)
-{
-    USE_SETTINGS;
-
-    double tool_turnOffDelay = SETTINGS_TOOL_OFFDELAY;
-
-    for (int j = 0; j < SETTINGS_TOOL_NUMSECTIONS + 1; j++)
-    {
-        //SECTIONS -
-
-
-        if (tool.section[j].sectionOnRequest)
-            tool.section[j].isSectionOn = true;
-
-        if (!tool.section[j].sectionOffRequest) tool.section[j].sectionOffTimer = (int)((double)fixUpdateHz * tool_turnOffDelay);
-
-        if (tool.section[j].sectionOffTimer > 0) tool.section[j].sectionOffTimer--;
-
-        if (tool.section[j].sectionOffRequest && tool.section[j].sectionOffTimer == 0)
-        {
-            if (tool.section[j].isSectionOn) tool.section[j].isSectionOn = false;
-        }
-
-        //MAPPING -
-
-        //easy just turn it on
-        if (tool.section[j].mappingOnRequest)
-        {
-            if (!tool.section[j].isMappingOn && isMapping) tool.section[j].turnMappingOn(); //**************************************** un comment to enable mappping again
-        }
-
-        //turn off
-        double sped = 1 / ((pn.speed+5) * 0.2);
-        if (sped < 0.2) sped = 0.2;
-
-        //keep setting the timer so full when ready to turn off
-        if (!tool.section[j].mappingOffRequest)
-            tool.section[j].mappingOffTimer = (int)(fixUpdateHz * 1 * sped + ((double)fixUpdateHz * tool_turnOffDelay));
-
-        //decrement the off timer
-        if (tool.section[j].mappingOffTimer > 0) tool.section[j].mappingOffTimer--;
-
-        //if Off mapping timer is zero, turn off the section, reset everything
-        if (tool.section[j].mappingOffTimer == 0 && tool.section[j].mappingOffRequest)
-        {
-            if (tool.section[j].isMappingOn) tool.section[j].turnMappingOff(tool);
-            tool.section[j].mappingOffRequest = false;
-        }
-
-        //#region notes
-        //Turn ON
-        //if requested to be on, set the timer to Max 10 (1 seconds) = 10 frames per second
-        //if (tool.section[j].sectionOnRequest && !tool.section[j].sectionOnOffCycle)
-        //{
-        //    tool.section[j].sectionOnTimer = (int)(pn.speed * tool.section[j].lookAheadOn) + 1;
-        //    if (tool.section[j].sectionOnTimer > fixUpdateHz + 3) tool.section[j].sectionOnTimer = fixUpdateHz + 3;
-        //    tool.section[j].sectionOnOffCycle = true;
-        //}
-
-        ////reset the ON request
-        //section[j].sectionOnRequest = false;
-
-        ////decrement the timer if not zero
-        //if (tool.section[j].sectionOnTimer > 0)
-        //{
-        //    //turn the section ON if not and decrement timer
-        //    tool.section[j].sectionOnTimer--;
-        //    if (!tool.section[j].isSectionOn) tool.section[j].isSectionOn = true;
-
-        //    //keep resetting the section OFF timer while the ON is active
-        //    //section[j].sectionOffTimer = (int)(fixUpdateHz * tool.toolTurnOffDelay);
-        //}
-        //if (!tool.section[j].sectionOffRequest)
-        //    tool.section[j].sectionOffTimer = (int)(fixUpdateHz * tool.turnOffDelay);
-
-        ////decrement the off timer
-        //if (tool.section[j].sectionOffTimer > 0 && tool.section[j].sectionOnTimer == 0) tool.section[j].sectionOffTimer--;
-
-        ////Turn OFF
-        ////if Off section timer is zero, turn off the section
-        //if (tool.section[j].sectionOffTimer == 0 && tool.section[j].sectionOnTimer == 0 && tool.section[j].sectionOffRequest)
-        //{
-        //    if (tool.section[j].isSectionOn) tool.section[j].isSectionOn = false;
-        //    //section[j].sectionOnOffCycle = false;
-        //    tool.section[j].sectionOffRequest = false;
-        //    //}
-        //}
-        //Turn ON
-        //if requested to be on, set the timer to Max 10 (1 seconds) = 10 frames per second
-        //if (tool.section[j].mappingOnRequest && !tool.section[j].mappingOnOffCycle)
-        //{
-        //    tool.section[j].mappingOnTimer = (int)(fixUpdateHz * 1) + 1;
-        //    tool.section[j].mappingOnOffCycle = true;
-        //}
-
-        ////reset the ON request
-        //section[j].mappingOnRequest = false;
-
-        //decrement the timer if not zero
-        //#endregion notes
-    }
-}
-
 void FormGPS::tmrWatchdog_timeout()
 {
-    USE_SETTINGS;
+    //TODO: replace all this with individual timers for cleaner
 
-    //Check for a newline char, if none then just return
-    sentenceCounter++;
-    int cr = pn.rawBuffer.indexOf("\n");
-    if (sentenceCounter > 80)
-        sentenceCounter = 100; //show no GPS warning
-
-    if (cr == -1) return;
-
-    //tmrWatchdog->stop();
-
-    //did we get a new fix position?
-    if (scanForNMEA())
+    if (++sentenceCounter > 20)
     {
-        //reset the dead GPS counter
-        if (sentenceCounter > 98)
+        //TODO: ShowNoGPSWarning();
+        return;
+    }
+
+    if (tenSecondCounter++ >= 40)
+    {
+        tenSecondCounter = 0;
+        tenSeconds++;
+    }
+    if (threeSecondCounter++ >= 12)
+    {
+        threeSecondCounter = 0;
+        threeSeconds++;
+    }
+    if (oneSecondCounter++ >= 4)
+    {
+        oneSecondCounter = 0;
+        oneSecond++;
+    }
+    if (oneHalfSecondCounter++ >= 2)
+    {
+        oneHalfSecondCounter = 0;
+        oneHalfSecond++;
+    }
+    if (oneFifthSecondCounter++ >= 0)
+    {
+        oneFifthSecondCounter = 0;
+        oneFifthSecond++;
+    }
+
+    ////////////////////////////////////////////// 10 second ///////////////////////////////////////////////////////
+    //every 10 second update status
+    if (tenSeconds != 0)
+    {
+        //reset the counter
+        tenSeconds = 0;
+        if (isJobStarted)
         {
-            camera.camSetDistance = -200;
-            setZoom();
-        }
-
-        sentenceCounter = 0;
-
-
-        if (threeSecondCounter++ >= fixUpdateHz * 2)
-        {
-            threeSecondCounter = 0;
-            threeSeconds++;
-        }
-        if (oneSecondCounter++ >= fixUpdateHz)
-        {
-            oneSecondCounter = 0;
-            oneSecond++;
-        }
-        if (oneHalfSecondCounter++ >= fixUpdateHz / 2)
-        {
-            oneHalfSecondCounter = 0;
-            oneHalfSecond++;
-        }
-        if (oneFifthSecondCounter++ >= fixUpdateHz / 5)
-        {
-            oneFifthSecondCounter = 0;
-            oneFifthSecond++;
-        }
-
-        /////////////////////////////////////////////////////////   333333333333333  ////////////////////////////////////////
-        //every 3 second update status
-        if (displayUpdateThreeSecondCounter != threeSeconds)
-        {
-            //reset the counter
-            displayUpdateThreeSecondCounter = threeSeconds;
-
-            //check to make sure the grid is big enough
-            worldGrid.checkZoomWorldGrid(pn.fix.northing, pn.fix.easting);
-
-            //TODO: batman panel
-
-            if (SETTINGS_DISPLAY_ISMETRIC)
+            if (isMetric)
             {
-                //TODO: status bar updates
-                /*
-                lblTotalFieldArea.Text = fd.AreaBoundaryLessInnersHectares;
-                lblTotalAppliedArea.Text = fd.WorkedHectares;
-                lblWorkRemaining.Text = fd.WorkedAreaRemainHectares;
-                lblPercentRemaining.Text = fd.WorkedAreaRemainPercentage;
-                lblTimeRemaining.Text = fd.TimeTillFinished;
-
-                lblAreaAppliedMinusOverlap.Text = ((fd.actualAreaCovered * glm.m2ha).ToString("N2"));
-                lblAreaMinusActualApplied.Text = (((fd.areaBoundaryOuterLessInner - fd.actualAreaCovered) * glm.m2ha).ToString("N2"));
-                lblOverlapPercent.Text = (fd.overlapPercent.ToString("N2")) + "%";
-                lblAreaOverlapped.Text = (((fd.workedAreaTotal - fd.actualAreaCovered) * glm.m2ha).ToString("N3"));
-
-                btnManualOffOn.Text = fd.AreaBoundaryLessInnersHectares;
-                lblEqSpec.Text = (Math.Round(tool.toolWidth, 2)).ToString() + " m  " + vehicleFileName + toolFileName;
+                /* TODO:
+                if (bnd.bndList.count() > 0)
+                {
+                    lblFieldStatus.Text = "(" + fd.AreaBoundaryLessInnersHectares + " - "
+                                          + fd.WorkedHectares + " = "
+                                          + fd.WorkedAreaRemainHectares + ")  "
+                                          + fd.WorkedAreaRemainPercentage + "  ("
+                                          + fd.AreaBoundaryLessInnersHectares + " - "
+                                          + fd.ActualAreaWorkedHectares + " = "
+                                          + fd.ActualRemainHectares + ")  "
+                                          + fd.ActualOverlapPercent + "  "
+                                          + fd.TimeTillFinished + "  "
+                                          + fd.WorkRateHectares;
+                }
+                else
+                    lblFieldStatus.Text =
+                        fd.WorkedHectares + "  *"
+                        + fd.ActualAreaWorkedHectares + " *"
+                        + fd.ActualOverlapPercent + "   "
+                        + fd.WorkRateHectares;
                 */
             }
             else //imperial
             {
-                /*
-                lblTotalFieldArea.Text = fd.AreaBoundaryLessInnersAcres;
-                lblTotalAppliedArea.Text = fd.WorkedAcres;
-                lblWorkRemaining.Text = fd.WorkedAreaRemainAcres;
-                lblPercentRemaining.Text = fd.WorkedAreaRemainPercentage;
-                lblTimeRemaining.Text = fd.TimeTillFinished;
-
-                lblAreaAppliedMinusOverlap.Text = ((fd.actualAreaCovered * glm.m2ac).ToString("N2"));
-                lblAreaMinusActualApplied.Text = (((fd.areaBoundaryOuterLessInner - fd.actualAreaCovered) * glm.m2ac).ToString("N2"));
-                lblOverlapPercent.Text = (fd.overlapPercent.ToString("N2")) + "%";
-                lblAreaOverlapped.Text = (((fd.workedAreaTotal - fd.actualAreaCovered) * glm.m2ac).ToString("N3"));
-
-                btnManualOffOn.Text = fd.AreaBoundaryLessInnersAcres;
-                lblEqSpec.Text =  (Math.Round(tool.toolWidth * glm.m2ft, 2)).ToString() + " ft  " + vehicleFileName + toolFileName;
+                /* TODO:
+                if (bnd.bndList.count() > 0)
+                    lblFieldStatus.Text = fd.AreaBoundaryLessInnersAcres + " - "
+                                          + fd.WorkedAcres + " = "
+                                          + fd.WorkedAreaRemainAcres + ")  "
+                                          + fd.WorkedAreaRemainPercentage + "  ("
+                                          + fd.AreaBoundaryLessInnersAcres + " - "
+                                          + fd.ActualAreaWorkedAcres + " = "
+                                          + fd.ActualRemainAcres + ")  "
+                                          + fd.ActualOverlapPercent + "  "
+                                          + fd.TimeTillFinished + "  "
+                                          + fd.WorkRateHectares;
+                else
+                    lblFieldStatus.Text =
+                        fd.WorkedAcres + "  *"
+                        + fd.ActualAreaWorkedAcres + " *"
+                        + fd.ActualOverlapPercent + "   "
+                        + fd.WorkRateAcres;
                 */
             }
 
-            //not Metric/Standard units sensitive
-            //TODO: line button updates
-            /*
-            if (ABLine.isBtnABLineOn) btnABLine.Text = "# " + PassNumber;
-            else btnABLine.Text = "";
+            //TODO: lblCurrentField.Text = displayFieldName;
 
-            if (curve.isBtnCurveOn) btnCurve.Text = "# " + CurveNumber;
-            else btnCurve.Text = "";
-
-            //update the online indicator 63 green red 64
-            if (recvCounter > 20 && toolStripBtnGPSStength.Image.Height != 64)
+            if (curve.numCurveLineSelected > 0 && curve.isBtnCurveOn)
             {
-                //stripOnlineGPS.Value = 1;
-                lblEasting.Text = "-";
-                lblNorthing.Text = gStr.gsNoGPS;
-                //lblZone.Text = "-";
-                toolStripBtnGPSStength.Image = Resources.GPSSignalPoor;
+                //TODO: lblGuidanceLine.Text = curve.curveArr[curve.numCurveLineSelected - 1].Name;
             }
-            else if (recvCounter < 20 && toolStripBtnGPSStength.Image.Height != 63)
+            else if (ABLine.numABLineSelected > 0 && ABLine.isBtnABLineOn)
             {
-                //stripOnlineGPS.Value = 100;
-                toolStripBtnGPSStength.Image = Resources.GPSSignalGood;
+                //TODO: lblGuidanceLine.Text = ABLine.lineArr[ABLine.numABLineSelected - 1].Name;
             }
-
-            lblDateTime.Text = DateTime.Now.ToString("HH:mm:ss") + "\n\r" + DateTime.Now.ToString("ddd MMM yyyy");
-            */
-        }//end every 3 seconds
-
-
-
-        //every second update all status ///////////////////////////   1 1 1 1 1 1 ////////////////////////////
-        if (displayUpdateOneSecondCounter != oneSecond)
+            //TODO: else lblGuidanceLine.Text = "Guidance Line";
+        }
+        else
         {
-            //reset the counter
-            displayUpdateOneSecondCounter = oneSecond;
+            //TODO: lblFieldStatus.Text = string.Empty;
+            //TODO: lblCurrentField.Text = (tool.width * m2FtOrM).ToString("N2") + unitsFtM + " - " + vehicleFileName;
+        }
+    }
+    /////////////////////////////////////////////////////////   333333333333333  ////////////////////////////////////////
+    //every 3 second update status
+    if (displayUpdateThreeSecondCounter != threeSeconds)
+    {
+        //reset the counter
+        displayUpdateThreeSecondCounter = threeSeconds;
 
-            //counter used for saving field in background
-            minuteCounter++;
+        //check to make sure the grid is big enough
+        //worldGrid.checkZoomWorldGrid(pn.fix.northing, pn.fix.easting);
 
-            qmlItem(qml_root,"btnAcres")->setProperty("buttonText", fd.getWorkedHectares());
+        //hide the NAv panel in 6  secs
+        /* TODO:
+        if (panelNavigation.Visible)
+        {
+            if (navPanelCounter-- < 2) panelNavigation.Visible = false;
+        }
 
+        if (panelNavigation.Visible)
+            lblHz.Text = gpsHz.ToString("N1") + " ~ " + (frameTime.ToString("N1")) + " " + FixQuality;
 
-            /*
-            if (panelBatman.Visible)
+        lblFix.Text = FixQuality + pn.age.ToString("N1");
+
+        lblTime.Text = DateTime.Now.ToString("T");
+        */
+
+        if (isJobStarted)
+        {
+            if (ABLine.isBtnABLineOn || curve.isBtnCurveOn)
             {
-                //both
-                lblLatitude.Text = Latitude;
-                lblLongitude.Text = Longitude;
-
-                pbarRelayComm.Value = pbarRelay;
-
-                lblRoll.Text = RollInDegrees;
-                lblYawHeading.Text = GyroInDegrees;
-                lblGPSHeading.Text = GPSHeading;
-
-                //up in the menu a few pieces of info
-                if (isJobStarted)
+                /* TODO
+                if (!btnEditAB.Visible)
                 {
-                    lblEasting.Text = "E:" + (pn.fix.easting).ToString("N2");
-                    lblNorthing.Text = "N:" + (pn.fix.northing).ToString("N2");
+                    //btnMakeLinesFromBoundary.Visible = true;
+                    btnEditAB.Visible = true;
+                    //btnSnapToPivot.Visible = true;
+                    cboxpRowWidth.Visible = true;
+                    btnYouSkipEnable.Visible = true;
                 }
-                else
+
+                if (curve.numCurveLineSelected > 0 && curve.isBtnCurveOn)
                 {
-                    lblEasting.Text = "E:" + (pn.actualEasting).ToString("N2");
-                    lblNorthing.Text = "N:" + (pn.actualNorthing).ToString("N2");
+                    lblGuidanceLine.Text = curve.curveArr[curve.numCurveLineSelected - 1].Name;
                 }
 
-                lblUturnByte.Text = Convert.ToString(mc.autoSteerData[mc.sdYouTurnByte], 2).PadLeft(6, '0');
+                else if (ABLine.numABLineSelected > 0 && ABLine.isBtnABLineOn)
+                {
+                    lblGuidanceLine.Text = ABLine.lineArr[ABLine.numABLineSelected - 1].Name;
+                }
+                else lblGuidanceLine.Text = gStr.gsNoGuidanceLines;
+               */
+            }
+            /*TODO :else
+            {
+                if (btnEditAB.Visible)
+                {
+                    //btnMakeLinesFromBoundary.Visible = false;
+                    btnEditAB.Visible = false;
+                    //btnSnapToPivot.Visible = false;
+                    cboxpRowWidth.Visible = false;
+                    btnYouSkipEnable.Visible = false;
+                }
+            }*/
+
+        }
+
+
+
+        //save nmea log file
+        //TODO: if (isLogNMEA) FileSaveNMEA();
+
+        //update button lines numbers
+        //TODO: UpdateGuidanceLineButtonNumbers();
+
+    }//end every 3 seconds
+
+    //every second update all status ///////////////////////////   1 1 1 1 1 1 ////////////////////////////
+    if (displayUpdateOneSecondCounter != oneSecond)
+    {
+        //reset the counter
+        displayUpdateOneSecondCounter = oneSecond;
+
+        //counter used for saving field in background
+        minuteCounter++;
+        tenMinuteCounter++;
+
+        if (isStanleyUsed)
+        {
+            if (curve.isBtnCurveOn || ABLine.isBtnABLineOn)
+            {
+                //TODO
+                //lblInty.Text = gyd.inty.ToString("N3");
+            }
+        }
+        else
+        {
+            if (curve.isBtnCurveOn)
+            {
+                //TODO
+                //lblInty.Text = curve.inty.ToString("N3");
             }
 
-            if (ABLine.isBtnABLineOn && !ct.isContourBtnOn)
+            else if (ABLine.isBtnABLineOn && !ct.isContourBtnOn)
             {
-                btnEditHeadingB.Text = ((int)(ABLine.moveDistance * 100)).ToString();
-            }
-            if (curve.isBtnCurveOn && !ct.isContourBtnOn)
-            {
-                btnEditHeadingB.Text = ((int)(curve.moveDistance * 100)).ToString();
+                //TODO
+                //lblInty.Text = ABLine.inty.ToString("N3");
             }
 
-            pbarAutoSteerComm.Value = pbarSteer;
-            pbarUDPComm.Value = pbarUDP;
-            */
+            else if (ct.isContourBtnOn) {}//TODO lblInty.Text = ct.inty.ToString("N3");
+        }
 
-            if (mc.steerSwitchValue == 0)
+        if (recPath.isDrivingRecordedPath) {} //TODO lblInty.Text = recPath.inty.ToString("N3");
+
+        //if (ABLine.isBtnABLineOn && !ct.isContourBtnOn)
+        //{
+        //    btnEditAB.Text = ((int)(ABLine.moveDistance * 100)).ToString();
+        //}
+        //if (curve.isBtnCurveOn && !ct.isContourBtnOn)
+        //{
+        //    btnEditAB.Text = ((int)(curve.moveDistance * 100)).ToString();
+        //}
+
+        //statusbar flash red undefined headland
+        //TODO: flash background alternately
+        /*
+        if (mc.isOutOfBounds && panelSim.BackColor == Color.Transparent
+            || !mc.isOutOfBounds && panelSim.BackColor == Color.Tomato)
+        {
+            if (!mc.isOutOfBounds)
             {
-                //this.AutoSteerToolBtn.BackColor = System.Drawing.Color.LightBlue;
+                panelSim.BackColor = Color.Transparent;
             }
             else
             {
-                //this.AutoSteerToolBtn.BackColor = System.Drawing.Color.Transparent;
+                panelSim.BackColor = Color.Tomato;
             }
+        }*/
+    }
 
+    //every half of a second update all status  ////////////////    0.5  0.5   0.5    0.5    /////////////////
+    if (displayUpdateHalfSecondCounter != oneHalfSecond)
+    {
+        //reset the counter
+        displayUpdateHalfSecondCounter = oneHalfSecond;
 
-            //AutoSteerAuto button enable - Ray Bear inspired code - Thx Ray!
-            if (isJobStarted && ahrs.isAutoSteerAuto && !recPath.isDrivingRecordedPath &&
-                (ABLine.isBtnABLineOn || ct.isContourBtnOn || curve.isBtnCurveOn))
-            {
-                if (mc.steerSwitchValue == 0)
-                {
-                    //if (!isAutoSteerBtnOn) btnAutoSteer.PerformClick();
-                }
-                else
-                {
-                    //if ( isAutoSteerBtnOn) btnAutoSteer.PerformClick();
-                }
-            }
+        isFlashOnOff = !isFlashOnOff;
 
-            //Make sure it is off when it should
-            //if ((!ABLine.isBtnABLineOn && !ct.isContourBtnOn && !curve.isBtnCurveOn && isAutoSteerBtnOn) || (recPath.isDrivingRecordedPath && isAutoSteerBtnOn)) btnAutoSteer.PerformClick();
+        //the main formgps window
+        if (isMetric)  //metric or imperial
+        {
+            //status strip values
+            //TODO: qmlItem(qml_root,"btnPerimeter")->setProperty("buttonText", fd.WorkedUserHectares());
+            //TODO: distanceToolBtn.Text = fd.DistanceUserMeters + "\r\n" + fd.WorkedUserHectares;
 
-            //do all the NTRIP routines
-            //DoNTRIPSecondRoutine();
-
-            //the main formgps window
-            /*
-            if (isMetric)  //metric or imperial
-            {
-                //Hectares on the master section soft control and sections
-                btnSectionOffAutoOn.Text = fd.WorkedHectares;
-                lblSpeed.Text = SpeedKPH;
-
-                //status strip values
-                distanceToolBtn.Text = fd.DistanceUserMeters + "\r\n" + fd.WorkedUserHectares2;
-
-                btnContour.Text = XTE; //cross track error
-
-            }
-            else  //Imperial Measurements
-            {
-                //acres on the master section soft control and sections
-                btnSectionOffAutoOn.Text = fd.WorkedAcres;
-                lblSpeed.Text = SpeedMPH;
-
-                //status strip values
-                distanceToolBtn.Text = fd.DistanceUserFeet + "\r\n" + fd.WorkedUserAcres2;
-                btnContour.Text = InchXTE; //cross track error
-            }
-
-            //statusbar flash red undefined headland
-            if (mc.isOutOfBounds && statusStripBottom.BackColor == Color.Transparent
-                || !mc.isOutOfBounds && statusStripBottom.BackColor == Color.Tomato)
-            {
-                if (!mc.isOutOfBounds)
-                {
-                    statusStripBottom.BackColor = Color.Transparent;
-                }
-                else
-                {
-                    statusStripBottom.BackColor = Color.Tomato;
-                }
-            }
-            */
+        }
+        else  //Imperial Measurements
+        {
+            //acres on the master section soft control and sections
+            //status strip values
+            //TODO: qmlItem(qml_root,"btnPerimeter")->setProperty("buttonText", fd.WorkedUserAcres());
+            //TODO: distanceToolBtn.Text = fd.DistanceUserFeet + "\r\n" + fd.WorkedUserAcres;
         }
 
-        //every half of a second update all status  ////////////////    0.5  0.5   0.5    0.5    /////////////////
-        if (displayUpdateHalfSecondCounter != oneHalfSecond)
+        //Make sure it is off when it should
+        if ((!ABLine.isBtnABLineOn && !ct.isContourBtnOn && !curve.isBtnCurveOn && isAutoSteerBtnOn)
+            ) onStopAutoSteer();
+
+        //the main formgps window
+        if (isMetric)  //metric or imperial
         {
-            //reset the counter
-            displayUpdateHalfSecondCounter = oneHalfSecond;
+            //TODO: lblSpeed.Text = SpeedKPH;
+            //btnContour.Text = XTE; //cross track error
 
-           //lblTrigger.Text = sectionTriggerStepDistance.ToString("N2");
-            //lblLift.Text = mc.pgn[mc.azRelayData][mc.rdHydLift].ToString();
-
-        } //end every 1/2 second
-
-        //every fifth second update  ///////////////////////////   FIFTH Fifth ////////////////////////////
-        if (displayUpdateOneFifthCounter != oneFifthSecond)
+        }
+        else  //Imperial Measurements
         {
-            //reset the counter
-            displayUpdateOneFifthCounter = oneFifthSecond;
-
-            if (hd.isOn)
-            {
-            }
-
-            if ((vehicle.guidanceLineDistanceOff == 32020) | (vehicle.guidanceLineDistanceOff == 32000))
-            {
-                //steerAnglesToolStripDropDownButton1.Text = "Off \r\n" + ActualSteerAngle;
-            }
-            else
-            {
-                //steerAnglesToolStripDropDownButton1.Text = SetSteerAngle + "\r\n" + ActualSteerAngle;
-            }
-
-            //lblHz.Text = NMEAHz + "Hz " + (int)(frameTime) + "\r\n" + FixQuality + HzTime.ToString("N1") + " Hz";
+            //TODO: lblSpeed.Text = SpeedMPH;
+            //btnContour.Text = InchXTE; //cross track error
         }
 
-    } //there was a new GPS update
+    } //end every 1/2 second
 
-    //Do these updates every cycle
+    //every fifth second update  ///////////////////////////   FIFTH Fifth ////////////////////////////
+    if (displayUpdateOneFifthCounter != oneFifthSecond)
+    {
+        //reset the counter
+        displayUpdateOneFifthCounter = oneFifthSecond;
 
+        //TODO: btnAutoSteerConfig.Text = SetSteerAngle + "\r\n" + ActualSteerAngle;
+
+        secondsSinceStart = stopwatch.elapsed() / 1000.0;
+
+        //integralStatusLeftSide.Text = "I: " + gyd.inty.ToString("N3");
+
+        //lblAV.Text = ABLine.angVel
+    }
+
+    //every cycle
     //we cannot manipulate the GUI from any of the OpenGL drawing methods as they run in a
     //different thread.
     if (isAutoSteerBtnOn && !ct.isContourBtnOn) {
@@ -1290,12 +1001,6 @@ void FormGPS::tmrWatchdog_timeout()
         qmlItem(qml_root, "btnAutoSteer")->setProperty("buttonText", "");
     }
 
-
-    //start timer again and wait for new fix
-    //qmlItem(qml_root,"stripAreaUser")->setProperty("text", locale.toString(vehicle.totalUserSquareMeters * 0.0001,'f',1) + " " + tr("Ha"));
-    //tmrWatchdog->start();
-
-    //wait till timer fires again.
 }
 
 //force all the buttons same according to two main buttons
@@ -1315,17 +1020,13 @@ void FormGPS::manualAllBtnsUpdate()
 //in QML they are always centered.
 void FormGPS::lineUpManualBtns()
 {
-    USE_SETTINGS;
-
-    int tool_numOfSections = SETTINGS_TOOL_NUMSECTIONS;
-
     QObject* button;
     for (int b=0; b< MAXSECTIONS-1; b++ ) {
         button = qmlItem(qml_root,QString("section")+QString::number(b));
 
         //temporarily enable them so we can test them
         button->setProperty("enabled", "true");
-        if (b < tool_numOfSections) {
+        if (b < tool.numOfSections) {
             button->setProperty("visible","true");
             if (isJobStarted)
                 button->setProperty("enabled", "true");
@@ -1340,17 +1041,17 @@ void FormGPS::manualBtnUpdate(int sectNumber)
 {
     QObject *button = qmlItem(qml_root,QString("section")+QString::number(sectNumber));
 
-    switch(tool.section[sectNumber].manBtnState) {
+    switch(tool.section[sectNumber].sectionBtnState) {
     case btnStates::Off:
-        tool.section[sectNumber].manBtnState = btnStates::Auto;
+        tool.section[sectNumber].sectionBtnState = btnStates::Auto;
         button->setProperty("state","auto");
         break;
     case btnStates::Auto:
-        tool.section[sectNumber].manBtnState = btnStates::On;
+        tool.section[sectNumber].sectionBtnState = btnStates::On;
         button->setProperty("state","on");
         break;
     case btnStates::On:
-        tool.section[sectNumber].manBtnState = btnStates::Off;
+        tool.section[sectNumber].sectionBtnState = btnStates::Off;
         button->setProperty("state","off");
         break;
     }
@@ -1377,100 +1078,102 @@ QString FormGPS::speedMPH() {
 void FormGPS::swapDirection() {
     if (!yt.isYouTurnTriggered)
     {
-        //is it turning right already?
-        if (yt.isYouTurnRight)
-        {
-            yt.isYouTurnRight = false;
-            yt.isLastYouTurnRight = !yt.isLastYouTurnRight;
-            yt.resetCreatedYouTurn();
-        }
-        else
-        {
-            //make it turn the other way
-            yt.isYouTurnRight = true;
-            yt.isLastYouTurnRight = !yt.isLastYouTurnRight;
-            yt.resetCreatedYouTurn();
-        }
+        yt.isYouTurnRight = ! yt.isYouTurnRight;
+        yt.ResetCreatedYouTurn();
+    }
+    else if (yt.isYouTurnBtnOn)
+    {
+        //btnAutoYouTurn.PerformClick();
+    }
+}
+
+
+void FormGPS::JobClose()
+{
+    recPath.resumeState = 0;
+    //TODO: reset resume path button
+    //btnResumePath.Image = Properties.Resources.pathResumeStart;
+    recPath.currentPositonIndex = 0;
+
+    //reset field offsets
+    if (!isKeepOffsetsOn)
+    {
+        pn.fixOffset.easting = 0;
+        pn.fixOffset.northing = 0;
+    }
+
+    //turn off headland
+    bnd.isHeadlandOn = false;
+
+    //TODO: reset headland button
+    //btnHeadlandOnOff.Image = Properties.Resources.HeadlandOff;
+    //btnHeadlandOnOff.Visible = false;
+
+    recPath.recList.clear();
+    recPath.StopDrivingRecordedPath();
+    //panelDrag.Visible = false;
+
+    //make sure hydraulic lift is off
+    p_239.pgn[p_239.hydLift] = 0;
+    vehicle.isHydLiftOn = false;
+    //TODO: reset hydlift button, make it invisible
+    //btnHydLift.Image = Properties.Resources.HydraulicLiftOff;
+    //btnHydLift.Visible = false;
+
+    //zoom gone
+    //oglZoom.SendToBack();
+
+    //clean all the lines
+    bnd.bndList.clear();
+
+    //TODO: turn off right panel
+    //panelRight.Enabled = false;
+    //TODO: FieldMenuButtonEnableDisable(false);
+
+    //menustripLanguage.Enabled = true;
+    isJobStarted = false;
+
+    //fix ManualOffOnAuto buttons
+    manualBtnState = btnStates::Off;
+    //btnSectionMasterManual.Image = Properties.Resources.ManualOff;
+
+    //fix auto button
+    autoBtnState = btnStates::Off;
+    //TODO reset section master button
+    //btnSectionMasterAuto.Image = Properties.Resources.SectionMasterOff;
+
+    if (tool.isSectionsNotZones)
+    {
+        //Update the button colors and text
+        //TODO AllSectionsAndButtonsToState(btnStates::Off);
+
+        //enable disable manual buttons
+        LineUpIndividualSectionBtns();
     }
     else
     {
-        //if (yt.isYouTurnBtnOn) btnAutoYouTurn.PerformClick();
+        //TODO AllZonesAndButtonsToState(autoBtnState);
+        //TODO LineUpAllZoneButtons();
     }
-}
-
-void FormGPS::onClearRecvCounter()
-{
-    recvCounter = 0;
-}
-
-void FormGPS::onHeadingSource(int tempInt)
-{
-    if (tempInt == 0)//0: no heading, no roll 1: heading ok, no roll 2: roll+heading ok
-    {
-        if (headingFromSource != "Fix") { headingFromSourceBak = headingFromSource; }
-        headingFromSource = "Fix";
-    }
-    else { headingFromSource = headingFromSourceBak; }
-}
-
-void FormGPS::jobClose()
-{
-    //settings are always live in FormGPS
-
-    pn.fixOffset.easting = 0;
-    pn.fixOffset.northing = 0;
-    hd.isOn = false;
-    //TODO: btnHeadlandOnOff.Image = Properties.Resources.HeadlandOff;
-
-    //make sure hydraulic lift is off
-    mc.machineData[mc.mdHydLift] = 0;
-    SETTINGS_SET_VEHICLE_ISHYDLIFTON(false);
-    //TODO: btnHydLift.Image = Properties.Resources.HydraulicLiftOff;
-
-    //zoom gone
-    //TODO: oglZoom.SendToBack();
-
-    //clean all the lines
-    bnd.bndArr.clear();
-    gf.geoFenceArr.clear();
-    turn.turnArr.clear();
-    hd.headArr[0].hdLine.clear();
-
-    //TODO: layoutPanelRight.Enabled = false;
-    //TODO: toolStripBtnDropDownBoundaryTools.Enabled = false;
-
-    //TODO: menustripLanguage.Enabled = true;
-    isJobStarted = false;
-
-    //reset the lat lon start pos
-    pn.latStart = 0;
-    pn.lonStart = 0;
-
-    //turn section buttons all OFF
-    for (int j = 0; j < MAXSECTIONS; j++)
-    {
-        tool.section[j].isAllowedOn = false;
-        tool.section[j].manBtnState = btnStates::On;
-    }
-
-    //fix ManualOffOnAuto buttons
-    //TODO: btnManualOffOn.Enabled = false;
-    manualBtnState = btnStates::Off;
-    //TODO: btnManualOffOn.Image = Properties.Resources.ManualOff;
-
-    //fix auto button
-    //TODO: btnSectionOffAutoOn.Enabled = false;
-    autoBtnState = btnStates::Off;
-    //TODO: btnSectionOffAutoOn.Image = Properties.Resources.SectionMasterOff;
-
-    //Update the button colors and text
-    manualAllBtnsUpdate();
-
-    //enable disable manual buttons
-    lineUpManualBtns();
-
     /*
-     TODO:
+    btnZone1.BackColor = Color.Silver;
+    btnZone2.BackColor = Color.Silver;
+    btnZone3.BackColor = Color.Silver;
+    btnZone4.BackColor = Color.Silver;
+    btnZone5.BackColor = Color.Silver;
+    btnZone6.BackColor = Color.Silver;
+    btnZone7.BackColor = Color.Silver;
+    btnZone8.BackColor = Color.Silver;
+
+    btnZone1.Enabled = false;
+    btnZone2.Enabled = false;
+    btnZone3.Enabled = false;
+    btnZone4.Enabled = false;
+    btnZone5.Enabled = false;
+    btnZone6.Enabled = false;
+    btnZone7.Enabled = false;
+    btnZone8.Enabled = false;
+
     btnSection1Man.Enabled = false;
     btnSection2Man.Enabled = false;
     btnSection3Man.Enabled = false;
@@ -1507,213 +1210,237 @@ void FormGPS::jobClose()
     */
 
     //clear the section lists
-    for (int j = 0; j < MAXSECTIONS; j++)
+    for (int j = 0; j < triStrip.count(); j++)
     {
         //clean out the lists
-        tool.section[j].patchList.clear();
-        tool.section[j].triangleList.clear();
+        triStrip[j].patchList.clear();
+        triStrip[j].triangleList.clear();
     }
+
+    triStrip.clear();
+    triStrip.append(CPatches());
 
     //clear the flags
     flagPts.clear();
-    //btnFlag.Enabled = false;
 
     //ABLine
-    //btnABLine.Enabled = false;
+    //TODO: btnABLine.Enabled = false;
+    //TODO: reset ABLine button state
     //btnABLine.Image = Properties.Resources.ABLineOff;
     ABLine.isBtnABLineOn = false;
-    ABLine.deleteAB();
+    ABLine.DeleteAB();
     ABLine.lineArr.clear();
     ABLine.numABLineSelected = 0;
-    ABLine.tramArr.clear();
-    ABLine.tramList.clear();
+    tram.tramList.clear();
 
     //curve line
-    //btnCurve.Enabled = false;
+    //TODO btnCurve.Enabled = false;
+    //TODO: reset curve button state
     //btnCurve.Image = Properties.Resources.CurveOff;
     curve.isBtnCurveOn = false;
     curve.isCurveSet = false;
-    curve.resetCurveLine();
+    curve.ResetCurveLine();
     curve.curveArr.clear();
     curve.numCurveLineSelected = 0;
-    curve.tramArr.clear();
-    curve.tramList.clear();
 
     //clean up tram
     tram.displayMode = 0;
-    tram.outArr.clear();
+    tram.generateMode = 0;
+    tram.tramBndInnerArr.clear();
+    tram.tramBndOuterArr.clear();
 
     //clear out contour and Lists
     //btnContour.Enabled = false;
     //btnContourPriority.Enabled = false;
-    //btnContourPriority.Image = Properties.Resources.Snap2;
-    ct.resetContour();
+    //btnSnapToPivot.Image = Properties.Resources.SnapToPivot;
+    ct.ResetContour();
     ct.isContourBtnOn = false;
+    //TODO: reset contour button state
     //btnContour.Image = Properties.Resources.ContourOff;
     ct.isContourOn = false;
 
-    //btnMakeLinesFromBoundary.Enabled = false;
+    //btnABDraw.Enabled = false;
+    //TODO: reset ABLineCycle button
+    //btnCycleLines.Image = Properties.Resources.ABLineCycle;
     //btnCycleLines.Enabled = false;
+    //btnCycleLinesBk.Image = Properties.Resources.ABLineCycleBk;
+    //btnCycleLinesBk.Enabled = false;
 
     //AutoSteer
     //btnAutoSteer.Enabled = false;
-    isAutoSteerBtnOn = false;
+    //isAutoSteerBtnOn = false;
     //btnAutoSteer.Image = Properties.Resources.AutoSteerOff;
 
     //auto YouTurn shutdown
     yt.isYouTurnBtnOn = false;
     //btnAutoYouTurn.Image = Properties.Resources.YouTurnNo;
     //btnAutoYouTurn.Enabled = false;
-    yt.resetYouTurn();
+
+    //btnABDraw.Visible = false;
+
+    yt.ResetYouTurn();
     //DisableYouTurnButtons();
 
     //reset acre and distance counters
     fd.workedAreaTotal = 0;
 
-    //reset boundaries
-    bnd.resetBoundaries();
-
-    //reset turn lines
-    turn.resetTurnLines();
-
     //reset GUI areas
-    fd.updateFieldBoundaryGUIAreas(bnd);
+    fd.UpdateFieldBoundaryGUIAreas(bnd.bndList);
 
-    ////turn off path record
+    displayFieldName = tr("None");
+    //TODO: FixTramModeButton();
+
     recPath.recList.clear();
-    if (recPath.isRecordOn)
-    {
-        recPath.isRecordOn = false;
-        //recordPathMenu.Image = Properties.Resources.BoundaryRecord;
-    }
+    recPath.shortestDubinsList.clear();
+    recPath.shuttleDubinsList.clear();
 
-    //reset all Port Module values
-    mc.resetAllModuleCommValues();
+    //FixPanelsAndMenus();
+    SetZoom();
+    worldGrid.isGeoMap = false;
 
+    //release Bing texture
 
 }
 
 void FormGPS::jobNew()
 {
-    /*
-     * TODO:
-    if (Settings.Default.setMenu_isOGLZoomOn == 1)
-    {
-        oglZoom.BringToFront();
-        oglZoom.Width = 300;
-        oglZoom.Height = 300;
-    }
-    */
-        //isGPSPositionInitialized = false;
-        //offset = 0;
-        //pn.latStart = pn.latitude;
-        //pn.lonStart = pn.longitude;
-
-    sendSteerSettingsOutAutoSteerPort();
     isJobStarted = true;
     startCounter = 0;
 
-    //btnManualOffOn.Enabled = true;
-    manualBtnState = btnStates::Off;
-    //btnManualOffOn.Image = Properties.Resources.ManualOff;
+    //btnFieldStats.Visible = true;
 
-    //btnSectionOffAutoOn.Enabled = true;
+    //btnSectionMasterManual.Enabled = true;
+    manualBtnState = btnStates::Off;
+    //btnSectionMasterManual.Image = Properties.Resources.ManualOff;
+
+    //btnSectionMasterAuto.Enabled = true;
     autoBtnState = btnStates::Off;
-    //btnSectionOffAutoOn.Image = Properties.Resources.SectionMasterOff;
+    //btnSectionMasterAuto.Image = Properties.Resources.SectionMasterOff;
+
+    //btnSection1Man.BackColor = Color.Red;
+    //btnSection2Man.BackColor = Color.Red;
+    //btnSection3Man.BackColor = Color.Red;
+    //btnSection4Man.BackColor = Color.Red;
+    //btnSection5Man.BackColor = Color.Red;
+    //btnSection6Man.BackColor = Color.Red;
+    //btnSection7Man.BackColor = Color.Red;
+    //btnSection8Man.BackColor = Color.Red;
+    //btnSection9Man.BackColor = Color.Red;
+    //btnSection10Man.BackColor = Color.Red;
+    //btnSection11Man.BackColor = Color.Red;
+    //btnSection12Man.BackColor = Color.Red;
+    //btnSection13Man.BackColor = Color.Red;
+    //btnSection14Man.BackColor = Color.Red;
+    //btnSection15Man.BackColor = Color.Red;
+    //btnSection16Man.BackColor = Color.Red;
+
+    //btnSection1Man.Enabled = true;
+    //btnSection2Man.Enabled = true;
+    //btnSection3Man.Enabled = true;
+    //btnSection4Man.Enabled = true;
+    //btnSection5Man.Enabled = true;
+    //btnSection6Man.Enabled = true;
+    //btnSection7Man.Enabled = true;
+    //btnSection8Man.Enabled = true;
+    //btnSection9Man.Enabled = true;
+    //btnSection10Man.Enabled = true;
+    //btnSection11Man.Enabled = true;
+    //btnSection12Man.Enabled = true;
+    //btnSection13Man.Enabled = true;
+    //btnSection14Man.Enabled = true;
+    //btnSection15Man.Enabled = true;
+    //btnSection16Man.Enabled = true;
 
     /*
-    btnSection1Man.BackColor = Color.Red;
-    btnSection2Man.BackColor = Color.Red;
-    btnSection3Man.BackColor = Color.Red;
-    btnSection4Man.BackColor = Color.Red;
-    btnSection5Man.BackColor = Color.Red;
-    btnSection6Man.BackColor = Color.Red;
-    btnSection7Man.BackColor = Color.Red;
-    btnSection8Man.BackColor = Color.Red;
-    btnSection9Man.BackColor = Color.Red;
-    btnSection10Man.BackColor = Color.Red;
-    btnSection11Man.BackColor = Color.Red;
-    btnSection12Man.BackColor = Color.Red;
-    btnSection13Man.BackColor = Color.Red;
-    btnSection14Man.BackColor = Color.Red;
-    btnSection15Man.BackColor = Color.Red;
-    btnSection16Man.BackColor = Color.Red;
+    btnZone1.BackColor = Color.Red;
+    btnZone2.BackColor = Color.Red;
+    btnZone3.BackColor = Color.Red;
+    btnZone4.BackColor = Color.Red;
+    btnZone5.BackColor = Color.Red;
+    btnZone6.BackColor = Color.Red;
+    btnZone7.BackColor = Color.Red;
+    btnZone8.BackColor = Color.Red;
 
-    btnSection1Man.Enabled = true;
-    btnSection2Man.Enabled = true;
-    btnSection3Man.Enabled = true;
-    btnSection4Man.Enabled = true;
-    btnSection5Man.Enabled = true;
-    btnSection6Man.Enabled = true;
-    btnSection7Man.Enabled = true;
-    btnSection8Man.Enabled = true;
-    btnSection9Man.Enabled = true;
-    btnSection10Man.Enabled = true;
-    btnSection11Man.Enabled = true;
-    btnSection12Man.Enabled = true;
-    btnSection13Man.Enabled = true;
-    btnSection14Man.Enabled = true;
-    btnSection15Man.Enabled = true;
-    btnSection16Man.Enabled = true;
+    btnZone1.Enabled = true;
+    btnZone2.Enabled = true;
+    btnZone3.Enabled = true;
+    btnZone4.Enabled = true;
+    btnZone5.Enabled = true;
+    btnZone6.Enabled = true;
+    btnZone7.Enabled = true;
+    btnZone8.Enabled = true;
+
+    btnABLine.Enabled = true;
+    btnContour.Enabled = true;
+    btnCurve.Enabled = true;
+    btnABDraw.Enabled = true;
+    btnCycleLines.Image = Properties.Resources.ABLineCycle;
+    btnCycleLinesBk.Image = Properties.Resources.ABLineCycleBk;
     */
-
-
-    // btnABLine.Enabled = true;
-    //btnContour.Enabled = true;
-    //btnCurve.Enabled = true;
-    //btnMakeLinesFromBoundary.Enabled = true;
-    //btnCycleLines.Enabled = true;
 
     ABLine.abHeading = 0.00;
     //btnAutoSteer.Enabled = true;
 
-    //disableYouTurnButtons();
+    //TODO: call QML javascrip to do this DisableYouTurnButtons();
     //btnFlag.Enabled = true;
 
-    //btnContourPriority.Image = Properties.Resources.Snap2;
-
-    if (recPath.isRecordOn)
+    if (tool.isSectionsNotZones)
     {
-        recPath.isRecordOn = false;
+        LineUpIndividualSectionBtns();
     }
-
-    lineUpManualBtns();
+    else
+    {
+        LineUpAllZoneButtons();
+    }
 
     //update the menu
     //this.menustripLanguage.Enabled = false;
-    //layoutPanelRight.Enabled = true;
+    //panelRight.Enabled = true;
     //boundaryToolStripBtn.Enabled = true;
-    //toolStripBtnDropDownBoundaryTools.Enabled = true;
+    //isPanelABHidden = false;
+
+    //FieldMenuButtonEnableDisable(true);
+    FixPanelsAndMenus();
+    SetZoom();
+    minuteCounter = 25;
+
 
 }
 
 void FormGPS::fileSaveEverythingBeforeClosingField(QQuickCloseEvent *event)
 {
-    USE_SETTINGS;
-
     qDebug() << "shutting down, saving field items.";
 
-    if (!isJobStarted) return;
-
     //turn off contour line if on
-    if (ct.isContourOn) ct.stopContourLine(vehicle.pivotAxlePos, contourSaveList);
+    if (ct.isContourOn) ct.StopContourLine(contourSaveList);
 
     //turn off all the sections
-    for (int j = 0; j < SETTINGS_TOOL_NUMSECTIONS; j++)
+    for (int j = 0; j < tool.numOfSections; j++)
     {
-        if (tool.section[j].isMappingOn) tool.section[j].turnMappingOff(tool);
         tool.section[j].sectionOnOffCycle = false;
         tool.section[j].sectionOffRequest = false;
     }
 
-    //FileSaveHeadland();
-    fileSaveBoundary();
-    fileSaveSections();
-    fileSaveContour();
-    fileSaveFlags();
-    fileSaveFieldKML();
+    //turn off patching
+    for (int j = 0; j < triStrip.count(); j++)
+    {
+        if (triStrip[j].isDrawing) triStrip[j].TurnMappingOff(tool, fd);
+    }
 
-    jobClose();
+    //FileSaveHeadland();
+    FileSaveBoundary();
+    FileSaveSections();
+    FileSaveContour();
+
+    ExportFieldAs_KML();
+    //ExportFieldAs_ISOXMLv3()
+    //ExportFieldAs_ISOXMLv4()
+
+    property_setF_CurrentDir = currentFieldDirectory;
+    displayFieldName = tr("None");
+
+    JobClose();
     //Text = "AgOpenGPS";
 
 }
+

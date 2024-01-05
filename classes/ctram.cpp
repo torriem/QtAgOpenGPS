@@ -3,9 +3,9 @@
 #include <QOpenGLFunctions>
 #include <math.h>
 #include "glutils.h"
-#include "ctool.h"
 #include "cboundary.h"
-#include "aogsettings.h"
+#include "ccamera.h"
+#include "aogproperty.h"
 #include "glm.h"
 
 //TODO: move all these to own file, centralize the names we're using
@@ -14,184 +14,179 @@
 
 CTram::CTram()
 {
-    USE_SETTINGS;
-    tramWidth = SETTINGS_TRAM_EQWIDTH;
-    wheelTrack = SETTINGS_TRAM_WHEELSPACING;
-    halfWheelTrack = wheelTrack * 0.5;
-
-    passes = SETTINGS_TRAM_PASSES;
-    //abOffset = (tool->toolWidth - tool->toolOverlap) / 2.0;
-    abOffset = 0;
-    displayMode = 0;
+    loadSettings();
+    IsTramOuterOrInner();
+    displayMode=0;
 }
 
-void CTram::drawTramBnd(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
+void CTram::loadSettings()
 {
-    if(tramBndArr.size() > 0) {
-        QOpenGLBuffer tramBuffer;
-        QVector<QVector3D> vertices;
-        for (int h = 0; h < tramBndArr.size(); h++)
-            vertices.append(QVector3D(tramBndArr[h].easting, tramBndArr[h].northing, 0));
+    tramWidth = property_setTram_tramWidth;
+    halfWheelTrack = (double)property_setVehicle_trackWidth * 0.5;
+    passes = property_setTram_passes;
+}
 
-        tramBuffer.create();
-        tramBuffer.bind();
-        tramBuffer.allocate(vertices.data(), tramBndArr.size() * sizeof(QVector3D));
-        tramBuffer.release();
+void CTram::IsTramOuterOrInner()
+{
+    isOuter = ((int)(tramWidth / (double)property_setVehicle_toolWidth + 0.5)) % 2 == 0;
+    if ((bool)property_setTool_isTramOuterInverted) isOuter = !isOuter;
+}
 
-        glDrawArraysColor(gl, mvp, GL_TRIANGLE_STRIP,
-                          QColor::fromRgbF(0.8630f, 0.73692f, 0.60f, 0.25),
-                          tramBuffer,GL_SHORT,tramBndArr.size(),1.0f);
+void CTram::DrawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, CCamera &camera)
+{
+    double lineWidth;
+
+    GLHelperOneColor gldraw;
+    QColor color;
+
+    if (camera.camSetDistance > -250) lineWidth = 4.0f;
+    else lineWidth=2.0f;
+    color.setRgbF(0.30f, 0.93692f, 0.7520f, 0.3);
+
+    if (displayMode == 1 || displayMode == 2)
+    {
+        if (tramList.count() > 0)
+        {
+            for (int i = 0; i < tramList.count(); i++)
+            {
+                gldraw.clear();
+                for (int h = 0; h < (*tramList[i]).count(); h++)
+                    gldraw.append(QVector3D((*tramList[i])[h].easting, (*tramList[i])[h].northing, 0));
+                gldraw.draw(gl,mvp,color,GL_LINE_STRIP,lineWidth);
+            }
+        }
+    }
+
+    if (displayMode == 1 || displayMode == 3)
+    {
+        if (tramBndOuterArr.count() > 0)
+        {
+            gldraw.clear();
+            for (int h = 0; h < tramBndOuterArr.count(); h++)
+                gldraw.append(QVector3D(tramBndOuterArr[h].easting, tramBndOuterArr[h].northing, 0));
+            gldraw.draw(gl,mvp,color,GL_LINE_STRIP,lineWidth);
+            gldraw.clear();
+            for (int h = 0; h < tramBndInnerArr.count(); h++)
+                gldraw.append(QVector3D(tramBndInnerArr[h].easting, tramBndInnerArr[h].northing, 0));
+            gldraw.draw(gl,mvp,color,GL_LINE_STRIP,lineWidth);
+        }
     }
 }
 
-void CTram::buildTramBnd(const CBoundary &bnd)
+void CTram::BuildTramBnd(const CBoundary &bnd)
 {
-    bool isBndExist = bnd.bndArr.size() != 0;
+    bool isBndExist = bnd.bndList.count() != 0;
 
     if (isBndExist)
     {
-        createBndTramRef(bnd);
-        createOuterTram();
-        preCalcTurnLines();
+        CreateBndOuterTramTrack(bnd);
+        CreateBndInnerTramTrack(bnd);
     }
     else
     {
-        outArr.clear();
-        tramBndArr.clear();
+        tramBndOuterArr.clear();
+        tramBndInnerArr.clear();
     }
 }
 
-void CTram::createBndTramRef(const CBoundary &bnd)
+void CTram::CreateBndInnerTramTrack(const CBoundary &bnd)
 {
-    //count the points from the boundary
-    int ptCount = bnd.bndArr[0].bndLine.size();
-    outArr.clear();
+    double tramWidth = property_setTram_tramWidth;
+    double halfWheelTrack = (double)property_setVehicle_trackWidth * 0.5;
+
+    int ptCount = bnd.bndList[0].fenceLine.count();
+    tramBndInnerArr.clear();
 
     //outside point
-    Vec3 pt3;
+    Vec2 pt3;
 
-    double distSq = ((tramWidth * 0.5) - halfWheelTrack) * ((tramWidth * 0.5) - halfWheelTrack) * 0.97;
-    bool fail = false;
+    double distSq = ((tramWidth * 0.5) + halfWheelTrack) * ((tramWidth * 0.5) + halfWheelTrack) * 0.999;
 
     //make the boundary tram outer array
     for (int i = 0; i < ptCount; i++)
     {
         //calculate the point inside the boundary
-        pt3.easting = bnd.bndArr[0].bndLine[i].easting -
-            (sin(glm::PIBy2 + bnd.bndArr[0].bndLine[i].heading) * (tramWidth * 0.5 - halfWheelTrack));
+        pt3.easting = bnd.bndList[0].fenceLine[i].easting -
+            (sin(glm::PIBy2 + bnd.bndList[0].fenceLine[i].heading) * (tramWidth * 0.5 + halfWheelTrack));
 
-        pt3.northing = bnd.bndArr[0].bndLine[i].northing -
-            (cos(glm::PIBy2 + bnd.bndArr[0].bndLine[i].heading) * (tramWidth * 0.5 - halfWheelTrack));
+        pt3.northing = bnd.bndList[0].fenceLine[i].northing -
+            (cos(glm::PIBy2 + bnd.bndList[0].fenceLine[i].heading) * (tramWidth * 0.5 + halfWheelTrack));
+
+        bool Add = true;
 
         for (int j = 0; j < ptCount; j++)
         {
-            double check = glm::distanceSquared(pt3.northing, pt3.easting,
-                                bnd.bndArr[0].bndLine[j].northing, bnd.bndArr[0].bndLine[j].easting);
+            double check = glm::DistanceSquared(pt3.northing, pt3.easting,
+                                bnd.bndList[0].fenceLine[j].northing, bnd.bndList[0].fenceLine[j].easting);
             if (check < distSq)
             {
-                fail = true;
+                Add = false;
                 break;
             }
         }
 
-        if (!fail)
+        if (Add)
         {
-            pt3.heading = bnd.bndArr[0].bndLine[i].heading;
-            outArr.append(pt3);
-        }
-        fail = false;
-    }
-
-    int cnt = outArr.size();
-    if (cnt < 6) return;
-
-    const double spacing = 2.0;
-    double distance;
-    for (int i = 0; i < cnt - 1; i++)
-    {
-        distance = glm::distance(outArr[i], outArr[i + 1]);
-        if (distance < spacing)
-        {
-            outArr.removeAt(i + 1);
-            cnt = outArr.size();
-            i--;
+            if (tramBndInnerArr.count() > 0)
+            {
+                double dist = ((pt3.easting - tramBndInnerArr[tramBndInnerArr.count() - 1].easting) * (pt3.easting - tramBndInnerArr[tramBndInnerArr.count() - 1].easting))
+                              + ((pt3.northing - tramBndInnerArr[tramBndInnerArr.count() - 1].northing) * (pt3.northing - tramBndInnerArr[tramBndInnerArr.count() - 1].northing));
+                if (dist > 2)
+                    tramBndInnerArr.append(pt3);
+            }
+            else tramBndInnerArr.append(pt3);
         }
     }
-
 }
 
-void CTram::createOuterTram()
+void CTram::CreateBndOuterTramTrack(const CBoundary &bnd)
 {
-    //build the outer boundary
-    tramBndArr.clear();
+    double tramWidth = property_setTram_tramWidth;
+    double halfWheelTrack = (double)property_setVehicle_trackWidth * 0.5;
 
-    int cnt = outArr.size();
+    //count the points from the boundary
+    int ptCount = bnd.bndList[0].fenceLine.count();
+    tramBndOuterArr.clear();
 
-    if (cnt > 0)
+    //outside point
+    Vec2 pt3;
+
+    double distSq = ((tramWidth * 0.5) - halfWheelTrack) * ((tramWidth * 0.5) - halfWheelTrack) * 0.999;
+
+    //make the boundary tram outer array
+    for (int i = 0; i < ptCount; i++)
     {
-        Vec2 pt;
-        Vec2 pt2;
+        //calculate the point inside the boundary
+        pt3.easting = bnd.bndList[0].fenceLine[i].easting -
+                      (sin(glm::PIBy2 + bnd.bndList[0].fenceLine[i].heading) * (tramWidth * 0.5 - halfWheelTrack));
 
-        for (int i = 0; i < cnt; i++)
+        pt3.northing = bnd.bndList[0].fenceLine[i].northing -
+                       (cos(glm::PIBy2 + bnd.bndList[0].fenceLine[i].heading) * (tramWidth * 0.5 - halfWheelTrack));
+
+        bool Add = true;
+
+        for (int j = 0; j < ptCount; j++)
         {
-            pt.easting = outArr[i].easting;
-            pt.northing = outArr[i].northing;
-            tramBndArr.append(pt);
-
-            pt2.easting = outArr[i].easting -
-                (sin(glm::PIBy2 + outArr[i].heading) * wheelTrack);
-
-            pt2.northing = outArr[i].northing -
-                (cos(glm::PIBy2 + outArr[i].heading) * wheelTrack);
-            tramBndArr.append(pt2);
+            double check = glm::DistanceSquared(pt3.northing, pt3.easting,
+                                               bnd.bndList[0].fenceLine[j].northing, bnd.bndList[0].fenceLine[j].easting);
+            if (check < distSq)
+            {
+                Add = false;
+                break;
+            }
         }
-    }
 
-}
-
-bool CTram::isPointInTramBndArea(Vec2 testPointv2)
-{
-    if (calcList.size() < 3) return false;
-    int j = outArr.size() - 1;
-    bool oddNodes = false;
-
-    //test against the constant and multiples list the test point
-    for (int i = 0; i < outArr.size(); j = i++)
-    {
-        if ((outArr[i].northing < testPointv2.northing && outArr[j].northing >= testPointv2.northing)
-        ||  (outArr[j].northing < testPointv2.northing && outArr[i].northing >= testPointv2.northing))
+        if (Add)
         {
-            oddNodes ^= ((testPointv2.northing * calcList[i].northing) + calcList[i].easting < testPointv2.easting);
-        }
-    }
-    return oddNodes; //true means inside.
-
-}
-
-void CTram::preCalcTurnLines()
-{
-    int j = outArr.size() - 1;
-    //clear the list, constant is easting, multiple is northing
-    calcList.clear();
-    Vec2 constantMultiple(0, 0);
-
-    for (int i = 0; i < outArr.size(); j = i++)
-    {
-        //check for divide by zero
-        if (fabs(outArr[i].northing - outArr[j].northing) < glm::DOUBLE_EPSILON)
-        {
-            constantMultiple.easting = outArr[i].easting;
-            constantMultiple.northing = 0;
-            calcList.append(constantMultiple);
-        }
-        else
-        {
-            //determine constant and multiple and add to list
-            constantMultiple.easting = outArr[i].easting - ((outArr[i].northing * outArr[j].easting)
-                            / (outArr[j].northing - outArr[i].northing)) + ((outArr[i].northing * outArr[i].easting)
-                                / (outArr[j].northing - outArr[i].northing));
-            constantMultiple.northing = (outArr[j].easting - outArr[i].easting) / (outArr[j].northing - outArr[i].northing);
-            calcList.append(constantMultiple);
+            if (tramBndOuterArr.count() > 0)
+            {
+                double dist = ((pt3.easting - tramBndOuterArr[tramBndOuterArr.count() - 1].easting) * (pt3.easting - tramBndOuterArr[tramBndOuterArr.count() - 1].easting))
+                              + ((pt3.northing - tramBndOuterArr[tramBndOuterArr.count() - 1].northing) * (pt3.northing - tramBndOuterArr[tramBndOuterArr.count() - 1].northing));
+                if (dist > 2)
+                    tramBndOuterArr.append(pt3);
+            }
+            else tramBndOuterArr.append(pt3);
         }
     }
 }
+

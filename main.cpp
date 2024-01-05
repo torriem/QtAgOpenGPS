@@ -5,8 +5,10 @@
 #include "cdubins.h"
 #include "vec3.h"
 #include "aogrenderer.h"
+#include "aogproperty.h"
 
 QLabel *grnPixelsWindow;
+AOGSettings *settings;
 
 #ifndef TESTING
 int main(int argc, char *argv[])
@@ -23,11 +25,13 @@ int main(int argc, char *argv[])
     //from this version of AOG:
     QCoreApplication::setApplicationVersion("4.1.0");
     qmlRegisterType<AOGRendererInSG>("AgOpenGPS",1,0,"AOGRenderer");
+    qRegisterMetaTypeStreamOperators<QList<int> >("QList<int>");
+    qRegisterMetaTypeStreamOperators<QVector<int> >("QVector<int>");
+    settings = new AOGSettings();
     FormGPS w;
     //w.show();
 
-    USE_SETTINGS;
-    if (SETTINGS_DISPLAY_SHOWBACK) {
+    if (property_displayShowBack) {
         grnPixelsWindow = new QLabel("Back Buffer");
         grnPixelsWindow->setFixedWidth(500);
         grnPixelsWindow->setFixedHeight(500);

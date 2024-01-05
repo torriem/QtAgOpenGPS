@@ -3,7 +3,6 @@
 #include <QQmlContext>
 #include <QScreen>
 #include "formgps.h"
-//#include "ui_formgps.h" //moc-generated from ui file
 #include "qmlutil.h"
 #include <QTimer>
 #include "cnmea.h"
@@ -11,6 +10,7 @@
 #include "csection.h"
 #include "ccontour.h"
 #include "cabline.h"
+#include "aogproperty.h"
 
 #include <QGuiApplication>
 #include <QQmlEngine>
@@ -83,11 +83,11 @@ void FormGPS::setupGui()
 
     btnManualOffOn = qmlItem(qml_root,"btnManualOffOn");
     connect(btnManualOffOn,SIGNAL(clicked()),this,
-            SLOT(onBtnManualOffOn_clicked()));
+            SLOT(btnSectionMasterManual_Click()));
 
     btnSectionOffAutoOn = qmlItem(qml_root,"btnSectionOffAutoOn");
     connect(btnSectionOffAutoOn,SIGNAL(clicked()),this,
-            SLOT(onBtnSectionOffAutoOn_clicked()));
+            SLOT(btnSectionMasterAuto_Click()));
 
 
     btnTiltDown = qmlItem(qml_root,"btnTiltDown");
@@ -155,7 +155,7 @@ void FormGPS::setupGui()
 
     //connnect section buttons to callbacks
     sectionButtonsSignalMapper = new QSignalMapper(this);
-    for(int i=0; i < MAXSECTIONS-1; i++){
+    for(int i=0; i < 16; i++){ //16 total onscreen buttons
         sectionButton[i] = qmlItem(qml_root,QString("section")+QString::number(i));
         sectionButton[i]->setProperty("state","off");
         connect(sectionButton[i],SIGNAL(clicked()),
@@ -164,7 +164,7 @@ void FormGPS::setupGui()
         sectionButtonsSignalMapper->setMapping(sectionButton[i], i);
     }
     connect(sectionButtonsSignalMapper,SIGNAL(mapped(int)),this,
-            SLOT(onBtnSectionMan_clicked(int)));
+            SLOT(btnSectionMan_Click(int)));
 
     txtDistanceOffABLine = qmlItem(qml_root,"txtDistanceOffABLine");
 
@@ -182,32 +182,22 @@ void FormGPS::setupGui()
     //we have to give it a way of calling our initialize and draw functions
     openGLControl->setProperty("callbackObject",QVariant::fromValue((void *) this));
     openGLControl->setProperty("initCallback",QVariant::fromValue((void *) &FormGPS::openGLControl_Initialized));
-    openGLControl->setProperty("paintCallback",QVariant::fromValue((void *) &FormGPS::openGLControl_Draw));
+    openGLControl->setProperty("paintCallback",QVariant::fromValue((void *) &FormGPS::oglMain_Paint));
 
     openGLControl->setProperty("samples",settings.value("display/antiAliasSamples", 0));
     openGLControl->setMirrorVertically(true);
     connect(openGLControl,SIGNAL(clicked(QVariant)),this,SLOT(onGLControl_clicked(QVariant)));
 
     //TODO: save and restore these numbers from settings
-    qml_root->setProperty("width",1000);
-    qml_root->setProperty("height",700);
+    qml_root->setProperty("width",1024);
+    qml_root->setProperty("height",768);
 
     tmrWatchdog = new QTimer(this);
     connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(tmrWatchdog_timeout()));
-    tmrWatchdog->start(50); //fire every 50ms.
+    tmrWatchdog->start(250); //fire every 50ms.
 
     //SIM on
-    connect(&simTimer, SIGNAL(timeout()),this,SLOT(onSimTimerTimeout()));
-    if (SETTINGS_SIM_ON) {
-        simTimer.start(100); //fire simulator every 200 ms.
-        fixUpdateHz = 10;
-    } else {
-        fixUpdateHz = 5;
-        //TODO! NMEA update settings
-    }
-
-    fixUpdateTime = 1.0 / fixUpdateHz;
-
+    connect_classes();
 
 
     swFrame.start();
@@ -339,7 +329,7 @@ void FormGPS::onBtnABLine_clicked(){
 void FormGPS::onBtnABCurve_clicked(){
     if (closeAllMenus()) return;
     qDebug()<<"ABCurve button clicked." ;
-    !ABLine.isBtnABLineOn;
+    ABLine.isBtnABLineOn = !ABLine.isBtnABLineOn;
     curve.isBtnCurveOn = !curve.isBtnCurveOn;
     if (curve.isBtnCurveOn) {
         qmlItem(qml_root,"btnABCurve")->setProperty("isChecked",true);
@@ -373,169 +363,60 @@ void FormGPS::onBtnContourPriority_clicked(){
         qmlItem(qml_root,"btnContourPriority")->setProperty("isChecked",false);
 }
 
-void FormGPS::onBtnManualOffOn_clicked(){
-    USE_SETTINGS;
-
-    int tool_numOfSections = SETTINGS_TOOL_NUMSECTIONS;
-
-    qDebug()<<"Manual off on button clicked." ;
-    switch (manualBtnState)
-    {
-    case btnStates::Off:
-        //roll to "on" state
-        manualBtnState = btnStates::On;
-        qmlItem(qml_root,"btnManualOffOn")->setProperty("isChecked",true);
-
-        autoBtnState = btnStates::Off;
-        qmlItem(qml_root,"btnSectionOffAutoOn")->setProperty("isChecked",false);
-
-        //turn all the sections allowed and update to ON!! Auto changes to ON
-        for (int j = 0; j < tool_numOfSections; j++)
-        {
-            tool.section[j].isAllowedOn = true;
-            tool.section[j].manBtnState = btnStates::Auto; //auto rolls over to on
-        }
-
-        manualAllBtnsUpdate();
-        break;
-
-    case btnStates::On:
-        manualBtnState = btnStates::Off;
-        qmlItem(qml_root,"btnManualOffOn")->setProperty("isChecked",false);
-
-        //turn section buttons all OFF or Auto if SectionAuto was on or off
-        for (int j = 0; j < tool_numOfSections; j++)
-        {
-            tool.section[j].isAllowedOn = false;
-            tool.section[j].manBtnState = btnStates::On;
-        }
-
-        //Update the button colors and text
-        manualAllBtnsUpdate();
-        break;
-    case btnStates::Auto:
-        //shouldn't ever happen!
-        assert(1 == 0);
-        break;
-    }
-    closeAllMenus();
-}
-
-void FormGPS::onBtnSectionOffAutoOn_clicked(){
-    USE_SETTINGS;
-
-    int tool_numOfSections = SETTINGS_TOOL_NUMSECTIONS;
-
-    qDebug()<<"Section off auto on button clicked." ;
-    switch (autoBtnState)
-    {
-        case btnStates::Off:
-            autoBtnState = btnStates::Auto;
-            qmlItem(qml_root,"btnSectionOffAutoOn")->setProperty("isChecked",true);
-
-            //turn off manual if on
-            manualBtnState = btnStates::Off;
-            qmlItem(qml_root,"btnManualOffOn")->setProperty("isChecked",false);
-
-            //turn all the sections allowed and update to ON!! Auto changes to ON
-            for (int j = 0; j < tool_numOfSections; j++)
-            {
-                tool.section[j].isAllowedOn = true;
-                tool.section[j].manBtnState = btnStates::Off;
-            }
-
-            manualAllBtnsUpdate();
-            break;
-
-        case btnStates::Auto:
-            autoBtnState = btnStates::Off;
-            qmlItem(qml_root,"btnSectionOffAutoOn")->setProperty("isChecked",false);
-
-            //turn section buttons all OFF or Auto if SectionAuto was on or off
-            for (int j = 0; j < tool_numOfSections; j++)
-            {
-                tool.section[j].isAllowedOn = false;
-                tool.section[j].manBtnState = btnStates::On;
-            }
-
-            //Update the button colors and text
-            manualAllBtnsUpdate();
-            break;
-
-        case btnStates::On:
-            //shouldn't ever happen
-            assert(1 == 0);
-
-    }
-    closeAllMenus();
-}
-
-//individual buttons for section (called by actual
-//qt callback onSectionButton_clicked() SLOT
-void FormGPS::onBtnSectionMan_clicked(int sectNumber) {
-    if (autoBtnState != btnStates::Auto) {
-        //if auto is off just have on-off for choices of section buttons
-        if (tool.section[sectNumber].manBtnState == btnStates::Off) {
-            ///set to auto so that manuBtnUpdate will roll it over to On
-            tool.section[sectNumber].manBtnState = btnStates::Auto;
-        }
-    }
-    //Roll over button to next state
-    manualBtnUpdate(sectNumber);
-    if (closeAllMenus()) return;
-}
-
 void FormGPS::onBtnTiltDown_clicked(){
-    USE_SETTINGS;
-
-    double camPitch = SETTINGS_DISPLAY_CAMPITCH;
 
     if (closeAllMenus()) return;
     qDebug()<<"TiltDown button clicked.";
-    camPitch -= (camPitch*0.03-1);
-    if (camPitch > 0) camPitch = 0;
+
+    if (camera.camPitch > -59) camera.camPitch = -60;
+    camera.camPitch += ((camera.camPitch * 0.012) - 1);
+    if (camera.camPitch < -76) camera.camPitch = -76;
+
     lastHeight = -1; //redraw the sky
-    SETTINGS_SET_DISPLAY_CAMPITCH(camPitch);
+    property_setwin = camera.camPitch;
     openGLControl->update();
 }
 
 void FormGPS::onBtnTiltUp_clicked(){
-    USE_SETTINGS;
-
-    double camPitch = SETTINGS_DISPLAY_CAMPITCH;
+    double camPitch = property_setwin;
 
     if (closeAllMenus()) return;
     qDebug()<<"TiltUp button clicked.";
-    camPitch += (camPitch*0.03-1);
-    if (camPitch < -80) camPitch = -80;
+
     lastHeight = -1; //redraw the sky
-    SETTINGS_SET_DISPLAY_CAMPITCH(camPitch);
+    camera.camPitch -= ((camera.camPitch * 0.012) - 1);
+    if (camera.camPitch > -58) camera.camPitch = 0;
+
+    property_setwin = camera.camPitch;
     openGLControl->update();
 }
 
 void FormGPS::onBtnZoomIn_clicked(){
     if (closeAllMenus()) return;
     qDebug() <<"ZoomIn button clicked.";
-    if (zoomValue <= 20) {
-        if ((zoomValue -= zoomValue * 0.1) < 6.0) zoomValue = 6.0;
+    if (camera.zoomValue <= 20) {
+        if ((camera.zoomValue -= camera.zoomValue * 0.1) < 3.0)
+            camera.zoomValue = 3.0;
     } else {
-        if ((zoomValue -= zoomValue*0.05) < 6.0) zoomValue = 6.0;
+        if ((camera.zoomValue -= camera.zoomValue * 0.05) < 3.0)
+            camera.zoomValue = 3.0;
     }
-
-    camera.camSetDistance = zoomValue * zoomValue * -1;
-    setZoom();
+    camera.camSetDistance = camera.zoomValue * camera.zoomValue * -1;
+    SetZoom();
+    //TODO save zoom to properties
     openGLControl->update();
 }
 
 void FormGPS::onBtnZoomOut_clicked(){
     if (closeAllMenus()) return;
     qDebug() <<"ZoomOut button clicked.";
-    if (zoomValue <= 20)
-        zoomValue += zoomValue*0.1;
-    else
-        zoomValue += zoomValue*0.05;
-    camera.camSetDistance = zoomValue * zoomValue * -1;
-    setZoom();
+    if (camera.zoomValue <= 20) camera.zoomValue += camera.zoomValue * 0.1;
+    else camera.zoomValue += camera.zoomValue * 0.05;
+    if (camera.zoomValue > 220) camera.zoomValue = 220;
+    camera.camSetDistance = camera.zoomValue * camera.zoomValue * -1;
+    SetZoom();
+
+    //todo save to properties
     openGLControl->update();
 }
 
@@ -604,19 +485,56 @@ bool FormGPS::closeAllMenus()
 void FormGPS::onBtnManUTurnLeft_clicked()
 {
     if (yt.isYouTurnTriggered) {
-        yt.resetYouTurn();
+        yt.ResetYouTurn();
     }else {
         yt.isYouTurnTriggered = true;
-        yt.buildManualYouTurn(ABLine, curve, false, true);
+        yt.BuildManualYouTurn(vehicle, ABLine, curve, false, true);
    }
 }
 
 void FormGPS::onBtnManUTurnRight_clicked()
 {
     if (yt.isYouTurnTriggered) {
-        yt.resetYouTurn();
+        yt.ResetYouTurn();
     }else {
         yt.isYouTurnTriggered = true;
-        yt.buildManualYouTurn(ABLine, curve, true, true);
+        yt.BuildManualYouTurn(vehicle, ABLine, curve, true, true);
    }
+}
+
+void FormGPS::TimedMessageBox(int timeout, QString s1, QString s2)
+{
+    qDebug() << s1 << ", " << s2 << Qt::endl;
+    //TODO ask QML to display a message
+}
+
+void FormGPS::turnOffBoundAlarm()
+{
+    qDebug() << "Bound alarm should be off" << Qt::endl;
+    //TODO implement sounds
+}
+
+void FormGPS::FixPanelsAndMenus()
+{
+    //TODO QML, perhaps not much needed to do here
+
+    if (tool.isSectionsNotZones)
+        LineUpIndividualSectionBtns();
+    else
+        LineUpAllZoneButtons();
+
+}
+
+void FormGPS::FixTramModeButton()
+{
+    //TODO QML
+    //unhide button if it should be seen
+    if (tram.tramList.count() > 0 || tram.tramBndOuterArr.count() > 0)
+    {
+        //btnTramDisplayMode.Visible = true;
+        tram.displayMode = 1;
+    }
+
+    //make sure tram has right icon.  DO this through javascript
+
 }

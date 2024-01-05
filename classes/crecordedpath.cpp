@@ -1,11 +1,9 @@
 #include "crecordedpath.h"
 #include "glutils.h"
 #include "cvehicle.h"
-#include "cgeofence.h"
 #include "cdubins.h"
-#include "cmazegrid.h"
-#include "cnmea.h"
-#include "aogsettings.h"
+#include "cyouturn.h"
+#include "aogproperty.h"
 #include "btnenum.h"
 #include "glm.h"
 
@@ -14,116 +12,143 @@ CRecordedPath::CRecordedPath(QObject *parent) : QObject(parent)
 
 }
 
-bool CRecordedPath::StartDrivingRecordedPath(const CVehicle &vehicle,
-                                             const CBoundary &bnd,
-                                             CGeoFence &gf,
-                                             CMazeGrid &mazeGrid,
-                                             double minFieldX, double minFieldY)
+bool CRecordedPath::StartDrivingRecordedPath(CVehicle &vehicle)
 {
     //create the dubins path based on start and goal to start of recorded path
     A = B = C = 0;
-    recListCount = recList.size();
-    if (recListCount < 5) return false;
 
-    //the goal is the first point of path, the start is the current position
-    Vec3 goal(recList[0].easting, recList[0].northing, recList[0].heading);
+    if (recList.count() < 5) return false;
 
     //save a copy of where we started.
     homePos = vehicle.pivotAxlePos;
 
+    // Try to find the nearest point of the recordet path in relation to the current position:
+    double distance = glm::DOUBLE_MAX;
+    int idx = 0;
+    int i = 0;
+
+    if (resumeState == 0) //start at the start
+    {
+        currentPositonIndex = 0;
+        idx = 0;
+        starPathIndx = 0;
+    }
+    else if (resumeState == 1) //resume from where stopped mid path
+    {
+        if (currentPositonIndex + 5 > recList.count())
+        {
+            currentPositonIndex = 0;
+            idx = 0;
+            starPathIndx = 0;
+        }
+        else
+        {
+            idx = starPathIndx = currentPositonIndex;
+        }
+    }
+    else //find closest point
+    {
+        foreach  (CRecPathPt pt, recList)
+        {
+            double temp = ((pt.easting - homePos.easting) * (pt.easting - homePos.easting))
+                          + ((pt.northing - homePos.northing) * (pt.northing - homePos.northing));
+
+            if (temp < distance)
+            {
+                distance = temp;
+                idx = i;
+            }
+            i++;
+        }
+
+        //scootch down the line a bit
+        if (idx + 5 < recList.count()) idx += 5;
+        else idx = recList.count() - 1;
+
+        starPathIndx = currentPositonIndex = idx;
+    }
+
+    //the goal is the first point of path, the start is the current position
+    Vec3 goal = Vec3(recList[idx].easting, recList[idx].northing, recList[idx].heading);
+
     //get the dubins for approach to recorded path
-    GetDubinsPath(vehicle, bnd, gf, mazeGrid, minFieldX, minFieldY, goal);
-    shuttleListCount = shuttleDubinsList.size();
+    GetDubinsPath(vehicle, goal);
+    shuttleListCount = shuttleDubinsList.count();
 
     //has a valid dubins path been created?
     if (shuttleListCount == 0) return false;
+
+    //starPathIndx = idxFieldSelected;
 
     //technically all good if we get here so set all the flags
     isFollowingDubinsHome = false;
     isFollowingRecPath = false;
     isFollowingDubinsToPath = true;
     isEndOfTheRecLine = false;
-    currentPositonIndex = 0;
+    //currentPositonIndex = 0;
     isDrivingRecordedPath = true;
-
-    isPausedDrivingRecordedPath = false;
     return true;
 }
 
-void CRecordedPath::UpdatePosition(CVehicle &vehicle,
-                                   const CBoundary &bnd,
-                                   const CNMEA &pn,
-                                   CGeoFence &gf,
-                                   CMazeGrid &mazeGrid,
-                                   double minFieldX,
-                                   double minFieldY)
+void CRecordedPath::UpdatePosition(CVehicle &vehicle, const CYouTurn &yt, bool isAutoSteerBtnOn)
 {
     if (isFollowingDubinsToPath)
     {
         //set a speed of 10 kmh
-        emit setSimStepDistance(shuttleDubinsList[C].speed / 17.86);
-        //mf.sim.stepDistance = shuttleDubinsList[C].speed / 17.86;
+        emit setSimStepDistance(shuttleDubinsList[C].speed / 50);
+        //mf.sim.stepDistance = shuttleDubinsList[C].speed / 50;
 
-        steerAxlePosRP = vehicle.steerAxlePos;
+        pivotAxlePosRP = vehicle.steerAxlePos;
 
-        StanleyDubinsPath(vehicle, pn, shuttleListCount);
+        //StanleyDubinsPath(vehicle, pn, shuttleListCount);
+        PurePursuitDubins(vehicle, yt, isAutoSteerBtnOn, shuttleListCount);
 
         //check if close to recorded path
         int cnt = shuttleDubinsList.size();
         pathCount = cnt - B;
         if (pathCount < 8)
         {
-            double distSqr = glm::distanceSquared(steerAxlePosRP.northing, steerAxlePosRP.easting, recList[0].northing, recList[0].easting);
+            double distSqr = glm::DistanceSquared(pivotAxlePosRP.northing, pivotAxlePosRP.easting, recList[0].northing, recList[0].easting);
             if (distSqr < 2)
             {
                 isFollowingRecPath = true;
                 isFollowingDubinsToPath = false;
                 shuttleDubinsList.clear();
                 shortestDubinsList.clear();
+                C = starPathIndx;
+                A = C + 3;
+                B = A + 1;
             }
         }
     }
 
     if (isFollowingRecPath)
     {
-        steerAxlePosRP = vehicle.steerAxlePos;
+        pivotAxlePosRP = vehicle.steerAxlePos;
 
-        StanleyRecPath(vehicle, pn, recListCount);
+        //StanleyRecPath(vehicle, pn, recListCount);
+        PurePursuitRecPath(vehicle, recListCount);
 
         //if end of the line then stop
         if (!isEndOfTheRecLine)
         {
-            emit setSimStepDistance(recList[C].speed / 17.86);
+            emit setSimStepDistance(recList[C].speed / 34.86);
             //mf.sim.stepDistance = recList[C].speed / 17.86;
             north = recList[C].northing;
 
             pathCount = recList.size() - C;
 
             //section control - only if different click the button
-            emit btnSectionSet(btnStates::Auto);
+            //torriem: turn off sectionMasterAuto if on
+            emit turnOffSectionMasterAuto();
             //bool autoBtn = (mf.autoBtnState == btnStates::Auto);
             //trig = autoBtn;
             //if (autoBtn != recList[C].autoBtnState) emit btnSectionOffAutoOnClicked();
         }
         else
         {
-            //create the dubins path based on start and goal to start trip home
-            GetDubinsPath(vehicle,bnd, gf,mazeGrid, minFieldX, minFieldY, homePos);
-            shuttleListCount = shuttleDubinsList.size();
-
-            //its too small
-            if (shuttleListCount < 3)
-            {
-                StopDrivingRecordedPath();
-                return;
-            }
-
-            //set all the flags
-            isFollowingDubinsHome = true;
-            A = B = C = 0;
-            isFollowingRecPath = false;
-            isFollowingDubinsToPath = false;
-            isEndOfTheRecLine = false;
+            StopDrivingRecordedPath();
+            return;
         }
     }
 
@@ -137,18 +162,12 @@ void CRecordedPath::UpdatePosition(CVehicle &vehicle,
             return;
         }
 
-        emit setSimStepDistance(shuttleDubinsList[C].speed / 17.86);
-        //mf.sim.stepDistance = shuttleDubinsList[C].speed / 17.86;
-        steerAxlePosRP = vehicle.steerAxlePos;
+        emit setSimStepDistance(shuttleDubinsList[C].speed / 35);
+        //mf.sim.stepDistance = shuttleDubinsList[C].speed / 35;
+        pivotAxlePosRP = vehicle.steerAxlePos;
 
-        StanleyDubinsPath(vehicle, pn, shuttleListCount);
+        PurePursuitDubins(vehicle, yt, isAutoSteerBtnOn, shuttleListCount);
     }
-
-    //if paused, set the sim to 0
-    if (isPausedDrivingRecordedPath)
-        emit setSimStepDistance(0);
-        //mf.sim.stepDistance = 0 / 17.86;
-
 }
 
 void CRecordedPath::StopDrivingRecordedPath()
@@ -162,32 +181,34 @@ void CRecordedPath::StopDrivingRecordedPath()
     //mf.sim.stepDistance = 0;
     isDrivingRecordedPath = false;
 
+    /* slot in main form can make sure gui is right*/
+    //mf.btnPathGoStop.Image = Properties.Resources.boundaryPlay;
+    //mf.btnPathRecordStop.Enabled = true;
+    //mf.btnPickPath.Enabled = true;
+    //mf.btnResumePath.Enabled = true;
     emit stoppedDriving();
-    //mf.goPathMenu.Image = Properties.Resources.AutoGo;
-    isPausedDrivingRecordedPath = false;
 }
 
-void CRecordedPath::GetDubinsPath(const CVehicle &vehicle, const CBoundary &bnd, CGeoFence &gf, CMazeGrid &mazeGrid, double minFieldX, double minFieldY, Vec3 goal)
+void CRecordedPath::GetDubinsPath(CVehicle &vehicle, Vec3 goal)
 {
-    USE_SETTINGS;
+    double minTurningRadius = vehicle.minTurningRadius;
 
-    double minTurningRadius = SETTINGS_VEHICLE_MINTURNINGRADIUS;
-    CDubinsTurningRadius = minTurningRadius * 1.0;
+    CDubinsTurningRadius = minTurningRadius * 1.2;
     CDubins dubPath;
 
     // current psition
-    steerAxlePosRP = vehicle.pivotAxlePos;
+    pivotAxlePosRP = vehicle.pivotAxlePos;
 
     //bump it forward
-    Vec3 pt2(steerAxlePosRP.easting + (sin(steerAxlePosRP.heading) * 3),
-             steerAxlePosRP.northing + (cos(steerAxlePosRP.heading) * 3),
-             steerAxlePosRP.heading);
+    Vec3 pt2(pivotAxlePosRP.easting + (sin(pivotAxlePosRP.heading) * 3),
+             pivotAxlePosRP.northing + (cos(pivotAxlePosRP.heading) * 3),
+             pivotAxlePosRP.heading);
 
     //get the dubins path vec3 point coordinates of turn
     shortestDubinsList.clear();
     shuttleDubinsList.clear();
 
-    shortestDubinsList = dubPath.GenerateDubins(pt2, goal, bnd, gf);
+    shortestDubinsList = dubPath.GenerateDubins(pt2, goal);
 
     //if Dubins returns 0 elements, there is an unavoidable blockage in the way.
     if (shortestDubinsList.size() > 0)
@@ -202,77 +223,22 @@ void CRecordedPath::GetDubinsPath(const CVehicle &vehicle, const CBoundary &bnd,
         }
         return;
     }
-
-    //find a path from start to goal - diagnostic, but also used later
-    mazeList = mazeGrid.searchForPath(minFieldX, minFieldY, pt2, goal);
-
-    //you can't get anywhere!
-    if (mazeList.size() == 0) return;
-
-    //start is navigateable - maybe
-    int cnt = mazeList.size();
-
-    if (cnt > 0)
-    {
-        {
-            int turnRadius = (int)(3 * minTurningRadius);
-            if (cnt > 2 * turnRadius)
-            {
-                mazeList.remove(0, turnRadius);
-                cnt = mazeList.size();
-                mazeList.remove(cnt - turnRadius, turnRadius);
-            }
-        }
-
-        shortestDubinsList = dubPath.GenerateDubins(pt2, mazeList[0], bnd, gf);
-        if (shortestDubinsList.size() > 0)
-        {
-            for (int i = 0; i < shortestDubinsList.size(); i++)
-            {
-                CRecPathPt pt(shortestDubinsList[i].easting, shortestDubinsList[i].northing, shortestDubinsList[i].heading, 10.0, false);
-                shuttleDubinsList.append(pt);
-            }
-        }
-        else
-        {
-            return; //unable to generate a dubins to the start
-        }
-
-        for (int i = 0; i < mazeList.size(); i++)
-        {
-            CRecPathPt pt(mazeList[i].easting, mazeList[i].northing, mazeList[i].heading, 15.0, false);
-            shuttleDubinsList.append(pt);
-        }
-
-        shortestDubinsList = dubPath.GenerateDubins(mazeList[mazeList.size() - 1], goal, bnd, gf);
-
-        for (int i = 0; i < shortestDubinsList.size(); i++)
-        {
-            CRecPathPt pt(shortestDubinsList[i].easting, shortestDubinsList[i].northing, shortestDubinsList[i].heading, 11.0, false);
-            shuttleDubinsList.append(pt);
-        }
-        return;
-    }
 }
 
-void CRecordedPath::StanleyRecPath(CVehicle &vehicle, const CNMEA &pn, int ptCount)
+void CRecordedPath::PurePursuitRecPath(CVehicle &vehicle, int ptCount)
 {
-    USE_SETTINGS;
-
-    double maxSteerAngle = SETTINGS_VEHICLE_MAXSTEERANGLE;
-
     //find the closest 2 points to current fix
     double minDistA = 9999999999;
+    double dist, dx, dz;
 
     //set the search range close to current position
     int top = currentPositonIndex + 5;
     if (top > ptCount) top = ptCount;
 
-    double dist;
     for (int t = currentPositonIndex; t < top; t++)
     {
-        dist = ((steerAxlePosRP.easting - recList[t].easting) * (steerAxlePosRP.easting - recList[t].easting))
-                        + ((steerAxlePosRP.northing - recList[t].northing) * (steerAxlePosRP.northing - recList[t].northing));
+        dist = ((pivotAxlePosRP.easting - recList[t].easting) * (pivotAxlePosRP.easting - recList[t].easting))
+                        + ((pivotAxlePosRP.northing - recList[t].northing) * (pivotAxlePosRP.northing - recList[t].northing));
         if (dist < minDistA)
         {
             minDistA = dist;
@@ -297,187 +263,310 @@ void CRecordedPath::StanleyRecPath(CVehicle &vehicle, const CNMEA &pn, int ptCou
     currentPositonIndex = A;
 
     //get the distance from currently active AB line
-    double dx = recList[B].easting - recList[A].easting;
-    double dz = recList[B].northing - recList[A].northing;
+    dx = recList[B].easting - recList[A].easting;
+    dz = recList[B].northing - recList[A].northing;
 
     if (fabs(dx) < glm::DOUBLE_EPSILON && fabs(dz) < glm::DOUBLE_EPSILON) return;
 
-    abHeading = atan2(dx, dz);
-    //abHeading = recList[A].heading;
-
     //how far from current AB Line is fix
-    distanceFromCurrentLine =
-        ((dz * steerAxlePosRP.easting) - (dx * steerAxlePosRP.northing) + (recList[B].easting
+    distanceFromCurrentLinePivot =
+        ((dz * pivotAxlePosRP.easting) - (dx * pivotAxlePosRP.northing) + (recList[B].easting
                 * recList[A].northing) - (recList[B].northing * recList[A].easting))
                     / sqrt((dz * dz) + (dx * dx));
 
-    //are we on the right side or not
-    isOnRightSideCurrentLine = distanceFromCurrentLine > 0;
+    //integral slider is set to 0
+    if (vehicle.purePursuitIntegralGain != 0)
+    {
+        pivotDistanceError = distanceFromCurrentLinePivot * 0.2 + pivotDistanceError * 0.8;
 
-    // calc point on ABLine closest to current position
-    double U = (((steerAxlePosRP.easting - recList[A].easting) * dx)
-                + ((steerAxlePosRP.northing - recList[A].northing) * dz))
-                / ((dx * dx) + (dz * dz));
+        if (counter2++ > 4)
+        {
+            pivotDerivative = pivotDistanceError - pivotDistanceErrorLast;
+            pivotDistanceErrorLast = pivotDistanceError;
+            counter2 = 0;
+            pivotDerivative *= 2;
+
+            //limit the derivative
+            //if (pivotDerivative > 0.03) pivotDerivative = 0.03;
+            //if (pivotDerivative < -0.03) pivotDerivative = -0.03;
+            //if (fabs(pivotDerivative) < 0.01) pivotDerivative = 0;
+        }
+
+        //pivotErrorTotal = pivotDistanceError + pivotDerivative;
+
+        if (isFollowingRecPath
+            && fabs(pivotDerivative) < (0.1)
+            && vehicle.avgSpeed > 2.5)
+        //&& fabs(pivotDistanceError) < 0.2)
+
+        {
+            //if over the line heading wrong way, rapidly decrease integral
+            if ((inty < 0 && distanceFromCurrentLinePivot < 0) || (inty > 0 && distanceFromCurrentLinePivot > 0))
+            {
+                inty += pivotDistanceError * vehicle.purePursuitIntegralGain * -0.04;
+            }
+            else
+            {
+                if (fabs(distanceFromCurrentLinePivot) > 0.02)
+                {
+                    inty += pivotDistanceError * vehicle.purePursuitIntegralGain * -0.02;
+                    if (inty > 0.2) inty = 0.2;
+                    else if (inty < -0.2) inty = -0.2;
+                }
+            }
+        }
+        else inty *= 0.95;
+    }
+    else inty = 0;
+
+    if (vehicle.isReverse) inty = 0;
+
+    // ** Pure pursuit ** - calc point on ABLine closest to current position
+    double U = (((pivotAxlePosRP.easting - recList[A].easting) * dx)
+                + ((pivotAxlePosRP.northing - recList[A].northing) * dz))
+               / ((dx * dx) + (dz * dz));
 
     rEastRP = recList[A].easting + (U * dx);
     rNorthRP = recList[A].northing + (U * dz);
 
-    //the first part of stanley is to extract heading error
-    double abFixHeadingDelta = (steerAxlePosRP.heading - abHeading);
+    //update base on autosteer settings and distance from line
+    double goalPointDistance = vehicle.UpdateGoalPointDistance();
 
-    //Fix the circular error - get it from -Pi/2 to Pi/2
-    if (abFixHeadingDelta > M_PI) abFixHeadingDelta -= M_PI;
-    else if (abFixHeadingDelta < M_PI) abFixHeadingDelta += M_PI;
-    if (abFixHeadingDelta > glm::PIBy2) abFixHeadingDelta -= M_PI;
-    else if (abFixHeadingDelta < -glm::PIBy2) abFixHeadingDelta += M_PI;
+    bool ReverseHeading = !vehicle.isReverse;
 
-    //normally set to 1, less then unity gives less heading error.
-    abFixHeadingDelta *= SETTINGS_VEHICLE_STANLEYHEADINGERRORGAIN;
-    if (abFixHeadingDelta > 0.74) abFixHeadingDelta = 0.74;
-    if (abFixHeadingDelta < -0.74) abFixHeadingDelta = -0.74;
+    int count = ReverseHeading ? 1 : -1;
+    CRecPathPt start(rEastRP, rNorthRP, 0, 0, false);
+    double distSoFar = 0;
 
-    //the non linear distance error part of stanley
-    steerAngleRP = atan((distanceFromCurrentLine * SETTINGS_VEHICLE_STANLEYGAIN) / ((pn.speed * 0.277777) + 1));
+    for (int i = ReverseHeading ? B : A; i < ptCount && i >= 0; i += count)
+    {
+        // used for calculating the length squared of next segment.
+        double tempDist = sqrt((start.easting - recList[i].easting) * (start.easting - recList[i].easting)
+                                    + (start.northing - recList[i].northing) * (start.northing - recList[i].northing));
 
-    //clamp it to max 42 degrees
-    if (steerAngleRP > 0.74) steerAngleRP = 0.74;
-    if (steerAngleRP < -0.74) steerAngleRP = -0.74;
+        //will we go too far?
+        if ((tempDist + distSoFar) > goalPointDistance)
+        {
+            double j = (goalPointDistance - distSoFar) / tempDist; // the remainder to yet travel
 
-    //add them up and clamp to max in vehicle settings
-    steerAngleRP = glm::toDegrees((steerAngleRP + abFixHeadingDelta) * -1.0);
-    if (steerAngleRP < -maxSteerAngle) steerAngleRP = -maxSteerAngle;
-    if (steerAngleRP > maxSteerAngle) steerAngleRP = maxSteerAngle;
+            goalPointRP.easting = (((1 - j) * start.easting) + (j * recList[i].easting));
+            goalPointRP.northing = (((1 - j) * start.northing) + (j * recList[i].northing));
+            break;
+        }
+        else distSoFar += tempDist;
+        start = recList[i];
+    }
 
-    //Convert to millimeters and round properly to above/below .5
-    distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);
+    //calc "D" the distance from pivotAxlePosRP axle to lookahead point
+    double goalPointDistanceSquared = glm::DistanceSquared(goalPointRP.northing, goalPointRP.easting, pivotAxlePosRP.northing, pivotAxlePosRP.easting);
 
-    //every guidance method dumps into these that are used and sent everywhere, last one wins
-    vehicle.guidanceLineDistanceOff = vehicle.distanceDisplay = (int)distanceFromCurrentLine;
-    vehicle.guidanceLineSteerAngle = (int)(steerAngleRP * 100);
+    //calculate the the delta x in local coordinates and steering angle degrees based on wheelbase
+    double localHeading = glm::twoPI - vehicle.fixHeading + inty;
+
+    ppRadiusRP = goalPointDistanceSquared / (2 * (((goalPointRP.easting - pivotAxlePosRP.easting) * cos(localHeading)) + ((goalPointRP.northing - pivotAxlePosRP.northing) * sin(localHeading))));
+
+    steerAngleRP = glm::toDegrees(atan(2 * (((goalPointRP.easting - pivotAxlePosRP.easting) * cos(localHeading))
+                                                + ((goalPointRP.northing - pivotAxlePosRP.northing) * sin(localHeading))) * vehicle.wheelbase / goalPointDistanceSquared));
+
+    if (steerAngleRP < -vehicle.maxSteerAngle) steerAngleRP = -vehicle.maxSteerAngle;
+    if (steerAngleRP > vehicle.maxSteerAngle) steerAngleRP = vehicle.maxSteerAngle;
+
+    //used for smooth mode
+    vehicle.modeActualXTE = (distanceFromCurrentLinePivot);
+
+    //Convert to centimeters
+    vehicle.guidanceLineDistanceOff = (short)glm::roundMidAwayFromZero(distanceFromCurrentLinePivot * 1000.0);
+    vehicle.guidanceLineSteerAngle = (short)(steerAngleRP * 100);
 }
 
-void CRecordedPath::StanleyDubinsPath(CVehicle &vehicle, const CNMEA &pn, int ptCount)
+void CRecordedPath::PurePursuitDubins(CVehicle &vehicle, const CYouTurn &yt, bool isAutoSteerBtnOn, int ptCount)
 {
-    USE_SETTINGS;
+    double dist, dx, dz;
+    double minDistA = 1000000, minDistB = 1000000;
 
-    double maxSteerAngle = SETTINGS_VEHICLE_MAXSTEERANGLE;
-
-    //distanceFromCurrentLine = 9999;
     //find the closest 2 points to current fix
-    double minDistA = 9999999999;
     for (int t = 0; t < ptCount; t++)
     {
-        double dist = ((steerAxlePosRP.easting - shuttleDubinsList[t].easting) * (steerAxlePosRP.easting - shuttleDubinsList[t].easting))
-                        + ((steerAxlePosRP.northing - shuttleDubinsList[t].northing) * (steerAxlePosRP.northing - shuttleDubinsList[t].northing));
+        dist = ((pivotAxlePosRP.easting - shuttleDubinsList[t].easting) * (pivotAxlePosRP.easting - shuttleDubinsList[t].easting))
+               + ((pivotAxlePosRP.northing - shuttleDubinsList[t].northing) * (pivotAxlePosRP.northing - shuttleDubinsList[t].northing));
         if (dist < minDistA)
         {
+            minDistB = minDistA;
+            B = A;
             minDistA = dist;
             A = t;
         }
+        else if (dist < minDistB)
+        {
+            minDistB = dist;
+            B = t;
+        }
     }
 
-    //save the closest point
-    C = A;
-    //next point is the next in list
-    B = A + 1;
-    if (B == ptCount) { A--; B--; }                //don't go past the end of the list - "end of the line" trigger
+    //just need to make sure the points continue ascending or heading switches all over the place
+    if (A > B) { C = A; A = B; B = C; }
+
+    //currentLocationIndex = A;
 
     //get the distance from currently active AB line
-    //x2-x1
-    double dx = shuttleDubinsList[B].easting - shuttleDubinsList[A].easting;
-    //z2-z1
-    double dz = shuttleDubinsList[B].northing - shuttleDubinsList[A].northing;
+    dx = shuttleDubinsList[B].easting - shuttleDubinsList[A].easting;
+    dz = shuttleDubinsList[B].northing - shuttleDubinsList[A].northing;
 
     if (fabs(dx) < glm::DOUBLE_EPSILON && fabs(dz) < glm::DOUBLE_EPSILON) return;
 
     //abHeading = atan2(dz, dx);
-    abHeading = shuttleDubinsList[A].heading;
 
     //how far from current AB Line is fix
-    distanceFromCurrentLine = ((dz * steerAxlePosRP.easting) - (dx * steerAxlePosRP
-        .northing) + (shuttleDubinsList[B].easting
-                * shuttleDubinsList[A].northing) - (shuttleDubinsList[B].northing * shuttleDubinsList[A].easting))
-                    / sqrt((dz * dz) + (dx * dx));
+    distanceFromCurrentLinePivot = ((dz * pivotAxlePosRP.easting) - (dx * pivotAxlePosRP.northing) + (shuttleDubinsList[B].easting
+                                                                                                      * shuttleDubinsList[A].northing) - (shuttleDubinsList[B].northing * shuttleDubinsList[A].easting))
+                                   / sqrt((dz * dz) + (dx * dx));
 
-    //are we on the right side or not
-    isOnRightSideCurrentLine = distanceFromCurrentLine > 0;
+    //integral slider is set to 0
+    if (vehicle.purePursuitIntegralGain != 0)
+    {
+        pivotDistanceError = distanceFromCurrentLinePivot * 0.2 + pivotDistanceError * 0.8;
 
-    // calc point on ABLine closest to current position
-    double U = (((steerAxlePosRP.easting - shuttleDubinsList[A].easting) * dx)
-                + ((steerAxlePosRP.northing - shuttleDubinsList[A].northing) * dz))
-                / ((dx * dx) + (dz * dz));
+        if (counter2++ > 4)
+        {
+            pivotDerivative = pivotDistanceError - pivotDistanceErrorLast;
+            pivotDistanceErrorLast = pivotDistanceError;
+            counter2 = 0;
+            pivotDerivative *= 2;
+
+            //limit the derivative
+            //if (pivotDerivative > 0.03) pivotDerivative = 0.03;
+            //if (pivotDerivative < -0.03) pivotDerivative = -0.03;
+            //if (fabs(pivotDerivative) < 0.01) pivotDerivative = 0;
+        }
+
+        //pivotErrorTotal = pivotDistanceError + pivotDerivative;
+
+        if (isAutoSteerBtnOn
+            && fabs(pivotDerivative) < (0.1)
+            && vehicle.avgSpeed > 2.5
+            && !yt.isYouTurnTriggered)
+
+        {
+            //if over the line heading wrong way, rapidly decrease integral
+            if ((inty < 0 && distanceFromCurrentLinePivot < 0) || (inty > 0 && distanceFromCurrentLinePivot > 0))
+            {
+                inty += pivotDistanceError * vehicle.purePursuitIntegralGain * -0.04;
+            }
+            else
+            {
+                if (fabs(distanceFromCurrentLinePivot) > 0.02)
+                {
+                    inty += pivotDistanceError * vehicle.purePursuitIntegralGain * -0.02;
+                    if (inty > 0.2) inty = 0.2;
+                    else if (inty < -0.2) inty = -0.2;
+                }
+            }
+        }
+        else inty *= 0.95;
+    }
+    else inty = 0;
+
+    if (vehicle.isReverse) inty = 0;
+
+    // ** Pure pursuit ** - calc point on ABLine closest to current position
+    double U = (((pivotAxlePosRP.easting - shuttleDubinsList[A].easting) * dx)
+                + ((pivotAxlePosRP.northing - shuttleDubinsList[A].northing) * dz))
+               / ((dx * dx) + (dz * dz));
 
     rEastRP = shuttleDubinsList[A].easting + (U * dx);
     rNorthRP = shuttleDubinsList[A].northing + (U * dz);
 
-    //the first part of stanley is to extract heading error
-    double abFixHeadingDelta = (steerAxlePosRP.heading - abHeading);
+    //update base on autosteer settings and distance from line
+    double goalPointDistance = vehicle.UpdateGoalPointDistance();
 
-    //Fix the circular error - get it from -Pi/2 to Pi/2
-    if (abFixHeadingDelta > M_PI) abFixHeadingDelta -= M_PI;
-    else if (abFixHeadingDelta < M_PI) abFixHeadingDelta += M_PI;
-    if (abFixHeadingDelta > glm::PIBy2) abFixHeadingDelta -= M_PI;
-    else if (abFixHeadingDelta < -glm::PIBy2) abFixHeadingDelta += M_PI;
+    bool ReverseHeading = !vehicle.isReverse;
 
-    //normally set to 1, less then unity gives less heading error.
-    abFixHeadingDelta *= SETTINGS_VEHICLE_STANLEYHEADINGERRORGAIN;
-    if (abFixHeadingDelta > 0.74) abFixHeadingDelta = 0.74;
-    if (abFixHeadingDelta < -0.74) abFixHeadingDelta = -0.74;
+    int count = ReverseHeading ? 1 : -1;
+    CRecPathPt start(rEastRP, rNorthRP, 0, 0, false);
+    double distSoFar = 0;
 
-    //the non linear distance error part of stanley
-    steerAngleRP = atan((distanceFromCurrentLine * SETTINGS_VEHICLE_STANLEYGAIN) / ((pn.speed * 0.277777) + 1));
+    for (int i = ReverseHeading ? B : A; i < ptCount && i >= 0; i += count)
+    {
+        // used for calculating the length squared of next segment.
+        double tempDist = sqrt((start.easting - shuttleDubinsList[i].easting) * (start.easting - shuttleDubinsList[i].easting)
+                                    + (start.northing - shuttleDubinsList[i].northing) * (start.northing - shuttleDubinsList[i].northing));
 
-    //clamp it to max 42 degrees
-    if (steerAngleRP > 0.74) steerAngleRP = 0.74;
-    if (steerAngleRP < -0.74) steerAngleRP = -0.74;
+        //will we go too far?
+        if ((tempDist + distSoFar) > goalPointDistance)
+        {
+            double j = (goalPointDistance - distSoFar) / tempDist; // the remainder to yet travel
 
-    //add them up and clamp to max in vehicle settings
-    steerAngleRP = glm::toDegrees((steerAngleRP + abFixHeadingDelta) * -1.0);
-    if (steerAngleRP < -maxSteerAngle) steerAngleRP = -maxSteerAngle;
-    if (steerAngleRP > maxSteerAngle) steerAngleRP = maxSteerAngle;
+            goalPointRP.easting = (((1 - j) * start.easting) + (j * shuttleDubinsList[i].easting));
+            goalPointRP.northing = (((1 - j) * start.northing) + (j * shuttleDubinsList[i].northing));
+            break;
+        }
+        else distSoFar += tempDist;
+        start = shuttleDubinsList[i];
+    }
 
-    //Convert to millimeters and round properly to above/below .5
-    distanceFromCurrentLine = glm::roundMidAwayFromZero(distanceFromCurrentLine * 1000.0);
+    //calc "D" the distance from pivotAxlePosRP axle to lookahead point
+    double goalPointDistanceSquared = glm::DistanceSquared(goalPointRP.northing, goalPointRP.easting, pivotAxlePosRP.northing, pivotAxlePosRP.easting);
 
-    //every guidance method dumps into these that are used and sent everywhere, last one wins
-    vehicle.guidanceLineDistanceOff = vehicle.distanceDisplay = (int)distanceFromCurrentLine;
-    vehicle.guidanceLineSteerAngle = (int)(steerAngleRP * 100);
+    //calculate the the delta x in local coordinates and steering angle degrees based on wheelbase
+    //double localHeading = glm::twoPI - vehicle.fixHeading;
+
+    double localHeading = glm::twoPI - vehicle.fixHeading + inty;
+
+    ppRadiusRP = goalPointDistanceSquared / (2 * (((goalPointRP.easting - pivotAxlePosRP.easting) * cos(localHeading)) + ((goalPointRP.northing - pivotAxlePosRP.northing) * sin(localHeading))));
+
+    steerAngleRP = glm::toDegrees(atan(2 * (((goalPointRP.easting - pivotAxlePosRP.easting) * cos(localHeading))
+                                   + ((goalPointRP.northing - pivotAxlePosRP.northing) * sin(localHeading))) * vehicle.wheelbase / goalPointDistanceSquared));
+
+    if (steerAngleRP < -vehicle.maxSteerAngle) steerAngleRP = -vehicle.maxSteerAngle;
+    if (steerAngleRP > vehicle.maxSteerAngle) steerAngleRP = vehicle.maxSteerAngle;
+
+    if (ppRadiusRP < -500) ppRadiusRP = -500;
+    if (ppRadiusRP > 500) ppRadiusRP = 500;
+
+    radiusPointRP.easting = pivotAxlePosRP.easting + (ppRadiusRP * cos(localHeading));
+    radiusPointRP.northing = pivotAxlePosRP.northing + (ppRadiusRP * sin(localHeading));
+
+    //angular velocity in rads/sec  = 2PI * m/sec * radians/meters
+    // double angVel = glm::twoPI * 0.277777 * vehicle.pn.speed * (tan(glm::toRadians(steerAngleRP))) / vehicle.vehicle.wheelbase;
+
+    //clamp the steering angle to not exceed safe angular velocity
+    //if (fabs(angVel) > mf.vehicle.maxAngularVelocity)
+    //{
+    //    steerAngleRP = glm::toDegrees(steerAngleRP > 0 ?
+    //            (atan((mf.vehicle.wheelbase * mf.vehicle.maxAngularVelocity) / (glm::twoPI * mf.avgSpeed * 0.277777)))
+    //        : (atan((mf.vehicle.wheelbase * -mf.vehicle.maxAngularVelocity) / (glm::twoPI * mf.avgSpeed * 0.277777))));
+    //}
+
+    //Convert to centimeters
+    vehicle.guidanceLineDistanceOff = (short)glm::roundMidAwayFromZero(distanceFromCurrentLinePivot * 1000.0);
+    vehicle.guidanceLineSteerAngle = (short)(steerAngleRP * 100);
+
 }
 
-void CRecordedPath::drawRecordedLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
+void CRecordedPath::DrawRecordedLine(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
 {
-    USE_SETTINGS;
-
     int ptCount = recList.size();
     if (ptCount < 1) return;
 
-    GLHelperColors gldraw;
-    ColorVertex cv;
+    GLHelperOneColor gldraw;
+    QColor color;
+    GLHelperColors gldraw1;
 
-    gl->glLineWidth(1);
+    color.setRgbF(0.98f, 0.92f, 0.460f);
+    for (int h = 0; h < ptCount; h++)
+        gldraw.append(QVector3D(recList[h].easting, recList[h].northing, 0));
+    gldraw.draw(gl,mvp,color,GL_LINE_STRIP,1.0f);
 
-    cv.color = QVector4D(0.98f, 0.92f, 0.460f, 1.0f);
-    for (int h = 0; h < ptCount; h++) {
-        cv.vertex = QVector3D(recList[h].easting, recList[h].northing, 0);
-        gldraw.append(cv);
-    }
-    gldraw.draw(gl, mvp, GL_LINE_STRIP, 1.0f);
-
-    if (SETTINGS_DISPLAY_ISPUREON)
+    if (!isRecordOn)
     {
-        gldraw.clear();
         //Draw lookahead Point
-        //GL.Color(1.0f, 1.0f, 0.25f);
-        //GL.Vertex(rEast, rNorth, 0.0);
-        cv.color = QVector4D(1.0f, 0.5f, 0.95f, 1.0f);
-        cv.vertex = QVector3D(rEastRP, rNorthRP, 0.0);
-        gldraw.append(cv);
-
-        gldraw.draw(gl, mvp, GL_POINTS, 8.0f);
+        gldraw1.append( { QVector3D(recList[currentPositonIndex].easting, recList[currentPositonIndex].northing, 0),
+                        QVector4D(1.0f, 0.5f, 0.95f, 1.0f) } );
+        gldraw1.draw(gl,mvp,GL_POINTS,16.0f);
     }
-}
+   }
 
-void CRecordedPath::drawDubins(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
+void CRecordedPath::DrawDubins(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
 {
     if (shuttleDubinsList.size() > 1)
     {

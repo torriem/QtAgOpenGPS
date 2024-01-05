@@ -32,17 +32,28 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += $$PWD/classes
 
 SOURCES += main.cpp\
+    aogproperty.cpp \
+    classes/cboundarylist.cpp \
+    classes/cfence.cpp \
+    classes/cguidance.cpp \
+    classes/cheadline.cpp \
+    classes/cpatches.cpp \
+    classes/cpgn.cpp \
+    classes/cturn.cpp \
+    classes/cturnlines.cpp \
         formgps.cpp \
     classes/cabline.cpp \
     classes/vec2.cpp \
     classes/vec3.cpp \
     classes/vec4.cpp \
-    classes/cvec.cpp \
     classes/cflag.cpp \
     classes/ccamera.cpp \
     classes/cworldgrid.cpp \
     classes/cmodulecomm.cpp \
     classes/csection.cpp \
+    formgps_classcallbacks.cpp \
+    formgps_sections.cpp \
+    formgps_settings.cpp \
     testlists.cpp \
     classes/cnmea.cpp \
     classes/cvehicle.cpp \
@@ -54,38 +65,32 @@ SOURCES += main.cpp\
     aogsettings.cpp \
     formgps_udpcomm.cpp \
     formgps_position.cpp \
-    formgps_serial.cpp \
     formgps_sim.cpp \
     glutils.cpp \
     aogrenderer.cpp \
     classes/cyouturn.cpp \
     classes/ctool.cpp \
     classes/ctram.cpp \
-    classes/cturnlines.cpp \
-    classes/cturn.cpp \
-    classes/cboundarylines.cpp \
-    classes/cheadlines.cpp \
     classes/chead.cpp \
     classes/cahrs.cpp \
     classes/cfielddata.cpp \
-    classes/cgeofencelines.cpp \
-    classes/cmazepath.cpp \
-    classes/cmazegrid.cpp \
-    classes/cgeofence.cpp \
     classes/cabcurve.cpp \
     classes/csim.cpp \
-    classes/cpointdata.cpp \
     classes/crecordedpath.cpp \
     classes/cdubins.cpp \
-    classes/csequence.cpp \
     formgps_saveopen.cpp
 
 HEADERS  += formgps.h \
+    aogproperty.h \
     classes/cabline.h \
+    classes/cboundarylist.h \
+    classes/cguidance.h \
+    classes/cheadline.h \
+    classes/cpatches.h \
+    classes/cpgn.h \
     classes/vec2.h \
     classes/vec3.h \
     classes/vec4.h \
-    classes/cvec.h \
     classes/cflag.h \
     classes/ccamera.h \
     classes/glm.h \
@@ -97,6 +102,9 @@ HEADERS  += formgps.h \
     classes/ccontour.h \
     classes/cboundary.h \
     btnenum.h \
+    classes/vecfix2fix.h \
+    propdefs.h \
+    properties.h \
     qmlutil.h \
     aogsettings.h \ 
     common.h \
@@ -105,23 +113,12 @@ HEADERS  += formgps.h \
     classes/cyouturn.h \
     classes/ctool.h \
     classes/ctram.h \
-    classes/cturnlines.h \
-    classes/cturn.h \
-    classes/cboundarylines.h \
-    classes/cheadlines.h \
-    classes/chead.h \
     classes/cahrs.h \
     classes/cfielddata.h \
-    classes/cgeofencelines.h \
-    classes/cmazepath.h \
-    classes/cmazegrid.h \
-    classes/cgeofence.h \
     classes/cabcurve.h \
     classes/csim.h \
-    classes/cpointdata.h \
     classes/crecordedpath.h \
-    classes/cdubins.h \
-    classes/csequence.h
+    classes/cdubins.h
 
 RESOURCES += \
     agopengps.qrc

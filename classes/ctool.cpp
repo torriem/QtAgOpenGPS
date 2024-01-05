@@ -1,88 +1,123 @@
 #include "ctool.h"
 #include "cvehicle.h"
 #include "glm.h"
-#include "aogsettings.h"
+#include "aogproperty.h"
 #include "glutils.h"
 #include "ccamera.h"
+#include "ctram.h"
+
+void CTool::loadSettings()
+{
+    //from settings grab the vehicle specifics
+    trailingToolToPivotLength = property_setTool_trailingToolToPivotLength;
+
+    width = property_setVehicle_toolWidth;
+    overlap = property_setVehicle_toolOverlap;
+
+    offset = property_setVehicle_toolOffset;
+
+    trailingHitchLength = property_setTool_toolTrailingHitchLength;
+    tankTrailingHitchLength = property_setVehicle_tankTrailingHitchLength;
+    hitchLength = property_setVehicle_hitchLength;
+
+    isToolRearFixed = property_setTool_isToolRearFixed;
+    isToolTrailing = property_setTool_isToolTrailing;
+    isToolTBT = property_setTool_isToolTBT;
+    isToolFrontFixed = property_setTool_isToolFront;
+
+    lookAheadOnSetting = property_setVehicle_toolLookAheadOn;
+    lookAheadOffSetting = property_setVehicle_toolLookAheadOff;
+    turnOffDelay = property_setVehicle_toolOffDelay;
+
+    isSectionOffWhenOut = property_setTool_isSectionOffWhenOut;
+
+    isSectionsNotZones = property_setTool_isSectionsNotZones;
+
+    if (isSectionsNotZones)
+        numOfSections = property_setVehicle_numSections;
+    else
+        numOfSections = property_setTool_numSectionsMulti;
+
+    minCoverage = property_setVehicle_minCoverage;
+    isMultiColoredSections = property_setColor_isMultiColorSections;
+
+    secColors[0] = property_setColor_sec01;
+    secColors[1] = property_setColor_sec02;
+    secColors[2] = property_setColor_sec03;
+    secColors[3] = property_setColor_sec04;
+    secColors[4] = property_setColor_sec05;
+    secColors[5] = property_setColor_sec06;
+    secColors[6] = property_setColor_sec07;
+    secColors[7] = property_setColor_sec08;
+    secColors[8] = property_setColor_sec09;
+    secColors[9] = property_setColor_sec10;
+    secColors[10] = property_setColor_sec11;
+    secColors[11] = property_setColor_sec12;
+    secColors[12] = property_setColor_sec13;
+    secColors[13] = property_setColor_sec14;
+    secColors[14] = property_setColor_sec15;
+    secColors[15] = property_setColor_sec16;
+
+    for (int c=0 ; c < 16; c++) {
+        //check setColor[C] to make sure there's nothing over 254
+    }
+
+    zoneRanges = property_setTool_zones;
+    zones = zoneRanges[0];
+    //zoneRanges.removeAt(0); //remove first element since it was a count
+
+
+}
+
 
 CTool::CTool()
 {
-    /*
-    USE_SETTINGS;
-
-    //from settings grab the vehicle specifics
-    //toolWidth = SETTINGS_TOOL_WIDTH;
-    //toolOverlap = SETTINGS_TOOL_OVERLAP;
-    //toolOffset = SETTINGS_TOOL_OFFSET;
-
-    toolTrailingHitchLength = SETTINGS_TOOL_TRAILINGHITCHLENGTH;
-    toolTankTrailingHitchLength = SETTINGS_TOOL_TANKTRAILINGHITCHLENGTH;
-    hitchLength = SETTINGS_TOOL_HITCHLENGTH;
-
-    isToolBehindPivot = SETTINGS_TOOL_ISBEHINDPIVOT;
-    isToolTrailing = SETTINGS_TOOL_ISTRAILING;
-    isToolTBT = SETTINGS_TOOL_ISTBT;
-
-    lookAheadOnSetting = SETTINGS_TOOL_LOOKAHEADON;
-    lookAheadOffSetting  = SETTINGS_TOOL_LOOKAHEADOFF;
-    turnOffDelay = SETTINGS_TOOL_OFFDELAY;
-
-    numOfSections = SETTINGS_TOOL_NUMSECTIONS;
-    numSuperSection = numOfSections + 1;
-
-    toolMinUnappliedPixels = SETTINGS_TOOL_MINAPPLIED;
-
-    slowSpeedCutoff = SETTINGS_TOOL_SLOWSPEEDCUTOFF;
-
-    //TOOD: section settings
-    */
+    loadSettings();
 }
 
-void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection)
+void CTool::DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection,
+                     bool isJobStarted,
+                     CVehicle &v, CCamera &camera, CTram &tram)
 {
-    USE_SETTINGS;
-
-    int numOfSections = SETTINGS_TOOL_NUMSECTIONS;
-    double hitchLength = SETTINGS_TOOL_HITCHLENGTH;
+    double tram_halfWheelTrack = (double)property_setVehicle_trackWidth * 0.5;
 
     //translate and rotate at pivot axle, caller's mvp will be changed
+    //all subsequent draws will be based on this point
     modelview.translate(v.pivotAxlePos.easting, v.pivotAxlePos.northing, 0);
 
     GLHelperOneColor gldraw;
 
-    QMatrix4x4 mv = modelview; //push matrix
+    QMatrix4x4 mv = modelview; //push matrix (just have to save it)
 
     //translate down to the hitch pin
     mv.translate(sin(v.fixHeading) * hitchLength,
                             cos(v.fixHeading) * hitchLength, 0);
 
-    gl->glLineWidth(2.0f);
-
     //settings doesn't change trailing hitch length if set to rigid, so do it here
     double trailingTank, trailingTool;
-    if (SETTINGS_TOOL_ISTRAILING)
+    if (isToolTrailing)
     {
-        trailingTank = SETTINGS_TOOL_TANKTRAILINGHITCHLENGTH;
-        trailingTool = SETTINGS_TOOL_TRAILINGHITCHLENGTH;
+        trailingTank = tankTrailingHitchLength;
+        trailingTool = trailingHitchLength;
     }
     else { trailingTank = 0; trailingTool = 0; }
 
     //there is a trailing tow between hitch
-    if (SETTINGS_TOOL_ISTBT && SETTINGS_TOOL_ISTRAILING)
+    if (isToolTBT && isToolTrailing)
     {
         //rotate to tank heading
         mv.rotate(glm::toDegrees(-v.tankPos.heading), 0.0, 0.0, 1.0);
 
 
         //draw the tank hitch
-        gldraw.append(QVector3D(0.0, trailingTank, 0.0));
+        //draw the rigid hitch
+        gldraw.append(QVector3D(-0.57, trailingTank, 0.0));
         gldraw.append(QVector3D(0, 0, 0));
-        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.7f, 0.7f, 0.97f),GL_LINES, 2.0f);
+        gldraw.append(QVector3D(0.57,trailingTank, 0.0));
+        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.0, 0.0, 0.0),GL_LINE_LOOP, 6.0f);
 
-        //section markers
-        gldraw.clear();
-        gldraw.append(QVector3D(0.0, trailingTank, 0.0));
-        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.95f, 0.95f, 0.0f),GL_POINTS, 6.0f);
+        //draw the rigid hitch
+        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.765f, 0.76f, 0.32f),GL_LINE_LOOP, 6.0f);
 
         //move down the tank hitch, unwind, rotate to section heading
         mv.translate(0.0, trailingTank, 0.0);
@@ -97,183 +132,278 @@ void CTool::drawTool(CVehicle &v, CCamera &camera, QOpenGLFunctions *gl, QMatrix
     }
 
     //draw the hitch if trailing
-    if (SETTINGS_TOOL_ISTRAILING)
+    if (isToolTrailing)
     {
         gldraw.clear();
-        gldraw.append(QVector3D(0.0, trailingTool, 0.0));
+        gldraw.append(QVector3D(-0.4 + offset, trailingTool, 0.0));
         gldraw.append(QVector3D(0,0,0));
-        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.7f, 0.7f, 0.97f),GL_LINES, 2.0f);
+        gldraw.append(QVector3D(0.4 + offset, trailingTool, 0.0));
+        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.0f, 0.0f, 0.0f),GL_LINE_STRIP, 6.0f);
+
+        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.7f, 0.4f, 0.2f),GL_LINE_STRIP, 1.0f);
     }
+
+    //draw trailer axle here
+    trailingTool -= trailingToolToPivotLength;
 
     //look ahead lines
     GLHelperColors gldrawcolors;
     ColorVertex cv;
     QColor color;
-    gl->glLineWidth(1);
-
-    //lookahead section on
-    cv.color = QVector4D(0.20f, 0.7f, 0.2f, 1);
-    cv.vertex = QVector3D(toolFarLeftPosition, (lookAheadDistanceOnPixelsLeft) * 0.1 + trailingTool, 0);
-    gldrawcolors.append(cv);
-    cv.vertex = QVector3D(toolFarRightPosition, (lookAheadDistanceOnPixelsRight) * 0.1 + trailingTool, 0);
-    gldrawcolors.append(cv);
-
-    //lookahead section off
-    cv.color = QVector4D(0.70f, 0.2f, 0.2f, 1);
-    cv.vertex = QVector3D(toolFarLeftPosition, (lookAheadDistanceOffPixelsLeft) * 0.1 + trailingTool, 0);
-    gldrawcolors.append(cv);
-    cv.vertex = QVector3D(toolFarRightPosition, (lookAheadDistanceOffPixelsRight) * 0.1 + trailingTool, 0);
-    gldrawcolors.append(cv);
 
 
-    if (SETTINGS_VEHICLE_ISHYDLIFTON)
+    if (isJobStarted)
     {
-        cv.color = QVector4D(0.70f, 0.2f, 0.72f, 1);
-        cv.vertex = QVector3D(section[0].positionLeft, (v.hydLiftLookAheadDistanceLeft * 0.1) + trailingTool, 0);
+        //lookahead section on
+        cv.color = QVector4D(0.20f, 0.7f, 0.2f, 1);
+        cv.vertex = QVector3D(farLeftPosition, (lookAheadDistanceOnPixelsLeft) * 0.1 + trailingTool, 0);
         gldrawcolors.append(cv);
-        cv.vertex = QVector3D(section[numOfSections - 1].positionRight, (v.hydLiftLookAheadDistanceRight * 0.1) + trailingTool, 0);
-        gldrawcolors.append(cv);
-    }
-
-    gldrawcolors.draw(gl, projection * mv, GL_LINES, 1.0);
-
-    //draw the sections
-    gldrawcolors.clear();
-    gl->glLineWidth(4);
-
-    //draw super section line
-    if (section[numOfSections].isSectionOn)
-    {
-        if (section[0].manBtnState == btnStates::Auto) cv.color=QVector4D(0.50f, 0.97f, 0.950f, 1.0);
-        else cv.color = QVector4D(0.99, 0.99, 0, 1.0);
-
-        cv.vertex = QVector3D( section[numOfSections].positionLeft, trailingTool, 0);
+        cv.vertex = QVector3D(farRightPosition, (lookAheadDistanceOnPixelsRight) * 0.1 + trailingTool, 0);
         gldrawcolors.append(cv);
 
-        cv.vertex = QVector3D( section[numOfSections].positionRight, trailingTool, 0);
+        //lookahead section off
+        cv.color = QVector4D(0.70f, 0.2f, 0.2f, 1);
+        cv.vertex = QVector3D(farLeftPosition, (lookAheadDistanceOffPixelsLeft) * 0.1 + trailingTool, 0);
         gldrawcolors.append(cv);
-    }
-    else
-    {
-        for (int j = 0; j < numOfSections; j++)
+        cv.vertex = QVector3D(farRightPosition, (lookAheadDistanceOffPixelsRight) * 0.1 + trailingTool, 0);
+        gldrawcolors.append(cv);
+
+
+        if (v.isHydLiftOn)
         {
+            cv.color = QVector4D(0.70f, 0.2f, 0.72f, 1);
+            cv.vertex = QVector3D(section[0].positionLeft, (v.hydLiftLookAheadDistanceLeft * 0.1) + trailingTool, 0);
+            gldrawcolors.append(cv);
+            cv.vertex = QVector3D(section[numOfSections - 1].positionRight, (v.hydLiftLookAheadDistanceRight * 0.1) + trailingTool, 0);
+            gldrawcolors.append(cv);
+        }
 
-            //if section is on, green, if off, red color
-            if (section[j].isSectionOn)
+        gldrawcolors.draw(gl, projection * mv, GL_LINES, 1.0);
+    }
+    //draw the sections
+    //line width 2 now
+
+    double hite = camera.camSetDistance / -150;
+    if (hite > 0.7) hite = 0.7;
+    if (hite < 0.5) hite = 0.5;
+
+    for (int j = 0; j < numOfSections; j++)
+    {
+        //if section is on, green, if off, red color
+        if (section[j].isSectionOn)
+        {
+            if (section[j].sectionBtnState == btnStates::Auto)
             {
-                if (section[j].manBtnState == btnStates::Auto) cv.color = QVector4D(0.0f, 0.9f, 0.0f, 1.0f);
-                else cv.color = QVector4D(0.97, 0.97, 0, 1.0f);
+                if (section[j].isMappingOn) color.setRgbF(0.0f, 0.95f, 0.0f, 1.0f);
+                else color.setRgbF(0.970f, 0.30f, 0.970f);
             }
+            else color.setRgbF(0.97, 0.97, 0, 1.0f);
+        }
+        else
+        {
+            if (!section[j].isMappingOn)
+                color.setRgbF(0.950f, 0.2f, 0.2f, 1.0f);
             else
-            {
-                cv.color = QVector4D(0.7f, 0.2f, 0.2f, 1.0f);
-            }
+                color.setRgbF(0.0f, 0.250f, 0.97f, 1.0f);
+        }
 
-            //draw section line
-            cv.vertex = QVector3D(section[j].positionLeft, trailingTool, 0);
-            gldrawcolors.append(cv);
-            cv.vertex = QVector3D(section[j].positionRight, trailingTool, 0);
-            gldrawcolors.append(cv);
+        double mid = (section[j].positionRight - section[j].positionLeft) / 2 + section[j].positionLeft;
+
+        gldraw.clear();
+        gldraw.append(QVector3D(section[j].positionLeft, trailingTool, 0));
+        gldraw.append(QVector3D(section[j].positionLeft, trailingTool - hite, 0));
+
+        gldraw.append(QVector3D(mid, trailingTool - hite * 1.5, 0));
+
+        gldraw.append(QVector3D(section[j].positionRight, trailingTool - hite, 0));
+        gldraw.append(QVector3D(section[j].positionRight, trailingTool, 0));
+
+        gldraw.draw(gl, projection * mv, color, GL_TRIANGLE_FAN, 2.0f);
+
+        if (camera.camSetDistance > -150)
+        {
+            color.setRgbF(0.0, 0.0, 0.0);
+            gldraw.draw(gl,projection * mv, color, GL_LINE_LOOP, 1.0);
         }
     }
 
-    gldrawcolors.draw(gl,projection*mv,GL_LINES,8.0f);
-
-    //draw section markers if close enough
-    if (camera.camSetDistance > -250)
+    //zones
+    if (!isSectionsNotZones && zones > 0 && camera.camSetDistance > -150)
     {
         gldraw.clear();
-        //section markers
-        for (int j = 0; j < numOfSections - 1; j++)
-            gldraw.append(QVector3D(section[j].positionRight, trailingTool, 0));
-
-        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0,0,0),GL_POINTS,3.0f);
+        color.setRgbF(0.5f, 0.80f, 0.950f);
+        for (int i = 1; i < zones; i++)
+        {
+            gldraw.append(QVector3D(section[zoneRanges[i]].positionLeft, trailingTool - 0.4, 0));
+            gldraw.append(QVector3D(section[zoneRanges[i]].positionLeft, trailingTool + 0.2, 0));
+        }
+        gldraw.draw(gl, projection * mv, color, GL_LINES, 2.0f);
     }
 
+    float pointSize;
+
+    //tram Dots
+    if (tram.displayMode != 0)
+    {
+        if (camera.camSetDistance > -300)
+        {
+            if (camera.camSetDistance > -100)
+                pointSize = 16;
+            else pointSize = 12;
+
+            if (tram.isOuter)
+            {
+                //section markers
+                gldrawcolors.clear();
+                //right side
+                if (((tram.controlByte) & 1) == 1) cv.color = QVector4D(0.0f, 0.900f, 0.39630f,1.0f);
+                else cv.color = QVector4D(0, 0, 0, 1.0f);
+                cv.vertex = QVector3D(farRightPosition - tram_halfWheelTrack, trailingTool, 0);
+                gldrawcolors.append(cv);
+
+                //left side
+                if ((tram.controlByte & 2) == 2) cv.color = QVector4D(0.0f, 0.900f, 0.3930f, 1.0f);
+                else cv.color = QVector4D(0, 0, 0, 1.0f);
+                cv.vertex = QVector3D(farLeftPosition + tram_halfWheelTrack, trailingTool, 0);
+                gldrawcolors.append(cv);
+
+                gldrawcolors.draw(gl, projection * mv,GL_POINTS, pointSize);
+            }
+            else
+            {
+                gldrawcolors.clear();
+
+                //right side
+                if (((tram.controlByte) & 1) == 1) cv.color = QVector4D(0.0f, 0.900f, 0.39630f, 1.0f);
+                else cv.color = QVector4D(0, 0, 0, 1.0f);
+                cv.vertex = QVector3D(tram_halfWheelTrack, trailingTool, 0);
+                gldrawcolors.append(cv);
+
+                //left side
+                if ((tram.controlByte & 2) == 2) cv.color = QVector4D(0.0f, 0.900f, 0.3930f, 1.0f);
+                else cv.color = QVector4D(0, 0, 0, 1.0f);
+                cv.vertex = QVector3D(-tram_halfWheelTrack, trailingTool, 0);
+                gldrawcolors.append(cv);
+                gldrawcolors.draw(gl, projection * mv, GL_POINTS, pointSize);
+            }
+        }
+    }
 }
 
 //function to calculate the width of each section and update
 void CTool::sectionCalcWidths()
 {
-    USE_SETTINGS;
-
-    int numOfSections = SETTINGS_TOOL_NUMSECTIONS;
-
-    for (int j = 0; j < MAXSECTIONS; j++)
+    if (isSectionsNotZones)
     {
-        section[j].sectionWidth = (section[j].positionRight - section[j].positionLeft);
-        section[j].rpSectionPosition = 250 + (int)(glm::roundMidAwayFromZero(section[j].positionLeft * 10));
-        section[j].rpSectionWidth = (int)(glm::roundMidAwayFromZero(section[j].sectionWidth * 10));
+        for (int j = 0; j < MAXSECTIONS; j++)
+        {
+            section[j].sectionWidth = (section[j].positionRight - section[j].positionLeft);
+            section[j].rpSectionPosition = 250 + (int)(glm::roundMidAwayFromZero(section[j].positionLeft * 10));
+            section[j].rpSectionWidth = (int)(glm::roundMidAwayFromZero(section[j].sectionWidth * 10));
+        }
+
+        //calculate tool width based on extreme right and left values
+        double width = fabs(section[0].positionLeft) + fabs(section[numOfSections - 1].positionRight);
+        property_setVehicle_toolWidth = width; //save it in settings
+
+        //left and right tool position
+        farLeftPosition = section[0].positionLeft;
+        farRightPosition = section[numOfSections - 1].positionRight;
+
+        //find the right side pixel position
+        rpXPosition = 250 + (int)(glm::roundMidAwayFromZero(farLeftPosition * 10));
+        rpWidth = (int)(glm::roundMidAwayFromZero(width * 10));
+    }
+}
+
+//moved from main form to here
+void CTool::sectionCalcMulti()
+{
+    double leftside = width / -2.0;
+    double defaultSectionWidth = property_setTool_sectionWidthMulti;
+    double offset = property_setVehicle_toolOffset;
+    section[0].positionLeft = leftside+offset;
+
+    for (int i = 0; i < numOfSections - 1; i++)
+    {
+        leftside += defaultSectionWidth;
+
+        section[i].positionRight = leftside + offset;
+        section[i + 1].positionLeft = leftside + offset;
+        section[i].sectionWidth = defaultSectionWidth;
+        section[i].rpSectionPosition = 250 + (int)(glm::roundMidAwayFromZero(section[i].positionLeft * 10));
+        section[i].rpSectionWidth = (int)(glm::roundMidAwayFromZero(section[i].sectionWidth * 10));
     }
 
+    leftside += defaultSectionWidth;
+    section[numOfSections - 1].positionRight = leftside + offset;
+    section[numOfSections - 1].sectionWidth = defaultSectionWidth;
+    section[numOfSections - 1].rpSectionPosition = 250 + (int)(glm::roundMidAwayFromZero(section[numOfSections - 1].positionLeft * 10));
+    section[numOfSections - 1].rpSectionWidth = (int)(glm::roundMidAwayFromZero(section[numOfSections - 1].sectionWidth * 10));
+
     //calculate tool width based on extreme right and left values
-    double toolWidth = fabs(section[0].positionLeft) + fabs(section[numOfSections - 1].positionRight);
-    SETTINGS_SET_TOOL_WIDTH(toolWidth);
+    width = (section[numOfSections - 1].positionRight) - (section[0].positionLeft);
+    property_setVehicle_toolWidth = width; //save it in settings
+
 
     //left and right tool position
-    toolFarLeftPosition = section[0].positionLeft;
-    toolFarRightPosition = section[numOfSections - 1].positionRight;
-
-    //now do the full width section
-    section[numOfSections].sectionWidth = toolWidth;
-    section[numOfSections].positionLeft = toolFarLeftPosition;
-    section[numOfSections].positionRight = toolFarRightPosition;
+    farLeftPosition = section[0].positionLeft;
+    farRightPosition = section[numOfSections - 1].positionRight;
 
     //find the right side pixel position
-    rpXPosition = 250 + (int)(glm::roundMidAwayFromZero(toolFarLeftPosition * 10));
-    rpWidth = (int)(glm::roundMidAwayFromZero(toolWidth * 10));
+    rpXPosition = 250 + (int)(glm::roundMidAwayFromZero(farLeftPosition * 10));
+    rpWidth = (int)(glm::roundMidAwayFromZero(width * 10));
+
 }
+
 
 void CTool::sectionSetPositions()
 {
-    USE_SETTINGS;
+    section[0].positionLeft = (double)property_setSection_position1 + (double)property_setVehicle_toolOffset;
+    section[0].positionRight = (double)property_setSection_position2 + (double)property_setVehicle_toolOffset;
 
-    section[0].positionLeft = SETTINGS_TOOL_SECTIONPOSITION1 + SETTINGS_TOOL_OFFSET;
-    section[0].positionRight = SETTINGS_TOOL_SECTIONPOSITION2 + SETTINGS_TOOL_OFFSET;
+    section[1].positionLeft = (double)property_setSection_position2 + (double)property_setVehicle_toolOffset;
+    section[1].positionRight = (double)property_setSection_position3 + (double)property_setVehicle_toolOffset;
 
-    section[1].positionLeft = SETTINGS_TOOL_SECTIONPOSITION2 + SETTINGS_TOOL_OFFSET;
-    section[1].positionRight = SETTINGS_TOOL_SECTIONPOSITION3 + SETTINGS_TOOL_OFFSET;
+    section[2].positionLeft = (double)property_setSection_position3 + (double)property_setVehicle_toolOffset;
+    section[2].positionRight = (double)property_setSection_position4 + (double)property_setVehicle_toolOffset;
 
-    section[2].positionLeft = SETTINGS_TOOL_SECTIONPOSITION3 + SETTINGS_TOOL_OFFSET;
-    section[2].positionRight = SETTINGS_TOOL_SECTIONPOSITION4 + SETTINGS_TOOL_OFFSET;
+    section[3].positionLeft = (double)property_setSection_position4 + (double)property_setVehicle_toolOffset;
+    section[3].positionRight = (double)property_setSection_position5 + (double)property_setVehicle_toolOffset;
 
-    section[3].positionLeft = SETTINGS_TOOL_SECTIONPOSITION4 + SETTINGS_TOOL_OFFSET;
-    section[3].positionRight = SETTINGS_TOOL_SECTIONPOSITION5 + SETTINGS_TOOL_OFFSET;
+    section[4].positionLeft = (double)property_setSection_position5 + (double)property_setVehicle_toolOffset;
+    section[4].positionRight = (double)property_setSection_position6 + (double)property_setVehicle_toolOffset;
 
-    section[4].positionLeft = SETTINGS_TOOL_SECTIONPOSITION5 + SETTINGS_TOOL_OFFSET;
-    section[4].positionRight = SETTINGS_TOOL_SECTIONPOSITION6 + SETTINGS_TOOL_OFFSET;
+    section[5].positionLeft = (double)property_setSection_position6 + (double)property_setVehicle_toolOffset;
+    section[5].positionRight = (double)property_setSection_position7 + (double)property_setVehicle_toolOffset;
 
-    section[5].positionLeft = SETTINGS_TOOL_SECTIONPOSITION6 + SETTINGS_TOOL_OFFSET;
-    section[5].positionRight = SETTINGS_TOOL_SECTIONPOSITION7 + SETTINGS_TOOL_OFFSET;
+    section[6].positionLeft = (double)property_setSection_position7 + (double)property_setVehicle_toolOffset;
+    section[6].positionRight = (double)property_setSection_position8 + (double)property_setVehicle_toolOffset;
 
-    section[6].positionLeft = SETTINGS_TOOL_SECTIONPOSITION7 + SETTINGS_TOOL_OFFSET;
-    section[6].positionRight = SETTINGS_TOOL_SECTIONPOSITION8 + SETTINGS_TOOL_OFFSET;
+    section[7].positionLeft = (double)property_setSection_position8 + (double)property_setVehicle_toolOffset;
+    section[7].positionRight = (double)property_setSection_position9 + (double)property_setVehicle_toolOffset;
 
-    section[7].positionLeft = SETTINGS_TOOL_SECTIONPOSITION8 + SETTINGS_TOOL_OFFSET;
-    section[7].positionRight = SETTINGS_TOOL_SECTIONPOSITION9 + SETTINGS_TOOL_OFFSET;
+    section[8].positionLeft = (double)property_setSection_position9 + (double)property_setVehicle_toolOffset;
+    section[8].positionRight = (double)property_setSection_position10 + (double)property_setVehicle_toolOffset;
 
-    section[8].positionLeft = SETTINGS_TOOL_SECTIONPOSITION9 + SETTINGS_TOOL_OFFSET;
-    section[8].positionRight = SETTINGS_TOOL_SECTIONPOSITION10 + SETTINGS_TOOL_OFFSET;
+    section[9].positionLeft = (double)property_setSection_position10 + (double)property_setVehicle_toolOffset;
+    section[9].positionRight = (double)property_setSection_position11 + (double)property_setVehicle_toolOffset;
 
-    section[9].positionLeft = SETTINGS_TOOL_SECTIONPOSITION10 + SETTINGS_TOOL_OFFSET;
-    section[9].positionRight = SETTINGS_TOOL_SECTIONPOSITION11 + SETTINGS_TOOL_OFFSET;
+    section[10].positionLeft = (double)property_setSection_position11 + (double)property_setVehicle_toolOffset;
+    section[10].positionRight = (double)property_setSection_position12 + (double)property_setVehicle_toolOffset;
 
-    section[10].positionLeft = SETTINGS_TOOL_SECTIONPOSITION11 + SETTINGS_TOOL_OFFSET;
-    section[10].positionRight = SETTINGS_TOOL_SECTIONPOSITION12 + SETTINGS_TOOL_OFFSET;
+    section[11].positionLeft = (double)property_setSection_position12 + (double)property_setVehicle_toolOffset;
+    section[11].positionRight = (double)property_setSection_position13 + (double)property_setVehicle_toolOffset;
 
-    section[11].positionLeft = SETTINGS_TOOL_SECTIONPOSITION12 + SETTINGS_TOOL_OFFSET;
-    section[11].positionRight = SETTINGS_TOOL_SECTIONPOSITION13 + SETTINGS_TOOL_OFFSET;
+    section[12].positionLeft = (double)property_setSection_position13 + (double)property_setVehicle_toolOffset;
+    section[12].positionRight = (double)property_setSection_position14 + (double)property_setVehicle_toolOffset;
 
-    section[12].positionLeft = SETTINGS_TOOL_SECTIONPOSITION13 + SETTINGS_TOOL_OFFSET;
-    section[12].positionRight = SETTINGS_TOOL_SECTIONPOSITION14 + SETTINGS_TOOL_OFFSET;
+    section[13].positionLeft = (double)property_setSection_position14 + (double)property_setVehicle_toolOffset;
+    section[13].positionRight = (double)property_setSection_position15 + (double)property_setVehicle_toolOffset;
 
-    section[13].positionLeft = SETTINGS_TOOL_SECTIONPOSITION14 + SETTINGS_TOOL_OFFSET;
-    section[13].positionRight = SETTINGS_TOOL_SECTIONPOSITION15 + SETTINGS_TOOL_OFFSET;
+    section[14].positionLeft = (double)property_setSection_position15 + (double)property_setVehicle_toolOffset;
+    section[14].positionRight = (double)property_setSection_position16 + (double)property_setVehicle_toolOffset;
 
-    section[14].positionLeft = SETTINGS_TOOL_SECTIONPOSITION15 + SETTINGS_TOOL_OFFSET;
-    section[14].positionRight = SETTINGS_TOOL_SECTIONPOSITION16 + SETTINGS_TOOL_OFFSET;
-
-    section[15].positionLeft = SETTINGS_TOOL_SECTIONPOSITION16 + SETTINGS_TOOL_OFFSET;
-    section[15].positionRight = SETTINGS_TOOL_SECTIONPOSITION17 + SETTINGS_TOOL_OFFSET;
-
+    section[15].positionLeft = (double)property_setSection_position16 + (double)property_setVehicle_toolOffset;
+    section[15].positionRight = (double)property_setSection_position17 + (double)property_setVehicle_toolOffset;
 }

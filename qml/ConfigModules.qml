@@ -2,9 +2,8 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
 
-Item {
-    anchors.fill: parent
     Rectangle{
+        id: configModules
         anchors.fill: parent
         color: "ghostwhite"
         Text {
@@ -21,7 +20,7 @@ Item {
             color: "ghostwhite"
             border.color: "black"
             anchors.top: titleText.bottom
-            anchors.topMargin: 10
+            anchors.topMargin: 20
             anchors.bottom: invertRel.top
             anchors.leftMargin: 10
             width: parent.width * .66
@@ -38,13 +37,11 @@ Item {
                 anchors.leftMargin: 10
                 rows: 2
                 columns: 3
-                Rectangle{
-                    height: 150
-                    width: 200
-                    IconButtonTransparent{
-                        anchors.fill: parent
-                        icon.source: "qrc:/images/SwitchOn.png"
-                    }
+                IconButtonColor{
+                    objectName: "btnHydLiftEnable"
+                    height: 130
+                    width: 170
+                    icon: "/images/SwitchOn.png"
                 }
                 SpinBox{
                     id: raiseTime
@@ -59,7 +56,7 @@ Item {
                     }
                 }
                 Image{
-                    source: "qrc:/images/Config/ConMa_LiftRaiseTime"
+                    source: "/images/Config/ConMa_LiftRaiseTime"
                     width: 200
                     height: 200
                 }
@@ -90,33 +87,19 @@ Item {
                     }
                 }
                 Image{
-                    source: "qrc:/images/Config/ConMa_LiftLowerTime"
+                    source: "/images/Config/ConMa_LiftLowerTime"
                     width: 200
                     height: 200
                 }
             }
         }
-        Rectangle{
+        IconButtonColor{
             id: invertRel
             anchors.horizontalCenter: hydConfig.horizontalCenter
-            height: 100
-            width: 150
             anchors.bottom: parent.bottom
+            buttonText: "Invert Relays"
             anchors.margins: 10
-            color: "ghostwhite"
-            border.color: "black"
-            IconButton{
-                anchors.centerIn: parent
-                width: 150
-                height: 100
-                icon.source: "qrc:/images/Config/ConSt_InvertRelay.png"
-            }
-            Text{
-                anchors.left: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.leftMargin: 3
-                text: qsTr("Invert Relays")
-            }
+            icon: "/images/Config/ConSt_InvertRelay.png"
         }
         Rectangle{
             anchors.bottom: parent.bottom
@@ -124,9 +107,10 @@ Item {
             anchors.right: parent.right
             anchors.top: titleText.bottom
             anchors.margins: 5
-            ColumnLayout{
+            Column{
                 anchors.top: parent.top
-                anchors.bottom: parent.bottom
+                height: children.height
+                spacing: 40
                 anchors.horizontalCenter: parent.horizontalCenter
                 SpinBox{
                     id: user1
@@ -139,7 +123,7 @@ Item {
                         anchors.right: parent.right
                         text: qsTr("User 1")
                     }
-            }
+                }
                 SpinBox{
                     id: user2
                     from: 0
@@ -151,7 +135,7 @@ Item {
                         anchors.right: parent.right
                         text: qsTr("User 2")
                     }
-            }
+                }
                 SpinBox{
                     id: user3
                     from: 0
@@ -163,7 +147,7 @@ Item {
                         anchors.right: parent.right
                         text: qsTr("User 3")
                     }
-            }
+                }
                 SpinBox{
                     id: user4
                     from: 0
@@ -175,8 +159,21 @@ Item {
                         anchors.right: parent.right
                         text: qsTr("User 4")
                     }
+                }
             }
-           }
+            IconButtonTransparent{
+                id: modulesSave
+                objectName: "btnModulesSave"
+                anchors.right: parent.right
+                anchors.margins: 20
+                anchors.bottom: parent.bottom
+                icon.source: "/images/ToolAcceptChange.png"
+                Text{
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.left
+                    anchors.rightMargin: 5
+                    text: "Send + Save"
+                }
+            }
         }
     }
-}

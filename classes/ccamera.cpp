@@ -1,6 +1,6 @@
 #include "ccamera.h"
 #include <QOpenGLContext>
-#include "aogsettings.h"
+#include "aogproperty.h"
 #include <math.h>
 #include "glm.h"
 
@@ -10,11 +10,17 @@ CCamera::CCamera()
     camFollowing = true;
 }
 
-void CCamera::setWorldCam(QMatrix4x4 &modelview,
+void CCamera::loadSettings()
+{
+    camPitch = property_setwin;
+    zoomValue = property_setDisplay_camZoom;
+    camSmoothFactor = ((double)(property_setDisplay_camSmooth) * 0.004) + 0.2;
+}
+
+void CCamera::SetWorldCam(QMatrix4x4 &modelview,
                           double _fixPosX, double _fixPosY,
                           double _fixHeading)
 {
-    USE_SETTINGS;
 
     camPosX = _fixPosX;
     camPosY = _fixPosY;
@@ -23,8 +29,13 @@ void CCamera::setWorldCam(QMatrix4x4 &modelview,
     //back the camera up
     modelview.translate(0,0,camSetDistance * 0.5);
 
-    modelview.rotate(SETTINGS_DISPLAY_CAMPITCH, 1, 0, 0);
+    //rotate the camera down to look at fix
+    modelview.rotate(camPitch, 1.0, 0, 0);
 
+    //pan if set
+    modelview.translate(panX, panY, 0);
+
+    //following game style or N fixed cam
     if(camFollowing) {
         modelview.rotate(camYaw, 0,0,1);
         modelview.translate(-camPosX, -camPosY, -camPosZ);

@@ -1,9 +1,9 @@
 #include "cdubins.h"
-#include "cgeofence.h"
+#include "aogproperty.h"
 #include "glm.h"
 
-static const double driveDistance = 0.1;
-double CDubinsTurningRadius = 1;
+static const double driveDistance = 0.05;
+double CDubinsTurningRadius = 1; //ultimately comes from settings properties
 
 //Takes care of all standardized methods related the generating of Dubins paths
 //Calculate center positions of the Right circle
@@ -179,46 +179,20 @@ void AddCoordinatesToPath(Vec2 &currentPos, double &theta, QVector<Vec2> &finalP
 
 CDubins::CDubins()
 {
+    loadSettings();
+}
+
+
+void CDubins::loadSettings()
+{
+    CDubinsTurningRadius = property_setVehicle_minTurningRadius;
 
 }
 
 QVector<Vec3> CDubins::GenerateDubins(Vec3 _start, Vec3 _goal)
 {
-    QVector<Vec3> dubinsShortestPathList;
-    startPos.easting = _start.easting;
-    startPos.northing = _start.northing;
-    startHeading = _start.heading;
-
-    goalPos.easting = _goal.easting;
-    goalPos.northing = _goal.northing;
-    goalHeading = _goal.heading;
-
-    //Get all valid Dubins paths
-    pathDataList = GetAllDubinsPaths();
-
-    //clear out existing path of vec3 points
-    //dubinsShortestPathList.clear();
-
-    if (pathDataList.count() > 0)
-    {
-        int cnt = pathDataList[0].pathCoordinates.count();
-        if (cnt > 1)
-        {
-            //calculate the heading for each point
-            for (int i = 0; i < cnt - 1; i += 5)
-            {
-                Vec3 pt(pathDataList[0].pathCoordinates[i].easting, pathDataList[0].pathCoordinates[i].northing, 0);
-                pt.heading = qAtan2(pathDataList[0].pathCoordinates[i + 1].easting - pathDataList[0].pathCoordinates[i].easting,
-                                    pathDataList[0].pathCoordinates[i + 1].northing - pathDataList[0].pathCoordinates[i].northing);
-                dubinsShortestPathList.append(pt);
-            }
-        }
-    }
-    return dubinsShortestPathList;
-}
-
-QVector<Vec3> CDubins::GenerateDubins(Vec3 _start, Vec3 _goal, const CBoundary &bnd, CGeoFence &fence)
-{
+    //torriem: since this list is always cleared and then returned by copy
+    //we don't need it to be an instance variable.
     QVector<Vec3> dubinsShortestPathList;
     //positions and heading
     startPos.easting = _start.easting;
@@ -235,29 +209,7 @@ QVector<Vec3> CDubins::GenerateDubins(Vec3 _start, Vec3 _goal, const CBoundary &
     //clear out existing path of vec3 points
     dubinsShortestPathList.clear();
 
-    int pathsCnt = pathDataList.count();
-    if (pathsCnt > 0)
-    {
-        for (int i = 0; i < pathsCnt; i++)
-        {
-            int cnt = pathDataList[i].pathCoordinates.count();
-            if (cnt > 1)
-            {
-                for (int j = 0; j < cnt; j++)
-                {
-                    if (!fence.isPointInsideGeoFences(bnd,pathDataList[i].pathCoordinates[j]))
-                    {
-                        pathDataList.removeAt(i);
-                        pathsCnt = pathDataList.count();
-                        i = -1;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    if (pathDataList.count()> 0)
+    if (pathDataList.count() > 0)
     {
         int cnt = pathDataList[0].pathCoordinates.count();
         if (cnt > 1)
@@ -267,7 +219,7 @@ QVector<Vec3> CDubins::GenerateDubins(Vec3 _start, Vec3 _goal, const CBoundary &
             {
                 Vec3 pt(pathDataList[0].pathCoordinates[i].easting, pathDataList[0].pathCoordinates[i].northing, 0);
                 pt.heading = qAtan2(pathDataList[0].pathCoordinates[i + 1].easting - pathDataList[0].pathCoordinates[i].easting,
-                pathDataList[0].pathCoordinates[i + 1].northing - pathDataList[0].pathCoordinates[i].northing);
+                                    pathDataList[0].pathCoordinates[i + 1].northing - pathDataList[0].pathCoordinates[i].northing);
                 dubinsShortestPathList.append(pt);
             }
         }
@@ -545,6 +497,7 @@ void CDubins::GeneratePathCoordinates()
     }
 }
 
+//Find the coordinates of the entire path from the 2 tangents and length of each segment
 void CDubins::GetTotalPath(OneDubinsPath &pathData)
 {
 //Store the waypoints of the final path here

@@ -16,9 +16,6 @@ class CABCurve;
 class CVehicle;
 class QOpenGLFunctions;
 class CVehicle;
-class CTurn;
-class CGeoFence;
-class CMazeGrid;
 class CNMEA;
 
 //class QMatrix4x4;
@@ -28,139 +25,132 @@ class CYouTurn: public QObject
     Q_OBJECT
 private:
     int A, B, C;
-    bool isABSameAsFixHeading = true, isOnRightSideCurrentLine = true;
-    int numShapePoints;
+    bool isHeadingSameWay = true;
 
 public:
     //triggered right after youTurnTriggerPoint is set
     bool isYouTurnTriggered;
 
     //turning right or left?
-    bool isYouTurnRight, isLastToggle;
-
-    //What was the last successful you turn direction?
-    bool isLastYouTurnRight;
-
-    //if not in workArea but in bounds, then we are on headland
-    bool isInWorkArea, isInBoundz;
-
-    //controlled by user in GUI to en/dis able
-    bool isRecordingCustomYouTurn;
+    bool isYouTurnRight;
 
     // Is the youturn button enabled?
     bool isYouTurnBtnOn;
 
-    ///The following application settings:
-    //bool isUsingDubinsTurn;
-    //int rowSkipsWidth = 1;
-    // distance from headland as offset where to start turn shape
-    //int youTurnStartOffset;
+    double boundaryAngleOffPerpendicular, youTurnRadius;
+
+    int rowSkipsWidth = 1, uTurnSmoothing;
+
+    bool alternateSkips = false, previousBigSkip = true;
+    int rowSkipsWidth2 = 3, turnSkips = 2;
+
+    /// <summary>  /// distance from headland as offset where to start turn shape /// </summary>
+    int youTurnStartOffset;
+
     //guidance values
-    //double distanceFromCurrentLine, triggerDistanceOffset, geoFenceDistance, dxAB, dyAB;
+    double distanceFromCurrentLine, uturnDistanceFromBoundary, dxAB, dyAB;
 
-    double boundaryAngleOffPerpendicular;
-    double distanceTurnBeforeLine = 0, tangencyAngle;
+    double distanceFromCurrentLineSteer, distanceFromCurrentLinePivot;
+    double steerAngleGu, rEastSteer, rNorthSteer, rEastPivot, rNorthPivot;
+    double pivotCurvatureOffset, lastCurveDistance = 10000;
 
-    double distanceFromCurrentLine, dxAB, dyAB;
     bool isTurnCreationTooClose = false, isTurnCreationNotCrossingError = false;
 
     //pure pursuit values
-    Vec3 pivot;
-    Vec2 goalPointYT;
-    Vec2 radiusPointYT;
+    Vec3 pivot = Vec3(0,0,0);
+    Vec2 goalPointYT = Vec2(0,0);
+    Vec2 radiusPointYT = Vec2(0,0);
     double steerAngleYT;
     double rEastYT, rNorthYT;
     double ppRadiusYT;
-    double minLookAheadDistance;
 
     //list of points for scaled and rotated YouTurn line
     QVector<Vec3> ytList;
 
-    //list of points read from file, this is the actual pattern from a bunch of sources possible
-    QVector<Vec2> youFileList;
+    //for 3Pt turns - second turn
+    QVector<Vec3> pt3ListSecondLine;
 
-    //to try and pull a UTurn back in bounds
-    double turnDistanceAdjuster;
+    int uTurnStyle = 0;
+
+    int pt3Phase = 0;
+    Vec3 pt3TurnNewAB = Vec3(0, 0, 0);
+    bool isLastFrameForward = true;
 
     //is UTurn pattern in or out of bounds
     bool isOutOfBounds = false;
 
     //sequence of operations of finding the next turn 0 to 3
-    int youTurnPhase, curListCount;
+    int youTurnPhase;
 
     Vec4 crossingCurvePoint;
-    Vec4 crossingTurnLinePoint;
+    double crossingheading = 0;
 
-    //list of points of collision path avoidance
-    QVector<Vec3> mazeList;
-
+    double iE = 0, iN = 0;
     int onA;
-
-    //moved from FormGPS to here since we are the only ones who use it,
-    //other than the display
-    double distancePivotToTurnLine;
 
     //constructor
     explicit CYouTurn(QObject *parent = 0);
 
+    void loadSettings();
+
     //Finds the point where an AB Curve crosses the turn line
-    bool findCurveTurnPoints(const CABCurve &curve, const CBoundary &bnd, CTurn &turn);
+    bool findCurveTurnPoints(const CABCurve &curve, const CBoundary &bnd);
 
-    void addSequenceLines(double head, Vec3 pivot);
+    /* moved to glm
+    int getLineIntersection(double p0x, double p0y, double p1x, double p1y,
+                            double p2x, double p2y, double p3x, double p3y,
+                            double &iEast, double &iNorth);
+    */
 
-    bool buildDriveAround(const CABLine &ABLine,
-                          CGeoFence &gf, CTurn &turn,
-                          const CBoundary &bnd, CMazeGrid &mazeGrid,
-                          double minFieldX, double minFieldY);
+    void AddSequenceLines(double head, Vec3 pivot);
 
-    bool buildABLineDubinsYouTurn(const CVehicle &vehicle,
-                                  const CBoundary &bnd,
-                                  CGeoFence &gf,
-                                  const CABLine &ABLine, CTurn &turn,
-                                  CMazeGrid &mazeGrid,
-                                  double minFieldX, double minFieldY,
+    bool BuildABLineDubinsYouTurn(CVehicle &vehicle,
+                                  CBoundary &bnd,
+                                  const CABLine &ABLine,
                                   bool isTurnRight);
 
-    bool buildABLinePatternYouTurn(const CVehicle &vehicle,
-                                   const CBoundary &bnd,
-                                   const CABLine &ABLine, CTurn &turn,
-                                   bool isTurnRight);
-
-    bool buildCurvePatternYouTurn(const CVehicle &vehicle,
+    bool BuildCurveDubinsYouTurn(CVehicle &vehicle,
                                   const CBoundary &bnd,
-                                  const CABCurve &curve, CTurn &turn,
-                                  bool isTurnRight, Vec3 pivotPos);
+                                  const CABCurve &curve,
+                                  bool isTurnRight,
+                                  Vec3 pivotPos);
 
-    bool buildCurveDubinsYouTurn(const CVehicle &vehicle,
-                                 const CBoundary &bnd,
-                                 const CABCurve &curve, CTurn &turn,
-                                 bool isTurnRight, Vec3 pivotPos);
+    void SmoothYouTurn(int smPts);
 
     //called to initiate turn
-    void youTurnTrigger();
+    void YouTurnTrigger(CVehicle &vehicle, CABLine &ABLine, CABCurve &curve);
 
     //Normal copmpletion of youturn
-    void completeYouTurn();
+    void CompleteYouTurn();
+
+    void SetAlternateSkips();
 
     //something went seriously wrong so reset everything
-    void resetYouTurn();
+    void ResetYouTurn();
 
-    void resetCreatedYouTurn();
-
-    //get list of points from txt shape file
-    void loadYouTurnShapeFromFile(QString filename);
+    void ResetCreatedYouTurn();
 
     //build the points and path of youturn to be scaled and transformed
-    void buildManualYouTurn(const CABLine &ABLine, CABCurve &curve,
+    void BuildManualYouLateral(CVehicle &vehicle,
+                               CABLine &ABLine, CABCurve &curve,
+                            bool isTurnRight);
+    void BuildManualYouTurn(CVehicle &vehicle,
+                            CABLine &ABLine, CABCurve &curve,
                             bool isTurnRight, bool isTurnButtonTriggered);
 
+    //get list of points from txt shape file
+    //void loadYouTurnShapeFromFile(QString filename);
+
+
     //determine distance from youTurn guidance line
-    void distanceFromYouTurnLine(CVehicle &v, CNMEA &pn);
+    bool DistanceFromYouTurnLine(CVehicle &v, CNMEA &pn);
+
+    void Check3PtSequence(void);
 
     //Duh.... What does this do....
-    void drawYouTurn(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
+    void DrawYouTurn(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
 signals:
-    void showMessage(int,QString,QString);
+    void TimedMessage(int,QString,QString);
     void outOfBounds();
     void swapDirection();
     void setTriggerSequence(bool);

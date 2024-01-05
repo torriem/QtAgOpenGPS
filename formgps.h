@@ -18,9 +18,9 @@
 
 #include "common.h"
 
+#include "vecfix2fix.h"
 #include "vec2.h"
 #include "vec3.h"
-#include "vec4.h"
 #include "cflag.h"
 #include "cmodulecomm.h"
 #include "ccamera.h"
@@ -32,20 +32,18 @@
 #include "cvehicle.h"
 #include "ctool.h"
 #include "cboundary.h"
-#include "cturn.h"
 #include "cabline.h"
 #include "ctram.h"
-#include "cmazegrid.h"
 #include "ccontour.h"
 #include "cabcurve.h"
 #include "cyouturn.h"
-#include "chead.h"
-#include "csequence.h"
 #include "cfielddata.h"
 #include "csim.h"
 #include "cahrs.h"
 #include "crecordedpath.h"
-#include "cgeofence.h"
+#include "cguidance.h"
+#include "cheadline.h"
+#include "cpgn.h"
 
 //forward declare classes referred to below, to break circular
 //references in the code
@@ -67,7 +65,7 @@ public:
     QObject *qml_root;
     QSignalMapper *sectionButtonsSignalMapper;
     QTimer *tmrWatchdog;
-    QTimer simTimer;
+    QTimer timerSim;
 
     /***************************
      * Qt and QML GUI elements *
@@ -128,45 +126,142 @@ public:
     /*******************
      * from FormGPS.cs *
      *******************/
-    //current directory of field;
-    QString currentFieldDirectory = "";
-    QString workingDirectory = "";
-    QString vehicleFileName = "";
-    QString toolFileName = "";
+    //The base directory where AgOpenGPS will be stored and fields and vehicles branch from
+    QString baseDirectory;
+
+    //current directory of vehicle
+    QString vehiclesDirectory, vehicleFileName = "";
+
+    //current directory of tools
+    QString toolsDirectory, toolFileName = "";
+
+    //current directory of Environments
+    QString envDirectory, envFileName = "";
+
+    //current fields and field directory
+    QString fieldsDirectory, currentFieldDirectory, displayFieldName;
+
+
+    bool leftMouseDownOnOpenGL; //mousedown event in opengl window
+    int flagNumberPicked = 0;
+
+    //bool for whether or not a job is active
+    bool isJobStarted = false, isAreaOnRight = true, isAutoSteerBtnOn = false;
+
+    //if we are saving a file
+    bool isSavingFile = false, isLogElevation = false;
+
+    //the currentversion of software
+    QString currentVersionStr, inoVersionStr;
+
+    int inoVersionInt;
+
+    //create instance of a stopwatch for timing of frames and NMEA hz determination
+    QElapsedTimer swFrame;
+
+    double secondsSinceStart;
+
+    //Time to do fix position update and draw routine
+    double frameTime = 0;
+
+    //Time to do fix position update and draw routine
+    double gpsHz = 10;
+
+    bool isStanleyUsed = false;
+
+    int pbarSteer, pbarRelay, pbarUDP;
+
+    double nudNumber = 0;
+
+    double m2InchOrCm, inchOrCm2m, m2FtOrM, ftOrMtoM, cm2CmOrIn, inOrCm2Cm;
+    QString unitsFtM, unitsInCm;
+
+    //used by filePicker Form to return picked file and directory
+    //QString filePickerFileAndDirectory;
+
+    //the position of the GPS Data window within the FormGPS window
+    //int GPSDataWindowLeft = 76, GPSDataWindowTopOffset = 220;
+
+    //the autoManual drive button. Assume in Auto
+    bool isInAutoDrive = true;
+
+    //isGPSData form up
+    bool isGPSSentencesOn = false, isKeepOffsetsOn = false;
+
+
+private:
+    //For field saving in background
+    int minuteCounter = 1;
+
+    int tenMinuteCounter = 1;
+
+    //used to update the screen status bar etc
+    int displayUpdateHalfSecondCounter = 0, displayUpdateOneSecondCounter = 0, displayUpdateOneFifthCounter = 0, displayUpdateThreeSecondCounter = 0;
+    int tenSecondCounter = 0, tenSeconds = 0;
+    int threeSecondCounter = 0, threeSeconds = 0;
+    int oneSecondCounter = 0, oneSecond = 0;
+    int oneHalfSecondCounter = 0, oneHalfSecond = 0;
+    int oneFifthSecondCounter = 0, oneFifthSecond = 0;
+
+
+     /*******************
+     * GUI.Designer.cs *
+     *******************/
+public:
+    //ABLines directory
+    QString ablinesdirectory;
 
     //colors for sections and field background
-    //uchar redSections, grnSections, bluSections;
-    //keep these in QSettings
-    //QColor sectionColor;
-    //QColor fieldColor;
-    //uchar redField, grnField, bluField;
+    uchar flagColor = 0;
+
+    //how many cm off line per big pixel
+    int lightbarCmPerPixel = 2;
 
     //polygon mode for section drawing
     bool isDrawPolygons = false;
 
-    //for animated submenu
-    bool isMenuHid = true;
+    QColor frameDayColor;
+    QColor frameNightColor;
+    QColor sectionColorDay;
+    QColor fieldColorDay;
+    QColor fieldColorNight;
 
-    //Flag stuff
-    uchar flagColor = 0;
-    bool leftMouseDownOnOpenGL = false; //mousedown event in opengl window
-    int flagNumberPicked = 0;
+    QColor textColorDay;
+    QColor textColorNight;
 
-    //Is it in 2D or 3D, metric, or imperial, display lightbar, display grid
-    //following are in settings now:
-    //isGridOn, isMetric
-    bool isIn3D = true, isLightbarOn = true, isSideGuideLines = true;
-    //bool isPureOn = true; //refer to QtSettings instead
+    QColor vehicleColor;
+    double vehicleOpacity;
+    uchar vehicleOpacityByte;
+    bool isVehicleImage;
 
-    //bool for whether or not a job is active
-    bool isJobStarted = false, isAreaOnRight = true, isAutoSteerBtnOn = false;
+    //Is it in 2D or 3D, metric or imperial, display lightbar, display grid etc
+    bool isMetric = true, isLightbarOn = true, isGridOn, isFullScreen;
+    bool isUTurnAlwaysOn, isCompassOn, isSpeedoOn, isSideGuideLines = true;
+    bool isPureDisplayOn = true, isSkyOn = true, isRollMeterOn = false, isTextureOn = true;
+    bool isDay = true, isDayTime = true, isBrightnessOn = true;
+    bool isKeyboardOn = true, isAutoStartAgIO = true, isSvennArrowOn = true;
+
+    bool isUTurnOn = true, isLateralOn = true;
+
+    //sunrise, sunset
+
+    bool isFlashOnOff = false;
+    //makes nav panel disappear after 6 seconds
+    int navPanelCounter = 0;
+
+    uint sentenceCounter = 0;
+
 
     //master Manual and Auto, 3 states possible
     btnStates manualBtnState = btnStates::Off;
     btnStates autoBtnState = btnStates::Off;
 
-    //if we are saving a file
-    bool isSavingFile = false, isLogNMEA = false;
+    void FixPanelsAndMenus();
+
+private:
+public:
+    //for animated submenu
+    //bool isMenuHid = true;
 
     //Zoom variables
     double gridZoom;
@@ -177,32 +272,15 @@ public:
     // Storage For Our Tractor, implement, background etc Textures
     //Texture particleTexture;
 
-    //create instance of a stopwatch for timing of frames and NMEA hz determination
-    QElapsedTimer swFrame;
     QElapsedTimer stopwatch; //general stopwatch for debugging purposes.
     //readonly Stopwatch swFrame = new Stopwatch();
 
-    //Time to do fix position update and draw routine
-    double frameTime = 0;
+
 
     //Time to do fix position update and draw routine
     double HzTime = 5;
 
-private:
-    //for the NTRIP CLient counting
-    int ntripCounter = 10;
-
-    //used to update the screen status bar etc
-     int displayUpdateHalfSecondCounter = 0, displayUpdateOneSecondCounter = 0, displayUpdateOneFifthCounter = 0, displayUpdateThreeSecondCounter = 0;
-
-     int threeSecondCounter = 0, threeSeconds = 0;
-     int oneSecondCounter = 0, oneSecond = 0;
-     int oneHalfSecondCounter = 0, oneHalfSecond = 0;
-     int oneFifthSecondCounter = 0, oneFifthSecond = 0;
-     int minuteCounter = 1;
-public:
-     int pbarSteer, pbarRelay, pbarUDP;
-     double nudNumber = 0;
+    QVector<CPatches> triStrip = QVector<CPatches>( { CPatches() } );
 
 
     //used to update the screen status bar etc
@@ -224,10 +302,9 @@ public:
     CABLine ABLine;
     CABCurve curve;
 
+    CGuidance gyd;
 
     CTram tram;
-
-    CMazeGrid mazeGrid;
 
     //Contour mode Instance
     //QScopedPointer<CContour> ct;
@@ -243,73 +320,99 @@ public:
     //boundary instance
     CBoundary bnd;
 
-    CTurn turn;
-    CHead hd;
-    CSequence seq;
     CSim sim;
     CAHRS ahrs;
     CRecordedPath recPath;
     CFieldData fd;
-    CGeoFence gf;
+
+    CHeadLine hdl;
+
+    /*
+     * PGNs *
+     */
+    CPGN_FE p_254;
+    CPGN_FC p_252;
+    CPGN_FB p_251;
+    CPGN_EF p_239;
+    CPGN_EE p_238;
+    CPGN_EC p_236;
+    CPGN_EB p_235;
+    CPGN_E5 p_229;
+
+    /* GUI synchronization lock */
+    QReadWriteLock lock;
+    bool newframe = false;
 
     bool bootstrap_field = false;
+   /************************
+     * Controls.Designer.cs *
+     ************************/
+public:
+    bool isTT;
+    bool isABCyled = false;
 
+    void GetHeadland();
+    void CloseTopMosts();
+    void SnapToPivot();
+    void getAB();
+    void FixTramModeButton();
+
+    //other things will be in slots
 
     /*************************
      *  Position.designer.cs *
      *************************/
-    double toLatitude;
-    double toLongitude;
-
+public:
     //very first fix to setup grid etc
-    bool isFirstFixPositionSet = false, isGPSPositionInitialized = false;
+    bool isFirstFixPositionSet = false, isGPSPositionInitialized = false, isFirstHeadingSet = false;
+    bool /*isReverse = false (CVehicle),*/ isSteerInReverse = true, isSuperSlow = false, isAutoSnaptoPivot = false;
+    double startGPSHeading = 0;
 
-    // autosteer variables for sending serial moved to CVehicle
-    //short int guidanceLineDistanceOff, guidanceLineSteerAngle;
-
-    //how many fix updates per sec
-    int fixUpdateHz = 5;
-    double fixUpdateTime = 0.2;
-
-    QString headingFromSource;
-    QString headingFromSourceBak;
-
-    /*
-    double fixHeadingSection = 0.0, fixHeadingTank = 0.0;
-    Vec2 pivotAxlePos;
-    Vec2 toolPos;
-    Vec2 tankPos;
-    Vec2 hitchPos;*/
-
-    Vec2 prevFix;
-
-    //headings
-    double gpsHeading = 0.0, prevGPSHeading = 0.0;
-
-
-    //a distance between previous and current fix
-    double distance = 0.0;
-    double treeSpacingCounter = 0.0;
-    int treeTrigger = 0;
-
-    //how far travelled since last section was added, section points
-    double sectionTriggerDistance = 0, sectionTriggerStepDistance = 0;
-    Vec2 prevSectionPos = Vec2(0, 0);
-
-    Vec2 prevBoundaryPos = Vec2(0, 0);
-
+    //string to record fixes for elevation maps
     QByteArray sbFix;
 
+    // autosteer variables for sending serial moved to CVehicle
+    //short guidanceLineDistanceOff, guidanceLineSteerAngle; --> CVehicle
+    double avGuidanceSteerAngle;
+
+    short errorAngVel;
+    double setAngVel, actAngVel;
+    bool isConstantContourOn;
+
+    //guidance line look ahead
+    double guidanceLookAheadTime = 2;
+    Vec2 guidanceLookPos;
+
+    //for heading or Atan2 as camera
+    QString headingFromSource, headingFromSourceBak;
+
+    /* moved to CVehicle:
+    Vec3 pivotAxlePos;
+    Vec3 steerAxlePos;
+    Vec3 toolPos;
+    Vec3 tankPos;
+    Vec3 hitchPos;
+    */
+
+    //history
+    Vec2 prevFix;
+    Vec2 prevDistFix;
+    Vec2 lastReverseFix;
 
     //headings
-    //double fixHeading = 0.0;
-    double fixHeadingCam = 0.0;
+    double smoothCamHeading = 0, gpsHeading = 10.0, prevGPSHeading = 0.0;
 
     //storage for the cos and sin of heading
+    //moved to vehicle
     //double cosSectionHeading = 1.0, sinSectionHeading = 0.0;
 
-    //are we still getting valid data from GPS, resets to 0 in NMEA RMC block, watchdog
-    int recvCounter = 20;
+    //how far travelled since last section was added, section points
+    double sectionTriggerDistance = 0, contourTriggerDistance = 0, sectionTriggerStepDistance = 0;
+    Vec2 prevSectionPos;
+    Vec2 prevContourPos;
+    int patchCounter = 0;
+
+    Vec2 prevBoundaryPos;
 
     //Everything is so wonky at the start
     int startCounter = 0;
@@ -318,63 +421,59 @@ public:
     QVector<CFlag> flagPts;
     bool flagsBufferCurrent = false;
 
+    //tally counters for display
+    //public double totalSquareMetersWorked = 0, totalUserSquareMeters = 0, userSquareMetersAlarm = 0;
 
 
-    //used to determine NMEA sentence frequency
-    int timerPn = 1;
-    double et = 0, hzTime = 0;
-
+    double /*avgSpeed --> CVehicle,*/ previousSpeed;//for average speed
     double crossTrackError; //for average cross track error
 
     //youturn
     double distancePivotToTurnLine = -2222;
     double distanceToolToTurnLine = -2222;
 
-
+    //the value to fill in you turn progress bar
+    int youTurnProgressBar = 0;
 
     //IMU
-    double rollDistance = 0;
-    double roll = 0; //, pitch = 0, angVel = 0;
-    double avgRoll = 0; //, avgPitch = 0, avgAngVel = 0;
     double rollCorrectionDistance = 0;
-    double gyroCorrection, gyroCorrected;
+    double imuGPS_Offset, imuCorrected;
 
-    double rollUsed;
+    //step position - slow speed spinner killer
+    int currentStepFix = 0;
+    int totalFixSteps = 10;
+    VecFix2Fix stepFixPts[10];
+    double distanceCurrentStepFix = 0, distanceCurrentStepFixDisplay = 0, minHeadingStepDist = 1, startSpeed = 0.5;
+    double fixToFixHeadingDistance = 0, gpsMinimumStepDistance = 0.05;
+
+    bool isChangingDirection, isReverseWithIMU;
+
+    double nowHz = 0, filteredDelta = 0, delta = 0;
+
+    bool isRTK, isRTK_KillAutosteer;
+
     double headlandDistanceDelta = 0, boundaryDistanceDelta = 0;
 
+    Vec2 lastGPS;
 
-    //cautosteer
-    //flag for free drive window to control autosteer
-    bool isInFreeDriveMode = false;
-    int driveFreeSteerAngle = 0;
+    double uncorrectedEastingGraph = 0;
+    double correctionDistanceGraph = 0;
 
+    double frameTimeRough = 3;
+    double timeSliceOfLastFix = 0;
 
+    bool isMaxAngularVelocity = false;
 
+    int minSteerSpeedTimer = 0;
 
-    int times;
-
-    int totalFixSteps = 10, currentStepFix = 0;
-    Vec3 vHold;
-    Vec3 stepFixPts[60];
-    //int fence = 0x0ff;
-    double distanceCurrentStepFix = 0, fixStepDist=0; //, minFixStepDist = 0;
-    bool isFixHolding = false, isFixHoldLoaded = false;
-
-    double rollZero = 0, pitchZero = 0;
-    double rollAngle = 0, pitchAngle = 0;
-
-    //step distances and positions for boundary, 6 meters before next point
-    double boundaryTriggerDistance = 6.0;
-
-    bool isBoundAlarming = false;
-
-    void updateFixPosition(); //process a new position
-    void calculatePositionHeading(); // compute all headings and fixes
-    void addBoundaryPoint();
-    void addSectionOrContourPathPoints();
-    void calculateSectionLookAhead(double northing, double easting, double cosHeading, double sinHeading);
-    void initializeFirstFewGPSPositions();
-    bool isInsideGeoFence();
+    void UpdateFixPosition(); //process a new position
+    void TheRest();
+    void CalculatePositionHeading(); // compute all headings and fixes
+    void AddBoundaryPoint();
+    void AddContourPoints();
+    void AddSectionOrPathPoints();
+    void CalculateSectionLookAhead(double northing, double easting, double cosHeading, double sinHeading);
+    void InitializeFirstFewGPSPositions();
 
     /************************
      * SaveOpen.Designer.cs *
@@ -388,35 +487,62 @@ public:
     //list of the list of patch data individual triangles for contour tracking
     QVector<QSharedPointer<QVector<Vec3>>> contourSaveList;
 
-    void fileSaveCurveLines();
-    void fileLoadCurveLines();
-    void fileSaveABLines();
-    void fileLoadABLines();
-    void fileSaveVehicle(QString filename);
-    bool fileOpenVehicle(QString filename);
-    void fileSaveTool(QString filename);
-    bool fileOpenTool(QString filename);
-    void fileSaveEnvironment(QString filename);
-    bool fileOpenEnvironment(QString filename);
-    bool fileOpenField(QString fieldDir);
-    void fileCreateField();
-    void fileCreateElevation();
-    void fileSaveSections();
-    void fileCreateSections();
-    void fileCreateFlags();
-    void fileCreateContour();
-    void fileSaveContour();
-    void fileSaveBoundary();
-    void fileCreateRecPath();
-    void fileSaveHeadland();
-    void fileSaveRecPath();
-    void fileSaveFlags();
-    void fileSaveNMEA();
-    void fileSaveElevation();
-    void fileSaveSingleFlagKML2(int flagNumber);
-    void fileSaveSingleFlagKML(int flagNumber);
-    void fileMakeKMLFromCurrentPosition(double lat, double lon);
-    void fileSaveFieldKML();
+    void FileSaveHeadLines();
+    void FileLoadHeadLines();
+    void FileSaveCurveLines();
+    void FileLoadCurveLines();
+    void FileSaveABLines();
+    void FileLoadABLines();
+    bool FileOpenField(QString fieldDir);
+    void FileCreateField();
+    void FileCreateElevation();
+    void FileSaveSections();
+    void FileCreateSections();
+    void FileCreateFlags();
+    void FileCreateContour();
+    void FileSaveContour();
+    void FileCreateBoundary();
+    void FileSaveBoundary();
+    void FileSaveTram();
+    void FileSaveBackPic();
+    void FileCreateRecPath();
+    void FileSaveHeadland();
+    void FileSaveRecPath();
+    void FileLoadRecPath();
+    void FileSaveFlags();
+    void FileSaveNMEA();
+    void FileSaveElevation();
+    void FileSaveSingleFlagKML2(int flagNumber);
+    void FileSaveSingleFlagKML(int flagNumber);
+    void FileMakeKMLFromCurrentPosition(double lat, double lon);
+    void ExportFieldAs_KML();
+    void FileUpdateAllFieldsKML();
+    QString GetBoundaryPointsLatLon(int bndNum);
+    void ExportFieldAs_ISOXMLv3();
+    void ExportFieldAs_ISOXMLv4();
+
+
+    /************************
+     * formgps_sections.cpp *
+     ************************/
+    void LineUpIndividualSectionBtns();
+    void AllSectionsAndButtonsToState(btnStates state);
+    void AllZonesAndButtonsToState(btnStates state);
+    void IndividualZoneAndButtonToState(btnStates state, int zoneNumber);
+    void IndividualSectionsAndButtonToState(btnStates state, int sectNumber);
+    void LineUpAllZoneButtons();
+    //void SectionSetPosition();
+    //void SectionCalcWidths();
+    //void SectionCalcMulti();
+    void BuildMachineByte();
+    void DoRemoteSwitches();
+
+
+    /************************
+     * formgps_settimgs.cpp *
+     ************************/
+
+    void loadSettings();
 
     /**********************
      * OpenGL.Designer.cs *
@@ -431,8 +557,6 @@ public:
     double maxFieldX, maxFieldY, minFieldX, minFieldY, fieldCenterX, fieldCenterY, maxFieldDistance;
     double offX = 0.0, offY = 0.0;
 
-    bool isDay;
-
     //data buffer for pixels read from off screen buffer
     //uchar grnPixels[80001];
     LookAheadPixels grnPixels[80001];
@@ -446,69 +570,65 @@ public:
     QOpenGLBuffer skyBuffer;
     QOpenGLBuffer flagsBuffer;
 
-    uint sentenceCounter = 0;
-
-
     /***********************
-     * UDPComm.designer.cs *
+     * formgps_udpcomm.cpp *
      ***********************/
 private:
     QUdpSocket *udpSocket = NULL;
 
 public:
+    QElapsedTimer udpWatch;
+    int udpWatchLimit = 70;
+    int udpWatchCounts = 0;
+
     bool isUDPServerOn = false;
 
-    void startUDPServer();
+    void StartLoopbackServer();
     void stopUDPServer();
 
-    void sendUDPMessage(uchar *msg);
+    void SendPgnToLoop(QByteArray byteData);
+    void DisableSim();
+    //void ReceiveFromAgIO(); // in slots below
+
+    /******************
+     * formgps_ui.cpp *
+     ******************/
+    //or should be under formgps_settings.cpp?
 
    /**********************
      * OpenGL.Designer.cs *
      **********************/
-    /*
-    //Simple wrapper to draw primitives using lists of Vec3 or QVector3Ds
-    //with a single color.
-    void glDrawArraysColor(QOpenGLFunctions *gl, QMatrix4x4 mvp,
-                           GLenum operation, QColor &color,
-                           QOpenGLBuffer &vertexBuffer, GLenum glType,
-                           int count,
-                           float pointSize=1.0f);
-    //Simple wrapper to draw primitives using lists of vec3s or QVector3Ds
-    //with a color per vertex. Buffer format is 7 floats per vertice:
-    //x,y,z,r,g,b,a
-    void glDrawArraysColors(QOpenGLFunctions *gl, QMatrix4x4 mvp,
-                           GLenum operation,
-                           QOpenGLBuffer &vertexBuffer, GLenum glType,
-                           int count,
-                           float pointSize=1.0f);
+    ulong number = 0, lastNumber = 0;
 
-    //Buffer format is 5 floats per vertice:
-    //x,y,z,texX,texY
-    void glDrawArraysTexture(QOpenGLFunctions *gl, QMatrix4x4 mvp,
-                             GLenum operation,
-                             QOpenGLBuffer &vertexBuffer, GLenum glType,
-                             int count);
-    */
-    void drawManUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
-    void drawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
-    void makeFlagMark(QOpenGLFunctions *gl);
-    void drawFlags(QOpenGLFunctions *gl, QMatrix4x4 mvp);
+    bool isHeadlandClose = false;
 
-    void drawLightBar(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height, double offlineDistance);
-    void drawLightBarText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height);
-    void drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection);
-    void drawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int height);
-    void drawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);
-    void drawCompass(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width);
+    int steerModuleConnectedCounter = 0;
+    double avgPivDistance=0, lightbarDistance=0;
+    QString strHeading;
+    int lenth = 4;
+
+    void DrawManUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
+    void DrawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
+    void MakeFlagMark(QOpenGLFunctions *gl);
+    void DrawFlags(QOpenGLFunctions *gl, QMatrix4x4 mvp);
+    void DrawSteerCircle(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection);
+
+    void DrawLightBar(QOpenGLFunctions *gl, QMatrix4x4 mvp, double offlineDistance);
+    void DrawLightBarText(QOpenGLFunctions *gl, QMatrix4x4 mvp);
+    //void drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection);
+    void DrawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int height);
+    void DrawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height);
+    void DrawCompass(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width);
+    void DrawReverse(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width, double Height);
     void drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width, double Height);
-    //void drawFieldText();
-    void drawLiftIndicator(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, int Width, int Height);
-    void calcFrustum(const QMatrix4x4 &mvp);
+    void DrawLiftIndicator(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, int Width, int Height);
+    void DrawLostRTK(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);
+    void DrawAge(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);
+    void CalcFrustum(const QMatrix4x4 &mvp);
     void calculateMinMax();
 
 
-    void setZoom();
+    void SetZoom();
     void loadGLTextures();
 
 private:
@@ -521,34 +641,9 @@ private:
 public:
     QString speedMPH();
     QString speedKPH();
-    void processSectionOnOffRequests(bool isMapping);
-    bool scanForNMEA();
 
     void jobNew();
-    void jobClose();
-
-    /**************************
-     * SerialComm.Designer.cs *
-     **************************/
-private:
-    QString portNameGPS = "COM GPS";
-    int baudRateGPS = QSerialPort::Baud4800;
-
-    //serial port gps is connected to
-    QSerialPort sp;
-
-    void SerialLineReceived(QByteArray sentence);
-
-public:
-
-    double actualSteerAngleDisp;
-    void autoSteerDataOutToPort();
-    void sendSteerSettingsOutAutoSteerPort();
-    void sectionControlOutToPort();
-    void sendOutUSBAutoSteerPort(uchar *data, int pgnSentenceLength);
-
-    void SerialPortOpenGPS();
-    void SerialPortCloseGPS();
+    void JobClose();
 
     /***********************
      * FormGPS.Designer.cs *
@@ -561,14 +656,29 @@ public:
     bool closeAllMenus();
 
 
+    /******************************
+     * formgps_classcallbacks.cpp *
+     ******************************/
+    void connect_classes();
+
+
+    /****************
+     * form_sim.cpp *
+     ****************/
+    void simConnectSlots();
+
     /**************************
      * UI/Qt object callbacks *
      **************************/
+
 public slots:
     /*******************
      * from FormGPS.cs *
      *******************/
+    void tmrWatchdog_timeout();
     void onGLControl_clicked(const QVariant &event);
+
+    void TimedMessageBox(int timeout, QString s1, QString s2);
 
     //left column
     void onBtnAcres_clicked();
@@ -583,8 +693,8 @@ public slots:
     void onBtnABLine_clicked();
     void onBtnToggleAB_clicked();
     void onBtnToggleABBack_clicked();
-    void onBtnManualOffOn_clicked();
-    void onBtnSectionOffAutoOn_clicked();
+    void btnSectionMasterManual_Click();
+    void btnSectionMasterAuto_Click();
     void onBtnAutoYouTurn_clicked();
     void onBtnAutoSteer_clicked();
     void onBtnContourPriority_clicked();
@@ -611,7 +721,7 @@ public slots:
     void onBtnAreaSide_clicked();
 
     //was btnSection#Man_Click in c#
-    void onBtnSectionMan_clicked(int sectNumber);
+    void btnSectionMan_Click(int sectNumber);
 
     void onBtnRedFlag_clicked();
     void onBtnGreenFlag_clicked();
@@ -619,12 +729,8 @@ public slots:
     void onBtnDeleteFlag_clicked();
     void onBtnDeleteAllFlags_clicked();
 
-    void tmrWatchdog_timeout();
-
     void swapDirection();
-    void turnOffBoundAlarm() {
-        isBoundAlarming = false;
-    }
+    void turnOffBoundAlarm();
 
     void onBtnManUTurnLeft_clicked();
     void onBtnManUTurnRight_clicked();
@@ -632,48 +738,52 @@ public slots:
     /***************************
      * from OpenGL.Designer.cs *
      ***************************/
-    void openGLControl_Draw();
+    void oglMain_Paint();
     void openGLControl_Initialized();
     void openGLControl_Shutdown();
     //void openGLControl_Resize();
 
-    void openGLControlBack_Draw();
+    void oglBack_Paint();
     void openGLControlBack_Initialized();
 
+    /***
+     * UDPCOMM.Designer.cs
+     * formgps_udpcomm.cpp
+     ***/
+    void ReceiveFromAgIO(); // in slots below
 
-
-    /*
-     * from UDPComm.Designer.cs
-     */
-
-    void udpServerReadDatagrams();
 
     /*
      * From Position.Designer.cs
      */
     void processSectionLookahead(); //called when section lookahead GL stuff is rendered
 
-    /**************************
-     * SerialComm.Designer.cs *
-     **************************/
-    void sp_DataReceived();
+    /*******************
+     * simulator       *
+     * formgps_sim.cpp *
+     *******************/
+    void onSimNewPosition(double vtgSpeed,
+                     double headingTrue,
+                     double latitude,
+                     double longitude, double hdop,
+                     double altitude,
+                     double satellitesTracked);
 
-    /*
-     * simulator
-     */
-    void onSimNewPosition(QByteArray nmea_data);
+    void onSimNewSteerAngle(double steerAngleAve);
+
     void onSimTimerTimeout();
 
     /*
      * misc
      */
-    void onClearRecvCounter();
-
-    /* CNMEA */
-    void onHeadingSource(int);
-
-
     void fileSaveEverythingBeforeClosingField(QQuickCloseEvent *event);
+
+    /* formgps_classcallbacks.cpp */
+    void onStopAutoSteer(); //cancel autosteer and ensure button state
+    void onSectionMasterAutoOff();
+    void onSectionMasterManualOff();
+    void onStoppedDriving();
+
 };
 
 #endif // FORMGPS_H

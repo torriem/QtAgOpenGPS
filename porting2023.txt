@@ -1,0 +1,77 @@
+Porting notes 2023
+
+Todo: move distancePivotToTurnLine from main form to cvehicle.  only CYouTurn refers to it in classes
+
+TODO
+- move distancePivotToTurnLine from main form to CVehicle
+- move isOutOfBounds from main form to CVehicle, stop using signal from CYouTurn
+- move guidanceLookPos from main form to CVehicle
+- move isReverse from main form to CVehicle
+- move guidanceLineDistanceOff, guidanceLineSteeringAngle to CVehicleo
+- perhaps as an optimization, add methods to various classes to refresh local copies of required property settings, rather than read them every time.
+
+
+
+Noteso
+- QList vs QVector... there are some places where C# code makes a temporary copy of a List, and then removes the original list. We've got to be careful in these situations as we would need the list copied, not just referenced.  Hmm.  QVector prefers contingous allocations, which is what we want for working with OpenGL. Not sure which is generally what we want, QList or QVector for other things.
+
+- CYouTube::youTurnStartOffset not needed; addSequenceLines pulls it directly from settings, but caching the property lookup might be an okay idea.
+- In CYouTube constructor, originally populated variables from settings. Now
+  we pull from settings inside each method that needs it. REVISIT this issue.  In CVehicle and other classes I started just copying all the settings in a loadSettings() method, also called from the constructor.
+- double check lists of lists, when we clear() and existing list and append it to another list... I think it just copies, which is fine. C# used static arrays which we could also.
+- the array of sections are moved from the main form to the CTool class, just as I did before.
+- in the section coverate triangle lists, the first vertex is always the color.  When creating the GL buffer, we skip the first item.
+- in CPatches, I don't access the sections[] array of CSection directly.  Instead I can easily pass in the left and right points, and the color. Also pass
+  the fielddata object in.
+- Moved SectionSetPosition, SectionCalcWidths, SectionCalcMulti to CTool. Not quite sure about SectionCalcMulti() just yet.
+- in CDubins::GenerateDubins(), since dubinsShortestPathList is always cleared, then built and returned, and not used anywhere else, there's no need for it to be a class instance variable.  So we define it locally.
+- Some Color4()s in AOG are over 1.0.  What's up with that?
+- Moved CNMEA::AverageTheSpeed() to CVehicle
+
+
+Signals to connect to main form:
+CYoutTurn:
+CModuleComm: void stopAutoSteer(void), void turnOffManulSections(void), void turnOffAutoSections(void)
+
+
+To port or update (= means we don't port)
+= CAutoSteer
+= CBrightness
+X CABCurve
+X CABLine
+X CCamera
+X CContour
+X CDubins
+- CExtensionMethods
+X CFlag
+X CFont -> glutils
+X CHead
+X CHeadLine
+X CModuleComm
+X CNMEA
+X CRecordedPath
+= CSettings?
+= CSim
+L CSound -- TODO later with QSound or QSoundEffect
+X CTool
+X CTurn
+X CTurnLines 
+X CVehicle
+X CWorldGrid
+
+Connections for signals and slots
+CABCurve::timedMessage --> mainform message box function TODO
+CABCurve::stopAutosteer --> main form TODO
+CContour::timedMessage --> main form TODO
+CModuleComm::stopAutoSteer --> main form TODO
+CModuleComm::turnOffManualSections --> main form TODO
+CModuleComm::turnOffAutoSections --> main form TODO
+CNMEA::checkZoomWorldGrid --> CWorldGrid::CheckZoomWorldGrid
+CYouTurn::outOfBounds --> main form?
+
+CSim::mc_set_actualSteerAngle --> CMachineComm::set_actualSteerAngleDegrees
+CSim::newSimPosition --> main form TODO
+
+
+
+

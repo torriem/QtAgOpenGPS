@@ -11,37 +11,45 @@ class QOpenGLFunctions;
 //namespace AgOpenGPS
 
 class CVehicle;
+class CBoundary;
 class CYouTurn;
 class CTool;
 class CNMEA;
 class CTram;
 class CCamera;
+class CAHRS;
+class CGuidance;
 
 class CABLines
 {
 public:
-    Vec2 ref1;
-    Vec2 ref2;
     Vec2 origin;
     double heading = 0;
     QString Name = "aa";
+    bool isVisible = true;
 };
 
 class CABLine: public QObject
 {
     Q_OBJECT
 private:
+    int counter2;
+    double shadowOffset = 0;
+    double widthMinusOverlap = 0;
 
 public:
     double abFixHeadingDelta = 0;
-    double abHeading = 0.0;
+    double abHeading = 0.0, abLength;
     double angVel = 0;
+
+    bool isABValid, isLateralTriggered;
 
 
     //the current AB guidance line
-    Vec2 currentABLineP1 = Vec2(0.0, 0.0);
-    Vec2 currentABLineP2 = Vec2(0.0, 1.0);
-    double distanceFromCurrentLine = 0.0;
+    Vec3 currentABLineP1 = Vec3(0.0, 0.0, 0.0);
+    Vec3 currentABLineP2 = Vec3(0.0, 1.0, 0.0);
+
+    double distanceFromCurrentLinePivot;
     double distanceFromRefLine = 0.0;
 
     //pure pursuit values
@@ -52,13 +60,11 @@ public:
     int numABLines, numABLineSelected;
 
     double howManyPathsAway = 0.0, moveDistance;
-    bool isABLineBeingSet, isEditing;
+    bool isABLineBeingSet;
     bool isABLineSet, isABLineLoaded;
-    bool isABSameAsVehicleHeading = true;
+    bool isHeadingSameWay = true;
     bool isBtnABLineOn;
-    bool isOnRightSideCurrentLine = true;
 
-    double passNumber;
     double ppRadiusAB;
     Vec2 radiusPointAB;
     double rEastAB, rNorthAB;
@@ -69,41 +75,62 @@ public:
     double refLineSide = 1.0;
 
     //the two inital A and B points
-    Vec2 refPoint1 = Vec2(0.2, 0.2);
+    Vec2 refPoint1 = Vec2(0.2, 0.15);
     Vec2 refPoint2 = Vec2(0.3, 0.3);
-    double snapDistance;
+    double snapDistance, lastSecond = 0;
     double steerAngleAB;
     int lineWidth;
 
+    //design
+    Vec2 desPoint1 = Vec2(0.2, 0.15);
 
-    //tramlines
-    QVector<Vec2> tramArr;
-    QVector<QVector<Vec2>> tramList;
+    Vec2 desPoint2 = Vec2(0.3, 0.3);
+    double desHeading = 0;
+    Vec2 desP1 = Vec2(0.0, 0.0);
+    Vec2 desP2 = Vec2(999997, 1.0);
+    QString desName = "";
+
+    double pivotDistanceError, pivotDistanceErrorLast, pivotDerivative, pivotDerivativeSmoothed;
+
+    //derivative counters
+    double inty;
+    double steerAngleSmoothed, pivotErrorTotal;
+    double distSteerError, lastDistSteerError, derivativeDistError;
 
     //Color tramColor = Color.YellowGreen;
-    int tramPassEvery = 0;
-
-private:
-    //pointers to mainform controls
-    //OpenGL gl;
-
+    int tramPassEvery;
 
 public:
     explicit CABLine(QObject *parent = 0);
-    void deleteAB();
-    void setABLineByBPoint(const CVehicle &vehicle);
-    void setABLineByHeading(double heading); //do we need to pass in heading somewhere from the main form?
-    void snapABLine();
-    void getCurrentABLine(Vec3 pivot, Vec3 steer, CVehicle &vehicle, CYouTurn &yt, CNMEA &pn);
-    void drawABLines(QOpenGLFunctions *g, const QMatrix4x4 &mvp, CYouTurn &yt, CTram &tram, const CCamera &camera);
-    void drawTram(QOpenGLFunctions *g, const QMatrix4x4 &mvp);
-    void buildTram();
-    void moveABLine(double dist);
-    void resetABLine();
+
+    void BuildCurrentABLineList(Vec3 pivot,
+                                double secondsSinceStart,
+                                const CYouTurn &yt,
+                                const CVehicle &vehicle);
+    void GetCurrentABLine(Vec3 pivot, Vec3 steer,
+                          double secondsSinceStart,
+                          bool isAutoSteerBtnOn,
+                          bool steerSwitchHigh,
+                          CVehicle &vehicle,
+                          CYouTurn &yt,
+                          const CAHRS &ahrs,
+                          CGuidance &gyd,
+                          CNMEA &pn);
+    void DrawABLines(QOpenGLFunctions *g, const QMatrix4x4 &mvp,
+                     bool isFontOn,
+                     CBoundary &bnd,
+                     CYouTurn &yt,
+                     const CCamera &camera,
+                     const CGuidance &gyd);
+    void BuildTram(CBoundary &bnd, CTram &tram);
+    void DeleteAB();
+    void SetABLineByBPoint(const CVehicle &vehicle);
+    void SetABLineByHeading(double heading); //do we need to pass in heading somewhere from the main form?
+    void MoveABLine(double dist);
 
 signals:
-    void doSequence(CYouTurn &yt);
-    void showMessage(int,QString,QString);
+    void stopAutosteer();
+    void TimedMessage(int,QString,QString);
 };
 
 #endif // CABLINE_H

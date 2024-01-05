@@ -8,101 +8,59 @@
 #include <QByteArray>
 #include <QBuffer>
 #include "vec2.h"
-
-class Vec2;
-
-/*struct XY {
-    double easting;
-    double northing;
-};
-*/
-
-class CVehicle;
-
+#include "glm.h"
+#include <QTextStream>
 
 class CNMEA : public QObject
 {
     Q_OBJECT
 private:
-    QList<QByteArray> words;
-    QByteArray nextNMEASentence = "";
-    int nmeaCntr = 0;
-
-    double rollK, Pc, G, Xp, Zp, XeRoll;
-    double P = 1.0;
-    const double varRoll = 0.1; // variance, smaller, more faster filtering
-    const double varProcess = 0.0003;
-
-    //Some methods require these items to be passed in from outside
-    double lastHeading;
-    double roll;
-
 public:
     //WGS84 Lat Long
-    double latitude = 0, longitude = 0;
+    double latitude, longitude;
 
+    double prevLatitude, prevLongitude;
+
+    //local plane geometry
     double latStart, lonStart;
-    double actualEasting=0, actualNorthing=0;
-    double zone=0;
-    double centralMeridian, convergenceAngle = 0;
 
-    bool updatedGGA=false, updatedOGI=false, updatedRMC=false;
+    double mPerDegreeLat, mPerDegreeLon;
 
-    bool isFirstFixPositionSet = false;
+    //our current fix
+    //moved to CVehicle
+    Vec2 fix = Vec2(0, 0);
 
-    QByteArray rawBuffer = "";
-    QString fixFrom;
-
-    //UTM coordinates
-    Vec2 fix = Vec2(0,0);
+    Vec2 prefSpeedFix= Vec2(0, 0);
 
     //used to offset the antenna position to compensate for drift
-    Vec2 fixOffset = Vec2(0,0);
+    Vec2 fixOffset = Vec2(0, 0);
 
     //other GIS Info
-    double altitude, speed;
-    double headingTrue, headingHDT, hdop, ageDiff;
+    double altitude, speed, newSpeed, vtgSpeed = glm::DOUBLE_MAX;
 
-    //imu
-    double nRoll, nPitch, nYaw, nAngularVelocity;
+    double headingTrueDual, headingTrue, hdop, age, headingTrueDualOffset;
 
-    bool isValidIMU;
-    int fixQuality;
+    int fixQuality, ageAlarm;
     int satellitesTracked;
-    QByteArray status = "q";
-    QDateTime utcDateTime;
-    char hemisphere = 'N';
 
-    //UTM numbers are huge, these cut them way down.
-    int utmNorth = 0, utmEast = 0;
-    QByteArray logNMEASentence = "";
+    QString logNMEASentence;
+
+    //StringBuilder logNMEASentence = new StringBuilder();
 
     explicit CNMEA(QObject *parent = 0);
-    void updateNorthingEasting();
-    void parseNMEA(double lastHeading, double roll);
-    void parseAVR();
-    QByteArray parse();
 
-    void parseGGA();
-    void parseOGI();
-    void parseVTG();
-    void parseHDT();
-    void parseTRA();
-    void parseRMC();
-    bool validateChecksum(QByteArray sentence);
+    //
+    //void AverageTheSpeed(); moved to CVehicle
+    void SetLocalMetersPerDegree();
+    void ConvertWGS84ToLocal(double Lat, double Lon, double &outNorthing, double &outEasting);
+    void ConvertLocalToWGS84(double Northing, double Easting, double &outLat, double &outLon);
+    QString GetLocalToWSG84_KML(double Easting, double Northing);
 
-    Vec2 decDeg2UTM(double latitude, double longitude);
-    static double arcLengthOfMeridian(double phi);
-    static Vec2 mapLatLonToXY(double phi, double lambda, double lambda0);
+    void loadSettings(void);
+
 signals:
-    void setRollX16(int); //set mf.ahrs.rollX16
-    void setCorrectionHeadingX16(int); //set mf.ahrs.correctionHeadingX16
-    void setRollUsed(double);
-    void setRollCorrectionDistance(double);
-    void headingSource(int);
-    void clearRecvCounter(); //tell watchdog to reset it's counter
-    void newSpeed(double); //so display can average this into it's speed
-
+    //void setAveSpeed(double);
+    void checkZoomWorldGrid(double, double);
 };
 
 #endif // CNMEA_H

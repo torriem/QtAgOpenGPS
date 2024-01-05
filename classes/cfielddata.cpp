@@ -1,26 +1,49 @@
 #include "cfielddata.h"
-#include "ctool.h"
-#include "cboundary.h"
-#include "cnmea.h"
-#include <QString>
+#include "aogproperty.h"
+#include "cvehicle.h"
 
-CFieldData::CFieldData(QObject *parent) : QObject(parent)
+CFieldData::CFieldData() {}
+
+QString CFieldData::TimeTillFinished(CVehicle &vehicle)
 {
-    workedAreaTotal = 0;
-    workedAreaTotalUser = 0;
-    userSquareMetersAlarm = 0;
+    if (vehicle.avgSpeed > 2)
+    {
+        double total_time = ((areaBoundaryOuterLessInner - workedAreaTotal) * glm::m2ha /
+                             ((double)property_setVehicle_toolWidth * vehicle.avgSpeed * 0.1));
+        int hours = (int) total_time;
+        int minutes = (total_time - hours) * 60;
+
+        return QString("%1:%2").arg(hours,2).arg(minutes,2);
+    }
+    else return QString("\u221E Hrs");
+ }
+
+QString CFieldData::WorkRateHectares(CVehicle &vehicle) {
+    return QString("%1 ha/hr").arg((double)property_setVehicle_toolWidth * vehicle.avgSpeed * 0.1,0,'g',1);
 }
 
-void CFieldData::updateFieldBoundaryGUIAreas(const CBoundary &bnd)
+QString CFieldData::WorkRateAcres(CVehicle &vehicle) {
+    return QString("%1 ac/hr").arg((double)property_setVehicle_toolWidth * vehicle.avgSpeed * 0.2471,0,'g',1);
+}
+
+void CFieldData::UpdateFieldBoundaryGUIAreas(QVector<CBoundaryList> &bndList)
 {
-    if (bnd.bndArr.size() > 0)
+    if (bndList.count() > 0)
     {
-        areaOuterBoundary = bnd.bndArr[0].area;
+        areaOuterBoundary = bndList[0].area;
         areaBoundaryOuterLessInner = areaOuterBoundary;
 
-        for (int i = 1; i < bnd.bndArr.size(); i++)
+        for (int i = 1; i < bndList.count(); i++)
         {
-            if (bnd.bndArr[i].isSet) areaBoundaryOuterLessInner -= bnd.bndArr[i].area;
+            areaBoundaryOuterLessInner -= bndList[i].area;
         }
     }
+    else
+    {
+        areaOuterBoundary = 0;
+        areaBoundaryOuterLessInner = 0;
+    }
+    //if (mf.isMetric) mf.btnManualOffOn.Text = AreaBoundaryLessInnersHectares;
+    //else mf.btnManualOffOn.Text = AreaBoundaryLessInnersAcres;
+
 }

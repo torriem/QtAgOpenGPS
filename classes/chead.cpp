@@ -1,171 +1,119 @@
-#include "chead.h"
+#include "cboundary.h"
 #include <QOpenGLFunctions>
 #include <QMatrix4x4>
 #include "vec2.h"
 #include "vec3.h"
 #include "glm.h"
-#include "glutils.h"
 #include "cvehicle.h"
 #include "ctool.h"
-#include "cheadlines.h"
-#include "common.h"
-#include "aogsettings.h"
+#include "cpgn.h"
 
-CHead::CHead(QObject *parent) : QObject(parent)
+void CBoundary::SetHydPosition(btnStates autoBtnState, CPGN_EF &p_239, CVehicle &vehicle)
 {
-    singleSpaceHeadlandDistance = 18;
-    isOn = false;
-
-    headArr.append(CHeadLines());
-    isToolUp = true;
-}
-
-void CHead::setHydPosition(double currentSpeed)
-{
-    USE_SETTINGS;
-
-    if (SETTINGS_VEHICLE_ISHYDLIFTON && currentSpeed > 0.2 ) //TODO: && mf.autoBtnState == FormGPS.btnStates.Auto
+    if (vehicle.isHydLiftOn && vehicle.avgSpeed > 0.2 && autoBtnState == btnStates::Auto)
     {
         if (isToolInHeadland)
         {
-            emit moveHydraulics(2);
-            isToolUp = true;
+            p_239.pgn[p_239.hydLift] = 2;
+            //TODO: implement sounds
+            emit soundHydLiftChange(isToolInHeadland);
+            /*
+            if (mf.sounds.isHydLiftChange != isToolInHeadland)
+            {
+                if (mf.sounds.isHydLiftSoundOn) mf.sounds.sndHydLiftUp.Play();
+                mf.sounds.isHydLiftChange = isToolInHeadland;
+            }
+            */
         }
         else
         {
-            emit moveHydraulics(1);
-            isToolUp = false;
+            p_239.pgn[p_239.hydLift] = 1;
+            //TODO: implement sounds
+            emit soundHydLiftChange(isToolInHeadland);
+            /*
+            if (mf.sounds.isHydLiftChange != isToolInHeadland)
+            {
+                if (mf.sounds.isHydLiftSoundOn) mf.sounds.sndHydLiftDn.Play();
+                mf.sounds.isHydLiftChange = isToolInHeadland;
+            }
+            */
         }
     }
 }
 
-void CHead::whereAreToolCorners(CTool &tool)
+void CBoundary::WhereAreToolCorners(CTool &tool)
 {
-    USE_SETTINGS;
-
-    int tool_numOfSections = SETTINGS_TOOL_NUMSECTIONS;
-
-    if (headArr[0].hdLine.count() == 0)
-    {
-        return;
-    }
-    else
+    if (bndList.count() > 0 && bndList[0].hdLine.count() > 0)
     {
         bool isLeftInWk, isRightInWk = true;
 
-        if (isOn)
+        for (int j = 0; j < tool.numOfSections; j++)
         {
-            for (int j = 0; j < tool_numOfSections; j++)
-            {
-                if (j == 0)
-                {
-                    //only one first left point, the rest are all rights moved over to left
-                    isLeftInWk = headArr[0].isPointInHeadArea(tool.section[j].leftPoint);
-                    isRightInWk = headArr[0].isPointInHeadArea(tool.section[j].rightPoint);
+            isLeftInWk = j == 0 ? IsPointInsideHeadArea(tool.section[j].leftPoint) : isRightInWk;
+            isRightInWk = IsPointInsideHeadArea(tool.section[j].rightPoint);
 
-                    //save left side
-                    tool.isLeftSideInHeadland = !isLeftInWk;
+            //save left side
+            if (j == 0)
+                tool.isLeftSideInHeadland = !isLeftInWk;
 
-                    //merge the two sides into in or out
-                    tool.section[j].isInHeadlandArea = !isLeftInWk && !isRightInWk;
-
-                }
-                else
-                {
-                    //grab the right of previous section, its the left of this section
-                    isLeftInWk = isRightInWk;
-                    isRightInWk = headArr[0].isPointInHeadArea(tool.section[j].rightPoint);
-
-                    tool.section[j].isInHeadlandArea = !isLeftInWk && !isRightInWk;
-                }
-            }
-
-            //save right side
-            tool.isRightSideInHeadland = !isRightInWk;
-
-            //is the tool in or out based on endpoints
-            isToolOuterPointsInHeadland = tool.isLeftSideInHeadland && tool.isRightSideInHeadland;
+            //merge the two sides into in or out
+            tool.section[j].isInHeadlandArea = !isLeftInWk && !isRightInWk;
         }
-        else
-        {
-            //set all to true;
-            isToolOuterPointsInHeadland = true;
-        }
+
+        //save right side
+        tool.isRightSideInHeadland = !isRightInWk;
+
+        //is the tool in or out based on endpoints
+        isToolOuterPointsInHeadland = tool.isLeftSideInHeadland && tool.isRightSideInHeadland;
     }
 }
 
-void CHead::whereAreToolLookOnPoints(const CVehicle &vehicle, CTool &tool)
+void CBoundary::WhereAreToolLookOnPoints(CVehicle &vehicle, CTool &tool)
 {
-    USE_SETTINGS;
-
-    int tool_numOfSections = SETTINGS_TOOL_NUMSECTIONS;
-
-    if (headArr[0].hdLine.count() == 0)
+    if (bndList.count() > 0 && bndList[0].hdLine.count() > 0)
     {
-        return;
-    }
-    else
-    {
+        bool isLookRightIn = false;
+
         Vec3 toolFix = vehicle.toolPos;
         double sinAB = sin(toolFix.heading);
         double cosAB = cos(toolFix.heading);
 
-        double pos = tool.section[0].rpSectionWidth;
+        //generated box for finding closest point
+        double pos = 0;
         double mOn = (tool.lookAheadDistanceOnPixelsRight - tool.lookAheadDistanceOnPixelsLeft) / tool.rpWidth;
-        double endHeight = (tool.lookAheadDistanceOnPixelsLeft + (mOn * pos))*0.1;
 
-        for (int j = 0; j < tool_numOfSections; j++)
+        for (int j = 0; j < tool.numOfSections; j++)
         {
-            if (j == 0)
-            {
-                downL.easting = tool.section[j].leftPoint.easting + (sinAB * tool.lookAheadDistanceOnPixelsLeft * 0.1);
-                downL.northing = tool.section[j].leftPoint.northing + (cosAB * tool.lookAheadDistanceOnPixelsLeft * 0.1);
+            bool isLookLeftIn = j == 0 ? IsPointInsideHeadArea(Vec2(
+                                    tool.section[j].leftPoint.easting + (sinAB * tool.lookAheadDistanceOnPixelsLeft * 0.1),
+                                    tool.section[j].leftPoint.northing + (cosAB * tool.lookAheadDistanceOnPixelsLeft * 0.1))) : isLookRightIn;
 
-                downR.easting = tool.section[j].rightPoint.easting + (sinAB * endHeight);
-                downR.northing = tool.section[j].rightPoint.northing + (cosAB * endHeight);
+            pos += tool.section[j].rpSectionWidth;
+            double endHeight = (tool.lookAheadDistanceOnPixelsLeft + (mOn * pos)) * 0.1;
 
-                isLookLeftIn = isPointInsideHeadLine(downL);
-                isLookRightIn = isPointInsideHeadLine(downR);
+            isLookRightIn = IsPointInsideHeadArea(Vec2(
+                tool.section[j].rightPoint.easting + (sinAB * endHeight),
+                tool.section[j].rightPoint.northing + (cosAB * endHeight)));
 
-                tool.section[j].isLookOnInHeadland = !isLookLeftIn && !isLookRightIn;
-                isLookLeftIn = isLookRightIn;
-            }
-            else
-            {
-                pos += tool.section[j].rpSectionWidth;
-                endHeight = (tool.lookAheadDistanceOnPixelsLeft + (mOn * pos))*0.1;
-
-                downR.easting = tool.section[j].rightPoint.easting + (sinAB * endHeight);
-                downR.northing = tool.section[j].rightPoint.northing + (cosAB * endHeight);
-
-                isLookRightIn = isPointInsideHeadLine(downR);
-                tool.section[j].isLookOnInHeadland = !isLookLeftIn && !isLookRightIn;
-                isLookLeftIn = isLookRightIn;
-            }
+            tool.section[j].isLookOnInHeadland = !isLookLeftIn && !isLookRightIn;
         }
     }
-
 }
 
-void CHead::drawHeadLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, int lineWidth)
-{
-    if (headArr[0].hdLine.count() > 0 && isOn) headArr[0].drawHeadLine(gl, mvp, lineWidth);
-}
-
-void CHead::drawHeadLinesBack(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
-{
-    if (headArr[0].hdLine.count() > 0 && isOn) headArr[0].drawHeadLineBackBuffer(gl, mvp);
-}
-
-bool CHead::isPointInsideHeadLine(Vec2 pt)
+bool CBoundary::IsPointInsideHeadArea(Vec2 pt)
 {
     //if inside outer boundary, then potentially add
-    if (headArr.count() > 0 && headArr[0].isPointInHeadArea(pt))
+    if (glm::IsPointInPolygon(bndList[0].hdLine, pt))
     {
+        for (int i = 1; i < bndList.count(); i++)
+        {
+            if (glm::IsPointInPolygon(bndList[i].hdLine,pt))
+            {
+                //point is in an inner turn area but inside outer
+                return false;
+            }
+        }
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
