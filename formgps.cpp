@@ -42,6 +42,9 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
     property_setVehicle_wheelbase = 3.1496;
     property_setVehicle_trackWidth = 2.286;
     property_setVehicle_hitchLength = -2.54;
+    property_setTool_isToolTBT=true;
+    property_setVehicle_tankTrailingHitchLength = -3;
+
     property_setTool_isToolTrailing = true;
     property_setTool_toolTrailingHitchLength = -4.572;
     property_setVehicle_minTurningRadius = 8;
