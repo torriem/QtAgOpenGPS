@@ -59,6 +59,7 @@ void FormGPS::FileSaveHeadLines()
 
     QTextStream writer(&headfile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     int cnt = hdl.tracksArr.count();
 
@@ -215,6 +216,7 @@ void FormGPS::FileSaveCurveLines()
 
     QTextStream writer(&curveFile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     writer << "$CurveLines" << Qt::endl;
 
@@ -362,6 +364,7 @@ void FormGPS::FileSaveABLines()
 
     QTextStream writer(&lineFile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     int cnt = ABLine.lineArr.count();
 
@@ -1126,6 +1129,7 @@ void FormGPS::FileCreateField()
 
     QTextStream writer(&fieldFile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     QDateTime now = QDateTime::currentDateTime();
 
@@ -1183,6 +1187,7 @@ void FormGPS::FileCreateElevation()
 
     QTextStream writer(&fieldFile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     QDateTime now = QDateTime::currentDateTime();
 
@@ -1227,6 +1232,7 @@ void FormGPS::FileSaveSections()
 
     QTextStream writer(&sectionFile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     //for each patch, write out the list of triangles to the file
     QSharedPointer<QVector<QVector3D>> triList;
@@ -1296,6 +1302,7 @@ void FormGPS::FileCreateBoundary()
 
     QTextStream writer(&boundfile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
     writer << "$Boundary" << Qt::endl;
 }
 
@@ -1343,6 +1350,7 @@ void FormGPS::FileCreateContour()
 
     QTextStream writer(&contourFile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     writer << "$Contour" << Qt::endl;
 }
@@ -1368,6 +1376,7 @@ void FormGPS::FileSaveContour()
 
     QTextStream writer(&contourFile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
     QSharedPointer<QVector<Vec3>> triList;
 
     foreach (triList, contourSaveList)
@@ -1414,6 +1423,7 @@ void FormGPS::FileSaveBoundary()
 
     QTextStream writer(&boundfile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
     writer << "$Boundary" << Qt::endl;
     for(int i = 0; i < bnd.bndList.count(); i++)
     {
@@ -1460,6 +1470,7 @@ void FormGPS::FileSaveTram()
 
     QTextStream writer(&tramFile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     writer << "$Tram" << Qt::endl;
 
@@ -1535,6 +1546,7 @@ void FormGPS::FileSaveBackPic()
 
     QTextStream writer(&backFile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     writer << "$BackPic" << Qt::endl;
 
@@ -1581,6 +1593,7 @@ void FormGPS::FileSaveHeadland()
 
     QTextStream writer(&headfile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
     writer << "$Headland" << Qt::endl;
     if (bnd.bndList.count() > 0 && bnd.bndList[0].hdLine.count() > 0)
     {
@@ -1627,6 +1640,7 @@ void FormGPS::FileCreateRecPath()
 
     QTextStream writer(&recpathfile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     writer << "$RecPath" << Qt::endl;
     writer << "0" << Qt::endl;
@@ -1660,6 +1674,7 @@ void FormGPS::FileSaveRecPath()
 
     QTextStream writer(&recpathfile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     writer << "$RecPath" << Qt::endl;
     writer << recPath.recList.count() << Qt::endl;
@@ -1765,6 +1780,7 @@ void FormGPS::FileSaveFlags()
 
     QTextStream writer(&flagsfile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     writer << "$Flags" << Qt::endl;
 
@@ -1812,6 +1828,7 @@ void FormGPS::FileSaveNMEA()
 
     QTextStream writer(&nmeafile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     writer << pn.logNMEASentence;
 
@@ -1845,6 +1862,7 @@ void FormGPS::FileSaveElevation()
 
     QTextStream writer(&elevfile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     writer << sbFix;
 
@@ -1879,6 +1897,7 @@ void FormGPS::FileSaveSingleFlagKML2(int flagNumber)
 
     QTextStream writer(&kmlFile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     writer << "<?xml version=""1.0"" encoding=""UTF-8""?" << Qt::endl;
     writer << "<kml xmlns=""http://www.opengis.net/kml/2.2""> " << Qt::endl;
@@ -1933,6 +1952,7 @@ void FormGPS::FileSaveSingleFlagKML(int flagNumber)
 
     QTextStream writer(&kmlFile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     writer << "<?xml version=""1.0"" encoding=""UTF-8""?" << Qt::endl;
     writer << "<kml xmlns=""http://www.opengis.net/kml/2.2""> " << Qt::endl;
@@ -1986,6 +2006,7 @@ void FormGPS::FileMakeKMLFromCurrentPosition(double lat, double lon)
 
     QTextStream writer(&kmlFile);
     writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     writer << "<?xml version=""1.0"" encoding=""UTF-8""?>     " << Qt::endl;
     writer << "<kml xmlns=""http://www.opengis.net/kml/2.2""> " << Qt::endl;
