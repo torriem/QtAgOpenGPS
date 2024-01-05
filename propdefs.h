@@ -250,3 +250,4 @@ AOGProperty property_setFeature_isAutoSteerOn("displayFeatures/isAutoSteerOn",tr
 AOGProperty property_setFeature_isUTurnOn("displayFeatures/isUTurnOn",true);
 AOGProperty property_setFeature_isLateralOn("displayFeatures/isLateralOn",true);
 AOGProperty property_displayShowBack("display/showBack",false);
+AOGProperty property_displayAntiAliasSamples("display/antiAliasSamples",0);

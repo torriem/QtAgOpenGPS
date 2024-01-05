@@ -253,5 +253,6 @@ extern AOGProperty property_setFeature_isAutoSteerOn;
 extern AOGProperty property_setFeature_isUTurnOn;
 extern AOGProperty property_setFeature_isLateralOn;
 extern AOGProperty property_displayShowBack;
+extern AOGProperty property_displayAntiAliasSamples;
 
 #endif // PROPERTIES_H

@@ -8,6 +8,10 @@ add_props = {
     'displayShowBack' : [ 'display/showBack', 
                           'AOGProperty property_displayShowBack("display/showBack",false);',
                           'extern AOGProperty property_displayShowBack;' ]
+                          ,
+    'antiAliasSamples' : [ 'display/antiAliasSamples',
+                           'AOGProperty property_displayAntiAliasSamples("display/antiAliasSamples",0);',
+                           'extern AOGProperty property_displayAntiAliasSamples;']
 }
 
 def parse_settings(file):
