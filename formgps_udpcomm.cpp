@@ -2,6 +2,7 @@
 #include "formgps.h"
 #include "aogproperty.h"
 #include "cnmea.h"
+#include <QHostAddress>
 
 #define BitConverter_ToDouble(data,position) (*(reinterpret_cast<double *>(&(data[position]))))
 #define BitConverter_ToSingle(data,position) (*(reinterpret_cast<float *>(&(data[position]))))
@@ -9,6 +10,9 @@
 #define BitConverter_ToInt16(data,position) (*(reinterpret_cast<qint16 *>(&(data[position]))))
 
 #define UDP_NMEA_PORT 9999
+
+const QHostAddress epAgIO = QHostAddress("127.255.255.255");
+const int epAgIO_port = 17777;
 
 void FormGPS::ReceiveFromAgIO()
 {
@@ -322,7 +326,6 @@ void FormGPS::SendPgnToLoop(QByteArray byteData) //10 bytes
             crc += byteData[i];
         }
         byteData[byteData.length() - 1] = (char)crc;
-
-        //TODO udpSocket->write(byteData);
+        udpSocket->writeDatagram(byteData,epAgIO,epAgIO_port);
     }
 }
