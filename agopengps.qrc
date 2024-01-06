@@ -517,5 +517,6 @@
         <file>qml/ConfigSourcesRoll.qml</file>
         <file>qml/ConfigImplementSectionsSection.qml</file>
         <file>qml/ConfigImplementSectionsZones.qml</file>
+        <file>images/textures/z_Tool.png</file>
     </qresource>
 </RCC>

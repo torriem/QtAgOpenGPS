@@ -1104,22 +1104,13 @@ void FormGPS::UpdateFixPosition()
     AOGRendererInSG *renderer = qml_root->findChild<AOGRendererInSG *>("openglcontrol");
     renderer->update();
 
-    //since we're in the main thread we can directly call processSectionLookahead()
-    //the code in processSectionLookahead was moved from AOG's oglBack_Paint because
-    //opengl drawing occurs in a separate thread in Qt.  So I broke the code out into
-    //its own function so we can call it from here.
-    processSectionLookahead();
-
+    //oglBack_Paint will schedule processSectionLookAhead() once it's done drawing.
+    //processSectionLookahead();
 
     //end of UppdateFixPosition
 
-    //stop the timer and calc how long it took to do calcs and draw
-    frameTimeRough = swFrame.elapsed();
-
-    if (frameTimeRough > 50) frameTimeRough = 50;
-    frameTime = frameTime * 0.90 + frameTimeRough * 0.1;
-    lock.unlock();
     newframe = true;
+    lock.unlock();
 
 }
 
@@ -1212,10 +1203,17 @@ void FormGPS::CalculatePositionHeading()
             //Torriem rules!!!!! Oh yes, this is all his. Thank-you
             if (distanceCurrentStepFix != 0)
             {
+                /* AOG algorithm was not quite correct
                 double t = (tool.tankTrailingHitchLength) / distanceCurrentStepFix;
                 vehicle.tankPos.easting = vehicle.hitchPos.easting + t * (vehicle.hitchPos.easting - vehicle.tankPos.easting);
                 vehicle.tankPos.northing = vehicle.hitchPos.northing + t * (vehicle.hitchPos.northing - vehicle.tankPos.northing);
                 vehicle.tankPos.heading = atan2(vehicle.hitchPos.easting - vehicle.tankPos.easting, vehicle.hitchPos.northing - vehicle.tankPos.northing);
+
+                turns out we can do it with just a heading, as down below the tankPos
+                is set based hitchPos, extended out along the heading we calculate here.
+                */
+                vehicle.tankPos.heading = atan2(vehicle.hitchPos.easting - vehicle.tankPos.easting, vehicle.hitchPos.northing - vehicle.tankPos.northing);
+
                 if (vehicle.tankPos.heading < 0) vehicle.tankPos.heading += glm::twoPI;
 
             }
@@ -1249,10 +1247,16 @@ void FormGPS::CalculatePositionHeading()
         //Torriem rules!!!!! Oh yes, this is all his. Thank-you
         if (distanceCurrentStepFix != 0)
         {
+            /*
+             * AOG algorithm wasn't quite right.
             double t = (tool.trailingHitchLength) / distanceCurrentStepFix;
             vehicle.toolPivotPos.easting = vehicle.tankPos.easting + t * (vehicle.tankPos.easting - vehicle.toolPivotPos.easting);
             vehicle.toolPivotPos.northing = vehicle.tankPos.northing + t * (vehicle.tankPos.northing - vehicle.toolPivotPos.northing);
             vehicle.toolPivotPos.heading = atan2(vehicle.tankPos.easting - vehicle.toolPivotPos.easting, vehicle.tankPos.northing - vehicle.toolPivotPos.northing);
+            */
+            //since position of tool is calculated below based on the tankPos, all we need is this heading
+            vehicle.toolPivotPos.heading = atan2(vehicle.tankPos.easting - vehicle.toolPivotPos.easting, vehicle.tankPos.northing - vehicle.toolPivotPos.northing);
+
             if (vehicle.toolPivotPos.heading < 0) vehicle.toolPivotPos.heading += glm::twoPI;
         }
 

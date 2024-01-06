@@ -42,6 +42,9 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
     property_setVehicle_wheelbase = 3.1496;
     property_setVehicle_trackWidth = 2.286;
     property_setVehicle_hitchLength = -2.54;
+    property_setTool_isToolTBT=true;
+    property_setVehicle_tankTrailingHitchLength = -3;
+
     property_setTool_isToolTrailing = true;
     property_setTool_toolTrailingHitchLength = -4.572;
     property_setVehicle_minTurningRadius = 8;
@@ -143,6 +146,8 @@ FormGPS::~FormGPS()
 //broken out here.  So the lookaheadPixels array has been populated already
 //by the rendering routine.
 void FormGPS::processSectionLookahead() {
+    lock.lockForWrite();
+
     if (property_displayShowBack)
         grnPixelsWindow->setPixmap(QPixmap::fromImage(grnPix.mirrored()));
 
@@ -674,6 +679,15 @@ void FormGPS::processSectionLookahead() {
         //oglZoom.Refresh();
 
     }
+
+    //stop the timer and calc how long it took to do calcs and draw
+    frameTimeRough = swFrame.elapsed();
+
+    if (frameTimeRough > 50) frameTimeRough = 50;
+    frameTime = frameTime * 0.90 + frameTimeRough * 0.1;
+
+    lock.unlock();
+
     //this is the end of the "frame". Now we wait for next NMEA sentence with a valid fix.
 }
 
