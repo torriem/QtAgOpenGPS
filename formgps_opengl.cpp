@@ -23,6 +23,105 @@
 
 #include <assert.h>
 
+
+QVector3D FormGPS::mouseClickToPan(int mouseX, int mouseY)
+{
+    QMatrix4x4 modelview;
+    QMatrix4x4 projection;
+
+    int width = qmlItem(qml_root, "openglcontrol")->property("width").toReal();
+    int height = qmlItem(qml_root, "openglcontrol")->property("height").toReal();
+
+    projection.setToIdentity();
+
+    //to shift, translate projection here. -1,0,0 is far left, 1,0,0 is far right.
+
+    //  Create a perspective transformation.
+    projection.perspective(glm::toDegrees(fovy), width / (double)height, 1.0f, camDistanceFactor * camera.camSetDistance);
+    modelview.setToIdentity();
+
+    //camera does translations and rotations
+    camera.SetWorldCam(modelview, vehicle.pivotAxlePos.easting, vehicle.pivotAxlePos.northing, camera.camHeading);
+    modelview.translate(vehicle.hitchPos.easting, vehicle.hitchPos.northing, 0);
+    //modelview.translate(sin(vehicle.fixHeading) * tool.hitchLength,
+    //                        cos(vehicle.fixHeading) * tool.hitchLength, 0);
+    if (camera.camFollowing)
+        modelview.rotate(glm::toDegrees(-vehicle.fixHeading), 0.0, 0.0, 1.0);
+
+    float x,y;
+    x = mouseX;
+    y = height - mouseY;
+
+    //get point on the near plane
+    QVector3D worldpoint_near = QVector3D( { x, y, 0} ).unproject(modelview,projection,QRect(0,0,width, height));
+    //get point on the far plane
+    QVector3D worldpoint_far = QVector3D( { x, y, 1} ).unproject(modelview, projection,QRect(0,0,width, height));
+    //get direction vector from near to far
+    QVector3D direction = worldpoint_far - worldpoint_near;
+    //determine intercept with z=0 plane, and calculate easting and northing
+    double lambda = -(worldpoint_near.z()) / direction.z();
+
+    mouseEasting = worldpoint_near.x() + lambda * direction.x();
+    mouseNorthing = worldpoint_near.y() + lambda * direction.y();
+
+    QMatrix4x4 m;
+    m.rotate(-vehicle.fixHeading, 0,0,1);
+
+    QVector3D relative = QVector3D( { mouseEasting, mouseNorthing, 0 } );
+    //relative.setX(relative.x() + vehicle.hitchPos.easting);
+    //relative.setY(relative.y() + vehicle.hitchPos.northing);
+    return relative;
+}
+
+QVector3D FormGPS::mouseClickToField(int mouseX, int mouseY)
+{
+    QMatrix4x4 modelview;
+    QMatrix4x4 projection;
+
+    int width = qmlItem(qml_root, "openglcontrol")->property("width").toReal();
+    int height = qmlItem(qml_root, "openglcontrol")->property("height").toReal();
+
+    projection.setToIdentity();
+
+    //to shift, translate projection here. -1,0,0 is far left, 1,0,0 is far right.
+
+    //  Create a perspective transformation.
+    projection.perspective(glm::toDegrees(fovy), width / (double)height, 1.0f, camDistanceFactor * camera.camSetDistance);
+    modelview.setToIdentity();
+
+    //camera does translations and rotations
+    camera.SetWorldCam(modelview, vehicle.pivotAxlePos.easting, vehicle.pivotAxlePos.northing, camera.camHeading);
+    //modelview.translate(vehicle.pivotAxlePos.easting, vehicle.pivotAxlePos.northing, 0);
+    //modelview.translate(sin(vehicle.fixHeading) * tool.hitchLength,
+    //                        cos(vehicle.fixHeading) * tool.hitchLength, 0);
+    //if (camera.camFollowing)
+    //    modelview.rotate(glm::toDegrees(-vehicle.fixHeading), 0.0, 0.0, 1.0);
+
+    float x,y;
+    x = mouseX;
+    y = height - mouseY;
+
+    //get point on the near plane
+    QVector3D worldpoint_near = QVector3D( { x, y, 0} ).unproject(modelview,projection,QRect(0,0,width, height));
+    //get point on the far plane
+    QVector3D worldpoint_far = QVector3D( { x, y, 1} ).unproject(modelview, projection,QRect(0,0,width, height));
+    //get direction vector from near to far
+    QVector3D direction = worldpoint_far - worldpoint_near;
+    //determine intercept with z=0 plane, and calculate easting and northing
+    double lambda = -(worldpoint_near.z()) / direction.z();
+
+    mouseEasting = worldpoint_near.x() + lambda * direction.x();
+    mouseNorthing = worldpoint_near.y() + lambda * direction.y();
+
+    QMatrix4x4 m;
+    m.rotate(-vehicle.fixHeading, 0,0,1);
+
+    QVector3D relative = QVector3D( { mouseEasting, mouseNorthing, 0 } );
+    //relative.setX(relative.x() + vehicle.hitchPos.easting);
+    //relative.setY(relative.y() + vehicle.hitchPos.northing);
+    return relative;
+}
+
 void FormGPS::oglMain_Paint()
 {
     QOpenGLContext *glContext = QOpenGLContext::currentContext();

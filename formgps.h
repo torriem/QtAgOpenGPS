@@ -50,6 +50,7 @@
 class QOpenGLShaderProgram;
 class AOGRendererInSG;
 class QQuickCloseEvent;
+class QVector3D;
 
 class FormGPS : public QQmlApplicationEngine
 {
@@ -553,6 +554,7 @@ public:
     double fovy = 0.7;
     double camDistanceFactor = -2;
     int mouseX = 0, mouseY = 0;
+    double mouseEasting = 0, mouseNorthing = 0;
     int lastWidth=-1, lastHeight=-1;
     double maxFieldX, maxFieldY, minFieldX, minFieldY, fieldCenterX, fieldCenterY, maxFieldDistance;
     double offX = 0.0, offY = 0.0;
@@ -627,6 +629,8 @@ public:
     void CalcFrustum(const QMatrix4x4 &mvp);
     void calculateMinMax();
 
+    QVector3D mouseClickToField(int mouseX, int mouseY);
+    QVector3D mouseClickToPan(int mouseX, int mouseY);
 
     void SetZoom();
     void loadGLTextures();
@@ -679,6 +683,7 @@ public slots:
     void processSectionLookahead(); //called when section lookahead GL stuff is rendered
 
     void onGLControl_clicked(const QVariant &event);
+    void onGLControl_dragged(int startX, int startY, int mouseX, int mouseY);
 
     void TimedMessageBox(int timeout, QString s1, QString s2);
 
