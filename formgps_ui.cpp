@@ -187,6 +187,9 @@ void FormGPS::setupGui()
     openGLControl->setProperty("samples",settings.value("display/antiAliasSamples", 0));
     openGLControl->setMirrorVertically(true);
     connect(openGLControl,SIGNAL(clicked(QVariant)),this,SLOT(onGLControl_clicked(QVariant)));
+    connect(openGLControl,SIGNAL(dragged(int,int,int,int)),this,SLOT(onGLControl_dragged(int,int,int,int)));
+    connect(openGLControl,SIGNAL(zoomIn()),this,SLOT(onBtnZoomIn_clicked()));
+    connect(openGLControl,SIGNAL(zoomOut()),this,SLOT(onBtnZoomOut_clicked()));
 
     //TODO: save and restore these numbers from settings
     qml_root->setProperty("width",1024);
@@ -206,6 +209,19 @@ void FormGPS::setupGui()
 
 }
 
+void FormGPS::onGLControl_dragged(int pressX, int pressY, int mouseX, int mouseY)
+{
+    QVector3D from,to,offset;
+
+    from = mouseClickToPan(pressX, pressY);
+    to = mouseClickToPan(mouseX, mouseY);
+    offset = to - from;
+
+    camera.panX += offset.x();
+    camera.panY += offset.y();
+    openGLControl->update();
+}
+
 void FormGPS::onGLControl_clicked(const QVariant &event)
 {
     QObject *m = event.value<QObject *>();
@@ -216,7 +232,12 @@ void FormGPS::onGLControl_clicked(const QVariant &event)
     //Pass the click on to the rendering routine.
     //make the bottom left be 0,0
     mouseX = m->property("x").toInt();
-    mouseY = m->property("height").toInt() - m->property("y").toInt();
+    mouseY = m->property("y").toInt();
+
+    QVector3D field = mouseClickToField(mouseX, mouseY);
+    mouseEasting = field.x();
+    mouseNorthing = field.y();
+
     leftMouseDownOnOpenGL = true;
     openGLControl->update();
 }
