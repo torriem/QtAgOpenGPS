@@ -21,10 +21,12 @@ Rectangle{
                     image.source = "/images/Config/ConT_Symmetric.png"
                     configImplementSectionsZones.visible = true
                     configImplementSectionsSection.visible = false
+                    console.log("zones")
                 }else{
                     image.source ="/images/Config/ConT_Asymmetric.png"
                     configImplementSectionsZones.visible = false
                     configImplementSectionsSection.visible = true
+                    console.log("sections")
                 }
             }
             width: 180
