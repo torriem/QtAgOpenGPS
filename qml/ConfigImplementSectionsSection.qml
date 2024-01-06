@@ -1,52 +1,5 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
-/*
-Torriem Original model
-ListModel {
-    id: section_model
-}
-
-GridView {
-    id: section_width_grid
-    anchors.fill: parent //temporary
-    model: section_model
-    cellWidth: 200
-
-    delegate: Rectangle {
-        SpinBox {
-            id: spinner
-            from: 0
-            to: 300
-            editable: true
-            value: model.width
-            onValueChanged: {
-                if (value < 1) {
-                    spin_message.visible = true
-                    spin_message.text = "Prob want >0"
-                } else {
-                    spin_message.visible = false
-                }
-
-                //some validation here
-                //emit signal.  We know our section number because it's in the model
-            }
-        }
-
-        Text {
-            text: "Section " + Number(model.secNum+1).toLocaleString(Qt.locale(),"f",0)
-            anchors.bottom: spinner.top
-            anchors.left: spinner.left
-        }
-        Text {
-            id: spin_message
-            visible: false
-            text: "message"
-            color: "red"
-            anchors.top: spinner.bottom
-            anchors.left: spinner.left
-        }
-    }
-}*/
 
 Item{
     id: configImplementSectionsSection
@@ -113,8 +66,7 @@ Item{
         height: children.height
         spacing: 120
 
-        SpinBox{ //-------------this is the spinbox i tried to remove the + and - from.
-            // I did, but now I can't edit it.
+        SpinBox{
             id: middleRowSpinbox
             objectName: "sectionWidthAll"
             implicitWidth: 150

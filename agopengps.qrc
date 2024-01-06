@@ -502,9 +502,6 @@
         <file>images/Images/z_TurnCancel.png</file>
         <file>images/Images/z_TurnManual.png</file>
         <file>qml/PinButtons.qml</file>
-        <file>qml/SectionWidth.qml</file>
-        <file>qml/TextFieldCustomized.qml</file>
-        <file>qml/NumberInputWindow.qml</file>
         <file>qml/WarningWindow.qml</file>
         <file>qml/ConfigTractorDimensions.qml</file>
         <file>qml/ConfigTractorAntenna.qml</file>
@@ -518,5 +515,6 @@
         <file>qml/ConfigImplementSectionsSection.qml</file>
         <file>qml/ConfigImplementSectionsZones.qml</file>
         <file>images/textures/z_Tool.png</file>
+        <file>qml/SpinBoxCustomized.qml</file>
     </qresource>
 </RCC>

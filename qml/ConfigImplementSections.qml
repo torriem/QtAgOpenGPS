@@ -48,17 +48,17 @@ Rectangle{
                 }
             }
         }
-        SpinBox{
+        SpinBoxCustomized{
             objectName: "percentConverage"
-            from: 0
-            to: 100
-            value: 100
-            editable: true
+            fromVal: 0
+            toVal: 100
+            valueVal: 100
             anchors.bottom: parent.bottom
-            Text{
-                anchors.bottom: parent.top
-                text: "% Coverage"
-            }
+            title: "% Coverage"
+//            Text{
+//                anchors.bottom: parent.top
+//                text: "% Coverage"
+//            }
         }
         IconButton{
             objectName: "boundaryOff"
@@ -104,6 +104,7 @@ Rectangle{
         anchors.bottom: bottomRow.top
         anchors.bottomMargin: 30
         anchors.margins: 15
+        visible: false
     }
     ConfigImplementSectionsZones{
         id: configImplementSectionsZones
@@ -114,5 +115,6 @@ Rectangle{
         anchors.bottom: bottomRow.top
         anchors.bottomMargin: 30
         anchors.margins: 15
+        visible: false
     }
 }
