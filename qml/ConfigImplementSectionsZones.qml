@@ -15,11 +15,15 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: middleRow.top
+        anchors.margins: 15
         model: section_model
         cellWidth: 200
 
+
         delegate: Rectangle {
             SpinBox {
+                anchors.left: parent.right
+                implicitWidth: 150
                 id: spinner
                 from: 3
                 to: 300
@@ -41,9 +45,16 @@ Item {
                     //emit signal.  We know our section number because it's in the model
                 }
             }
+            Text{
+                text: 1+"->"
+                anchors.right: spinner.left
+                anchors.verticalCenter: spinner.verticalCenter
+                font.bold: true
+                font.pixelSize: 15
+            }
 
             Text {
-                text: "Section " + Number(model.secNum+1).toLocaleString(Qt.locale(),"f",0)
+                text: "Zone " + Number(model.secNum+1).toLocaleString(Qt.locale(),"f",0)
                 anchors.bottom: spinner.top
                 anchors.left: spinner.left
             }
@@ -57,6 +68,7 @@ Item {
             }
         }
     }
+
     Row{
         id: middleRow
         anchors.top: parent.verticalCenter
@@ -65,16 +77,34 @@ Item {
         width: children.width
         height: children.height
         spacing: 120
+        SpinBox{
+            id: numOfZones
+			anchors.verticalCenter: parent.verticalCenter
+            objectName: "numOfZones"
+            from: 1
+            value: 4
+            to: 8
+            editable: true
+            onValueChanged: function (which = value) {
+                console.warn("We got this one: " + which);
+                section_model.clear();
+				for (var i=0; i < which; i++) {
+                    console.warn("Writing new section " + i)
+                    section_model.append( { secNum: i, width: 5 } )
+                }
+            }
 
-        SpinBoxCustomized{
-            id: zonesNumber
-            objectName: "zonesNumber"
-            implicitWidth: 150
-            implicitHeight: 50
-            fromVal: 1
-            valueVal: 4
-            toVal: 8
-            title: "Zones"
+            Component.onCompleted: {
+                if (section_model.count < (value)) {
+                    for (var i=section_model.count; i < value ; i ++ ) {
+                         section_model.append( { secNum: i, width: 5 } )
+                    }
+                }
+            }
+            Text{
+                anchors.bottom: parent.top
+                text: "Zones"
+            }
         }
         SpinBoxCustomized{
             id: sectionWidthAllZones
@@ -86,32 +116,16 @@ Item {
             toVal: 300
             title: "Section Width"
         }
-        SpinBox{
-            id: numOfSections
-            objectName: "numOfSections"
-            from: 0
-            value: 40
-            to: 64
-            onValueChanged: function (which = value) {
-                console.warn("We got this one: " + which);
-                section_model.clear();
-                for (var i=0; i < which+1; i++) {
-                    console.warn("Writing new section " + i)
-                    section_model.append( { secNum: i, width: 5 } )
-                }
-            }
+        SpinBoxCustomized{
+            id: sectionsNumber
+            objectName: "sectionsNumber"
+            implicitWidth: 150
+            implicitHeight: 50
+            fromVal: 1
+            valueVal: 40
+            toVal: 60
+            title: "Sections"
 
-            Component.onCompleted: {
-                if (section_model.count < (value + 1)) {
-                    for (var i=section_model.count; i < value+1 ; i ++ ) {
-                         section_model.append( { secNum: i, width: 5 } )
-                    }
-                }
-            }
-            Text{
-                anchors.bottom: parent.top
-                text: "Sections"
-            }
         }
         Column{
             spacing: 8
