@@ -92,7 +92,7 @@ Item {
             from: 0
             value: 40
             to: 64
-            onValueChanged: function (which) {
+            onValueChanged: function (which = value) {
                 console.warn("We got this one: " + which);
                 section_model.clear();
                 for (var i=0; i < which+1; i++) {
@@ -102,8 +102,8 @@ Item {
             }
 
             Component.onCompleted: {
-                if (section_model.count < (currentIndex + 1)) {
-                    for (var i=section_model.count; i < currentIndex+1 ; i ++ ) {
+                if (section_model.count < (value + 1)) {
+                    for (var i=section_model.count; i < value+1 ; i ++ ) {
                          section_model.append( { secNum: i, width: 5 } )
                     }
                 }
