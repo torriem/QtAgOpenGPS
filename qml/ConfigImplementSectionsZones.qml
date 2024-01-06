@@ -86,10 +86,13 @@ Item {
             toVal: 300
             title: "Section Width"
         }
-        ComboBox{
+        SpinBox{
             id: numOfSections
             objectName: "numOfSections"
-            onActivated: function (which) {
+            from: 0
+            value: 40
+            to: 64
+            onValueChanged: function (which) {
                 console.warn("We got this one: " + which);
                 section_model.clear();
                 for (var i=0; i < which+1; i++) {
@@ -105,26 +108,6 @@ Item {
                     }
                 }
             }
-            model: ListModel{
-                ListElement {text: "1"}
-                ListElement {text: "2"}
-                ListElement {text: "3"}
-                ListElement {text: "4"}
-                ListElement {text: "5"}
-                ListElement {text: "6"}
-                ListElement {text: "7"}
-                ListElement {text: "8"}
-                ListElement {text: "9"}
-                ListElement {text: "10"}
-                ListElement{text: "11"}
-                ListElement{text: "12"}
-                ListElement{text: "13"}
-                ListElement{text: "14"}
-                ListElement{text: "15"}
-                ListElement{text: "16"}
-            }
-            implicitHeight:60
-            implicitWidth: 90
             Text{
                 anchors.bottom: parent.top
                 text: "Sections"

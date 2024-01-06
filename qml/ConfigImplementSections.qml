@@ -104,7 +104,7 @@ Rectangle{
         anchors.bottom: bottomRow.top
         anchors.bottomMargin: 30
         anchors.margins: 15
-        visible: false
+        visible: true
     }
     ConfigImplementSectionsZones{
         id: configImplementSectionsZones
