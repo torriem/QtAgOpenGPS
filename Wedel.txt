@@ -1,7 +1,5 @@
 My own notes.
 
-Really should wrap the main window area in a mouseclicked area, to stop phantom clicks from carrying through from the config pages.
-
 Need to finish the tractor steer config page sometime
 
 min gps step
@@ -9,18 +7,8 @@ dual
 reverse det
 remove icon on those 3 but use iconbuttoncolor if possible
 
-set work switch section control buttons correctly
-
 add sliders to steer config page(dependant upon the buttons above them)
 
-need to rework the vehicle/field/line picker.
-right now they're coded to /home/[my user]/Documents/QtAgOpenGPS/etc., so they will only work on my computer.
-using ~/Documents/QtAgOpenGPS/etc does not work
-
-Need to change the AB Line/curve(later) editors. 
-Right now they are linked to the AB Line button.
-So you turn off the AB Line when you open the window to pick which line you want. 
-They need to open if the AB Line is active, and the line button is clicked
 
 And need to catch up the UI to Brian's latest.
 
@@ -29,7 +17,6 @@ And add AgIO
 Really need to figure out how to change icons to grayscale, when they aren't needed/wanted
 That is done in the Colorize section of the button file.
 
-I also haven't figured out how to solve the "ReferenceError:etc." warning
 
 Need to set steerconfigwindow/line editor to their own windows, so we can move them around on the screen, instead of being anchored to one spot
 

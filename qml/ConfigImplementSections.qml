@@ -73,12 +73,11 @@ Rectangle{
             colorChecked2: "green"
             colorChecked3: "green"
         }
-        SpinBox{
+        SpinBoxOneDigit{
             objectName: "speedBelowSectionOff"
-            from: 0
-            to: 30
-            value: 0
-            editable: true
+            fromVal: 0.0
+            toVal: 30
+            valueVal: 0.3
             anchors.bottom: parent.bottom
             Image{
                 anchors.bottom: parent.top

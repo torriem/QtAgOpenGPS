@@ -516,5 +516,6 @@
         <file>qml/ConfigImplementSectionsZones.qml</file>
         <file>images/textures/z_Tool.png</file>
         <file>qml/SpinBoxCustomized.qml</file>
+        <file>qml/SpinBoxOneDigit.qml</file>
     </qresource>
 </RCC>

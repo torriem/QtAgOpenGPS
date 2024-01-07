@@ -6,7 +6,8 @@ Item {
     property int fromVal: 0
     property int valueVal: 1
     property int toVal: 10
-    property string title: "Hello"
+    property string title: ""
+	property int stepSize: 1
     width: spinner.width
     height: 100
 
@@ -16,6 +17,7 @@ Item {
         to: spinBox_Customized.toVal
         editable: true
         value: valueVal
+		stepSize: spinBox_Customized.stepSize
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
