@@ -498,18 +498,14 @@ Item {
                     isChecked: false
                     buttonText: "Invert Relays"
                 }
-                SpinBox{
-                    Text{
-                        anchors.bottom: parent.top
-                        font.pixelSize: 10
-                        text: "Panic Stop"
-                    }
+                SpinBoxOneDecimal{
+                    text: "Panic Stop"
                     implicitWidth: 120
                     implicitHeight: 65
-                        from: 0
-                        value: 0
-                        to: 10
-                        editable: true
+                    from: 0
+                    value: 0
+                    to: 10
+                    editable: true
                 }
             }
             ColumnLayout{

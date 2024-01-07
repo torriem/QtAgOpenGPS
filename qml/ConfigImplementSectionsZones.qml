@@ -111,20 +111,20 @@ Item {
             objectName: "sectionWidthAllZones"
             implicitWidth: 150
             implicitHeight: 50
-            fromVal: 1
-            valueVal: 240
-            toVal: 300
-            title: "Section Width"
+            from: 1
+            value: 240
+            to: 300
+            text: "Section Width"
         }
         SpinBoxCustomized{
             id: sectionsNumber
             objectName: "sectionsNumber"
             implicitWidth: 150
             implicitHeight: 50
-            fromVal: 1
-            valueVal: 40
-            toVal: 60
-            title: "Sections"
+            from: 1
+            value: 40
+            to: 60
+            text: "Sections"
 
         }
         Column{

@@ -66,21 +66,16 @@ Item{
         height: children.height
         spacing: 120
 
-        SpinBox{
+        SpinBoxCustomized{
             id: middleRowSpinbox
             objectName: "sectionWidthAll"
             implicitWidth: 150
             implicitHeight: 50
-
             from: 1
             value: 240
             to: 300
             editable: true
-
-            Text{
-                anchors.bottom: parent.top
-                text: "Section Width"
-            }
+            text: "Section Width"
         }
         ComboBox{
             id: numOfSections

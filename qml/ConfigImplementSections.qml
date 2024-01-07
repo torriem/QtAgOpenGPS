@@ -50,11 +50,11 @@ Rectangle{
         }
         SpinBoxCustomized{
             objectName: "percentConverage"
-            fromVal: 0
-            toVal: 100
-            valueVal: 100
+            from: 0
+            to: 100
+            value: 100
             anchors.bottom: parent.bottom
-            title: "% Coverage"
+            text: "% Coverage"
 //            Text{
 //                anchors.bottom: parent.top
 //                text: "% Coverage"
@@ -73,11 +73,11 @@ Rectangle{
             colorChecked2: "green"
             colorChecked3: "green"
         }
-        SpinBoxOneDigit{
+        SpinBoxOneDecimal{
             objectName: "speedBelowSectionOff"
-            fromVal: 0.0
-            toVal: 30
-            valueVal: 0.3
+            from: 0.0
+            to: 30
+            value: 0.3
             anchors.bottom: parent.bottom
             Image{
                 anchors.bottom: parent.top

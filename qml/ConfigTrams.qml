@@ -15,29 +15,25 @@ Item {
             width: 200
             height: 200
         }
-        SpinBox{
+        SpinBoxCustomized{
             id: tramWidth
             anchors.verticalCenter: imageTram.verticalCenter
             anchors.left: parent.horizontalCenter
             anchors.margins: 3
             editable: true
-            Text{
-                anchors.bottom: parent.top
-                anchors.horizontalCenter:parent.horizontalCenter
-                text: qsTr("Tram Width")
-            }
+            text: qsTr("Tram Width")
             Text{
                 anchors.left: parent.right
                 anchors.verticalCenter: parent.verticalCenter
             }
         }
-            IconButtonColor{
+        IconButtonColor{
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 100
             width: 200
             height: 200
-                icon: "/images/Config/ConT_TramOverride.png"
+            icon: "/images/Config/ConT_TramOverride.png"
         }
     }
 }

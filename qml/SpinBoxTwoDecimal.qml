@@ -15,22 +15,23 @@ import QtQuick.Controls 2.5
 
 Item {
     id: spinBox_singledigit
-    property double fromVal: 0
-    property double valueVal: 1
-    property double toVal: 10 * 10
-    property string title: ""
+    property double from: 0
+    property double value: 1
+    property double to: 10 * 100
+    property string text: ""
 	property int stepSize: 1
-	property int decimals: 1
+    property int decimals: 2
+    property bool editable: true
     width: spinner.width
     height: 100
-	property real realValue: valueVal / 10
+    property real realValue: value / 100
 
     SpinBox {
         id: spinner
-        from: spinBox_singledigit.fromVal * 10
-        to: spinBox_singledigit.toVal *10
-        editable: true
-        value: valueVal
+        from: spinBox_singledigit.from * 100
+        to: spinBox_singledigit.to *100
+        editable: spinBox_singledigit.editable
+        value: value
 		stepSize: spinBox_singledigit.stepSize
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
@@ -51,16 +52,16 @@ Item {
             //emit signal.  We know our section number because it's in the model
 		}
 		textFromValue: function(value, locale) {
-			return Number(value / 10).toLocaleString(locale, 'f', spinner.decimals)
+            return Number(value / 100).toLocaleString(locale, 'f', spinner.decimals)
 		}
 
 		valueFromText: function(text, locale) {
-			return Number.fromLocaleString(locale, text) * 10
+            return Number.fromLocaleString(locale, text) * 100
 		}
 	}
 
 	Text {
-        text: spinBox_singledigit.title
+        text: spinBox_singledigit.text
         anchors.bottom: spinner.top
         anchors.left: spinner.left
     }

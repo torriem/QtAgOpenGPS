@@ -99,27 +99,15 @@ Item {
                 objectName: "btnTramPassesDown"
                 icon.source: "/images/DnArrow64.png"
             }
-            Rectangle{
+            SpinBoxCustomized{
                 id: passesRow
                 width: tramPassesDown.width
                 height: tramPassesDown.height
-                color: "lightgray"
-                border.color: "darkgray"
-                border.width: 1
-                Text {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottom: parent.top
-                    font.bold: true
-                    font.pixelSize: 15
-                    text: qsTr("Passes")
-                }
-                TextInput{
                     objectName: "tramPasses"
-                    anchors.fill: parent
-                    validator: RegExpValidator {
-                        regExp: /(\d{1,3})?$/
-                    }
-                }
+                    text: qsTr("Passes")
+                    from: 1
+                    value: 1
+                    to: 999
             }
             IconButtonTransparent{
                 objectName: "btnTramPassesUp"

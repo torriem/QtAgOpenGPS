@@ -28,7 +28,7 @@ Rectangle{
             anchors.top: lightbartitletxt.bottom
             anchors.bottom: parent.bottom
             width: parent.width*.5
-            SpinBox{
+            SpinBoxCustomized{
                 id: lightbarSetting
                 anchors.top: parent.top
                 anchors.topMargin: 25
@@ -39,12 +39,7 @@ Rectangle{
                 value: 1
                 to: 15
                 editable: true
-                Text {
-                    text: qsTr("in  /  pixel")
-                    anchors.top:parent.bottom
-                    anchors.topMargin: 10
-                    anchors.left: parent.left
-                }
+                text: qsTr("in  /  pixel")
             }
         }
     }
@@ -70,7 +65,7 @@ Rectangle{
             anchors.top: linelengthtitletxt.bottom
             anchors.bottom: parent.bottom
             width: parent.width*.5
-            SpinBox{
+            SpinBoxCustomized{
                 id: linelengthSetting
                 anchors.top: parent.top
                 anchors.topMargin: 25
@@ -80,13 +75,7 @@ Rectangle{
                 from: 656
                 value: 5249
                 to: 16400
-                editable: true
-                Text {
-                    text: qsTr("ft")
-                    anchors.top:parent.bottom
-                    anchors.topMargin: 10
-                    anchors.left: parent.left
-                }
+                text: qsTr("ft")
             }
         }
     }
@@ -156,7 +145,7 @@ Recording")
             anchors.top: linewidthtitletxt.bottom
             anchors.bottom: parent.bottom
             width: parent.width*.5
-            SpinBox{
+            SpinBoxCustomized{
                 id: linewidthSetting
                 anchors.top: parent.top
                 anchors.topMargin: 25
@@ -166,13 +155,7 @@ Recording")
                 from: 1
                 value: 2
                 to: 8
-                editable: true
-                Text {
-                    text: qsTr("pixels")
-                    anchors.top:parent.bottom
-                    anchors.topMargin: 10
-                    anchors.left: parent.left
-                }
+                text: qsTr("pixels")
             }
         }
     }
@@ -198,7 +181,7 @@ Recording")
             anchors.top: nudgedisttitletxt.bottom
             anchors.bottom: parent.bottom
             width: parent.width*.5
-            SpinBox{
+            SpinBoxOneDecimal{
                 id: nudgedistSetting
                 anchors.top: parent.top
                 anchors.topMargin: 25
@@ -209,12 +192,7 @@ Recording")
                 value: 3
                 to: 155
                 editable: true
-                Text {
                     text: qsTr("in")
-                    anchors.top:parent.bottom
-                    anchors.topMargin: 10
-                    anchors.left: parent.left
-                }
             }
         }
     }
@@ -240,7 +218,7 @@ Recording")
             anchors.top: lineacqLAheadtitletxt.bottom
             anchors.bottom: parent.bottom
             width: parent.width*.5
-            SpinBox{
+            SpinBoxOneDecimal{
                 id: lineacqLAheadSetting
                 anchors.top: parent.top
                 anchors.topMargin: 25
@@ -250,13 +228,7 @@ Recording")
                 from: 0
                 value: 1
                 to: 10
-                editable: true
-                Text {
-                    text: qsTr("Seconds")
-                    anchors.top:parent.bottom
-                    anchors.topMargin: 10
-                    anchors.left: parent.left
-                }
+                text: qsTr("Seconds")
             }
         }
     }
