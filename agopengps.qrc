@@ -519,5 +519,8 @@
         <file>qml/ConfigImplementSectionsZones.qml</file>
         <file>images/textures/z_Tool.png</file>
         <file>qml/TimedMessage.qml</file>
+        <file>qml/Compass.qml</file>
+        <file>qml/SteerCircle.qml</file>
+        <file>qml/Speedometer.qml</file>
     </qresource>
 </RCC>
