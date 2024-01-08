@@ -525,8 +525,12 @@ void FormGPS::onBtnManUTurnRight_clicked()
 
 void FormGPS::TimedMessageBox(int timeout, QString s1, QString s2)
 {
-    qDebug() << s1 << ", " << s2 << Qt::endl;
+    qDebug() << "Timed message " << timeout << s1 << ", " << s2 << Qt::endl;
     //TODO ask QML to display a message
+    QObject *temp = qmlItem(qml_root, "timedMessage");
+    qDebug() << temp;
+
+    QMetaObject::invokeMethod(temp, "addMessage", Q_ARG(int, timeout), Q_ARG(QString, s1), Q_ARG(QString, s2));
 }
 
 void FormGPS::turnOffBoundAlarm()
