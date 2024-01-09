@@ -1236,14 +1236,6 @@ Window {
                 width:1024
                 visible:false
             }
-            WarningWindow{
-                id: warningWindow
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.top
-                anchors.topMargin: 20
-                visible: false
-            }
-
             Rectangle{
                 id: recordButtons
                 anchors.bottom: bottomButtons.top
