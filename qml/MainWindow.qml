@@ -1152,8 +1152,8 @@ Window {
                 objectName: "steerConfigWindow"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                height: 768
-                width:1024
+                height: 500
+                width:400
                 visible:false
             }
             ABCurvePicker{

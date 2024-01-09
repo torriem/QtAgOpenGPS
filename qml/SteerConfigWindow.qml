@@ -334,6 +334,14 @@ Item {
             anchors.left: tabButtons.left
             width: tabButtons.width
             height: 30
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                steerConfigWindow.height = 768
+                steerConfigWindow.width=1024
+                }
+            }
+
             Text {
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
