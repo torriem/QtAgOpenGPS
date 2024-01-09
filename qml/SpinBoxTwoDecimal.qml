@@ -40,10 +40,10 @@ Item {
         onValueChanged: {
             if (value == spinner.from) {
                 spin_message.visible = true
-                spin_message.text = "Must be "+spinner.from+" or greater"
+                spin_message.text = "Must be "+spinner.from /100+" or greater"
             } else if(value == spinner.to){
                 spin_message.visible = true
-                spin_message.text = "Can't be larger than " + spinner.to
+                spin_message.text = "Can't be larger than " + spinner.to/100
             }else {
                 spin_message.visible = false
             }

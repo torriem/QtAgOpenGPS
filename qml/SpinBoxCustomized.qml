@@ -25,7 +25,7 @@ Item {
         onValueChanged: {
             if (value == spinBox_Customized.from) {
                 spin_message.visible = true
-                spin_message.text = "Must be "+spinBox_Customized.fromVal+" or greater"
+                spin_message.text = "Must be "+from+" or greater"
             } else if(value == spinBox_Customized.to){
                 spin_message.visible = true
                 spin_message.text = "Can't be larger than " + to

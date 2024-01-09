@@ -2,8 +2,9 @@ I'll put my branch notes/changes here.
 
 Zones page UI done. Need to clean up once the backend is present.
 
-Added customized SpinBox es with warning, and another one with single decimal point...Have a little work left on that one.
+Added customized SpinBox es with warning, and another one with single decimal point, and a double decimal point
 
+Got all the spinboxes switched over
 
 These are dead ends I ran into...
 
