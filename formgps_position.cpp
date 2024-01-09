@@ -743,9 +743,9 @@ void FormGPS::UpdateFixPosition()
                 {
                     onStopAutoSteer();
                     if (isMetric)
-                        TimedMessageBox(3000, tr("AutoSteer Disabled"), tr("Below Minimum Safe Steering Speed: ") + locale.toString(vehicle.maxSteerSpeed, 'g', 1) + tr(" Kmh"));
+                        TimedMessageBox(3000, tr("AutoSteer Disabled"), tr("Below Minimum Safe Steering Speed: ") + locale.toString(vehicle.minSteerSpeed, 'g', 1) + tr(" Kmh"));
                     else
-                        TimedMessageBox(3000, tr("AutoSteer Disabled"), tr("Below Minimum Safe Steering Speed: ") + locale.toString(vehicle.maxSteerSpeed * 0.621371, 'g', 1) + tr(" MPH"));
+                        TimedMessageBox(3000, tr("AutoSteer Disabled"), tr("Below Minimum Safe Steering Speed: ") + locale.toString(vehicle.minSteerSpeed * 0.621371, 'g', 1) + tr(" MPH"));
                 }
             }
             else

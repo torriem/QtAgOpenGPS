@@ -87,6 +87,8 @@ void FormGPS::loadSettings()
     isSideGuideLines = property_setMenu_isSideGuideLines;
     isSvennArrowOn = property_setDisplay_isSvennArrowOn;
 
+    lightbarCmPerPixel = property_setDisplay_lightbarCmPerPixel;
+
     //isLogNMEA = property_setMenu_isLogNMEA;
     isPureDisplayOn = property_setMenu_isPureOn;
 

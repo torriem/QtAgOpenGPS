@@ -184,7 +184,7 @@ void FormGPS::setupGui()
     openGLControl->setProperty("initCallback",QVariant::fromValue((void *) &FormGPS::openGLControl_Initialized));
     openGLControl->setProperty("paintCallback",QVariant::fromValue((void *) &FormGPS::oglMain_Paint));
 
-    openGLControl->setProperty("samples",settings.value("display/antiAliasSamples", 0));
+    openGLControl->setProperty("samples",settings->value("display/antiAliasSamples", 0));
     openGLControl->setMirrorVertically(true);
     connect(openGLControl,SIGNAL(clicked(QVariant)),this,SLOT(onGLControl_clicked(QVariant)));
     connect(openGLControl,SIGNAL(dragged(int,int,int,int)),this,SLOT(onGLControl_dragged(int,int,int,int)));
@@ -297,7 +297,7 @@ void FormGPS::onBtnYouSkip_clicked(){
 
 void FormGPS::onBtnAreaSide_clicked() {
     isAreaOnRight = !isAreaOnRight;
-    settings.setValue("vehicle/isAreaOnRight", isAreaOnRight);
+    settings->setValue("vehicle/isAreaOnRight", isAreaOnRight);
     contextArea->setProperty("visible",false);
     //vehicle->settingsChanged();
 }

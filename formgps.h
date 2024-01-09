@@ -25,7 +25,6 @@
 #include "cmodulecomm.h"
 #include "ccamera.h"
 #include "btnenum.h"
-#include "aogsettings.h"
 
 #include "cworldgrid.h"
 #include "cnmea.h"
@@ -115,8 +114,6 @@ public:
     QObject *sectionButton[MAXSECTIONS-1]; //zero based array
 
     QObject *txtDistanceOffABLine;
-
-    AOGSettings settings;
 
     //offscreen GL objects:
     QSurfaceFormat backSurfaceFormat;
