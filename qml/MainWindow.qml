@@ -1185,9 +1185,9 @@ Window {
                 objectName: "steerConfigWindow"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                height: 500
-                width:400
                 visible:false
+                height: 600
+                width:450
             }
             ABCurvePicker{
                 id: abCurvePicker
