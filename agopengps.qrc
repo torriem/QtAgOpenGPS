@@ -522,5 +522,6 @@
         <file>qml/Compass.qml</file>
         <file>qml/SteerCircle.qml</file>
         <file>qml/Speedometer.qml</file>
+        <file>qml/AOGInterface.qml</file>
     </qresource>
 </RCC>
