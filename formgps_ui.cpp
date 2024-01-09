@@ -184,7 +184,7 @@ void FormGPS::setupGui()
     openGLControl->setProperty("initCallback",QVariant::fromValue((void *) &FormGPS::openGLControl_Initialized));
     openGLControl->setProperty("paintCallback",QVariant::fromValue((void *) &FormGPS::oglMain_Paint));
 
-    openGLControl->setProperty("samples",settings.value("display/antiAliasSamples", 0));
+    openGLControl->setProperty("samples",settings->value("display/antiAliasSamples", 0));
     openGLControl->setMirrorVertically(true);
     connect(openGLControl,SIGNAL(clicked(QVariant)),this,SLOT(onGLControl_clicked(QVariant)));
     connect(openGLControl,SIGNAL(dragged(int,int,int,int)),this,SLOT(onGLControl_dragged(int,int,int,int)));
@@ -297,7 +297,7 @@ void FormGPS::onBtnYouSkip_clicked(){
 
 void FormGPS::onBtnAreaSide_clicked() {
     isAreaOnRight = !isAreaOnRight;
-    settings.setValue("vehicle/isAreaOnRight", isAreaOnRight);
+    settings->setValue("vehicle/isAreaOnRight", isAreaOnRight);
     contextArea->setProperty("visible",false);
     //vehicle->settingsChanged();
 }
@@ -525,8 +525,12 @@ void FormGPS::onBtnManUTurnRight_clicked()
 
 void FormGPS::TimedMessageBox(int timeout, QString s1, QString s2)
 {
-    qDebug() << s1 << ", " << s2 << Qt::endl;
+    qDebug() << "Timed message " << timeout << s1 << ", " << s2 << Qt::endl;
     //TODO ask QML to display a message
+    QObject *temp = qmlItem(qml_root, "timedMessage");
+    qDebug() << temp;
+
+    QMetaObject::invokeMethod(temp, "addMessage", Q_ARG(int, timeout), Q_ARG(QString, s1), Q_ARG(QString, s2));
 }
 
 void FormGPS::turnOffBoundAlarm()

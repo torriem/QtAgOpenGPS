@@ -49,8 +49,6 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
     property_setTool_toolTrailingHitchLength = -4.572;
     property_setVehicle_minTurningRadius = 8;
     property_setVehicle_maxSteerAngle = 30;
-    settings.setValue("test/test", "My test.");
-    settings.sync();
 
     setupGui();
     loadSettings();

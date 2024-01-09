@@ -29,6 +29,12 @@ Window {
     //height:600
     //anchors.fill: parent
 
+    TimedMessage {
+        //This is a popup message that dismisses itself after a timeout
+        id: timedMessage
+        objectName: "timedMessage"
+    }
+
     SystemPalette {
         id: systemPalette
         colorGroup: SystemPalette.Active
@@ -81,14 +87,41 @@ Window {
         anchors.bottom:  statusBar.top
 
         signal clicked(var mouse)
+        signal dragged(int fromX, int fromY, int toX, int toY)
+        signal zoomOut()
+        signal zoomIn()
 
         MouseArea {
             id: mainMouseArea
             anchors.fill: parent
 
+            property int fromX: 0
+            property int fromY: 0
+
             onClicked: {
                 parent.clicked(mouse);
             }
+
+            onPressed: {
+                //save a copy of the coordinates
+                fromX = mouseX
+                fromY = mouseY
+            }
+
+            onPositionChanged: {
+                parent.dragged(fromX, fromY, mouseX, mouseY)
+                fromX = mouseX
+                fromY = mouseY
+            }
+
+            onWheel: {
+                if (wheel.angleDelta.y > 0) {
+                    parent.zoomIn()
+                } else if (wheel.angleDelta.y <0 ) {
+                    parent.zoomOut()
+                }
+            }
+
         }
 
         //----------------------------------------------------------------------------------------left column

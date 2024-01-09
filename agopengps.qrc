@@ -515,8 +515,13 @@
         <file>qml/ConfigImplementSectionsSection.qml</file>
         <file>qml/ConfigImplementSectionsZones.qml</file>
         <file>images/textures/z_Tool.png</file>
+        <file>qml/TimedMessage.qml</file>
         <file>qml/SpinBoxCustomized.qml</file>
         <file>qml/SpinBoxOneDecimal.qml</file>
         <file>qml/SpinBoxTwoDecimal.qml</file>
+        <file>qml/Compass.qml</file>
+        <file>qml/SteerCircle.qml</file>
+        <file>qml/Speedometer.qml</file>
+        <file>qml/AOGInterface.qml</file>
     </qresource>
 </RCC>
