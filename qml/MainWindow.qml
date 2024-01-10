@@ -29,6 +29,8 @@ Window {
     //height:600
     //anchors.fill: parent
 
+    //there's a global "settings" property now.  In qmlscene we'll have to fake it somehow.
+
     TimedMessage {
         //This is a popup message that dismisses itself after a timeout
         id: timedMessage

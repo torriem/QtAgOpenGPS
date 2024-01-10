@@ -5,23 +5,18 @@
 #include "formgps.h"
 #include "qmlutil.h"
 #include <QTimer>
-#include "cnmea.h"
 #include "cvehicle.h"
-#include "csection.h"
 #include "ccontour.h"
 #include "cabline.h"
 #include "aogproperty.h"
-
 #include <QGuiApplication>
 #include <QQmlEngine>
-
-//#include <QtGui/private/qguiapplication_p.h>
-//#include <QtGui/qpa/qplatformintegration.h>
-//hello
-
 #include <functional>
 #include <assert.h>
 #include "aogrenderer.h"
+#include "qmlsettings.h"
+
+extern QMLSettings qml_settings;
 
 void FormGPS::setupGui()
 {
@@ -31,6 +26,8 @@ void FormGPS::setupGui()
     //Load the QML into a view
     rootContext()->setContextProperty("screenPixelDensity",QGuiApplication::primaryScreen()->physicalDotsPerInch() * QGuiApplication::primaryScreen()->devicePixelRatio());
     rootContext()->setContextProperty("mainForm", this);
+    rootContext()->setContextProperty("settings", &qml_settings);
+
     load(QUrl("qrc:/qml/MainWindow.qml"));
     //setColor(Qt::transparent);
 
@@ -528,8 +525,6 @@ void FormGPS::TimedMessageBox(int timeout, QString s1, QString s2)
     qDebug() << "Timed message " << timeout << s1 << ", " << s2 << Qt::endl;
     //TODO ask QML to display a message
     QObject *temp = qmlItem(qml_root, "timedMessage");
-    qDebug() << temp;
-
     QMetaObject::invokeMethod(temp, "addMessage", Q_ARG(int, timeout), Q_ARG(QString, s1), Q_ARG(QString, s2));
 }
 

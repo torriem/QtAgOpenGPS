@@ -8,13 +8,18 @@
 #include <QLocale>
 #include <QLabel>
 #include <QQuickWindow>
+#include "qmlsettings.h"
 
 extern QLabel *grnPixelsWindow;
+extern QMLSettings qml_settings;
 
 FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
 {
     connect_classes(); //make all the inter-class connections
-    /* test data to see if drawing routines are working. */
+    qml_settings.setupKeys();
+    qml_settings.loadSettings();  //fetch everything from QSettings for QML to use
+
+    /* Temporary test data to see if drawing routines are working. */
 
     //fieldColor = QColor(s.value("display/fieldColor", "#82781E").toString());
     //sectionColor = QColor(s.value("display/sectionColor", "#32DCC8").toString());

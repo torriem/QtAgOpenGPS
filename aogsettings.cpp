@@ -9,6 +9,9 @@
 #include <QJsonDocument>
 #include <QDataStream>
 #include <QFile>
+#include "qmlsettings.h"
+
+extern QMLSettings qml_settings;
 
 QVariant AOGSettings::value(const QString &key, const QVariant &defaultvalue)
 {
@@ -34,13 +37,19 @@ QVector<int> AOGSettings::value(const QString &key, const QVector<int> &defaultv
     return toVector<int>(val);
 }
 
-
 void AOGSettings::setValue(const QString &key, const QVector<int> &value_list)
 {
     QSettings::setValue(key,toVariant(value_list));
+    qml_settings.updateSetting(key);
 }
 
 void AOGSettings::setValue(const QString &key, const QVariant &value)
+{
+    QSettings::setValue(key,value);
+    qml_settings.updateSetting(key);
+}
+
+void AOGSettings::setValue_noqml(const QString &key, const QVariant &value)
 {
     QSettings::setValue(key,value);
 }

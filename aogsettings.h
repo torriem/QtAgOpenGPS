@@ -20,6 +20,10 @@ public:
     void setValue(const QString &key, const QVector<int> &value_list);
     void setValue(const QString &key, const QVariant &value);
 
+    //special method for QMLSettings to call, which won't call back to
+    //QMLSettings which would be a loop
+    void setValue_noqml(const QString &key, const QVariant &value);
+
     QJsonObject toJson();
     bool saveJson(QString filename);
     bool loadJson(QString filename);

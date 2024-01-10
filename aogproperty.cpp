@@ -1,6 +1,5 @@
 #include "aogsettings.h"
 #include "aogproperty.h"
-#include "propdefs.h"
 
 //AOGSettings settings;
 
