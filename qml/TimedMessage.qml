@@ -21,6 +21,8 @@ Popup {
     y: parent.height * 0.25
     modal: false
 
+    property int fontsize: 14
+
     id: timedMessage
 
     Rectangle {
@@ -52,11 +54,13 @@ Popup {
                             id: textTitle
                             width: 450
                             font.bold: true
+                            font.pointSize: timedMessage.fontsize + 2
                             text: "(" + Number(model.timeout / 1000).toLocaleString(Qt.locale(),'f',0) + ") " + model.title
                         }
                         Text {
                             id: textMessage
                             width: 450
+                            font.pointSize: timedMessage.fontsize
                             anchors.top: textTitle.bottom
                             wrapMode: Text.WordWrap
 
