@@ -6,19 +6,6 @@ import QtQuick.Layouts 1.3
 import AgOpenGPS 1.0
 
 Window {
-    function warningWindowJS(text){
-        warningWindow.visible = true;
-        warningWindow.text = text;
-        console.log("Warning sent to screen ", text);
-     /*   timer = new Timer();
-        timer.interval = 1000;
-        timer.repeat = false;
-        timer.triggered.connect(function () {
-            warningWindow.visible = false;
-            console.log("triggered");
-        })
-        timer.start();*/
-    }
 
     //We draw native opengl to this root object
     id: mainWindow

@@ -502,7 +502,6 @@
         <file>images/Images/z_TurnCancel.png</file>
         <file>images/Images/z_TurnManual.png</file>
         <file>qml/PinButtons.qml</file>
-        <file>qml/WarningWindow.qml</file>
         <file>qml/ConfigTractorDimensions.qml</file>
         <file>qml/ConfigTractorAntenna.qml</file>
         <file>qml/ConfigTractorSteerSettings.qml</file>

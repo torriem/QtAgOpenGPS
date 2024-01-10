@@ -6,6 +6,8 @@ Added customized SpinBox es with warning, and another one with single decimal po
 
 Got all the spinboxes switched over
 
+Steer config window more like aog.
+
 These are dead ends I ran into...
 
 Need to set steerconfigwindow/line editor to their own windows, so we can move them around on the screen, instead of being anchored to one spot
