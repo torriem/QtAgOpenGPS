@@ -213,7 +213,6 @@ Window {
                         height: parent.height
                         width: 75
                         icon.source: "/images/Help.png"
-                        onClicked: warningWindowJS("yo")
                     }
                     IconButtonTransparent{
                         objectName: "btnWindowMinimize"
