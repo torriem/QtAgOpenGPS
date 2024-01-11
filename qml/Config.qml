@@ -5,15 +5,15 @@ import QtQuick.Extras 1.4
 import Qt.labs.folderlistmodel 2.2
 
 Item {
-		height: 768
-		width:1024
-	function closeAllConfig(){
-		configWhichVehicle.visible = false
-		configTractor.visible = false
-		configTractorAntenna.visible = false
-		configTractorDimensions.visible = false
-		configTractorSteerSettings.visible = false
-		configImplement.visible = false
+    height: 768
+    width:1024
+    function closeAllConfig(){
+        configWhichVehicle.visible = false
+        configTractor.visible = false
+        configTractorAntenna.visible = false
+        configTractorDimensions.visible = false
+        configTractorSteerSettings.visible = false
+        configImplement.visible = false
         configImplementDimensions.visible = false
         configImplementSections.visible = false
         configImplementSwitches.visible = false

@@ -43,48 +43,35 @@ import QtQuick.Controls 2.5
                     width: 170
                     icon: "/images/SwitchOn.png"
                 }
-                SpinBox{
+                SpinBoxCustomized{
                     id: raiseTime
                     from:1
                     value: 2
                     to: 255
                     editable: true
-                    Text{
-                        anchors.bottom: parent.top
-                        anchors.right: parent.right
-                        text: qsTr("Raise Time(secs)")
-                    }
+                    text: qsTr("Raise Time(secs)")
                 }
                 Image{
                     source: "/images/Config/ConMa_LiftRaiseTime"
                     width: 200
                     height: 200
                 }
-                SpinBox{
+                SpinBoxOneDecimal{
                     id: liftLookAhead
                     from:1
                     value: 2
                     to: 20
                     editable: true
-                    Text{
-                        anchors.bottom: parent.top
-                        anchors.right: parent.right
-                        text: qsTr("Hydraulic Lift Look Ahead
+                    text: qsTr("Hydraulic Lift Look Ahead
 (secs)")
-                        width: parent.width
-                    }
                 }
-                SpinBox{
+                SpinBoxCustomized{
                     id: lowerTime
                     from:1
                     value: 5
                     to: 255
                     editable: true
-                    Text{
-                        anchors.bottom: parent.top
-                        anchors.right: parent.right
-                        text: qsTr("Lower Time(secs)")
-                    }
+                    text: qsTr("Lower Time(secs)")
                 }
                 Image{
                     source: "/images/Config/ConMa_LiftLowerTime"
@@ -112,53 +99,37 @@ import QtQuick.Controls 2.5
                 height: children.height
                 spacing: 40
                 anchors.horizontalCenter: parent.horizontalCenter
-                SpinBox{
+                SpinBoxCustomized{
                     id: user1
                     from: 0
                     value: 1
                     to: 255
                     editable: true
-                    Text{
-                        anchors.bottom: parent.top
-                        anchors.right: parent.right
-                        text: qsTr("User 1")
-                    }
+                    text: qsTr("User 1")
                 }
-                SpinBox{
+                SpinBoxCustomized{
                     id: user2
                     from: 0
                     value: 2
                     to: 255
                     editable: true
-                    Text{
-                        anchors.bottom: parent.top
-                        anchors.right: parent.right
-                        text: qsTr("User 2")
-                    }
+                    text: qsTr("User 2")
                 }
-                SpinBox{
+                SpinBoxCustomized{
                     id: user3
                     from: 0
                     value: 3
                     to: 255
                     editable: true
-                    Text{
-                        anchors.bottom: parent.top
-                        anchors.right: parent.right
-                        text: qsTr("User 3")
-                    }
+                    text: qsTr("User 3")
                 }
-                SpinBox{
+                SpinBoxCustomized{
                     id: user4
                     from: 0
                     value: 4
                     to: 255
                     editable: true
-                    Text{
-                        anchors.bottom: parent.top
-                        anchors.right: parent.right
-                        text: qsTr("User 4")
-                    }
+                    text: qsTr("User 4")
                 }
             }
             IconButtonTransparent{

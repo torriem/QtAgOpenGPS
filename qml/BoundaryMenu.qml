@@ -371,28 +371,17 @@ Item {
             color: "lightgray"
             border.color: "aqua"
             border.width: 2
-            Rectangle{
+            SpinBoxCustomized{
                 height: 50
                 anchors.left: parent.left
                 anchors.right: side2Record.left
                 anchors.top: recordBoundaryWindow.top
                 anchors.margins: 5
-                color: "white"
-                border.color: "gray"
-                border.width: 1
-                TextInput {
-                    objectName: "boundaryRecordOffset"
-                    anchors.fill: parent
-                    validator: RegExpValidator {
-                        regExp: /(\d{1,4})/
-                    }
-                }
-                Text{
-                    anchors.top: parent.bottom
-                    anchors.left: parent.left
-                    text: "Centimeter"
-                    font.bold: true
-                }
+                objectName: "boundaryRecordOffset"
+                text: "Centimeter"
+                from: 0
+                value: 79
+                to: 1968
             }
             IconButtonTransparent{
                 id: side2Record
@@ -403,8 +392,8 @@ Item {
                 anchors.right: parent.right
                 anchors.margins: 5
                 border: 1
-                    width: 80
-                    height: 80
+                width: 80
+                height: 80
             }
             Row{
                 anchors.top: side2Record.bottom

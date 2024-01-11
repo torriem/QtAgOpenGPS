@@ -13,7 +13,7 @@ Rectangle{
         height: 350
         anchors.centerIn: parent
     }
-    SpinBox{
+    SpinBoxCustomized{
         id: antForward
         anchors.bottom: antImage.top
         anchors.left: antImage.left
@@ -21,9 +21,8 @@ Rectangle{
         from: -999
         value: 20
         to: 999
-        editable: true
     }
-    SpinBox{
+    SpinBoxCustomized{
         id: antHeight
         anchors.top: antImage.top
         anchors.topMargin: 100
@@ -32,9 +31,8 @@ Rectangle{
         from: 0
         value: 20
         to: 1000
-        editable: true
     }
-    SpinBox{
+    SpinBoxCustomized{
         id: antOffset
         anchors.bottom: antImage.bottom
         anchors.bottomMargin: 70
@@ -43,6 +41,5 @@ Rectangle{
         from: -500
         value: 20
         to: 500
-        editable: true
     }
 }

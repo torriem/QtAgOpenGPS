@@ -14,46 +14,31 @@ Rectangle{
         height: 350
         anchors.centerIn: parent
     }
-    SpinBox{
+    SpinBoxCustomized{
         id: wheelBase
         anchors.verticalCenter: dimImage.verticalCenter
         anchors.right: dimImage.left
         from: 20
         value: 20
         to: 787
-        editable: true
-        Text{
-            anchors.bottom: parent.top
-            anchors.left: parent.left
-            text: qsTr("Wheelbase")
-        }
+            text: "Wheelbase"
     }
-    SpinBox{
+    SpinBoxCustomized{
         id: track
         anchors.top: dimImage.top
         anchors.left: dimImage.right
         from: 20
         value: 20
         to: 3937
-        editable: true
-        Text{
-            anchors.bottom: parent.top
-            anchors.left: parent.left
-            text: qsTr("Track")
-        }
+        text: qsTr("Track")
     }
-    SpinBox{
+    SpinBoxCustomized{
         id: turnRadius
         anchors.bottom: dimImage.bottom
         anchors.left: dimImage.right
         from: 20
         value: 20
         to: 787
-        editable: true
-        Text{
-            anchors.bottom: parent.top
-            anchors.left: parent.left
-            text: qsTr("Turn Radius")
-        }
+        text: qsTr("Turn Radius")
     }
 }

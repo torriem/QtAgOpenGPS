@@ -21,10 +21,12 @@ Rectangle{
                     image.source = "/images/Config/ConT_Symmetric.png"
                     configImplementSectionsZones.visible = true
                     configImplementSectionsSection.visible = false
+                    console.log("zones")
                 }else{
                     image.source ="/images/Config/ConT_Asymmetric.png"
                     configImplementSectionsZones.visible = false
                     configImplementSectionsSection.visible = true
+                    console.log("sections")
                 }
             }
             width: 180
@@ -46,17 +48,17 @@ Rectangle{
                 }
             }
         }
-        SpinBox{
+        SpinBoxCustomized{
             objectName: "percentConverage"
             from: 0
             to: 100
             value: 100
-            editable: true
             anchors.bottom: parent.bottom
-            Text{
-                anchors.bottom: parent.top
-                text: "% Coverage"
-            }
+            text: "% Coverage"
+//            Text{
+//                anchors.bottom: parent.top
+//                text: "% Coverage"
+//            }
         }
         IconButton{
             objectName: "boundaryOff"
@@ -71,12 +73,11 @@ Rectangle{
             colorChecked2: "green"
             colorChecked3: "green"
         }
-        SpinBox{
+        SpinBoxOneDecimal{
             objectName: "speedBelowSectionOff"
-            from: 0
+            from: 0.0
             to: 30
-            value: 0
-            editable: true
+            value: 0.3
             anchors.bottom: parent.bottom
             Image{
                 anchors.bottom: parent.top
@@ -102,6 +103,7 @@ Rectangle{
         anchors.bottom: bottomRow.top
         anchors.bottomMargin: 30
         anchors.margins: 15
+        visible: true
     }
     ConfigImplementSectionsZones{
         id: configImplementSectionsZones
@@ -112,5 +114,6 @@ Rectangle{
         anchors.bottom: bottomRow.top
         anchors.bottomMargin: 30
         anchors.margins: 15
+        visible: false
     }
 }

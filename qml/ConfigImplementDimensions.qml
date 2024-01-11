@@ -13,23 +13,21 @@ Rectangle{
         anchors.bottom: parent.bottom
         anchors.margins: 15
         height: parent.height*.75
-        SpinBox{
+        SpinBoxCustomized{
             anchors.bottom: parent.top
             anchors.right: parent.right
             anchors.rightMargin: 500
             from: 4
-            value : 1
+            value: 1
             to:1181
-            editable: true
         }
-        SpinBox{
+        SpinBoxCustomized{
             anchors.bottom: parent.top
             anchors.right: parent.right
             anchors.rightMargin: 50
             from: 4
-            value : 1
+            value: 1
             to:1181
-            editable: true
         }
     }
 }

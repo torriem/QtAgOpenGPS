@@ -6,19 +6,6 @@ import QtQuick.Layouts 1.3
 import AgOpenGPS 1.0
 
 Window {
-    function warningWindowJS(text){
-        warningWindow.visible = true;
-        warningWindow.text = text;
-        console.log("Warning sent to screen ", text);
-     /*   timer = new Timer();
-        timer.interval = 1000;
-        timer.repeat = false;
-        timer.triggered.connect(function () {
-            warningWindow.visible = false;
-            console.log("triggered");
-        })
-        timer.start();*/
-    }
 
     //We draw native opengl to this root object
     id: mainWindow
@@ -1192,9 +1179,9 @@ Window {
                 objectName: "steerConfigWindow"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                height: 768
-                width:1024
                 visible:false
+                height: 600
+                width:450
             }
             ABCurvePicker{
                 id: abCurvePicker
@@ -1243,14 +1230,6 @@ Window {
                 width:1024
                 visible:false
             }
-            WarningWindow{
-                id: warningWindow
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.top
-                anchors.topMargin: 20
-                visible: false
-            }
-
             Rectangle{
                 id: recordButtons
                 anchors.bottom: bottomButtons.top

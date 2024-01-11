@@ -32,6 +32,7 @@ Item {
             IconButtonTransparent{
                 objectName: "btnLineEdit"
                 icon.source: "/images/FileEditName.png"
+                onClicked: editLineName.visible = true
             }
             IconButtonTransparent{
                 objectName: "btnLineSwapPoints"
@@ -119,25 +120,71 @@ Item {
                 isChecked: true
                 icon.source: "/images/LetterBBlue.png"
             }
-            Rectangle{
-                    id: headingTextInput
-                    anchors.topMargin: 20
+//            Rectangle{
+//                id: headingTextInput
+//                anchors.topMargin: 20
+//                anchors.top: a.bottom
+//                height: 50
+//                width: parent.width -50
+//                anchors.horizontalCenter: parent.horizontalCenter
+//                color: "white"
+//                border.color: "gray"
+//                border.width: 1
+//                TextInput {
+//                    objectName: "heading"
+//                    anchors.fill: parent
+//                    validator: RegExpValidator {
+//                        regExp: /(\d{1,3})([.,]\d{1,5})?$/
+//                    }
+//                }
+//            }
+            SpinBox{
+                id: headingTextInput
+                objectName: "heading"
+                from: 0
+                to: 359999999
+                stepSize: 1000000
+                value: 0
+                editable: true
+                property real realValue: value/ 1000000
+                property int decimals: 6
+
+                anchors.topMargin: 20
                 anchors.top: a.bottom
-                height: 50
                 width: parent.width -50
                 anchors.horizontalCenter: parent.horizontalCenter
-                color: "white"
-                border.color: "gray"
-                border.width: 1
-                TextInput {
-                    objectName: "heading"
-                    anchors.fill: parent
-                    validator: RegExpValidator {
-                        regExp: /(\d{1,3})([.,]\d{1,5})?$/
+                onValueChanged: {
+                    if (value == from) {
+                        spin_message.visible = true
+                        spin_message.text = "Must be "+from/1000000+" or greater"
+                    } else if(value == to){
+                        spin_message.visible = true
+                        spin_message.text = "Can't be larger than " + to/ 1000000
+                    }else {
+                        spin_message.visible = false
                     }
+
+                    //some validation here
+                    //emit signal.  We know our section number because it's in the model
+                }
+                textFromValue: function(value, locale) {
+                    return Number(value / 1000000).toLocaleString(locale, 'f', decimals)
+                }
+
+                valueFromText: function(text, locale) {
+                    return Number.fromLocaleString(locale, text) * 1000000
+                }
+                Text {
+                    id: spin_message
+                    visible: false
+                    text: "message"
+                    color: "red"
+                    anchors.top: parent.bottom
+                    anchors.left: parent.left
                 }
             }
-           IconButtonTransparent{
+
+            IconButtonTransparent{
                id: fancyEditor
                anchors.top: headingTextInput.bottom
                anchors.topMargin: 20
