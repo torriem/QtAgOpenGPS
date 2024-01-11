@@ -1,5 +1,5 @@
-import QtQuick 2.0
-import Qt.labs.settings 1.1
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 /* This type contains properties, signals, and functions to interface
    the C++ backend with the QML gui, while abstracting and limiting
@@ -18,7 +18,7 @@ import Qt.labs.settings 1.1
 
 
 Item {
-    id: aogInterface
+    id: aogInterfaceType
 
     property double easting: 0
     property double northing: 0
@@ -30,8 +30,28 @@ Item {
     property double speedKph: 0
 
     property double offlineDistance: 0
-    property int lightbarCmPerPixel: 5 //populate from settings
-    property bool isLightbarOn: true
+
+
+    //Field dialogs
+
+    ListModel {
+        //place to keep fields
+        id: fieldsModel
+    }
+    signal updateFieldList()
+    signal resumeFieldLast()
+    signal closeField()
+    signal openField(name: string)
+    signal newField(name: string)
+
+
+    function clearFieldList() {
+        fieldsModel.clear()
+    }
+
+    function addFieldToList(name: string, distance: double, boundary: bool, area: double) {
+    }
+
 
 
 
