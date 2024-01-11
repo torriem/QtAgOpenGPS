@@ -78,7 +78,7 @@ extern AOGProperty property_setDisplay_isVehicleImage;
 extern AOGProperty property_setIMU_isHeadingCorrectionFromAutoSteer;
 extern AOGProperty property_setDisplay_isTextureOn;
 extern AOGProperty property_setAB_lineLength;
-extern AOGProperty property_SetGPS_udpWatchMsec;
+extern AOGProperty property_setGPS_udpWatchMsec;
 extern AOGProperty property_setF_isSteerWorkSwitchManualSections;
 extern AOGProperty property_setAS_isConstantContourOn;
 extern AOGProperty property_setAS_guidanceLookAheadTime;

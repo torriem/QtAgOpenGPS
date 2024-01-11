@@ -35,28 +35,28 @@ Item {
                 height: 150
                 width: 150
             }
-            SpinBox{
+            SpinBoxTwoDecimal{
                 objectName: "UturnRadius"
                 from: 2
                 value: 20
                 to:100
                 editable: true
             }
-            SpinBox{
+            SpinBoxTwoDecimal{
                 objectName: "UturnDistance"
                 from: 0
                 value: 10
                 to:328
                 editable: true
             }
-            SpinBox{
+            SpinBoxCustomized{
                 objectName: "UturnRadius"
                 from: 9
                 value: 20
                 to:164
                 editable: true
             }
-            SpinBox{
+            SpinBoxCustomized{
                 objectName: "UturnRadius"
                 from: 8
                 value: 18

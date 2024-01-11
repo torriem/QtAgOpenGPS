@@ -60,7 +60,6 @@ void FormGPS::loadSettings()
         unitsFtM = " ft";
     }
 
-    udpWatchLimit = property_SetGPS_udpWatchMsec;
     pn.headingTrueDualOffset = property_setGPS_dualHeadingOffset;
 
     frameDayColor = property_setDisplay_colorDayFrame;
@@ -110,7 +109,7 @@ void FormGPS::loadSettings()
 
 
     //hotkeys = Properties.Settings.Default.setKey_hotkeys.ToCharArray();
-    udpWatchLimit = property_SetGPS_udpWatchMsec;
+    udpWatchLimit = property_setGPS_udpWatchMsec;
     //check for 255
     //TODO
     //string[] words = Properties.Settings.Default.setDisplay_customColors.Split(',');

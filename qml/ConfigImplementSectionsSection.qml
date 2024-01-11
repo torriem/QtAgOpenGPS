@@ -4,206 +4,59 @@ import QtQuick.Controls 2.5
 Item{
     id: configImplementSectionsSection
     z: 8
-    Item{
-        id: secWidthButtons
-        Button{
-            implicitHeight: 50
-            implicitWidth: 80
-            background: Rectangle{
-                border.width: 1
-                border.color: "black"
-                color: "white"
-            }
-            contentItem: Rectangle{
-                id: text11
-                color: "transparent"
-                Text{
-                    id: text12
-                    anchors.centerIn: parent
-                    text: middleRowSpinbox.value
+    ListModel {
+        id: section_model
+
+    }
+
+    GridView {
+        id: section_width_grid
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: middleRow.top
+        model: section_model
+        cellWidth: 200
+
+        delegate: Rectangle {
+            SpinBox {
+                id: spinner
+                from: 3
+                to: 300
+                editable: true
+                value: model.width
+                onValueChanged: {
+                    if (value == 3) {
+                        spin_message.visible = true
+                        spin_message.text = "Must be 3 or greater"
+                    } else if(value == 300){
+                        spin_message.visible = true
+                        spin_message.text = "Can't be larger than 300"
+
+                    }else {
+                        spin_message.visible = false
+                    }
+
+                    //some validation here
+                    //emit signal.  We know our section number because it's in the model
                 }
             }
-            onClicked: textEntryBox.visible=true
-            Text{
-                anchors.bottom: parent.top
-                anchors.left: parent.left
-                text: "1"
+
+            Text {
+                text: "Section " + Number(model.secNum+1).toLocaleString(Qt.locale(),"f",0)
+                anchors.bottom: spinner.top
+                anchors.left: spinner.left
+            }
+            Text {
+                id: spin_message
+                visible: false
+                text: "message"
+                color: "red"
+                anchors.top: spinner.bottom
+                anchors.left: spinner.left
             }
         }
     }
-
-    Rectangle{
-        id: textEntryBox
-        visible: false
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
-        width: 200
-        height: 200
-        border.color: "black"
-        border.width: 1
-        color: "lightgray"
-        //                Text{ //-----these are for displaying the highest and lowest numbers possible
-        //                    anchors.left: parent.left
-        //                    anchors.top: parent.top
-        //                    anchors.margins: 20
-        //                    font.pixelSize: 20
-        //                    text: textEntry_validator.bottom
-        //                }
-        //                Text{
-        //                    anchors.right: parent.right
-        //                    anchors.top: parent.top
-        //                    anchors.margins: 20
-        //                    font.pixelSize: 20
-        //                    text: textEntry_validator.top
-        //                }
-        TextField{
-            id: textEntry
-            implicitWidth: 90
-            implicitHeight: 40
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: 10
-            //text: text12.text
-            background: Rectangle{
-                id: textEntry_rect
-                border.color: "black"
-                border.width: 1
-                color: "white"
-            }
-            validator: DoubleValidator{
-                //                        id: textEntry_validator
-                //                        bottom: 3
-                //                        top: 350
-
-            }
-            onTextChanged: {//for some reason, "text" is returned as 0x[string of numbers]
-                //so I don't know if we can use textfield or not
-                //                        console.log(text)
-                //                        console.log(parseInt(text))
-                //                        //console.log(parseString(text))
-                //                            if (parseInt(text) < 3 || parseInt(text) > 350) {
-                //                                console.log("Invalid input");
-                //                                //Display whatever warning here
-                //                                textEntry_rect.color = "red";
-                //                            } else {
-                //                                console.log("Input good");
-                //                                //Hide warning here
-                //                                textEntry_rect.color = "white";
-                //                            }
-            }
-        }
-        IconButtonTransparent{
-            id: cancel
-            icon.source: "/images/Cancel64.png"
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.margins: 10
-            onClicked: parent.visible = false
-        }
-        IconButtonTransparent{
-            objectName: "btnNumberWindowSave"
-            icon.source: "/images/OK64.png"
-            anchors.bottom: parent.bottom
-            anchors.right: parent.right
-            anchors.margins: 10
-
-        }
-    }
-
-    /* GridLayout{
-         anchors.fill: parent
-         rows: 2
-         columns: 8
-         flow: Grid.LeftToRight
-         z:9
-         SectionWidth{
-             objectName: "sectionWidth1"
-             value: middleRowSpinbox.value
-             titleText: 1
-             bottomNum: 3
-             topNum: 300
-             z: -1
-         }
-         SectionWidth{
-             objectName: "sectionWidth2"
-             value: middleRowSpinbox.value
-             titleText: 2
-             z: -1
-         }
-         SectionWidth{
-             objectName: "sectionWidth3"
-             value: middleRowSpinbox.value
-             titleText: 3
-             z: 5
-         }
-         SectionWidth{
-             objectName: "sectionWidth4"
-             value: middleRowSpinbox.value
-             titleText: 4
-             z: 5
-         }
-         SectionWidth{
-             objectName: "sectionWidth5"
-             value: middleRowSpinbox.value
-             titleText: 5
-         }
-         SectionWidth{
-             objectName: "sectionWidth6"
-             value: middleRowSpinbox.value
-             titleText: 6
-         }
-         SectionWidth{
-             objectName: "sectionWidth7"
-             value: middleRowSpinbox.value
-             titleText: 7
-         }
-         SectionWidth{
-             objectName: "sectionWidth8"
-             value: middleRowSpinbox.value
-             titleText: 8
-         }
-         SectionWidth{
-             objectName: "sectionWidth9"
-             value: middleRowSpinbox.value
-             titleText: 9
-         }
-         SectionWidth{
-             objectName: "sectionWidth10"
-             value: middleRowSpinbox.value
-             titleText: 10
-         }
-         SectionWidth{
-             objectName: "sectionWidth11"
-             value: middleRowSpinbox.value
-             titleText: 11
-         }
-         SectionWidth{
-             objectName: "sectionWidth12"
-             value: middleRowSpinbox.value
-             titleText: 12
-         }
-         SectionWidth{
-             objectName: "sectionWidth13"
-             value: middleRowSpinbox.value
-             titleText: 13
-         }
-         SectionWidth{
-             objectName: "sectionWidth14"
-             value: middleRowSpinbox.value
-             titleText: 14
-         }
-         SectionWidth{
-             objectName: "sectionWidth15"
-             value: middleRowSpinbox.value
-             titleText: 15
-         }
-         SectionWidth{
-             objectName: "sectionWidth16"
-             value: middleRowSpinbox.value
-             titleText: 16
-         }
-     }*/
-
     Row{
         id: middleRow
         anchors.top: parent.verticalCenter
@@ -213,39 +66,36 @@ Item{
         height: children.height
         spacing: 120
 
-        SpinBox{ //-------------this is the spinbox i tried to remove the + and - from.
-            // I did, but now I can't edit it.
+        SpinBoxCustomized{
             id: middleRowSpinbox
             objectName: "sectionWidthAll"
-            implicitWidth: 50
+            implicitWidth: 150
             implicitHeight: 50
-
-            from: 3
+            from: 1
             value: 240
-            to: 39400
+            to: 300
             editable: true
-
-
-            //up.destroy: true
-            up.indicator: Rectangle{
-                visible: false
-                width: 1
-                anchors.left: parent.right
-            }
-            down.indicator:Rectangle{
-                visible: false
-                width: 1
-                anchors.right: parent.left
-            }
-
-            Text{
-                anchors.bottom: parent.top
-                text: "Section Width"
-            }
+            text: "Section Width"
         }
         ComboBox{
             id: numOfSections
             objectName: "numOfSections"
+            onActivated: function (which) {
+                console.warn("We got this one: " + which);
+                section_model.clear();
+                for (var i=0; i < which+1; i++) {
+                    console.warn("Writing new section " + i)
+                    section_model.append( { secNum: i, width: 5 } )
+                }
+            }
+
+            Component.onCompleted: {
+                if (section_model.count < (currentIndex + 1)) {
+                    for (var i=section_model.count; i < currentIndex+1 ; i ++ ) {
+                         section_model.append( { secNum: i, width: 5 } )
+                    }
+                }
+            }
             model: ListModel{
                 ListElement {text: "1"}
                 ListElement {text: "2"}

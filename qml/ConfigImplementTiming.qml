@@ -18,46 +18,33 @@ import QtQuick.Controls 2.5
             anchors.topMargin: 100
             source: "/images/ImplementSettings.png"
 
-            SpinBox{
+            SpinBoxOneDecimal{
                 anchors.right: parent.left
                 anchors.top: parent.top
                 from: 0
                 value: 1
                 to: 22
-                editable: true
-                Text{
-                    anchors.left: parent.left
-                    anchors.bottom: parent.top
-                    text: qsTr("On (secs)")
-                }
+                text: qsTr("On (secs)")
             }
-            SpinBox{
+            SpinBoxOneDecimal{
                 anchors.right: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 from: 0
                 value:0
                 to: 20
                 editable: true
-                Text{
-                    anchors.left: parent.left
-                    anchors.bottom: parent.top
-                    text: qsTr("Off (secs)")
-                }
+                text: qsTr("Off (secs)")
             }
-            SpinBox{
+            SpinBoxOneDecimal{
                 anchors.right: parent.left
                 anchors.bottom: parent.bottom
                 from: 0
                 value: 0
                 to: 20
                 editable: true
-                Text{
-                    anchors.left: parent.left
-                    anchors.bottom: parent.top
-                    text: qsTr("Delay (secs)")
-                }
+                text: qsTr("Delay (secs)")
             }
-            SpinBox{
+            SpinBoxCustomized{
                 anchors.left: parent.left
                 anchors.leftMargin: 500
                 anchors.top: parent.bottom
@@ -66,13 +53,9 @@ import QtQuick.Controls 2.5
                 value: 0
                 to: 984
                 editable: true
-                Text{
-                    anchors.left: parent.left
-                    anchors.top: parent.bottom
-                    text: qsTr("Offset")
-                }
+                text: qsTr("Offset")
             }
-            SpinBox{
+            SpinBoxCustomized{
                 anchors.right: parent.right
                 anchors.rightMargin: 120
                 anchors.bottom: parent.bottom
@@ -81,11 +64,7 @@ import QtQuick.Controls 2.5
                 value: 0
                 to: 1181
                 editable: true
-                Text{
-                    anchors.left: parent.left
-                    anchors.top: parent.bottom
-                    text: qsTr("Overlap / Gap")
-                }
+                text: qsTr("Overlap / Gap")
             }
         }
     }

@@ -215,7 +215,7 @@ Rectangle{
             anchors.left: parent.left
             anchors.leftMargin: 30
         }
-        SpinBox{
+        SpinBoxOneDecimal{
             id: headingOffSet
             anchors.left: head.right
             anchors.bottom: head.bottom

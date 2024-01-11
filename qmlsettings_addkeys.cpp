@@ -76,7 +76,7 @@ void QMLSettings::setupKeys() {
     addKey(QString("setIMU_isHeadingCorrectionFromAutoSteer"),QString("gps/isHeadingCorrectionFromAutoSteer"));
     addKey(QString("setDisplay_isTextureOn"),QString("display/texture"));
     addKey(QString("setAB_lineLength"),QString("ABLine/lineLength"));
-    addKey(QString("SetGPS_udpWatchMsec"),QString("gps/udpWatchMS"));
+    addKey(QString("setGPS_udpWatchMsec"),QString("gps/udpWatchMS"));
     addKey(QString("setF_isSteerWorkSwitchManualSections"),QString("tool/isWorkSwitchManualSections"));
     addKey(QString("setAS_isConstantContourOn"),QString("autosteer/constantContourOn"));
     addKey(QString("setAS_guidanceLookAheadTime"),QString("autosteer/guidanceLookAheadTime"));

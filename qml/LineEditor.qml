@@ -25,28 +25,16 @@ Rectangle {
             objectName: "btnLineNudgeLeft"
             icon.source: "/images/ArrowLeft.png"
         }
-        Rectangle{
+            SpinBoxOneDecimal{
             width: leftNudger.width
             height: 50
             anchors.verticalCenter: parent.verticalCenter
-            color: "lightgray"
-            border.color: "darkgray"
-            border.width: 1
-            Text {
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.top
-                font.bold: true
-                font.pixelSize: 15
-                text: qsTr("cm")
-            }
-            TextInput{
                 objectName: "lineNudgeDistance"
-                anchors.fill: parent
-                validator: RegExpValidator {
-                    regExp: /(\d{1,4})?$/
-                }
+                text: qsTr("cm")
+                from: 0
+                value: 7.5
+                to: 9999
             }
-        }
 
         IconButtonTransparent{
             objectName: "btnLineNudgeRight"
