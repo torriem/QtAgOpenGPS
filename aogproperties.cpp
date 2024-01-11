@@ -79,7 +79,7 @@ AOGProperty property_setDisplay_isVehicleImage("display/isVehicleImage",true);
 AOGProperty property_setIMU_isHeadingCorrectionFromAutoSteer("gps/isHeadingCorrectionFromAutoSteer","False");
 AOGProperty property_setDisplay_isTextureOn("display/texture",true);
 AOGProperty property_setAB_lineLength("ABLine/lineLength",1600);
-AOGProperty property_SetGPS_udpWatchMsec("gps/udpWatchMS",50);
+AOGProperty property_setGPS_udpWatchMsec("gps/udpWatchMS",50);
 AOGProperty property_setF_isSteerWorkSwitchManualSections("tool/isWorkSwitchManualSections",false);
 AOGProperty property_setAS_isConstantContourOn("autosteer/constantContourOn",false);
 AOGProperty property_setAS_guidanceLookAheadTime("autosteer/guidanceLookAheadTime",2.5);
