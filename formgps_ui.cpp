@@ -41,18 +41,7 @@ void FormGPS::setupGui()
     connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
 
     //connect qml button signals to callbacks (it's not automatic with qml)
-    //btnMenuDrawer = qmlItem(qml_root, "btnMenuDrawer");
 
-
-    /*btnPerimeter = qmlItem(qml_root,"btnPerimeter");
-    connect(btnPerimeter,SIGNAL(clicked()),this,
-            SLOT(onBtnPerimeter_clicked()));
-*/
-    contextArea = qmlItem(qml_root, "contextArea");
-
-    btnnavigationSettings = qmlItem(qml_root, "btnNavigationSettings");
-    connect(btnnavigationSettings,SIGNAL(clicked()),this,
-            SLOT(onBtnNavigationSettings_clicked()));
     btnAutoSteer = qmlItem(qml_root,"btnAutoSteer");
     connect(btnAutoSteer,SIGNAL(clicked()),this,
             SLOT(onBtnAutoSteer_clicked()));
@@ -110,30 +99,6 @@ void FormGPS::setupGui()
     connect(btnSettings,SIGNAL(clicked()),this,
             SLOT(onBtnSettings_clicked()));
 
-  /*  btnJob = qmlItem(qml_root,"btnJob");
-    connect(btnJob,SIGNAL(clicked()),this,
-            SLOT(onBtnJob_clicked()));
-
-    btnBoundaryMenu = qmlItem(qml_root,"btnBoundaryMenu");
-    connect(btnBoundaryMenu,SIGNAL(clicked()),this,
-            SLOT(onBtnBoundaryMenu_clicked()));
-
-    btnComm = qmlItem(qml_root,"btnComm");
-    connect(btnComm,SIGNAL(clicked()),this,
-            SLOT(onBtnComm_clicked()));
-
-    btnUnits = qmlItem(qml_root,"btnUnits");
-    connect(btnUnits,SIGNAL(clicked()),this,
-            SLOT(onBtnUnits_clicked()));
-
-    btnFileExplorer = qmlItem(qml_root,"btnFileExplorer");
-    connect(btnFileExplorer,SIGNAL(clicked()),this,
-            SLOT(onBtnFileExplorer_clicked()));
-
-    btnAutoSteerConfig = qmlItem(qml_root,"btnAutoSteerConfig");
-    connect(btnAutoSteerConfig,SIGNAL(clicked()),this,
-            SLOT(onBtnAutoSteerConfig_clicked()));
-*/
     //Any objects we don't need to access later we can just store
     //temporarily
     QObject *temp;
@@ -242,9 +207,6 @@ void FormGPS::onGLControl_clicked(const QVariant &event)
 void FormGPS::onBtnAcres_clicked(){
     qDebug()<<"AcresButton";
 }
-void FormGPS::onBtnNavigationSettings_clicked(){
-    qDebug()<<"Navigation Settings";
-}
 void FormGPS::onBtnSettings_clicked(){
     qDebug()<<"Settings";
 }
@@ -292,12 +254,6 @@ void FormGPS::onBtnYouSkip_clicked(){
 }
 
 
-void FormGPS::onBtnAreaSide_clicked() {
-    isAreaOnRight = !isAreaOnRight;
-    settings->setValue("vehicle/isAreaOnRight", isAreaOnRight);
-    contextArea->setProperty("visible",false);
-    //vehicle->settingsChanged();
-}
 
 void FormGPS::onBtnAutoSteer_clicked(){
     if (isAutoSteerBtnOn) {

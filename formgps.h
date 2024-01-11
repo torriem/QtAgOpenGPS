@@ -75,7 +75,6 @@ public:
     AOGRendererInSG *openGLControl;
     //Left Menu & children
     QObject *btnAcres;
-    QObject *btnnavigationSettings;
     QObject *btnSettings;
     QObject *btnTools;
     QObject *btnFieldMenu;
@@ -101,9 +100,6 @@ public:
     QObject *btnContourPriority;
     //other
     QObject *btnFlag;
-
-    //area context menu
-    QObject *contextArea;
 
     //flag context menu and buttons
     QObject *contextFlag;
@@ -686,7 +682,6 @@ public slots:
 
     //left column
     void onBtnAcres_clicked();
-    void onBtnNavigationSettings_clicked();
     void onBtnSettings_clicked();
     void onBtnAgIO_clicked();
     void onBtnSteerConfig_clicked();
@@ -720,9 +715,6 @@ public slots:
 
     void onBtnZoomIn_clicked();
     void onBtnZoomOut_clicked();
-
-
-    void onBtnAreaSide_clicked();
 
     //was btnSection#Man_Click in c#
     void btnSectionMan_Click(int sectNumber);
