@@ -67,7 +67,7 @@ QVector3D FormGPS::mouseClickToPan(int mouseX, int mouseY)
     QMatrix4x4 m;
     m.rotate(-vehicle.fixHeading, 0,0,1);
 
-    QVector3D relative = QVector3D( { mouseEasting, mouseNorthing, 0 } );
+    QVector3D relative = QVector3D( { (float)mouseEasting, (float)mouseNorthing, 0 } );
     //relative.setX(relative.x() + vehicle.hitchPos.easting);
     //relative.setY(relative.y() + vehicle.hitchPos.northing);
     return relative;
@@ -116,7 +116,7 @@ QVector3D FormGPS::mouseClickToField(int mouseX, int mouseY)
     QMatrix4x4 m;
     m.rotate(-vehicle.fixHeading, 0,0,1);
 
-    QVector3D relative = QVector3D( { mouseEasting, mouseNorthing, 0 } );
+    QVector3D relative = QVector3D( { (float)mouseEasting, (float)mouseNorthing, 0 } );
     //relative.setX(relative.x() + vehicle.hitchPos.easting);
     //relative.setY(relative.y() + vehicle.hitchPos.northing);
     return relative;
@@ -1151,7 +1151,8 @@ void FormGPS::DrawLightBarText(QOpenGLFunctions *gl, QMatrix4x4 mvp)
     //int ogl_height = qmlItem(qml_root, "openglcontrol")->property("height").toInt();
 
     // in millimeters
-    avgPivDistance = avgPivDistance * 0.5 + lightbarDistance * 0.5;
+    // moved to formgps_position, bottom of UpdateFixPosition
+    //avgPivDistance = avgPivDistance * 0.5 + lightbarDistance * 0.5;
 
     double avgPivotDistance = avgPivDistance * (isMetric ? 0.1 : 0.03937);
     QString hede;

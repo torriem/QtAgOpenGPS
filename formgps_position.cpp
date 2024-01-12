@@ -13,6 +13,7 @@
 #include <string>
 #include "aogrenderer.h"
 #include "cpgn.h"
+#include "qmlutil.h"
 
 //called for every new GPS or simulator position
 void FormGPS::UpdateFixPosition()
@@ -1105,6 +1106,20 @@ void FormGPS::UpdateFixPosition()
     //processSectionLookahead();
 
     //end of UppdateFixPosition
+    //update AOGInterface.qml:
+    //pn: latitude, longitude, easting, northing, heading
+    //vehicle: avgSpeed
+    //ahrs:  imuRoll
+    QObject *aog = qmlItem(qml_root,"aog");
+
+    aog->setProperty("latitude",pn.latitude);
+    aog->setProperty("longitude",pn.longitude);
+    aog->setProperty("easting",pn.fix.easting);
+    aog->setProperty("northing",pn.fix.northing);
+    aog->setProperty("imuRollDegrees",ahrs.imuRoll);
+    avgPivDistance = avgPivDistance * 0.5 + vehicle.guidanceLineDistanceOff * 0.5;
+    aog->setProperty("offlineDistance", avgPivDistance); //mm!
+    aog->setProperty("speedKph", vehicle.avgSpeed);
 
     newframe = true;
     lock.unlock();

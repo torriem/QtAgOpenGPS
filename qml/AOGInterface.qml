@@ -33,16 +33,21 @@ Item {
 
     property bool isAutoSteerBtnOn: false
 
+    property double latStart: 0
+    property double lonStart: 0
+
     property double easting: 0
     property double northing: 0
     property double latitude: 0
     property double longitude: 0
-
     property double imuRollDegrees: 0
-
     property double speedKph: 0
-
     property double offlineDistance: 0
+
+    //onLatitudeChanged: {
+    //    console.debug(latitude + ", " + longitude + ", " + easting + ", " + northing)
+    //    console.debug(offlineDistance + ", " + imuRollDegrees + ", " + speedKph)
+    //}
 
 
     //Field dialogs
