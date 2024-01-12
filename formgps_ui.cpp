@@ -52,18 +52,11 @@ void FormGPS::setupGui()
     connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
 
     //connect qml button signals to callbacks (it's not automatic with qml)
-    //btnMenuDrawer = qmlItem(qml_root, "btnMenuDrawer");
-
 
     /*btnPerimeter = qmlItem(qml_root,"btnPerimeter");
     connect(btnPerimeter,SIGNAL(clicked()),this,
             SLOT(onBtnPerimeter_clicked()));
-*/
-    contextArea = qmlItem(qml_root, "contextArea");
-
-    btnnavigationSettings = qmlItem(qml_root, "btnNavigationSettings");
-    connect(btnnavigationSettings,SIGNAL(clicked()),this,
-            SLOT(onBtnNavigationSettings_clicked()));
+    */
 
     btnFlag = qmlItem(qml_root,"btnFlag");
     connect(btnFlag,SIGNAL(clicked()),this,
@@ -125,10 +118,7 @@ void FormGPS::setupGui()
     connect(btnDeleteAllFlags,SIGNAL(clicked()),this,SLOT(onBtnDeleteAllFlags_clicked()));
     contextFlag = qmlItem(qml_root, "contextFlag");
 
-    txtDistanceOffABLine = qmlItem(qml_root,"txtDistanceOffABLine");
-
-    temp = qmlItem(qml_root,"btnAreaSide");
-    connect(temp,SIGNAL(clicked()), this, SLOT(onBtnAreaSide_clicked()));
+    //txtDistanceOffABLine = qmlItem(qml_root,"txtDistanceOffABLine");
 
     temp = qmlItem(qml_root, "btnManUturnLeft");
     connect(temp,SIGNAL(clicked()), this, SLOT(onBtnManUTurnLeft_clicked()));
@@ -204,9 +194,6 @@ void FormGPS::onGLControl_clicked(const QVariant &event)
 void FormGPS::onBtnAcres_clicked(){
     qDebug()<<"AcresButton";
 }
-void FormGPS::onBtnNavigationSettings_clicked(){
-    qDebug()<<"Navigation Settings";
-}
 void FormGPS::onBtnSettings_clicked(){
     qDebug()<<"Settings";
 }
@@ -254,12 +241,6 @@ void FormGPS::onBtnYouSkip_clicked(){
 }
 
 
-void FormGPS::onBtnAreaSide_clicked() {
-    isAreaOnRight = !isAreaOnRight;
-    settings->setValue("vehicle/isAreaOnRight", isAreaOnRight);
-    contextArea->setProperty("visible",false);
-    //vehicle->settingsChanged();
-}
 
 void FormGPS::onBtnAutoSteer_clicked(){
     /*TODO implement in QML
