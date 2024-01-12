@@ -135,10 +135,8 @@ void FormGPS::loadSettings()
     if (tool.isSectionsNotZones){
         tool.sectionSetPositions();
         tool.sectionCalcWidths();
-        LineUpIndividualSectionBtns();
     } else {
         tool.sectionCalcMulti();
-        LineUpAllZoneButtons();
     }
 
     //disable youturn buttons

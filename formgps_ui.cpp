@@ -89,15 +89,6 @@ void FormGPS::setupGui()
     connect(btnContourPriority,SIGNAL(clicked()),this,
             SLOT(onBtnContourPriority_clicked()));
 
-    btnManualOffOn = qmlItem(qml_root,"btnManualOffOn");
-    connect(btnManualOffOn,SIGNAL(clicked()),this,
-            SLOT(btnSectionMasterManual_Click()));
-
-    btnSectionOffAutoOn = qmlItem(qml_root,"btnSectionOffAutoOn");
-    connect(btnSectionOffAutoOn,SIGNAL(clicked()),this,
-            SLOT(btnSectionMasterAuto_Click()));
-
-
     btnTiltDown = qmlItem(qml_root,"btnTiltDown");
     connect(btnTiltDown,SIGNAL(clicked()),this,
             SLOT(onBtnTiltDown_clicked()));
@@ -121,30 +112,6 @@ void FormGPS::setupGui()
     connect(btnSettings,SIGNAL(clicked()),this,
             SLOT(onBtnSettings_clicked()));
 
-  /*  btnJob = qmlItem(qml_root,"btnJob");
-    connect(btnJob,SIGNAL(clicked()),this,
-            SLOT(onBtnJob_clicked()));
-
-    btnBoundaryMenu = qmlItem(qml_root,"btnBoundaryMenu");
-    connect(btnBoundaryMenu,SIGNAL(clicked()),this,
-            SLOT(onBtnBoundaryMenu_clicked()));
-
-    btnComm = qmlItem(qml_root,"btnComm");
-    connect(btnComm,SIGNAL(clicked()),this,
-            SLOT(onBtnComm_clicked()));
-
-    btnUnits = qmlItem(qml_root,"btnUnits");
-    connect(btnUnits,SIGNAL(clicked()),this,
-            SLOT(onBtnUnits_clicked()));
-
-    btnFileExplorer = qmlItem(qml_root,"btnFileExplorer");
-    connect(btnFileExplorer,SIGNAL(clicked()),this,
-            SLOT(onBtnFileExplorer_clicked()));
-
-    btnAutoSteerConfig = qmlItem(qml_root,"btnAutoSteerConfig");
-    connect(btnAutoSteerConfig,SIGNAL(clicked()),this,
-            SLOT(onBtnAutoSteerConfig_clicked()));
-*/
     //Any objects we don't need to access later we can just store
     //temporarily
     QObject *temp;
@@ -160,19 +127,6 @@ void FormGPS::setupGui()
     btnDeleteAllFlags = qmlItem(qml_root,"btnDeleteAllFlags");
     connect(btnDeleteAllFlags,SIGNAL(clicked()),this,SLOT(onBtnDeleteAllFlags_clicked()));
     contextFlag = qmlItem(qml_root, "contextFlag");
-
-    //connnect section buttons to callbacks
-    sectionButtonsSignalMapper = new QSignalMapper(this);
-    for(int i=0; i < 16; i++){ //16 total onscreen buttons
-        sectionButton[i] = qmlItem(qml_root,QString("section")+QString::number(i));
-        sectionButton[i]->setProperty("state","off");
-        connect(sectionButton[i],SIGNAL(clicked()),
-                sectionButtonsSignalMapper,
-                SLOT(map()));
-        sectionButtonsSignalMapper->setMapping(sectionButton[i], i);
-    }
-    connect(sectionButtonsSignalMapper,SIGNAL(mapped(int)),this,
-            SLOT(btnSectionMan_Click(int)));
 
     txtDistanceOffABLine = qmlItem(qml_root,"txtDistanceOffABLine");
 
@@ -548,11 +502,7 @@ void FormGPS::turnOffBoundAlarm()
 void FormGPS::FixPanelsAndMenus()
 {
     //TODO QML, perhaps not much needed to do here
-
-    if (tool.isSectionsNotZones)
-        LineUpIndividualSectionBtns();
-    else
-        LineUpAllZoneButtons();
+    //nearly everything is in QML already
 
 }
 

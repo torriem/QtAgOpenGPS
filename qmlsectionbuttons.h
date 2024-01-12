@@ -22,7 +22,7 @@ public:
     inline btnStates get (int sectionno) {
         if (needRead) {
             needRead = false;
-            states = aog_root->property("sectionButtons").toList();
+            states = aog_root->property("sectionButtonState").toList();
         }
 
         return (btnStates)states[sectionno].toInt();
@@ -31,11 +31,11 @@ public:
     inline void set (int sectionno, btnStates new_state) {
         if (needRead) {
             needRead = false;
-            states = aog_root->property("sectionButtons").toList();
+            states = aog_root->property("sectionButtonState").toList();
         }
 
         states[sectionno] = QVariant((int) new_state);
-        aog_root->setProperty("sectionButtons", states);
+        aog_root->setProperty("sectionButtonState", states);
     }
 
 public slots:

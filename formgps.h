@@ -529,12 +529,6 @@ public:
     /************************
      * formgps_sections.cpp *
      ************************/
-    void LineUpIndividualSectionBtns();
-    void AllSectionsAndButtonsToState(btnStates state);
-    void AllZonesAndButtonsToState(btnStates state);
-    void IndividualZoneAndButtonToState(btnStates state, int zoneNumber);
-    void IndividualSectionsAndButtonToState(btnStates state, int sectNumber);
-    void LineUpAllZoneButtons();
     //void SectionSetPosition();
     //void SectionCalcWidths();
     //void SectionCalcMulti();
@@ -703,8 +697,6 @@ public slots:
     void onBtnABLine_clicked();
     void onBtnToggleAB_clicked();
     void onBtnToggleABBack_clicked();
-    void btnSectionMasterManual_Click();
-    void btnSectionMasterAuto_Click();
     void onBtnAutoYouTurn_clicked();
     void onBtnAutoSteer_clicked();
     void onBtnContourPriority_clicked();
@@ -729,9 +721,6 @@ public slots:
 
 
     void onBtnAreaSide_clicked();
-
-    //was btnSection#Man_Click in c#
-    void btnSectionMan_Click(int sectNumber);
 
     void onBtnRedFlag_clicked();
     void onBtnGreenFlag_clicked();

@@ -88,7 +88,6 @@ Rectangle {
         }
         aog.sectionButtonState = temp1
         sectionButtons.buttonState = temp2
-        console.debug (aog.sectionButtonState)
     }
 
     function setAllSectionsToState(new_state: int) {
@@ -99,9 +98,14 @@ Rectangle {
 
         if (settings.setTool_isSectionsNotZones) {
             //1:1 correlation between buttons and sections
-            for (i=0; i < 16 ; i++) {
-                temp1[i] = new_state //this is the tie-in back to the C++ land
-                temp2[i] = new_state //this is the onscreen button
+            for (i=0; i < 65 ; i++) {
+                if (i < numSections)
+                    temp1[i] = new_state //this is the tie-in back to the C++ land
+                else
+                    temp1[i] = 0; //off
+
+                if (i < 16)
+                    temp2[i] = new_state //this is the onscreen button
             }
          } else {
             //zones, not buttons. numSections is the number of zones
@@ -132,12 +136,13 @@ Rectangle {
         buttonModel.clear()
         for (var i = 0; i < numSections; i++) {
             buttonModel.append( { sectionNo: i } )
-        }
+        y}
     }
 
     //callbacks, connections, and signals
     Component.onCompleted:  {
         setColors()
+        buttonModel.clear()
         for (var i = 0; i < numSections; i++) {
             buttonModel.append( { sectionNo: i } )
         }
@@ -169,14 +174,7 @@ Rectangle {
                 //emit signal
                 sectionClicked(model.sectionNo)
                 //set the state here
-                if (sectionButtons.triState) {
-                    setSectionState(model.sectionNo, (sectionButtons.buttonState[model.sectionNo] + 1 ) % 3)
-                } else {
-                    if (sectionButtons.buttonState[model.sectionNo] === 0)
-                        setSectionState(model.sectionNo, 2)
-                    else
-                        setSectionState(model.sectionNo, 0)
-                }
+                setSectionState(model.sectionNo, (sectionButtons.buttonState[model.sectionNo] + 1 ) % 3)
             }
         }
     }

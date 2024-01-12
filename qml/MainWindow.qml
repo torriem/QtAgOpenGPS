@@ -17,6 +17,10 @@ Window {
     //anchors.fill: parent
 
     //there's a global "settings" property now.  In qmlscene we'll have to fake it somehow.
+    /*
+    MockSettings {
+        id: settings
+    }*/
 
     AOGInterface {
         id: aog
@@ -518,23 +522,39 @@ Window {
                 }
 
                 IconButtonText {
-                    id: btnManualOffOn
-                    objectName: "btnManualOffOn"
+                    id: btnSectionManual
+                    objectName: "btnSectionManual"
                     isChecked: false
                     checkable: true
                     icon.source: "/images/ManualOff.png"
                     iconChecked: "/images/ManualOn.png"
                     buttonText: "Manual"
+                    onCheckedChanged: {
+                        if (checked) {
+                            btnSectionAuto.checked = false;
+                            sectionButtons.setAllSectionsToState(2 /*auto*/);
+                        } else {
+                            sectionButtons.setAllSectionsToState(0 /*off*/);
+                        }
+                    }
                 }
 
                 IconButtonText {
-                    id: btnSectionOffAutoOn
-                    objectName: "btnSectionOffAutoOn"
+                    id: btnSectionAuto
+                    objectName: "btnSectionAuto"
                     isChecked: false
                     checkable: true
                     icon.source: "/images/SectionMasterOff.png"
                     iconChecked: "/images/SectionMasterOn.png"
                     buttonText: "Auto"
+                    onCheckedChanged: {
+                        if (checked) {
+                            btnSectionManual.checked = false;
+                            sectionButtons.setAllSectionsToState(1 /*auto*/);
+                        } else {
+                            sectionButtons.setAllSectionsToState(0 /*off*/);
+                        }
+                    }
                 }
                 IconButtonText {
                     id: btnAutoYouTurn
@@ -550,7 +570,7 @@ Window {
                     objectName: "btnAutoSteer"
                     icon.source: "/images/AutoSteerOff.png"
                     iconChecked: "/images/AutoSteerOn.png"
-                    buttonText: "X"
+                    buttonText: checked ? (aog.offlineDistance).toFixed(1) : "X"
                 }
 
             }
@@ -685,133 +705,20 @@ Window {
 
             }
 
-            Row {
+            SectionButtons {
                 id: sectionButtons
+                visible: aog.isJobStarted ? true : false
                 anchors.horizontalCenter: parent.horizontalCenter
+                //TODO: add logic to interact with the Auto and manual buttons
+
+                //only allow on and off when auto is on. TODO what about when Manual is on?
+                //triState: btnSectionAuto.checked ? false : true
 
                 anchors.bottom: bottomButtons.top
                 anchors.bottomMargin:10
-
-                spacing: 15
-
-                SectionButton {
-                    id: btnSection1Man
-                    objectName: "section0"
-                    state: "on"
-                    buttonText: "1"
-                }
-
-                SectionButton {
-                    id: btnSection2Man
-                    objectName: "section1"
-                    state: "auto"
-                    buttonText: "2"
-                }
-
-                SectionButton {
-                    id: btnSection3Man
-                    objectName: "section2"
-                    buttonText: "3"
-                }
-
-                SectionButton {
-                    id: btnSection4Man
-                    objectName: "section3"
-                    buttonText: "4"
-                }
-
-                SectionButton {
-                    id: btnSection5Man
-                    visible: false
-                    objectName: "section4"
-                    buttonText: "5"
-                }
-
-                SectionButton {
-                    id: btnSection6Man
-                    visible: false
-                    objectName: "section5"
-                    buttonText: "6"
-                }
-
-                SectionButton {
-                    id: btnSection7Man
-                    visible: false
-                    objectName: "section6"
-                    buttonText: "7"
-                }
-
-                SectionButton {
-                    id: btnSection8Man
-                    visible: false
-                    objectName: "section7"
-                    buttonText: "8"
-                }
-
-                SectionButton {
-                    id: btnSection9Man
-                    visible: false
-                    objectName: "section8"
-                    buttonText: "9"
-                }
-
-                SectionButton {
-                    id: btnSection10Man
-                    visible: false
-                    objectName: "section9"
-                    buttonText: "10"
-                }
-
-                SectionButton {
-                    id: btnSection11Man
-                    visible: false
-                    objectName: "section10"
-                    buttonText: "11"
-                }
-
-                SectionButton {
-                    id: btnSection12Man
-                    visible: false
-                    objectName: "section11"
-                    buttonText: "12"
-                }
-
-                SectionButton {
-                    id: btnSection13Man
-                    visible: false
-                    objectName: "section12"
-                    buttonText: "13"
-                }
-
-                SectionButton {
-                    id: btnSection14Man
-                    visible: false
-                    objectName: "section13"
-                    buttonText: "14"
-                }
-
-                SectionButton {
-                    id: btnSection15Man
-                    visible: false
-                    objectName: "section14"
-                    buttonText: "15"
-                }
-
-                SectionButton {
-                    id: btnSection16Man
-                    visible: false
-                    objectName: "section15"
-                    buttonText: "16"
-                }
-
-                SectionButton {
-                    id: btnSection17Man
-                    visible: false
-                    objectName: "section16"
-                    buttonText: "17"
-                }
-
+                width: 500
             }
+
             Rectangle{
                 id: displayButtons
                 width: childrenRect.width + 10

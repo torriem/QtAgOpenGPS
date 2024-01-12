@@ -58,10 +58,8 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
     setupGui();
     loadSettings();
 
-    //turn on the right number of section buttons.
-    //we don't need to do this on resize, but we will need
-    //to call it when settings change.
-    LineUpIndividualSectionBtns();
+    //QML does this now
+    //LineUpIndividualSectionBtns();
 
     //hard wire this on for testing
     isJobStarted = true;
@@ -1159,19 +1157,6 @@ void FormGPS::JobClose()
     //TODO reset section master button
     //btnSectionMasterAuto.Image = Properties.Resources.SectionMasterOff;
 
-    if (tool.isSectionsNotZones)
-    {
-        //Update the button colors and text
-        //TODO AllSectionsAndButtonsToState(btnStates::Off);
-
-        //enable disable manual buttons
-        LineUpIndividualSectionBtns();
-    }
-    else
-    {
-        //TODO AllZonesAndButtonsToState(autoBtnState);
-        //TODO LineUpAllZoneButtons();
-    }
     /*
     btnZone1.BackColor = Color.Silver;
     btnZone2.BackColor = Color.Silver;
@@ -1400,15 +1385,6 @@ void FormGPS::jobNew()
 
     //TODO: call QML javascrip to do this DisableYouTurnButtons();
     //btnFlag.Enabled = true;
-
-    if (tool.isSectionsNotZones)
-    {
-        LineUpIndividualSectionBtns();
-    }
-    else
-    {
-        LineUpAllZoneButtons();
-    }
 
     //update the menu
     //this.menustripLanguage.Enabled = false;
