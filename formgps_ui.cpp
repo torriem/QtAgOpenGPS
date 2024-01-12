@@ -64,9 +64,6 @@ void FormGPS::setupGui()
     btnnavigationSettings = qmlItem(qml_root, "btnNavigationSettings");
     connect(btnnavigationSettings,SIGNAL(clicked()),this,
             SLOT(onBtnNavigationSettings_clicked()));
-    btnAutoSteer = qmlItem(qml_root,"btnAutoSteer");
-    connect(btnAutoSteer,SIGNAL(clicked()),this,
-            SLOT(onBtnAutoSteer_clicked()));
 
     btnFlag = qmlItem(qml_root,"btnFlag");
     connect(btnFlag,SIGNAL(clicked()),this,
@@ -265,20 +262,13 @@ void FormGPS::onBtnAreaSide_clicked() {
 }
 
 void FormGPS::onBtnAutoSteer_clicked(){
-    if (isAutoSteerBtnOn) {
-        isAutoSteerBtnOn = false;
-        btnAutoSteer->setProperty("icon","/images/AutoSteerOff.png");
-
+    /*TODO implement in QML
+    if (ABLine.isABLineSet || ct.isContourBtnOn) {
     } else {
-        if (ABLine.isABLineSet || ct.isContourBtnOn) {
-            isAutoSteerBtnOn = true;
-            btnAutoSteer->setProperty("icon","/images/AutoSteerOn.png");
-        } else {
-            //show a timed error message
-            //No Guidance Lines; turn on contour or set AB line"
-        }
+        isAutoSteerBtnOn = false;
+        TimedMessageBox(2000, tr("No Guidance Lines"), tr("Turn on Contour or set an AB Line."));
     }
-    closeAllMenus();
+    */
 }
 
 void FormGPS::onBtnFlag_clicked() {

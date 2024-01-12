@@ -2,8 +2,6 @@
 #include <QApplication>
 #include <QCoreApplication>
 #include <QLabel>
-#include "cdubins.h"
-#include "vec3.h"
 #include "aogrenderer.h"
 #include "aogproperty.h"
 
@@ -28,6 +26,8 @@ int main(int argc, char *argv[])
     qRegisterMetaTypeStreamOperators<QList<int> >("QList<int>");
     qRegisterMetaTypeStreamOperators<QVector<int> >("QVector<int>");
     settings = new AOGSettings();
+    AOGProperty::init_defaults();
+    settings->sync();
     FormGPS w;
     //w.show();
 

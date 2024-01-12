@@ -16,8 +16,12 @@ protected:
     const QVector<int> default_list;
 
 public:
-    AOGProperty(const QString key, const QVariant &defaultvalue): key(key), default_value(defaultvalue) {}
-    AOGProperty(const QString key, const QVector<int> &defaultvalue): key(key), default_list(defaultvalue) {}
+    inline static QMap<QString, QVariant> default_map;
+    static void add_default_map (const QString &key, const QVariant &default_value);
+    static void init_defaults();
+
+    AOGProperty(const QString key, const QVariant &defaultvalue);
+    AOGProperty(const QString key, const QVector<int> &defaultvalue);
 
     operator int();
     operator char();

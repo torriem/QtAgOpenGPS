@@ -7,6 +7,27 @@ AOGProperty test_property("test/test", false);
 //QtAOG-specific setting properties
 AOGProperty property_environment_last_name("environment/name",QString(""));
 
+AOGProperty::AOGProperty(const QString key, const QVariant &defaultvalue): key(key), default_value(defaultvalue)
+{
+    AOGProperty::add_default_map(key, default_value);
+}
+
+AOGProperty::AOGProperty(const QString key, const QVector<int> &defaultvalue): key(key), default_list(defaultvalue)
+{
+    AOGProperty::add_default_map(key,toVariant(defaultvalue));
+}
+
+void AOGProperty::add_default_map(const QString &key, const QVariant &default_value) {
+    default_map[key] = default_value;
+}
+
+void AOGProperty::init_defaults()
+{
+    foreach (QString key, AOGProperty::default_map.keys()) {
+        settings->value(key, default_map[key]);
+    }
+}
+
 AOGProperty::operator int() { return settings->value(key,default_value).toInt(); }
 AOGProperty::operator char() { return (char)(settings->value(key,default_value).toInt()); }
 AOGProperty::operator double() { return settings->value(key,default_value).toDouble(); }

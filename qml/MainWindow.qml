@@ -570,7 +570,13 @@ Window {
                     objectName: "btnAutoSteer"
                     icon.source: "/images/AutoSteerOff.png"
                     iconChecked: "/images/AutoSteerOn.png"
-                    buttonText: checked ? (aog.offlineDistance).toFixed(1) : "X"
+                    checkable: true
+                    checked: aog.isAutoSteerBtnOn
+                    //Is remote activation of autosteer enabled?
+                    buttonText: (settings.setAS_isAutoSteerAutoOn === true ? "R" : "M")
+                    onCheckedChanged: {
+                        aog.isAutoSteerBtnOn = checked
+                    }
                 }
 
             }

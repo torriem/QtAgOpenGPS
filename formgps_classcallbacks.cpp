@@ -1,4 +1,8 @@
 #include "formgps.h"
+#include "aogsettings.h"
+
+
+extern AOGSettings *settings;
 
 /***************************************
  * callbacks for classes to connect to *
@@ -31,6 +35,7 @@ void FormGPS::connect_classes()
     connect(&yt, SIGNAL(outOfBounds()),&mc,SLOT(setOutOfBounds()));
     //TODO: connect(&yt,SIGNAL(turnOffBoundAlarm()),&sounds,SLOT(onTurnOffBoundAlarm()));
 
+    //connect(settings, &AOGSettings::updateFromSettings, this, &FormGPS::loadSettings);
 }
 
 void FormGPS::onStopAutoSteer()

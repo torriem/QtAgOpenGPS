@@ -69,8 +69,8 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
         //set up default field to play in for debugging purposes
         currentFieldDirectory = "TestField";
         property_setF_CurrentDir = currentFieldDirectory;
-        pn.latitude = sim.latitude;
-        pn.longitude = sim.longitude;
+        pn.latStart = sim.latitude;
+        pn.lonStart = sim.longitude;
 
         FileCreateField();
 
@@ -1000,6 +1000,7 @@ void FormGPS::tmrWatchdog_timeout()
     //every cycle
     //we cannot manipulate the GUI from any of the OpenGL drawing methods as they run in a
     //different thread.
+    //TODO move this entirely to QML
     if (isAutoSteerBtnOn && !ct.isContourBtnOn) {
         qmlItem(qml_root, "btnManUturnLeft")->setProperty("visible", true);
         qmlItem(qml_root, "btnManUturnRight")->setProperty("visible", true);
@@ -1007,15 +1008,6 @@ void FormGPS::tmrWatchdog_timeout()
         qmlItem(qml_root, "btnManUturnLeft")->setProperty("visible", false);
         qmlItem(qml_root, "btnManUturnRight")->setProperty("visible", false);
     }
-
-    if (ct.isContourBtnOn || ABLine.isBtnABLineOn || curve.isBtnCurveOn)
-    {
-        double dist = vehicle.distanceDisplay * 0.1;
-        qmlItem(qml_root, "btnAutoSteer")->setProperty("buttonText", locale.toString(dist,'f',1));
-    } else {
-        qmlItem(qml_root, "btnAutoSteer")->setProperty("buttonText", "");
-    }
-
 }
 
 //force all the buttons same according to two main buttons

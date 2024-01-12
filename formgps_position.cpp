@@ -3,7 +3,6 @@
 #include "cmodulecomm.h"
 #include "cabline.h"
 #include "ccontour.h"
-#include "cworldgrid.h"
 #include "cvehicle.h"
 #include "csection.h"
 #include "cboundary.h"
@@ -12,9 +11,7 @@
 #include <QPair>
 #include "glm.h"
 #include <string>
-#include "qmlutil.h"
 #include "aogrenderer.h"
-#include "aogproperty.h"
 #include "cpgn.h"
 
 //called for every new GPS or simulator position
@@ -694,7 +691,7 @@ void FormGPS::UpdateFixPosition()
         //mc.machineControlData[mc.cnSpeed] = mc.autoSteerData[mc.sdSpeed];
 
         //save distance for display
-        //lightbarDistance = vehicle.guidanceLineDistanceOff;
+        lightbarDistance = vehicle.guidanceLineDistanceOff;
 
         if (!isAutoSteerBtnOn) //32020 means auto steer is off
         {
