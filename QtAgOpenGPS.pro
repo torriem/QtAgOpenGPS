@@ -55,6 +55,7 @@ SOURCES += main.cpp\
     formgps_classcallbacks.cpp \
     formgps_sections.cpp \
     formgps_settings.cpp \
+    qmlsectionbuttons.cpp \
     qmlsettings.cpp \
     qmlsettings_addkeys.cpp \
     testlists.cpp \
@@ -84,6 +85,7 @@ SOURCES += main.cpp\
     formgps_saveopen.cpp
 
 HEADERS  += formgps.h \
+    aogiface_property.h \
     aogproperty.h \
     classes/cabline.h \
     classes/cboundarylist.h \
@@ -107,6 +109,7 @@ HEADERS  += formgps.h \
     btnenum.h \
     classes/vecfix2fix.h \
     properties.h \
+    qmlsectionbuttons.h \
     qmlsettings.h \
     qmlutil.h \
     aogsettings.h \ 

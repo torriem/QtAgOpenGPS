@@ -21,6 +21,10 @@ Window {
     AOGInterface {
         id: aog
         objectName: "aog"
+
+        onIsJobStartedChanged: {
+            console.debug("isJobStarted changed!")
+        }
     }
 
     TimedMessage {

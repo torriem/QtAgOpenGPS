@@ -6,6 +6,7 @@
 #include "cpatches.h"
 #include "common.h"
 #include <QColor>
+#include "qmlsectionbuttons.h"
 
 class QOpenGLFunctions;
 class QMatrix4x4;
@@ -75,6 +76,7 @@ public:
 
     //moved the following from the main form to here
     CSection section[MAXSECTIONS+1];
+    QMLSectionButtons sectionButtonState;
 
     //list of the list of patch data individual triangles for field sections
     QVector<QSharedPointer<PatchTriangleList>> patchSaveList;

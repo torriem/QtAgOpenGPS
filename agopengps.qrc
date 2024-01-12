@@ -522,5 +522,6 @@
         <file>qml/SteerCircle.qml</file>
         <file>qml/Speedometer.qml</file>
         <file>qml/AOGInterface.qml</file>
+        <file>qml/SectionButtons.qml</file>
     </qresource>
 </RCC>

@@ -12,7 +12,7 @@ void FormGPS::btnSectionMasterManual_Click()
     autoBtnState = btnStates::Off;
     qmlItem(qml_root,"btnSectionOffAutoOn")->setProperty("isChecked",false);
 
-    switch (manualBtnState)
+    switch ((btnStates)manualBtnState)
     {
     case btnStates::Off:
         //roll to "on" state
@@ -45,7 +45,7 @@ void FormGPS::btnSectionMasterAuto_Click(){
     manualBtnState = btnStates::Off;
     qmlItem(qml_root,"btnManualOffOn")->setProperty("isChecked",false);
 
-    switch (autoBtnState)
+    switch ((btnStates)autoBtnState)
     {
     case btnStates::Off:
         autoBtnState = btnStates::Auto;
@@ -208,7 +208,7 @@ void FormGPS::IndividualZoneAndButtonToState(btnStates state,int zoneNumber)
 
     for (int i = sectionStartNumber; i < sectionEndNumber; i++)
     {
-        tool.section[i].sectionBtnState = state;
+        tool.sectionButtonState.set(i,state);
     }
 
     switch(state) {
@@ -315,8 +315,7 @@ void FormGPS::DoRemoteSwitches()
             // ON Signal from Arduino
             for (int s=0; s < 8; s++){
                 if((mc.ss[mc.swOnGr0] & (1 << s)) && tool.numOfSections > s) {
-                    if (tool.section[s].sectionBtnState != btnStates::Auto) tool.section[s].sectionBtnState = btnStates::Auto;
-                    btnSectionMan_Click(s);
+                    tool.sectionButtonState.set(s,btnStates::On);
                 }
             }
 
@@ -329,8 +328,7 @@ void FormGPS::DoRemoteSwitches()
             for (int s=0; s<8; s++) {
                 if ((mc.ss[mc.swOnGr1] & (1 << s)) && tool.numOfSections > (s+8))
                 {
-                    if (tool.section[s].sectionBtnState != btnStates::Auto) tool.section[s+8].sectionBtnState = btnStates::Auto;
-                    btnSectionMan_Click(s+8);
+                    tool.sectionButtonState.set(s+8, btnStates::On);
                 }
             }
             mc.ssP[mc.swOnGr1] = mc.ss[mc.swOnGr1];
@@ -345,9 +343,9 @@ void FormGPS::DoRemoteSwitches()
             {
 
                 for(int s=0; s< 8; s++) {
-                    if ((mc.ssP[mc.swOffGr0] & (1 << s)) && (mc.ss[mc.swOffGr0] & (1 << s)) && (tool.section[s].sectionBtnState == btnStates::Off))
+                    if ((mc.ssP[mc.swOffGr0] & (1 << s)) && (mc.ss[mc.swOffGr0] & (1 << s)) && (tool.sectionButtonState.get(s) == btnStates::Off))
                     {
-                        btnSectionMan_Click(s);
+                        tool.sectionButtonState.set(s,btnStates::Auto);
                     }
                 }
             }
@@ -360,10 +358,9 @@ void FormGPS::DoRemoteSwitches()
             if (autoBtnState == btnStates::Auto)
             {
                 for(int s=8; s< 16; s++) {
-                    if ((mc.ssP[mc.swOffGr1] & (1 << s)) && (mc.ss[mc.swOffGr1] & (1 << s)) && (tool.section[s+8].sectionBtnState == btnStates::Off))
+                    if ((mc.ssP[mc.swOffGr1] & (1 << s)) && (mc.ss[mc.swOffGr1] & (1 << s)) && (tool.sectionButtonState.get(s+8) == btnStates::Off))
                     {
-
-                        btnSectionMan_Click(s+8);
+                        tool.sectionButtonState.set(s+8,btnStates::Auto);
                     }
                 }
             }
@@ -375,10 +372,9 @@ void FormGPS::DoRemoteSwitches()
         {
             //if section SW in Arduino is switched to OFF; check always, if switch is locked to off GUI should not change
             for(int s=0; s< 8; s++) {
-                if ((mc.ss[mc.swOffGr0] & (1 << s)) && tool.section[s].sectionBtnState != btnStates::Off)
+                if ((mc.ss[mc.swOffGr0] & (1 << s)) && tool.sectionButtonState.get(s) != btnStates::Off)
                 {
-                    tool.section[s].sectionBtnState = btnStates::On;
-                    btnSectionMan_Click(s);
+                    tool.sectionButtonState.set(s,btnStates::Off);
                 }
             }
         } // if swOFFLo !=0
@@ -386,10 +382,9 @@ void FormGPS::DoRemoteSwitches()
         {
             //if section SW in Arduino is switched to OFF; check always, if switch is locked to off GUI should not change
             for (int s=0; s<8; s++) {
-                if ((mc.ss[mc.swOffGr0] & (1 << s)) && tool.section[s+8].sectionBtnState != btnStates::Off)
+                if ((mc.ss[mc.swOffGr0] & (1 << s)) && tool.sectionButtonState.get(s+8) != btnStates::Off)
                 {
-                    tool.section[s].sectionBtnState = btnStates::On;
-                    btnSectionMan_Click(s);
+                    tool.sectionButtonState.set(s,btnStates::Off);
                 }
             }
         } // if swOFFHi !=0

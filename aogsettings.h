@@ -14,7 +14,10 @@ class QJsonObject;
 
 class AOGSettings : public QSettings
 {
+    Q_OBJECT
 public:
+    AOGSettings(QObject *parent = 0);
+
     QVariant value(const QString &key, const QVariant &defaultvalue = QVariant::Invalid);
     QVector<int> value(const QString &key, const QVector<int> &defaultvalue = QVector<int> {});
     void setValue(const QString &key, const QVector<int> &value_list);
@@ -27,6 +30,9 @@ public:
     QJsonObject toJson();
     bool saveJson(QString filename);
     bool loadJson(QString filename);
+
+signals:
+    void updateFromSettings();
 };
 
 template <class T> static QVariant toVariant(const QVector<T> &list)

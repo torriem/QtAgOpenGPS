@@ -207,7 +207,7 @@ Item {
     property int setDisplay_brightnessSystem: 80
     property bool setTool_isSectionsNotZones: true
     property int setTool_numSectionsMulti: 20
-    property var setTool_zones: [ 2,10,20,0,0,0,0,0,0 ]
+    property var setTool_zones: [ 4,5,10,15,20,0,0,0,0 ]
     property double setTool_sectionWidthMulti: 0.5
     property bool setDisplay_isBrightnessOn: true
     property string setKey_hotkeys: "ACFGMNPTYVW12345678"

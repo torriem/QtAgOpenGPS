@@ -13,6 +13,11 @@
 
 extern QMLSettings qml_settings;
 
+AOGSettings::AOGSettings(QObject *parent) : QSettings(parent)
+{
+
+}
+
 QVariant AOGSettings::value(const QString &key, const QVariant &defaultvalue)
 {
     QVariant val;
@@ -41,17 +46,20 @@ void AOGSettings::setValue(const QString &key, const QVector<int> &value_list)
 {
     QSettings::setValue(key,toVariant(value_list));
     qml_settings.updateSetting(key);
+    //emit updateFromSettings();
 }
 
 void AOGSettings::setValue(const QString &key, const QVariant &value)
 {
     QSettings::setValue(key,value);
     qml_settings.updateSetting(key);
+    //emit updateFromSettings();
 }
 
 void AOGSettings::setValue_noqml(const QString &key, const QVariant &value)
 {
     QSettings::setValue(key,value);
+    //emit updateFromSettings();
 }
 
 QJsonObject AOGSettings::toJson()

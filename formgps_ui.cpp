@@ -15,6 +15,7 @@
 #include <assert.h>
 #include "aogrenderer.h"
 #include "qmlsettings.h"
+#include "qmlsectionbuttons.h"
 
 extern QMLSettings qml_settings;
 
@@ -37,6 +38,16 @@ void FormGPS::setupGui()
 
     qml_root->setProperty("visible",true);
 
+    //have to do this for each type we use
+    AOGIFace_Property<int>::set_qml_root(qmlItem(qml_root, "aog"));
+    AOGIFace_Property<bool>::set_qml_root(qmlItem(qml_root, "aog"));
+    AOGIFace_Property<btnStates>::set_qml_root(qmlItem(qml_root, "aog"));
+    QMLSectionButtons::set_aog_root(qmlItem(qml_root, "aog"));
+
+
+    //hook up our AOGInterface properties
+    QObject *aog = qmlItem(qml_root, "aog");
+    connect(aog,SIGNAL(sectionButtonStateChanged()), &tool.sectionButtonState, SLOT(onStatesUpdated()));
 
     connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
 

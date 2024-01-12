@@ -298,13 +298,13 @@ void FormGPS::processSectionLookahead() {
     for (int j = 0; j < tool.numOfSections; j++)
     {
         //Off or too slow or going backwards
-        if (tool.section[j].sectionBtnState == btnStates::Off || vehicle.avgSpeed < vehicle.slowSpeedCutoff || tool.section[j].speedPixels < 0)
+        if (tool.sectionButtonState.get(j) == btnStates::Off || vehicle.avgSpeed < vehicle.slowSpeedCutoff || tool.section[j].speedPixels < 0)
         {
             tool.section[j].sectionOnRequest = false;
             tool.section[j].sectionOffRequest = true;
 
             // Manual on, force the section On
-            if (tool.section[j].sectionBtnState == btnStates::On)
+            if (tool.sectionButtonState.get(j) == btnStates::On)
             {
                 tool.section[j].sectionOnRequest = true;
                 tool.section[j].sectionOffRequest = false;
@@ -314,7 +314,7 @@ void FormGPS::processSectionLookahead() {
         }
 
         // Manual on, force the section On
-        if (tool.section[j].sectionBtnState == btnStates::On)
+        if (tool.sectionButtonState.get(j) == btnStates::On)
         {
             tool.section[j].sectionOnRequest = true;
             tool.section[j].sectionOffRequest = false;
@@ -1058,17 +1058,17 @@ void FormGPS::manualBtnUpdate(int sectNumber)
 {
     QObject *button = qmlItem(qml_root,QString("section")+QString::number(sectNumber));
 
-    switch(tool.section[sectNumber].sectionBtnState) {
+    switch(tool.sectionButtonState.get(sectNumber)) {
     case btnStates::Off:
-        tool.section[sectNumber].sectionBtnState = btnStates::Auto;
+        tool.sectionButtonState.set(sectNumber, btnStates::Auto);
         button->setProperty("state","auto");
         break;
     case btnStates::Auto:
-        tool.section[sectNumber].sectionBtnState = btnStates::On;
+        tool.sectionButtonState.set(sectNumber, btnStates::On);
         button->setProperty("state","on");
         break;
     case btnStates::On:
-        tool.section[sectNumber].sectionBtnState = btnStates::Off;
+        tool.sectionButtonState.set(sectNumber, btnStates::Off);
         button->setProperty("state","off");
         break;
     }

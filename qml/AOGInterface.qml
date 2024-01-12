@@ -20,6 +20,17 @@ import QtQuick.Controls 2.15
 Item {
     id: aogInterfaceType
 
+    property bool isJobStarted: false
+
+    property int manualBtnState: 0
+    property int autoBtnState: 0
+
+    //sections 0-15 are used for on-screen buttons if
+    //not using zones.  If using zones the rest are used
+    //for mapping zones to sections
+
+    property variant sectionButtonState: [ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ]
+
     property double easting: 0
     property double northing: 0
     property double latitude: 0

@@ -43,6 +43,7 @@
 #include "cguidance.h"
 #include "cheadline.h"
 #include "cpgn.h"
+#include "aogiface_property.h"
 
 //forward declare classes referred to below, to break circular
 //references in the code
@@ -144,7 +145,10 @@ public:
     int flagNumberPicked = 0;
 
     //bool for whether or not a job is active
-    bool isJobStarted = false, isAreaOnRight = true, isAutoSteerBtnOn = false;
+    bool /*isJobStarted = false,*/ isAreaOnRight = true, isAutoSteerBtnOn = false;
+
+    //this bool actually lives in the QML aog object.
+    AOGIFace_Property<bool> isJobStarted = AOGIFace_Property<bool>("isJobStarted");
 
     //if we are saving a file
     bool isSavingFile = false, isLogElevation = false;
@@ -251,8 +255,10 @@ public:
 
 
     //master Manual and Auto, 3 states possible
-    btnStates manualBtnState = btnStates::Off;
-    btnStates autoBtnState = btnStates::Off;
+    //btnStates manualBtnState = btnStates::Off;
+    //btnStates autoBtnState = btnStates::Off;
+    AOGIFace_Property<btnStates> manualBtnState = AOGIFace_Property<btnStates>("manualBtnState");
+    AOGIFace_Property<btnStates> autoBtnState = AOGIFace_Property<btnStates>("manualBtnState");
 
     void FixPanelsAndMenus();
 

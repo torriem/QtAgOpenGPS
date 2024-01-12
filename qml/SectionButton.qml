@@ -40,15 +40,15 @@ Rectangle {
     height: 40
 
     border.width: 1
-    border.color: "black"
+    border.color: "black" //textColor?
 
     //property color buttonColor: "white"
     //property string buttonText: "Ok"
     property string buttonText: ""
+    property color textColor: "white"
     signal clicked
 
     color: "red"
-
 
     MouseArea {
         id: mouseArea
@@ -61,6 +61,7 @@ Rectangle {
     Text {
         id: label
         anchors.fill: parent
+        color: textColor
         text: rect.buttonText
         font.bold: true
         fontSizeMode: Text.Fit
@@ -70,6 +71,7 @@ Rectangle {
         horizontalAlignment: Text.AlignHCenter
     }
 
+    /*
     states: [
         State {
             name: "on"
@@ -105,5 +107,5 @@ Rectangle {
                 //text:  "Off"
             }
        }
-    ]
+    ]*/
 }
