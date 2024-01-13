@@ -44,10 +44,14 @@ void FormGPS::setupGui()
     AOGIFace_Property<btnStates>::set_qml_root(qmlItem(qml_root, "aog"));
     QMLSectionButtons::set_aog_root(qmlItem(qml_root, "aog"));
 
-
     //hook up our AOGInterface properties
     QObject *aog = qmlItem(qml_root, "aog");
     connect(aog,SIGNAL(sectionButtonStateChanged()), &tool.sectionButtonState, SLOT(onStatesUpdated()));
+
+    //AB Line Picker
+    QObject *abLinePicker = qmlItem(qml_root, "abLinePicker");
+    connect(abLinePicker,SIGNAL(updateABLines()),this,SLOT(update_ablines_qml()));
+
 
     connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
 
@@ -489,4 +493,25 @@ void FormGPS::FixTramModeButton()
 
     //make sure tram has right icon.  DO this through javascript
 
+}
+
+void FormGPS::update_ablines_qml()
+{
+    qDebug() << "update_ablines_qml called";
+    QObject *aog = qmlItem(qml_root,"aog");
+
+    QList<QVariant> ablist;
+    QMap<QString, QVariant>abline;
+
+    for(int i=0; i < ABLine.lineArr.count(); i++) {
+        abline.clear();
+        abline["index"] = i;
+        abline["name"] = ABLine.lineArr[i].Name;
+        abline["easting"] = ABLine.lineArr[i].origin.easting;
+        abline["northing"] = ABLine.lineArr[i].origin.northing;
+        abline["northing"] = ABLine.lineArr[i].heading;
+        ablist.append(abline);
+    }
+
+    aog->setProperty("abLinesList",ablist);
 }

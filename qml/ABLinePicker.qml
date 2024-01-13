@@ -1,12 +1,59 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
+import QtQuick.Dialogs 1.3
 import Qt.labs.folderlistmodel 2.2
 import QtQml.Models 2.3
 
-Item {
+Dialog {
+    //AOGInterface {
+    //    id: aog //temporary
+    //}
+    id: abLinePickerDialog
+
     width: 600
     height: 400
+
+    modality: Qt.WindowModal
+    standardButtons: StandardButton.NoButton
+    title: qsTr("AB Line")
+
+    signal updateABLines()
+    signal switchToLine(int lineno) //redundant? use aogproperty
+    signal deleteLine(int lineno)
+    signal addLine(string name, double easting, double northing, double heading)
+
+    Connections {
+        target: aog
+        function onAbLinesListChanged() {
+            abLinePickerDialog.reloadModel()
+        }
+    }
+
+    function reloadModel() {
+        ablineModel.clear()
+        for( var i = 0; i < aog.abLinesList.length ; i++ ) {
+            ablineModel.append(aog.abLinesList[i])
+        }
+        if (aog.currentABCurve >-1)
+            ablineView.currentIndex = aog.currentABCurve
+
+    }
+
+    onVisibleChanged:  {
+        //when we show or hide the dialog, ask the main
+        //program to update our lines list in the
+        //AOGInterface object
+        console.debug("visibility changed, requesting update")
+        updateABLines()
+        ablineView.currentIndex = aog.currentABLine
+        //preselect first AB line if none was in use before
+        //to make it faster for user
+        if (ablineView.currentIndex < 0)
+            if (aog.abLinesList.length > 0)
+                ablineView.currentIndex = 0
+    }
+
     Rectangle{
         anchors.fill: parent
         border.width: 1
@@ -41,6 +88,16 @@ Item {
             IconButtonTransparent{
                 objectName: "btnLineExit"
                 icon.source: "/images/OK64.png"
+                onClicked: {
+                    console.debug("okay clicked")
+                    console.debug(ablineView.currentIndex)
+                    if (ablineView.currentIndex > -1) {
+                        abLinePicker.switchToLine(ablineView.currentIndex)
+                        aog.currentABLine = ablineView.currentIndex
+                        abLinePickerDialog.accept()
+                    } else
+                        abLinePickerDialog.reject()
+                }
             }
         }
 
@@ -67,7 +124,11 @@ Item {
                 IconButtonTransparent{
                     objectName: "btnLineExit"
                     icon.source: "/images/SwitchOff.png"
-                    onClicked: abLinePicker.visible = false
+                    onClicked: {
+                        aog.currentABLine = -1
+                        ablineView.currentIndex = -1
+                        abLinePickerDialog.reject()
+                    }
                 }
                 IconButtonTransparent{
                     objectName: "btnLineAdd"
@@ -240,7 +301,6 @@ Item {
         }
 
         Rectangle{
-            id: picker
             anchors.left: parent.left
             anchors.top:topLine.bottom
             anchors.right: rightColumn.left
@@ -248,22 +308,35 @@ Item {
             anchors.bottomMargin: 0
             anchors.margins: 10
             color: "white"
+
+            ListModel {
+                id: ablineModel
+                objectName: "ablineModel"
+            }
+
+            Component.onCompleted: {
+                reloadModel()
+            }
+
             ListView {
+                id: ablineView
                 anchors.fill: parent
                 property Component mycomponent: fileName
-                model: FolderListModel{
-                    id: fieldList
-                    folder: "file:/home/davidwedel/Documents/QtAgOpenGPS/Fields/ex"
-
-                }
+                model: ablineModel
+                property int currentIndex: -1
 
                 delegate: RadioButton{
                     id: control
+                    checked: ablineView.currentIndex === index ? true : false
                     indicator: Rectangle{
                         anchors.fill: parent
                         anchors.margins: 2
-                        color: control.down ? "white" : "blue"
+                        color: (control.down) ? "white" : "blue"
                         visible: control.checked
+                    }
+
+                    onDownChanged: {
+                        ablineView.currentIndex = index
                     }
 
                     width:parent.width
@@ -274,7 +347,7 @@ Item {
                         anchors.left: parent.left
                         anchors.leftMargin: 5
                         anchors.verticalCenter: parent.verticalCenter
-                        text: fileName
+                        text: model.name
                         font.pixelSize: 25
                         font.bold: true
                         color: control.checked ? "white" : "black"
