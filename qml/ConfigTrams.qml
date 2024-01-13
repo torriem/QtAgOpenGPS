@@ -33,7 +33,7 @@ Item {
             anchors.bottomMargin: 100
             width: 200
             height: 200
-            icon: "/images/Config/ConT_TramOverride.png"
+            icon.source: "/images/Config/ConT_TramOverride.png"
         }
     }
 }

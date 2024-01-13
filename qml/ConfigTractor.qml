@@ -19,21 +19,21 @@ Rectangle{
             id: harvester
             width:150
             height:100
-            icon: "/images/vehiclePageHarvester.png"
+            icon.source: "/images/vehiclePageHarvester.png"
             isChecked: false
         }
         IconButtonColor{
             width:150
             height:100
             id: tractor
-            icon: "/images/vehiclePageTractor.png"
+            icon.source: "/images/vehiclePageTractor.png"
             isChecked: false
         }
         IconButtonColor{
             width:150
             height:100
             id: tr4wd
-            icon: "/images/vehiclePage4WD.png"
+            icon.source: "/images/vehiclePage4WD.png"
             isChecked: false
         }
     }

@@ -41,7 +41,7 @@ import QtQuick.Controls 2.5
                     objectName: "btnHydLiftEnable"
                     height: 130
                     width: 170
-                    icon: "/images/SwitchOn.png"
+                    icon.source: "/images/SwitchOn.png"
                 }
                 SpinBoxCustomized{
                     id: raiseTime
@@ -84,9 +84,9 @@ import QtQuick.Controls 2.5
             id: invertRel
             anchors.horizontalCenter: hydConfig.horizontalCenter
             anchors.bottom: parent.bottom
-            buttonText: "Invert Relays"
+            text: "Invert Relays"
             anchors.margins: 10
-            icon: "/images/Config/ConSt_InvertRelay.png"
+            icon.source: "/images/Config/ConSt_InvertRelay.png"
         }
         Rectangle{
             anchors.bottom: parent.bottom

@@ -4,6 +4,11 @@ import QtQuick.Layouts 1.3
 import QtQuick.Extras 1.4
 import Qt.labs.folderlistmodel 2.2
 
+
+/*todo:
+  couldn't find the setting for the polygons
+  or logNMEA
+  */
 Item {
     anchors.fill: parent
     Rectangle{
@@ -24,84 +29,92 @@ Item {
             IconButtonColor{
                 id: fieldTexture
                 objectName: "btnFieldTexture"
-                buttonText: qsTr("Field Texture")
-                icon: "/images/Config/ConD_FloorTexture.png"
-                isChecked: false
+                text: qsTr("Field Texture")
+                icon.source: "/images/Config/ConD_FloorTexture.png"
+                isChecked: settings.setDisplay_isTextureOn
+                onCheckedChanged: settings.setDisplay_isTextureOn = checked
             }
             IconButtonColor{
                 id: autoDayNight
                 objectName: "btnAutoDayNight"
-                isChecked: false
-                buttonText: qsTr("Auto Day Night")
-                icon: "/images/Config/ConD_AutoDayNight.png"
+                checked: settings.setDisplay_isAutoDayNight
+                onCheckedChanged: settings.setDisplay_isAutoDayNight = !checked
+                text: qsTr("Auto Day Night")
+                icon.source: "/images/Config/ConD_AutoDayNight.png"
             }
             IconButtonColor{
                 id:startFullScreen
                 objectName: "btnStartFullScreen"
-                buttonText: qsTr("Start FullScreen")
-                icon: "/images/Config/ConD_FullScreenBegin.png"
-                isChecked: false
+                text: qsTr("Start FullScreen")
+                icon.source: "/images/Config/ConD_FullScreenBegin.png"
+                checked: settings.setDisplay_isStartFullScreen
+                onCheckedChanged: settings.setDisplay_isStartFullScreen = checked
             }
             IconButtonColor{
                 id:polygons
                 objectName: "btnPolygons"
-                buttonText: qsTr("Polygons")
-                icon: "/images/Config/ConD_Poligons.png"
-                isChecked: false
+                text: qsTr("Polygons")
+                icon.source: "/images/Config/ConD_Poligons.png"
+               // checked: settings.set
             }
             IconButtonColor{
                 id:grid
                 objectName: "btnGrid"
-                buttonText: qsTr("Grid")
-                icon: "/images/Config/ConD_Grid.png"
-                isChecked: false
+                text: qsTr("Grid")
+                icon.source: "/images/Config/ConD_Grid.png"
+                checked: settings.setMenu_isGridOn
+                onCheckedChanged: settings.setMenu_isGridOn = checked
             }
             IconButtonColor{
                 id:sky
                 objectName: "btnSky"
-                buttonText:qsTr("Sky")
-                icon: "/images/Config/ConD_Sky.png"
+                text:qsTr("Sky")
+                icon.source: "/images/Config/ConD_Sky.png"
+                checked: settings.setMenu_isSkyOn
+                onCheckedChanged: settings.setMenu_isSkyOn = checked
             }
             IconButtonColor{
                 id:brightness
-                buttonText:qsTr("Brightness")
+                text:qsTr("Brightness")
                 objectName: "btnBrightness"
-                icon: "/images/BrightnessUp.png"
-                isChecked: false
+                icon.source: "/images/BrightnessUp.png"
+                checked: settings.setDisplay_isBrightnessOn
+                onCheckedChanged: settings.setDisplay_isBrightnessOn = checked
             }
             IconButtonColor{
                 id:lightBar
                 objectName: "btnLightBar"
-                buttonText:qsTr("Lightbar")
-                icon: "/images/Config/ConD_LightBar.png"
-                isChecked: false
+                text:qsTr("Lightbar")
+                icon.source: "/images/Config/ConD_LightBar.png"
+                checked: settings.setMenu_isLightbarOn
+                onCheckedChanged: settings.setMenu_isLightbarOn = checked
             }
             IconButtonColor{
                 id:logNMEA
                 objectName: "btnLonNMEA"
-                buttonText: qsTr("Log NMEA")
+                text: qsTr("Log NMEA")
                 isChecked: false
-                icon: "/images/Config/ConD_LogNMEA.png"
+                icon.source: "/images/Config/ConD_LogNMEA.png"
             }
-            IconButtonColor{
+            IconButtonColor{ //delete this?
                 id:keyboard
                 objectName: "btnKeyboard"
-                buttonText:qsTr("Keyboard")
-                icon: "/images/Config/ConD_KeyBoard.png"
+                text:qsTr("Keyboard")
+                icon.source: "/images/Config/ConD_KeyBoard.png"
                 isChecked: false
             }
             IconButtonColor{
                 id: guideLines
                 objectName: "btnGuidelines"
-                buttonText: qsTr("GuideLines")
-                icon: "/images/Config/ConD_ExtraGuides.png"
-                isChecked: false
+                text: qsTr("GuideLines")
+                icon.source: "/images/Config/ConD_ExtraGuides.png"
+                checked: false
             }
             IconButtonColor{
                 id:svennArrow
                 objectName: "btnSvennArrow"
-                buttonText: qsTr("Svenn Arrow")
-                icon: "/images/SvennArrow.png"
+                text: qsTr("Svenn Arrow")
+                icon.source: "/images/SvennArrow.png"
                 isChecked: false
             }
         }
@@ -114,8 +127,8 @@ Item {
             IconButtonColor{
                 id:metric
                 objectName: "btnMetric"
-                icon: "/images/Config/ConD_Metric.png"
-                buttonText: ""
+                icon.source: "/images/Config/ConD_Metric.png"
+                text: ""
                 onClicked:{
                     metric.isChecked = true
                     imperial.isChecked = false
@@ -124,8 +137,8 @@ Item {
             IconButtonColor{
                 id:imperial
                 objectName: "btnImperial"
-                icon: "/images/Config/ConD_Imperial.png"
-                buttonText: ""
+                icon.source: "/images/Config/ConD_Imperial.png"
+                text: ""
                 onClicked:{
                     imperial.isChecked = true
                     metric.isChecked = false
@@ -225,7 +238,7 @@ Item {
             anchors.rightMargin: 30
             anchors.top: vehicleList.top
             icon.source: "/images/VehFileLoad.png"
-            buttonText: qsTr("Load")
+            text: qsTr("Load")
             color3: "white"
             border: 2
         }
@@ -235,7 +248,7 @@ Item {
             anchors.topMargin: 50
             anchors.horizontalCenter: load.horizontalCenter
             icon.source: "/images/VehFileDelete.png"
-            buttonText: qsTr("Delete")
+            text: qsTr("Delete")
             color3: "white"
             border: 2
         }

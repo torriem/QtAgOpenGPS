@@ -257,6 +257,7 @@ Window {
                 objectName: "btnAcres"
                 buttonText: qsTr("0.00")
                 icon.source: "/images/TripOdometer.png"
+            visible: aog.isJobStarted ? true : false
 
             }
             IconButtonText {
@@ -355,6 +356,7 @@ Window {
                 buttonText: qsTr("Field Tools")
                 icon.source: "/images/FieldTools.png"
                 onClicked: fieldTools.popup()
+            visible: aog.isJobStarted ? true : false
             }
             Menu{
                 id: fieldTools
@@ -465,6 +467,7 @@ Window {
                 iconChecked: "/images/ContourOn.png"
                 buttonText: "Contour"
                 //color: "white"
+            visible: aog.isJobStarted ? true : false
             }
             IconButtonText{
                 id: btnABCurve
@@ -475,6 +478,7 @@ Window {
                 iconChecked: "/images/CurveOn.png"
                 buttonText: "ABCurve"
                 onClicked: abCurvePicker.visible = true
+            visible: aog.isJobStarted ? true : false
             }
             IconButtonText{
                 id: btnABLine
@@ -487,6 +491,7 @@ Window {
                 iconChecked: "/images/ABLineOn.png"
                 onClicked: abLinePicker.visible = true
                 buttonText: "ABLine"
+            visible: aog.isJobStarted ? true : false
             }
 
             IconButton{
@@ -495,6 +500,7 @@ Window {
                 icon.source: "/images/ABLineCycle.png"
                 width: btnABLine.width
                 height: btnABLine.height
+            visible: aog.isJobStarted ? true : false
             }
             IconButton{
                 id: btnABLineCycleBk
@@ -502,6 +508,7 @@ Window {
                 icon.source: "/images/ABLineCycleBk.png"
                 width: btnABLine.width
                 height: btnABLine.height
+            visible: aog.isJobStarted ? true : false
             }
 
             IconButtonText {
@@ -512,6 +519,7 @@ Window {
                 icon.source: "/images/ManualOff.png"
                 iconChecked: "/images/ManualOn.png"
                 buttonText: "Manual"
+            visible: aog.isJobStarted ? true : false
                 onCheckedChanged: {
                     if (checked) {
                         btnSectionAuto.checked = false;
@@ -530,6 +538,7 @@ Window {
                 icon.source: "/images/SectionMasterOff.png"
                 iconChecked: "/images/SectionMasterOn.png"
                 buttonText: "Auto"
+            visible: aog.isJobStarted ? true : false
                 onCheckedChanged: {
                     if (checked) {
                         btnSectionManual.checked = false;
@@ -555,6 +564,7 @@ Window {
                 iconChecked: "/images/AutoSteerOn.png"
                 checkable: true
                 checked: aog.isAutoSteerBtnOn
+            visible: aog.isJobStarted ? true : false
                 //Is remote activation of autosteer enabled?
                 buttonText: (settings.setAS_isAutoSteerAutoOn === true ? "R" : "M")
                 onCheckedChanged: {
@@ -641,6 +651,7 @@ Window {
                 id: btnSectionMapping
                 objectName: "btnSectionMapping"
                 icon.source: "/images/SectionMapping"
+            visible: aog.isJobStarted ? true : false
             }
 
             IconButtonText {
@@ -832,7 +843,7 @@ Window {
             anchors.right: rightColumn.left
             anchors.topMargin: 50
             anchors.rightMargin: 150
-            visible: true
+            visible: aog.isJobStarted ? true : false
             width: childrenRect.width
             height: childrenRect.height
             ColorOverlay{

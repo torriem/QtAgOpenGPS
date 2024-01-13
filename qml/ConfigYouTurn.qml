@@ -113,7 +113,7 @@ Radius")
                 anchors.bottomMargin: 5
                 spacing: 20
                 IconButtonColor{
-                    icon: "/images/YouTurnNo.png"
+                    icon.source: "/images/YouTurnNo.png"
                     //onClick: childUturn.color = "green"
                     /* background:Rectangle{
                     id: childUturn
@@ -122,7 +122,7 @@ Radius")
                 }*/
                 }
                 IconButtonColor{
-                    icon: "/images/YouTurnH.png"
+                    icon.source: "/images/YouTurnH.png"
                 }
             }
         }

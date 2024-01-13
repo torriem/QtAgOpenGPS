@@ -12,17 +12,17 @@ Rectangle{
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 20
-        buttonText: qsTr("Remove Offset")
-        icon: "/images/Config/ConDa_RemoveOffset.png"
+        text: qsTr("Remove Offset")
+        icon.source: "/images/Config/ConDa_RemoveOffset.png"
         isChecked: false
     }
     IconButtonColor{
         objectName: "zeroRoll"
-        buttonText: "Zero Roll"
+        text: "Zero Roll"
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 20
-        icon: "/images/Config/ConDa_RollSetZero.png"
+        icon.source: "/images/Config/ConDa_RollSetZero.png"
         isChecked: false
     }
     IconButtonColor{
@@ -30,7 +30,7 @@ Rectangle{
         anchors.left: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: 20
-        icon: "/images/Config/ConDa_ResetIMU.png"
+        icon.source: "/images/Config/ConDa_ResetIMU.png"
         isChecked: false
     }
 
@@ -39,8 +39,8 @@ Rectangle{
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.horizontalCenter
         anchors.topMargin: 20
-        buttonText: qsTr("Invert Roll")
-        icon: "/images/Config/ConDa_InvertRoll.png"
+        text: qsTr("Invert Roll")
+        icon.source: "/images/Config/ConDa_InvertRoll.png"
         isChecked: false
     }
     Rectangle{

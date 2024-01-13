@@ -26,7 +26,7 @@ Rectangle{
 			width:200
 			height:150
 			id: i3pt
-			icon: "/images/ToolChkRear.png"
+            icon.source: "/images/ToolChkRear.png"
 			isChecked: false
 		}
 
@@ -34,21 +34,21 @@ Rectangle{
 			width:200
 			height:150
 			id: i3ptfront
-			icon: "/images/ToolChkFront.png"
+            icon.source: "/images/ToolChkFront.png"
 			isChecked: false
 		}
 		IconButtonColor{
 			width:200
 			height:150
 			id: itrailed
-			icon: "/images/ToolChkTrailing.png"
+            icon.source: "/images/ToolChkTrailing.png"
 			isChecked: false
 		}
 		IconButtonColor{
 			width:200
 			height:150
 			id: iTBT
-			icon: "/images/ToolChkTBT.png"
+            icon.source: "/images/ToolChkTBT.png"
 			isChecked: false
 		}
 	}

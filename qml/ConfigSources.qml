@@ -32,18 +32,18 @@ Rectangle{
             IconButtonColor{
                 width:150
                 height:100
-                buttonText: "Dual"
+                text: "Dual"
                 id: dual
-                icon: "/images/Config/Con_SourcesGPSDual.png"
+                icon.source: "/images/Config/Con_SourcesGPSDual.png"
                 isChecked: false
             }
             IconButtonColor{
                 width:150
                 height:100
                 id: fix
-                buttonText: "Fix"
+                text: "Fix"
                 isChecked: false
-                icon: "/images/Config/Con_SourcesGPSSingle.png"
+                icon.source: "/images/Config/Con_SourcesGPSSingle.png"
             }
         }
     }
@@ -72,7 +72,7 @@ Rectangle{
                 width:150
                 height:100
                 id: alarm
-                icon: "/images/Config/Con_SourcesRTKAlarm.png"
+                icon.source: "/images/Config/Con_SourcesRTKAlarm.png"
                 isChecked: false
             }
             Text{
@@ -82,7 +82,7 @@ Rectangle{
                 width:150
                 height:100
                 id: killAutoSteer
-                icon: "/images/AutoSteerOff.png"
+                icon.source: "/images/AutoSteerOff.png"
                 isChecked: false
             }
         }
