@@ -4,20 +4,20 @@ import QtQuick.Controls 2.5
 Item {
     id: spinBox_Customized
     property int from: 0
-    property int value: 1
     property int to: 10
+    property int value: 0
     property string text: ""
 	property int stepSize: 1
     property bool editable: true
     width: spinner.width
-    height: 100
+    property int spinValue: spinner.value
 
     SpinBox {
         id: spinner
         from: spinBox_Customized.from
         to: spinBox_Customized.to
         editable: spinBox_Customized.editable
-        value: value
+        value: spinBox_Customized.value
 		stepSize: spinBox_Customized.stepSize
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
