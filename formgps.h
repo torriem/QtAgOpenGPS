@@ -681,6 +681,8 @@ public slots:
 
     void TimedMessageBox(int timeout, QString s1, QString s2);
 
+    void update_ablines_qml();
+
     //left column
     void onBtnAcres_clicked();
     void onBtnSettings_clicked();

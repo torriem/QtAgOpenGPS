@@ -18,6 +18,8 @@ public:
 
     AOGIFace_Property() : prop_name(NULL) {}
 
+    ~AOGIFace_Property() { if(prop_name != NULL) delete prop_name; }
+
     //inline operator QString() { return prop_root->property(prop_name).toString(); }
     //TODO add types as needed
     static inline void set_qml_root(QObject *aogiface_root) {prop_root = aogiface_root; }

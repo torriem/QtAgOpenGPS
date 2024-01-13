@@ -486,10 +486,24 @@ Window {
                 checkable: true
                 //TODO: this should be set programmatically
                 //Also the types of lines are all mutually exclusive
-                checked: true
                 icon.source: "/images/ABLineOff.png"
                 iconChecked: "/images/ABLineOn.png"
-                onClicked: abLinePicker.visible = true
+                onClicked: {
+                    abLinePicker.visible = true
+                    if (aog.currentABLine > -1)
+                        btnABLine.checked = true
+                }
+                Connections {
+                    target: abLinePicker
+                    function onAccepted(){
+                        btnABLine.checked = true
+                    }
+                    function onRejected(){
+                        console.debug("abline dialog canceled")
+                        btnABLine.checked = false
+                    }
+                }
+                checked: aog.currentABLine > -1 ? true : false
                 buttonText: "ABLine"
             visible: aog.isJobStarted ? true : false
             }
@@ -1077,8 +1091,8 @@ Window {
         ABLinePicker{
             id: abLinePicker
             objectName: "abLinePicker"
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
+            //anchors.verticalCenter: parent.verticalCenter
+            //anchors.horizontalCenter: parent.horizontalCenter
             visible: false
         }
         TramLinesEditor{
