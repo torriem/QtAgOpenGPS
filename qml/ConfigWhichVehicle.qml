@@ -8,6 +8,7 @@ import Qt.labs.folderlistmodel 2.2
 /*todo:
   couldn't find the setting for the polygons
   or logNMEA
+  imperial/metric def isn't working right.
   */
 Item {
     anchors.fill: parent
@@ -108,14 +109,16 @@ Item {
                 objectName: "btnGuidelines"
                 text: qsTr("GuideLines")
                 icon.source: "/images/Config/ConD_ExtraGuides.png"
-                checked: false
+                checked: settings.setMenu_isSideGuideLines
+                onCheckedChanged: settings.setMenu_isSideGuideLines = checked
             }
             IconButtonColor{
                 id:svennArrow
                 objectName: "btnSvennArrow"
                 text: qsTr("Svenn Arrow")
                 icon.source: "/images/SvennArrow.png"
-                isChecked: false
+                checked: settings.setDisplay_isSvennArrowOn
+                onCheckedChanged: settings.setDisplay_isSvennArrowOn
             }
         }
         Row{
@@ -129,20 +132,16 @@ Item {
                 objectName: "btnMetric"
                 icon.source: "/images/Config/ConD_Metric.png"
                 text: ""
-                onClicked:{
-                    metric.isChecked = true
-                    imperial.isChecked = false
-                }
+                checked: settings.setMenu_isMetric
+                onClicked: settings.setMenu_isMetric = true
             }
             IconButtonColor{
                 id:imperial
                 objectName: "btnImperial"
                 icon.source: "/images/Config/ConD_Imperial.png"
                 text: ""
-                onClicked:{
-                    imperial.isChecked = true
-                    metric.isChecked = false
-                }
+                checked: !settings.setMenu_isMetric
+                onClicked: settings.setMenu_isMetric = false
             }
         }
         Rectangle{
