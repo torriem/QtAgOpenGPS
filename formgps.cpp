@@ -76,7 +76,8 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
 
         ABLine.refPoint1.easting = 0;
         ABLine.refPoint1.easting = 0;
-        ABLine.SetABLineByHeading(glm::toRadians(5.0f));
+        ABLine.abHeading = glm::toRadians(5.0f);
+        ABLine.SetABLineByHeading();
 
         CABLines line;
         line.origin = Vec2(0,0);
@@ -124,8 +125,8 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
         bootstrap_field=true;
         isJobStarted = true;
     }
-    ABLine.isABLineSet = true;
-    ABLine.isBtnABLineOn = true;
+    //ABLine.isABLineSet = true;
+    //ABLine.isBtnABLineOn = true;
 
     StartLoopbackServer();
 

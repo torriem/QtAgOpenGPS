@@ -1,12 +1,53 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
-import Qt.labs.folderlistmodel 2.2
+import QtQuick.Dialogs 1.3
 import QtQml.Models 2.3
 
-Item {
+Dialog {
+    id: abCurvePickerDialog
     width: 600
     height: 400
+
+    modality: Qt.WindowModal
+    standardButtons: StandardButton.NoButton
+    title: qsTr("AB Curve")
+
+    signal updateABCurves()
+    signal switchToCurve(int lineno) //redundant? use aogproperty
+    signal deleteCurve(int lineno)
+
+    Connections {
+        target: aog
+        function onAbCurvesListChanged() {
+            abCurvePickerDialog.reloadModel()
+        }
+    }
+
+    function reloadModel() {
+        abcurveModel.clear()
+        for( var i = 0; i < aog.abCurvesList.length ; i++ ) {
+            abcurveModel.append(aog.abCurvesList[i])
+        }
+        if (aog.currentABCurve >-1){
+            abcurveView.currentIndex = aog.currentABCurve
+        }
+
+    }
+
+    onVisibleChanged:  {
+        //when we show or hide the dialog, ask the main
+        //program to update our lines list in the
+        //AOGInterface object
+        updateABCurves()
+        abcurveView.currentIndex = aog.currentABCurve
+        //preselect first AB line if none was in use before
+        //to make it faster for user
+        if (abcurveView.currentIndex < 0)
+            if (aog.abCurvesList.length > 0)
+                abcurveView.currentIndex = 0
+    }
+
     Rectangle{
         anchors.fill: parent
         border.width: 1
@@ -42,7 +83,13 @@ Item {
             IconButtonTransparent{
                 objectName: "btnLineExit"
                 icon.source: "/images/OK64.png"
-                onClicked: abCurvePicker.visible = false
+                onClicked: {
+                    if (abcurveView.currentIndex > -1) {
+                        aog.currentABCurve = abcurveView.currentIndex
+                        abCurvePickerDialog.accept()
+                    } else
+                        abCurvePickerDialog.reject()
+                }
             }
         }
 
@@ -69,7 +116,11 @@ Item {
                 IconButtonTransparent{
                     objectName: "btnLineExit"
                     icon.source: "/images/SwitchOff.png"
-                    onClicked: abCurvePicker.visible = false
+                    onClicked: {
+                        aog.currentABCurve = -1
+                        abcurveView.currentIndex = -1
+                        abCurvePickerDialog.reject()
+                    }
                 }
                 IconButtonTransparent{
                     objectName: "btnLineAdd"
@@ -86,8 +137,8 @@ Item {
             anchors.top: topLine.bottom
             height: 10
             color: parent.color
-            width: picker.width
-            anchors.left: picker.left
+            width: abCurvePickerDialog.width
+            anchors.left: abCurvePickerDialog.left
             z: 1
         }
         Rectangle{
@@ -178,23 +229,35 @@ Item {
             anchors.bottomMargin: 0
             anchors.margins: 10
             color: "white"
-            ListView {
-                anchors.fill: parent
-                property Component mycomponent: fileName
-                model: FolderListModel{
-                    id: fieldList
-                    folder: "file:/home/davidwedel/Documents/QtAgOpenGPS/Fields/ex"
 
-                }
+            ListModel {
+                id: abcurveModel
+                objectName: "abcurveModel"
+            }
+
+            Component.onCompleted: {
+                reloadModel()
+            }
+
+            ListView {
+                id: abcurveView
+                anchors.fill: parent
+                model: abcurveModel
+                property int currentIndex: -1
 
                 delegate: RadioButton{
                     id: control
+                    checked: abcurveView.currentIndex === index ? true : false
                     indicator: Rectangle{
                         anchors.fill: parent
                         anchors.margins: 2
                         color: control.down ? "white" : "blue"
                         visible: control.checked
                     }
+                    onDownChanged: {
+                        abcurveView.currentIndex = index
+                    }
+
 
                     width:parent.width
                     height:50
@@ -204,7 +267,7 @@ Item {
                         anchors.left: parent.left
                         anchors.leftMargin: 5
                         anchors.verticalCenter: parent.verticalCenter
-                        text: fileName
+                        text: model.name
                         font.pixelSize: 25
                         font.bold: true
                         color: control.checked ? "white" : "black"

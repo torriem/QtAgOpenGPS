@@ -2,7 +2,6 @@ import QtQuick 2.9
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
 import QtQuick.Dialogs 1.3
-import Qt.labs.folderlistmodel 2.2
 import QtQml.Models 2.3
 
 Dialog {
@@ -44,7 +43,6 @@ Dialog {
         //when we show or hide the dialog, ask the main
         //program to update our lines list in the
         //AOGInterface object
-        console.debug("visibility changed, requesting update")
         updateABLines()
         ablineView.currentIndex = aog.currentABLine
         //preselect first AB line if none was in use before
@@ -89,10 +87,7 @@ Dialog {
                 objectName: "btnLineExit"
                 icon.source: "/images/OK64.png"
                 onClicked: {
-                    console.debug("okay clicked")
-                    console.debug(ablineView.currentIndex)
                     if (ablineView.currentIndex > -1) {
-                        abLinePicker.switchToLine(ablineView.currentIndex)
                         aog.currentABLine = ablineView.currentIndex
                         abLinePickerDialog.accept()
                     } else
@@ -145,8 +140,8 @@ Dialog {
             anchors.top: topLine.bottom
             height: 10
             color: parent.color
-            width: picker.width
-            anchors.left: picker.left
+            width: abLinePickerDialog.width
+            anchors.left: abLinePickerDialog.left
             z: 1
         }
         Rectangle{
@@ -321,7 +316,6 @@ Dialog {
             ListView {
                 id: ablineView
                 anchors.fill: parent
-                property Component mycomponent: fileName
                 model: ablineModel
                 property int currentIndex: -1
 
