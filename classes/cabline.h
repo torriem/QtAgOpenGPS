@@ -125,7 +125,7 @@ public:
     void BuildTram(CBoundary &bnd, CTram &tram);
     void DeleteAB();
     void SetABLineByBPoint(const CVehicle &vehicle);
-    void SetABLineByHeading(double heading); //do we need to pass in heading somewhere from the main form?
+    void SetABLineByHeading(); //do we need to pass in heading somewhere from the main form?
     void MoveABLine(double dist);
 
 signals:

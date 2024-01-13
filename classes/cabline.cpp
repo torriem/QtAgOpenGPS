@@ -603,14 +603,14 @@ void CABLine::SetABLineByBPoint(const CVehicle &vehicle)
     isABLineLoaded = true;
 }
 
-void CABLine::SetABLineByHeading(double heading)
+void CABLine::SetABLineByHeading()
 {
     //heading is set in the AB Form
-    refABLineP1.easting = refPoint1.easting - (sin(heading) * abLength);
-    refABLineP1.northing = refPoint1.northing - (cos(heading) * abLength);
+    refABLineP1.easting = refPoint1.easting - (sin(abHeading) * abLength);
+    refABLineP1.northing = refPoint1.northing - (cos(abHeading) * abLength);
 
-    refABLineP2.easting = refPoint1.easting + (sin(heading) * abLength);
-    refABLineP2.northing = refPoint1.northing + (cos(heading) * abLength);
+    refABLineP2.easting = refPoint1.easting + (sin(abHeading) * abLength);
+    refABLineP2.northing = refPoint1.northing + (cos(abHeading) * abLength);
 
     refPoint2.easting = refABLineP2.easting;
     refPoint2.northing = refABLineP2.northing;

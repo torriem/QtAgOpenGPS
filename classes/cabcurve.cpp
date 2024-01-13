@@ -213,7 +213,7 @@ void CABCurve::BuildCurveCurrentList(Vec3 pivot,
 
         //to calc heading based on next and previous points to give an average heading.
         cnt = curList.count();
-        arr = QVector<Vec3>(arr);
+        arr = QVector<Vec3>(curList);
         cnt--;
         curList.clear();
 
