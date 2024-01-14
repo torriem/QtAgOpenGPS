@@ -160,7 +160,7 @@ void destroyShaders() {
 
 void destroyTextures() {
 
-    foreach(const QOpenGLTexture *t, texture) {
+    for(const QOpenGLTexture *t: texture) {
         delete t;
     }
     texture.clear();

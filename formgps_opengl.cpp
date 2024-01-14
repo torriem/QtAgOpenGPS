@@ -13,7 +13,7 @@
 #include "glutils.h"
 #include "qmlutil.h"
 
-#include <QGLWidget>
+//#include <QGLWidget>
 #include <QQuickView>
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
@@ -291,8 +291,7 @@ void FormGPS::oglMain_Paint()
                     */
                     //for every new chunk of patch
 
-                    //foreach is a Qt macro that iterates over Qt containers
-                    foreach (QSharedPointer<PatchTriangleList> triList, triStrip[j].patchList)
+                    for (QSharedPointer<PatchTriangleList> triList: triStrip[j].patchList)
                     {
                         isDraw = false;
                         int count2 = triList->size();
@@ -692,7 +691,7 @@ void FormGPS::oglBack_Paint()
         if (patchCount > 0)
         {
             //for every new chunk of patch
-            foreach (QSharedPointer<QVector<QVector3D>> triList, triStrip[j].patchList)
+            for (QSharedPointer<QVector<QVector3D>> triList: triStrip[j].patchList)
             {
                 isDraw = false;
                 int count2 = triList->size();
@@ -1683,9 +1682,7 @@ void FormGPS::calculateMinMax()
             if (patchCount > 0)
             {
                 //for every new chunk of patch
-                QSharedPointer<PatchTriangleList> triList;
-
-                foreach (triList, triStrip[j].patchList)
+                for (QSharedPointer<PatchTriangleList>triList: triStrip[j].patchList)
                 {
                     int count2 = triList->count();
                     for (int i = 0; i < count2; i += 3)

@@ -22,7 +22,7 @@ void QMLSettings::loadSettings() {
     //load every setting that is in our map
     QString settings_key;
 
-    foreach (QString key, qml_to_settings_map.keys()) {
+    for (QString key: qml_to_settings_map.keys()) {
         settings_key = qml_to_settings_map[key];
         insert(key, (QVariant) settings->value(settings_key, QVariant::Invalid));
     }

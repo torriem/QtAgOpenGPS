@@ -23,7 +23,7 @@ void AOGProperty::add_default_map(const QString &key, const QVariant &default_va
 
 void AOGProperty::init_defaults()
 {
-    foreach (QString key, AOGProperty::default_map.keys()) {
+    for (QString key: AOGProperty::default_map.keys()) {
         settings->value(key, default_map[key]);
     }
 }

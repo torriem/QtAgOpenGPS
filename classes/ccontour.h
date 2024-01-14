@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QVector>
 #include <QSharedPointer>
+#include <climits>
 #include "vec2.h"
 #include "vec3.h"
 

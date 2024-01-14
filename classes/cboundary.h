@@ -9,6 +9,7 @@
 #include <QOpenGLBuffer>
 #include "cboundarylist.h"
 #include "btnenum.h"
+#include <QObject>
 
 
 class QOpenGLFunctions;

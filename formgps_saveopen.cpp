@@ -370,7 +370,7 @@ void FormGPS::FileSaveABLines()
 
     if (cnt > 0)
     {
-        foreach (CABLines item, ABLine.lineArr)
+        for (CABLines item : ABLine.lineArr)
         {
             //make it culture invariant
             writer << item.Name << ","
@@ -1235,8 +1235,7 @@ void FormGPS::FileSaveSections()
     writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     //for each patch, write out the list of triangles to the file
-    QSharedPointer<QVector<QVector3D>> triList;
-    foreach(triList, tool.patchSaveList)
+    for(QSharedPointer<QVector<QVector3D>> triList: tool.patchSaveList)
     {
         int count2 = triList->count();
         writer << count2 << Qt::endl;
@@ -1377,9 +1376,8 @@ void FormGPS::FileSaveContour()
     QTextStream writer(&contourFile);
     writer.setLocale(QLocale::C);
     writer.setRealNumberNotation(QTextStream::FixedNotation);
-    QSharedPointer<QVector<Vec3>> triList;
 
-    foreach (triList, contourSaveList)
+    for (QSharedPointer<QVector<Vec3>> triList: contourSaveList)
     {
         int count2 = triList->count();
 
