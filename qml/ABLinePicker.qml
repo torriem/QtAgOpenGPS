@@ -20,7 +20,9 @@ Dialog {
     signal updateABLines()
     signal switchToLine(int lineno) //redundant? use aogproperty
     signal deleteLine(int lineno)
+    signal changeName(int lineno)
     signal addLine(string name, double easting, double northing, double heading)
+    signal setA(bool start_cancel); //true to mark an A point, false to cancel new point
 
     Connections {
         target: aog
@@ -128,7 +130,10 @@ Dialog {
                 IconButtonTransparent{
                     objectName: "btnLineAdd"
                     icon.source: "/images/AddNew.png"
-                    onClicked: abSetter.visible = true
+                    onClicked: {
+                        abSetter.visible = true
+                        abLinePickerDialog.visible = false
+                    }
                 }
                 IconButtonTransparent{
                     objectName: "btnLineLoadFromKML"
@@ -144,17 +149,41 @@ Dialog {
             anchors.left: abLinePickerDialog.left
             z: 1
         }
-        Rectangle{
+        Dialog {
             id: abSetter
-            anchors.left: parent.left
-            anchors.top: parent.top
             width: 300
             height: 400
-            color: "lightgray"
-            border.width: 1
-            border.color: "black"
-            z: 1
+            //color: "lightgray"
+            //border.width: 1
+            //border.color: "black"
+            //z: 1
+            modality: Qt.WindowModal
+            standardButtons: StandardButton.NoButton
+
+            property double a_easting
+            property double a_northing
+            property double b_easting
+            property double b_northing
+            property bool a_set
+            property double heading //radians
+            property double heading_degrees
+
             visible: false
+
+            onVisibleChanged: {
+                if (visible === true) {
+                    a_set = false;
+                    a.visible = true;
+                    b.visible = false
+                    headingSpinbox.value = 0
+                }
+            }
+
+            onRejected: {
+                console.debug("new ab line aborted.")
+                abLinePickerDialog.visible = true
+            }
+
             TopLine{
                 id: settertopLine
                 titleText: "AB Line"
@@ -165,17 +194,46 @@ Dialog {
                 anchors.top: settertopLine.bottom
                 anchors.left: parent.left
                 anchors.margins: 5
-                isChecked: false
+                checkable: false
                 icon.source: "/images/LetterABlue.png"
+                onClicked: {
+                    abLinePickerDialog.setA(true)
+                    abSetter.a_easting = aog.easting
+                    abSetter.a_northing = aog.northing
+                    b.visible = true
+                    headingSpinbox.value = 0
+
+                    //debugging
+                    aog.easting += 5
+                }
             }
+
             IconButtonTransparent{
                 objectName: "b"
+                id: b
                 anchors.top: settertopLine.bottom
                 anchors.right: parent.right
                 anchors.margins: 5
-                isChecked: true
+                checkable: false
+                visible: false
                 icon.source: "/images/LetterBBlue.png"
+
+                onClicked: {
+                    abSetter.b_easting = aog.easting
+                    abSetter.b_northing = aog.northing
+
+                    abSetter.heading = Math.atan2(abSetter.b_easting - abSetter.a_easting,
+                                             abSetter.b_northing - abSetter.a_northing)
+
+                    abSetter.heading_degrees = abSetter.heading * 180.0 / Math.PI
+
+                    headingSpinbox.value = abSetter.heading_degrees * 100
+
+                    //debugging
+                    aog.northing += 5
+                }
             }
+
 //            Rectangle{
 //                id: headingTextInput
 //                anchors.topMargin: 20
@@ -195,15 +253,15 @@ Dialog {
 //                }
 //            }
             SpinBox{
-                id: headingTextInput
+                id: headingSpinbox
                 objectName: "heading"
                 from: 0
-                to: 359999999
-                stepSize: 1000000
+                to: 35999
+                stepSize: 10
                 value: 0
                 editable: true
-                property real realValue: value/ 1000000
-                property int decimals: 6
+                property real realValue: value/ 100
+                property int decimals: 2
 
                 anchors.topMargin: 20
                 anchors.top: a.bottom
@@ -220,15 +278,16 @@ Dialog {
                         spin_message.visible = false
                     }
 
-                    //some validation here
-                    //emit signal.  We know our section number because it's in the model
+                    abSetter.heading = value / 100 * Math.PI / 180.0
+                    abSetter.heading_degrees = value / 100
                 }
+
                 textFromValue: function(value, locale) {
-                    return Number(value / 1000000).toLocaleString(locale, 'f', decimals)
+                    return Number(value / 100).toLocaleString(locale, 'f', decimals)
                 }
 
                 valueFromText: function(text, locale) {
-                    return Number.fromLocaleString(locale, text) * 1000000
+                    return Number.fromLocaleString(locale, text) * 100
                 }
                 Text {
                     id: spin_message
@@ -242,21 +301,24 @@ Dialog {
 
             IconButtonTransparent{
                id: fancyEditor
-               anchors.top: headingTextInput.bottom
+               anchors.top: headingSpinbox.bottom
                anchors.topMargin: 20
                anchors.horizontalCenter: parent.horizontalCenter
                icon.source: "/images/FileEditName.png"
-           }
+            }
 
-           IconButtonTransparent{
-               objectName: "btnCancel"
-               anchors.bottom: parent.bottom
-               anchors.left: parent.left
-               anchors.margins: 20
-               icon.source: "/images/Cancel64.png"
-               onClicked:{
-                   parent.visible = false
-               }
+            IconButtonTransparent{
+                objectName: "btnCancel"
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                anchors.margins: 20
+                icon.source: "/images/Cancel64.png"
+                 onClicked:{
+                     //cancel
+                     abLinePickerDialog.setA(false) //turn off line setting
+                     abSetter.rejected()
+                     abSetter.close()
+                }
            }
            IconButtonTransparent{
                objectName: "btnOk"
@@ -264,16 +326,32 @@ Dialog {
                anchors.right: parent.right
                anchors.margins: 20
                icon.source: "/images/OK64.png"
-               onClicked: newLineName.visible = true
-           }
-           LineName{
-               id: newLineName
-               objectName: "newLineName"
-               anchors.top: parent.top
-               anchors.left: parent.left
-               title: "AB Line"
-               visible: false
-           }
+               onClicked: {
+                   newLineName.visible = true
+                   newLineName.generate_ab_name(abSetter.heading_degrees)
+               }
+            }
+            LineName{
+                id: newLineName
+                objectName: "newLineName"
+                anchors.top: parent.top
+                anchors.left: parent.left
+                title: "AB Line"
+                visible: false
+                onRejected: {
+                    //go back to A/B dialog
+                    //do nothing
+                }
+
+                onAccepted: {
+                    //collect our data
+                    var count = aog.abLinesList.length
+                    //emit signal to create the line
+                    //set the new line as the current
+                    aog.currentABLine = count
+                    abSetter.accepted()
+                }
+            }
         }
 
         LineName{
@@ -285,6 +363,7 @@ Dialog {
             visible: false
             z: 2
         }
+
         LineName{
             id: editLineName
             objectName: "editLineName"
