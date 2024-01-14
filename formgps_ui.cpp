@@ -50,7 +50,9 @@ void FormGPS::setupGui()
 
     //AB Line Picker
     QObject *abLinePicker = qmlItem(qml_root, "abLinePicker");
-    connect(abLinePicker,SIGNAL(updateABLines()),this,SLOT(update_ablines_qml()));
+    connect(abLinePicker,SIGNAL(updateABLines()),this,SLOT(update_lines_in_qml()));
+    connect(aog,SIGNAL(currentABLineChanged()), this, SLOT(update_current_line_from_qml()));
+    connect(aog,SIGNAL(currentABCurveChanged()), this, SLOT(update_current_line_from_qml()));
 
 
     connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
@@ -495,23 +497,104 @@ void FormGPS::FixTramModeButton()
 
 }
 
-void FormGPS::update_ablines_qml()
+void FormGPS::update_current_line_from_qml()
 {
-    qDebug() << "update_ablines_qml called";
-    QObject *aog = qmlItem(qml_root,"aog");
+    //AOGInterface currentABLine property changed; sync our
+    //local ABLine.numABLineSelected with it.
 
-    QList<QVariant> ablist;
-    QMap<QString, QVariant>abline;
+    QObject *aog = qmlItem(qml_root, "aog"); //TODO save this in formgps.h
 
-    for(int i=0; i < ABLine.lineArr.count(); i++) {
-        abline.clear();
-        abline["index"] = i;
-        abline["name"] = ABLine.lineArr[i].Name;
-        abline["easting"] = ABLine.lineArr[i].origin.easting;
-        abline["northing"] = ABLine.lineArr[i].origin.northing;
-        abline["northing"] = ABLine.lineArr[i].heading;
-        ablist.append(abline);
+    //the property will be -1 if nothing is selected, ABLine uses base 1
+    //so add one to it
+    ABLine.numABLineSelected = aog->property("currentABLine").toInt() + 1;
+    qDebug() << "currentABLine changed in aog to " << ABLine.numABLineSelected;
+    ABLine.isABValid = false; //recalculate the closest line to us
+    ABLine.moveDistance = 0;
+
+    if (ABLine.numABLineSelected > 0) {
+        ABLine.abHeading = ABLine.lineArr[ABLine.numABLineSelected-1].heading;
+        ABLine.refPoint1 = ABLine.lineArr[ABLine.numABLineSelected-1].origin;
+        ABLine.SetABLineByHeading();
+        ABLine.isBtnABLineOn = true;
+        ABLine.isABLineSet = true;
+        ABLine.isABLineLoaded = true;
+        ABLine.isABLineBeingSet = false;
+    } else {
+        ABLine.isBtnABLineOn = false;
+        ABLine.isABLineSet = false;
+        ABLine.isABLineLoaded = false;
+        ABLine.isABLineBeingSet = false;
     }
 
-    aog->setProperty("abLinesList",ablist);
+    int selectedItem = aog->property("currentABCurve").toInt();
+    qDebug() << "currentABCurve changed in aog to " << selectedItem + 1;
+    //reset to generate new reference
+    curve.isCurveValid = false;
+    curve.moveDistance = 0;
+    curve.desList.clear();
+
+    FileSaveCurveLines(); // in case a new one was added
+
+    if (selectedItem > -1)
+    {
+        int idx = selectedItem;
+        curve.numCurveLineSelected = idx + 1;
+
+        curve.aveLineHeading = curve.curveArr[idx].aveHeading;
+        curve.refList.clear();
+        for (int i = 0; i < curve.curveArr[idx].curvePts.count(); i++)
+        {
+            curve.refList.append(curve.curveArr[idx].curvePts[i]);
+        }
+        curve.isCurveSet = true;
+        yt.ResetYouTurn();
+    }
+    else
+    {
+        curve.numCurveLineSelected = 0;
+        curve.isOkToAddDesPoints = false;
+        curve.isCurveSet = false;
+        curve.refList.clear();
+        curve.isCurveSet = false;
+        //DisableYouTurnButtons();
+        //done in QML
+        curve.isBtnCurveOn = false;
+    }
+
+    if (ABLine.numABLineSelected == 0 && curve.numCurveLineSelected == 0 && ct.isContourBtnOn == false) {
+        qDebug() << "setting aog.isAutoSteerBtnOn to false";
+        isAutoSteerBtnOn = false;
+    }
+}
+
+void FormGPS::update_lines_in_qml()
+{
+    QObject *aog = qmlItem(qml_root,"aog");
+
+    QList<QVariant> list;
+    QMap<QString, QVariant>line;
+
+    for(int i=0; i < ABLine.lineArr.count(); i++) {
+        line.clear();
+        line["index"] = i;
+        line["name"] = ABLine.lineArr[i].Name;
+        line["easting"] = ABLine.lineArr[i].origin.easting;
+        line["northing"] = ABLine.lineArr[i].origin.northing;
+        line["northing"] = ABLine.lineArr[i].heading;
+        line["visible"] = ABLine.lineArr[i].isVisible;
+        list.append(line);
+    }
+
+    aog->setProperty("abLinesList",list);
+
+    list.clear();
+    for(int i=0; i < curve.curveArr.count(); i++) {
+        line.clear();
+        line["index"] = i;
+        line["name"] = curve.curveArr[i].Name;
+        line["visible"] = curve.curveArr[i].isVisible;
+        list.append(line);
+    }
+
+    aog->setProperty("abCurvesList",list);
 }

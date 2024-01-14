@@ -546,7 +546,7 @@ bool FormGPS::FileOpenField(QString fieldDir)
         ABLine.refPoint1 = ABLine.lineArr[ABLine.numABLineSelected - 1].origin;
         //ABLine.refPoint2 = ABLine.lineArr[ABLine.numABLineSelected - 1].ref2;
         ABLine.abHeading = ABLine.lineArr[ABLine.numABLineSelected - 1].heading;
-        ABLine.SetABLineByHeading(ABLine.abHeading);
+        ABLine.SetABLineByHeading();
         ABLine.isABLineSet = false;
         ABLine.isABLineLoaded = true;
     }

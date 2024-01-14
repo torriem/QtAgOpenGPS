@@ -477,8 +477,30 @@ Window {
                 icon.source: "/images/CurveOff.png"
                 iconChecked: "/images/CurveOn.png"
                 buttonText: "ABCurve"
-                onClicked: abCurvePicker.visible = true
-            visible: aog.isJobStarted ? true : false
+				visible: aog.isJobStarted ? true : false
+				onClicked: {
+                    abCurvePicker.visible = true
+                    if (aog.currentABCurve > -1) {
+                        btnABCurve.checked = true
+                    }
+                }
+                Connections {
+                    target: abCurvePicker
+                    function onAccepted(){
+                        if(aog.currentABCurve > -1) {
+                            //mutually exclusive with the other
+                            //buttons
+                            btnABCurve.checked = true
+                            btnABLine.checked = false
+                            aog.currentABLine = -1;
+                        }
+                    }
+                    function onRejected(){
+                        btnABCurve.checked = false
+                        //leave any other buttons alone
+                    }
+
+                }
             }
             IconButtonText{
                 id: btnABLine
@@ -496,10 +518,14 @@ Window {
                 Connections {
                     target: abLinePicker
                     function onAccepted(){
-                        btnABLine.checked = true
+                        if(aog.currentABLine > -1) {
+                            btnABLine.checked = true
+                            btnABCurve.checked = false
+                            aog.currentABCurve = -1
+                        }
+                        console.debug( ((aog.currentABLine > -1) || (aog.currentABCurve > -1)))
                     }
                     function onRejected(){
-                        console.debug("abline dialog canceled")
                         btnABLine.checked = false
                     }
                 }
@@ -581,11 +607,29 @@ Window {
             visible: aog.isJobStarted ? true : false
                 //Is remote activation of autosteer enabled?
                 buttonText: (settings.setAS_isAutoSteerAutoOn === true ? "R" : "M")
-                onCheckedChanged: {
-                    aog.isAutoSteerBtnOn = checked
+                onClicked: {
+                    if (checked && ((aog.currentABCurve > -1) || (aog.currentABLine > -1))) {
+                        console.debug("okay to turn on autosteer button.")
+                        aog.isAutoSteerBtnOn = true;
+                    } else {
+                        console.debug("keep autoster button off.")
+                        checked = false;
+                        aog.isAutoSteerBtnOn = false;
+                    }
+                }
+                Connections {
+                    target: aog
+                    function onIsAutoSteerBtnOnChanged() {
+                        if (aog.isAutoSteerBtnOn && ((aog.currentABCurve > -1) || (aog.currentABLine > -1))) {
+                            btnAutoSteer.checked = true
+                        } else {
+                            //default to turning everything off
+                            btnAutoSteer.checked = false
+                            aog.isAutoSteerBtnOn = false
+                        }
+                    }
                 }
             }
-
         }
 
         Column {
@@ -908,15 +952,15 @@ Window {
             }
         }
         Item{
-             objectName: "manUTurnButtons"
-           id: manualUturnLateral
+            objectName: "manUTurnButtons"
+            id: manualUturnLateral
             anchors.top: parent.top
             anchors.left: leftColumn.right
             anchors.topMargin: 50
             anchors.leftMargin: 150
-            visible: true
             width: childrenRect.width
             height: childrenRect.height
+            visible: (aog.currentABCurve > -1) || (aog.currentABLine > -1)
             ColorOverlay{
                 color: "#e6e600"
                 anchors.fill: uturn
@@ -1084,15 +1128,11 @@ Window {
         ABCurvePicker{
             id: abCurvePicker
             objectName: "abCurvePicker"
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
             visible: false
         }
         ABLinePicker{
             id: abLinePicker
             objectName: "abLinePicker"
-            //anchors.verticalCenter: parent.verticalCenter
-            //anchors.horizontalCenter: parent.horizontalCenter
             visible: false
         }
         TramLinesEditor{

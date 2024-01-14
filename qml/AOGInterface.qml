@@ -33,6 +33,10 @@ Item {
 
     property bool isAutoSteerBtnOn: false
 
+    onIsAutoSteerBtnOnChanged: {
+        console.debug("isAutoSteerBtnOn is now " + isAutoSteerBtnOn)
+    }
+
     property double latStart: 0
     property double lonStart: 0
 
@@ -44,59 +48,29 @@ Item {
     property double speedKph: 0
     property double offlineDistance: 0
 
+
+    property int currentABLine: -1 //use this instead of signals?
+    property int currentABCurve: -1
+
     //onLatitudeChanged: {
     //    console.debug(latitude + ", " + longitude + ", " + easting + ", " + northing)
     //    console.debug(offlineDistance + ", " + imuRollDegrees + ", " + speedKph)
     //}
 
+    //ABLine dialogs
 
-    //Field dialogs
+    property var abLinesList: [
+        {index: 0, name: "one", easting: 3, northing: 4, heading: 75, visible: true },
+        {index: 1, name: "two", easting: 3, northing: 4, heading: 75, visible: true },
+        {index: 2, name: "three", easting: 3, northing: 4, heading: 75, visible: true },
+        {index: 3, name: "four", easting: 3, northing: 4, heading: 75, visible: true }
+    ]
 
-    ListModel {
-        //place to keep fields
-        id: fieldsModel
-    }
-    signal updateFieldList()
-    signal resumeFieldLast()
-    signal closeField()
-    signal openField(name: string)
-    signal newField(name: string)
-
-
-    function clearFieldList() {
-        fieldsModel.clear()
-    }
-
-    function addFieldToList(name: string, distance: double, boundary: bool, area: double) {
-    }
-
-
-
-
-    //Signals from GUI to C++ code
-    signal blah(bool test)
-
-    //signals from functions to be caught by GUI items
-
-
-
-    function deactivateAutoSteer ()
-    {
-
-
-    }
-
-    function deactivateSim ()
-    {
-    }
-
-    function setHeadland (on: bool)
-    {
-    }
-
-    /**
-     * settings functions
-     */
+    property var abCurvesList: [
+        {index: 0, name: "one", visible: true },
+        {index: 1, name: "two", visible: true },
+        {index: 2, name: "three", visible: true }
+    ]
 
     signal settingChangedCPP(string key) //QML to let c++ know
     signal settingChangedQML(string key) //javascript call this to let qml types know
