@@ -14,31 +14,34 @@ Rectangle{
         height: 350
         anchors.centerIn: parent
     }
-    SpinBoxCustomized{
+    SpinBoxOneDecimal{
         id: wheelBase
         anchors.verticalCenter: dimImage.verticalCenter
         anchors.right: dimImage.left
         from: 20
-        value: 20
+        value: settings.setVehicle_wheelbase
+        onValueChanged: settings.setVehicle_wheelbase = value
         to: 787
             text: "Wheelbase"
     }
-    SpinBoxCustomized{
+    SpinBoxOneDecimal{
         id: track
         anchors.top: dimImage.top
         anchors.left: dimImage.right
-        from: 20
-        value: 20
-        to: 3937
+        from: 50
+        value: settings.setVehicle_trackWidth
+        onValueChanged: settings.setVehicle_trackWidth = value
+        to: 9999
         text: qsTr("Track")
     }
-    SpinBoxCustomized{
+    SpinBoxOneDecimal{
         id: turnRadius
         anchors.bottom: dimImage.bottom
         anchors.left: dimImage.right
-        from: 20
-        value: 20
-        to: 787
+        from: 50
+        value: settings.setVehicle_minTurningRadius
+        onValueChanged: settings.setVehicle_minTurningRadius = value
+        to: 9999
         text: qsTr("Turn Radius")
     }
 }

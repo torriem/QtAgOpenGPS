@@ -36,7 +36,8 @@ Rectangle{
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: 0
-                value: 1
+                value: settings.setDisplay_lightbarCmPerPixel
+                onValueChanged: settings.setDisplay_lightbarCmPerPixel
                 to: 15
                 editable: true
                 text: qsTr("in  /  pixel")
@@ -72,10 +73,11 @@ Rectangle{
                 height: 50
                 anchors.left: parent.right
                 anchors.leftMargin: 10
-                from: 656
-                value: 5249
-                to: 16400
-                text: qsTr("ft")
+                from: 200
+                value: settings.setAB_lineLength
+                onValueChanged: settings.setAB_lineLength
+                to: 5000
+                text: qsTr("cm")
             }
         }
     }
@@ -153,7 +155,8 @@ Recording")
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: 1
-                value: 2
+                value: settings.setDisplay_lineWidth
+                onValueChanged: settings.setDisplay_lineWidth
                 to: 8
                 text: qsTr("pixels")
             }
@@ -189,10 +192,11 @@ Recording")
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: 0
-                value: 3
-                to: 155
+                value: settings.setAS_snapDistance
+                onValueChanged: settings.setAS_snapDistance
+                to: 1000
                 editable: true
-                    text: qsTr("in")
+                    text: qsTr("cm")
             }
         }
     }
@@ -225,8 +229,9 @@ Recording")
                 height: 50
                 anchors.left: parent.right
                 anchors.leftMargin: 10
-                from: 0
-                value: 1
+                from: .1
+                value: settings.setAS_guidanceLookAheadTime
+                onValueChanged: settings.setAS_guidanceLookAheadTime
                 to: 10
                 text: qsTr("Seconds")
             }

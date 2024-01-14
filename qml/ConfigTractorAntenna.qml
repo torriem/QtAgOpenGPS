@@ -37,8 +37,6 @@ Rectangle{
         onValueChanged: {
             settings.setVehicle_antennaHeight = value
         }
-
-
         to: 1000
     }
     SpinBoxCustomized{
