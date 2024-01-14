@@ -5,12 +5,11 @@ Item {
     id: spinBox_Customized
     property int from: 0
     property int to: 10
-    property int value: 0
+    property int value: 10
     property string text: ""
 	property int stepSize: 1
     property bool editable: true
     width: spinner.width
-    property int spinValue: spinner.value
 
     SpinBox {
         id: spinner
@@ -23,6 +22,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
 
         onValueChanged: {
+                spinBox_Customized.value = value
             if (value == spinBox_Customized.from) {
                 spin_message.visible = true
                 spin_message.text = "Must be "+from+" or greater"

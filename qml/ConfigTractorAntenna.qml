@@ -20,15 +20,12 @@ Rectangle{
         anchors.leftMargin: 30
         from: -999
         value: settings.setVehicle_antennaPivot
-        onSpinValueChanged: {
-            console.log(settings.setVehicle_antennaHeight)
-            console.log(value)
+        onValueChanged: {
             settings.setVehicle_antennaPivot = value
-            console.log(settings.setVehicle_antennaHeight)
         }
         to: 999
     }
-    SpinBox{
+    SpinBoxCustomized{
         id: antHeight
         anchors.top: antImage.top
         anchors.topMargin: 100
@@ -38,10 +35,7 @@ Rectangle{
         editable: true
         value: settings.setVehicle_antennaHeight
         onValueChanged: {
-            console.log(settings.setVehicle_antennaHeight)
-            console.log(value)
             settings.setVehicle_antennaHeight = value
-            console.log(settings.setVehicle_antennaHeight)
         }
 
 
@@ -54,7 +48,8 @@ Rectangle{
         anchors.left: antImage.right
         anchors.leftMargin: -25
         from: -500
-        value: 20
+        value: settings.setVehicle_antennaOffset
         to: 500
+        onValueChanged: settings.setVehicle_antennaOffset = value
     }
 }
