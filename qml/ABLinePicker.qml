@@ -164,7 +164,9 @@ Dialog {
             property double a_northing
             property double b_easting
             property double b_northing
-            property bool a_set;
+            property bool a_set
+            property double heading //radians
+            property double heading_degrees
 
             visible: false
 
@@ -220,12 +222,12 @@ Dialog {
                     abSetter.b_easting = aog.easting
                     abSetter.b_northing = aog.northing
 
-                    var heading = Math.atan2(abSetter.b_easting - abSetter.a_easting,
+                    abSetter.heading = Math.atan2(abSetter.b_easting - abSetter.a_easting,
                                              abSetter.b_northing - abSetter.a_northing)
 
-                    heading = heading * 180.0 / Math.PI
+                    abSetter.heading_degrees = abSetter.heading * 180.0 / Math.PI
 
-                    headingSpinbox.value = heading * 100
+                    headingSpinbox.value = abSetter.heading_degrees * 100
 
                     //debugging
                     aog.northing += 5
@@ -276,9 +278,10 @@ Dialog {
                         spin_message.visible = false
                     }
 
-                    //some validation here
-                    //emit signal.  We know our section number because it's in the model
+                    abSetter.heading = value / 100 * Math.PI / 180.0
+                    abSetter.heading_degrees = value / 100
                 }
+
                 textFromValue: function(value, locale) {
                     return Number(value / 100).toLocaleString(locale, 'f', decimals)
                 }
@@ -304,15 +307,18 @@ Dialog {
                icon.source: "/images/FileEditName.png"
             }
 
-           IconButtonTransparent{
-               objectName: "btnCancel"
-               anchors.bottom: parent.bottom
-               anchors.left: parent.left
-               anchors.margins: 20
-               icon.source: "/images/Cancel64.png"
-               onClicked:{
-                   parent.visible = false
-               }
+            IconButtonTransparent{
+                objectName: "btnCancel"
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                anchors.margins: 20
+                icon.source: "/images/Cancel64.png"
+                 onClicked:{
+                     //cancel
+                     abLinePickerDialog.setA(false) //turn off line setting
+                     abSetter.rejected()
+                     abSetter.close()
+                }
            }
            IconButtonTransparent{
                objectName: "btnOk"
@@ -320,16 +326,32 @@ Dialog {
                anchors.right: parent.right
                anchors.margins: 20
                icon.source: "/images/OK64.png"
-               onClicked: newLineName.visible = true
-           }
-           LineName{
-               id: newLineName
-               objectName: "newLineName"
-               anchors.top: parent.top
-               anchors.left: parent.left
-               title: "AB Line"
-               visible: false
-           }
+               onClicked: {
+                   newLineName.visible = true
+                   newLineName.generate_ab_name(abSetter.heading_degrees)
+               }
+            }
+            LineName{
+                id: newLineName
+                objectName: "newLineName"
+                anchors.top: parent.top
+                anchors.left: parent.left
+                title: "AB Line"
+                visible: false
+                onRejected: {
+                    //go back to A/B dialog
+                    //do nothing
+                }
+
+                onAccepted: {
+                    //collect our data
+                    var count = aog.abLinesList.length
+                    //emit signal to create the line
+                    //set the new line as the current
+                    aog.currentABLine = count
+                    abSetter.accepted()
+                }
+            }
         }
 
         LineName{
@@ -341,6 +363,7 @@ Dialog {
             visible: false
             z: 2
         }
+
         LineName{
             id: editLineName
             objectName: "editLineName"
