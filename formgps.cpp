@@ -688,6 +688,9 @@ void FormGPS::processSectionLookahead() {
     if (frameTimeRough > 50) frameTimeRough = 50;
     frameTime = frameTime * 0.90 + frameTimeRough * 0.1;
 
+    QObject *aog = qmlItem(qml_root, "aog");
+    aog->setProperty("frameTime", frameTime);
+
     lock.unlock();
 
     //this is the end of the "frame". Now we wait for next NMEA sentence with a valid fix.
@@ -996,18 +999,6 @@ void FormGPS::tmrWatchdog_timeout()
         //integralStatusLeftSide.Text = "I: " + gyd.inty.ToString("N3");
 
         //lblAV.Text = ABLine.angVel
-    }
-
-    //every cycle
-    //we cannot manipulate the GUI from any of the OpenGL drawing methods as they run in a
-    //different thread.
-    //TODO move this entirely to QML
-    if (isAutoSteerBtnOn && !ct.isContourBtnOn) {
-        qmlItem(qml_root, "btnManUturnLeft")->setProperty("visible", true);
-        qmlItem(qml_root, "btnManUturnRight")->setProperty("visible", true);
-    } else {
-        qmlItem(qml_root, "btnManUturnLeft")->setProperty("visible", false);
-        qmlItem(qml_root, "btnManUturnRight")->setProperty("visible", false);
     }
 }
 
