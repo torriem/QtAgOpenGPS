@@ -1,5 +1,6 @@
 import QtQuick 2.9
-import QtQuick.Controls 2.5
+import QtQuick.Controls 2.15
+import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
 import QtQuick.Dialogs 1.3
 import QtQml.Models 2.3
@@ -17,12 +18,11 @@ Dialog {
     standardButtons: StandardButton.NoButton
     title: qsTr("AB Line")
 
-    signal updateABLines()
-    signal switchToLine(int lineno) //redundant? use aogproperty
-    signal deleteLine(int lineno)
-    signal changeName(int lineno)
-    signal addLine(string name, double easting, double northing, double heading)
-    signal setA(bool start_cancel); //true to mark an A point, false to cancel new point
+    //signal updateABLines()
+    //signal deleteLine(int lineno)
+    //signal changeName(int lineno)
+    //signal addLine(string name, double easting, double northing, double heading)
+    //signal setA(bool start_cancel); //true to mark an A point, false to cancel new point
 
     Connections {
         target: aog
@@ -45,7 +45,7 @@ Dialog {
         //when we show or hide the dialog, ask the main
         //program to update our lines list in the
         //AOGInterface object
-        updateABLines()
+        aog.abLine_updateLines()
         ablineView.currentIndex = aog.currentABLine
         //preselect first AB line if none was in use before
         //to make it faster for user
@@ -132,7 +132,7 @@ Dialog {
                     icon.source: "/images/AddNew.png"
                     onClicked: {
                         abSetter.visible = true
-                        abLinePickerDialog.visible = false
+                        abLinePickerDialog.close()
                     }
                 }
                 IconButtonTransparent{
@@ -152,18 +152,23 @@ Dialog {
         Dialog {
             id: abSetter
             width: 300
-            height: 400
+            height: 450
+            modality: Qt.NonModal
             //color: "lightgray"
             //border.width: 1
             //border.color: "black"
             //z: 1
-            modality: Qt.WindowModal
+
             standardButtons: StandardButton.NoButton
 
             property double a_easting
             property double a_northing
+            property double a_longitude
+            property double a_latitude
             property double b_easting
             property double b_northing
+            property double b_latitude
+            property double b_longitude
             property bool a_set
             property double heading //radians
             property double heading_degrees
@@ -173,8 +178,8 @@ Dialog {
             onVisibleChanged: {
                 if (visible === true) {
                     a_set = false;
-                    a.visible = true;
-                    b.visible = false
+                    a_stuff.visible = true;
+                    b_stuff.visible = false
                     headingSpinbox.value = 0
                 }
             }
@@ -184,128 +189,264 @@ Dialog {
                 abLinePickerDialog.visible = true
             }
 
-            TopLine{
-                id: settertopLine
-                titleText: "AB Line"
+            onAccepted: {
+                //emit signal to create the line
+                //abLinePickerDialog.addLine(
+                aog.abLine_addLine(newLineName.abLineName,a_easting, a_northing, heading)
+                aog.abLine_updateLines()
+                var count = aog.abLinesList.length
+                ablineView.currentIndex = count -1
+                aog.currentABLine = count - 1
+                abSetter.close()
+                //abLinePickerDialog.open()
             }
-            IconButtonTransparent{
-                objectName: "a"
-                id: a
-                anchors.top: settertopLine.bottom
+
+            Rectangle {
+                id: a_stuff
                 anchors.left: parent.left
-                anchors.margins: 5
-                checkable: false
-                icon.source: "/images/LetterABlue.png"
-                onClicked: {
-                    abLinePickerDialog.setA(true)
-                    abSetter.a_easting = aog.easting
-                    abSetter.a_northing = aog.northing
-                    b.visible = true
-                    headingSpinbox.value = 0
-
-                    //debugging
-                    aog.easting += 5
-                }
-            }
-
-            IconButtonTransparent{
-                objectName: "b"
-                id: b
-                anchors.top: settertopLine.bottom
                 anchors.right: parent.right
-                anchors.margins: 5
-                checkable: false
-                visible: false
-                icon.source: "/images/LetterBBlue.png"
+                height: childrenRect.height
+                color: "transparent"
 
-                onClicked: {
-                    abSetter.b_easting = aog.easting
-                    abSetter.b_northing = aog.northing
+                Text {
+                    id: a_label
+                    text:  qsTr("Drive to AB line <b>start</b> point and press the A button or enter Latitude and Longitude.")
+                    wrapMode: Text.WordWrap
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.margins: 5
+                }
+                IconButtonTransparent{
+                    objectName: "a"
+                    id: a
+                    anchors.top: a_label.bottom
+                    anchors.left: parent.left
+                    anchors.margins: 5
+                    checkable: false
+                    icon.source: "/images/LetterABlue.png"
+                    onClicked: {
+                        abSetter.a_easting = aog.easting
+                        abSetter.a_northing = aog.northing
+                        aog.abLine_setA(true, abSetter.a_easting, abSetter.b_northing)
+                        a_manual_latitude.set_without_onchange(aog.latitude)
+                        a_manual_longitude.set_without_onchange(aog.longitude)
+                        b_stuff.visible = true
+                        headingSpinbox.value = 0
 
-                    abSetter.heading = Math.atan2(abSetter.b_easting - abSetter.a_easting,
-                                             abSetter.b_northing - abSetter.a_northing)
+                        //debugging
+                        aog.easting += 5
+                    }
+                }
 
-                    abSetter.heading_degrees = abSetter.heading * 180.0 / Math.PI
+                GridLayout {
+                    anchors.top: a_label.bottom
+                    anchors.left: a.right
+                    anchors.right: parent.right
+                    anchors.margins: 5
+                    columns: 2
+                    rows: 2
 
-                    headingSpinbox.value = abSetter.heading_degrees * 100
+                    Text {
+                        text: qsTr("Lat","Latitude abbreviation")
+                    }
+                    LatLonTextField {
+                        id: a_manual_latitude
+                        Layout.fillWidth: true
+                        placeholderText: qsTr("Latitude")
 
-                    //debugging
-                    aog.northing += 5
+                        onManualTextChanged: {
+                            if (a_manual_longitude.text != "") {
+                                b_stuff.visible = true
+                            }
+                        }
+
+                        onEditingFinished: {
+                            if (a_manual_longitude.text != "") {
+                                const [northing, easting] = aog.convertWGS84ToLocal(Number(a_manual_latitude.text), Number(a_manual_longitude.text))
+                                abSetter.a_easting = easting
+                                abSetter.a_northing = northing
+                                aog.abLine_setA(true, abSetter.a_easting, abSetter.b_northing)
+                            }
+                        }
+                    }
+                    Text {
+                        text: qsTr("Lon","Longitude abbreviation")
+                    }
+                    LatLonTextField {
+                        id: a_manual_longitude
+                        Layout.fillWidth: true
+                        placeholderText: qsTr("Longitude")
+                        onManualTextChanged: {
+                             if (a_manual_latitude.text != "") {
+                                b_stuff.visible = true;
+                             }
+                        }
+                        onEditingFinished: {
+                             if (a_manual_latitude.text != "") {
+                                const [northing, easting] = aog.convertWGS84ToLocal(Number(a_manual_latitude.text), Number(a_manual_longitude.text))
+                                abSetter.a_easting = easting
+                                abSetter.a_northing = northing
+                                aog.abLine_setA(true, abSetter.a_easting, abSetter.b_northing)
+                            }
+                        }
+                    }
                 }
             }
 
-//            Rectangle{
-//                id: headingTextInput
-//                anchors.topMargin: 20
-//                anchors.top: a.bottom
-//                height: 50
-//                width: parent.width -50
-//                anchors.horizontalCenter: parent.horizontalCenter
-//                color: "white"
-//                border.color: "gray"
-//                border.width: 1
-//                TextInput {
-//                    objectName: "heading"
-//                    anchors.fill: parent
-//                    validator: RegExpValidator {
-//                        regExp: /(\d{1,3})([.,]\d{1,5})?$/
-//                    }
-//                }
-//            }
-            SpinBox{
-                id: headingSpinbox
-                objectName: "heading"
-                from: 0
-                to: 35999
-                stepSize: 10
-                value: 0
-                editable: true
-                property real realValue: value/ 100
-                property int decimals: 2
+            Rectangle {
+                id: b_stuff
+                anchors.top: a_stuff.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                color: "transparent"
 
-                anchors.topMargin: 20
-                anchors.top: a.bottom
-                width: parent.width -50
-                anchors.horizontalCenter: parent.horizontalCenter
-                onValueChanged: {
-                    if (value == from) {
-                        spin_message.visible = true
-                        spin_message.text = "Must be "+from/1000000+" or greater"
-                    } else if(value == to){
-                        spin_message.visible = true
-                        spin_message.text = "Can't be larger than " + to/ 1000000
-                    }else {
-                        spin_message.visible = false
+                Text {
+                    id: b_label
+                    text:  qsTr("For an A+ line, enter the heading.  Otherwise drive to AB line <b>end</b> point and press the B button, or manually enter Latitude and Longitude.")
+                    wrapMode: Text.WordWrap
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.margins: 5
+                }
+
+                SpinBox{
+                    id: headingSpinbox
+                    objectName: "heading"
+                    from: 0
+                    to: 35999999
+                    stepSize: 10000
+                    value: 0
+                    editable: true
+
+                    property real realValue: value/ 100000
+                    property int decimals: 2
+
+                    property bool suppress_onchange: false
+
+                    function set_without_onchange(new_value) {
+                        suppress_onchange = true
+                        value = new_value * 100000
+                        suppress_onchange = false
                     }
 
-                    abSetter.heading = value / 100 * Math.PI / 180.0
-                    abSetter.heading_degrees = value / 100
+
+
+                    anchors.top: b_label.bottom
+                    anchors.margins: 5
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    onValueChanged: {
+                        if (! suppress_onchange) {
+                            abSetter.heading = value / 100000 * Math.PI / 180.0
+                            abSetter.heading_degrees = value / 100000
+
+                            //calculate b latitude and longitude for the display
+                            //use 100m
+                            abSetter.b_easting = Math.cos(abSetter.heading) * 100 + abSetter.a_easting
+                            abSetter.b_northing = Math.sin(abSetter.heading) * 100 + abSetter.a_northing
+
+                            const [latitude, longitude] = aog.convertLocalToWGS84(abSetter.b_northing, abSetter.b_easting)
+                            b_manual_latitude.set_without_onchange(latitude)
+                            b_manual_longitude.set_without_onchange(longitude)
+                        }
+                    }
+
+                    textFromValue: function(value, locale) {
+                        return Number(value / 100000).toLocaleString(locale, 'f', decimals)
+                    }
+
+                    valueFromText: function(text, locale) {
+                        return Number.fromLocaleString(locale, text) * 100000
+                    }
                 }
 
-                textFromValue: function(value, locale) {
-                    return Number(value / 100).toLocaleString(locale, 'f', decimals)
-                }
-
-                valueFromText: function(text, locale) {
-                    return Number.fromLocaleString(locale, text) * 100
-                }
-                Text {
-                    id: spin_message
-                    visible: false
-                    text: "message"
-                    color: "red"
-                    anchors.top: parent.bottom
+                IconButtonTransparent{
+                    objectName: "b"
+                    id: b
+                    anchors.top: headingSpinbox.bottom
                     anchors.left: parent.left
+                    anchors.margins: 5
+                    checkable: false
+                    icon.source: "/images/LetterBBlue.png"
+
+                    onClicked: {
+                        abSetter.b_easting = aog.easting
+                        abSetter.b_northing = aog.northing
+
+                        b_manual_latitude.set_without_onchange(aog.latitude)
+                        b_manual_longitude.set_without_onchange(aog.longitude)
+
+                        abSetter.heading = Math.atan2(abSetter.b_easting - abSetter.a_easting,
+                                                 abSetter.b_northing - abSetter.a_northing)
+
+                        if (abSetter.heading < 0) abSetter.heading += 2 * Math.PI
+
+                        abSetter.heading_degrees = abSetter.heading * 180.0 / Math.PI
+
+                        headingSpinbox.set_without_onchange(abSetter.heading_degrees)
+
+                        //debugging
+                        aog.northing += 5
+                    }
+                }
+                GridLayout {
+                    anchors.top: headingSpinbox.bottom
+                    anchors.left: b.right
+                    anchors.right: parent.right
+                    anchors.margins: 5
+                    columns: 2
+                    rows: 2
+
+                    Text {
+                        text: qsTr("Lat","Latitude abbreviation")
+                    }
+                    LatLonTextField {
+                        id: b_manual_latitude
+                        Layout.fillWidth: true
+                        placeholderText: qsTr("Latitude")
+                        onEditingFinished: {
+                            if (b_manual_longitude.text != "") {
+                                const [northing, easting] = aog.convertWGS84ToLocal(Number(b_manual_latitude.text), Number(b_manual_longitude.text))
+                                abSetter.b_easting = easting
+                                abSetter.b_northing = northing
+
+                                abSetter.heading = Math.atan2(abSetter.b_easting - abSetter.a_easting,
+                                                 abSetter.b_northing - abSetter.a_northing)
+
+                                if (abSetter.heading < 0) abSetter.heading += 2 * Math.PI
+
+                                abSetter.heading_degrees = abSetter.heading * 180.0 / Math.PI
+
+                                headingSpinbox.set_without_onchange(abSetter.heading_degrees)
+                            }
+                        }
+                    }
+
+                    Text {
+                        text: qsTr("Lon","Longitude abbreviation")
+                    }
+                    LatLonTextField {
+                        id: b_manual_longitude
+                        Layout.fillWidth: true
+                        placeholderText: qsTr("Latitude")
+                        onEditingFinished: {
+                            if (b_manual_latitude.text != "") {
+                                const [northing, easting] = aog.convertWGS84ToLocal(Number(b_manual_latitude.text), Number(b_manual_longitude.text))
+                                abSetter.b_easting = easting
+                                abSetter.b_northing = northing
+                                if (abSetter.heading < 0) abSetter.heading += 2 * Math.PI
+
+                                abSetter.heading_degrees = abSetter.heading * 180.0 / Math.PI
+
+                                headingSpinbox.set_without_onchange(abSetter.heading_degrees)
+                            }
+                        }
+                    }
                 }
             }
 
-            IconButtonTransparent{
-               id: fancyEditor
-               anchors.top: headingSpinbox.bottom
-               anchors.topMargin: 20
-               anchors.horizontalCenter: parent.horizontalCenter
-               icon.source: "/images/FileEditName.png"
-            }
 
             IconButtonTransparent{
                 objectName: "btnCancel"
@@ -315,7 +456,7 @@ Dialog {
                 icon.source: "/images/Cancel64.png"
                  onClicked:{
                      //cancel
-                     abLinePickerDialog.setA(false) //turn off line setting
+                     abLinePickerDialog.setA(false,0,0) //turn off line setting
                      abSetter.rejected()
                      abSetter.close()
                 }
@@ -344,11 +485,6 @@ Dialog {
                 }
 
                 onAccepted: {
-                    //collect our data
-                    var count = aog.abLinesList.length
-                    //emit signal to create the line
-                    //set the new line as the current
-                    aog.currentABLine = count
                     abSetter.accepted()
                 }
             }

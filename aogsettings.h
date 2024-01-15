@@ -7,7 +7,7 @@
 #include <QVector3D>
 #include <QColor>
 
-Q_DECLARE_METATYPE(QList<int>)
+//Q_DECLARE_METATYPE(QList<int>)
 Q_DECLARE_METATYPE(QVector<int>)
 
 class QJsonObject;

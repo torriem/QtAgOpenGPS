@@ -37,8 +37,8 @@ Item {
         console.debug("isAutoSteerBtnOn is now " + isAutoSteerBtnOn)
     }
 
-    property double latStart: 0
-    property double lonStart: 0
+    property double latStart: 53
+    property double lonStart: -111
 
     property double easting: 0
     property double northing: 0
@@ -51,13 +51,6 @@ Item {
 
     property int currentABLine: -1 //use this instead of signals?
     property int currentABCurve: -1
-
-    //onLatitudeChanged: {
-    //    console.debug(latitude + ", " + longitude + ", " + easting + ", " + northing)
-    //    console.debug(offlineDistance + ", " + imuRollDegrees + ", " + speedKph)
-    //}
-
-    //ABLine dialogs
 
     property var abLinesList: [
         {index: 0, name: "one", easting: 3, northing: 4, heading: 75, visible: true },
@@ -72,15 +65,77 @@ Item {
         {index: 2, name: "three", visible: true }
     ]
 
-    signal settingChangedCPP(string key) //QML to let c++ know
-    signal settingChangedQML(string key) //javascript call this to let qml types know
+    signal addABLine(string name, double easting, double northing, double heading)
+    signal updateABLines()
+    signal deleteABLine(int lineno)
+    signal changeABLineName(int lineno, string new_name)
+    signal setNewABLineAPoint(bool start_or_cancel, double easting, double northing) //true to mark point, false to cancel new point
+
+    //this is a bit clumsy but it's the only way I can get
+    //the signals defined above to be accessible to the other
+    //qml files.  Some kind of scope limitation I guess
+    function abLine_addLine(name, easting, northing, heading_radians) {
+        console.debug("add new line: " + name + ", " + easting + ", " + northing + ", " + heading_radians)
+        addABLine(name,easting, northing, heading_radians);
+    }
+
+    function abLine_updateLines() {
+        updateABLines()
+    }
+
+    function abLine_deleteLine(index) {
+        deleteABLine(index)
+    }
+
+    function abLine_changeName(index, new_name) {
+        updateABLines(index, new_name)
+
+    }
+
+    function abLine_setA(start_or_cancel) {
+        setNewABLineAPoint(start_or_cancel)
+    }
 
 
+    property double mPerDegreeLat
+    property double mPerDegreeLon
 
-    //C++ can call this to let QML know about a change. Types will
-    //connect themselves to the settingChangedQML() signal
-    function settingsUpdated(key: string) {
-        settingChangedQML(key)
+    function setLocalMetersPerDegree() {
+        mPerDegreeLat = 111132.92 - 559.82 * Math.cos(2.0 * latStart * 0.01745329251994329576923690766743) + 1.175
+                              * Math.cos(4.0 * latStart * 0.01745329251994329576923690766743) - 0.0023
+                              * Math.cos(6.0 * latStart * 0.01745329251994329576923690766743)
+
+        mPerDegreeLon = 111412.84 * Math.cos(latStart * 0.01745329251994329576923690766743) - 93.5
+                              * Math.cos(3.0 * latStart * 0.01745329251994329576923690766743) + 0.118
+                              * Math.cos(5.0 * latStart * 0.01745329251994329576923690766743)
+    }
+
+    function convertLocalToWGS84(northing, easting) { //note northing first here
+        var mPerDegreeLat = 111132.92 - 559.82 * Math.cos(2.0 * latStart * 0.01745329251994329576923690766743) + 1.175
+                              * Math.cos(4.0 * latStart * 0.01745329251994329576923690766743) - 0.0023
+                              * Math.cos(6.0 * latStart * 0.01745329251994329576923690766743)
+        var mPerDegreeLon = 111412.84 * Math.cos(latStart * 0.01745329251994329576923690766743) - 93.5
+                              * Math.cos(3.0 * latStart * 0.01745329251994329576923690766743) + 0.118
+                              * Math.cos(5.0 * latStart * 0.01745329251994329576923690766743)
+
+        var outLat = (northing / mPerDegreeLat) + latStart;
+        var outLon = (easting  / mPerDegreeLon) + lonStart;
+
+        return [ outLat, outLon ]
+    }
+
+    function convertWGS84ToLocal(latitude, longitude) {
+        var mPerDegreeLat = 111132.92 - 559.82 * Math.cos(2.0 * latStart * 0.01745329251994329576923690766743) + 1.175
+                              * Math.cos(4.0 * latStart * 0.01745329251994329576923690766743) - 0.0023
+                              * Math.cos(6.0 * latStart * 0.01745329251994329576923690766743)
+        var mPerDegreeLon = 111412.84 * Math.cos(latStart * 0.01745329251994329576923690766743) - 93.5
+                              * Math.cos(3.0 * latStart * 0.01745329251994329576923690766743) + 0.118
+                              * Math.cos(5.0 * latStart * 0.01745329251994329576923690766743)
+
+        var outNorthing = (latitude - latStart) * mPerDegreeLat;
+        var outEasting = (longitude - lonStart) * mPerDegreeLon;
+
+        return [outNorthing, outEasting]
     }
 
 

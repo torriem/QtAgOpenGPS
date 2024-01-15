@@ -23,8 +23,10 @@ int main(int argc, char *argv[])
     //from this version of AOG:
     QCoreApplication::setApplicationVersion("4.1.0");
     qmlRegisterType<AOGRendererInSG>("AgOpenGPS",1,0,"AOGRenderer");
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     qRegisterMetaTypeStreamOperators<QList<int> >("QList<int>");
     qRegisterMetaTypeStreamOperators<QVector<int> >("QVector<int>");
+#endif
     settings = new AOGSettings();
     AOGProperty::init_defaults();
     settings->sync();
@@ -47,7 +49,7 @@ int main(int argc, char *argv[])
     QVector<Vec3> pathlist;
     pathlist = c.GenerateDubins(start, goal);
 
-    foreach(goal, pathlist) {
+    foreach(Vec3 goal: pathlist) {
         qDebug() << goal.easting<< ", "<<goal.northing;
     }
     return 0;

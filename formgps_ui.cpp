@@ -49,11 +49,11 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(sectionButtonStateChanged()), &tool.sectionButtonState, SLOT(onStatesUpdated()));
 
     //AB Line Picker
-    QObject *abLinePicker = qmlItem(qml_root, "abLinePicker");
-    connect(abLinePicker,SIGNAL(updateABLines()),this,SLOT(update_lines_in_qml()));
-    connect(aog,SIGNAL(currentABLineChanged()), this, SLOT(update_current_line_from_qml()));
-    connect(aog,SIGNAL(currentABCurveChanged()), this, SLOT(update_current_line_from_qml()));
-
+    connect(aog,SIGNAL(updateABLines()),this,SLOT(update_ABlines_in_qml()));
+    connect(aog,SIGNAL(currentABLineChanged()), this, SLOT(update_current_ABline_from_qml()));
+    connect(aog,SIGNAL(currentABCurveChanged()), this, SLOT(update_current_ABline_from_qml()));
+    connect(aog,SIGNAL(addABLine(QString, double, double, double)), this, SLOT(add_new_ABline(QString,double,double,double)));
+    connect(aog,SIGNAL(setNewABLineAPoint(bool,double,double)), this, SLOT(start_newABLine(bool,double,double)));
 
     connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
 
@@ -497,7 +497,7 @@ void FormGPS::FixTramModeButton()
 
 }
 
-void FormGPS::update_current_line_from_qml()
+void FormGPS::update_current_ABline_from_qml()
 {
     //AOGInterface currentABLine property changed; sync our
     //local ABLine.numABLineSelected with it.
@@ -567,7 +567,7 @@ void FormGPS::update_current_line_from_qml()
     }
 }
 
-void FormGPS::update_lines_in_qml()
+void FormGPS::update_ABlines_in_qml()
 {
     QObject *aog = qmlItem(qml_root,"aog");
 
@@ -597,4 +597,20 @@ void FormGPS::update_lines_in_qml()
     }
 
     aog->setProperty("abCurvesList",list);
+}
+
+void FormGPS::add_new_ABline(QString name, double easting, double northing, double heading)
+{
+    qDebug() << name << easting << northing << heading;
+    CABLines line;
+    line.origin = Vec2(easting, northing);
+    line.heading = heading;
+    line.Name = name;
+    ABLine.lineArr.append(line);
+    FileSaveABLines();
+}
+
+void FormGPS::start_newABLine(bool start_or_cancel, double easting, double northing)
+{
+
 }

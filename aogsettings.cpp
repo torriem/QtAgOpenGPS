@@ -148,7 +148,7 @@ bool AOGSettings::loadJson(QString filename)
             new_value = new_value.mid(6);
             QStringList parts = new_value.split(",");
             QVector<int> list;
-            foreach(QString part, parts) {
+            for(QString part: parts) {
                 list.append(part.toInt());
             }
 

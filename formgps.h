@@ -681,8 +681,10 @@ public slots:
 
     void TimedMessageBox(int timeout, QString s1, QString s2);
 
-    void update_lines_in_qml();
-    void update_current_line_from_qml();
+    void update_ABlines_in_qml();
+    void update_current_ABline_from_qml();
+    void add_new_ABline(QString name, double easting, double northing,double heading);
+    void start_newABLine(bool start_or_cancel, double easting, double northing);
 
     //left column
     void onBtnAcres_clicked();
