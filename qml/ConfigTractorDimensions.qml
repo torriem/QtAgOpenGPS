@@ -22,7 +22,7 @@ Rectangle{
         value: settings.setVehicle_wheelbase
         onValueChanged: settings.setVehicle_wheelbase = value
         to: 787
-            text: "Wheelbase"
+            text: qsTr("Wheelbase")
     }
     SpinBoxOneDecimal{
         id: track
