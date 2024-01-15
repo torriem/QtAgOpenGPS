@@ -53,7 +53,7 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(currentABLineChanged()), this, SLOT(update_current_ABline_from_qml()));
     connect(aog,SIGNAL(currentABCurveChanged()), this, SLOT(update_current_ABline_from_qml()));
     connect(aog,SIGNAL(addABLine(QString, double, double, double)), this, SLOT(add_new_ABline(QString,double,double,double)));
-    connect(aog,SIGNAL(setNewABLineAPoint(bool,double,double), this, SLOT(start_newABLine(bool,double,double)));
+    connect(aog,SIGNAL(setNewABLineAPoint(bool,double,double)), this, SLOT(start_newABLine(bool,double,double)));
 
     connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
 
@@ -608,4 +608,9 @@ void FormGPS::add_new_ABline(QString name, double easting, double northing, doub
     line.Name = name;
     ABLine.lineArr.append(line);
     FileSaveABLines();
+}
+
+void FormGPS::start_newABLine(bool start_or_cancel, double easting, double northing)
+{
+
 }
