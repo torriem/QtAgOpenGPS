@@ -39,7 +39,6 @@ TextField {
 
     onEditingFinished: {
         var value = Number(text)
-        console.debug("Testing number " +  text)
         if (value > 180) {
             text = "180.000000000"
         } else if (value < -180) {

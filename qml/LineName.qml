@@ -15,43 +15,43 @@ Rectangle{
     function findDirection(heading) {
         if (heading > 337.5 || heading < 22.5)
         {
-            return qsTr(" N ")
+            return qsTr("N","compass bearing")
         }
         if (heading > 22.5 && heading < 67.5)
         {
-            return qsTr(" NE ");
+            return qsTr("NE","compass bearing");
         }
         if (heading > 67.5 && heading < 111.5)
         {
-            return qsTr(" E ");
+            return qsTr("E", "compass bearing");
         }
         if (heading > 111.5 && heading < 157.5)
         {
-            return qsTr(" SE ");
+            return qsTr("SE", "compass bearing");
         }
         if (heading > 157.5 && heading < 202.5)
         {
-            return qsTr(" S ");
+            return qsTr("S", "compass bearing");
         }
         if (heading > 202.5 && heading < 247.5)
         {
-            return qsTr(" SW ");
+            return qsTr("SW", "compass bearing");
         }
         if (heading > 247.5 && heading < 292.5)
         {
-            return qsTr(" W ");
+            return qsTr("W", "compass bearing");
         }
         if (heading > 292.5 && heading < 337.5)
         {
-            return qsTr(" NW ");
+            return qsTr("NW", "compass bearing");
         }
-        return qsTr(" ?? ");
+        return qsTr("??", "unknown compass bearing");
     }
 
     function generate_ab_name(heading_degrees) {
         var name
 
-        name = qsTr("AB ") + (heading_degrees).toLocaleString(Qt.locale(), 'f', 1) + "\u00B0" + line_Name.findDirection(heading_degrees)
+        name = qsTr("AB ") + (heading_degrees).toLocaleString(Qt.locale(), 'f', 1) + "\u00B0 " + line_Name.findDirection(heading_degrees)
 
         textInputBox.text = name
     }
@@ -65,33 +65,28 @@ Rectangle{
                 titleText: line_Name.title
             }
 
-    Rectangle{
-        id: textInputRect
+    TextField {
+        id: textInputBox
         width: parent.width -20
         anchors.left: parent.left
         anchors.top: topLine.bottom
         anchors.margins: 10
         height: 80
-        color:"lightgray"
-        border.color: "gray"
-        TextInput{
-            id: textInputBox
-            anchors.fill: parent
-            objectName: "textInputBox"
-            text: ""
-            cursorVisible: true
-        }
+        //color:"lightgray"
+        objectName: "textInputBox"
+        text: ""
+        selectByMouse: true
     }
 
     IconButtonTransparent{
         objectName: "btnAddTime"
-        anchors.top: textInputRect.bottom
+        anchors.top: textInputBox.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.margins: 20
         icon.source: "/images/Time.png"
         onClicked: {
             var time = new Date().toLocaleTimeString(Qt.locale())
-            textInputBox.text += time
+            textInputBox.text += " " + time
         }
         Text{
             anchors.right: parent.left

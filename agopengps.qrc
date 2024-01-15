@@ -524,5 +524,6 @@
         <file>qml/AOGInterface.qml</file>
         <file>qml/SectionButtons.qml</file>
         <file>qml/MathUtils.qml</file>
+        <file>qml/LatLonTextField.qml</file>
     </qresource>
 </RCC>
