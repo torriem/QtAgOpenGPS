@@ -20,6 +20,8 @@ import QtQuick.Controls 2.15
 Item {
     id: aogInterfaceType
 
+    property double frameTime: 0
+
     property bool isJobStarted: false
 
     property int manualBtnState: 0
@@ -44,6 +46,12 @@ Item {
     property double northing: 0
     property double latitude: 0
     property double longitude: 0
+    property double heading: 0
+    property double toolEasting: 0
+    property double toolNorthing: 0
+    property double toolLatitude: 0
+    property double toolLongitude: 0
+    property double toolHeading: 0
     property double imuRollDegrees: 0
     property double speedKph: 0
     property double offlineDistance: 0
@@ -69,7 +77,7 @@ Item {
     signal updateABLines()
     signal deleteABLine(int lineno)
     signal changeABLineName(int lineno, string new_name)
-    signal setNewABLineAPoint(bool start_or_cancel, double easting, double northing) //true to mark point, false to cancel new point
+    signal setNewABLineAPoint(bool start_or_cancel, double easting, double northing, double heading) //true to mark point, false to cancel new point
 
     //this is a bit clumsy but it's the only way I can get
     //the signals defined above to be accessible to the other
@@ -92,8 +100,8 @@ Item {
 
     }
 
-    function abLine_setA(start_or_cancel) {
-        setNewABLineAPoint(start_or_cancel)
+    function abLine_setA(start_or_cancel, easting, northing, heading) {
+        setNewABLineAPoint(start_or_cancel, easting, northing, heading)
     }
 
 

@@ -684,7 +684,7 @@ public slots:
     void update_ABlines_in_qml();
     void update_current_ABline_from_qml();
     void add_new_ABline(QString name, double easting, double northing,double heading);
-    void start_newABLine(bool start_or_cancel, double easting, double northing);
+    void start_newABLine(bool start_or_cancel, double easting, double northing, double heading);
 
     //left column
     void onBtnAcres_clicked();

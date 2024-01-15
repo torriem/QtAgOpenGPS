@@ -53,7 +53,7 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(currentABLineChanged()), this, SLOT(update_current_ABline_from_qml()));
     connect(aog,SIGNAL(currentABCurveChanged()), this, SLOT(update_current_ABline_from_qml()));
     connect(aog,SIGNAL(addABLine(QString, double, double, double)), this, SLOT(add_new_ABline(QString,double,double,double)));
-    connect(aog,SIGNAL(setNewABLineAPoint(bool,double,double)), this, SLOT(start_newABLine(bool,double,double)));
+    connect(aog,SIGNAL(setNewABLineAPoint(bool,double,double,double)), this, SLOT(start_newABLine(bool,double,double,double)));
 
     connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
 
@@ -610,7 +610,26 @@ void FormGPS::add_new_ABline(QString name, double easting, double northing, doub
     FileSaveABLines();
 }
 
-void FormGPS::start_newABLine(bool start_or_cancel, double easting, double northing)
+void FormGPS::start_newABLine(bool start_or_cancel, double easting, double northing, double heading)
 {
+    if (!start_or_cancel) {
+        ABLine.isABLineBeingSet = false;
+        return;
+    }
 
+    ABLine.desPoint1.easting = easting + cos(heading) * (double)property_setVehicle_toolOffset;
+    ABLine.desPoint2.northing = northing + sin(heading) * (double)property_setVehicle_toolOffset;
+
+    ABLine.desHeading = heading;
+
+    ABLine.desPoint2.easting = 99999;
+    ABLine.desPoint2.northing = 99999;
+
+    ABLine.isABLineBeingSet = true;
+
+    ABLine.desHeading = heading;
+    ABLine.desP1.easting = ABLine.desPoint1.easting - (sin(ABLine.desHeading) * (double)property_setAB_lineLength);
+    ABLine.desP1.northing = ABLine.desPoint1.northing - (cos(ABLine.desHeading) * (double)property_setAB_lineLength);
+    ABLine.desP2.easting = ABLine.desPoint1.easting + (sin(ABLine.desHeading) * (double)property_setAB_lineLength);
+    ABLine.desP2.northing = ABLine.desPoint1.northing + (cos(ABLine.desHeading) * (double)property_setAB_lineLength);
 }

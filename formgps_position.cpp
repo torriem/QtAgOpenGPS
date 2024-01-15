@@ -1116,6 +1116,16 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("longitude",pn.longitude);
     aog->setProperty("easting",pn.fix.easting);
     aog->setProperty("northing",pn.fix.northing);
+    aog->setProperty("heading", vehicle.fixHeading);
+    aog->setProperty("toolEasting", vehicle.pivotAxlePos.easting);
+    aog->setProperty("toolNorthing", vehicle.pivotAxlePos.northing);
+    aog->setProperty("toolHeading", vehicle.pivotAxlePos.heading);
+
+    double tool_lat, tool_lon;
+    pn.ConvertLocalToWGS84(vehicle.pivotAxlePos.northing, vehicle.pivotAxlePos.easting, tool_lat, tool_lon);
+    aog->setProperty("toolLatitude", tool_lat);
+    aog->setProperty("toolLongitude", tool_lon);
+
     aog->setProperty("imuRollDegrees",ahrs.imuRoll);
     avgPivDistance = avgPivDistance * 0.5 + vehicle.guidanceLineDistanceOff * 0.5;
     aog->setProperty("offlineDistance", avgPivDistance); //mm!
