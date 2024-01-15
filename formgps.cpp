@@ -43,6 +43,13 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
     property_setTool_sectionWidthMulti = .5588; //22" rows
     property_setTool_isSectionsNotZones = false; //enable zones
 
+    if (property_setTool_isSectionsNotZones) {
+        tool.sectionCalcWidths();
+    } else {
+        tool.sectionCalcMulti();
+    }
+
+
 
     property_setVehicle_wheelbase = 3.1496;
     property_setVehicle_trackWidth = 2.286;
