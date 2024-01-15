@@ -43,14 +43,14 @@ Item{
             }
 
             Text {
-                text: "Section " + Number(model.secNum+1).toLocaleString(Qt.locale(),"f",0)
+                text: qsTr("Section " + Number(model.secNum+1).toLocaleString(Qt.locale(),"f",0))
                 anchors.bottom: spinner.top
                 anchors.left: spinner.left
             }
             Text {
                 id: spin_message
                 visible: false
-                text: "message"
+                text: qsTr("message")
                 color: "red"
                 anchors.top: spinner.bottom
                 anchors.left: spinner.left
@@ -75,7 +75,7 @@ Item{
             value: 240
             to: 300
             editable: true
-            text: "Section Width"
+            text: qsTr("Section Width")
         }
         ComboBox{
             id: numOfSections
@@ -97,37 +97,37 @@ Item{
                 }
             }
             model: ListModel{
-                ListElement {text: "1"}
-                ListElement {text: "2"}
-                ListElement {text: "3"}
-                ListElement {text: "4"}
-                ListElement {text: "5"}
-                ListElement {text: "6"}
-                ListElement {text: "7"}
-                ListElement {text: "8"}
-                ListElement {text: "9"}
-                ListElement {text: "10"}
-                ListElement{text: "11"}
-                ListElement{text: "12"}
-                ListElement{text: "13"}
-                ListElement{text: "14"}
-                ListElement{text: "15"}
-                ListElement{text: "16"}
+                ListElement {text: qsTr("1")}
+                ListElement {text: qsTr("2")}
+                ListElement {text: qsTr("3")}
+                ListElement {text: qsTr("4")}
+                ListElement {text: qsTr("5")}
+                ListElement {text: qsTr("6")}
+                ListElement {text: qsTr("7")}
+                ListElement {text: qsTr("8")}
+                ListElement {text: qsTr("9")}
+                ListElement {text: qsTr("10")}
+                ListElement{text: qsTr("11")}
+                ListElement{text: qsTr("12")}
+                ListElement{text: qsTr("13")}
+                ListElement{text: qsTr("14")}
+                ListElement{text: qsTr("15")}
+                ListElement{text: qsTr("16")}
             }
             implicitHeight:60
             implicitWidth: 90
             Text{
                 anchors.bottom: parent.top
-                text: "Sections"
+                text: qsTr("Sections")
             }
         }
         Column{
             spacing: 8
             Text {
-                text: "000"
+                text: qsTr("000")
             }
             Text {
-                text: "Inch"
+                text: qsTr("Inch")
                 color: "green"
             }
         }

@@ -54,11 +54,7 @@ Rectangle{
             to: 100
             value: 100
             anchors.bottom: parent.bottom
-            text: "% Coverage"
-//            Text{
-//                anchors.bottom: parent.top
-//                text: "% Coverage"
-//            }
+            text: qsTr("% Coverage")
         }
         IconButton{
             objectName: "boundaryOff"
@@ -90,7 +86,7 @@ Rectangle{
     Text{
         id: bottomRightText
         anchors.right: parent.right
-        text: "Km/H"
+        text: qsTr("Km/H")
         anchors.verticalCenter: bottomRow.verticalCenter
         font.pixelSize: 25
     }

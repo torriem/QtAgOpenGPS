@@ -46,7 +46,7 @@ Item {
                 }
             }
             Text{
-                text: 1+"->"
+                text: qsTr(1+"->")
                 anchors.right: spinner.left
                 anchors.verticalCenter: spinner.verticalCenter
                 font.bold: true
@@ -54,14 +54,14 @@ Item {
             }
 
             Text {
-                text: "Zone " + Number(model.secNum+1).toLocaleString(Qt.locale(),"f",0)
+                text: qsTr("Zone " + Number(model.secNum+1).toLocaleString(Qt.locale(),"f",0))
                 anchors.bottom: spinner.top
                 anchors.left: spinner.left
             }
             Text {
                 id: spin_message
                 visible: false
-                text: "message"
+                text: qsTr("message")
                 color: "red"
                 anchors.top: spinner.bottom
                 anchors.left: spinner.left
@@ -103,7 +103,7 @@ Item {
             }
             Text{
                 anchors.bottom: parent.top
-                text: "Zones"
+                text: qsTr("Zones")
             }
         }
         SpinBoxCustomized{
@@ -114,7 +114,7 @@ Item {
             from: 1
             value: 240
             to: 300
-            text: "Section Width"
+            text: qsTr("Section Width")
         }
         SpinBoxCustomized{
             id: sectionsNumber
@@ -124,16 +124,16 @@ Item {
             from: 1
             value: 40
             to: 60
-            text: "Sections"
+            text: qsTr("Sections")
 
         }
         Column{
             spacing: 8
             Text {
-                text: "000"
+                text: qsTr("000")
             }
             Text {
-                text: "Inch"
+                text: qsTr("Inch")
                 color: "green"
             }
         }
