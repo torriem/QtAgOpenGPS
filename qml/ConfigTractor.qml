@@ -1,6 +1,9 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
+/* todo:
+  don't know how to make one of 3 options here
+  */
 Rectangle{
     id: configTractor
     anchors.fill: parent

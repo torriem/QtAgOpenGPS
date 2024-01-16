@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
+//todo: sections not populated from .config yet
 Item{
     id: configImplementSectionsSection
     z: 8
@@ -71,16 +72,19 @@ Item{
             objectName: "sectionWidthAll"
             implicitWidth: 150
             implicitHeight: 50
-            from: 1
-            value: 240
-            to: 300
+            from: 10
+            value: settings.setTool_defaultSectionWidth
+            to: 1000
             editable: true
             text: qsTr("Section Width")
+            onValueChanged: settings.setTool_defaultSectionWidth = value
         }
         ComboBox{
             id: numOfSections
             objectName: "numOfSections"
+            valueRole: settings.setVehicle_numSections
             onActivated: function (which) {
+                settings.setVehicle_numSections = which
                 console.warn("We got this one: " + which);
                 section_model.clear();
                 for (var i=0; i < which+1; i++) {

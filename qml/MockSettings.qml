@@ -128,7 +128,6 @@ Item {
     property string setSection_position2: "-1"
     property string setSection_position3: "1"
     property string setSection_position4: "2"
-    property string setSection_position5: "0"
     property string setSection_position6: "0"
     property string setSection_position7: "0"
     property string setSection_position8: "0"

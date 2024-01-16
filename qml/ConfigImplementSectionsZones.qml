@@ -1,12 +1,11 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
+//todo: zone width not done
 Item {
     id: configImplementSectionsZones
-
     ListModel {
         id: section_model
-
     }
 
     GridView {
@@ -111,10 +110,11 @@ Item {
             objectName: "sectionWidthAllZones"
             implicitWidth: 150
             implicitHeight: 50
-            from: 1
-            value: 240
-            to: 300
+            from: 10
+            value: settings.setTool_sectionWidthMulti
+            to: 1000
             text: qsTr("Section Width")
+            onValueChanged: settings.setTool_sectionWidthMulti
         }
         SpinBoxCustomized{
             id: sectionsNumber
@@ -122,9 +122,10 @@ Item {
             implicitWidth: 150
             implicitHeight: 50
             from: 1
-            value: 40
-            to: 60
+            value: settings.setTool_numSectionsMulti
+            to: 64
             text: qsTr("Sections")
+            onValueChanged: settings.setTool_numSectionsMulti = value
 
         }
         Column{
