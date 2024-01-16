@@ -453,7 +453,7 @@ Window {
 
         ColumnLayout {
             id: rightColumn
-            anchors.top: topLine.bottom
+            anchors.top: parent.top
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.rightMargin: 6

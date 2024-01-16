@@ -1,6 +1,9 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
+/*todo:
+  not sure how to handle "remove offset, zero roll, and reset IMU". Will leave for now
+  */
 Rectangle{
     id: configSourcesRoll
     anchors.fill: parent
@@ -14,11 +17,11 @@ Rectangle{
         anchors.leftMargin: 20
         text: qsTr("Remove Offset")
         icon.source: "/images/Config/ConDa_RemoveOffset.png"
-        isChecked: false
+
     }
     IconButtonColor{
         objectName: "zeroRoll"
-        text: "Zero Roll"
+        text: qsTr("Zero Roll")
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 20
@@ -41,7 +44,8 @@ Rectangle{
         anchors.topMargin: 20
         text: qsTr("Invert Roll")
         icon.source: "/images/Config/ConDa_InvertRoll.png"
-        isChecked: false
+        checked: settings.setIMU_invertRoll
+        onCheckedChanged: settings.setIMU_invertRoll = checked
     }
     Rectangle{
         id: rollFilterSlider
@@ -57,7 +61,8 @@ Rectangle{
             anchors.fill: parent
             from: 0
             to: 98
-            value: 0
+            value: settings.setIMU_rollFilter
+            onValueChanged: settings.setIMU_rollFilter = value
             leftTopText: "Less"
             centerTopText: "Roll Filter"
             rightTopText: "More"

@@ -1,6 +1,8 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
+/* todo:
+  */
 Rectangle{
     id: configSources
     anchors.fill: parent
@@ -35,14 +37,16 @@ Rectangle{
                 text: "Dual"
                 id: dual
                 icon.source: "/images/Config/Con_SourcesGPSDual.png"
-                isChecked: false
+                checked: setting.setGPS_fixFromWhichSource === "Fix"
+                onClicked: settings.setGPS_fixFromWhichSource = "Fix"
             }
             IconButtonColor{
                 width:150
                 height:100
                 id: fix
                 text: "Fix"
-                isChecked: false
+                checked: setting.setGPS_fixFromWhichSource === "Dual"
+                onClicked: settings.setGPS_fixFromWhichSource = "Dual"
                 icon.source: "/images/Config/Con_SourcesGPSSingle.png"
             }
         }
@@ -73,17 +77,19 @@ Rectangle{
                 height:100
                 id: alarm
                 icon.source: "/images/Config/Con_SourcesRTKAlarm.png"
-                isChecked: false
+                checked: settings.setGPS_ageAlarm
+                onCheckedChanged: settings.setGPS_ageAlarm
             }
             Text{
-                text: qsTr("  ->  ")
+                text: "  ->  "
             }
             IconButtonColor{
                 width:150
                 height:100
                 id: killAutoSteer
                 icon.source: "/images/AutoSteerOff.png"
-                isChecked: false
+                checked: settings.setGPS_isRTK_KillAutoSteer
+                onCheckedChanged: settings.setGPS_isRTK_KillAutoSteer
             }
         }
     }
@@ -103,34 +109,24 @@ Rectangle{
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Single Antenna Settings")
         }
-        Rectangle{
+
+        ButtonColor{
             id: minGPSStep
             width: 180
             height: 50
             anchors.top: singleText.bottom
             anchors.right: parent.right
             anchors.margins: 5
-            border.color: "black"
             color: "blue"
-            Text{
-                anchors.right: stepButton.left
-                anchors.rightMargin: 15
-                anchors.verticalCenter: parent.verticalCenter
-                text: qsTr("Minimum GPS Step")
-            }
-
-            Button{
-                id: stepButton
-                Text{
-                    text: qsTr("5 Centimeter")
-                    anchors.fill: parent
-                    font.bold: true
+            colorChecked: "green"
+            onCheckedChanged: {
+                if(checked){
+                    settings.setGPS_minimumStepLimit = 0.1
+                }else{
+                    settings.setGPS_minimumStepLimit = 0.05
                 }
-                flat: true
-                anchors.fill: parent
-                onClicked: minGPSStep.color = "green"
-
             }
+            text: qsTr(settings.setGPS_minimumStepLimit * 100 + "Centimeter")
             Text{
                 id: cmText
                 anchors.top: minGPSStep.bottom
@@ -142,11 +138,17 @@ Rectangle{
             Text{
                 anchors.top: minGPSStep.bottom
                 anchors.topMargin: 10
-                anchors.right: stepButton.left
+                anchors.right: minGPSStep.left
                 text: qsTr("Heading Distance")
-
+            }
+            Text{
+                anchors.top: minGPSStep.bottom
+                anchors.topMargin: 10
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr(settings.setGPS_minimumStepLimit * 1000 + "Centimeter")
             }
         }
+
         Rectangle{//fusion adjuster
             id: fusionRow
             anchors.horizontalCenter: parent.horizontalCenter
@@ -156,7 +158,7 @@ Rectangle{
             border.color: "black"
             color: "ghostwhite"
             SliderCustomized{
-                leftText: value
+                leftText: 100 - value
                 rightText: value
                 leftTopText: "IMU <"
                 colorLeftTopText: "green"
@@ -164,9 +166,10 @@ Rectangle{
                 rightTopText: "> GPS"
                 colorRightTopText: "red"
                 centerTopText: "Fusion"
-                from: 50
-                to: 90
-                value: 70
+                from: 20
+                to: 40
+                value: settings.setIMU_fusionWeight2
+                onValueChanged: settings.setIMU_fusionWeight2 = value
                 stepSize: 1
             }
         }
@@ -176,17 +179,15 @@ Rectangle{
             anchors.topMargin: 15
             text: qsTr("Default: 70%")
         }
-        Button{
+        ButtonColor{
             text: qsTr("Reverse Detection")
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 30
             anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: childRectangle.color = "green"
-            background:Rectangle{
-                id: childRectangle
-                color: "white"
-                border.color: "black"
-            }
+            color: "white"
+            colorChecked: "green"
+            checked: settings.setIMU_isReverseOn
+            onCheckedChanged: settings.setIMU_isReverseOn = checked
         }
     }
     Rectangle{
@@ -221,7 +222,8 @@ Rectangle{
             anchors.bottom: head.bottom
             anchors.leftMargin: 50
             from: -100
-            value: 0
+            value: settings.setGPS_dualHeadingOffset
+            onValueChanged: settings.setGPS_dualHeadingOffset = value
             to: 100
             editable: true
         }
@@ -231,19 +233,17 @@ Rectangle{
             anchors.horizontalCenter: headingOffSet.horizontalCenter
             text: qsTr("Heading Offset (Degree)")
         }
-        IconButtonText{
+        ButtonColor{
             id: dualAsIMU
             objectName: "dualAsIMU"
             text: qsTr("Dual As IMU")
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 30
             anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: childofdual.color = "green"
-            background:Rectangle{
-                id: childofdual
-                color: "white"
-                border.color: "black"
-            }
+            color: "white"
+            colorChecked: "green"
+            checked: settings.setIMU_isDualAsIMU
+            onCheckedChanged: settings.setIMU_isDualAsIMU = checked
         }
     }
 }

@@ -526,5 +526,6 @@
         <file>qml/MathUtils.qml</file>
         <file>qml/LatLonTextField.qml</file>
         <file>images/SectionOnBoundary.png</file>
+        <file>qml/ButtonColor.qml</file>
     </qresource>
 </RCC>
