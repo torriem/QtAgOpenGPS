@@ -133,7 +133,7 @@ Item {
 
     function speed_unit() {
         if (settings.setMenu_isMetric)
-            return qsTr("KPH","abbreviation for kilometers per hour")
+            return qsTr("km/h","abbreviation for kilometers per hour")
         else
             return qsTr("MPH", "abbreviation for miles per hour")
     }
@@ -143,6 +143,76 @@ Item {
             return speed
         else
             return speed * 0.62137 //convert to mph
+    }
+
+    function convert_speed_text(speed, decimal_places) {
+        if (settings.setMenu_isMetric)
+            return Number(speed).toLocaleString(Qt.locale(), 'f', decimal_places)
+        else
+            return Number(speed * 0.62137).toLocaleString(Qt.locale(), 'f', decimal_places) //convert to mph
+    }
+
+    function cm_unit() {
+        if(settings.setMenu_isMetric)
+            return qsTr("cm", "centimeter abbreviation")
+        else
+            return qsTr("in", "inches abbreviation")
+    }
+
+    function cm_convert(distance) {
+        if(settings.setMenu_isMetric)
+            return distance
+        else
+            return distance / 25.4 //convert to inches
+    }
+
+    function cm_convert_text(distance, decimal_places) {
+        if(settings.setMenu_isMetric)
+            return Number(distance).toLocaleString(Qt.locale(),'f', decimal_places)
+        else
+            return Number(distance / 25.4).toLocaleString(Qt.locale(), 'f', decimal_places) //convert to inches
+    }
+
+    function m_unit() {
+        if(settings.setMenu_isMetric)
+            return qsTr("m", "metre abbreviation")
+        else
+            return qsTr("ft", "imperial feet abbreviation")
+    }
+
+    function m_convert(distance) {
+        if(settings.setMenu_isMetric)
+            return distance
+        else
+            return distance / 3.2808 //convert to ft
+    }
+
+    function m_convert_text(distance, decimal_places) {
+        if(settings.setMenu_isMetric)
+            return Number(distance).toLocaleString(Qt.locale(),'f', decimal_places)
+        else
+            return Number(distance / 3.2808).toLocaleString(Qt.locale(), 'f', decimal_places) //convert to ft
+    }
+
+    function km_unit() {
+        if(settings.setMenu_isMetric)
+            return qsTr("km", "kilometre abbreviation")
+        else
+            return qsTr("mi", "imperial miles abbreviation")
+    }
+
+    function km_convert(distance) {
+        if(settings.setMenu_isMetric)
+            return distance
+        else
+            return distance / 0.62137 //convert to miles
+    }
+
+    function km_convert_text(distance, decimal_places) {
+        if(settings.setMenu_isMetric)
+            return Number(distance).toLocaleString(Qt.locale(),'f', decimal_places)
+        else
+            return Number(distance / 0.62137).toLocaleString(Qt.locale(), 'f', decimal_places) //convert to miles
     }
 
 }

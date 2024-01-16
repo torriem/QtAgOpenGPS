@@ -977,7 +977,7 @@ Window {
                             aog.uturn(false)
                         else
                             timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                    aog.convert_speed(settings.setAS_functionSpeedLimit) + " " + aog.speed_unit)
+                                                    aog.convert_speed(settings.setAS_functionSpeedLimit) + " " + aog.speed_unit())
                     }
                 }
                 Button{
@@ -992,7 +992,7 @@ Window {
                             aog.uturn(true)
                         else
                             timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                    aog.convert_speed(settings.setAS_functionSpeedLimit) + " " + aog.speed_unit)
+                                                    aog.convert_speed(settings.setAS_functionSpeedLimit) + " " + aog.speed_unit())
                     }
                 }
             }
@@ -1031,7 +1031,7 @@ Window {
                             aog.lateral(false)
                         else
                             timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                    aog.convert_speed(settings.setAS_functionSpeedLimit) + " " + aog.speed_unit)
+                                                    aog.convert_speed(settings.setAS_functionSpeedLimit) + " " + aog.speed_unit())
                     }
                 }
                 Button{
@@ -1046,7 +1046,7 @@ Window {
                             aog.lateral(false)
                         else
                             timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                    aog.convert_speed(settings.setAS_functionSpeedLimit) + " " + aog.speed_unit)
+                                                    aog.convert_speed(settings.setAS_functionSpeedLimit) + " " + aog.speed_unit())
                     }
                 }
             }
