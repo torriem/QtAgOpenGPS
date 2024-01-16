@@ -136,7 +136,7 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.left
             anchors.rightMargin: 5
-            text: "Send + Save"
+            text: qsTr("Send + Save")
         }
     }
 

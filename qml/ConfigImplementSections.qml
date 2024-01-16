@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
-//todo: couldn't find setting for sectionOffOverBoundary
+//todo: noticed % coverage was in wrong spot
 Rectangle{
     id: configImplementSection
     anchors.fill: parent
