@@ -54,6 +54,9 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(currentABCurveChanged()), this, SLOT(update_current_ABline_from_qml()));
     connect(aog,SIGNAL(addABLine(QString, double, double, double)), this, SLOT(add_new_ABline(QString,double,double,double)));
     connect(aog,SIGNAL(setNewABLineAPoint(bool,double,double,double)), this, SLOT(start_newABLine(bool,double,double,double)));
+    connect(aog,SIGNAL(deleteABLine(int)), this, SLOT( delete_ABLine(int)));
+    connect(aog,SIGNAL(swapHeadingABLine(int)), this, SLOT(swap_heading_ABLine(int)));
+    connect(aog,SIGNAL(changeABLineName(int, QString)), this, SLOT(change_name_ABLine(int,QString)));
 
     connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
 
@@ -580,7 +583,7 @@ void FormGPS::update_ABlines_in_qml()
         line["name"] = ABLine.lineArr[i].Name;
         line["easting"] = ABLine.lineArr[i].origin.easting;
         line["northing"] = ABLine.lineArr[i].origin.northing;
-        line["northing"] = ABLine.lineArr[i].heading;
+        line["heading"] = ABLine.lineArr[i].heading;
         line["visible"] = ABLine.lineArr[i].isVisible;
         list.append(line);
     }
@@ -608,6 +611,7 @@ void FormGPS::add_new_ABline(QString name, double easting, double northing, doub
     line.Name = name;
     ABLine.lineArr.append(line);
     FileSaveABLines();
+    update_ABlines_in_qml();
 }
 
 void FormGPS::start_newABLine(bool start_or_cancel, double easting, double northing, double heading)
@@ -632,4 +636,44 @@ void FormGPS::start_newABLine(bool start_or_cancel, double easting, double north
     ABLine.desP1.northing = ABLine.desPoint1.northing - (cos(ABLine.desHeading) * (double)property_setAB_lineLength);
     ABLine.desP2.easting = ABLine.desPoint1.easting + (sin(ABLine.desHeading) * (double)property_setAB_lineLength);
     ABLine.desP2.northing = ABLine.desPoint1.northing + (cos(ABLine.desHeading) * (double)property_setAB_lineLength);
+}
+
+void FormGPS::delete_ABLine(int which_one)
+{
+    QObject *aog = qmlItem(qml_root,"aog");
+
+    if ((which_one < 0) || (which_one >= ABLine.lineArr.count()))
+        return;
+
+    ABLine.lineArr.removeAt(which_one);
+
+    aog->setProperty("currentABLine", -1);
+
+    update_ABlines_in_qml();
+    update_current_ABline_from_qml();
+    FileSaveABLines();
+}
+
+void FormGPS::swap_heading_ABLine(int which_one)
+{
+    if ((which_one < 0) || (which_one >= ABLine.lineArr.count()))
+        return;
+
+    double heading = ABLine.lineArr[which_one].heading + M_PI;
+    if (heading > glm::twoPI) //if over 360
+        heading -= glm::twoPI;
+
+    ABLine.lineArr[which_one].heading = heading;
+    update_ABlines_in_qml();
+    FileSaveABLines();
+}
+
+void FormGPS::change_name_ABLine(int which_one, QString name)
+{
+    qDebug() << "changing name of " << which_one << " to " << name;
+    if (which_one > -1) {
+        ABLine.lineArr[which_one].Name = name;
+        update_ABlines_in_qml();
+        FileSaveABLines();
+    }
 }

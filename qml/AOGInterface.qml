@@ -78,6 +78,7 @@ Item {
     signal deleteABLine(int lineno)
     signal changeABLineName(int lineno, string new_name)
     signal setNewABLineAPoint(bool start_or_cancel, double easting, double northing, double heading) //true to mark point, false to cancel new point
+    signal swapHeadingABLine(int lineno)
 
     //this is a bit clumsy but it's the only way I can get
     //the signals defined above to be accessible to the other
@@ -95,8 +96,12 @@ Item {
         deleteABLine(index)
     }
 
+    function abLine_swapHeading(index) {
+        swapHeadingABLine(index)
+    }
+
     function abLine_changeName(index, new_name) {
-        updateABLines(index, new_name)
+        changeABLineName(index, new_name)
 
     }
 

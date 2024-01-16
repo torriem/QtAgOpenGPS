@@ -74,16 +74,30 @@ Dialog {
             IconButtonTransparent{
                 objectName: "btnLineCopy"
                 icon.source: "/images/FileCopy.png"
-                onClicked: copyLineName.visible = true
+                onClicked: {
+                    if(ablineView.currentIndex > -1) {
+                        copyLineName.set_name("Copy of " + aog.abLinesList[ablineView.currentIndex].name)
+                        copyLineName.visible = true
+                    }
+                }
             }
             IconButtonTransparent{
                 objectName: "btnLineEdit"
                 icon.source: "/images/FileEditName.png"
-                onClicked: editLineName.visible = true
+                onClicked: {
+                    if (ablineView.currentIndex > -1) {
+                        editLineName.set_name(aog.abLinesList[ablineView.currentIndex].name)
+                        editLineName.visible = true
+                    }
+                }
             }
             IconButtonTransparent{
                 objectName: "btnLineSwapPoints"
                 icon.source: "/images/ABSwapPoints.png"
+                onClicked: {
+                    if(ablineView.currentIndex > -1)
+                        aog.abLine_swapHeading(ablineView.currentIndex);
+                }
             }
             IconButtonTransparent{
                 objectName: "btnLineExit"
@@ -117,6 +131,11 @@ Dialog {
                     id: btnLineDelete
                     objectName: "btnLineDelete"
                     icon.source: "/images/ABLineDelete.png"
+
+                    onClicked: {
+                        if (ablineView.currentIndex > -1)
+                            aog.deleteABLine(ablineView.currentIndex)
+                    }
                 }
                 IconButtonTransparent{
                     objectName: "btnLineExit"
@@ -184,7 +203,6 @@ Dialog {
             }
 
             onRejected: {
-                console.debug("new ab line aborted.")
                 abLinePickerDialog.visible = true
             }
 
@@ -194,10 +212,10 @@ Dialog {
                 aog.abLine_addLine(newLineName.abLineName,a_easting, a_northing, heading)
                 aog.abLine_updateLines()
                 var count = aog.abLinesList.length
-                ablineView.currentIndex = count -1
-                aog.currentABLine = count - 1
+                //ablineView.currentIndex = count -1
+                //aog.currentABLine = count - 1
                 abSetter.close()
-                //abLinePickerDialog.open()
+                abLinePickerDialog.open()
             }
 
             Rectangle {
@@ -497,9 +515,20 @@ Dialog {
             objectName: "copyLineName"
             anchors.top:parent.top
             anchors.left: parent.left
-            title: "AB Line"
+            title: "Copy AB Line"
             visible: false
             z: 2
+            onAccepted: {
+                if(ablineView.currentIndex > -1) {
+                    console.debug("copy heading " + aog.abLinesList[ablineView.currentIndex].heading);
+                    var heading = aog.abLinesList[ablineView.currentIndex].heading
+                    var easting = aog.abLinesList[ablineView.currentIndex].easting
+                    var northing = aog.abLinesList[ablineView.currentIndex].northing
+                    aog.abLine_addLine(copyLineName.abLineName, easting, northing, heading)
+                    //aog.abLine_updateLines()
+                    ablineView.positionViewAtEnd()
+                }
+            }
         }
 
         LineName{
@@ -510,9 +539,17 @@ Dialog {
             title: "AB Line"
             visible: false
             z: 1
+            onAccepted: {
+                if(ablineView.currentIndex > -1) {
+                    aog.abLine_changeName(ablineView.currentIndex, editLineName.abLineName)
+                    //aog.abLine_updateLines()
+                    //ablineView.positionViewAtEnd()
+                }
+            }
         }
 
         Rectangle{
+            id: listrect
             anchors.left: parent.left
             anchors.top:topLine.bottom
             anchors.right: rightColumn.left
@@ -551,7 +588,7 @@ Dialog {
                         ablineView.currentIndex = index
                     }
 
-                    width:parent.width
+                    width:listrect.width
                     height:50
                     //anchors.fill: parent
                     //color: "light gray"
