@@ -57,6 +57,7 @@ Item {
     property double offlineDistance: 0
 
 
+    //AB Lines properties, signals, and methods
     property int currentABLine: -1 //use this instead of signals?
     property int currentABCurve: -1
 
@@ -73,43 +74,22 @@ Item {
         {index: 2, name: "three", visible: true }
     ]
 
-    signal addABLine(string name, double easting, double northing, double heading)
-    signal updateABLines()
-    signal deleteABLine(int lineno)
-    signal changeABLineName(int lineno, string new_name)
-    signal setNewABLineAPoint(bool start_or_cancel, double easting, double northing, double heading) //true to mark point, false to cancel new point
-    signal swapHeadingABLine(int lineno)
+    signal abLine_updateLines()
 
-    //this is a bit clumsy but it's the only way I can get
-    //the signals defined above to be accessible to the other
-    //qml files.  Some kind of scope limitation I guess
-    function abLine_addLine(name, easting, northing, heading_radians) {
-        console.debug("add new line: " + name + ", " + easting + ", " + northing + ", " + heading_radians)
-        addABLine(name,easting, northing, heading_radians);
-    }
+    signal abLine_addLine(string name, double easting, double northing, double heading)
+    signal abLine_deleteLine(int index)
+    //signal changeABLineName(int lineno, string new_name)
+    signal abLine_changeName(int which_one, string new_name)
+    signal abLine_setA(bool start_or_cancel, double easting, double northing, double heading) //true to mark point, false to cancel new point
+    signal abLine_swapHeading(int index)
 
-    function abLine_updateLines() {
-        updateABLines()
-    }
+    //on-screen buttons
 
-    function abLine_deleteLine(index) {
-        deleteABLine(index)
-    }
-
-    function abLine_swapHeading(index) {
-        swapHeadingABLine(index)
-    }
-
-    function abLine_changeName(index, new_name) {
-        changeABLineName(index, new_name)
-
-    }
-
-    function abLine_setA(start_or_cancel, easting, northing, heading) {
-        setNewABLineAPoint(start_or_cancel, easting, northing, heading)
-    }
+    signal uturn(bool turn_right)
+    signal lateral(bool go_right)
 
 
+    //misc math functions
     property double mPerDegreeLat
     property double mPerDegreeLon
 
@@ -151,5 +131,18 @@ Item {
         return [outNorthing, outEasting]
     }
 
+    function speed_unit() {
+        if (settings.setMenu_isMetric)
+            return qsTr("KPH","abbreviation for kilometers per hour")
+        else
+            return qsTr("MPH", "abbreviation for miles per hour")
+    }
+
+    function convert_speed(speed) {
+        if (settings.setMenu_isMetric)
+            return speed
+        else
+            return speed * 0.62137 //convert to mph
+    }
 
 }

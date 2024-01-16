@@ -733,8 +733,8 @@ public slots:
     void swapDirection();
     void turnOffBoundAlarm();
 
-    void onBtnManUTurnLeft_clicked();
-    void onBtnManUTurnRight_clicked();
+    void onBtnManUTurn_clicked(bool right);
+    void onBtnLateral_clicked(bool right);
 
     /***************************
      * from OpenGL.Designer.cs *

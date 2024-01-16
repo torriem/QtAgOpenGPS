@@ -133,8 +133,12 @@ Dialog {
                     icon.source: "/images/ABLineDelete.png"
 
                     onClicked: {
-                        if (ablineView.currentIndex > -1)
-                            aog.deleteABLine(ablineView.currentIndex)
+                        if (ablineView.currentIndex > -1) {
+                            if (aog.currentABLine == ablineView.currentIndex)
+                                aog.currentABLine = -1
+                            aog.abLine_deleteLine(ablineView.currentIndex)
+                            ablineView.currentIndex = -1
+                        }
                     }
                 }
                 IconButtonTransparent{

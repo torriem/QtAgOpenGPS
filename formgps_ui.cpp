@@ -49,14 +49,19 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(sectionButtonStateChanged()), &tool.sectionButtonState, SLOT(onStatesUpdated()));
 
     //AB Line Picker
-    connect(aog,SIGNAL(updateABLines()),this,SLOT(update_ABlines_in_qml()));
     connect(aog,SIGNAL(currentABLineChanged()), this, SLOT(update_current_ABline_from_qml()));
     connect(aog,SIGNAL(currentABCurveChanged()), this, SLOT(update_current_ABline_from_qml()));
-    connect(aog,SIGNAL(addABLine(QString, double, double, double)), this, SLOT(add_new_ABline(QString,double,double,double)));
-    connect(aog,SIGNAL(setNewABLineAPoint(bool,double,double,double)), this, SLOT(start_newABLine(bool,double,double,double)));
-    connect(aog,SIGNAL(deleteABLine(int)), this, SLOT( delete_ABLine(int)));
-    connect(aog,SIGNAL(swapHeadingABLine(int)), this, SLOT(swap_heading_ABLine(int)));
-    connect(aog,SIGNAL(changeABLineName(int, QString)), this, SLOT(change_name_ABLine(int,QString)));
+    connect(aog,SIGNAL(abLine_updateLines()),this,SLOT(update_ABlines_in_qml()));
+    connect(aog,SIGNAL(abLine_addLine(QString, double, double, double)), this, SLOT(add_new_ABline(QString,double,double,double)));
+    connect(aog,SIGNAL(abLine_setA(bool,double,double,double)), this, SLOT(start_newABLine(bool,double,double,double)));
+    connect(aog,SIGNAL(abLine_deleteLine(int)), this, SLOT( delete_ABLine(int)));
+    connect(aog,SIGNAL(abLine_swapHeading(int)), this, SLOT(swap_heading_ABLine(int)));
+    connect(aog,SIGNAL(abLine_changeName(int, QString)), this, SLOT(change_name_ABLine(int,QString)));
+
+
+    //manual youturn buttons
+    connect(aog,SIGNAL(uturn(bool)), this, SLOT(onBtnManUTurn_clicked(bool)));
+    connect(aog,SIGNAL(lateral(bool)), this, SLOT(onBtnLateral_clicked(bool)));
 
     connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
 
@@ -128,12 +133,6 @@ void FormGPS::setupGui()
     contextFlag = qmlItem(qml_root, "contextFlag");
 
     //txtDistanceOffABLine = qmlItem(qml_root,"txtDistanceOffABLine");
-
-    temp = qmlItem(qml_root, "btnManUturnLeft");
-    connect(temp,SIGNAL(clicked()), this, SLOT(onBtnManUTurnLeft_clicked()));
-
-    temp = qmlItem(qml_root, "btnManUturnRight");
-    connect(temp,SIGNAL(clicked()), this, SLOT(onBtnManUTurnRight_clicked()));
 
     openGLControl = qml_root->findChild<AOGRendererInSG *>("openglcontrol");
     //This is a bit hackish, but all rendering is done in this item, so
@@ -445,24 +444,19 @@ bool FormGPS::closeAllMenus()
     return false;
 }
 
-void FormGPS::onBtnManUTurnLeft_clicked()
+void FormGPS::onBtnManUTurn_clicked(bool right)
 {
     if (yt.isYouTurnTriggered) {
         yt.ResetYouTurn();
     }else {
         yt.isYouTurnTriggered = true;
-        yt.BuildManualYouTurn(vehicle, ABLine, curve, false, true);
+        yt.BuildManualYouTurn(vehicle, ABLine, curve, right, true);
    }
 }
 
-void FormGPS::onBtnManUTurnRight_clicked()
+void FormGPS::onBtnLateral_clicked(bool right)
 {
-    if (yt.isYouTurnTriggered) {
-        yt.ResetYouTurn();
-    }else {
-        yt.isYouTurnTriggered = true;
-        yt.BuildManualYouTurn(vehicle, ABLine, curve, true, true);
-   }
+   yt.BuildManualYouLateral(vehicle, ABLine, curve, right);
 }
 
 void FormGPS::TimedMessageBox(int timeout, QString s1, QString s2)
@@ -510,7 +504,9 @@ void FormGPS::update_current_ABline_from_qml()
     //the property will be -1 if nothing is selected, ABLine uses base 1
     //so add one to it
     ABLine.numABLineSelected = aog->property("currentABLine").toInt() + 1;
-    qDebug() << "currentABLine changed in aog to " << ABLine.numABLineSelected;
+    if (ABLine.numABLineSelected > ABLine.lineArr.count())
+        ABLine.numABLineSelected = 0;
+
     ABLine.isABValid = false; //recalculate the closest line to us
     ABLine.moveDistance = 0;
 
@@ -530,7 +526,6 @@ void FormGPS::update_current_ABline_from_qml()
     }
 
     int selectedItem = aog->property("currentABCurve").toInt();
-    qDebug() << "currentABCurve changed in aog to " << selectedItem + 1;
     //reset to generate new reference
     curve.isCurveValid = false;
     curve.moveDistance = 0;
@@ -538,7 +533,7 @@ void FormGPS::update_current_ABline_from_qml()
 
     FileSaveCurveLines(); // in case a new one was added
 
-    if (selectedItem > -1)
+    if (selectedItem > -1 and selectedItem <= curve.curveArr.count())
     {
         int idx = selectedItem;
         curve.numCurveLineSelected = idx + 1;
@@ -565,7 +560,6 @@ void FormGPS::update_current_ABline_from_qml()
     }
 
     if (ABLine.numABLineSelected == 0 && curve.numCurveLineSelected == 0 && ct.isContourBtnOn == false) {
-        qDebug() << "setting aog.isAutoSteerBtnOn to false";
         isAutoSteerBtnOn = false;
     }
 }
