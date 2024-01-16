@@ -696,7 +696,7 @@ void FormGPS::UpdateFixPosition()
 
         if (!isAutoSteerBtnOn) //32020 means auto steer is off
         {
-            vehicle.guidanceLineDistanceOff = 32020;
+            //vehicle.guidanceLineDistanceOff = 32020;
             p_254.pgn[p_254.status] = 0;
         }
 
@@ -709,7 +709,8 @@ void FormGPS::UpdateFixPosition()
 
         //convert to cm from mm and divide by 2 - lightbar
         int distanceX2;
-        if (vehicle.guidanceLineDistanceOff == 32020 || vehicle.guidanceLineDistanceOff == 32000)
+        //if (vehicle.guidanceLineDistanceOff == 32020 || vehicle.guidanceLineDistanceOff == 32000)
+        if (!isAutoSteerBtnOn || vehicle.guidanceLineDistanceOff == 32000)
             distanceX2 = 255;
 
         else
@@ -861,7 +862,7 @@ void FormGPS::UpdateFixPosition()
 
         if (!isAutoSteerBtnOn) //32020 means auto steer is off
         {
-            vehicle.guidanceLineDistanceOff = 32020;
+            //vehicle.guidanceLineDistanceOff = 32020;
             p_254.pgn[p_254.status] = 0;
         }
 
@@ -874,7 +875,8 @@ void FormGPS::UpdateFixPosition()
 
         //convert to cm from mm and divide by 2 - lightbar
         int distanceX2;
-        if (vehicle.guidanceLineDistanceOff == 32020 || vehicle.guidanceLineDistanceOff == 32000)
+        //if (vehicle.guidanceLineDistanceOff == 32020 || vehicle.guidanceLineDistanceOff == 32000)
+        if (!isAutoSteerBtnOn || vehicle.guidanceLineDistanceOff == 32000)
             distanceX2 = 255;
 
         else
