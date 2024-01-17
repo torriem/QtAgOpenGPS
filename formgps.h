@@ -603,7 +603,6 @@ public:
     QString strHeading;
     int lenth = 4;
 
-    void DrawManUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
     void DrawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
     void MakeFlagMark(QOpenGLFunctions *gl);
     void DrawFlags(QOpenGLFunctions *gl, QMatrix4x4 mvp);
@@ -643,17 +642,6 @@ public:
     void jobNew();
     void JobClose();
 
-    /***********************
-     * FormGPS.Designer.cs *
-     ***********************/
-    void manualAllBtnsUpdate();
-    void manualBtnUpdate(int sectNumber);
-    void lineUpManualBtns();
-
-    // formgps_ui
-    bool closeAllMenus();
-
-
     /******************************
      * formgps_classcallbacks.cpp *
      ******************************/
@@ -681,10 +669,14 @@ public slots:
 
     void TimedMessageBox(int timeout, QString s1, QString s2);
 
+    //AB Lines in GUI
     void update_ABlines_in_qml();
     void update_current_ABline_from_qml();
     void add_new_ABline(QString name, double easting, double northing,double heading);
-    void start_newABLine(bool start_or_cancel, double easting, double northing);
+    void start_newABLine(bool start_or_cancel, double easting, double northing, double heading);
+    void delete_ABLine(int which_line);
+    void swap_heading_ABLine(int which_line);
+    void change_name_ABLine(int which_line, QString name);
 
     //left column
     void onBtnAcres_clicked();
@@ -694,8 +686,6 @@ public slots:
     void onBtnSteerMode_clicked();
     //right column
     void onBtnContour_clicked();
-    void onBtnABCurve_clicked();
-    void onBtnABLine_clicked();
     void onBtnToggleAB_clicked();
     void onBtnToggleABBack_clicked();
     void onBtnAutoYouTurn_clicked();
@@ -729,8 +719,8 @@ public slots:
     void swapDirection();
     void turnOffBoundAlarm();
 
-    void onBtnManUTurnLeft_clicked();
-    void onBtnManUTurnRight_clicked();
+    void onBtnManUTurn_clicked(bool right);
+    void onBtnLateral_clicked(bool right);
 
     /***************************
      * from OpenGL.Designer.cs *

@@ -56,6 +56,10 @@ Rectangle{
         textInputBox.text = name
     }
 
+    function set_name(name) {
+        textInputBox.text = name
+    }
+
     color: "ghostwhite"
             border.width: 1
             border.color: "black"

@@ -696,7 +696,7 @@ void FormGPS::UpdateFixPosition()
 
         if (!isAutoSteerBtnOn) //32020 means auto steer is off
         {
-            vehicle.guidanceLineDistanceOff = 32020;
+            //vehicle.guidanceLineDistanceOff = 32020;
             p_254.pgn[p_254.status] = 0;
         }
 
@@ -709,7 +709,8 @@ void FormGPS::UpdateFixPosition()
 
         //convert to cm from mm and divide by 2 - lightbar
         int distanceX2;
-        if (vehicle.guidanceLineDistanceOff == 32020 || vehicle.guidanceLineDistanceOff == 32000)
+        //if (vehicle.guidanceLineDistanceOff == 32020 || vehicle.guidanceLineDistanceOff == 32000)
+        if (!isAutoSteerBtnOn || vehicle.guidanceLineDistanceOff == 32000)
             distanceX2 = 255;
 
         else
@@ -861,7 +862,7 @@ void FormGPS::UpdateFixPosition()
 
         if (!isAutoSteerBtnOn) //32020 means auto steer is off
         {
-            vehicle.guidanceLineDistanceOff = 32020;
+            //vehicle.guidanceLineDistanceOff = 32020;
             p_254.pgn[p_254.status] = 0;
         }
 
@@ -874,7 +875,8 @@ void FormGPS::UpdateFixPosition()
 
         //convert to cm from mm and divide by 2 - lightbar
         int distanceX2;
-        if (vehicle.guidanceLineDistanceOff == 32020 || vehicle.guidanceLineDistanceOff == 32000)
+        //if (vehicle.guidanceLineDistanceOff == 32020 || vehicle.guidanceLineDistanceOff == 32000)
+        if (!isAutoSteerBtnOn || vehicle.guidanceLineDistanceOff == 32000)
             distanceX2 = 255;
 
         else
@@ -1116,6 +1118,16 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("longitude",pn.longitude);
     aog->setProperty("easting",pn.fix.easting);
     aog->setProperty("northing",pn.fix.northing);
+    aog->setProperty("heading", vehicle.fixHeading);
+    aog->setProperty("toolEasting", vehicle.pivotAxlePos.easting);
+    aog->setProperty("toolNorthing", vehicle.pivotAxlePos.northing);
+    aog->setProperty("toolHeading", vehicle.pivotAxlePos.heading);
+
+    double tool_lat, tool_lon;
+    pn.ConvertLocalToWGS84(vehicle.pivotAxlePos.northing, vehicle.pivotAxlePos.easting, tool_lat, tool_lon);
+    aog->setProperty("toolLatitude", tool_lat);
+    aog->setProperty("toolLongitude", tool_lon);
+
     aog->setProperty("imuRollDegrees",ahrs.imuRoll);
     avgPivDistance = avgPivDistance * 0.5 + vehicle.guidanceLineDistanceOff * 0.5;
     aog->setProperty("offlineDistance", avgPivDistance); //mm!

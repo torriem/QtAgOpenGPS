@@ -20,6 +20,8 @@ import QtQuick.Controls 2.15
 Item {
     id: aogInterfaceType
 
+    property double frameTime: 0
+
     property bool isJobStarted: false
 
     property int manualBtnState: 0
@@ -44,11 +46,18 @@ Item {
     property double northing: 0
     property double latitude: 0
     property double longitude: 0
+    property double heading: 0
+    property double toolEasting: 0
+    property double toolNorthing: 0
+    property double toolLatitude: 0
+    property double toolLongitude: 0
+    property double toolHeading: 0
     property double imuRollDegrees: 0
     property double speedKph: 0
     property double offlineDistance: 0
 
 
+    //AB Lines properties, signals, and methods
     property int currentABLine: -1 //use this instead of signals?
     property int currentABCurve: -1
 
@@ -65,78 +74,19 @@ Item {
         {index: 2, name: "three", visible: true }
     ]
 
-    signal addABLine(string name, double easting, double northing, double heading)
-    signal updateABLines()
-    signal deleteABLine(int lineno)
-    signal changeABLineName(int lineno, string new_name)
-    signal setNewABLineAPoint(bool start_or_cancel, double easting, double northing) //true to mark point, false to cancel new point
+    signal abLine_updateLines()
 
-    //this is a bit clumsy but it's the only way I can get
-    //the signals defined above to be accessible to the other
-    //qml files.  Some kind of scope limitation I guess
-    function abLine_addLine(name, easting, northing, heading_radians) {
-        console.debug("add new line: " + name + ", " + easting + ", " + northing + ", " + heading_radians)
-        addABLine(name,easting, northing, heading_radians);
-    }
+    signal abLine_addLine(string name, double easting, double northing, double heading)
+    signal abLine_deleteLine(int index)
+    //signal changeABLineName(int lineno, string new_name)
+    signal abLine_changeName(int which_one, string new_name)
+    signal abLine_setA(bool start_or_cancel, double easting, double northing, double heading) //true to mark point, false to cancel new point
+    signal abLine_swapHeading(int index)
 
-    function abLine_updateLines() {
-        updateABLines()
-    }
+    //on-screen buttons
 
-    function abLine_deleteLine(index) {
-        deleteABLine(index)
-    }
-
-    function abLine_changeName(index, new_name) {
-        updateABLines(index, new_name)
-
-    }
-
-    function abLine_setA(start_or_cancel) {
-        setNewABLineAPoint(start_or_cancel)
-    }
-
-
-    property double mPerDegreeLat
-    property double mPerDegreeLon
-
-    function setLocalMetersPerDegree() {
-        mPerDegreeLat = 111132.92 - 559.82 * Math.cos(2.0 * latStart * 0.01745329251994329576923690766743) + 1.175
-                              * Math.cos(4.0 * latStart * 0.01745329251994329576923690766743) - 0.0023
-                              * Math.cos(6.0 * latStart * 0.01745329251994329576923690766743)
-
-        mPerDegreeLon = 111412.84 * Math.cos(latStart * 0.01745329251994329576923690766743) - 93.5
-                              * Math.cos(3.0 * latStart * 0.01745329251994329576923690766743) + 0.118
-                              * Math.cos(5.0 * latStart * 0.01745329251994329576923690766743)
-    }
-
-    function convertLocalToWGS84(northing, easting) { //note northing first here
-        var mPerDegreeLat = 111132.92 - 559.82 * Math.cos(2.0 * latStart * 0.01745329251994329576923690766743) + 1.175
-                              * Math.cos(4.0 * latStart * 0.01745329251994329576923690766743) - 0.0023
-                              * Math.cos(6.0 * latStart * 0.01745329251994329576923690766743)
-        var mPerDegreeLon = 111412.84 * Math.cos(latStart * 0.01745329251994329576923690766743) - 93.5
-                              * Math.cos(3.0 * latStart * 0.01745329251994329576923690766743) + 0.118
-                              * Math.cos(5.0 * latStart * 0.01745329251994329576923690766743)
-
-        var outLat = (northing / mPerDegreeLat) + latStart;
-        var outLon = (easting  / mPerDegreeLon) + lonStart;
-
-        return [ outLat, outLon ]
-    }
-
-    function convertWGS84ToLocal(latitude, longitude) {
-        var mPerDegreeLat = 111132.92 - 559.82 * Math.cos(2.0 * latStart * 0.01745329251994329576923690766743) + 1.175
-                              * Math.cos(4.0 * latStart * 0.01745329251994329576923690766743) - 0.0023
-                              * Math.cos(6.0 * latStart * 0.01745329251994329576923690766743)
-        var mPerDegreeLon = 111412.84 * Math.cos(latStart * 0.01745329251994329576923690766743) - 93.5
-                              * Math.cos(3.0 * latStart * 0.01745329251994329576923690766743) + 0.118
-                              * Math.cos(5.0 * latStart * 0.01745329251994329576923690766743)
-
-        var outNorthing = (latitude - latStart) * mPerDegreeLat;
-        var outEasting = (longitude - lonStart) * mPerDegreeLon;
-
-        return [outNorthing, outEasting]
-    }
+    signal uturn(bool turn_right)
+    signal lateral(bool go_right)
 
 
 }

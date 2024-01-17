@@ -32,6 +32,10 @@ Window {
         }
     }
 
+    UnitConversion {
+        id: utils
+    }
+
     TimedMessage {
         //This is a popup message that dismisses itself after a timeout
         id: timedMessage
@@ -628,6 +632,16 @@ Window {
                             aog.isAutoSteerBtnOn = false
                         }
                     }
+                    function onSpeedKphChanged() {
+                        if (btnAutoSteer.checked) {
+                            if (aog.speedKph < settings.setAS_minSteerSpeed) {
+                                aog.isAutoSteerBtnOn = false
+                            } else if (aog.speedKph > settings.setAS_maxSteerSpeed) {
+                                //timedMessage
+                                aog.isAutoSteerBtnOn = false
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -973,6 +987,13 @@ Window {
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
                     anchors.right: parent.horizontalCenter
+                    onClicked: {
+                        if (settings.setAS_functionSpeedLimit > aog.speedKph)
+                            aog.uturn(false)
+                        else
+                            timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+                                                    aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
+                    }
                 }
                 Button{
                     background: Rectangle{color: "transparent"}
@@ -981,6 +1002,13 @@ Window {
                     anchors.bottom: parent.bottom
                     anchors.right: parent.right
                     anchors.left: parent.horizontalCenter
+                    onClicked: {
+                        if (settings.setAS_functionSpeedLimit > aog.speedKph)
+                            aog.uturn(true)
+                        else
+                            timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+                                                    aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
+                    }
                 }
             }
             Image{
@@ -1013,6 +1041,13 @@ Window {
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
                     anchors.right: parent.horizontalCenter
+                    onClicked: {
+                        if (settings.setAS_functionSpeedLimit > aog.speedKph)
+                            aog.lateral(false)
+                        else
+                            timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+                                                    aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
+                    }
                 }
                 Button{
                     background: Rectangle{color: "transparent"}
@@ -1021,6 +1056,13 @@ Window {
                     anchors.bottom: parent.bottom
                     anchors.right: parent.right
                     anchors.left: parent.horizontalCenter
+                    onClicked: {
+                        if (settings.setAS_functionSpeedLimit > aog.speedKph)
+                            aog.lateral(false)
+                        else
+                            timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+                                                    aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
+                    }
                 }
             }
         }
@@ -1113,7 +1155,7 @@ Window {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             height: parent.height
-            width:parent.width
+            //width:parent.width
             visible:false
         }
         SteerConfigWindow {
