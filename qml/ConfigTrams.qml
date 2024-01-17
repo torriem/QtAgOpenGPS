@@ -1,6 +1,9 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
+/*todo:
+  not sure about this whole file. The IconButtonColor isn't connected to anything
+  */
 Item {
     anchors.fill: parent
     Rectangle{
@@ -22,10 +25,10 @@ Item {
             anchors.margins: 3
             editable: true
             text: qsTr("Tram Width")
-            Text{
-                anchors.left: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-            }
+            from: 1
+            value: settings.setTram_tramWidth
+            to: 5000
+            onValueChanged: settings.setTram_tramWidth = value
         }
         IconButtonColor{
             anchors.horizontalCenter: parent.horizontalCenter
