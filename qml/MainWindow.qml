@@ -454,6 +454,7 @@ Window {
         ColumnLayout {
             id: rightColumn
             anchors.top: parent.top
+            anchors.topMargin: topLine.height
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.rightMargin: 6
