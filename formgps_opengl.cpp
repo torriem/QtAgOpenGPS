@@ -820,39 +820,6 @@ void FormGPS::openGLControlBack_Initialized()
 {
 }
 
-void  FormGPS::DrawManUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp)
-{
-    GLHelperTexture gldraw;
-    VertexTexcoord vt;
-
-    int two3 = qmlItem(qml_root, "openglcontrol")->property("width").toReal() / 4;
-    //int two3 = 0;
-
-    vt.texcoord = QVector2D(0,0); vt.vertex = QVector3D(-82 - two3, 45, 0);
-    gldraw.append(vt);
-    vt.texcoord = QVector2D(1,0); vt.vertex = QVector3D(82 - two3, 45, 0);
-    gldraw.append(vt);
-    vt.texcoord = QVector2D(0,1); vt.vertex = QVector3D(-82 - two3, 120, 0);
-    gldraw.append(vt);
-    vt.texcoord = QVector2D(1,1); vt.vertex = QVector3D(82 - two3, 120, 0);
-    gldraw.append(vt);
-
-    gldraw.draw(gl, mvp, Textures::TURNMANUAL, GL_QUADS, true, QColor::fromRgbF(0.90f, 0.90f, 0.293f));
-
-    if (isLateralOn)
-    {
-        vt.texcoord = QVector2D(0,0); vt.vertex = QVector3D(-82 - two3, 90, 0);
-        gldraw.append(vt);
-        vt.texcoord = QVector2D(1,0); vt.vertex = QVector3D(82 - two3, 90, 0);
-        gldraw.append(vt);
-        vt.texcoord = QVector2D(0,1); vt.vertex = QVector3D(-82 - two3, 150, 0);
-        gldraw.append(vt);
-        vt.texcoord = QVector2D(1,1); vt.vertex = QVector3D(82 - two3, 150, 0);
-        gldraw.append(vt);
-        gldraw.draw(gl, mvp, Textures::LATERAL_MANUAL, GL_QUADS, true, QColor::fromRgbF(0.190f, 0.90f, 0.93f));
-    }
-}
-
 void FormGPS::DrawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp)
 {
     QColor color;
@@ -964,7 +931,7 @@ void FormGPS::DrawSteerCircle(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatri
     gldrawtex.append( { QVector3D(sizer, sizer, 0), QVector2D(1,1) } ); //
     gldrawtex.append( { QVector3D(-sizer, sizer, 0), QVector2D(0,1) } ); //
 
-    gldrawtex.draw(gl,projection*modelview,Textures::STEER_POINTER, GL_QUADS,true,color);
+    //TODO: turn on QML version instead -- gldrawtex.draw(gl,projection*modelview,Textures::STEER_POINTER, GL_QUADS,true,color);
 
     if ((ahrs.imuRoll != 88888))
     {
@@ -980,7 +947,7 @@ void FormGPS::DrawSteerCircle(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatri
     gldrawtex.append( { QVector3D(sizer, -sizer, 0), QVector2D(1,0) } );
     gldrawtex.append( { QVector3D(sizer, sizer, 0), QVector2D(1,1) } );
     gldrawtex.append( { QVector3D(-sizer, sizer, 0), QVector2D(0,1) } );
-    gldrawtex.draw(gl,projection*saved_modelview,Textures::STEER_DOT, GL_QUADS,true,color);
+    //TODO: turn on QML version insetead -- gldrawtex.draw(gl,projection*saved_modelview,Textures::STEER_DOT, GL_QUADS,true,color);
 }
 
 void FormGPS::MakeFlagMark(QOpenGLFunctions *gl)

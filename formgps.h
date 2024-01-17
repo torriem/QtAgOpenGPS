@@ -603,7 +603,6 @@ public:
     QString strHeading;
     int lenth = 4;
 
-    void DrawManUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
     void DrawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
     void MakeFlagMark(QOpenGLFunctions *gl);
     void DrawFlags(QOpenGLFunctions *gl, QMatrix4x4 mvp);
@@ -642,17 +641,6 @@ public:
 
     void jobNew();
     void JobClose();
-
-    /***********************
-     * FormGPS.Designer.cs *
-     ***********************/
-    void manualAllBtnsUpdate();
-    void manualBtnUpdate(int sectNumber);
-    void lineUpManualBtns();
-
-    // formgps_ui
-    bool closeAllMenus();
-
 
     /******************************
      * formgps_classcallbacks.cpp *
@@ -698,8 +686,6 @@ public slots:
     void onBtnSteerMode_clicked();
     //right column
     void onBtnContour_clicked();
-    void onBtnABCurve_clicked();
-    void onBtnABLine_clicked();
     void onBtnToggleAB_clicked();
     void onBtnToggleABBack_clicked();
     void onBtnAutoYouTurn_clicked();
