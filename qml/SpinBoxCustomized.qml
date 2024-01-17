@@ -3,14 +3,35 @@ import QtQuick.Controls 2.5
 
 Item {
     id: spinBox_Customized
-    property int from: 0
+    property int from: -1
     property int value: 1
     property int to: 10
     property string text: ""
 	property int stepSize: 1
     property bool editable: true
+    property bool suppress_onchange_in: false
+    property bool suppress_onchange_out: false
     width: spinner.width
-    height: 100
+    height: spinner.height + spin_message.height + 20
+
+
+    onValueChanged: {
+        //value changed from the outside; we need
+        //the spin box to update itself but not set
+        //off the spinner's onValueChanged routine
+        //and try to set this value again, causing a loop
+        if (suppress_onchange_out)
+            return; //do nothing since it was the spinner that originated the change
+
+        //otherwise it came from outside
+
+        if (value < from) value = from
+        if (value > to) value = to
+
+        suppress_onchange_in = true
+        spinner.value = value
+        suppress_onchange_in = false
+    }
 
     SpinBox {
         id: spinner
@@ -33,16 +54,29 @@ Item {
                 spin_message.visible = false
             }
 
-            //some validation here
-            //emit signal.  We know our section number because it's in the model
+            if(spinBox_Customized.suppress_onchange_in) {
+                //console.debug("suppressing inner spinbox onchange since change originated externally")
+                return
+            }
+
+            //if this change was caused by the user manipulating the
+            //spin box, we need to update the Item's value so that
+            //users can react to it.
+            spinBox_Customized.suppress_onchange_out = true
+            spinBox_Customized.value = spinner.value
+            spinBox_Customized.suppress_onchange_out = false
+
+            //console.debug("SpinBox value changed; updating customized value")
         }
     }
 
+    /*
     Text {
         text: spinBox_Customized.text
         anchors.bottom: spinner.top
         anchors.left: spinner.left
-    }
+    }*/
+
     Text {
         id: spin_message
         visible: false
