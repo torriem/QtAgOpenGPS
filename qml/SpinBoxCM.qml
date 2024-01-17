@@ -12,6 +12,7 @@ Item {
     property int to: 30 //centimeters
     property int stepSize: 1
     property bool editable: true
+    property string text: ""
 
     property bool suppress_onchange_in: false
     property bool suppress_onchange_out: false
@@ -44,6 +45,7 @@ Item {
         from: utils.cm_to_unit(spinBoxCM.from / 100.0)
         to: utils.cm_to_unit(spinBoxCM.to / 100.0)
         editable: spinBoxCM.editable
+        text: spinBoxCM.text
         value: utils.cm_to_unit(SpinBoxCM.value) // should be in metres!
         stepSize: spinBoxCM.stepSize
         anchors.fill: parent

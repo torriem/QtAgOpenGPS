@@ -12,7 +12,7 @@ Item {
     property bool suppress_onchange_in: false
     property bool suppress_onchange_out: false
     width: spinner.width
-    height: spinner.height + spin_message.height + 20
+    height: spinner.height + spin_text.height + spin_message.height + 20
 
 
     onValueChanged: {
@@ -70,12 +70,12 @@ Item {
         }
     }
 
-    /*
     Text {
+        id: spin_text
         text: spinBox_Customized.text
         anchors.bottom: spinner.top
         anchors.left: spinner.left
-    }*/
+    }
 
     Text {
         id: spin_message

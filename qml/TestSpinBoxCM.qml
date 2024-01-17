@@ -22,6 +22,7 @@ Rectangle {
         
         from: 4 //centimetres
         to: 100 //centimetres
+        text: "section width"
 
         onValueChanged: {
             console.debug("value in metres is " + test.value + " which is local units " + utils.cm_to_unit(test.value))
