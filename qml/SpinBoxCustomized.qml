@@ -6,7 +6,6 @@ Item {
     property int from: -1
     property int value: 1
     property int to: 10
-    property int value: 10
     property string text: ""
 	property int stepSize: 1
     property bool editable: true

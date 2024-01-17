@@ -525,12 +525,9 @@
         <file>qml/SectionButtons.qml</file>
         <file>qml/MathUtils.qml</file>
         <file>qml/LatLonTextField.qml</file>
-<<<<<<< HEAD
         <file>images/SectionOnBoundary.png</file>
         <file>qml/ButtonColor.qml</file>
-=======
         <file>qml/UnitConversion.qml</file>
         <file>qml/SpinBoxCM.qml</file>
->>>>>>> 4946c489a5b9ffc3b323be8e93930de375f513a0
     </qresource>
 </RCC>
