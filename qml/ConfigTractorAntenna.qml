@@ -21,8 +21,8 @@ Rectangle{
         from: -999
         value: settings.setVehicle_antennaPivot
         //onValueChanged: {
-            settings.setVehicle_antennaPivot = value
-        }
+            //settings.setVehicle_antennaPivot = value
+        //}
         to: 999
     }
     SpinBoxCustomized{
@@ -35,8 +35,8 @@ Rectangle{
         editable: true
         value: settings.setVehicle_antennaHeight
         //onValueChanged: {
-            settings.setVehicle_antennaHeight = value
-        }
+         //   settings.setVehicle_antennaHeight = value
+        //}
         to: 1000
     }
     SpinBoxCustomized{
