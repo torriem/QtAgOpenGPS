@@ -3,16 +3,20 @@
 #include <QQuickWindow>
 #include <QOpenGLFramebufferObject>
 
+#include <functional>
+
 void AOGRenderer::render()
 {
     //update();
     if(callback_object && initCallback) {
         if (!isInitialized) {
             //call the main form initialize gl function
-            initCallback( callback_object );
+            //initCallback( callback_object );
+            initCallback();
             isInitialized = true;
         }
-        paintCallback( callback_object );
+        //paintCallback( callback_object );
+        paintCallback();
     }
     //win->resetOpenGLState();
 }
@@ -45,17 +49,17 @@ void AOGRenderer::synchronize(QQuickFramebufferObject *fbo)
 
     prop = fbo->property("initCallback");
     if (prop.isValid()) {
-        initCallback = (void (*)(void *))prop.value<void *>();
+        initCallback = prop.value<std::function<void (void)>>();
     }
 
     prop = fbo->property("paintCallback");
     if (prop.isValid()) {
-        paintCallback = (void (*)(void *))prop.value<void *>();
+        paintCallback = prop.value<std::function<void (void)>>();
     }
 
     prop = fbo->property("cleanupCallback");
     if (prop.isValid()) {
-        cleanupCallback = (void (*)(void *))prop.value<void *>();
+        cleanupCallback = prop.value<std::function<void (void)>>();
     }
 
     prop = fbo->property("samples");

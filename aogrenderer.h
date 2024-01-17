@@ -6,8 +6,7 @@
 #include <QQuickFramebufferObject>
 
 #include <functional>
-
-//class FormGPS;
+Q_DECLARE_METATYPE(std::function<void (void)>)
 
 class AOGRenderer : public QQuickFramebufferObject::Renderer
 {
@@ -38,9 +37,9 @@ private:
 
     //callback in main form to do actual rendering
     void *callback_object;
-    std::function<void (void *)> paintCallback;
-    std::function<void (void *)> initCallback;
-    std::function<void (void *)> cleanupCallback;
+    std::function<void (void)> paintCallback;
+    std::function<void (void)> initCallback;
+    std::function<void (void)> cleanupCallback;
 };
 
 class AOGRendererInSG : public QQuickFramebufferObject

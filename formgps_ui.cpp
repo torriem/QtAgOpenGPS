@@ -138,8 +138,8 @@ void FormGPS::setupGui()
     //This is a bit hackish, but all rendering is done in this item, so
     //we have to give it a way of calling our initialize and draw functions
     openGLControl->setProperty("callbackObject",QVariant::fromValue((void *) this));
-    openGLControl->setProperty("initCallback",QVariant::fromValue((void *) &FormGPS::openGLControl_Initialized));
-    openGLControl->setProperty("paintCallback",QVariant::fromValue((void *) &FormGPS::oglMain_Paint));
+    openGLControl->setProperty("initCallback",QVariant::fromValue<std::function<void (void)>>(std::bind(&FormGPS::openGLControl_Initialized, this)));
+    openGLControl->setProperty("paintCallback",QVariant::fromValue<std::function<void (void)>>(std::bind(&FormGPS::oglMain_Paint,this)));
 
     openGLControl->setProperty("samples",settings->value("display/antiAliasSamples", 0));
     openGLControl->setMirrorVertically(true);
@@ -533,7 +533,7 @@ void FormGPS::update_current_ABline_from_qml()
 
     FileSaveCurveLines(); // in case a new one was added
 
-    if (selectedItem > -1 and selectedItem <= curve.curveArr.count())
+    if (selectedItem > -1 && selectedItem <= curve.curveArr.count())
     {
         int idx = selectedItem;
         curve.numCurveLineSelected = idx + 1;
