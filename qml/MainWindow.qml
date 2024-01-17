@@ -32,6 +32,10 @@ Window {
         }
     }
 
+    UnitConversion {
+        id: utils
+    }
+
     TimedMessage {
         //This is a popup message that dismisses itself after a timeout
         id: timedMessage
