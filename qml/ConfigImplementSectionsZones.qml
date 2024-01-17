@@ -114,7 +114,7 @@ Item {
             value: settings.setTool_sectionWidthMulti
             to: 1000
             text: qsTr("Section Width")
-            onValueChanged: settings.setTool_sectionWidthMulti
+            //onValueChanged: settings.setTool_sectionWidthMulti
         }
         SpinBoxCustomized{
             id: sectionsNumber
@@ -125,7 +125,7 @@ Item {
             value: settings.setTool_numSectionsMulti
             to: 64
             text: qsTr("Sections")
-            onValueChanged: settings.setTool_numSectionsMulti = value
+            //onValueChanged: settings.setTool_numSectionsMulti = value
 
         }
         Column{

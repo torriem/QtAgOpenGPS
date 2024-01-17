@@ -26,7 +26,7 @@ Item {
             editable: true
             text: qsTr("Tram Width")
             from: 1
-            value: settings.setTram_tramWidth
+            //value: settings.setTram_tramWidth
             to: 5000
             onValueChanged: settings.setTram_tramWidth = value
         }

@@ -37,7 +37,7 @@ Rectangle{
                 anchors.leftMargin: 10
                 from: 0
                 value: settings.setDisplay_lightbarCmPerPixel
-                onValueChanged: settings.setDisplay_lightbarCmPerPixel
+                //onValueChanged: settings.setDisplay_lightbarCmPerPixel
                 to: 15
                 editable: true
                 text: qsTr("in  /  pixel")
@@ -75,7 +75,7 @@ Rectangle{
                 anchors.leftMargin: 10
                 from: 200
                 value: settings.setAB_lineLength
-                onValueChanged: settings.setAB_lineLength
+                //onValueChanged: settings.setAB_lineLength
                 to: 5000
                 text: qsTr("cm")
             }
@@ -156,7 +156,7 @@ Recording")
                 anchors.leftMargin: 10
                 from: 1
                 value: settings.setDisplay_lineWidth
-                onValueChanged: settings.setDisplay_lineWidth
+                //onValueChanged: settings.setDisplay_lineWidth
                 to: 8
                 text: qsTr("pixels")
             }
@@ -193,7 +193,7 @@ Recording")
                 anchors.leftMargin: 10
                 from: 0
                 value: settings.setAS_snapDistance
-                onValueChanged: settings.setAS_snapDistance
+                //onValueChanged: settings.setAS_snapDistance
                 to: 1000
                 editable: true
                     text: qsTr("cm")
@@ -231,7 +231,7 @@ Recording")
                 anchors.leftMargin: 10
                 from: .1
                 value: settings.setAS_guidanceLookAheadTime
-                onValueChanged: settings.setAS_guidanceLookAheadTime
+                //onValueChanged: settings.setAS_guidanceLookAheadTime
                 to: 10
                 text: qsTr("Seconds")
             }

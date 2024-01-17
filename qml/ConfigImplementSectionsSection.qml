@@ -77,7 +77,7 @@ Item{
             to: 1000
             editable: true
             text: qsTr("Section Width")
-            onValueChanged: settings.setTool_defaultSectionWidth = value
+            //onValueChanged: settings.setTool_defaultSectionWidth = value
         }
         ComboBox{
             id: numOfSections

@@ -27,7 +27,7 @@ Rectangle{
             from: 10
             value: settings.setVehicle_hitchLength
             to:3000
-            onValueChanged: settings.setVehicle_hitchLength = value
+            //onValueChanged: settings.setVehicle_hitchLength = value
         }
         SpinBoxCustomized{
             id: trailingHitchLength
@@ -37,7 +37,7 @@ Rectangle{
             from: 10
             value: settings.setTool_toolTrailingHitchLength
             to:3000
-            onValueChanged: settings.setTool_toolTrailingHitchLength = value
+            //onValueChanged: settings.setTool_toolTrailingHitchLength = value
         }
     }
 }

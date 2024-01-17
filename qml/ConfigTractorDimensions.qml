@@ -20,7 +20,7 @@ Rectangle{
         anchors.right: dimImage.left
         from: 20
         value: settings.setVehicle_wheelbase
-        onValueChanged: settings.setVehicle_wheelbase = value
+        //onValueChanged: settings.setVehicle_wheelbase = value
         to: 787
             text: qsTr("Wheelbase")
     }
@@ -30,7 +30,7 @@ Rectangle{
         anchors.left: dimImage.right
         from: 50
         value: settings.setVehicle_trackWidth
-        onValueChanged: settings.setVehicle_trackWidth = value
+        //onValueChanged: settings.setVehicle_trackWidth = value
         to: 9999
         text: qsTr("Track")
     }
@@ -40,7 +40,7 @@ Rectangle{
         anchors.left: dimImage.right
         from: 50
         value: settings.setVehicle_minTurningRadius
-        onValueChanged: settings.setVehicle_minTurningRadius = value
+        //onValueChanged: settings.setVehicle_minTurningRadius = value
         to: 9999
         text: qsTr("Turn Radius")
     }

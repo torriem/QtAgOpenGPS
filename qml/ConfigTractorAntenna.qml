@@ -20,7 +20,7 @@ Rectangle{
         anchors.leftMargin: 30
         from: -999
         value: settings.setVehicle_antennaPivot
-        onValueChanged: {
+        //onValueChanged: {
             settings.setVehicle_antennaPivot = value
         }
         to: 999
@@ -34,7 +34,7 @@ Rectangle{
         from: 0
         editable: true
         value: settings.setVehicle_antennaHeight
-        onValueChanged: {
+        //onValueChanged: {
             settings.setVehicle_antennaHeight = value
         }
         to: 1000
@@ -48,6 +48,6 @@ Rectangle{
         from: -500
         value: settings.setVehicle_antennaOffset
         to: 500
-        onValueChanged: settings.setVehicle_antennaOffset = value
+        //onValueChanged: settings.setVehicle_antennaOffset = value
     }
 }

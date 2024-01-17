@@ -54,7 +54,7 @@ Rectangle{
             value: settings.setVehicle_minCoverage
             anchors.bottom: parent.bottom
             text: qsTr("% Coverage")
-            onValueChanged: settings.setVehicle_minCoverage
+            //onValueChanged: settings.setVehicle_minCoverage
         }
         IconButton{
             objectName: "boundaryOff"
@@ -77,7 +77,7 @@ Rectangle{
             to: 30
             value: settings.setVehicle_slowSpeedCutoff
             anchors.bottom: parent.bottom
-            onValueChanged: settings.setVehicle_slowSpeedCutoff = value
+            //onValueChanged: settings.setVehicle_slowSpeedCutoff = value
             Image{
                 anchors.bottom: parent.top
                 width: parent.width

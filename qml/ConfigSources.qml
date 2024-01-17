@@ -223,7 +223,7 @@ Rectangle{
             anchors.leftMargin: 50
             from: -100
             value: settings.setGPS_dualHeadingOffset
-            onValueChanged: settings.setGPS_dualHeadingOffset = value
+            //onValueChanged: settings.setGPS_dualHeadingOffset = value
             to: 100
             editable: true
         }

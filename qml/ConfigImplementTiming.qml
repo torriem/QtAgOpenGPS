@@ -23,7 +23,7 @@ import QtQuick.Controls 2.5
                 anchors.top: parent.top
                 from: 0.2
                 value: settings.setVehicle_toolLookAheadOn
-                onValueChanged: settings.setVehicle_toolLookAheadOn = value
+                //onValueChanged: settings.setVehicle_toolLookAheadOn = value
                 to: 22
                 text: qsTr("On (secs)")
             }
@@ -32,7 +32,7 @@ import QtQuick.Controls 2.5
                 anchors.verticalCenter: parent.verticalCenter
                 from: 0
                 value:settings.setVehicle_toolLookAheadOff
-                onValueChanged: settings.setVehicle_toolLookAheadOff = value
+                //onValueChanged: settings.setVehicle_toolLookAheadOff = value
                 to: 20
                 editable: true
                 text: qsTr("Off (secs)")
@@ -42,7 +42,7 @@ import QtQuick.Controls 2.5
                 anchors.bottom: parent.bottom
                 from: 0
                 value: settings.setVehicle_toolOffDelay
-                onValueChanged: settings.setVehicle_toolOffDelay = value
+                //onValueChanged: settings.setVehicle_toolOffDelay = value
                 to: 10
                 editable: true
                 text: qsTr("Delay (secs)")
@@ -54,7 +54,7 @@ import QtQuick.Controls 2.5
                 anchors.bottomMargin: -10
                 from: -2500
                 value: settings.setVehicle_toolOffset
-                onValueChanged: settings.setVehicle_toolOffest = value
+                //onValueChanged: settings.setVehicle_toolOffest = value
                 to: 2500
                 editable: true
                 text: qsTr("Offset")
@@ -66,7 +66,7 @@ import QtQuick.Controls 2.5
                 anchors.bottomMargin: 100
                 from: -3000
                 value: settings.setVehicle_toolOverlap
-                onValueChanged: settings.setVehicle_toolOverlap
+                //onValueChanged: settings.setVehicle_toolOverlap
                 to: 3000
                 editable: true
                 text: qsTr("Overlap / Gap")
