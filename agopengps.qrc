@@ -525,5 +525,7 @@
         <file>qml/SectionButtons.qml</file>
         <file>qml/MathUtils.qml</file>
         <file>qml/LatLonTextField.qml</file>
+        <file>qml/UnitConversion.qml</file>
+        <file>qml/SpinBoxCM.qml</file>
     </qresource>
 </RCC>
