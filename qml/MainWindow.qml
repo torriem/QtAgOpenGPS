@@ -453,21 +453,39 @@ Window {
         //------------------------------------------------------------------------------------------right
 
         Speedometer {
-            anchors.top: topRow.bottom
+            anchors.top: parent.top
             anchors.right: rightColumn.left
-            anchors.margins: 10
+            anchors.topMargin: topLine.height + 10
+            anchors.rightMargin: 10
             visible: (settings.setMenu_isSpeedoOn === true ||
                       settings.setMenu_isSpeedoOn === "true")
 
             speed: utils.speed_to_unit(aog.speedKph)
         }
 
+        SteerCircle {
+            anchors.bottom: bottomButtons.top
+            anchors.right: rightColumn.left
+            anchors.margins: 10
+
+            visible: true
+            rollAngle: aog.imuRollDegrees
+            steerColor: (aog.steerModuleConnectedCounter > 30 ?
+                             "#f0f218f0" :
+                             (aog.steerSwitchHigh === true ?
+                                  "#faf80007" :
+                                  (aog.isAutoSteerBtnOn === true ?
+                                       "#f80df807" : "#f0f2c007")))
+
+        }
+
 
         ColumnLayout {
             id: rightColumn
-            anchors.top: topRow.bottom
+            anchors.top: parent.top
             anchors.right: parent.right
             anchors.bottom: parent.bottom
+            anchors.topMargin: topLine.height + 6
             anchors.rightMargin: 6
 
             IconButtonText {
@@ -991,7 +1009,7 @@ Window {
                             aog.uturn(false)
                         else
                             timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                    aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
+                                                    utils.speed_to_unit_text(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
                     }
                 }
                 Button{
@@ -1006,7 +1024,7 @@ Window {
                             aog.uturn(true)
                         else
                             timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                    aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
+                                                    utils.speed_to_unit_text(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
                     }
                 }
             }
@@ -1075,7 +1093,7 @@ Window {
             anchors.leftMargin: 3
             from: -30
             to: 30
-            value: 5
+            value: 0
         }
 
         IconButton {
