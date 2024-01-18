@@ -40,6 +40,15 @@ Item {
         suppress_onchange_in = false
     }
 
+    Connections {
+        target: settings
+        function onSetMenu_isMetricChanged() {
+            suppress_onchange_in = true
+            spinner.value = utils.cm_to_unit(value)
+            suppress_onchange_in = false
+        }
+    }
+
     SpinBoxCustomized {
         id: spinner
         from: utils.cm_to_unit(spinBoxCM.from / 100.0)
