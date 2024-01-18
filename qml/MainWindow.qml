@@ -247,7 +247,14 @@ Window {
                 MenuItem{ text: "Section Colors"}
                 MenuItem{ text: "Top Field View"}
                 MenuItem{ text: "Enter Sim Coords"}
-                MenuItem{ text: "Simulator On"}
+                MenuItem{
+                    text: "Simulator On"
+                    checked: settings.setMenu_isSimulatorOn
+                    onCheckedChanged: {
+                        settings.setMenu_isSimulatorOn = checked
+                        console.log(settings.setMenu_isSimulatorOn)
+                    }
+                }
                 MenuItem{ text: "Reset All"}
                 MenuItem{ text: "HotKeys"}
                 MenuItem{ text: "About..."}
