@@ -527,5 +527,6 @@
         <file>qml/LatLonTextField.qml</file>
         <file>qml/UnitConversion.qml</file>
         <file>qml/SpinBoxCM.qml</file>
+        <file>qml/LightBar.qml</file>
     </qresource>
 </RCC>

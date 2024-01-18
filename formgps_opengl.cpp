@@ -502,6 +502,7 @@ void FormGPS::oglMain_Paint()
             {
                 if (pn.fixQuality != 4)
                 {
+                    //TODO: move to QML
                     drawText(gl, projection*modelview, -width / 4, 150, "Lost RTK",
                              2.0, true, QColor::fromRgbF(0.9752f, 0.52f, 0.0f));
                 } else {
@@ -509,6 +510,7 @@ void FormGPS::oglMain_Paint()
                 }
             }
 
+            //TODO: move to QML
             if (pn.age > pn.ageAlarm) DrawAge(gl, projection * modelview, width);
 
             gl->glFlush();

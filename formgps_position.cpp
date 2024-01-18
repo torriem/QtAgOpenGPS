@@ -1136,7 +1136,8 @@ void FormGPS::UpdateFixPosition()
 
     aog->setProperty("imuRollDegrees",ahrs.imuRoll);
     avgPivDistance = avgPivDistance * 0.5 + vehicle.guidanceLineDistanceOff * 0.5;
-    aog->setProperty("offlineDistance", avgPivDistance); //mm!
+    aog->setProperty("avgPivDistance", avgPivDistance); //mm!
+    aog->setProperty("offlineDistance", vehicle.guidanceLineDistanceOff);
     aog->setProperty("speedKph", vehicle.avgSpeed);
 
     if (!timerSim.isActive())

@@ -55,6 +55,7 @@ Item {
     property double imuRollDegrees: 0
     property double speedKph: 0
     property double offlineDistance: 0
+    property double avgPivDistance: 0
 
     property int steerModuleConnectedCounter: 0
     property bool steerSwitchHigh: false
