@@ -56,6 +56,9 @@ Item {
     property double speedKph: 0
     property double offlineDistance: 0
 
+    property int steerModuleConnectedCounter: 0
+    property bool steerSwitchHigh: false
+
 
     //AB Lines properties, signals, and methods
     property int currentABLine: -1 //use this instead of signals?

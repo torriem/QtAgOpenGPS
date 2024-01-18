@@ -1139,6 +1139,15 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("offlineDistance", avgPivDistance); //mm!
     aog->setProperty("speedKph", vehicle.avgSpeed);
 
+    if (!timerSim.isActive())
+        //if running simulator pretend steer module
+        //is okay
+        if (steerModuleConnectedCounter++ > 30)
+            steerModuleConnectedCounter = 31;
+
+    aog->setProperty("steerModuleConnectedCounter", steerModuleConnectedCounter);
+    aog->setProperty("steerSwitchHigh", mc.steerSwitchHigh);
+
     newframe = true;
     lock.unlock();
 

@@ -493,10 +493,6 @@ void FormGPS::oglMain_Paint()
 
             DrawCompassText(gl, projection*modelview, width - 400, height);
 
-            if (isSpeedoOn) drawSpeedo(gl, modelview, projection, width, height);
-
-            DrawSteerCircle(gl,modelview,projection);
-
             if (vehicle.isHydLiftOn) DrawLiftIndicator(gl, modelview, projection, width, height);
 
             if (vehicle.isReverse || isChangingDirection)
