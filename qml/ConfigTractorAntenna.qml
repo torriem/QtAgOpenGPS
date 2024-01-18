@@ -43,7 +43,10 @@ Rectangle{
         Connections {
             target: settings
             function onSetVehicle_antennaHeightChanged(){
+                console.log(settings.setVehicle_antennaHeight)
+                console.log(settings.setMenu_isMetric)
                 antennaHeight.value = settings.setVehicle_antennaHeight
+                console.log(settings.setVehicle_antennaHeight)
             }
         }
         to: 1000
