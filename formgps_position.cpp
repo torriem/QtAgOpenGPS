@@ -231,6 +231,12 @@ void FormGPS::UpdateFixPosition()
         //imu on board
         if (ahrs.imuHeading != 99999)
         {
+            //check for out-of bounds fusion weights in case config
+            //file was edited and changed inappropriately.
+            //TODO move this sort of thing to FormGPS::load_settings
+            if (ahrs.fusionWeight > 0.4) ahrs.fusionWeight = 0.4;
+            if (ahrs.fusionWeight < 0.2) ahrs.fusionWeight = 0.2;
+
             //how far since last fix
             distanceCurrentStepFix = glm::Distance(stepFixPts[0], pn.fix);
 

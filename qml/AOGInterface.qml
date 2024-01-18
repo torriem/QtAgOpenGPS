@@ -83,10 +83,29 @@ Item {
     signal abLine_setA(bool start_or_cancel, double easting, double northing, double heading) //true to mark point, false to cancel new point
     signal abLine_swapHeading(int index)
 
+
     //on-screen buttons
 
     signal uturn(bool turn_right)
     signal lateral(bool go_right)
+
+
+    //general settings
+    signal settings_reload() //tell backend classes to reload settings from store
+    signal settings_tempsave() //save a temporary copy of all the settings
+    signal settings_revert() //revert to temporary copy of all settings
+    signal settings_save() //sync to disk, and also copy to current vehicle file, if active
+
+    signal vehicle_saveas(string vehicle_name)
+    signal vehicle_load(int index)
+    signal vehicle_delete(int index)
+    signal vehicle_update_list()
+
+    property var vehicle_list: [
+        { index: 0, name: "tractor" }
+    ]
+
+
 
 
 }

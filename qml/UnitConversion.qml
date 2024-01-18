@@ -94,16 +94,16 @@ Item {
 
     function cm_to_unit(distance) {
         if (isMetric())
-            return distance * 100 //base unit is metres, convert to centimetres
+            return Math.round(distance * 100) //base unit is metres, convert to centimetres
         else
-            return distance * 39.370079 //convert metres to inches
+            return Math.round(distance * 39.370079) //convert metres to inches
     }
 
     function cm_to_unit_string(distance, decimal_places) {
         if (isMetric())
-            return Number(distance * 100).toLocaleString(Qt.locale(),'f', decimal_places)
+            return Number(Math.round(distance * 100)).toLocaleString(Qt.locale(),'f', decimal_places)
         else
-            return Number(distance * 39.370079).toLocaleString(Qt.locale(), 'f', decimal_places) //convert to inches
+            return Number(Math.round(distance * 39.370079)).toLocaleString(Qt.locale(), 'f', decimal_places) //convert to inches
     }
 
     function cm_from_unit(distance) {
