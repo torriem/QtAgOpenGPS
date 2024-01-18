@@ -18,7 +18,7 @@ Item {
             width: 200
             height: 200
         }
-        SpinBoxCustomized{
+        SpinBoxCM{
             id: tramWidth
             anchors.verticalCenter: imageTram.verticalCenter
             anchors.left: parent.horizontalCenter
@@ -26,7 +26,13 @@ Item {
             editable: true
             text: qsTr("Tram Width")
             from: 1
-            //value: settings.setTram_tramWidth
+            value: settings.setTram_tramWidth
+            Connections {
+                target: settings
+                function onSetTram_tramWidthChanged(){
+                    tramWidth.value = settings.setTram_tramWidth
+                }
+            }
             to: 5000
             onValueChanged: settings.setTram_tramWidth = value
         }
