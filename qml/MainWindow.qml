@@ -213,7 +213,6 @@ Window {
             }
         }
     }
-
     //----------------------------------------------------------------------------------------left column
     Item {
 
@@ -452,6 +451,17 @@ Window {
             }
         }
         //------------------------------------------------------------------------------------------right
+
+        Speedometer {
+            anchors.top: topRow.bottom
+            anchors.right: rightColumn.left
+            anchors.margins: 10
+            visible: (settings.setMenu_isSpeedoOn === true ||
+                      settings.setMenu_isSpeedoOn === "true")
+
+            speed: utils.speed_to_unit(aog.speedKph)
+        }
+
 
         ColumnLayout {
             id: rightColumn
