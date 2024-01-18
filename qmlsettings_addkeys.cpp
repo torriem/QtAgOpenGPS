@@ -49,7 +49,7 @@ void QMLSettings::setupKeys() {
     addKey(QString("setDisplay_colorNightFrame"),QString("display/colorNightFrame"));
     addKey(QString("setDisplay_colorSectionsDay"),QString("display/colorSectionsDay"));
     addKey(QString("setDisplay_colorFieldDay"),QString("display/colorFieldDay"));
-    addKey(QString("setDisplay_isDayMode"),QString("display,dayMode"));
+    addKey(QString("setDisplay_isDayMode"),QString("display/dayMode"));
     addKey(QString("setDisplay_colorSectionsNight"),QString("display/colorSectionsNight"));
     addKey(QString("setDisplay_colorFieldNight"),QString("display/colorFieldNight"));
     addKey(QString("setDisplay_isAutoDayNight"),QString("display/autoDayNight"));
