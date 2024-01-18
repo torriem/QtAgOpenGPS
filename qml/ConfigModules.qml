@@ -53,7 +53,7 @@ import QtQuick.Controls 2.5
                     id: raiseTime
                     from:1
                     value: settings.setArdMac_hydRaiseTime
-                    //onValueChanged: settings.setArdMac_hydRaiseTime = value
+                    onValueChanged: settings.setArdMac_hydRaiseTime = value
                     to: 255
                     editable: true
                     text: qsTr("Raise Time(secs)")
@@ -67,7 +67,7 @@ import QtQuick.Controls 2.5
                     id: liftLookAhead
                     from:1
                     value: settings.setVehicle_hydraulicLiftLookAhead
-                    //onValueChanged: settings.setVehicle_hydraulicLiftLookAhead = value
+                    onValueChanged: settings.setVehicle_hydraulicLiftLookAhead = value
                     to: 20
                     editable: true
                     text: qsTr("Hydraulic Lift Look Ahead
@@ -77,7 +77,7 @@ import QtQuick.Controls 2.5
                     id: lowerTime
                     from:1
                     value: settings.setArdMac_hydLowerTime
-                    //onValueChanged: settings.setArdMac_hydLowerTime = value
+                    onValueChanged: settings.setArdMac_hydLowerTime = value
                     to: 255
                     editable: true
                     text: qsTr("Lower Time(secs)")
@@ -113,7 +113,7 @@ import QtQuick.Controls 2.5
                     id: user1
                     from: 0
                     value: settings.setArdMac_user1
-                    //onValueChanged: settings.setArdMac_user1
+                    onValueChanged: settings.setArdMac_user1
                     to: 255
                     editable: true
                     text: qsTr("User 1")
@@ -122,7 +122,7 @@ import QtQuick.Controls 2.5
                     id: user2
                     from: 0
                     value: settings.setArdMac_user2
-                    //onValueChanged: settings.setArdMac_user2
+                    onValueChanged: settings.setArdMac_user2
                     to: 255
                     editable: true
                     text: qsTr("User 2")
@@ -131,7 +131,7 @@ import QtQuick.Controls 2.5
                     id: user3
                     from: 0
                     value: settings.setArdMac_user3
-                    //onValueChanged: settings.setArdMac_user3
+                    onValueChanged: settings.setArdMac_user3
                     to: 255
                     editable: true
                     text: qsTr("User 3")
@@ -140,7 +140,7 @@ import QtQuick.Controls 2.5
                     id: user4
                     from: 0
                     value: settings.setArdMac_user4
-                    //onValueChanged: settings.setArdMac_user4
+                    onValueChanged: settings.setArdMac_user4
                     to: 255
                     editable: true
                     text: qsTr("User 4")

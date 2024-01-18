@@ -1,7 +1,9 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
-//todo: sections not populated from .config yet
+/*todo: sections not populated from .config yet
+  also not at all sure about switching these to SpinBoxCM... Don't want to break anything
+  */
 Item{
     id: configImplementSectionsSection
     z: 8
@@ -67,9 +69,8 @@ Item{
         height: children.height
         spacing: 120
 
-        SpinBoxCustomized{
-            id: middleRowSpinbox
-            objectName: "sectionWidthAll"
+        SpinBoxCM{
+            id: defaultSectionWidth
             implicitWidth: 150
             implicitHeight: 50
             from: 10
@@ -77,11 +78,16 @@ Item{
             to: 1000
             editable: true
             text: qsTr("Section Width")
-            //onValueChanged: settings.setTool_defaultSectionWidth = value
+            onValueChanged: settings.setTool_defaultSectionWidth = value
+            Connections {
+                target: settings
+                function onSetTool_defaultSectionWidthChanged(){
+                    defaultSectionWidth.value = settings.setTool_defaultSectionWidth
+                }
+            }
         }
         ComboBox{
             id: numOfSections
-            objectName: "numOfSections"
             valueRole: settings.setVehicle_numSections
             onActivated: function (which) {
                 settings.setVehicle_numSections = which

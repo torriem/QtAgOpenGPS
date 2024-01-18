@@ -3,6 +3,8 @@ import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
 /* todo:
   not sure about uTurn Style. setting seems to be an int.
+  these don't need the SpinBoxCM thing, because they're already metric.
+  Should be made to convert to Imperial some day.
   */
 Item {
     anchors.fill: parent
@@ -42,7 +44,7 @@ Item {
                 objectName: "UturnRadius"
                 from: 2
                 value: settings.set_youTurnRadius
-                //onValueChanged: settings.set_youTurnRadius = value
+                onValueChanged: settings.set_youTurnRadius = value
                 to:100
                 editable: true
             }
@@ -50,7 +52,7 @@ Item {
                 objectName: "UturnDistance"
                 from: 0
                 value: settings.set_youTurnDistanceFromBoundary
-                //onValueChanged: settings.set_youTurnDistanceFromBoundary = value
+                onValueChanged: settings.set_youTurnDistanceFromBoundary = value
                 to:100
                 editable: true
             }
@@ -58,7 +60,7 @@ Item {
                 objectName: "UturnExtensionLength"
                 from: 3
                 value: settings.set_youTurnExtensionLength
-                //onValueChanged: settings.set_youTurnExtensionLength = value
+                onValueChanged: settings.set_youTurnExtensionLength = value
                 to:50
                 editable: true
             }
@@ -66,7 +68,7 @@ Item {
                 objectName: "UturnSmoothing"
                 from: 8
                 value: settings.setAS_uTurnSmoothing
-                //onValueChanged: settings.setAS_uTurnSmoothing = value
+                onValueChanged: settings.setAS_uTurnSmoothing = value
                 to:50
                 editable: true
             }
