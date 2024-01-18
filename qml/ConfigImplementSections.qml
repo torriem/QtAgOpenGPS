@@ -78,7 +78,7 @@ Rectangle{
             to: 30
             value: settings.setVehicle_slowSpeedCutoff
             anchors.bottom: parent.bottom
-            //onValueChanged: settings.setVehicle_slowSpeedCutoff = value
+            onValueChanged: settings.setVehicle_slowSpeedCutoff = value
             Image{
                 anchors.bottom: parent.top
                 width: parent.width
