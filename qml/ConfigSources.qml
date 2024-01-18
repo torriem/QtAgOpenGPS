@@ -168,8 +168,11 @@ Rectangle{
                 centerTopText: "Fusion"
                 from: 20
                 to: 40
-                value: settings.setIMU_fusionWeight2
-                onValueChanged: settings.setIMU_fusionWeight2 = value
+                value: settings.setIMU_fusionWeight2 * 100
+                onValueChanged: {
+                    settings.setIMU_fusionWeight2 = value / 100
+                    console.log(settings.setIMU_fusionWeight2)
+                }
                 stepSize: 1
             }
         }
