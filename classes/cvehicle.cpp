@@ -253,13 +253,13 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
 
             if (steerAngle < 0)
             {
-                leftAckerman = 1.25 * -steerAngle;
-                rightAckerman = -steerAngle;
+                leftAckerman = 1.25 * steerAngle;
+                rightAckerman = steerAngle;
             }
             else
             {
-                leftAckerman = -steerAngle;
-                rightAckerman = 1.25 * -steerAngle;
+                leftAckerman = steerAngle;
+                rightAckerman = 1.25 * steerAngle;
             }
 
             //right wheel
