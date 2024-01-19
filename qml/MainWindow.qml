@@ -218,7 +218,7 @@ Window {
             anchors.top: glcontrolrect.top
             anchors.horizontalCenter: glcontrolrect.horizontalCenter
             anchors.margins: 5
-            dotDistance: aog.offlineDistance / 10
+            dotDistance: aog.avgPivDistance / 10 //avgPivotDistance is averaged
             visible: (aog.offlineDistance != 32000 &&
                       (settings.setMenu_isLightbarOn === true ||
                        settings.setMenu_isLightbarOn === "true")) ?
