@@ -354,8 +354,6 @@ Dialog {
                         suppress_onchange = false
                     }
 
-
-
                     anchors.top: b_label.bottom
                     anchors.margins: 5
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -364,10 +362,9 @@ Dialog {
                         if (! suppress_onchange) {
                             abSetter.heading = value / 100000 * Math.PI / 180.0
                             abSetter.heading_degrees = value / 100000
-                            abSetter.heading = aog.toolHeading
-                            abSetter.heading_degrees = aog.toolHeading * 180 / Math.PI
 
-                            aog.abLine_setA(bool, abSetter.a_easting, abSetter.a_northing, abSetter.heading)
+                            aog.abLine_setA(true, abSetter.a_easting, abSetter.a_northing, abSetter.heading)
+                            console.debug(abSetter.a_easting, abSetter.a_northing, abSetter.heading)
 
                             //calculate b latitude and longitude for the display
                             //use 100m
