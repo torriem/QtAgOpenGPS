@@ -19,6 +19,11 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("QtAgOpenGPS");
     QCoreApplication::setOrganizationDomain("qtagopengps");
     QCoreApplication::setApplicationName("QtAgOpenGPS");
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+    QSettings::setPath(QSettings::IniFormat,
+                       QSettings::UserScope,
+                       QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+
     //We're supposed to be compatible with the saved data
     //from this version of AOG:
     QCoreApplication::setApplicationVersion("4.1.0");

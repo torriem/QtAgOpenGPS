@@ -479,10 +479,6 @@ void FormGPS::oglMain_Paint()
 
             if(isSkyOn) DrawSky(gl, projection*modelview, width, height);
 
-            if(isLightbarOn) {
-                DrawLightBarText(gl, projection*modelview);
-            }
-
             //Moved to QML, set a flag or something.
             //if (bnd.bndList.size() > 0 && yt.isYouTurnBtnOn) drawUTurnBtn(gl, projection*modelview);
 
@@ -502,6 +498,7 @@ void FormGPS::oglMain_Paint()
             {
                 if (pn.fixQuality != 4)
                 {
+                    //TODO: move to QML
                     drawText(gl, projection*modelview, -width / 4, 150, "Lost RTK",
                              2.0, true, QColor::fromRgbF(0.9752f, 0.52f, 0.0f));
                 } else {
@@ -509,6 +506,7 @@ void FormGPS::oglMain_Paint()
                 }
             }
 
+            //TODO: move to QML
             if (pn.age > pn.ageAlarm) DrawAge(gl, projection * modelview, width);
 
             gl->glFlush();
@@ -889,63 +887,6 @@ void FormGPS::DrawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp)
 
 }
 
-void FormGPS::DrawSteerCircle(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection)
-{
-    int sizer = 60;
-    int center = qmlItem(qml_root, "openglcontrol")->property("width").toReal() / 2 - 160;
-    int bottomSide = qmlItem(qml_root, "openglcontrol")->property("height").toReal() - 130;
-
-    QMatrix4x4 saved_modelview = modelview;
-
-    QColor color;
-
-    //draw the clock
-    //GL.Color4(0.9752f, 0.80f, 0.3f, 0.98);
-    //font.DrawText(center -210, oglMain.Height - 26, DateTime.Now.ToString("T"), 0.8);
-
-    GLHelperTexture gldrawtex;
-
-    //texture 11, SteerPointer
-    if (mc.steerSwitchHigh)
-        color.setRgbF(0.9752f, 0.0f, 0.03f, 0.98);
-    else if (isAutoSteerBtnOn)
-        color.setRgbF(0.052f, 0.970f, 0.03f, 0.97);
-    else
-        color.setRgbF(0.952f, 0.750f, 0.03f, 0.97);
-
-    //we have lost connection to steer module
-    if (steerModuleConnectedCounter++ > 30)
-    {
-        color.setRgbF(0.952f, 0.093570f, 0.93f, 0.97);
-    }
-
-    modelview.translate(center, bottomSide, 0);
-    modelview.rotate(ahrs.imuRoll, 0, 0, 1);
-
-    gldrawtex.append( { QVector3D(-sizer, -sizer, 0), QVector2D(0,0) } ); //
-    gldrawtex.append( { QVector3D(sizer, -sizer, 0), QVector2D(1,0) } ); //
-    gldrawtex.append( { QVector3D(sizer, sizer, 0), QVector2D(1,1) } ); //
-    gldrawtex.append( { QVector3D(-sizer, sizer, 0), QVector2D(0,1) } ); //
-
-    //TODO: turn on QML version instead -- gldrawtex.draw(gl,projection*modelview,Textures::STEER_POINTER, GL_QUADS,true,color);
-
-    if ((ahrs.imuRoll != 88888))
-    {
-        QString head = QString("%1").arg(ahrs.imuRoll,0,'f', 1);
-        drawText(gl,projection*modelview,(int)(((head.length()) * -7)), -30, head, 0.8,true,color);
-    }
-
-    // stationary part
-    saved_modelview.translate(center, bottomSide, 0);
-
-    gldrawtex.clear();
-    gldrawtex.append( { QVector3D(-sizer, -sizer, 0), QVector2D(0,0) } );
-    gldrawtex.append( { QVector3D(sizer, -sizer, 0), QVector2D(1,0) } );
-    gldrawtex.append( { QVector3D(sizer, sizer, 0), QVector2D(1,1) } );
-    gldrawtex.append( { QVector3D(-sizer, sizer, 0), QVector2D(0,1) } );
-    //TODO: turn on QML version insetead -- gldrawtex.draw(gl,projection*saved_modelview,Textures::STEER_DOT, GL_QUADS,true,color);
-}
-
 void FormGPS::MakeFlagMark(QOpenGLFunctions *gl)
 {
     leftMouseDownOnOpenGL = false;
@@ -1019,214 +960,6 @@ void FormGPS::DrawFlags(QOpenGLFunctions *gl, QMatrix4x4 mvp)
                     GL_LINE_STRIP, 4.0);
     }
 }
-
-void FormGPS::DrawLightBar(QOpenGLFunctions *gl, QMatrix4x4 mvp, double offlineDistance)
-{
-    GLHelperColors gldraw;
-    ColorVertex tv;
-
-    double down = 20;
-    //gl->glLineWidth(1);
-
-    //  Dot distance is representation of how far from AB Line
-    int dotDistance = offlineDistance;
-    int limit = (int)lightbarCmPerPixel * 8;
-    if (dotDistance < -limit) dotDistance = -limit;
-    if (dotDistance > limit) dotDistance = limit;
-
-    // dot background
-    for (int i = -8; i < 0; i++) gldraw.append({ QVector3D(i*32, down, 0),
-                                                QVector4D(0,0,0,1)} );
-    for (int i = 1; i < 9; i++) gldraw.append({ QVector3D(i*32, down, 0),
-                                               QVector4D(0,0,0,1)} );
-
-    gldraw.draw(gl, mvp, GL_POINTS, 8.0f);
-
-    gldraw.clear();
-    //red left side
-    for (int i = -8; i < 0; i++) gldraw.append({ QVector3D(i*32, down, 0),
-                                                QVector4D(0.9750f, 0.0f, 0.0f, 1.0f) } );
-
-    //green right side
-    for (int i = 1; i < 9; i++) gldraw.append( { QVector3D(i*32, down, 0),
-                                                QVector4D(0.0f, 0.9750f, 0.0f, 1.0f) } );
-
-    gldraw.draw(gl, mvp, GL_POINTS, 4.0f);
-
-    //Are you on the right side of line? So its green.
-    if ((offlineDistance) < 0.0)
-    {
-        int numDots = dotDistance * -1 / lightbarCmPerPixel;
-
-        gldraw.clear();
-        for (int i = 1; i < numDots + 1; i++) gldraw.append({ QVector3D(i*32, down, 0),
-                                                            QVector4D(0,0,0,1) } );
-        gldraw.draw(gl, mvp, GL_POINTS, 32.0f);
-
-        gldraw.clear();
-        for (int i = 0; i < numDots; i++) gldraw.append({ QVector3D(i*32+32, down, 0),
-                                                        QVector4D(0.0f, 0.980f, 0.0f,1)} );
-        gldraw.draw(gl, mvp, GL_POINTS, 24.0f);
-    }
-
-    else
-    {
-        int numDots = dotDistance / lightbarCmPerPixel;
-
-        gldraw.clear();
-        for (int i = 1; i < numDots + 1; i++) gldraw.append({ QVector3D(i*-32, down, 0),
-                                                            QVector4D(0,0,0,1) } );
-        gldraw.draw(gl, mvp, GL_POINTS, 32.0f);
-
-        gldraw.clear();
-        for (int i = 0; i < numDots; i++) gldraw.append({ QVector3D(i*-32-32, down, 0),
-                                                        QVector4D(0.980f, 0.30f, 0.0f,1)} );
-        gldraw.draw(gl, mvp, GL_POINTS, 24.0f);
-    }
-
-    //yellow center dot
-    //ColorVertex p = { QVector3D(0, down, 0),
-    //                  QVector4D(0,0,0,1) };
-
-    //gldraw.clear();
-    //gldraw.append(p);
-
-    //if (dotDistance >= -lightbarCmPerPixel && dotDistance <= lightbarCmPerPixel)
-    //{
-    //    gldraw.draw(gl, mvp, GL_POINTS, 32.0f);
-
-    //    gldraw[0].color = QVector4D(0.980f, 0.98f, 0.0f, 1.0f);
-    //    gldraw.draw(gl, mvp, GL_POINTS, 24.0f);
-    //}
-
-    //else
-    //{
-    //    gldraw.draw(gl, mvp, GL_POINTS, 8.0f);
-    //}
-
-}
-
-void FormGPS::DrawLightBarText(QOpenGLFunctions *gl, QMatrix4x4 mvp)
-{
-    QLocale locale;
-    //int ogl_width = qmlItem(qml_root, "openglcontrol")->property("width").toInt();
-    //int ogl_height = qmlItem(qml_root, "openglcontrol")->property("height").toInt();
-
-    // in millimeters
-    // moved to formgps_position, bottom of UpdateFixPosition
-    //avgPivDistance = avgPivDistance * 0.5 + lightbarDistance * 0.5;
-
-    double avgPivotDistance = avgPivDistance * (isMetric ? 0.1 : 0.03937);
-    QString hede;
-    QColor color;
-
-    DrawLightBar(gl,mvp, avgPivotDistance);
-
-    if (avgPivotDistance > 0.01)
-    {
-        color.setRgbF(0.9752f, 0.50f, 0.3f);
-        hede = QString("%1").arg(fabs(avgPivotDistance),0,'f',0);
-    }
-    else
-    {
-        color.setRgbF(0.50f, 0.952f, 0.3f);
-        hede = QString("%1").arg(fabs(avgPivotDistance),0,'f',0);
-    }
-
-    int center = -(int)(((double)(hede.length()) * 0.5) * 16);
-    drawText(gl, mvp, center, 8, hede, 1.2, true, color);
-}
-
-#if 0
-void FormGPS::drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection)
-{
-    USE_SETTINGS;
-
-    double set = vehicle.guidanceLineSteerAngle * 0.01 * (50 / SETTINGS_VEHICLE_MAXSTEERANGLE);
-    double actual = actualSteerAngleDisp * 0.01 * (50 / SETTINGS_VEHICLE_MAXSTEERANGLE);
-    double hiit = 0;
-    GLHelperOneColor gldraw;
-
-    modelview.translate(0, 100, 0); //will not override caller's modelview
-
-    //If roll is used rotate graphic based on roll angle
-    if ((SETTINGS_GPS_ISROLLFROMAUTOSTEER || SETTINGS_GPS_ISROLLFROMGPS || SETTINGS_GPS_ISROLLFROMOGI) && ahrs.rollX16 != 9999)
-        modelview.rotate(((ahrs.rollX16 - SETTINGS_GPS_IMUROLLZEROX16) * 0.0625f), 0.0f, 0.0f, 1.0f);
-
-    gl->glLineWidth(1);
-
-    double wiid = 50;
-
-    gldraw.append(QVector3D(-wiid, 25, 0));
-    gldraw.append(QVector3D(-wiid, 0, 0));
-    gldraw.append(QVector3D(wiid, 0, 0));
-    gldraw.append(QVector3D(wiid, 25, 0));
-
-    gldraw.draw(gl, projection*modelview, QColor::fromRgbF(0.54f, 0.54f, 0.54f),
-                GL_LINE_STRIP, 1);
-
-    modelview.translate(0, 10, 0);
-
-    {
-        if (actualSteerAngleDisp > 0)
-        {
-            gl->glLineWidth(1);
-
-            gldraw.clear();
-            gldraw.append(QVector3D(0, hiit, 0));
-            gldraw.append(QVector3D(actual, hiit + 8, 0));
-            gldraw.append(QVector3D(0, hiit + 16, 0));
-            gldraw.append(QVector3D(0, hiit, 0));
-            gldraw.draw(gl, projection*modelview, QColor::fromRgbF(0.0f, 0.75930f, 0.0f),
-                        GL_LINE_STRIP, 1);
-
-        }
-        else
-        {
-            //actual
-            gl->glLineWidth(1);
-
-            gldraw.clear();
-            gldraw.append(QVector3D(-0, hiit, 0));
-            gldraw.append(QVector3D(actual, hiit + 8, 0));
-            gldraw.append(QVector3D(-0, hiit + 16, 0));
-            gldraw.append(QVector3D(-0, hiit, 0));
-            gldraw.draw(gl, projection*modelview, QColor::fromRgbF(0.75930f, 0.0f, 0.0f),
-                        GL_LINE_STRIP, 1);
-        }
-    }
-
-    if (vehicle.guidanceLineSteerAngle > 0)
-    {
-        gl->glLineWidth(1);
-
-        gldraw.clear();
-        gldraw.append(QVector3D(0, hiit, 0));
-        gldraw.append(QVector3D(set, hiit + 8, 0));
-        gldraw.append(QVector3D(0, hiit + 16, 0));
-        gldraw.append(QVector3D(0, hiit, 0));
-        gldraw.draw(gl, projection*modelview, QColor::fromRgbF(0.75930f, 0.75930f, 0.0f),
-                    GL_LINE_STRIP, 1);
-
-    }
-    else
-    {
-        gl->glLineWidth(1);
-
-        gldraw.clear();
-        gldraw.append(QVector3D(-0, hiit, 0));
-        gldraw.append(QVector3D(set, hiit + 8, 0));
-        gldraw.append(QVector3D(-0, hiit + 16, 0));
-        gldraw.append(QVector3D(-0, hiit, 0));
-        gldraw.draw(gl, projection*modelview, QColor::fromRgbF(0.75930f, 0.75930f, 0.0f),
-                    GL_LINE_STRIP, 1);
-
-    }
-
-    //return back
-}
-#endif
-
 
 void FormGPS::DrawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int height)
 {
@@ -1453,51 +1186,6 @@ void FormGPS::DrawLiftIndicator(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMat
 
     gldraw.draw(gl, projection * modelview, Textures::HYDLIFT,
                 GL_TRIANGLE_STRIP, true, color);
-}
-
-void FormGPS::drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width, double Height)
-{
-    GLHelperTexture gldraw1;
-
-    int bottomSide = Height - 165;
-
-    modelview.translate(Width / 2 - 160, bottomSide, 0);
-
-    gldraw1.append({ QVector3D(-58, -58, 0), QVector2D(0, 0) }); //bottom left
-    gldraw1.append({ QVector3D(58, -58.0, 0), QVector2D(1, 0) }); //bottom right
-    gldraw1.append({ QVector3D(-58, 58, 0), QVector2D(0, 1) }); //top left
-    gldraw1.append({ QVector3D(58, 58, 0), QVector2D(1, 1) }); //top right
-
-    gldraw1.draw(gl, projection*modelview, Textures::SPEEDO, GL_TRIANGLE_STRIP, true, QColor::fromRgbF(0.952f, 0.870f, 0.823f, 0.8));
-
-    double angle = 0;
-    double aveSpd = 0;
-    if (isMetric)
-    {
-        aveSpd = fabs(vehicle.avgSpeed);
-        if (aveSpd > 20) aveSpd = 20;
-        angle = (aveSpd - 10) * 15;
-    }
-    else
-    {
-        double aveSpd = fabs(vehicle.avgSpeed) * 0.621371;
-        if (aveSpd > 20) aveSpd = 20;
-        angle = (aveSpd - 10) * 15;
-    }
-
-    QColor color;
-    if (vehicle.avgSpeed > -0.1) color = QColor::fromRgbF(0.0f, 0.950f, 0.0f);
-    else color = QColor::fromRgbF(0.952f, 0.0f, 0.0f);
-
-    gldraw1.clear();
-    modelview.rotate(angle, 0, 0, 1);
-    gldraw1.append({ QVector3D(-48, -48, 0),  QVector2D(0, 0) });
-    gldraw1.append({ QVector3D(48, -48.0, 0), QVector2D(1, 0) });
-    gldraw1.append({ QVector3D(-48, 48, 0),   QVector2D(0, 1) });
-    gldraw1.append({ QVector3D(48, 48, 0),    QVector2D(1, 1) });
-
-    gldraw1.draw(gl, projection*modelview, Textures::SPEEDONEDLE, GL_TRIANGLE_STRIP,
-                 true, color);
 }
 
 void FormGPS::DrawLostRTK(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width)

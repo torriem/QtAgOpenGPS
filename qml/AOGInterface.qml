@@ -54,7 +54,8 @@ Item {
     property double toolHeading: 0
     property double imuRollDegrees: 0
     property double speedKph: 0
-    property double offlineDistance: 0
+    property double offlineDistance: 32000
+    property double avgPivDistance: 32000
 
     property int steerModuleConnectedCounter: 0
     property bool steerSwitchHigh: false
@@ -108,7 +109,45 @@ Item {
         { index: 0, name: "tractor" }
     ]
 
+    property double mPerDegreeLat
+    property double mPerDegreeLon
 
+    function setLocalMetersPerDegree() {
+        mPerDegreeLat = 111132.92 - 559.82 * Math.cos(2.0 * latStart * 0.01745329251994329576923690766743) + 1.175
+                              * Math.cos(4.0 * latStart * 0.01745329251994329576923690766743) - 0.0023
+                              * Math.cos(6.0 * latStart * 0.01745329251994329576923690766743)
 
+        mPerDegreeLon = 111412.84 * Math.cos(latStart * 0.01745329251994329576923690766743) - 93.5
+                              * Math.cos(3.0 * latStart * 0.01745329251994329576923690766743) + 0.118
+                              * Math.cos(5.0 * latStart * 0.01745329251994329576923690766743)
+    }
+
+    function convertLocalToWGS84(northing, easting) { //note northing first here
+        var mPerDegreeLat = 111132.92 - 559.82 * Math.cos(2.0 * latStart * 0.01745329251994329576923690766743) + 1.175
+                              * Math.cos(4.0 * latStart * 0.01745329251994329576923690766743) - 0.0023
+                              * Math.cos(6.0 * latStart * 0.01745329251994329576923690766743)
+        var mPerDegreeLon = 111412.84 * Math.cos(latStart * 0.01745329251994329576923690766743) - 93.5
+                              * Math.cos(3.0 * latStart * 0.01745329251994329576923690766743) + 0.118
+                              * Math.cos(5.0 * latStart * 0.01745329251994329576923690766743)
+
+        var outLat = (northing / mPerDegreeLat) + latStart;
+        var outLon = (easting  / mPerDegreeLon) + lonStart;
+
+        return [ outLat, outLon ]
+    }
+
+    function convertWGS84ToLocal(latitude, longitude) {
+        var mPerDegreeLat = 111132.92 - 559.82 * Math.cos(2.0 * latStart * 0.01745329251994329576923690766743) + 1.175
+                              * Math.cos(4.0 * latStart * 0.01745329251994329576923690766743) - 0.0023
+                              * Math.cos(6.0 * latStart * 0.01745329251994329576923690766743)
+        var mPerDegreeLon = 111412.84 * Math.cos(latStart * 0.01745329251994329576923690766743) - 93.5
+                              * Math.cos(3.0 * latStart * 0.01745329251994329576923690766743) + 0.118
+                              * Math.cos(5.0 * latStart * 0.01745329251994329576923690766743)
+
+        var outNorthing = (latitude - latStart) * mPerDegreeLat;
+        var outEasting = (longitude - lonStart) * mPerDegreeLon;
+
+        return [outNorthing, outEasting]
+    }
 
 }

@@ -606,16 +606,10 @@ public:
     void DrawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
     void MakeFlagMark(QOpenGLFunctions *gl);
     void DrawFlags(QOpenGLFunctions *gl, QMatrix4x4 mvp);
-    void DrawSteerCircle(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection);
-
-    void DrawLightBar(QOpenGLFunctions *gl, QMatrix4x4 mvp, double offlineDistance);
-    void DrawLightBarText(QOpenGLFunctions *gl, QMatrix4x4 mvp);
-    //void drawRollBar(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection);
     void DrawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int height);
     void DrawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height);
     void DrawCompass(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width);
     void DrawReverse(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width, double Height);
-    void drawSpeedo(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width, double Height);
     void DrawLiftIndicator(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, int Width, int Height);
     void DrawLostRTK(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);
     void DrawAge(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);
