@@ -484,43 +484,43 @@ Item {
                     spacing: 20
                     flow: Grid.TopToBottom
                     IconButtonColor{
-                        icon: "/images/Config/ConST_Danfoss.png"
+                        icon.source: "/images/Config/ConST_Danfoss.png"
                         objectName: "btnDanfoss"
                         isChecked: false
                         buttonText: "Danfoss"
                     }
                     IconButtonColor{
-                        icon: "/images/Config/ConSt_TurnSensor.png"
+                        icon.source: "/images/Config/ConSt_TurnSensor.png"
                         objectName: "btnTurnSensor"
                         isChecked: false
                         buttonText: "Turn Sensor"
                     }
                     IconButtonColor{
-                        icon: "/images/Config/ConSt_TurnSensorPressure.png"
+                        icon.source: "/images/Config/ConSt_TurnSensorPressure.png"
                         isChecked: false
                         objectName: "btnPressureTurnSensor"
                         buttonText: "Pressure Turn Sensor"
                     }
                     IconButtonColor{
-                        icon: "/images/Config/ConSt_TurnSensorCurrent.png"
+                        icon.source: "/images/Config/ConSt_TurnSensorCurrent.png"
                         objectName: "btnCurrentTurnSensor"
                         isChecked: false
                         buttonText: "Current Turn Sensor"
                     }
                     IconButtonColor{
-                        icon: "/images/Config/ConSt_InvertWAS.png"
+                        icon.source: "/images/Config/ConSt_InvertWAS.png"
                         objectName: "btnInvertWAS"
                         isChecked: false
                         buttonText: "Invert WAS"
                     }
                     IconButtonColor{
-                        icon: "/images/Config/ConSt_InvertDirection.png"
+                        icon.source: "/images/Config/ConSt_InvertDirection.png"
                         objectName: "btnInvertMotorDirection"
                         isChecked: false
                         buttonText: "Invert Motor Dir"
                     }
                     IconButtonColor{
-                        icon: "/images/Config/ConSt_InvertRelay.png"
+                        icon.source: "/images/Config/ConSt_InvertRelay.png"
                         objectName: "btnSteerInvertRelays"
                         isChecked: false
                         buttonText: "Invert Relays"

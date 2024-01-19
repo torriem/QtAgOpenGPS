@@ -14,7 +14,6 @@ Item {
     width: spinner.width
     height: spinner.height + spin_text.height + spin_message.height + 20
 
-
     onValueChanged: {
         //value changed from the outside; we need
         //the spin box to update itself but not set
@@ -38,12 +37,13 @@ Item {
         from: spinBox_Customized.from
         to: spinBox_Customized.to
         editable: spinBox_Customized.editable
-        value: value
+        value: spinBox_Customized.value
 		stepSize: spinBox_Customized.stepSize
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
         onValueChanged: {
+                spinBox_Customized.value = value
             if (value == spinBox_Customized.from) {
                 spin_message.visible = true
                 spin_message.text = "Must be "+from+" or greater"

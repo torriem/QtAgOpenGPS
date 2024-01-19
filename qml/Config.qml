@@ -34,7 +34,9 @@ Item {
         id: catcher
         //to catch phantom clicks from carrying through to the MainWindow screen
         anchors.fill: parent
-        onClicked: console.log("caught")
+        onClicked: {
+            console.log("caught")
+        }
     }
 
 	Rectangle{

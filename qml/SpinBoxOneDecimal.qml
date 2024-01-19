@@ -39,6 +39,7 @@ Item {
 
         onValueChanged: {
             if (value == spinner.from) {
+                spinBox_singledigit.value = value
                 spin_message.visible = true
                 spin_message.text = "Must be "+spinner.from /10+" or greater"
             } else if(value == spinner.to){

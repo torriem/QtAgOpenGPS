@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
-
+//todo: noticed % coverage was in wrong spot
 Rectangle{
     id: configImplementSection
     anchors.fill: parent
@@ -17,15 +17,13 @@ Rectangle{
         spacing: 90
         Button{
             function toggleZones(){
-                if(configImplementSectionsSection.visible == true){
+                if( settings.setTool_isSectionsNotZones){
                     image.source = "/images/Config/ConT_Symmetric.png"
-                    configImplementSectionsZones.visible = true
-                    configImplementSectionsSection.visible = false
+                    settings.setTool_isSectionsNotZones = false
                     console.log("zones")
                 }else{
                     image.source ="/images/Config/ConT_Asymmetric.png"
-                    configImplementSectionsZones.visible = false
-                    configImplementSectionsSection.visible = true
+                    settings.setTool_isSectionsNotZones = true
                     console.log("sections")
                 }
             }
@@ -49,21 +47,19 @@ Rectangle{
             }
         }
         SpinBoxCustomized{
+            id: percentCoverage
             objectName: "percentConverage"
             from: 0
             to: 100
-            value: 100
+            value: settings.setVehicle_minCoverage
             anchors.bottom: parent.bottom
-            text: "% Coverage"
-//            Text{
-//                anchors.bottom: parent.top
-//                text: "% Coverage"
-//            }
+            text: qsTr("% Coverage")
+            onValueChanged: settings.setVehicle_minCoverage
         }
         IconButton{
             objectName: "boundaryOff"
             icon.source: "/images/SectionOffBoundary.png"
-            iconChecked: "/images/SectionOnBounary.png"
+            iconChecked: "/images/SectionOnBoundary.png"
             anchors.bottom: parent.bottom
             implicitWidth: 100
             implicitHeight: 100
@@ -72,13 +68,17 @@ Rectangle{
             colorChecked1: "green"
             colorChecked2: "green"
             colorChecked3: "green"
+            checked: settings.setTool_isSectionOffWhenOut
+            onCheckedChanged: settings.setTool_isSectionOffWhenOut = checked
         }
         SpinBoxOneDecimal{
+            //todo: this should be made english/metric
             objectName: "speedBelowSectionOff"
             from: 0.0
             to: 30
-            value: 0.3
+            value: settings.setVehicle_slowSpeedCutoff
             anchors.bottom: parent.bottom
+            onValueChanged: settings.setVehicle_slowSpeedCutoff = value
             Image{
                 anchors.bottom: parent.top
                 width: parent.width
@@ -90,7 +90,7 @@ Rectangle{
     Text{
         id: bottomRightText
         anchors.right: parent.right
-        text: "Km/H"
+        text: qsTr("Km/H")
         anchors.verticalCenter: bottomRow.verticalCenter
         font.pixelSize: 25
     }
@@ -103,7 +103,7 @@ Rectangle{
         anchors.bottom: bottomRow.top
         anchors.bottomMargin: 30
         anchors.margins: 15
-        visible: true
+        visible: settings.setTool_isSectionsNotZones
     }
     ConfigImplementSectionsZones{
         id: configImplementSectionsZones
@@ -114,6 +114,7 @@ Rectangle{
         anchors.bottom: bottomRow.top
         anchors.bottomMargin: 30
         anchors.margins: 15
-        visible: false
+        visible: !settings.setTool_isSectionsNotZones
+
     }
 }

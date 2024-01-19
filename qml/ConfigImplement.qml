@@ -2,8 +2,10 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
 import QtQuick.Controls.Styles 1.4
-import QtQuick.Controls 1.4 as OldCtrl
 
+/* todo:
+  don't know how to make one of 4 options here
+  */
 Rectangle{
 	anchors.fill: parent
 	visible: true
@@ -26,7 +28,7 @@ Rectangle{
 			width:200
 			height:150
 			id: i3pt
-			icon: "/images/ToolChkRear.png"
+            icon.source: "/images/ToolChkRear.png"
 			isChecked: false
 		}
 
@@ -34,21 +36,21 @@ Rectangle{
 			width:200
 			height:150
 			id: i3ptfront
-			icon: "/images/ToolChkFront.png"
+            icon.source: "/images/ToolChkFront.png"
 			isChecked: false
 		}
 		IconButtonColor{
 			width:200
 			height:150
 			id: itrailed
-			icon: "/images/ToolChkTrailing.png"
+            icon.source: "/images/ToolChkTrailing.png"
 			isChecked: false
 		}
 		IconButtonColor{
 			width:200
 			height:150
 			id: iTBT
-			icon: "/images/ToolChkTBT.png"
+            icon.source: "/images/ToolChkTBT.png"
 			isChecked: false
 		}
 	}

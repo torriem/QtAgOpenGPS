@@ -1,12 +1,13 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
+/*todo: sections not populated from .config yet
+  also not at all sure about switching these to SpinBoxCM... Don't want to break anything
+  */
 Item {
     id: configImplementSectionsZones
-
     ListModel {
         id: section_model
-
     }
 
     GridView {
@@ -46,7 +47,7 @@ Item {
                 }
             }
             Text{
-                text: 1+"->"
+                text: qsTr(1+"->")
                 anchors.right: spinner.left
                 anchors.verticalCenter: spinner.verticalCenter
                 font.bold: true
@@ -54,14 +55,14 @@ Item {
             }
 
             Text {
-                text: "Zone " + Number(model.secNum+1).toLocaleString(Qt.locale(),"f",0)
+                text: qsTr("Zone " + Number(model.secNum+1).toLocaleString(Qt.locale(),"f",0))
                 anchors.bottom: spinner.top
                 anchors.left: spinner.left
             }
             Text {
                 id: spin_message
                 visible: false
-                text: "message"
+                text: qsTr("message")
                 color: "red"
                 anchors.top: spinner.bottom
                 anchors.left: spinner.left
@@ -80,7 +81,6 @@ Item {
         SpinBox{
             id: numOfZones
 			anchors.verticalCenter: parent.verticalCenter
-            objectName: "numOfZones"
             from: 1
             value: 4
             to: 8
@@ -103,37 +103,43 @@ Item {
             }
             Text{
                 anchors.bottom: parent.top
-                text: "Zones"
+                text: qsTr("Zones")
+            }
+        }
+        SpinBoxCM{
+            id: sectionWidthAllZones
+            implicitWidth: 150
+            implicitHeight: 50
+            from: 10
+            value: settings.setTool_sectionWidthMulti
+            to: 1000
+            text: qsTr("Section Width")
+            onValueChanged: settings.setTool_sectionWidthMulti
+            Connections {
+                target: settings
+                function onSetTool_SectionWidthMultiChanged(){
+                    sectionWidthAllZones.value = settings.setTool_sectionWidthMulti
+                }
             }
         }
         SpinBoxCustomized{
-            id: sectionWidthAllZones
-            objectName: "sectionWidthAllZones"
-            implicitWidth: 150
-            implicitHeight: 50
-            from: 1
-            value: 240
-            to: 300
-            text: "Section Width"
-        }
-        SpinBoxCustomized{
             id: sectionsNumber
-            objectName: "sectionsNumber"
             implicitWidth: 150
             implicitHeight: 50
             from: 1
-            value: 40
-            to: 60
-            text: "Sections"
+            value: settings.setTool_numSectionsMulti
+            to: 64
+            text: qsTr("Sections")
+            onValueChanged: settings.setTool_numSectionsMulti = value
 
         }
         Column{
             spacing: 8
             Text {
-                text: "000"
+                text: qsTr("000")
             }
             Text {
-                text: "Inch"
+                text: qsTr("Inch")
                 color: "green"
             }
         }

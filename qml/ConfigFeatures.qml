@@ -26,17 +26,17 @@ Item {
             IconButtonColor{
                 objectName: "btnFeaturesTrams"
                 icon.source: "/images/TramAll.png"
-                buttonText: "Tram Lines"
+                text: "Tram Lines"
             }
             IconButtonColor{
                 objectName: "btnFeaturesHeadland"
                 icon.source: "/images/HeadlandOn.png"
-                buttonText: "Headland"
+                text: "Headland"
             }
             IconButtonColor{
                 objectName: "btnFeaturesBoundary"
                 icon.source: "/images/BoundaryOuter.png"
-                buttonText: "Boundary"
+                text: "Boundary"
             }
             IconButtonColor{
                 objectName: "btnFeaturesRecPath"
@@ -62,17 +62,17 @@ Item {
             IconButtonColor{
                 objectName: "btnFeaturesABSmooth"
                 icon.source: "/images/ABSmooth.png"
-                buttonText: "AB Smooth"
+                text: "AB Smooth"
             }
             IconButtonColor{
                 objectName: "btnFeaturesHideContour"
                 icon.source: "/images/HideContour.png"
-                buttonText: "Hide Contour"
+                text: "Hide Contour"
             }
             IconButtonColor{
                 objectName: "btnFeaturesWebCam"
                 icon.source: "/images/Webcam.png"
-                buttonText: "WebCam"
+                text: "WebCam"
             }
             IconButtonColor{
                 objectName: "btnFeaturesRecPath"
