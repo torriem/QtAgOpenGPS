@@ -14,7 +14,6 @@ Item {
     width: spinner.width
     height: spinner.height + spin_text.height + spin_message.height + 20
 
-
     onValueChanged: {
         //value changed from the outside; we need
         //the spin box to update itself but not set
