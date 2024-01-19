@@ -36,42 +36,42 @@ Rectangle{
                 height:100
                 text: "Dual"
                 id: dual
-                isChecked: (settings.setGPS_headingFromWhichSource === "Dual" ? false: true)
+                isChecked: (settings.setGPS_headingFromWhichSource === "Dual" ? true: false)
                 onClicked: settings.setGPS_headingFromWhichSource = "Dual"
                 icon.source: "/images/Config/Con_SourcesGPSDual.png"
-            Connections{
-                target: settings
-                function onSetGPS_headingFromWhichSourceChanged(){
-                    if(settings.setGPS_headingFromWhichSource === "Dual"){
-                        dual.checked = true
-                        dual.checkable = false
-                    }else{
-                        dual.checked = false
-                        dual.checkable = true
+                Connections{
+                    target: settings
+                    function onSetGPS_headingFromWhichSourceChanged(){
+                        if(settings.setGPS_headingFromWhichSource === "Dual"){
+                            dual.checked = true
+                            dual.checkable = false
+                        }else{
+                            dual.checked = false
+                            dual.checkable = true
+                        }
                     }
                 }
-            }
             }
             IconButtonColor{
                 width:150
                 height:100
                 id: fix
                 text: "Fix"
-                isChecked: (settings.setGPS_headingFromWhichSource === "Fix" ? false : true)
+                isChecked: (settings.setGPS_headingFromWhichSource === "Fix" ? true : false)
                 onClicked: settings.setGPS_headingFromWhichSource = "Fix"
                 icon.source: "/images/Config/Con_SourcesGPSSingle.png"
-            Connections{
-                target: settings
-                function onSetGPS_headingFromWhichSourceChanged(){
-                    if(settings.setGPS_headingFromWhichSource === "Fix"){
-                        fix.checked = true
-                        fix.checkable = false
-                    }else{
-                        fix.checked = false
-                        fix.checkable = true
+                Connections{
+                    target: settings
+                    function onSetGPS_headingFromWhichSourceChanged(){
+                        if(settings.setGPS_headingFromWhichSource === "Fix"){
+                            fix.checked = true
+                            fix.checkable = false
+                        }else{
+                            fix.checked = false
+                            fix.checkable = true
+                        }
                     }
                 }
-            }
             }
         }
     }
