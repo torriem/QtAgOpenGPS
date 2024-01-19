@@ -5,7 +5,7 @@ Rectangle
     id: speedo
     width: 117
     height: 117
-    color: "black"
+    color: "transparent"
     property double speed: 0
 
     Image {

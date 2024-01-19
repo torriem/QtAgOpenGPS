@@ -12,47 +12,15 @@ Rectangle{
     signal rejected()
     property string abLineName //TODO: use this as input for editing the name
 
-    function findDirection(heading) {
-        if (heading > 337.5 || heading < 22.5)
-        {
-            return qsTr("N","compass bearing")
-        }
-        if (heading > 22.5 && heading < 67.5)
-        {
-            return qsTr("NE","compass bearing");
-        }
-        if (heading > 67.5 && heading < 111.5)
-        {
-            return qsTr("E", "compass bearing");
-        }
-        if (heading > 111.5 && heading < 157.5)
-        {
-            return qsTr("SE", "compass bearing");
-        }
-        if (heading > 157.5 && heading < 202.5)
-        {
-            return qsTr("S", "compass bearing");
-        }
-        if (heading > 202.5 && heading < 247.5)
-        {
-            return qsTr("SW", "compass bearing");
-        }
-        if (heading > 247.5 && heading < 292.5)
-        {
-            return qsTr("W", "compass bearing");
-        }
-        if (heading > 292.5 && heading < 337.5)
-        {
-            return qsTr("NW", "compass bearing");
-        }
-        return qsTr("??", "unknown compass bearing");
-    }
-
     function generate_ab_name(heading_degrees) {
         var name
 
-        name = qsTr("AB ") + (heading_degrees).toLocaleString(Qt.locale(), 'f', 1) + "\u00B0 " + line_Name.findDirection(heading_degrees)
+        name = qsTr("AB ") + (heading_degrees).toLocaleString(Qt.locale(), 'f', 1) + "\u00B0 " + utils.findDirection(heading_degrees)
 
+        textInputBox.text = name
+    }
+
+    function set_name(name) {
         textInputBox.text = name
     }
 

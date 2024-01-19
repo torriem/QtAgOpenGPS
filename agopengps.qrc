@@ -523,9 +523,12 @@
         <file>qml/Speedometer.qml</file>
         <file>qml/AOGInterface.qml</file>
         <file>qml/SectionButtons.qml</file>
-        <file>qml/MathUtils.qml</file>
         <file>qml/LatLonTextField.qml</file>
         <file>images/SectionOnBoundary.png</file>
         <file>qml/ButtonColor.qml</file>
+        <file>qml/UnitConversion.qml</file>
+        <file>qml/SpinBoxCM.qml</file>
+        <file>qml/LightBar.qml</file>
+        <file>qml/OutlineText.qml</file>
     </qresource>
 </RCC>

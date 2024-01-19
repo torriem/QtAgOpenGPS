@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import AgOpenGPS 1.0
+//import AgOpenGPS 1.0
 
 Item {
     id: lineDrawer
@@ -14,7 +14,8 @@ Item {
         anchors.bottom:  parent.bottom
         color: "black"
 
-        AOGRenderer{
+        Rectangle { //temporary for qmlscene testing
+        //AOGRenderer{
             id: lineDrawerField
             objectName: "lineDrawerField"
             anchors.fill: parent

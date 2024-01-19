@@ -20,6 +20,8 @@ import QtQuick.Controls 2.15
 Item {
     id: aogInterfaceType
 
+    property double frameTime: 0
+
     property bool isJobStarted: false
 
     property int manualBtnState: 0
@@ -44,11 +46,22 @@ Item {
     property double northing: 0
     property double latitude: 0
     property double longitude: 0
+    property double heading: 0
+    property double toolEasting: 0
+    property double toolNorthing: 0
+    property double toolLatitude: 0
+    property double toolLongitude: 0
+    property double toolHeading: 0
     property double imuRollDegrees: 0
     property double speedKph: 0
-    property double offlineDistance: 0
+    property double offlineDistance: 32000
+    property double avgPivDistance: 32000
+
+    property int steerModuleConnectedCounter: 0
+    property bool steerSwitchHigh: false
 
 
+    //AB Lines properties, signals, and methods
     property int currentABLine: -1 //use this instead of signals?
     property int currentABCurve: -1
 
@@ -65,37 +78,36 @@ Item {
         {index: 2, name: "three", visible: true }
     ]
 
-    signal addABLine(string name, double easting, double northing, double heading)
-    signal updateABLines()
-    signal deleteABLine(int lineno)
-    signal changeABLineName(int lineno, string new_name)
-    signal setNewABLineAPoint(bool start_or_cancel, double easting, double northing) //true to mark point, false to cancel new point
+    signal abLine_updateLines()
 
-    //this is a bit clumsy but it's the only way I can get
-    //the signals defined above to be accessible to the other
-    //qml files.  Some kind of scope limitation I guess
-    function abLine_addLine(name, easting, northing, heading_radians) {
-        console.debug("add new line: " + name + ", " + easting + ", " + northing + ", " + heading_radians)
-        addABLine(name,easting, northing, heading_radians);
-    }
+    signal abLine_addLine(string name, double easting, double northing, double heading)
+    signal abLine_deleteLine(int index)
+    //signal changeABLineName(int lineno, string new_name)
+    signal abLine_changeName(int which_one, string new_name)
+    signal abLine_setA(bool start_or_cancel, double easting, double northing, double heading) //true to mark point, false to cancel new point
+    signal abLine_swapHeading(int index)
 
-    function abLine_updateLines() {
-        updateABLines()
-    }
 
-    function abLine_deleteLine(index) {
-        deleteABLine(index)
-    }
+    //on-screen buttons
 
-    function abLine_changeName(index, new_name) {
-        updateABLines(index, new_name)
+    signal uturn(bool turn_right)
+    signal lateral(bool go_right)
 
-    }
 
-    function abLine_setA(start_or_cancel) {
-        setNewABLineAPoint(start_or_cancel)
-    }
+    //general settings
+    signal settings_reload() //tell backend classes to reload settings from store
+    signal settings_tempsave() //save a temporary copy of all the settings
+    signal settings_revert() //revert to temporary copy of all settings
+    signal settings_save() //sync to disk, and also copy to current vehicle file, if active
 
+    signal vehicle_saveas(string vehicle_name)
+    signal vehicle_load(int index)
+    signal vehicle_delete(int index)
+    signal vehicle_update_list()
+
+    property var vehicle_list: [
+        { index: 0, name: "tractor" }
+    ]
 
     property double mPerDegreeLat
     property double mPerDegreeLon
@@ -137,6 +149,5 @@ Item {
 
         return [outNorthing, outEasting]
     }
-
 
 }

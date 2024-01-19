@@ -52,7 +52,7 @@ AOGProperty property_setDisplay_colorDayFrame("display/colorDayFrame",QColor(210
 AOGProperty property_setDisplay_colorNightFrame("display/colorNightFrame",QColor(50, 50, 65));
 AOGProperty property_setDisplay_colorSectionsDay("display/colorSectionsDay",QColor(27, 151, 160));
 AOGProperty property_setDisplay_colorFieldDay("display/colorFieldDay",QColor(100, 100, 125));
-AOGProperty property_setDisplay_isDayMode("display,dayMode",true);
+AOGProperty property_setDisplay_isDayMode("display/dayMode",true);
 AOGProperty property_setDisplay_colorSectionsNight("display/colorSectionsNight",QColor(27, 100, 100));
 AOGProperty property_setDisplay_colorFieldNight("display/colorFieldNight",QColor(60, 60, 60));
 AOGProperty property_setDisplay_isAutoDayNight("display/autoDayNight",false);

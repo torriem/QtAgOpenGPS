@@ -770,7 +770,7 @@ void CABCurve::SmoothAB(int smPts)
     if (!isCurveSet || cnt < 200) return;
 
     //the temp array
-    Vec3 arr[cnt];
+    Vec3 *arr = new Vec3[cnt];
 
     //read the points before and after the setpoint
     for (int s = 0; s < smPts / 2; s++)
@@ -806,6 +806,8 @@ void CABCurve::SmoothAB(int smPts)
     {
         smooList.append(arr[i]);
     }
+
+    delete[] arr;
 }
 
 void CABCurve::CalculateTurnHeadings()
