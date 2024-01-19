@@ -65,6 +65,10 @@ Item {
     property int currentABLine: -1 //use this instead of signals?
     property int currentABCurve: -1
 
+    property double currentABLine_heading: 0
+
+    property int current_trackNum: 0
+
     property var abLinesList: [
         {index: 0, name: "one", easting: 3, northing: 4, heading: 75, visible: true },
         {index: 1, name: "two", easting: 3, northing: 4, heading: 75, visible: true },

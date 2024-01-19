@@ -458,6 +458,7 @@ void FormGPS::update_current_ABline_from_qml()
         ABLine.isABLineSet = true;
         ABLine.isABLineLoaded = true;
         ABLine.isABLineBeingSet = false;
+        aog->setProperty("currentABLine_heading", ABLine.abHeading);
     } else {
         ABLine.isBtnABLineOn = false;
         ABLine.isABLineSet = false;

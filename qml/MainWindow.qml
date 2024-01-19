@@ -215,6 +215,7 @@ Window {
         }
 
         LightBar {
+            id: lightbar
             anchors.top: glcontrolrect.top
             anchors.horizontalCenter: glcontrolrect.horizontalCenter
             anchors.margins: 5
@@ -225,6 +226,27 @@ Window {
                          true : false
         }
 
+        TrackNum {
+           id: tracknum
+            anchors.top: lightbar.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.margins: 5
+
+            font.pixelSize: 24
+
+            //only use dir names for AB Lines with heading
+            useDirNames: (aog.currentABLine > -1)
+            currentTrack: aog.current_trackNum
+
+            trackHeading: aog.currentABLine > -1 ?
+                              aog.currentABLine_heading :
+                              0
+
+            visible: (utils.isTrue(settings.setDisplay_topTrackNum) &&
+                      ((aog.currentABLine > -1) ||
+                       (aog.currentABCurve > -1)))
+            //TODO add contour
+        }
     }
     //----------------------------------------------------------------------------------------left column
     Item {

@@ -432,35 +432,37 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
         gldraw.draw(gl,mvp,color,GL_LINE_STRIP,property_setDisplay_lineWidth);
     }
 
-    color.setRgbF(1.269, 1.25, 1.2510, 0.87); //?? why over 1.0?
-    if (curve.isBtnCurveOn && !ct.isContourBtnOn)
-    {
-        if (curve.howManyPathsAway == 0) {
-            drawTextVehicle(camera, gl, mvp, 2, wheelbase+1, "0", 1,
-                            true, color);
-        } else if (curve.howManyPathsAway > 0) {
-            drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
-                            QString("%1").arg(curve.howManyPathsAway,0,'f',0), 1,
-                            true, color);
-        }else {
-            drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
-                            QString("%1L").arg(curve.howManyPathsAway,0,'f',0) + "L", 1,
-                            true, color);
+    if(!(bool)property_setDisplay_topTrackNum) {
+        color.setRgbF(1.269, 1.25, 1.2510, 0.87); //?? why over 1.0?
+        if (curve.isBtnCurveOn && !ct.isContourBtnOn)
+        {
+            if (curve.howManyPathsAway == 0) {
+                drawTextVehicle(camera, gl, mvp, 2, wheelbase+1, "0", 1,
+                                true, color);
+            } else if (curve.howManyPathsAway > 0) {
+                drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
+                                QString("%1").arg(curve.howManyPathsAway,0,'f',0), 1,
+                                true, color);
+            }else {
+                drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
+                                QString("%1L").arg(curve.howManyPathsAway,0,'f',0) + "L", 1,
+                                true, color);
+            }
         }
-    }
-    else if (ABLine.isBtnABLineOn && !ct.isContourBtnOn)
-    {
-        if (ABLine.howManyPathsAway == 0) {
-            drawTextVehicle(camera, gl, mvp, 2, wheelbase+1, "0", 1,
-                            true, color);
-        } else if (ABLine.howManyPathsAway > 0) {
-            drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
-                            QString("%1R").arg(ABLine.howManyPathsAway,0,'f',0), 1,
-                            true, color);
-        }else {
-            drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
-                            QString("%1L").arg(ABLine.howManyPathsAway,0,'f',0), 1,
-                            true, color);
+        else if (ABLine.isBtnABLineOn && !ct.isContourBtnOn)
+        {
+            if (ABLine.howManyPathsAway == 0) {
+                drawTextVehicle(camera, gl, mvp, 2, wheelbase+1, "0", 1,
+                                true, color);
+            } else if (ABLine.howManyPathsAway > 0) {
+                drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
+                                QString("%1R").arg(ABLine.howManyPathsAway,0,'f',0), 1,
+                                true, color);
+            }else {
+                drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
+                                QString("%1L").arg(ABLine.howManyPathsAway,0,'f',0), 1,
+                                true, color);
+            }
         }
     }
 

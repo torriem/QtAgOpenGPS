@@ -4,7 +4,66 @@ import QtQuick 2.0
 
 Item {
     id: unit_conversions
+
+    function isTrue(value) {
+        return (value === true ||
+                value === 'true')
+    }
+
     function findDirection(heading) {
+        if (heading > 337.5 || heading < 22.5)
+        {
+            return qsTr("N","compass bearing")
+        }
+        if (heading > 22.5 && heading < 67.5)
+        {
+            return qsTr("NE","compass bearing");
+        }
+        if (heading > 67.5 && heading < 111.5)
+        {
+            return qsTr("E", "compass bearing");
+        }
+        if (heading > 111.5 && heading < 157.5)
+        {
+            return qsTr("SE", "compass bearing");
+        }
+        if (heading > 157.5 && heading < 202.5)
+        {
+            return qsTr("S", "compass bearing");
+        }
+        if (heading > 202.5 && heading < 247.5)
+        {
+            return qsTr("SW", "compass bearing");
+        }
+        if (heading > 247.5 && heading < 292.5)
+        {
+            return qsTr("W", "compass bearing");
+        }
+        if (heading > 292.5 && heading < 337.5)
+        {
+            return qsTr("NW", "compass bearing");
+        }
+        return qsTr("??", "unknown compass bearing");
+    }
+
+    function findTrackDirection(abHeading,tracknum) {
+        var heading = 0.0
+
+        //identify what direction is 90 degrees to our
+        //present track
+        console.debug(abHeading)
+
+        if (tracknum > 0)
+            heading = abHeading + 90
+        else
+            heading = abHeading - 90
+
+        if (heading > 360)
+            heading -= 360
+        if (heading < 0)
+            heading += 360
+
+        //now get the name of that direction
         if (heading > 337.5 || heading < 22.5)
         {
             return qsTr("N","compass bearing")

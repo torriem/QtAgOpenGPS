@@ -1140,6 +1140,16 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("offlineDistance", vehicle.guidanceLineDistanceOff);
     aog->setProperty("speedKph", vehicle.avgSpeed);
 
+    if (ABLine.numABLineSelected > 0) {
+        //currentABLine_heading is set in formgps_ui.cpp
+        aog->setProperty("current_trackNum", ABLine.howManyPathsAway);
+    } else if (curve.numCurveLineSelected > 0) {
+        aog->setProperty("current_trackNum", curve.howManyPathsAway);
+    //TODO: add contour
+    } else {
+        aog->setProperty("current_trackNum", 0);
+    }
+
     if (!timerSim.isActive())
         //if running simulator pretend steer module
         //is okay
