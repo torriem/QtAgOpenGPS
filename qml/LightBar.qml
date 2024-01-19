@@ -43,20 +43,20 @@ Rectangle {
         for (i = -8 ; i < 0 ; i ++ ) {
             if (numDots < 0 && i >= numDots) {
                 //big dot
-                dots.append( { x: (i*32), isRight: false, dotSize: 24.0 } )
+                dots.append( { x: (i*32) - 16, isRight: false, dotSize: 24.0 } )
             } else {
                 //small dot
-                dots.append( {x: (i*32), isRight: false, dotSize: 8 } )
+                dots.append( {x: (i*32) - 16, isRight: false, dotSize: 8 } )
             }
         }
 
         for (i = 1 ; i < 9 ; i++ ) {
             if (numDots > 0 && i <= numDots) {
                 //big dot
-                dots.append( { x: (i*32), isRight: true, dotSize: 24.0 } )
+                dots.append( { x: (i*32) + 16, isRight: true, dotSize: 24.0 } )
             } else {
                 //small dot
-                dots.append( {x: (i*32) , isRight: true, dotSize: 8 } )
+                dots.append( {x: (i*32) + 16, isRight: true, dotSize: 8 } )
             }
 
         }
