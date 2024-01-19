@@ -36,18 +36,42 @@ Rectangle{
                 height:100
                 text: "Dual"
                 id: dual
+                isChecked: (settings.setGPS_headingFromWhichSource === "Dual" ? false: true)
+                onClicked: settings.setGPS_headingFromWhichSource = "Dual"
                 icon.source: "/images/Config/Con_SourcesGPSDual.png"
-                checked: setting.setGPS_fixFromWhichSource === "Fix"
-                onClicked: settings.setGPS_fixFromWhichSource = "Fix"
+            Connections{
+                target: settings
+                function onSetGPS_headingFromWhichSourceChanged(){
+                    if(settings.setGPS_headingFromWhichSource === "Dual"){
+                        dual.checked = true
+                        dual.checkable = false
+                    }else{
+                        dual.checked = false
+                        dual.checkable = true
+                    }
+                }
+            }
             }
             IconButtonColor{
                 width:150
                 height:100
                 id: fix
                 text: "Fix"
-                checked: setting.setGPS_fixFromWhichSource === "Dual"
-                onClicked: settings.setGPS_fixFromWhichSource = "Dual"
+                isChecked: (settings.setGPS_headingFromWhichSource === "Fix" ? false : true)
+                onClicked: settings.setGPS_headingFromWhichSource = "Fix"
                 icon.source: "/images/Config/Con_SourcesGPSSingle.png"
+            Connections{
+                target: settings
+                function onSetGPS_headingFromWhichSourceChanged(){
+                    if(settings.setGPS_headingFromWhichSource === "Fix"){
+                        fix.checked = true
+                        fix.checkable = false
+                    }else{
+                        fix.checked = false
+                        fix.checkable = true
+                    }
+                }
+            }
             }
         }
     }

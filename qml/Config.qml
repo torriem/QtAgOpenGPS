@@ -36,6 +36,8 @@ Item {
         anchors.fill: parent
         onClicked: {
             console.log("caught")
+            console.log(settings.setGPS_headingFromWhichSource)
+            console.log (settings.yo)
         }
     }
 
