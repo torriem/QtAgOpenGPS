@@ -250,4 +250,5 @@ void QMLSettings::setupKeys() {
     addKey(QString("setFeature_isAutoSteerOn"),QString("displayFeatures/isAutoSteerOn"));
     addKey(QString("setFeature_isUTurnOn"),QString("displayFeatures/isUTurnOn"));
     addKey(QString("setFeature_isLateralOn"),QString("displayFeatures/isLateralOn"));
+    addKey(QString("setDisplayUseTrackZero"),QString("display/useTrackZero"));
 }
