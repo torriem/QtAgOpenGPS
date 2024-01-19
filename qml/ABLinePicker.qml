@@ -364,7 +364,6 @@ Dialog {
                             abSetter.heading_degrees = value / 100000
 
                             aog.abLine_setA(true, abSetter.a_easting, abSetter.a_northing, abSetter.heading)
-                            console.debug(abSetter.a_easting, abSetter.a_northing, abSetter.heading)
 
                             //calculate b latitude and longitude for the display
                             //use 100m
@@ -521,7 +520,6 @@ Dialog {
             z: 2
             onAccepted: {
                 if(ablineView.currentIndex > -1) {
-                    console.debug("copy heading " + aog.abLinesList[ablineView.currentIndex].heading);
                     var heading = aog.abLinesList[ablineView.currentIndex].heading
                     var easting = aog.abLinesList[ablineView.currentIndex].easting
                     var northing = aog.abLinesList[ablineView.currentIndex].northing
