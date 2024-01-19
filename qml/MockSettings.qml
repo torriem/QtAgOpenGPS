@@ -253,5 +253,6 @@ Item {
     property bool setFeature_isAutoSteerOn: true
     property bool setFeature_isUTurnOn: true
     property bool setFeature_isLateralOn: true
-    property bool setDisplayUseTrackZero: false
+    property bool setDisplay_useTrackZero: false
+    property bool setDisplay_topTrackNum: false
 }

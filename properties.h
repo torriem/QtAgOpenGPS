@@ -254,6 +254,7 @@ extern AOGProperty property_setFeature_isUTurnOn;
 extern AOGProperty property_setFeature_isLateralOn;
 extern AOGProperty property_displayShowBack;
 extern AOGProperty property_displayAntiAliasSamples;
-extern AOGProperty property_setDisplayUseTrackZero;
+extern AOGProperty property_setDisplay_useTrackZero;
+extern AOGProperty property_setDisplay_topTrackNum;
 
 #endif // PROPERTIES_H

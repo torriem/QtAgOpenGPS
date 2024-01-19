@@ -14,11 +14,16 @@ add_props = {
                            'extern AOGProperty property_displayAntiAliasSamples;'],
 
     'useTrackZero' : [ 'display/useTrackZero',
-                    'AOGProperty property_setDisplayUseTrackZero("display/useTrackZero", false);',
-                    'extern AOGProperty property_setDisplayUseTrackZero;',
-                    'property bool setDisplayUseTrackZero: false',
-                    '    addKey(QString("setDisplayUseTrackZero"),QString("display/useTrackZero"));'
-            ],
+                    'AOGProperty property_setDisplay_useTrackZero("display/useTrackZero", false);',
+                    'extern AOGProperty property_setDisplay_useTrackZero;',
+                    'property bool setDisplay_useTrackZero: false',
+                    '    addKey(QString("setDisplay_useTrackZero"),QString("display/useTrackZero"));' ],
+
+    'displayTopTrackNum' : [ 'display/topTrackNum',
+                             'AOGProperty property_setDisplay_topTrackNum("display/topTrackNum", false);',
+                             'extern AOGProperty property_setDisplay_topTrackNum;',
+                             'property bool setDisplay_topTrackNum: false',
+                             '    addKey(QString("setDisplay_topTrackNum"),QString("display/topTrackNum"));' ],
 }
 
 def parse_settings(file):
