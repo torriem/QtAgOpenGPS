@@ -219,7 +219,10 @@ Window {
             anchors.horizontalCenter: glcontrolrect.horizontalCenter
             anchors.margins: 5
             dotDistance: aog.offlineDistance / 10
-            visible: (aog.offlineDistance != 32000) ? true : false
+            visible: (aog.offlineDistance != 32000 &&
+                      (settings.setMenu_isLightbarOn === true ||
+                       settings.setMenu_isLightbarOn === "true")) ?
+                         true : false
         }
 
     }
