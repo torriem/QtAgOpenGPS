@@ -352,25 +352,44 @@ void drawText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString 
         double u = (double)(idx % GlyphsPerLine) * u_step;
         double v = (double)(idx / GlyphsPerLine) * v_step;
 
-        vt.texcoord = QVector2D(u, v);
-        vt.vertex = QVector3D(x, y, 0);
-        gldraw.append(vt);
 
-        vt.texcoord = QVector2D(u + u_step, v);
-        vt.vertex = QVector3D(x + GlyphWidth * size, y, 0);
-        gldraw.append(vt);
-
+        //1
         vt.texcoord = QVector2D(u, v + v_step);
         vt.vertex = QVector3D(x, y + GlyphHeight * size, 0);
         gldraw.append(vt);
 
+        //2
         vt.texcoord = QVector2D(u + u_step, v + v_step);
         vt.vertex = QVector3D(x + GlyphWidth * size, y + GlyphHeight * size, 0);
         gldraw.append(vt);
 
+        //4
+        vt.texcoord = QVector2D(u, v);
+        vt.vertex = QVector3D(x, y, 0);
+        gldraw.append(vt);
+
+        //4
+        vt.texcoord = QVector2D(u, v);
+        vt.vertex = QVector3D(x, y, 0);
+        gldraw.append(vt);
+
+        //2
+        vt.texcoord = QVector2D(u + u_step, v + v_step);
+        vt.vertex = QVector3D(x + GlyphWidth * size, y + GlyphHeight * size, 0);
+        gldraw.append(vt);
+
+        //3
+        vt.texcoord = QVector2D(u + u_step, v);
+        vt.vertex = QVector3D(x + GlyphWidth * size, y, 0);
+        gldraw.append(vt);
+
+
         x += CharXSpacing * size;
-        gldraw.draw(gl, mvp, Textures::FONT, GL_TRIANGLE_STRIP, colorize, color);
-}    }
+    }
+
+    gldraw.draw(gl, mvp, Textures::FONT, GL_TRIANGLE_STRIP, colorize, color);
+
+}
 
 
 
@@ -413,25 +432,40 @@ void drawText3D(const CCamera &camera, QOpenGLFunctions *gl,
         double v = (double)(idx / GlyphsPerLine) * v_step;
         gldraw.clear();
 
+        //1
         vt.texcoord = QVector2D(u, v + v_step);
         vt.vertex = QVector3D(x, y, 0);
         gldraw.append(vt);
 
+        //2
         vt.texcoord = QVector2D(u + u_step, v + v_step);
         vt.vertex = QVector3D(x + GlyphWidth * size, y, 0);
         gldraw.append(vt);
 
+        //4
         vt.texcoord = QVector2D(u, v);
         vt.vertex = QVector3D(x, y + GlyphHeight * size, 0);
         gldraw.append(vt);
 
+        //4
+        vt.texcoord = QVector2D(u, v);
+        vt.vertex = QVector3D(x, y + GlyphHeight * size, 0);
+        gldraw.append(vt);
+
+        //2
+        vt.texcoord = QVector2D(u + u_step, v + v_step);
+        vt.vertex = QVector3D(x + GlyphWidth * size, y, 0);
+        gldraw.append(vt);
+
+        //3
         vt.texcoord = QVector2D(u + u_step, v);
         vt.vertex = QVector3D(x + GlyphWidth * size, y + GlyphHeight * size, 0);
         gldraw.append(vt);
-        gldraw.draw(gl, mvp, Textures::FONT, GL_TRIANGLE_STRIP, colorize, color);
+
 
         x += CharXSpacing * size;
     }
+    gldraw.draw(gl, mvp, Textures::FONT, GL_TRIANGLES, colorize, color);
 
 }
 
