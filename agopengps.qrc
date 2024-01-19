@@ -527,5 +527,6 @@
         <file>qml/UnitConversion.qml</file>
         <file>qml/SpinBoxCM.qml</file>
         <file>qml/LightBar.qml</file>
+        <file>qml/OutlineText.qml</file>
     </qresource>
 </RCC>

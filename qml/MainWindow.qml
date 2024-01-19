@@ -30,6 +30,7 @@ Window {
         onIsJobStartedChanged: {
             console.debug("isJobStarted changed!")
         }
+
     }
 
     UnitConversion {
@@ -212,6 +213,15 @@ Window {
                 }
             }
         }
+
+        LightBar {
+            anchors.top: glcontrolrect.top
+            anchors.horizontalCenter: glcontrolrect.horizontalCenter
+            anchors.margins: 5
+            dotDistance: aog.offlineDistance / 10
+            visible: (aog.offlineDistance != 32000) ? true : false
+        }
+
     }
     //----------------------------------------------------------------------------------------left column
     Item {
