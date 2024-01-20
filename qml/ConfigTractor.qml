@@ -12,25 +12,36 @@ Rectangle{
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
     }
+
+    ButtonGroup {
+        buttons:  typesButtons.children
+    }
+
     Row{
+        id: typesButtons
         anchors.top: text.bottom
         anchors.horizontalCenter: parent.horizontalCenter
+
+
         IconButtonColor{
             id: harvester
             width:150
             height:100
+            checkable: true
             icon.source: "/images/vehiclePageHarvester.png"
-            isChecked: (settings.setVehicle_vehicleType = 1 ? false: true)
-            onClicked: settings.setVehicle_vehicleType = 1
+            checked: Number(settings.setVehicle_vehicleType) === 1 ? true: false
+            onClicked: {
+                if (checked)
+                    settings.setVehicle_vehicleType = 1
+            }
+
             Connections{
                 target: settings
                 function onSetVehicle_vehicleTypeChanged(){
                     if(settings.setVehicle_vehicleType === 1){
                         harvester.checked = true
-                        harvester.checkable = false
                     }else{
                         harvester.checked = false
-                        harvester.checkable = true
                     }
                 }
             }
@@ -40,17 +51,19 @@ Rectangle{
             height:100
             id: tractor
             icon.source: "/images/vehiclePageTractor.png"
-            isChecked: (settings.setVehicle_vehicleType = 0 ? false: true)
-            onClicked: settings.setVehicle_vehicleType = 0
+            checkable: true
+            checked: Number(settings.setVehicle_vehicleType) === 0 ? true: false
+            onClicked: {
+                if (checked)
+                    settings.setVehicle_vehicleType = 0
+            }
             Connections{
                 target: settings
                 function onSetVehicle_vehicleTypeChanged(){
                     if(settings.setVehicle_vehicleType === 0){
                         tractor.checked = true
-                        tractor.checkable = false
                     }else{
                         tractor.checked = false
-                        tractor.checkable = true
                     }
                 }
             }
@@ -60,17 +73,20 @@ Rectangle{
             height:100
             id: tr4wd
             icon.source: "/images/vehiclePage4WD.png"
-            isChecked: (settings.setVehicle_vehicleType = 2 ? false: true)
-            onClicked: settings.setVehicle_vehicleType = 2
+            checkable: true
+            checked: Number(settings.setVehicle_vehicleType) === 2 ? true: false
+            onClicked: {
+                if (checked)
+                    settings.setVehicle_vehicleType = 2
+            }
+
             Connections{
                 target: settings
                 function onSetVehicle_vehicleTypeChanged(){
                     if(settings.setVehicle_vehicleType === 2){
                         tr4wd.checked = true
-                        tr4wd.checkable = false
                     }else{
                         tr4wd.checked = false
-                        tr4wd.checkable = true
                     }
                 }
             }
