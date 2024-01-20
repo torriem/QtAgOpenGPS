@@ -65,6 +65,11 @@ void FormGPS::setupGui()
 
     connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
 
+
+    //connect settings dialog box
+    connect(aog,SIGNAL(settings_reload()), this, SLOT(on_settings_reload()));
+    connect(aog,SIGNAL(settings_save()), this, SLOT(on_settings_save()));
+
     //connect qml button signals to callbacks (it's not automatic with qml)
 
     /*btnPerimeter = qmlItem(qml_root,"btnPerimeter");
@@ -611,4 +616,12 @@ void FormGPS::change_name_ABLine(int which_one, QString name)
         update_ABlines_in_qml();
         FileSaveABLines();
     }
+}
+
+void FormGPS::on_settings_reload() {
+    loadSettings();
+}
+
+void FormGPS::on_settings_save() {
+    settings->sync();
 }

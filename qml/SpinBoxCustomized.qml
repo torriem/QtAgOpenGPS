@@ -42,6 +42,10 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
+        Keys.onReturnPressed: {
+            //console.debug("enter was pressed.  ignore it.")
+        }
+
         onValueChanged: {
                 spinBox_Customized.value = value
             if (value == spinBox_Customized.from) {
