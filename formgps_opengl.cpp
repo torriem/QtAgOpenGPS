@@ -436,7 +436,7 @@ void FormGPS::oglMain_Paint()
                 gldraw1.append(QVector3D(flagPts[flagNumberPicked-1].easting, flagPts[flagNumberPicked-1].northing, 0));
                 gldraw1.draw(gl, projection*modelview,
                              QColor::fromRgbF(0.930f, 0.72f, 0.32f),
-                             GL_LINE, property_setDisplay_lineWidth);
+                             GL_LINES, property_setDisplay_lineWidth);
             }
 
             //draw the vehicle/implement
@@ -1133,9 +1133,11 @@ void FormGPS::DrawReverse(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4
 
         gldrawtex.append( { QVector3D(-32, -32, 0), QVector2D(0, 0.15) } );
         gldrawtex.append( { QVector3D(32, -32, 0), QVector2D(1, 0.15) } );
-        gldrawtex.append( { QVector3D(32, 32, 0), QVector2D(1, 1) } );
         gldrawtex.append( { QVector3D(-32, 32, 0), QVector2D(0, 1) } );
-        gldrawtex.draw(gl,projection * modelview,Textures::HYDLIFT,GL_QUADS,true,color);
+        gldrawtex.append( { QVector3D(-32, 32, 0), QVector2D(0, 1) } );
+        gldrawtex.append( { QVector3D(32, -32, 0), QVector2D(1, 0.15) } );
+        gldrawtex.append( { QVector3D(32, 32, 0), QVector2D(1, 1) } );
+        gldrawtex.draw(gl,projection * modelview,Textures::HYDLIFT,GL_TRIANGLES,true,color);
     }
     else
     {
@@ -1156,9 +1158,11 @@ void FormGPS::DrawReverse(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4
 
         gldrawtex.append( { QVector3D(-32, -32, 0), QVector2D(0, 0.15) } );
         gldrawtex.append( { QVector3D(32, -32, 0), QVector2D(1, 0.15) } );
-        gldrawtex.append( { QVector3D(32, 32, 0), QVector2D(1, 1) } );
         gldrawtex.append( { QVector3D(-32, 32, 0), QVector2D(0, 1) } );
-        gldrawtex.draw(gl,projection * modelview,Textures::HYDLIFT,GL_QUADS,true,color);
+        gldrawtex.append( { QVector3D(-32, 32, 0), QVector2D(0, 1) } );
+        gldrawtex.append( { QVector3D(32, -32, 0), QVector2D(1, 0.15) } );
+        gldrawtex.append( { QVector3D(32, 32, 0), QVector2D(1, 1) } );
+        gldrawtex.draw(gl,projection * modelview,Textures::HYDLIFT,GL_TRIANGLES,true,color);
     }
 }
 
