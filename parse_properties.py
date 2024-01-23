@@ -11,7 +11,19 @@ add_props = {
                           ,
     'antiAliasSamples' : [ 'display/antiAliasSamples',
                            'AOGProperty property_displayAntiAliasSamples("display/antiAliasSamples",0);',
-                           'extern AOGProperty property_displayAntiAliasSamples;']
+                           'extern AOGProperty property_displayAntiAliasSamples;'],
+
+    'useTrackZero' : [ 'display/useTrackZero',
+                    'AOGProperty property_setDisplay_useTrackZero("display/useTrackZero", false);',
+                    'extern AOGProperty property_setDisplay_useTrackZero;',
+                    'property bool setDisplay_useTrackZero: false',
+                    '    addKey(QString("setDisplay_useTrackZero"),QString("display/useTrackZero"));' ],
+
+    'displayTopTrackNum' : [ 'display/topTrackNum',
+                             'AOGProperty property_setDisplay_topTrackNum("display/topTrackNum", false);',
+                             'extern AOGProperty property_setDisplay_topTrackNum;',
+                             'property bool setDisplay_topTrackNum: false',
+                             '    addKey(QString("setDisplay_topTrackNum"),QString("display/topTrackNum"));' ],
 }
 
 def parse_settings(file):
@@ -113,6 +125,8 @@ def parse_csettings(file):
     cpp = []
     qml_cpp = []
     h = []
+    mock_qml = []
+
     with file:
         for line in file.readlines():
             if 'public bool' in line and 'is' in line:
@@ -129,8 +143,9 @@ def parse_csettings(file):
                 cpp.append('AOGProperty property_%s("%s",%s);'% (name, qs_name, parts[1]))
                 qml_cpp.append('    addKey(QString("%s"),QString("%s"));' % (name, qs_name));
                 h.append('extern AOGProperty property_%s;' % name)
+                mock_qml.append('property bool %s: %s' % (name, parts[1]))
 
-    return ([], cpp, h, qml_cpp)
+    return ([], cpp, h, qml_cpp, mock_qml)
                 
 
 
@@ -154,7 +169,7 @@ if __name__ == '__main__':
     
     cpp_pre,cpp,h,qml_cpp, mock_qml = parse_settings(open(args.settings_file,'r'))
 
-    cpp_pre1,cpp1,h1,qml_cpp1 = parse_csettings(open(args.csettings_file,'r'))
+    cpp_pre1,cpp1,h1,qml_cpp1, mock_qml1 = parse_csettings(open(args.csettings_file,'r'))
 
 
 
@@ -192,6 +207,11 @@ if __name__ == '__main__':
 
         for line in mock_qml:
             print ("    %s"  % line)
+        for line in mock_qml1:
+            print ("    %s"  % line)
+        for key in add_props:
+            if len(add_props[key]) > 3:
+                print ("    %s"   % add_props[key][3])
 
         print ("}")
 
@@ -203,6 +223,11 @@ if __name__ == '__main__':
             print (line)
         for line in qml_cpp1:
             print (line)
+        for key in add_props:
+            if len(add_props[key]) > 4:
+                print ("%s"   % add_props[key][4])
+
+
         print ('}')
 
 

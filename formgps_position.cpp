@@ -231,6 +231,12 @@ void FormGPS::UpdateFixPosition()
         //imu on board
         if (ahrs.imuHeading != 99999)
         {
+            //check for out-of bounds fusion weights in case config
+            //file was edited and changed inappropriately.
+            //TODO move this sort of thing to FormGPS::load_settings
+            if (ahrs.fusionWeight > 0.4) ahrs.fusionWeight = 0.4;
+            if (ahrs.fusionWeight < 0.2) ahrs.fusionWeight = 0.2;
+
             //how far since last fix
             distanceCurrentStepFix = glm::Distance(stepFixPts[0], pn.fix);
 
@@ -696,7 +702,7 @@ void FormGPS::UpdateFixPosition()
 
         if (!isAutoSteerBtnOn) //32020 means auto steer is off
         {
-            vehicle.guidanceLineDistanceOff = 32020;
+            //vehicle.guidanceLineDistanceOff = 32020;
             p_254.pgn[p_254.status] = 0;
         }
 
@@ -709,7 +715,8 @@ void FormGPS::UpdateFixPosition()
 
         //convert to cm from mm and divide by 2 - lightbar
         int distanceX2;
-        if (vehicle.guidanceLineDistanceOff == 32020 || vehicle.guidanceLineDistanceOff == 32000)
+        //if (vehicle.guidanceLineDistanceOff == 32020 || vehicle.guidanceLineDistanceOff == 32000)
+        if (!isAutoSteerBtnOn || vehicle.guidanceLineDistanceOff == 32000)
             distanceX2 = 255;
 
         else
@@ -861,7 +868,7 @@ void FormGPS::UpdateFixPosition()
 
         if (!isAutoSteerBtnOn) //32020 means auto steer is off
         {
-            vehicle.guidanceLineDistanceOff = 32020;
+            //vehicle.guidanceLineDistanceOff = 32020;
             p_254.pgn[p_254.status] = 0;
         }
 
@@ -874,7 +881,8 @@ void FormGPS::UpdateFixPosition()
 
         //convert to cm from mm and divide by 2 - lightbar
         int distanceX2;
-        if (vehicle.guidanceLineDistanceOff == 32020 || vehicle.guidanceLineDistanceOff == 32000)
+        //if (vehicle.guidanceLineDistanceOff == 32020 || vehicle.guidanceLineDistanceOff == 32000)
+        if (!isAutoSteerBtnOn || vehicle.guidanceLineDistanceOff == 32000)
             distanceX2 = 255;
 
         else
@@ -1116,10 +1124,40 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("longitude",pn.longitude);
     aog->setProperty("easting",pn.fix.easting);
     aog->setProperty("northing",pn.fix.northing);
+    aog->setProperty("heading", vehicle.fixHeading);
+    aog->setProperty("toolEasting", vehicle.pivotAxlePos.easting);
+    aog->setProperty("toolNorthing", vehicle.pivotAxlePos.northing);
+    aog->setProperty("toolHeading", vehicle.pivotAxlePos.heading);
+
+    double tool_lat, tool_lon;
+    pn.ConvertLocalToWGS84(vehicle.pivotAxlePos.northing, vehicle.pivotAxlePos.easting, tool_lat, tool_lon);
+    aog->setProperty("toolLatitude", tool_lat);
+    aog->setProperty("toolLongitude", tool_lon);
+
     aog->setProperty("imuRollDegrees",ahrs.imuRoll);
     avgPivDistance = avgPivDistance * 0.5 + vehicle.guidanceLineDistanceOff * 0.5;
-    aog->setProperty("offlineDistance", avgPivDistance); //mm!
+    aog->setProperty("avgPivDistance", avgPivDistance); //mm!
+    aog->setProperty("offlineDistance", vehicle.guidanceLineDistanceOff);
     aog->setProperty("speedKph", vehicle.avgSpeed);
+
+    if (ABLine.numABLineSelected > 0) {
+        //currentABLine_heading is set in formgps_ui.cpp
+        aog->setProperty("current_trackNum", ABLine.howManyPathsAway);
+    } else if (curve.numCurveLineSelected > 0) {
+        aog->setProperty("current_trackNum", curve.howManyPathsAway);
+    //TODO: add contour
+    } else {
+        aog->setProperty("current_trackNum", 0);
+    }
+
+    if (!timerSim.isActive())
+        //if running simulator pretend steer module
+        //is okay
+        if (steerModuleConnectedCounter++ > 30)
+            steerModuleConnectedCounter = 31;
+
+    aog->setProperty("steerModuleConnectedCounter", steerModuleConnectedCounter);
+    aog->setProperty("steerSwitchHigh", mc.steerSwitchHigh);
 
     newframe = true;
     lock.unlock();

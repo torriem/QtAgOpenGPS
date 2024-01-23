@@ -74,16 +74,30 @@ Dialog {
             IconButtonTransparent{
                 objectName: "btnLineCopy"
                 icon.source: "/images/FileCopy.png"
-                onClicked: copyLineName.visible = true
+                onClicked: {
+                    if(ablineView.currentIndex > -1) {
+                        copyLineName.set_name("Copy of " + aog.abLinesList[ablineView.currentIndex].name)
+                        copyLineName.visible = true
+                    }
+                }
             }
             IconButtonTransparent{
                 objectName: "btnLineEdit"
                 icon.source: "/images/FileEditName.png"
-                onClicked: editLineName.visible = true
+                onClicked: {
+                    if (ablineView.currentIndex > -1) {
+                        editLineName.set_name(aog.abLinesList[ablineView.currentIndex].name)
+                        editLineName.visible = true
+                    }
+                }
             }
             IconButtonTransparent{
                 objectName: "btnLineSwapPoints"
                 icon.source: "/images/ABSwapPoints.png"
+                onClicked: {
+                    if(ablineView.currentIndex > -1)
+                        aog.abLine_swapHeading(ablineView.currentIndex);
+                }
             }
             IconButtonTransparent{
                 objectName: "btnLineExit"
@@ -117,6 +131,15 @@ Dialog {
                     id: btnLineDelete
                     objectName: "btnLineDelete"
                     icon.source: "/images/ABLineDelete.png"
+
+                    onClicked: {
+                        if (ablineView.currentIndex > -1) {
+                            if (aog.currentABLine == ablineView.currentIndex)
+                                aog.currentABLine = -1
+                            aog.abLine_deleteLine(ablineView.currentIndex)
+                            ablineView.currentIndex = -1
+                        }
+                    }
                 }
                 IconButtonTransparent{
                     objectName: "btnLineExit"
@@ -152,7 +175,6 @@ Dialog {
         Dialog {
             id: abSetter
             width: 300
-            height: 450
             modality: Qt.NonModal
             //color: "lightgray"
             //border.width: 1
@@ -185,7 +207,6 @@ Dialog {
             }
 
             onRejected: {
-                console.debug("new ab line aborted.")
                 abLinePickerDialog.visible = true
             }
 
@@ -195,10 +216,10 @@ Dialog {
                 aog.abLine_addLine(newLineName.abLineName,a_easting, a_northing, heading)
                 aog.abLine_updateLines()
                 var count = aog.abLinesList.length
-                ablineView.currentIndex = count -1
-                aog.currentABLine = count - 1
+                //ablineView.currentIndex = count -1
+                //aog.currentABLine = count - 1
                 abSetter.close()
-                //abLinePickerDialog.open()
+                abLinePickerDialog.open()
             }
 
             Rectangle {
@@ -226,16 +247,16 @@ Dialog {
                     checkable: false
                     icon.source: "/images/LetterABlue.png"
                     onClicked: {
-                        abSetter.a_easting = aog.easting
-                        abSetter.a_northing = aog.northing
-                        aog.abLine_setA(true, abSetter.a_easting, abSetter.b_northing)
-                        a_manual_latitude.set_without_onchange(aog.latitude)
-                        a_manual_longitude.set_without_onchange(aog.longitude)
+                        abSetter.a_easting = aog.toolEasting
+                        abSetter.a_northing = aog.toolNorthing
+                        abSetter.heading = aog.toolHeading
+                        abSetter.heading_degrees = aog.toolHeading * 180 / Math.PI
+                        aog.abLine_setA(true, abSetter.a_easting, abSetter.a_northing, abSetter.heading)
+                        a_manual_latitude.set_without_onchange(aog.toolLatitude)
+                        a_manual_longitude.set_without_onchange(aog.toolLongitude)
                         b_stuff.visible = true
-                        headingSpinbox.value = 0
 
-                        //debugging
-                        aog.easting += 5
+                        headingSpinbox.set_without_onchange(abSetter.heading_degrees)
                     }
                 }
 
@@ -266,7 +287,9 @@ Dialog {
                                 const [northing, easting] = aog.convertWGS84ToLocal(Number(a_manual_latitude.text), Number(a_manual_longitude.text))
                                 abSetter.a_easting = easting
                                 abSetter.a_northing = northing
-                                aog.abLine_setA(true, abSetter.a_easting, abSetter.b_northing)
+                                abSetter.heading = aog.toolHeading
+                                abSetter.heading_degrees = aog.toolHeading * 180 / Math.PI
+                                aog.abLine_setA(true, abSetter.a_easting, abSetter.a_northing, abSetter.heading)
                             }
                         }
                     }
@@ -287,7 +310,7 @@ Dialog {
                                 const [northing, easting] = aog.convertWGS84ToLocal(Number(a_manual_latitude.text), Number(a_manual_longitude.text))
                                 abSetter.a_easting = easting
                                 abSetter.a_northing = northing
-                                aog.abLine_setA(true, abSetter.a_easting, abSetter.b_northing)
+                                aog.abLine_setA(true, abSetter.a_easting, abSetter.a_northing, abSetter.heading)
                             }
                         }
                     }
@@ -331,8 +354,6 @@ Dialog {
                         suppress_onchange = false
                     }
 
-
-
                     anchors.top: b_label.bottom
                     anchors.margins: 5
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -341,6 +362,8 @@ Dialog {
                         if (! suppress_onchange) {
                             abSetter.heading = value / 100000 * Math.PI / 180.0
                             abSetter.heading_degrees = value / 100000
+
+                            aog.abLine_setA(true, abSetter.a_easting, abSetter.a_northing, abSetter.heading)
 
                             //calculate b latitude and longitude for the display
                             //use 100m
@@ -372,11 +395,11 @@ Dialog {
                     icon.source: "/images/LetterBBlue.png"
 
                     onClicked: {
-                        abSetter.b_easting = aog.easting
-                        abSetter.b_northing = aog.northing
+                        abSetter.b_easting = aog.toolEasting
+                        abSetter.b_northing = aog.toolNorthing
 
-                        b_manual_latitude.set_without_onchange(aog.latitude)
-                        b_manual_longitude.set_without_onchange(aog.longitude)
+                        b_manual_latitude.set_without_onchange(aog.toolLatitude)
+                        b_manual_longitude.set_without_onchange(aog.toolLongitude)
 
                         abSetter.heading = Math.atan2(abSetter.b_easting - abSetter.a_easting,
                                                  abSetter.b_northing - abSetter.a_northing)
@@ -386,9 +409,6 @@ Dialog {
                         abSetter.heading_degrees = abSetter.heading * 180.0 / Math.PI
 
                         headingSpinbox.set_without_onchange(abSetter.heading_degrees)
-
-                        //debugging
-                        aog.northing += 5
                     }
                 }
                 GridLayout {
@@ -452,11 +472,11 @@ Dialog {
                 objectName: "btnCancel"
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
-                anchors.margins: 20
+                anchors.margins: 10
                 icon.source: "/images/Cancel64.png"
                  onClicked:{
                      //cancel
-                     abLinePickerDialog.setA(false,0,0) //turn off line setting
+                     aog.abLine_setA(false,0,0,0) //turn off line setting
                      abSetter.rejected()
                      abSetter.close()
                 }
@@ -465,7 +485,7 @@ Dialog {
                objectName: "btnOk"
                anchors.bottom: parent.bottom
                anchors.right: parent.right
-               anchors.margins: 20
+               anchors.margins: 10
                icon.source: "/images/OK64.png"
                onClicked: {
                    newLineName.visible = true
@@ -495,9 +515,19 @@ Dialog {
             objectName: "copyLineName"
             anchors.top:parent.top
             anchors.left: parent.left
-            title: "AB Line"
+            title: "Copy AB Line"
             visible: false
             z: 2
+            onAccepted: {
+                if(ablineView.currentIndex > -1) {
+                    var heading = aog.abLinesList[ablineView.currentIndex].heading
+                    var easting = aog.abLinesList[ablineView.currentIndex].easting
+                    var northing = aog.abLinesList[ablineView.currentIndex].northing
+                    aog.abLine_addLine(copyLineName.abLineName, easting, northing, heading)
+                    //aog.abLine_updateLines()
+                    ablineView.positionViewAtEnd()
+                }
+            }
         }
 
         LineName{
@@ -508,9 +538,17 @@ Dialog {
             title: "AB Line"
             visible: false
             z: 1
+            onAccepted: {
+                if(ablineView.currentIndex > -1) {
+                    aog.abLine_changeName(ablineView.currentIndex, editLineName.abLineName)
+                    //aog.abLine_updateLines()
+                    //ablineView.positionViewAtEnd()
+                }
+            }
         }
 
         Rectangle{
+            id: listrect
             anchors.left: parent.left
             anchors.top:topLine.bottom
             anchors.right: rightColumn.left
@@ -533,6 +571,7 @@ Dialog {
                 anchors.fill: parent
                 model: ablineModel
                 property int currentIndex: -1
+                clip: true
 
                 delegate: RadioButton{
                     id: control
@@ -548,7 +587,7 @@ Dialog {
                         ablineView.currentIndex = index
                     }
 
-                    width:parent.width
+                    width:listrect.width
                     height:50
                     //anchors.fill: parent
                     //color: "light gray"

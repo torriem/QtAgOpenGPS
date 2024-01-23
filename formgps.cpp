@@ -43,6 +43,13 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
     property_setTool_sectionWidthMulti = .5588; //22" rows
     property_setTool_isSectionsNotZones = false; //enable zones
 
+    if (property_setTool_isSectionsNotZones) {
+        tool.sectionCalcWidths();
+    } else {
+        tool.sectionCalcMulti();
+    }
+
+
 
     property_setVehicle_wheelbase = 3.1496;
     property_setVehicle_trackWidth = 2.286;
@@ -688,6 +695,9 @@ void FormGPS::processSectionLookahead() {
     if (frameTimeRough > 50) frameTimeRough = 50;
     frameTime = frameTime * 0.90 + frameTimeRough * 0.1;
 
+    QObject *aog = qmlItem(qml_root, "aog");
+    aog->setProperty("frameTime", frameTime);
+
     lock.unlock();
 
     //this is the end of the "frame". Now we wait for next NMEA sentence with a valid fix.
@@ -996,72 +1006,6 @@ void FormGPS::tmrWatchdog_timeout()
         //integralStatusLeftSide.Text = "I: " + gyd.inty.ToString("N3");
 
         //lblAV.Text = ABLine.angVel
-    }
-
-    //every cycle
-    //we cannot manipulate the GUI from any of the OpenGL drawing methods as they run in a
-    //different thread.
-    //TODO move this entirely to QML
-    if (isAutoSteerBtnOn && !ct.isContourBtnOn) {
-        qmlItem(qml_root, "btnManUturnLeft")->setProperty("visible", true);
-        qmlItem(qml_root, "btnManUturnRight")->setProperty("visible", true);
-    } else {
-        qmlItem(qml_root, "btnManUturnLeft")->setProperty("visible", false);
-        qmlItem(qml_root, "btnManUturnRight")->setProperty("visible", false);
-    }
-}
-
-//force all the buttons same according to two main buttons
-void FormGPS::manualAllBtnsUpdate()
-{
-    manualBtnUpdate(0);
-    manualBtnUpdate(1);
-    manualBtnUpdate(2);
-    manualBtnUpdate(3);
-    manualBtnUpdate(4);
-    manualBtnUpdate(5);
-    manualBtnUpdate(6);
-    manualBtnUpdate(7);
-}
-
-//line up section On Off Auto buttons based on how many there are
-//in QML they are always centered.
-void FormGPS::lineUpManualBtns()
-{
-    QObject* button;
-    for (int b=0; b< MAXSECTIONS-1; b++ ) {
-        button = qmlItem(qml_root,QString("section")+QString::number(b));
-
-        //temporarily enable them so we can test them
-        button->setProperty("enabled", "true");
-        if (b < tool.numOfSections) {
-            button->setProperty("visible","true");
-            if (isJobStarted)
-                button->setProperty("enabled", "true");
-        } else {
-            button->setProperty("visible","false");
-        }
-    }
-}
-
-//udate individual btn based on state after push.
-void FormGPS::manualBtnUpdate(int sectNumber)
-{
-    QObject *button = qmlItem(qml_root,QString("section")+QString::number(sectNumber));
-
-    switch(tool.sectionButtonState.get(sectNumber)) {
-    case btnStates::Off:
-        tool.sectionButtonState.set(sectNumber, btnStates::Auto);
-        button->setProperty("state","auto");
-        break;
-    case btnStates::Auto:
-        tool.sectionButtonState.set(sectNumber, btnStates::On);
-        button->setProperty("state","on");
-        break;
-    case btnStates::On:
-        tool.sectionButtonState.set(sectNumber, btnStates::Off);
-        button->setProperty("state","off");
-        break;
     }
 }
 

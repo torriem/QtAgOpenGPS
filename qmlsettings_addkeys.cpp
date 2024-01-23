@@ -49,7 +49,7 @@ void QMLSettings::setupKeys() {
     addKey(QString("setDisplay_colorNightFrame"),QString("display/colorNightFrame"));
     addKey(QString("setDisplay_colorSectionsDay"),QString("display/colorSectionsDay"));
     addKey(QString("setDisplay_colorFieldDay"),QString("display/colorFieldDay"));
-    addKey(QString("setDisplay_isDayMode"),QString("display,dayMode"));
+    addKey(QString("setDisplay_isDayMode"),QString("display/dayMode"));
     addKey(QString("setDisplay_colorSectionsNight"),QString("display/colorSectionsNight"));
     addKey(QString("setDisplay_colorFieldNight"),QString("display/colorFieldNight"));
     addKey(QString("setDisplay_isAutoDayNight"),QString("display/autoDayNight"));
@@ -250,4 +250,6 @@ void QMLSettings::setupKeys() {
     addKey(QString("setFeature_isAutoSteerOn"),QString("displayFeatures/isAutoSteerOn"));
     addKey(QString("setFeature_isUTurnOn"),QString("displayFeatures/isUTurnOn"));
     addKey(QString("setFeature_isLateralOn"),QString("displayFeatures/isLateralOn"));
+    addKey(QString("setDisplay_useTrackZero"),QString("display/useTrackZero"));
+    addKey(QString("setDisplay_topTrackNum"),QString("display/topTrackNum"));
 }

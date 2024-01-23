@@ -30,6 +30,11 @@ Window {
         onIsJobStartedChanged: {
             console.debug("isJobStarted changed!")
         }
+
+    }
+
+    UnitConversion {
+        id: utils
     }
 
     TimedMessage {
@@ -208,8 +213,41 @@ Window {
                 }
             }
         }
-    }
 
+        LightBar {
+            id: lightbar
+            anchors.top: glcontrolrect.top
+            anchors.horizontalCenter: glcontrolrect.horizontalCenter
+            anchors.margins: 5
+            dotDistance: aog.avgPivDistance / 10 //avgPivotDistance is averaged
+            visible: (aog.offlineDistance != 32000 &&
+                      (settings.setMenu_isLightbarOn === true ||
+                       settings.setMenu_isLightbarOn === "true")) ?
+                         true : false
+        }
+
+        TrackNum {
+           id: tracknum
+            anchors.top: lightbar.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.margins: 5
+
+            font.pixelSize: 24
+
+            //only use dir names for AB Lines with heading
+            useDirNames: (aog.currentABLine > -1)
+            currentTrack: aog.current_trackNum
+
+            trackHeading: aog.currentABLine > -1 ?
+                              aog.currentABLine_heading :
+                              0
+
+            visible: (utils.isTrue(settings.setDisplay_topTrackNum) &&
+                      ((aog.currentABLine > -1) ||
+                       (aog.currentABCurve > -1)))
+            //TODO add contour
+        }
+    }
     //----------------------------------------------------------------------------------------left column
     Item {
 
@@ -451,12 +489,40 @@ Window {
         }
         //------------------------------------------------------------------------------------------right
 
+        Speedometer {
+            anchors.top: parent.top
+            anchors.right: rightColumn.left
+            anchors.topMargin: topLine.height + 10
+            anchors.rightMargin: 10
+            visible: (settings.setMenu_isSpeedoOn === true ||
+                      settings.setMenu_isSpeedoOn === "true")
+
+            speed: utils.speed_to_unit(aog.speedKph)
+        }
+
+        SteerCircle {
+            anchors.bottom: bottomButtons.top
+            anchors.right: rightColumn.left
+            anchors.margins: 10
+
+            visible: true
+            rollAngle: aog.imuRollDegrees
+            steerColor: (aog.steerModuleConnectedCounter > 30 ?
+                             "#f0f218f0" :
+                             (aog.steerSwitchHigh === true ?
+                                  "#faf80007" :
+                                  (aog.isAutoSteerBtnOn === true ?
+                                       "#f80df807" : "#f0f2c007")))
+
+        }
+
+
         ColumnLayout {
             id: rightColumn
             anchors.top: parent.top
-            anchors.topMargin: topLine.height
             anchors.right: parent.right
             anchors.bottom: parent.bottom
+            anchors.topMargin: topLine.height + 6
             anchors.rightMargin: 6
 
             IconButtonText {
@@ -627,6 +693,16 @@ Window {
                             //default to turning everything off
                             btnAutoSteer.checked = false
                             aog.isAutoSteerBtnOn = false
+                        }
+                    }
+                    function onSpeedKphChanged() {
+                        if (btnAutoSteer.checked) {
+                            if (aog.speedKph < settings.setAS_minSteerSpeed) {
+                                aog.isAutoSteerBtnOn = false
+                            } else if (aog.speedKph > settings.setAS_maxSteerSpeed) {
+                                //timedMessage
+                                aog.isAutoSteerBtnOn = false
+                            }
                         }
                     }
                 }
@@ -974,6 +1050,13 @@ Window {
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
                     anchors.right: parent.horizontalCenter
+                    onClicked: {
+                        if (settings.setAS_functionSpeedLimit > aog.speedKph)
+                            aog.uturn(false)
+                        else
+                            timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+                                                    utils.speed_to_unit_text(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
+                    }
                 }
                 Button{
                     background: Rectangle{color: "transparent"}
@@ -982,6 +1065,13 @@ Window {
                     anchors.bottom: parent.bottom
                     anchors.right: parent.right
                     anchors.left: parent.horizontalCenter
+                    onClicked: {
+                        if (settings.setAS_functionSpeedLimit > aog.speedKph)
+                            aog.uturn(true)
+                        else
+                            timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+                                                    utils.speed_to_unit_text(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
+                    }
                 }
             }
             Image{
@@ -1014,6 +1104,13 @@ Window {
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
                     anchors.right: parent.horizontalCenter
+                    onClicked: {
+                        if (settings.setAS_functionSpeedLimit > aog.speedKph)
+                            aog.lateral(false)
+                        else
+                            timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+                                                    aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
+                    }
                 }
                 Button{
                     background: Rectangle{color: "transparent"}
@@ -1022,6 +1119,13 @@ Window {
                     anchors.bottom: parent.bottom
                     anchors.right: parent.right
                     anchors.left: parent.horizontalCenter
+                    onClicked: {
+                        if (settings.setAS_functionSpeedLimit > aog.speedKph)
+                            aog.lateral(false)
+                        else
+                            timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+                                                    aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
+                    }
                 }
             }
         }
@@ -1035,7 +1139,7 @@ Window {
             anchors.leftMargin: 3
             from: -30
             to: 30
-            value: 5
+            value: 0
         }
 
         IconButton {
@@ -1114,7 +1218,7 @@ Window {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             height: parent.height
-            width:parent.width
+            //width:parent.width
             visible:false
         }
         SteerConfigWindow {

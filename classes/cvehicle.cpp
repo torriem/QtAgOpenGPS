@@ -253,13 +253,13 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
 
             if (steerAngle < 0)
             {
-                leftAckerman = 1.25 * -steerAngle;
-                rightAckerman = -steerAngle;
+                leftAckerman = 1.25 * steerAngle;
+                rightAckerman = steerAngle;
             }
             else
             {
-                leftAckerman = -steerAngle;
-                rightAckerman = 1.25 * -steerAngle;
+                leftAckerman = steerAngle;
+                rightAckerman = 1.25 * steerAngle;
             }
 
             //right wheel
@@ -301,7 +301,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
             gltex.append( { QVector3D(-trackWidth, wheelbase * 1.5, 0.0),  QVector2D(0, 0) } );
             gltex.append( { QVector3D(trackWidth, -wheelbase * 1.5, 0.0),  QVector2D(1, 1) } );
             gltex.append( { QVector3D(-trackWidth, -wheelbase * 1.5, 0.0), QVector2D(0, 1) } );
-            gltex.draw(gl,mvp,Textures::TRACTOR,GL_TRIANGLE_STRIP,false); //TODO: colorize
+            gltex.draw(gl,mvp,Textures::HARVESTER,GL_TRIANGLE_STRIP,false); //TODO: colorize
 
         }
         else if (vehicleType == 2) //4WD tractor, articulated
@@ -432,35 +432,37 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
         gldraw.draw(gl,mvp,color,GL_LINE_STRIP,property_setDisplay_lineWidth);
     }
 
-    color.setRgbF(1.269, 1.25, 1.2510, 0.87); //?? why over 1.0?
-    if (curve.isBtnCurveOn && !ct.isContourBtnOn)
-    {
-        if (curve.howManyPathsAway == 0) {
-            drawTextVehicle(camera, gl, mvp, 2, wheelbase+1, "0", 1,
-                            true, color);
-        } else if (curve.howManyPathsAway > 0) {
-            drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
-                            QString("%1").arg(curve.howManyPathsAway,0,'f',0), 1,
-                            true, color);
-        }else {
-            drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
-                            QString("%1L").arg(curve.howManyPathsAway,0,'f',0) + "L", 1,
-                            true, color);
+    if(!(bool)property_setDisplay_topTrackNum) {
+        color.setRgbF(1.269, 1.25, 1.2510, 0.87); //?? why over 1.0?
+        if (curve.isBtnCurveOn && !ct.isContourBtnOn)
+        {
+            if (curve.howManyPathsAway == 0) {
+                drawTextVehicle(camera, gl, mvp, 2, wheelbase+1, "0", 1,
+                                true, color);
+            } else if (curve.howManyPathsAway > 0) {
+                drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
+                                QString("%1").arg(curve.howManyPathsAway,0,'f',0), 1,
+                                true, color);
+            }else {
+                drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
+                                QString("%1L").arg(curve.howManyPathsAway,0,'f',0) + "L", 1,
+                                true, color);
+            }
         }
-    }
-    else if (ABLine.isBtnABLineOn && !ct.isContourBtnOn)
-    {
-        if (ABLine.howManyPathsAway == 0) {
-            drawTextVehicle(camera, gl, mvp, 2, wheelbase+1, "0", 1,
-                            true, color);
-        } else if (ABLine.howManyPathsAway > 0) {
-            drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
-                            QString("%1R").arg(ABLine.howManyPathsAway,0,'f',0), 1,
-                            true, color);
-        }else {
-            drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
-                            QString("%1L").arg(ABLine.howManyPathsAway,0,'f',0), 1,
-                            true, color);
+        else if (ABLine.isBtnABLineOn && !ct.isContourBtnOn)
+        {
+            if (ABLine.howManyPathsAway == 0) {
+                drawTextVehicle(camera, gl, mvp, 2, wheelbase+1, "0", 1,
+                                true, color);
+            } else if (ABLine.howManyPathsAway > 0) {
+                drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
+                                QString("%1R").arg(ABLine.howManyPathsAway,0,'f',0), 1,
+                                true, color);
+            }else {
+                drawTextVehicle(camera, gl, mvp, 2, wheelbase+1,
+                                QString("%1L").arg(ABLine.howManyPathsAway,0,'f',0), 1,
+                                true, color);
+            }
         }
     }
 

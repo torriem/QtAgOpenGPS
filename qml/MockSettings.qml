@@ -207,7 +207,7 @@ Item {
     property int setDisplay_brightnessSystem: 80
     property bool setTool_isSectionsNotZones: true
     property int setTool_numSectionsMulti: 20
-    property var setTool_zones: [ 4,5,10,15,20,0,0,0,0 ]
+    property var setTool_zones: [ 2,10,20,0,0,0,0,0,0 ]
     property double setTool_sectionWidthMulti: 0.5
     property bool setDisplay_isBrightnessOn: true
     property string setKey_hotkeys: "ACFGMNPTYVW12345678"
@@ -232,4 +232,27 @@ Item {
     property point setWindow_abCurveCreate: "40, 40"
     property point setWindow_abLineCreate: "40, 40"
     property double setTool_trailingToolToPivotLength: 1.5
+    property bool setFeature_isHeadlandOn: true
+    property bool setFeature_isTramOn: true
+    property bool setFeature_isBoundaryOn: true
+    property bool setFeature_isBndContourOn: true
+    property bool setFeature_isRecPathOn: true
+    property bool setFeature_isABSmoothOn: true
+    property bool setFeature_isHideContourOn: true
+    property bool setFeature_isWebCamOn: true
+    property bool setFeature_isOffsetFixOn: true
+    property bool setFeature_isAgIOOn: true
+    property bool setFeature_isContourOn: true
+    property bool setFeature_isYouTurnOn: true
+    property bool setFeature_isSteerModeOn: true
+    property bool setFeature_isManualSectionOn: true
+    property bool setFeature_isAutoSectionOn: true
+    property bool setFeature_isCycleLinesOn: true
+    property bool setFeature_isABLineOn: true
+    property bool setFeature_isCurveOn: true
+    property bool setFeature_isAutoSteerOn: true
+    property bool setFeature_isUTurnOn: true
+    property bool setFeature_isLateralOn: true
+    property bool setDisplay_useTrackZero: false
+    property bool setDisplay_topTrackNum: false
 }
