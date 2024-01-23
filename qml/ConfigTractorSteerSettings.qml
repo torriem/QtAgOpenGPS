@@ -28,8 +28,8 @@ Rectangle{
             anchors.top: lightbartitletxt.bottom
             anchors.bottom: parent.bottom
             width: parent.width*.5
-            SpinBoxCustomized{
-                id: lightbarSetting
+            SpinBoxCM{
+                id: lightbarCmPerPixel
                 anchors.top: parent.top
                 anchors.topMargin: 25
                 height: 50
@@ -38,9 +38,15 @@ Rectangle{
                 from: 0
                 value: settings.setDisplay_lightbarCmPerPixel
                 onValueChanged: settings.setDisplay_lightbarCmPerPixel
+                Connections {
+                    target: settings
+                    function onSetDisplay_lightbarCmPerPixelChanged(){
+                        lightbarCmPerPixel.value = settings.setDisplay_lightbarCmPerPixel
+                    }
+                }
                 to: 15
                 editable: true
-                text: qsTr("in  /  pixel")
+                text: qsTr("cm  /  pixel")
             }
         }
     }
@@ -184,8 +190,8 @@ Recording")
             anchors.top: nudgedisttitletxt.bottom
             anchors.bottom: parent.bottom
             width: parent.width*.5
-            SpinBoxOneDecimal{
-                id: nudgedistSetting
+            SpinBoxCM{
+                id: snapDistance
                 anchors.top: parent.top
                 anchors.topMargin: 25
                 height: 50
@@ -194,9 +200,15 @@ Recording")
                 from: 0
                 value: settings.setAS_snapDistance
                 onValueChanged: settings.setAS_snapDistance
+                Connections {
+                    target: settings
+                    function onSetAS_snapDistanceChanged(){
+                        snapDistance.value = settings.setAS_snapDistance
+                    }
+                }
                 to: 1000
                 editable: true
-                    text: qsTr("cm")
+                text: qsTr("cm")
             }
         }
     }

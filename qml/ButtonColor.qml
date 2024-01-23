@@ -37,14 +37,6 @@ Button {
     onCheckedChanged: {
         isChecked = checked
 
-        if (checked && useIconChecked) {
-            content_image.source = iconChecked
-            //console.warn("icon should be ", content_image.source)
-        } else {
-            content_image.source = icon.source
-            //console.warn("icon should be ", content_image.source)
-        }
-
     }
 
 

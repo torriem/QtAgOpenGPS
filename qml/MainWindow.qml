@@ -285,7 +285,14 @@ Window {
                 MenuItem{ text: "Section Colors"}
                 MenuItem{ text: "Top Field View"}
                 MenuItem{ text: "Enter Sim Coords"}
-                MenuItem{ text: "Simulator On"}
+                MenuItem{
+                    text: "Simulator On"
+                    checked: settings.setMenu_isSimulatorOn
+                    onCheckedChanged: {
+                        settings.setMenu_isSimulatorOn = checked
+                        console.log(settings.setMenu_isSimulatorOn)
+                    }
+                }
                 MenuItem{ text: "Reset All"}
                 MenuItem{ text: "HotKeys"}
                 MenuItem{ text: "About..."}
@@ -332,7 +339,7 @@ Window {
                 objectName: "btnSettings"
                 buttonText: qsTr("Settings")
                 icon.source: "/images/Settings48.png"
-                onClicked: config.visible = true
+                onClicked: config.open()
 
             }
             IconButtonText {
@@ -1251,11 +1258,23 @@ Window {
         Config {
             id:config
             objectName: "config"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
+            //anchors.horizontalCenter: parent.horizontalCenter
+            //anchors.bottom: parent.bottom
             height: parent.height
             //width:parent.width
             visible:false
+
+            onAccepted: {
+                console.debug("accepting settings and closing window.")
+                aog.settings_save()
+                aog.settings_reload()
+            }
+            onRejected: {
+                console.debug("rejecing all settings changes.")
+                aog.settings_revert()
+                aog.settings_reload()
+            }
+
         }
         SteerConfigWindow {
             id:steerConfigWindow

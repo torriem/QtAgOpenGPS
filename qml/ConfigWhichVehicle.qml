@@ -8,7 +8,6 @@ import Qt.labs.folderlistmodel 2.2
 /*todo:
   couldn't find the setting for the polygons
   or logNMEA
-  imperial/metric def isn't working right.
   */
 Item {
     anchors.fill: parent
@@ -132,16 +131,43 @@ Item {
                 objectName: "btnMetric"
                 icon.source: "/images/Config/ConD_Metric.png"
                 text: ""
-                checked: settings.setMenu_isMetric
-                onClicked: settings.setMenu_isMetric = true
+                isChecked: utils.isMetric()
+                onClicked:{
+                    imperial.checkable = true
+                    metric.checkable = false
+                    if(utils.isMetric){
+                        settings.setMenu_isMetric = true
+                    }
+                }
+                Connections{
+                    target: settings
+                    function onSetMenu_isMetricChanged(){
+                        metric.checked = settings.setMenu_isMetric
+                    }
+                }
             }
             IconButtonColor{
                 id:imperial
                 objectName: "btnImperial"
                 icon.source: "/images/Config/ConD_Imperial.png"
                 text: ""
-                checked: !settings.setMenu_isMetric
-                onClicked: settings.setMenu_isMetric = false
+                isChecked: !utils.isMetric()
+                onClicked:{
+                    metric.checkable = true
+                    imperial.checkable = false
+                    console.log("starting")
+                    if(utils.isMetric){
+                        settings.setMenu_isMetric = false
+                        console.log(settings.setMenu_isMetric)
+                    }
+                }
+                Connections{
+                    target: settings
+                    function onSetMenu_isMetricChanged(){
+                        imperial.checked = !settings.setMenu_isMetric
+                        console.log(settings.setMenu_isMetric)
+                    }
+                }
             }
         }
         Rectangle{

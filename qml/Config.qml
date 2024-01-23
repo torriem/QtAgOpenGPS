@@ -1,12 +1,18 @@
-import QtQuick 2.0
-import QtQuick.Controls 2.5
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 import QtQuick.Extras 1.4
+import QtQuick.Dialogs 1.3
 import Qt.labs.folderlistmodel 2.2
 
-Item {
+Dialog {
     height: 768
     width:1024
+    modality: Qt.WindowModal
+    standardButtons: StandardButton.NoButton
+    title: qsTr("General Settings")
+
+
     function closeAllConfig(){
         configWhichVehicle.visible = false
         configTractor.visible = false
@@ -30,12 +36,6 @@ Item {
         sourcesMenu.visible = false
         modulesMenu.visible = false
 	}
-    MouseArea{
-        id: catcher
-        //to catch phantom clicks from carrying through to the MainWindow screen
-        anchors.fill: parent
-        onClicked: console.log("caught")
-    }
 
 	Rectangle{
 		id: configMain
@@ -43,10 +43,7 @@ Item {
 		border.color: "black"
 		border.width: 8
 		visible: true
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.verticalCenter: parent.verticalCenter
-		height: 768
-		width:1024
+        anchors.fill: parent
 		Rectangle{
 			id:topLine
 			color:"gray"
@@ -65,11 +62,29 @@ Item {
 			}
 		}
 
+        ScrollView {
+            id: leftColumnView
+            anchors.top: topLine.bottom
+            anchors.left: topLine.left
+            width: 110
+            anchors.bottom: configMain.bottom
+
+            //ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+            clip: true
+            ScrollBar.vertical  : ScrollBar {
+                policy: ScrollBar.AlwaysOn
+                anchors.rightMargin: 10
+                contentItem: Rectangle {
+                    color: "red"
+                }
+            }
+
 		Column{
-			id:leftColumn
-			anchors.top:topLine.bottom
-			anchors.left: topLine.left
-			width: childrenRect.width
+            id:leftColumn
+            anchors.fill: parent
+            //anchors.top:topLine.bottom
+            //anchors.left: topLine.left
+            //width: childrenRect.width
 			visible: true
             spacing: 15
 			IconButtonTransparent{
@@ -305,6 +320,7 @@ Item {
 				}
 			}
 		}
+        }
 
 		Rectangle{
 			id:bottomLine
@@ -330,14 +346,14 @@ Item {
 				width:parent.height
 				height: parent.height
 				icon.source: "/images/OK64"
-				onClicked: config.visible = false
+                onClicked: accept()
 			}
 		}
 		Rectangle{
 			id: mainConfig
 			anchors.top: topLine.bottom
 			anchors.right: parent.right
-			anchors.left: leftColumn.right
+            anchors.left: leftColumnView.right
 			anchors.bottom: bottomLine.top
 			anchors.rightMargin: 8
 			color: "ghostwhite"

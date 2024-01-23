@@ -72,6 +72,7 @@ Rectangle{
             onCheckedChanged: settings.setTool_isSectionOffWhenOut = checked
         }
         SpinBoxOneDecimal{
+            //todo: this should be made english/metric
             objectName: "speedBelowSectionOff"
             from: 0.0
             to: 30

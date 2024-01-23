@@ -663,7 +663,7 @@ public slots:
 
     void TimedMessageBox(int timeout, QString s1, QString s2);
 
-    //AB Lines in GUI
+    //AB Lines in GUI. TODO: rename these, make them consistent
     void update_ABlines_in_qml();
     void update_current_ABline_from_qml();
     void add_new_ABline(QString name, double easting, double northing,double heading);
@@ -671,6 +671,11 @@ public slots:
     void delete_ABLine(int which_line);
     void swap_heading_ABLine(int which_line);
     void change_name_ABLine(int which_line, QString name);
+
+
+    //settings dialog callbacks
+    void on_settings_reload();
+    void on_settings_save();
 
     //left column
     void onBtnAcres_clicked();

@@ -1,7 +1,9 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
-//todo: zone width not done
+/*todo: sections not populated from .config yet
+  also not at all sure about switching these to SpinBoxCM... Don't want to break anything
+  */
 Item {
     id: configImplementSectionsZones
     ListModel {
@@ -79,7 +81,6 @@ Item {
         SpinBox{
             id: numOfZones
 			anchors.verticalCenter: parent.verticalCenter
-            objectName: "numOfZones"
             from: 1
             value: 4
             to: 8
@@ -105,9 +106,8 @@ Item {
                 text: qsTr("Zones")
             }
         }
-        SpinBoxCustomized{
+        SpinBoxCM{
             id: sectionWidthAllZones
-            objectName: "sectionWidthAllZones"
             implicitWidth: 150
             implicitHeight: 50
             from: 10
@@ -115,10 +115,15 @@ Item {
             to: 1000
             text: qsTr("Section Width")
             onValueChanged: settings.setTool_sectionWidthMulti
+            Connections {
+                target: settings
+                function onSetTool_SectionWidthMultiChanged(){
+                    sectionWidthAllZones.value = settings.setTool_sectionWidthMulti
+                }
+            }
         }
         SpinBoxCustomized{
             id: sectionsNumber
-            objectName: "sectionsNumber"
             implicitWidth: 150
             implicitHeight: 50
             from: 1
