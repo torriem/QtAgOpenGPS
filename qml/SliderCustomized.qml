@@ -24,15 +24,16 @@ Slider{
         width: parent.availableWidth
         height: implicitHeight
         radius: 2
-        color: "lightgray"
+        color: "white"
 
     }
 
     handle: Rectangle{
-        height: parent.height
+        height: parent.height - 4
+        radius: 2
         width: 20
         visible: true
-        color: "grey"
+        color: "lightgray"
         x: parent.leftPadding + parent.visualPosition * (parent.availableWidth - width)
         y: parent.topPadding + parent.availableHeight / 2 - height / 2
 
@@ -44,11 +45,15 @@ Slider{
         anchors.bottom: sliderCustomized.bottom
         width: 20
         onClicked: sliderCustomized.value = sliderCustomized.value +1 * multiplicationValue
-        Text{
-            anchors.centerIn: parent
-            text: qsTr(">")
+        background: Rectangle{
+            color: "transparent"
+            Text{
+                anchors.centerIn: parent
+                text: ">"
 
+            }
         }
+
     }
     Button{
         id: leftSliderButton
@@ -57,9 +62,11 @@ Slider{
         onClicked: sliderCustomized.value = sliderCustomized.value -1 * multiplicationValue
         anchors.bottom: sliderCustomized.bottom
         width: 20
-        Text{
-            anchors.centerIn: parent
-            text: qsTr("<")
+        background: Rectangle{
+            Text{
+                anchors.centerIn: parent
+                text: "<"
+            }
         }
     }
     Text{
