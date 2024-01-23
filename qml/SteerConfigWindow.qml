@@ -3,22 +3,28 @@ import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
 
 Item {
+        function hideTabs(){
+            steerTab.visible = false
+            gainTab.visible = false
+            stanleyTab.visible = false
+            ppTab.visible = false
+        }
     id: steerConfigWindow
         Rectangle{
             id: steerConfigFirst
-            color: "ghostwhite"
+            color: "#a6a6a6"
             border.color: "black"
-            border.width: 8
+            border.width: 1
             visible: true
             anchors.fill: parent
             Rectangle{
                 id:topLine
-                color:"gray"
+                color:"white"
                 visible: true
-                width: parent.width-16
+                width: parent.width-2
                 height: 40
                 anchors.top: parent.top
-                anchors.topMargin: 8
+                anchors.topMargin: 1
                 anchors.horizontalCenter: parent.horizontalCenter
                 Text{
                     anchors.left: parent.left
@@ -46,61 +52,60 @@ Item {
                 }
             }
     Item{
+
         id: steerSlidersConfig
         anchors.left: parent.left
         anchors.top: topLine.bottom
         height: 500
         width:450
-            TabBar{
-                id: tabButtons
-                anchors.top: parent.top
-                anchors.topMargin: 10
-                anchors.left: parent.left
-                anchors.leftMargin: 10
-                spacing: 4
-                anchors.bottom: angleInfo.top
-                anchors.bottomMargin: 5
-                width: 400
-                visible: true
-                TabButton{
-
-                    Image {
-                        anchors.fill: parent
-                        source: "/images/Steer/ST_SteerTab.png"
-                    }
+        RowLayout{
+            id: buttonsTop
+            width: parent.width
+            IconButtonColor{
+                id: steerBtn
+                icon.source: "/images/Steer/ST_SteerTab.png"
+                onClicked: {
+                    hideTabs()
+                    steerTab.visible = true
                 }
-                TabButton{
-                    Image{
-                        anchors.fill: parent
-                        source: "/images/Steer/ST_GainTab.png"
-                    }
-                }
-                TabButton{
-                    Image{
-                        anchors.fill: parent
-
-                        source: "/images/Steer/ST_StanleyTab.png"
-                    }
-                }
-                TabButton{
-                    Image{
-                        anchors.fill: parent
-                        source: "/images/Steer/Sf_PPTab.png"
-                    }
-                }
+                implicitWidth: parent.width /4 - 4
             }
-
-            StackLayout{
-                width: tabButtons.width
-                anchors.bottom: tabButtons.bottom
-                anchors.left: tabButtons.left
-                height: parent.height - 180
-                currentIndex: tabButtons.currentIndex
-
+            IconButtonColor{
+                id: gainBtn
+                icon.source: "/images/Steer/ST_GainTab.png"
+                onClicked: {
+                    hideTabs()
+                    gainTab.visible = true
+                }
+                implicitWidth: parent.width /4 - 4
+            }
+            IconButtonColor{
+                id: stanleyBtn
+                icon.source: "/images/Steer/ST_StanleyTab.png"
+                onClicked: {
+                    hideTabs()
+                    stanleyTab.visible = true
+                }
+                implicitWidth: parent.width /4 - 4
+            }
+            IconButtonColor{
+                id: ppBtn
+                icon.source: "/images/Steer/Sf_PPTab.png"
+                onClicked: {
+                    hideTabs()
+                    ppTab.visible = true
+                }
+                implicitWidth: parent.width /4 - 4
+            }
+        }
 
                 Rectangle{
                     id: steerTab
                     visible: true
+                    anchors.top: buttonsTop.bottom
+                    anchors.right: parent.right
+                    anchors.left: parent.left
+                    anchors.bottom: angleInfo.top
                     color: "white"
                     Column{
                         id: steerColumn
@@ -163,7 +168,10 @@ Item {
                 }
                 Rectangle{
                     id: gainTab
-                    height: parent.height
+                    anchors.top: buttonsTop.bottom
+                    anchors.right: parent.right
+                    anchors.left: parent.left
+                    anchors.bottom: angleInfo.top
                     visible: false
                     color: "white"
                     Column{
@@ -217,7 +225,10 @@ Item {
                 }
                 Rectangle{
                     id: stanleyTab
-                    height: parent.height * .66
+                    anchors.top: buttonsTop.bottom
+                    anchors.right: parent.right
+                    anchors.left: parent.left
+                    anchors.bottom: angleInfo.top
                     visible: false
                     color: "white"
                     Column{
@@ -272,6 +283,10 @@ Item {
                 Rectangle{
                     id: ppTab
                     visible: false
+                    anchors.top: buttonsTop.bottom
+                    anchors.right: parent.right
+                    anchors.left: parent.left
+                    anchors.bottom: angleInfo.top
                     color: "white"
                     Column{
                         id: ppColumn
@@ -331,13 +346,12 @@ Item {
                         source: "/images/Steer/Sf_PP.png"
                     }
                 }
-            }
             Rectangle{
                 id: angleInfo
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 8
-                anchors.left: tabButtons.left
-                width: tabButtons.width
+                anchors.left: buttonsTop.left
+                width: buttonsTop.width
                 height: 30
                 MouseArea{
                     anchors.fill: parent
