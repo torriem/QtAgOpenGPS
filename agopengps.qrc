@@ -531,5 +531,6 @@
         <file>qml/LightBar.qml</file>
         <file>qml/OutlineText.qml</file>
         <file>qml/TrackNum.qml</file>
+        <file>qml/DisplayButtons.qml</file>
     </qresource>
 </RCC>
