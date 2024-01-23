@@ -276,6 +276,9 @@ Window {
             }
             Menu{
                 id: fileMenu
+                //anchors.left: buttonsArea.left
+                //anchors.top: buttonsArea.top
+                //anchors. margins: 200
                 MenuItem{ text: "Languages"}
                 MenuItem{ text: "Directories"}
                 MenuItem{ text: "Colors"}
@@ -850,7 +853,7 @@ Window {
             //triState: btnSectionAuto.checked ? false : true
 
             anchors.bottom: bottomButtons.top
-            anchors.bottomMargin:10
+            anchors.bottomMargin: simBarRect.height + 25
             width: 500
         }
 
@@ -1130,7 +1133,7 @@ Window {
             }
         }
 
-        SliderCustomized {
+        SliderCustomized { //quick dirty hack--the up and down buttons change this value, so the speed changes
             id: speedSlider
             objectName: "simSpeed"
             anchors.bottom: bottomButtons.top
@@ -1140,47 +1143,80 @@ Window {
             from: -30
             to: 30
             value: 0
+            visible: false
         }
 
-        IconButton {
-            id: simStopButton
-            objectName: "simStopButton"
-            icon.source: "/images/Stop.png"
-            width: 50
-            height: 50
-            anchors.left: speedSlider.right
-            anchors.bottom: speedSlider.bottom
-            onClicked: {
-                speedSlider.value = 0;
-            }
-        }
-
-        SliderCustomized {
-            id: steerSlider
-            objectName: "simSteer"
-            anchors.bottom: simStopButton.top
-            anchors.leftMargin: 3
-            anchors.left: bottomButtons.left
-            multiplicationValue: 10
-            from: 0
-            to: 600
-            value: 300
-        }
-
-        IconButton {
-            id: centerSteerbutton
-            objectName: "simSteerCenter"
-            width: 50
-            height: 50
-            anchors.left: steerSlider.right
-            anchors.leftMargin: 50
-            anchors.bottom: steerSlider.bottom
-            icon.source: "/images/AutoSteerOn.png"
-            onClicked: {
-                steerSlider.value = 300;
+        Rectangle{
+            id: simBarRect
+            width: childrenRect.width +10
+            height: 60
+            anchors.bottom: bottomButtons.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottomMargin: 10
+            color: "gray"
+            visible: utils.isTrue(settings.setMenu_isSimulatorOn)
+            Connections{
+                target: settings
+                function onSetMenu_isSimulatorOnChanged(){
+                    simBarRect.visible = settings.setMenu_isSimulatorOn
+                }
             }
 
+            Row{
+                spacing: 4
+                width: childrenRect.width
+                height: 50
+                anchors.centerIn: parent
+                Button{
+                    text: "Reset"
+                    height: parent.height
+                    width: parent.height + 15
+                    onClicked: console.log("nothing doing")
+                }
+                Button{
+                    text: "wheelangle"
+                    font.pixelSize: 15
+                    height: parent.height
+                    width: parent.height + 15
+                    onClicked: steerSlider.value = 300
+                }
+                SliderCustomized {
+                    id: steerSlider
+                    objectName: "simSteer"
+                    multiplicationValue: 10
+                    from: 0
+                    to: 600
+                    value: 300
+                }
+                IconButtonTransparent{
+                    height: parent.height
+                    width: parent.height + 15
+                    icon.source: "/images/DnArrow64.png"
+                    onClicked: speedSlider.value -= 5
+                }
+                IconButtonTransparent{
+                    height: parent.height
+                    width: parent.height + 15
+                    icon.source: "/images/AutoStop.png"
+                    onClicked: speedSlider.value = 0
+                }
+                IconButtonTransparent{
+                    height: parent.height
+                    width: parent.height + 15
+                    icon.source: "/images/UpArrow64.png"
+                    onClicked: speedSlider.value += 5
+                }
+                IconButtonTransparent{
+                    height: parent.height
+                    width: parent.height + 15
+                    icon.source: "/images/YouTurn80.png"
+                    onClicked: console.log("nothing")
+                }
+
+            }
+
         }
+
         FieldMenu {
             id: fieldMenu
             objectName: "slideoutMenu"
