@@ -319,26 +319,7 @@ Window {
                 objectName: "btnnavigationSettings"
                 buttonText: qsTr("Display")
                 icon.source: "/images/NavigationSettings.png"
-                property bool hideButtons: true
-
-                onHideButtonsChanged: {
-                    if (hideButtons == true) {
-                        displayButtons.visible = false
-                    }else{
-                        displayButtons.visible = true
-                    }
-                }
-
-                function toggle_displaybuttons(){
-                    if (hideButtons == true) {
-                        hideButtons = false
-                    }else{
-                        hideButtons = true
-                    }
-                }
-                onClicked: {
-                    toggle_displaybuttons()
-                }
+                onClicked: displayButtons.visible = !displayButtons.visible
             }
             IconButtonText {
                 id: btnSettings
@@ -353,56 +334,14 @@ Window {
                 objectName: "btnTools"
                 buttonText: qsTr("Tools")
                 icon.source: "/images/SpecialFunctions.png"
-                //pseudo state
-                property bool hideTools: true
-
-                onHideToolsChanged: {
-                    if (hideTools == true) {
-                        toolsWindow.visible = false
-                    } else {
-                        toolsWindow.visible = true
-                    }
-                }
-
-                function toggle_toolsmenu() {
-                    if (hideTools == true) {
-                        hideTools = false
-                    } else {
-                        hideTools = true
-                    }
-                }
-
-                onClicked: {
-                    toggle_toolsmenu();
-                }
+                onClicked: toolsWindow.visible = !toolsWindow.visible
             }
             IconButtonText{
                 id: btnFieldMenu
                 objectName: "btnFieldMenu"
                 buttonText: qsTr("Field")
                 icon.source: "/images/JobActive.png"
-                //pseudo state
-                property bool hideFieldMenu: true
-
-                onHideFieldMenuChanged: {
-                    if (hideFieldMenu == true) {
-                        fieldMenu.visible = false
-                    } else {
-                        fieldMenu.visible = true
-                    }
-                }
-
-                function toggle_fieldmenu() {
-                    if (hideFieldMenu == true) {
-                        hideFieldMenu = false
-                    } else {
-                        hideFieldMenu = true
-                    }
-                }
-
-                onClicked: {
-                    toggle_fieldmenu();
-                }
+                onClicked: fieldMenu.visible = !fieldMenu.visible
             }
             IconButtonText{
                 id: btnFieldTools
@@ -441,29 +380,7 @@ Window {
                     text: "Recorded Path"
                     icon.source: "/images/RecPath.png"
                     width: 300
-                    //pseudo state
-                    property bool hideRecordMenu: true
-
-                    onHideRecordMenuChanged: {
-                        if (hideRecordMenu == true) {
-                            recordButtons.visible = false
-                        } else {
-                            recordButtons.visible = true
-                        }
-                    }
-
-                    function toggle_recordmenu() {
-                        if (hideRecordMenu == true) {
-                            hideRecordMenu = false
-                        } else {
-                            hideRecordMenu = true
-                        }
-                    }
-
-                    onClicked: {
-                        toggle_recordmenu();
-                    }
-
+                    onClicked: recordButtons.visible = !recordButtons.visible
                 }
             }
 
@@ -478,28 +395,8 @@ Window {
                 objectName: "btnAutosteerConf"
                 buttonText: qsTr("Steer config")
                 icon.source: "/images/AutoSteerConf.png"
-                /*property bool hideSteerMenu: true
-
-                    onHideSteerMenuChanged: {
-                        if (hideSteerMenu == true) {
-                            steerConfigWindow.visible = false
-                        } else {
-                            steerConfigWindow.visible = true
-                        }
-                    }
-
-                    function toggle_steermenu() {
-                        if (hideSteerMenu == true) {
-                            hideSteerMenu = false
-                        } else {
-                            hideSteerMenu = true
-                        }
-                    }*/
-
                 onClicked: {
                         steerConfigWindow.visible = true
-
-                    //toggle_steermenu();
                 }
             }
         }
