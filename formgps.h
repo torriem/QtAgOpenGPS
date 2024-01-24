@@ -14,7 +14,7 @@
 #include <QOpenGLFramebufferObject>
 #include <QOpenGLBuffer>
 #include <QQmlApplicationEngine>
-#include <QSerialPort>
+//#include <QSerialPort>
 
 #include "common.h"
 
