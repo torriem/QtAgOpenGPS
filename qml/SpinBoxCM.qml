@@ -27,9 +27,7 @@ Item {
     Connections {
         target: settings
         function onSetMenu_isMetricChanged() {
-            suppress_onchange_in = true
             spinner.value = utils.cm_to_unit(value)
-            suppress_onchange_in = false
         }
     }
 

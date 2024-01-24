@@ -42,7 +42,7 @@ Rectangle{
             Connections {
                 target: settings
                 function onSetTool_isToolRearFixedChanged(){
-                    checked = utils.isTrue(settings.setTool_isToolRearFixed)
+                    i3pt.checked = utils.isTrue(settings.setTool_isToolRearFixed)
                 }
             }
 		}
@@ -60,7 +60,7 @@ Rectangle{
             Connections {
                 target: settings
                 function onSetTool_isToolFrontChanged(){
-                    checked = utils.isTrue(settings.setTool_isToolFront)
+                    i3ptfront.checked = utils.isTrue(settings.setTool_isToolFront)
                 }
             }
         }
@@ -80,7 +80,7 @@ Rectangle{
                 target: settings
                 function onSetTool_isToolTrailingChanged(){
                     if (!utils.isTrue(settings.setTool_isToolTBT))
-                        checked = utils.isTrue(settings.setTool_isToolTrailing)
+                        itrailed.checked = utils.isTrue(settings.setTool_isToolTrailing)
                 }
             }
         }
@@ -92,13 +92,13 @@ Rectangle{
             checkable: true
             checked: utils.isTrue(settings.setTool_isToolTBT)
             onCheckedChanged: {
-                settings.setTool_isToolTrailing = true
                 settings.setTool_isToolTBT = true
+                settings.setTool_isToolTrailing = true
             }
             Connections {
                 target: settings
                 function onSetTool_isToolTBTChanged(){
-                    checked = utils.isTrue(settings.setTool_isToolTBT)
+                    iTBT.checked = utils.isTrue(settings.setTool_isToolTBT)
                 }
             }
         }

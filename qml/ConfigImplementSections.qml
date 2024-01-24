@@ -75,7 +75,7 @@ Rectangle{
             colorChecked1: "green"
             colorChecked2: "green"
             colorChecked3: "green"
-            checked: utils.istrue(settings.setTool_isSectionOffWhenOut)
+            checked: utils.isTrue(settings.setTool_isSectionOffWhenOut)
             onCheckedChanged: settings.setTool_isSectionOffWhenOut = checked
             Connections {
                 target: settings
@@ -87,11 +87,13 @@ Rectangle{
         SpinBoxOneDecimal{
             //todo: this should be made english/metric
             id: slowSpeedCutoff
-            from: utils.speed_to_unit(0.0)
+            from: utils.speed_to_unit(0)
             to: utils.speed_to_unit(30)
             value: utils.speed_to_unit(Number(settings.setVehicle_slowSpeedCutoff))
             anchors.bottom: parent.bottom
             onValueModified: settings.setVehicle_slowSpeedCutoff = utils.speed_from_unit(value)
+            text: utils.speed_unit()
+
             Connections {
                 target: settings
                 function onSetVehicle_slowSpeedCutoffChanged() {
@@ -101,18 +103,10 @@ Rectangle{
 
             Image{
                 anchors.bottom: parent.top
-                width: parent.width
-                height: parent.height +30
+                anchors.horizontalCenter: parent.horizontalCenter
                 source: "/images/SectionOffBelow.png"
             }
         }
-    }
-    Text{
-        id: bottomRightText
-        anchors.right: parent.right
-        text: qsTr("Km/H")
-        anchors.verticalCenter: bottomRow.verticalCenter
-        font.pixelSize: 25
     }
     ConfigImplementSectionsSection{
         id: configImplementSectionsSection

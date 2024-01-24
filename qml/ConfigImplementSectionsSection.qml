@@ -16,74 +16,94 @@ Item{
         if (visible) loadModelFromSettings()
     }
 
+    property int totalWidth: 0
+
     function loadModelFromSettings() {
         if(!utils.isTrue(settings.setTool_isSectionsNotZones))
             return
 
         section_model.clear()
 
+        totalWidth = 0
+
         var w = Number(settings.setSection_position2) - Number(settings.setSection_position1)
         section_model.append({secNum: 0, width: w })
+        totalWidth += w
         if(Number(settings.setVehicle_numSections < 2)) return
 
         w = Number(settings.setSection_position3) - Number(settings.setSection_position2)
         section_model.append({secNum: 1, width: w })
+        totalWidth += w
         if(Number(settings.setVehicle_numSections < 3)) return
 
         w = Number(settings.setSection_position4) - Number(settings.setSection_position3)
         section_model.append({secNum: 2, width: w })
+        totalWidth += w
         if(Number(settings.setVehicle_numSections < 4)) return
 
         w = Number(settings.setSection_position5) - Number(settings.setSection_position4)
         section_model.append({secNum: 3, width: w })
+        totalWidth += w
         if(Number(settings.setVehicle_numSections < 5)) return
 
         w = Number(settings.setSection_position6) - Number(settings.setSection_position5)
         section_model.append({secNum: 4, width: w })
+        totalWidth += w
         if(Number(settings.setVehicle_numSections < 6)) return
 
         w = Number(settings.setSection_position7) - Number(settings.setSection_position6)
         section_model.append({secNum: 5, width: w })
+        totalWidth += w
         if(Number(settings.setVehicle_numSections < 7)) return
 
         w = Number(settings.setSection_position8) - Number(settings.setSection_position7)
         section_model.append({secNum: 6, width: w })
+        totalWidth += w
         if(Number(settings.setVehicle_numSections < 8)) return
 
         w = Number(settings.setSection_position9) - Number(settings.setSection_position8)
         section_model.append({secNum: 7, width: w })
+        totalWidth += w
         if(Number(settings.setVehicle_numSections < 9)) return
 
         w = Number(settings.setSection_position10) - Number(settings.setSection_position9)
         section_model.append({secNum: 8, width: w })
+        totalWidth += w
         if(Number(settings.setVehicle_numSections < 10)) return
 
         w = Number(settings.setSection_position11) - Number(settings.setSection_position10)
         section_model.append({secNum: 9, width: w })
+        totalWidth += w
         if(Number(settings.setVehicle_numSections < 11)) return
 
         w = Number(settings.setSection_position12) - Number(settings.setSection_position11)
         section_model.append({secNum: 10, width: w })
+        totalWidth += w
         if(Number(settings.setVehicle_numSections < 12)) return
 
         w = Number(settings.setSection_position13) - Number(settings.setSection_position12)
         section_model.append({secNum: 11, width: w })
+        totalWidth += w
         if(Number(settings.setVehicle_numSections < 13)) return
 
         w = Number(settings.setSection_position14) - Number(settings.setSection_position13)
         section_model.append({secNum: 12, width: w })
+        totalWidth += w
         if(Number(settings.setVehicle_numSections < 14)) return
 
         w = Number(settings.setSection_position15) - Number(settings.setSection_position14)
         section_model.append({secNum: 13, width: w })
+        totalWidth += w
         if(Number(settings.setVehicle_numSections < 15)) return
 
         w = Number(settings.setSection_position16) - Number(settings.setSection_position15)
         section_model.append({secNum: 14, width: w })
+        totalWidth += w
         if(Number(settings.setVehicle_numSections < 16)) return
 
         w = Number(settings.setSection_position17) - Number(settings.setSection_position16)
         section_model.append({secNum: 15, width: w })
+        totalWidth += w
     }
 
     function saveModelToSettings() {
@@ -93,6 +113,7 @@ Item{
             w += section_model.get(i).width
 
         settings.setVehicle_toolWidth = w;
+        totalWidth = w
         var pos = -w/2
         var n = Number(settings.setVehicle_numSections)
 
@@ -351,10 +372,10 @@ Item{
         Column{
             spacing: 8
             Text {
-                text: qsTr("000")
+                text: utils.cm_to_unit_string(totalWidth,0)
             }
             Text {
-                text: qsTr("Inch")
+                text: utils.cm_unit()
                 color: "green"
             }
         }

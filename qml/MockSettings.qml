@@ -156,7 +156,7 @@ Item {
     property bool setVehicle_isSteerAxleAhead: true
     property string setVehicle_vehicleName: "Default Vehicle"
     property double setVehicle_slowSpeedCutoff: 0.5
-    property double setVehicle_tankTrailingHitchLength: 3
+    property double setVehicle_tankTrailingHitchLength: -3
     property int setVehicle_minCoverage: 100
     property double setVehicle_goalPointLookAhead: 3
     property double setVehicle_maxAngularVelocity: 0.64

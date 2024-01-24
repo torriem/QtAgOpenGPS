@@ -20,7 +20,10 @@ Dialog {
         configTractorDimensions.visible = false
         configTractorSteerSettings.visible = false
         configImplement.visible = false
-        configImplementDimensions.visible = false
+        configImplementRearDimensions.visible = false
+        configImplementFrontDimensions.visible = false
+        configImplementTBTDimensions.visible = false
+        configImplementTrailingDimensions.visible = false
         configImplementSections.visible = false
         configImplementSwitches.visible = false
         configImplementTiming.visible = false
@@ -254,9 +257,19 @@ Dialog {
 
                     onCheckedChanged: {
                         if(checked) {
-                            configImplementDimensions.visible = true
+                            if (utils.isTrue(settings.setTool_isToolRearFixed))
+                                configImplementRearDimensions.visible = true
+                            else if (utils.isTrue(settings.setTool_isToolFront))
+                                configImplementFrontDimensions.visible = true
+                            else if (utils.isTrue(settings.setTool_isToolTrailing) && ! utils.isTrue(settings.setTool_isToolTBT))
+                                configImplementTrailingDimensions.visible = true
+                            else
+                                configImplementTBTDimensions.visible = true
                         } else {
-                            configImplementDimensions.visible = false
+                            configImplementRearDimensions.visible = false
+                            configImplementFrontDimensions.visible = false
+                            configImplementTrailingDimensions.visible = false
+                            configImplementTBTDimensions.visible = false
                         }
 					}
 				}
@@ -443,6 +456,15 @@ Dialog {
 				icon.source: "/images/OK64"
                 onClicked: {
                     closeAllConfig()
+                    //fix up signs on implement dimensions
+                    if ((utils.isTrue(settings.setTool_isToolFront) && Number(settings.setVehicle_hitchLength < 0)) ||
+                        (!utils.isTrue(settings.setTool_isToolFront) && Number(settings.setVehicle_hitchLength) > 0)) {
+                        //if front-mounted tool, make sure the hitchLength is positive and if rear-mounted, make sure
+                        //hitchLength is negative
+                        settings.setVehicle_hitchLength = -Number(settings.setVehicle_hitchLength)
+                        //console.debug("corrected sign on hitchLength")
+                    }
+
                     accept()
                 }
 			}
@@ -494,8 +516,26 @@ Dialog {
 			anchors.margins:1
 			visible: false
 		}
-		ConfigImplementDimensions{
-			id:configImplementDimensions
+        ConfigImplementFrontDimensions{
+            id:configImplementFrontDimensions
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: false
+        }
+        ConfigImplementRearDimensions{
+            id:configImplementRearDimensions
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: false
+        }
+        ConfigImplementTBTDimensions{
+            id:configImplementTBTDimensions
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: false
+        }
+        ConfigImplementTrailingDimensions{
+            id:configImplementTrailingDimensions
 			anchors.fill: mainConfig
 			anchors.margins:1
 			visible: false
