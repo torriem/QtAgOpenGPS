@@ -12,7 +12,10 @@ Rectangle{
     visible: false
     Image {
         id: dimImage
-        source: "/images/RadiusWheelBase.png"
+        source: Number(settings.setVehicle_vehicleType === 0) ? "/images/RadiusWheelBase.png":
+                Number(settings.setVehicle_vehicleType === 1) ? "/images/RadiusWheelBaseHarvester.png" :
+                Number(settings.setVehicle_vehicleType === 2) ? "/images/RadiusWheelBase4WD.png":
+                "/images/Config/ConSt_Mandatory.png"
         width: 350
         height: 350
         anchors.centerIn: parent
