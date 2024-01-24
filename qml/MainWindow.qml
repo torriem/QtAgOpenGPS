@@ -124,7 +124,7 @@ Window {
             implicitWidth: 75
             background: Rectangle{
                 Text {
-                    text: qsTr("0")
+                    text: aog.speedKph
                     font.bold: true
                     anchors.centerIn: parent
                     font.pixelSize: 35
