@@ -20,9 +20,22 @@ Window {
 
         contentWidth: 800
         contentHeight: 600
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-        ScrollBar.vertical.position: scrollPosition
+
+        ScrollBar.vertical {
+            id: vsb
+            policy: ScrollBar.AlwaysOn
+            active: vbar.active
+            position: sv.scrollPosition
+
+            onPositionChanged: {
+                console.debug(vsb.position, vsb.visualSize)
+
+            }
+        }
+
+        onScrollPositionChanged: {
+            console.debug(scrollPosition)
+        }
 
         Rectangle {
             id: r
@@ -32,6 +45,22 @@ Window {
             anchors.margins: 10
 
             color: "red"
+            SpinBox {
+                id: spin1
+                x: 50
+                y: 100
+                to: 100
+                from: 0
+                editable: true
+
+                onActiveFocusChanged: function(focused) {
+                    if  (focused) {
+                        console.debug("y position is " + spin1.y, sv.height, spin1.y / 600)
+                        sv.scrollPosition = spin1.y / 600 * (1 - vsb.visualSize)
+
+                    }
+                }
+            }
             SpinBox {
                 id: spin
                 x: 50
@@ -43,7 +72,7 @@ Window {
                 onActiveFocusChanged: function(focused) {
                     if  (focused) {
                         console.debug("y position is " + spin.y)
-                        sv.scrollPosition = (spin.y / sv.height)
+                        sv.scrollPosition = spin.y / 600 * (1 - vsb.visualSize)
 
                     }
                 }
