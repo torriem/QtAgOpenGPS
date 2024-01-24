@@ -22,7 +22,6 @@ Window {
     //    id: settings
     //}
 
-
     AOGInterface {
         id: aog
         objectName: "aog"
@@ -157,6 +156,13 @@ Window {
                 height: parent.height
                 icon.source: "/images/WindowMaximize.png"
                 width: 75
+                onClicked: {
+                    console.debug("Visibility is " + mainWindow.visibility)
+                    if (mainWindow.visibility == Window.FullScreen)
+                        mainWindow.showNormal()
+                    else
+                        mainWindow.showFullScreen()
+                }
             }
             IconButtonTransparent{
                 objectName: "btnWindowClose"
