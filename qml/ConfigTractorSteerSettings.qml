@@ -36,12 +36,12 @@ Rectangle{
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: 0
-                value: settings.setDisplay_lightbarCmPerPixel
-                onValueChanged: settings.setDisplay_lightbarCmPerPixel
+                value: Number(settings.setDisplay_lightbarCmPerPixel)
+                onValueModified: { settings.setDisplay_lightbarCmPerPixel = value }
                 Connections {
                     target: settings
                     function onSetDisplay_lightbarCmPerPixelChanged(){
-                        lightbarCmPerPixel.value = settings.setDisplay_lightbarCmPerPixel
+                        lightbarCmPerPixel.setValue(Number(settings.setDisplay_lightbarCmPerPixel))
                     }
                 }
                 to: 15
@@ -80,8 +80,15 @@ Rectangle{
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: 200
-                value: settings.setAB_lineLength
-                onValueChanged: settings.setAB_lineLength
+                value: Number(settings.setAB_lineLength)
+                onValueModified: { settings.setAB_lineLength = value }
+                Connections {
+                    target: settings
+                    function onSetAB_lineLengthChanged() {
+                        linelengthSetting.setValue(Number(settings.setAB_lineLength))
+                    }
+                }
+
                 to: 5000
                 text: qsTr("cm")
             }
@@ -97,17 +104,32 @@ Rectangle{
         Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
-            width: 100
-            height: 100
-            radius: 5
+            width: 102
+            height: 102
+            radius: 0
             border.color: "black"
             IconButtonTransparent{
                 anchors.fill: parent
+                anchors.margins: 1
+                radius: 0
+                checkable: true
+                checked: utils.isTrue(settings.setAS_isConstantContourOn)
                 icon.source: "/images/ContourOn.png"
+                onCheckedChanged: {
+                    settings.setAS_isConstantContourOn = checked
+                }
+                Connections {
+                    target: settings
+                    function onSetAS_isConstantContourOnChanged() {
+                        checked = utils.isTrue(settings.setAS_isConstantContourOn)
+                    }
+                }
+
             }
             Text{
-                text: qsTr("Constant Contour
-Recording")
+                width: 150
+                wrapMode: Text.WordWrap
+                text: qsTr("Constant Contour Recording")
                 anchors.bottom: parent.top
                 anchors.left: parent.left
             }
@@ -115,13 +137,26 @@ Recording")
         Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            width: 100
-            height: 100
-            radius: 5
+            width: 102
+            height: 102
+            radius: 0
             border.color: "black"
             IconButtonTransparent{
                 anchors.fill: parent
+                anchors.margins: 1
                 icon.source: "/images/AutoSteerOn.png"
+                radius: 0
+                checkable: true
+                checked: utils.isTrue(settings.setAS_isAutoSteerAutoOn)
+                onCheckableChanged: {
+                    settings.setAS_isAutoSteerAutoOn = checked
+                }
+                Connections {
+                    target: settings
+                    function onSetAS_isAutoSteerAutoOnChanged() {
+                        checked = utils.isTrue(settings.setAS_isAutoSteerAutoOn)
+                    }
+                }
             }
             Text{
                 text: qsTr("Steer Switch Control")
@@ -161,8 +196,15 @@ Recording")
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: 1
-                value: settings.setDisplay_lineWidth
-                onValueChanged: settings.setDisplay_lineWidth
+                value: Number(settings.setDisplay_lineWidth)
+                onValueModified: { settings.setDisplay_lineWidth = value}
+                Connections {
+                    target: settings
+                    function onSetDisplay_lineWidthChanged() {
+                        linewidthSetting.setValue(Number(settings.setDisplay_lineWidth))
+                    }
+                }
+
                 to: 8
                 text: qsTr("pixels")
             }
@@ -198,12 +240,12 @@ Recording")
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: 0
-                value: settings.setAS_snapDistance
-                onValueChanged: settings.setAS_snapDistance
+                value: Number(settings.setAS_snapDistance)
+                onValueModified: { settings.setAS_snapDistance = value }
                 Connections {
                     target: settings
                     function onSetAS_snapDistanceChanged(){
-                        snapDistance.value = settings.setAS_snapDistance
+                        snapDistance.setValue(Number(settings.setAS_snapDistance))
                     }
                 }
                 to: 1000
@@ -242,8 +284,14 @@ Recording")
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: .1
-                value: settings.setAS_guidanceLookAheadTime
-                onValueChanged: settings.setAS_guidanceLookAheadTime
+                value: Number(settings.setAS_guidanceLookAheadTime)
+                onValueModified: {settings.setAS_guidanceLookAheadTime = value }
+                Connections {
+                    target: settings
+                    function onSetAS_guidanceLookAheadTimeChanged() {
+                        lineacqLAheadSetting.setValue(Number(settings.setAS_guidanceLookAheadTime))
+                    }
+                }
                 to: 10
                 text: qsTr("Seconds")
             }

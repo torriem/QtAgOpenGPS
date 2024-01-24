@@ -17,7 +17,7 @@ Rectangle{
         spacing: 90
         Button{
             function toggleZones(){
-                if( settings.setTool_isSectionsNotZones){
+                if( utils.isTrue(settings.setTool_isSectionsNotZones)){
                     image.source = "/images/Config/ConT_Symmetric.png"
                     settings.setTool_isSectionsNotZones = false
                     console.log("zones")
@@ -51,10 +51,16 @@ Rectangle{
             objectName: "percentConverage"
             from: 0
             to: 100
-            value: settings.setVehicle_minCoverage
+            value: Number(settings.setVehicle_minCoverage)
             anchors.bottom: parent.bottom
             text: qsTr("% Coverage")
-            onValueChanged: settings.setVehicle_minCoverage
+            onValueModified: settings.setVehicle_minCoverage = value
+            Connections {
+                target: settings
+                function onSetVehicle_minCoverageChanged() {
+                    percentCoverage.setValue(Number(settings.setVehicle_minCoverage))
+                }
+            }
         }
         IconButton{
             objectName: "boundaryOff"
@@ -64,21 +70,35 @@ Rectangle{
             implicitWidth: 100
             implicitHeight: 100
             border: 1
+            radius: 0
             color3: "white"
             colorChecked1: "green"
             colorChecked2: "green"
             colorChecked3: "green"
-            checked: settings.setTool_isSectionOffWhenOut
+            checked: utils.istrue(settings.setTool_isSectionOffWhenOut)
             onCheckedChanged: settings.setTool_isSectionOffWhenOut = checked
+            Connections {
+                target: settings
+                function onSetTool_isSectionOffWhenOutChanged() {
+                    checked = utils.isTrue(settings.setTool_isSectionOffWhenOut)
+                }
+            }
         }
         SpinBoxOneDecimal{
             //todo: this should be made english/metric
-            objectName: "speedBelowSectionOff"
-            from: 0.0
-            to: 30
-            value: settings.setVehicle_slowSpeedCutoff
+            id: slowSpeedCutoff
+            from: utils.speed_to_unit(0.0)
+            to: utils.speed_to_unit(30)
+            value: utils.speed_to_unit(Number(settings.setVehicle_slowSpeedCutoff))
             anchors.bottom: parent.bottom
-            onValueChanged: settings.setVehicle_slowSpeedCutoff = value
+            onValueModified: settings.setVehicle_slowSpeedCutoff = utils.speed_from_unit(value)
+            Connections {
+                target: settings
+                function onSetVehicle_slowSpeedCutoffChanged() {
+                    slowSpeedCutoff.setValue(utils.speed_to_unit(Number(settings.setVehicle_slowSpeedCutoff)))
+                }
+            }
+
             Image{
                 anchors.bottom: parent.top
                 width: parent.width

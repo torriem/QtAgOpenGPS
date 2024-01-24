@@ -22,14 +22,14 @@ Rectangle{
         anchors.verticalCenter: dimImage.verticalCenter
         anchors.right: dimImage.left
         from: 20
-        value: settings.setVehicle_wheelbase
+        value: Number(settings.setVehicle_wheelbase)
         Connections {
             target: settings
             function onSetVehicle_wheelbaseChanged(){
-                wheelbase.value = settings.setVehicle_wheelbase
+                wheelbase.setValue(Number(settings.setVehicle_wheelbase))
             }
         }
-        onValueChanged: settings.setVehicle_wheelbase = value
+        onValueModified: settings.setVehicle_wheelbase = value
         to: 787
             text: qsTr("Wheelbase")
     }
@@ -38,12 +38,12 @@ Rectangle{
         anchors.top: dimImage.top
         anchors.left: dimImage.right
         from: 50
-        value: settings.setVehicle_trackWidth
-        onValueChanged: settings.setVehicle_trackWidth = value
+        value: Number(settings.setVehicle_trackWidth)
+        onValueModified: settings.setVehicle_trackWidth = value
         Connections {
             target: settings
             function onSetVehicle_trackWidthChanged(){
-                trackWidth.value = settings.setVehicle_trackWidth
+                trackWidth.setValue(Number(settings.setVehicle_trackWidth))
             }
         }
         to: 9999
@@ -54,12 +54,12 @@ Rectangle{
         anchors.bottom: dimImage.bottom
         anchors.left: dimImage.right
         from: 50
-        value: settings.setVehicle_minTurningRadius
-        onValueChanged: settings.setVehicle_minTurningRadius = value
+        value: Number(settings.setVehicle_minTurningRadius)
+        onValueModified: settings.setVehicle_minTurningRadius = value
         Connections {
             target: settings
             function onSetVehicle_minTurningRadiusChanged(){
-                minTurningRadius.value = settings.setVehicle_minTurningRadius
+                minTurningRadius.setValue(Number(settings.setVehicle_minTurningRadius))
             }
         }
         to: 9999

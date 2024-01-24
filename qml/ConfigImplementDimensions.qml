@@ -25,13 +25,13 @@ Rectangle{
             anchors.right: parent.right
             anchors.rightMargin: 500
             from: 10
-            value: settings.setVehicle_hitchLength
             to:3000
-            onValueChanged: settings.setVehicle_hitchLength = value
+            value: -Number(settings.setVehicle_hitchLength)
+            onValueModified: settings.setVehicle_hitchLength = -value
             Connections {
                 target: settings
                 function onSetVehicle_hitchLengthChanged(){
-                    hitchLength.value = settings.setVehicle_hitchLength
+                    hitchLength.setValue(-Number(settings.setVehicle_hitchLength))
                 }
             }
         }
@@ -41,13 +41,13 @@ Rectangle{
             anchors.right: parent.right
             anchors.rightMargin: 50
             from: 10
-            value: settings.setTool_toolTrailingHitchLength
             to:3000
-            onValueChanged: settings.setTool_toolTrailingHitchLength = value
+            value: -Number(settings.setTool_toolTrailingHitchLength)
+            onValueModified: settings.setTool_toolTrailingHitchLength = -value
             Connections {
                 target: settings
                 function onSetTool_toolTrailingHitchLengthChanged(){
-                    toolTrailingHitchLength.value = settings.setTool_toolTrailingHitchLength
+                    toolTrailingHitchLength.setValue(-Number(settings.setTool_toolTrailingHitchLength))
                 }
             }
         }

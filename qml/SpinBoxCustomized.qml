@@ -3,33 +3,24 @@ import QtQuick.Controls 2.5
 
 Item {
     id: spinBox_Customized
-    property int from: -1
-    property int value: 1
-    property int to: 10
+    property int from
+    property int value
+    property int to
     property string text: ""
 	property int stepSize: 1
     property bool editable: true
-    property bool suppress_onchange_in: false
-    property bool suppress_onchange_out: false
+
+    signal valueModified()
+
     width: spinner.width
     height: spinner.height + spin_text.height + spin_message.height + 20
 
-    onValueChanged: {
-        //value changed from the outside; we need
-        //the spin box to update itself but not set
-        //off the spinner's onValueChanged routine
-        //and try to set this value again, causing a loop
-        if (suppress_onchange_out)
-            return; //do nothing since it was the spinner that originated the change
+    //this method sets the spinner value without firing the
+    //valueChanged signal
 
-        //otherwise it came from outside
-
-        if (value < from) value = from
-        if (value > to) value = to
-
-        suppress_onchange_in = true
+    function setValue(value) {
         spinner.value = value
-        suppress_onchange_in = false
+
     }
 
     SpinBox {
@@ -46,8 +37,10 @@ Item {
             //console.debug("enter was pressed.  ignore it.")
         }
 
-        onValueChanged: {
-                spinBox_Customized.value = value
+        onValueModified: {
+            //this only fires when the user interactively changes the spinbox.
+
+            spinBox_Customized.value = value
             if (value == spinBox_Customized.from) {
                 spin_message.visible = true
                 spin_message.text = "Must be "+from+" or greater"
@@ -58,19 +51,8 @@ Item {
                 spin_message.visible = false
             }
 
-            if(spinBox_Customized.suppress_onchange_in) {
-                //console.debug("suppressing inner spinbox onchange since change originated externally")
-                return
-            }
+            spinBox_Customized.valueModified()
 
-            //if this change was caused by the user manipulating the
-            //spin box, we need to update the Item's value so that
-            //users can react to it.
-            spinBox_Customized.suppress_onchange_out = true
-            spinBox_Customized.value = spinner.value
-            spinBox_Customized.suppress_onchange_out = false
-
-            //console.debug("SpinBox value changed; updating customized value")
         }
     }
 

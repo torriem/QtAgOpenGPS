@@ -26,6 +26,13 @@ Item {
     height: 100
     property real realValue: value / 10
 
+    signal valueModified()
+
+    function setValue(value) {
+        //TODO.  Is this right?
+        spinner.value = value
+    }
+
     SpinBox {
         id: spinner
         from: spinBox_singledigit.from * 10
@@ -37,7 +44,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
 		property int decimals: spinBox_singledigit.decimals
 
-        onValueChanged: {
+        onValueModified: {
             if (value == spinner.from) {
                 spinBox_singledigit.value = value
                 spin_message.visible = true
@@ -49,9 +56,9 @@ Item {
                 spin_message.visible = false
             }
 
-            //some validation here
-            //emit signal.  We know our section number because it's in the model
-		}
+            spinBox_singledigit.valueModified()
+        }
+
 		textFromValue: function(value, locale) {
 			return Number(value / 10).toLocaleString(locale, 'f', spinner.decimals)
 		}

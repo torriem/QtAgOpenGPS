@@ -35,6 +35,15 @@ Dialog {
 		implementMenu.visible = false
         sourcesMenu.visible = false
         modulesMenu.visible = false
+
+        vehicleMenu.checked = false
+        implementMenuBtn.checked = false
+        sourcesMenubtn.checked = false
+        uTurnMenu.checked = false
+        modulesMenubtn.checked = false
+        tramMenu.checked = false
+        featureMenu.checked = false
+
 	}
 
 	Rectangle{
@@ -87,6 +96,11 @@ Dialog {
             //width: childrenRect.width
 			visible: true
             spacing: 15
+            ButtonGroup {
+                buttons: [ vehicleMenu, implementMenuBtn, sourcesMenubtn, uTurnMenu,  modulesMenubtn, tramMenu, featureMenu ]
+
+
+            }
 			IconButtonTransparent{
 				id:vehicleMenu
 				objectName: "btnVehicleMenu"
@@ -94,60 +108,92 @@ Dialog {
 				width:100
 				height:75
 
-				function toggle_configTractor(){
-					if(tractorMenu.visible == true){
-						closeAllConfig()
-						configWhichVehicle.visible = true
-						tractorMenu.visible = false
-					}else{
-						closeAllConfig()
-						configTractor.visible = true
-						tractorMenu.visible = true
-					}
-				}
+                //colorChecked1: "#aaaaaa"
+                //colorChecked2: "#aaaaaa"
+                //colorChecked3: "#777777"
+                checkable: true
+                radius: 0
+
 				onClicked: {
-					toggle_configTractor()
+                    if(tractorMenu.visible == true){
+                        closeAllConfig()
+                        configWhichVehicle.visible = true //this is the default page when nothing is checked
+                        tractorMenu.visible = false
+                    }else{
+                        closeAllConfig()
+                        configTractor.visible = true
+                        tractorMenu.visible = true
+                        vehicleMenu.checked = true
+                        configTrSettings.checked = true
+                    }
 				}
 			}
 			Column{
+                x: 25
 				id: tractorMenu
-				visible: false
-				height: children.height
+                visible: false
+                height: children.height
+
+                ButtonGroup {
+                    buttons: [configTrSettings, configTrDim, btnconfigTrAntDim, btnconfigTrSteerSett ]
+                }
+
 				IconButton{
 					id: configTrSettings
-					icon.source: "/images/Config/ConS_VehicleConfig.png"
-					onClicked:{
-						closeAllConfig()
-						configTractor.visible = true
-						tractorMenu.visible = true
+                    icon.source: "/images/Config/ConS_VehicleConfig.png"
+                    checkable: true
+                    checked: false
+
+                    onCheckedChanged: {
+                        if (checked) {
+                            configTractor.visible = true
+                        } else {
+                            configTractor.visible = false
+                        }
 					}
 				}
 				IconButton{
 					id: configTrDim
 					icon.source: "/images/Config/ConS_ImplementHitch.png"
-					onClicked: {
-						closeAllConfig()
-						configTractorDimensions.visible = true
-						tractorMenu.visible = true
+                    checkable: true
+                    checked: false
+
+                    onCheckedChanged: {
+                        if (checked) {
+                            configTractorDimensions.visible = true
+                        } else {
+                            configTractorDimensions.visible = false
+                        }
 					}
 				}
 				IconButton{
 					id: btnconfigTrAntDim
 					icon.source: "/images/Config/ConS_ImplementAntenna.png"
-					onClicked: {
-						closeAllConfig()
-						configTractorAntenna.visible = true
-						tractorMenu.visible = true
+
+                    checkable: true
+                    checked: false
+
+                    onCheckedChanged: {
+                        if (checked) {
+                            configTractorAntenna.visible = true
+                        } else {
+                            configTractorAntenna.visible = false
+                        }
 					}
 				}
 				IconButton{
 					id: btnconfigTrSteerSett
 					icon.source: "/images/Config/ConS_ModulesSteer.png"
 
-					onClicked: {
-						closeAllConfig()
-						configTractorSteerSettings.visible = true
-						tractorMenu.visible = true
+                    checkable: true
+                    checked: false
+
+                    onCheckedChanged: {
+                        if (checked) {
+                            configTractorSteerSettings.visible = true
+                        } else {
+                            configTractorSteerSettings.visible = false
+                        }
 					}
 				}
 			}
@@ -157,60 +203,104 @@ Dialog {
 				icon.source: "/images/Config/Con_ImplementMenu.png"
 				width:100
 				height:75
-				onClicked:{
-					closeAllConfig()
-					implementMenu.visible = true
-					configImplement.visible = true
+                checkable: true
+
+                radius: 0
+
+                onClicked:{
+                    if(implementMenu.visible == true){
+                        //close the menu
+                        closeAllConfig()
+                        configWhichVehicle.visible = true //show default page
+                        implementMenu.visible = false
+                    }else{
+                        closeAllConfig()
+                        configImplement.visible = true
+                        implementMenu.visible = true
+                        implementMenuBtn.checked = true
+                        configImpSettings.checked = true
+                    }
 				}
 			}
 			Column{
 				id: implementMenu
 				visible: false
 				height: children.height
+                x: 25
+
+                ButtonGroup {
+                    buttons: [ configImpSettings, configImpDim, configImpSection, configImpTiming, configImpSwitches ]
+                }
 				IconButton{
 					id: configImpSettings
 					icon.source: "/images/Config/ConS_VehicleConfig.png"
-					onClicked: {
-						closeAllConfig()
-						configImplement.visible = true
-						implementMenu.visible = true
+
+                    checkable: true
+                    checked: false
+
+                    onCheckedChanged: {
+                        if(checked) {
+                            configImplement.visible = true
+                        } else {
+                            configImplement.visible = true
+                        }
 					}
 				}
 				IconButton{
 					id: configImpDim
 					icon.source: "/images/Config/ConS_ImplementHitch.png"
-					onClicked:{
-						closeAllConfig();
-						configImplementDimensions.visible = true
-						implementMenu.visible = true
+                    checkable: true
+                    checked: false
+
+                    onCheckedChanged: {
+                        if(checked) {
+                            configImplementDimensions.visible = true
+                        } else {
+                            configImplementDimensions.visible = false
+                        }
 					}
 				}
 				IconButton{
 					id: configImpSection
 					icon.source: "/images/Config/ConS_ImplementSection.png"
-					onClicked:{
-						closeAllConfig();
-                        configImplementSections.visible = true
-						implementMenu.visible = true
+                    checkable: true
+                    checked: false
+
+                    onCheckedChanged: {
+                        if(checked) {
+                            configImplementSections.visible = true
+                        } else {
+                            configImplementSections.visible = false
+                        }
 					}
 				}
 				IconButton{
 					id: configImpTiming
 					icon.source: "/images/Config/ConS_ImplementSettings.png"
-					onClicked:{
-						closeAllConfig();
-						configImplementTiming.visible = true
-						implementMenu.visible = true
+                    checkable: true
+                    checked: false
+
+                    onCheckedChanged: {
+                        if(checked) {
+                            configImplementTiming.visible = true
+                        } else {
+                            configImplementTiming.visible = false
+                        }
 					}
 
 				}
 				IconButton{
 					id: configImpSwitches
 					icon.source: "/images/Config/ConS_ImplementSwitch.png"
-					onClicked:{
-						closeAllConfig();
-						configImplementSwitches.visible = true
-						implementMenu.visible = true
+                    checkable: true
+                    checked: false
+
+                    onCheckedChanged: {
+                        if(checked) {
+                            configImplementSwitches.visible = true
+                        } else {
+                            configImplementSwitches.visible = false
+                        }
 					}
 
 				}
@@ -220,7 +310,8 @@ Dialog {
 				objectName: "btnSourcesMenu"
 				icon.source: "/images/Config/Con_SourcesMenu.png"
 				width:100
-				onClicked:{
+                checkable: true
+                onClicked:{
 					closeAllConfig()
 					configSources.visible = true
                     sourcesMenu.visible = true
@@ -256,9 +347,10 @@ Dialog {
 				icon.source: "/images/Config/Con_UTurnMenu.png"
 				width:100
 				height:75
-				onClicked:{
+                checkable: true
+                onClicked:{
 					closeAllConfig()
-					configYouTurn.visible = true
+                    configYouTurn.visible = true
 				}
 			}
 			IconButtonTransparent{
@@ -267,7 +359,8 @@ Dialog {
 				icon.source: "/images/Config/Con_ModulesMenu.png"
 				width:100
 				height:75
-				onClicked:{
+                checkable: true
+                onClicked:{
 					closeAllConfig()
 					configModules.visible = true
                     modulesMenu.visible = true
@@ -298,10 +391,11 @@ Dialog {
                 }
             }
             IconButtonTransparent{
-				id:tramMenu
+                id:tramMenu
 				objectName: "btnTramMenu"
 				icon.source: "/images/Config/Con_TramMenu.png"
-				width:100
+                checkable: true
+                width:100
 				height:75
 				onClicked: {
 					closeAllConfig()
@@ -309,12 +403,13 @@ Dialog {
 				}
 			}
 			IconButtonTransparent{
-				id:featureMenu
+                id:featureMenu
 				objectName: "btnFeatureMenu"
 				icon.source: "/images/Config/Con_FeatureMenu.png"
 				width:100
 				height:75
-				onClicked:{
+                checkable: true
+                onClicked:{
 					closeAllConfig()
 					configFeatures.visible = true
 				}
@@ -346,7 +441,10 @@ Dialog {
 				width:parent.height
 				height: parent.height
 				icon.source: "/images/OK64"
-                onClicked: accept()
+                onClicked: {
+                    closeAllConfig()
+                    accept()
+                }
 			}
 		}
 		Rectangle{
