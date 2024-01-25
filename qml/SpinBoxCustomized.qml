@@ -8,7 +8,7 @@ Item {
     property int to
     property string text: ""
 	property int stepSize: 1
-    property bool editable: true
+    property bool editable
 
     signal valueModified()
 
