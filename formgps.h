@@ -677,6 +677,13 @@ public slots:
     void on_settings_reload();
     void on_settings_save();
 
+    //vehicle callbacks
+    void vehicle_saveas(QString vehicle_name);
+    //void vehicle_load(int index);
+    void vehicle_load(QString vehicle_name);
+    void vehicle_delete(QString vehicle_name);
+    void vehicle_update_list();
+
     //left column
     void onBtnAcres_clicked();
     void onBtnSettings_clicked();

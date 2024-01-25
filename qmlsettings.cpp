@@ -39,6 +39,14 @@ void QMLSettings::onValueChanged(const QString &key, const QVariant &value) {
     //the QSettings store.  We use AOGSetting's setValue_noqml to
     //prevent AOGSetting from calling our updateSetting which would loop!
     QString settings_key = qml_to_settings_map[key];
+    QString type_name = value.typeName();
+    //qDebug() << "QML changed " << key << " to type " << type_name;
+    if (type_name == "QJSValue") {
+        //assume QList<int>
+        QVector<int> v = toVector<int>(value);
+        settings -> setValue_noqml(settings_key, toVariant(v));
+    } else {
+        settings -> setValue_noqml(settings_key, value);
+    }
 
-    settings -> setValue_noqml(settings_key, value);
 }
