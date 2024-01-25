@@ -113,7 +113,7 @@ Rectangle{
         anchors.bottom: bottomRow.top
         anchors.bottomMargin: 30
         anchors.margins: 15
-        visible: settings.setTool_isSectionsNotZones
+        visible: utils.isTrue(settings.setTool_isSectionsNotZones)
     }
     ConfigImplementSectionsZones{
         id: configImplementSectionsZones
@@ -124,7 +124,7 @@ Rectangle{
         anchors.bottom: bottomRow.top
         anchors.bottomMargin: 30
         anchors.margins: 15
-        visible: !settings.setTool_isSectionsNotZones
+        visible: !utils.isTrue(settings.setTool_isSectionsNotZones)
 
     }
 }
