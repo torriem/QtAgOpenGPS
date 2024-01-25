@@ -13,18 +13,16 @@ Rectangle {
         id: utils
     }
 
-    Component.onCompleted: {
-        test.value = 0.04 //4 cm
-    }
-
     SpinBoxCM {
         id: test
         
         from: 4 //centimetres
-        to: 100 //centimetres
+        to: 240 //centimetres
         text: "section width"
 
-        onValueChanged: {
+        value: 2.3 * 1
+
+        onValueModified: {
             console.debug("value in metres is " + test.value + " which is local units " + utils.cm_to_unit(test.value))
         }
     }
@@ -33,6 +31,6 @@ Rectangle {
         id: test_button
         anchors.top: test.bottom
         text: "Click to change number"
-        onClicked: test.value = 0.5 //metres
+        onClicked: test.setValue(0.5) //metres
     }
 }

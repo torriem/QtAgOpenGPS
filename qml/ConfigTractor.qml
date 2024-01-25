@@ -8,7 +8,7 @@ Rectangle{
     color: "ghostwhite"
     Text {
         id: text
-        text: qsTr("Choose Vehicle Type")
+        text: qsTr("<h1>Choose Vehicle Type</h1>")
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
     }
@@ -38,7 +38,7 @@ Rectangle{
             Connections{
                 target: settings
                 function onSetVehicle_vehicleTypeChanged(){
-                    if(settings.setVehicle_vehicleType === 1){
+                    if(Number(settings.setVehicle_vehicleType) === 1){
                         harvester.checked = true
                     }else{
                         harvester.checked = false
@@ -60,7 +60,7 @@ Rectangle{
             Connections{
                 target: settings
                 function onSetVehicle_vehicleTypeChanged(){
-                    if(settings.setVehicle_vehicleType === 0){
+                    if(Number(settings.setVehicle_vehicleType) === 0){
                         tractor.checked = true
                     }else{
                         tractor.checked = false
@@ -83,7 +83,7 @@ Rectangle{
             Connections{
                 target: settings
                 function onSetVehicle_vehicleTypeChanged(){
-                    if(settings.setVehicle_vehicleType === 2){
+                    if(Number(settings.setVehicle_vehicleType) === 2){
                         tr4wd.checked = true
                     }else{
                         tr4wd.checked = false

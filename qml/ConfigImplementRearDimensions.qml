@@ -13,7 +13,7 @@ Rectangle{
     color: "ghostwhite"
     visible: false
     Image{
-        source: "/images/ToolHitchPageTrailing.png"
+        source: "/images/ToolHitchPageRear.png"
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
@@ -23,33 +23,22 @@ Rectangle{
             id: hitchLength
             anchors.bottom: parent.top
             anchors.right: parent.right
-            anchors.rightMargin: 500
+            anchors.rightMargin: parent.width * 0.6
             from: 10
-            value: settings.setVehicle_hitchLength
             to:3000
-            onValueChanged: settings.setVehicle_hitchLength = value
+            value: Number(settings.setVehicle_hitchLength) < 0 ? -Number(settings.setVehicle_hitchLength) : Number(settings.setVehicle_hitchLength)
+            onValueModified: settings.setVehicle_hitchLength = -value
             Connections {
                 target: settings
                 function onSetVehicle_hitchLengthChanged(){
-                    hitchLength.value = settings.setVehicle_hitchLength
+                    //if the implement type was recently switched from front to rear, the sign of the hitchLength
+                    //will be wrong, so make it positive for the GUI
+                    if (Number(settings.setVehicle_hitchLength) > 0)
+                        hitchLength.setValue(Number(settings.setVehicle_hitchLength))
+                    else
+                        hitchLength.setValue(-Number(settings.setVehicle_hitchLength))
                 }
             }
-        }
-        SpinBoxCM{
-            id: toolTrailingHitchLength
-            anchors.bottom: parent.top
-            anchors.right: parent.right
-            anchors.rightMargin: 50
-            from: 10
-            value: settings.setTool_toolTrailingHitchLength
-            to:3000
-            onValueChanged: settings.setTool_toolTrailingHitchLength = value
-            Connections {
-                target: settings
-                function onSetTool_toolTrailingHitchLengthChanged(){
-                    toolTrailingHitchLength.value = settings.setTool_toolTrailingHitchLength
-                }
-            }
-        }
+         }
     }
 }

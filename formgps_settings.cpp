@@ -132,6 +132,7 @@ void FormGPS::loadSettings()
     isStanleyUsed = property_setVehicle_isStanleyUsed;
     isDay = property_setDisplay_isDayMode;
 
+    tool.loadSettings();
     if (tool.isSectionsNotZones){
         tool.sectionSetPositions();
         tool.sectionCalcWidths();
@@ -148,7 +149,6 @@ void FormGPS::loadSettings()
     camera.loadSettings();
     pn.loadSettings();
     sim.loadSettings();
-    tool.loadSettings();
     vehicle.loadSettings();
     yt.loadSettings();
 }

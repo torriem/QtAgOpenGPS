@@ -182,6 +182,7 @@ Item {
 
 
             ListView {
+                id: vehicleListView
                 anchors.fill: parent
                 anchors.margins: 1
 
@@ -201,8 +202,8 @@ Item {
                             visible: control.checked
                         }
 
-                    width:parent.width
-                    height:50
+                    width: vehicleListView.width
+                    height: 50
                     //anchors.fill: parent
                     //color: "light gray"
                     Text{
