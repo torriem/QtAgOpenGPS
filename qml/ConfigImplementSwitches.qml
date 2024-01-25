@@ -2,7 +2,10 @@ import QtQuick 2.0
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
 
-
+/*todo
+  this page definitely isn't done yet. Need to add logic for
+  changing one button state when it's opposite is clicked
+  */
 Rectangle{
 	id: configImplementSwitch
 	anchors.fill: parent
@@ -32,20 +35,22 @@ Rectangle{
 			IconButtonTextBeside{
 				icon.source: "/images/HydraulicLiftOff.png"
 				objectName: "btnWorkSwitch"
-				isChecked: false
+                checked: settings.setF_isRemoteWorkSystemOn
+                onCheckedChanged: settings.setF_isRemoteWorkSystemOn = checked
 				text: qsTr("Work Switch")
 			}
 			IconButtonTextBeside{
 				icon.source: "/images/ManualOff.png"
 				objectName: "btnWorkSwitchManual"
-				isChecked: false
+                checked: settings.setF_isWorkSwitchManualSections
+                onCheckedChanged: settings.setF_isWorkSwitchManualSections
 				text: qsTr("Manual Sections")
 			}
 
 			IconButtonTextBeside{
 				objectName: "btnWorkSwitchAuto"
 				icon.source: "/images/SectionMasterOff.png"
-				isChecked: false
+                checked: !settings.setF_isWorkSwitchManualSections
 				text: qsTr("Auto Sections")
 			}
 			IconButton{
@@ -54,12 +59,13 @@ Rectangle{
 				border: 1
 				id: switchStateButton
 				objectName: "workSwitchstatebutton"
-				isChecked: false
 				icon.source: "/images/SwitchActiveClosed.png"
 				color3: "white"
 				colorChecked1: "green"
 				colorChecked2: "green"
 				colorChecked3: "green"
+                checked: settings.setF_isWorkSwitchActiveLow
+                onCheckedChanged: settings.setF_isWorkSwitchActiveLow = checked
 			}
 		}
 	}
@@ -86,19 +92,21 @@ Rectangle{
 			anchors.margins: 15
 			IconButtonTextBeside{
 				objectName: "btnSteerSwitch"
-				isChecked: false
+                checked: settings.setF_isSteerWorkSwitchEnabled
+                onCheckedChanged: settings.setF_isSteerWorkSwitchEnabled
 				text: qsTr("Steer Switch")
 				icon.source: "/images/AutoSteerOff.png"
 			}
 			IconButtonTextBeside{
 				objectName: "btnSteerSwitchManual"
-				isChecked: false
+                checked: settings.setF_isSteerWorkSwitchManualSections
+                onCheckedChanged: settings.setF_isSteerWorkSwitchManualSections = checked
 				text: qsTr("Manual Sections")
 				icon.source: "/images/ManualOff.png"
 			}
 			IconButtonTextBeside{
 				objectName: "btnSteerSwitchAuto"
-				isChecked: false
+                checked: !settings.setF_isSteerWorkSwitchManualSections
 				text: qsTr("Auto Sections")
 				icon.source: "/images/SectionMasterOff.png"
 			}

@@ -51,6 +51,11 @@ def parse_settings(file):
                t == 'system.Decimal' or \
                t == 'System.Byte':
                 default_value = s.Value.contents[0]
+
+                #special case for a bad default value in Settings.settings
+                if n == 'setVehicle_tankTrailingHitchLength' and default_value[0] != '-':
+                    default_value = "-" + default_value
+
                 if t == 'System.Int32' or t == 'system.Byte':
                     mock_qml.append("property int %s: %s" % (n, default_value))
                 else:

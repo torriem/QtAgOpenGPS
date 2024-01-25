@@ -102,7 +102,7 @@ Rectangle{
                 id: deleteField
                 objectName: "btnDeleteField"
                 icon.source: "/images/skull.png"
-                buttonText: "Delete Field"
+                text: "Delete Field"
                 color3: "white"
                 border: 1
                 height: 75
@@ -111,7 +111,7 @@ Rectangle{
                 id: sort
                 objectName: "btnSort"
                 icon.source: "/images/Sort.png"
-                buttonText: "Sort"
+                text: "Sort"
                 color3: "white"
                 border: 1
                 height: 75
@@ -120,7 +120,7 @@ Rectangle{
                 id: cancel
                 objectName: "btnCancel"
                 icon.source: "/images/Cancel64.png"
-                buttonText: "Cancel"
+                text: "Cancel"
                 onClicked: fieldOpen.visible = false
                 color3: "white"
                 border: 1
@@ -130,7 +130,7 @@ Rectangle{
                 id: useSelected
                 objectName: "btnUseSelected"
                 icon.source: "/images/FileOpen.png"
-                buttonText: "Use Selected"
+                text: "Use Selected"
                 color3: "white"
                 border: 1
                 height: 75

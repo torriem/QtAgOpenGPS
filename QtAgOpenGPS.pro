@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl quick quickwidgets network serialport
+QT       += core gui opengl quick quickwidgets network
 
 CONFIG += c++17
 

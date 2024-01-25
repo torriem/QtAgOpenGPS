@@ -506,7 +506,7 @@
         <file>qml/ConfigTractorAntenna.qml</file>
         <file>qml/ConfigTractorSteerSettings.qml</file>
         <file>qml/ConfigModulesPins.qml</file>
-        <file>qml/ConfigImplementDimensions.qml</file>
+        <file>qml/ConfigImplementTrailingDimensions.qml</file>
         <file>qml/ConfigImplementSections.qml</file>
         <file>qml/ConfigImplementSwitches.qml</file>
         <file>qml/ConfigImplementTiming.qml</file>
@@ -524,10 +524,15 @@
         <file>qml/AOGInterface.qml</file>
         <file>qml/SectionButtons.qml</file>
         <file>qml/LatLonTextField.qml</file>
+        <file>images/SectionOnBoundary.png</file>
+        <file>qml/ButtonColor.qml</file>
         <file>qml/UnitConversion.qml</file>
         <file>qml/SpinBoxCM.qml</file>
         <file>qml/LightBar.qml</file>
         <file>qml/OutlineText.qml</file>
         <file>qml/TrackNum.qml</file>
+        <file>qml/ConfigImplementFrontDimensions.qml</file>
+        <file>qml/ConfigImplementRearDimensions.qml</file>
+        <file>qml/ConfigImplementTBTDimensions.qml</file>
     </qresource>
 </RCC>

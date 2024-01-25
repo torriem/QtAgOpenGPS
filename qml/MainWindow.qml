@@ -22,7 +22,6 @@ Window {
     //    id: settings
     //}
 
-
     AOGInterface {
         id: aog
         objectName: "aog"
@@ -157,6 +156,13 @@ Window {
                 height: parent.height
                 icon.source: "/images/WindowMaximize.png"
                 width: 75
+                onClicked: {
+                    console.debug("Visibility is " + mainWindow.visibility)
+                    if (mainWindow.visibility == Window.FullScreen)
+                        mainWindow.showNormal()
+                    else
+                        mainWindow.showFullScreen()
+                }
             }
             IconButtonTransparent{
                 objectName: "btnWindowClose"
@@ -176,6 +182,10 @@ Window {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
+
+        //for moving the center of the view around
+        property double shiftX: 0 //-1 left to 1 right
+        property double shiftY: 0 //-1 down to 1 up
 
         signal clicked(var mouse)
         signal dragged(int fromX, int fromY, int toX, int toY)
@@ -282,7 +292,14 @@ Window {
                 MenuItem{ text: "Section Colors"}
                 MenuItem{ text: "Top Field View"}
                 MenuItem{ text: "Enter Sim Coords"}
-                MenuItem{ text: "Simulator On"}
+                MenuItem{
+                    text: "Simulator On"
+                    checked: settings.setMenu_isSimulatorOn
+                    onCheckedChanged: {
+                        settings.setMenu_isSimulatorOn = checked
+                        console.log(settings.setMenu_isSimulatorOn)
+                    }
+                }
                 MenuItem{ text: "Reset All"}
                 MenuItem{ text: "HotKeys"}
                 MenuItem{ text: "About..."}
@@ -295,6 +312,7 @@ Window {
                 objectName: "btnAcres"
                 buttonText: qsTr("0.00")
                 icon.source: "/images/TripOdometer.png"
+            visible: aog.isJobStarted ? true : false
 
             }
             IconButtonText {
@@ -328,7 +346,7 @@ Window {
                 objectName: "btnSettings"
                 buttonText: qsTr("Settings")
                 icon.source: "/images/Settings48.png"
-                onClicked: config.visible = true
+                onClicked: config.open()
 
             }
             IconButtonText {
@@ -393,6 +411,7 @@ Window {
                 buttonText: qsTr("Field Tools")
                 icon.source: "/images/FieldTools.png"
                 onClicked: fieldTools.popup()
+            visible: aog.isJobStarted ? true : false
             }
             Menu{
                 id: fieldTools
@@ -532,6 +551,7 @@ Window {
                 iconChecked: "/images/ContourOn.png"
                 buttonText: "Contour"
                 //color: "white"
+            visible: aog.isJobStarted ? true : false
             }
             IconButtonText{
                 id: btnABCurve
@@ -541,7 +561,8 @@ Window {
                 icon.source: "/images/CurveOff.png"
                 iconChecked: "/images/CurveOn.png"
                 buttonText: "ABCurve"
-                onClicked: {
+				visible: aog.isJobStarted ? true : false
+				onClicked: {
                     abCurvePicker.visible = true
                     if (aog.currentABCurve > -1) {
                         btnABCurve.checked = true
@@ -594,6 +615,7 @@ Window {
                 }
                 checked: aog.currentABLine > -1 ? true : false
                 buttonText: "ABLine"
+            visible: aog.isJobStarted ? true : false
             }
 
             IconButton{
@@ -602,6 +624,7 @@ Window {
                 icon.source: "/images/ABLineCycle.png"
                 width: btnABLine.width
                 height: btnABLine.height
+            visible: aog.isJobStarted ? true : false
             }
             IconButton{
                 id: btnABLineCycleBk
@@ -609,6 +632,7 @@ Window {
                 icon.source: "/images/ABLineCycleBk.png"
                 width: btnABLine.width
                 height: btnABLine.height
+            visible: aog.isJobStarted ? true : false
             }
 
             IconButtonText {
@@ -619,6 +643,7 @@ Window {
                 icon.source: "/images/ManualOff.png"
                 iconChecked: "/images/ManualOn.png"
                 buttonText: "Manual"
+            visible: aog.isJobStarted ? true : false
                 onCheckedChanged: {
                     if (checked) {
                         btnSectionAuto.checked = false;
@@ -637,6 +662,7 @@ Window {
                 icon.source: "/images/SectionMasterOff.png"
                 iconChecked: "/images/SectionMasterOn.png"
                 buttonText: "Auto"
+            visible: aog.isJobStarted ? true : false
                 onCheckedChanged: {
                     if (checked) {
                         btnSectionManual.checked = false;
@@ -662,6 +688,7 @@ Window {
                 iconChecked: "/images/AutoSteerOn.png"
                 checkable: true
                 checked: aog.isAutoSteerBtnOn
+            visible: aog.isJobStarted ? true : false
                 //Is remote activation of autosteer enabled?
                 buttonText: (settings.setAS_isAutoSteerAutoOn === true ? "R" : "M")
                 onClicked: {
@@ -776,6 +803,7 @@ Window {
                 id: btnSectionMapping
                 objectName: "btnSectionMapping"
                 icon.source: "/images/SectionMapping"
+            visible: aog.isJobStarted ? true : false
             }
 
             IconButtonText {
@@ -967,7 +995,7 @@ Window {
             anchors.right: rightColumn.left
             anchors.topMargin: 50
             anchors.rightMargin: 150
-            visible: true
+            visible: aog.isJobStarted ? true : false
             width: childrenRect.width
             height: childrenRect.height
             ColorOverlay{
@@ -1204,11 +1232,23 @@ Window {
         Config {
             id:config
             objectName: "config"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
+            //anchors.horizontalCenter: parent.horizontalCenter
+            //anchors.bottom: parent.bottom
             height: parent.height
             //width:parent.width
             visible:false
+
+            onAccepted: {
+                console.debug("accepting settings and closing window.")
+                aog.settings_save()
+                aog.settings_reload()
+            }
+            onRejected: {
+                console.debug("rejecing all settings changes.")
+                aog.settings_revert()
+                aog.settings_reload()
+            }
+
         }
         SteerConfigWindow {
             id:steerConfigWindow

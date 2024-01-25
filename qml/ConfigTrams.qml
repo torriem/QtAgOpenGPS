@@ -1,6 +1,9 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
+/*todo:
+  not sure about this whole file. The IconButtonColor isn't connected to anything
+  */
 Item {
     anchors.fill: parent
     Rectangle{
@@ -15,17 +18,23 @@ Item {
             width: 200
             height: 200
         }
-        SpinBoxCustomized{
+        SpinBoxCM{
             id: tramWidth
             anchors.verticalCenter: imageTram.verticalCenter
             anchors.left: parent.horizontalCenter
             anchors.margins: 3
             editable: true
             text: qsTr("Tram Width")
-            Text{
-                anchors.left: parent.right
-                anchors.verticalCenter: parent.verticalCenter
+            from: 1
+            value: settings.setTram_tramWidth
+            Connections {
+                target: settings
+                function onSetTram_tramWidthChanged(){
+                    tramWidth.value = settings.setTram_tramWidth
+                }
             }
+            to: 5000
+            onValueChanged: settings.setTram_tramWidth = value
         }
         IconButtonColor{
             anchors.horizontalCenter: parent.horizontalCenter
@@ -33,7 +42,7 @@ Item {
             anchors.bottomMargin: 100
             width: 200
             height: 200
-            icon: "/images/Config/ConT_TramOverride.png"
+            icon.source: "/images/Config/ConT_TramOverride.png"
         }
     }
 }

@@ -1,12 +1,18 @@
-import QtQuick 2.0
-import QtQuick.Controls 2.5
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 import QtQuick.Extras 1.4
+import QtQuick.Dialogs 1.3
 import Qt.labs.folderlistmodel 2.2
 
-Item {
+Dialog {
     height: 768
     width:1024
+    modality: Qt.WindowModal
+    standardButtons: StandardButton.NoButton
+    title: qsTr("General Settings")
+
+
     function closeAllConfig(){
         configWhichVehicle.visible = false
         configTractor.visible = false
@@ -14,7 +20,10 @@ Item {
         configTractorDimensions.visible = false
         configTractorSteerSettings.visible = false
         configImplement.visible = false
-        configImplementDimensions.visible = false
+        configImplementRearDimensions.visible = false
+        configImplementFrontDimensions.visible = false
+        configImplementTBTDimensions.visible = false
+        configImplementTrailingDimensions.visible = false
         configImplementSections.visible = false
         configImplementSwitches.visible = false
         configImplementTiming.visible = false
@@ -29,13 +38,16 @@ Item {
 		implementMenu.visible = false
         sourcesMenu.visible = false
         modulesMenu.visible = false
+
+        vehicleMenu.checked = false
+        implementMenuBtn.checked = false
+        sourcesMenubtn.checked = false
+        uTurnMenu.checked = false
+        modulesMenubtn.checked = false
+        tramMenu.checked = false
+        featureMenu.checked = false
+
 	}
-    MouseArea{
-        id: catcher
-        //to catch phantom clicks from carrying through to the MainWindow screen
-        anchors.fill: parent
-        onClicked: console.log("caught")
-    }
 
 	Rectangle{
 		id: configMain
@@ -43,10 +55,7 @@ Item {
 		border.color: "black"
 		border.width: 8
 		visible: true
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.verticalCenter: parent.verticalCenter
-		height: 768
-		width:1024
+        anchors.fill: parent
 		Rectangle{
 			id:topLine
 			color:"gray"
@@ -65,13 +74,36 @@ Item {
 			}
 		}
 
+        ScrollView {
+            id: leftColumnView
+            anchors.top: topLine.bottom
+            anchors.left: topLine.left
+            width: 110
+            anchors.bottom: configMain.bottom
+
+            //ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+            clip: true
+            ScrollBar.vertical  : ScrollBar {
+                policy: ScrollBar.AlwaysOn
+                anchors.rightMargin: 10
+                contentItem: Rectangle {
+                    color: "red"
+                }
+            }
+
 		Column{
-			id:leftColumn
-			anchors.top:topLine.bottom
-			anchors.left: topLine.left
-			width: childrenRect.width
+            id:leftColumn
+            anchors.fill: parent
+            //anchors.top:topLine.bottom
+            //anchors.left: topLine.left
+            //width: childrenRect.width
 			visible: true
             spacing: 15
+            ButtonGroup {
+                buttons: [ vehicleMenu, implementMenuBtn, sourcesMenubtn, uTurnMenu,  modulesMenubtn, tramMenu, featureMenu ]
+
+
+            }
 			IconButtonTransparent{
 				id:vehicleMenu
 				objectName: "btnVehicleMenu"
@@ -79,60 +111,92 @@ Item {
 				width:100
 				height:75
 
-				function toggle_configTractor(){
-					if(tractorMenu.visible == true){
-						closeAllConfig()
-						configWhichVehicle.visible = true
-						tractorMenu.visible = false
-					}else{
-						closeAllConfig()
-						configTractor.visible = true
-						tractorMenu.visible = true
-					}
-				}
+                //colorChecked1: "#aaaaaa"
+                //colorChecked2: "#aaaaaa"
+                //colorChecked3: "#777777"
+                checkable: true
+                radius: 0
+
 				onClicked: {
-					toggle_configTractor()
+                    if(tractorMenu.visible == true){
+                        closeAllConfig()
+                        configWhichVehicle.visible = true //this is the default page when nothing is checked
+                        tractorMenu.visible = false
+                    }else{
+                        closeAllConfig()
+                        configTractor.visible = true
+                        tractorMenu.visible = true
+                        vehicleMenu.checked = true
+                        configTrSettings.checked = true
+                    }
 				}
 			}
 			Column{
+                x: 25
 				id: tractorMenu
-				visible: false
-				height: children.height
+                visible: false
+                height: children.height
+
+                ButtonGroup {
+                    buttons: [configTrSettings, configTrDim, btnconfigTrAntDim, btnconfigTrSteerSett ]
+                }
+
 				IconButton{
 					id: configTrSettings
-					icon.source: "/images/Config/ConS_VehicleConfig.png"
-					onClicked:{
-						closeAllConfig()
-						configTractor.visible = true
-						tractorMenu.visible = true
+                    icon.source: "/images/Config/ConS_VehicleConfig.png"
+                    checkable: true
+                    checked: false
+
+                    onCheckedChanged: {
+                        if (checked) {
+                            configTractor.visible = true
+                        } else {
+                            configTractor.visible = false
+                        }
 					}
 				}
 				IconButton{
 					id: configTrDim
 					icon.source: "/images/Config/ConS_ImplementHitch.png"
-					onClicked: {
-						closeAllConfig()
-						configTractorDimensions.visible = true
-						tractorMenu.visible = true
+                    checkable: true
+                    checked: false
+
+                    onCheckedChanged: {
+                        if (checked) {
+                            configTractorDimensions.visible = true
+                        } else {
+                            configTractorDimensions.visible = false
+                        }
 					}
 				}
 				IconButton{
 					id: btnconfigTrAntDim
 					icon.source: "/images/Config/ConS_ImplementAntenna.png"
-					onClicked: {
-						closeAllConfig()
-						configTractorAntenna.visible = true
-						tractorMenu.visible = true
+
+                    checkable: true
+                    checked: false
+
+                    onCheckedChanged: {
+                        if (checked) {
+                            configTractorAntenna.visible = true
+                        } else {
+                            configTractorAntenna.visible = false
+                        }
 					}
 				}
 				IconButton{
 					id: btnconfigTrSteerSett
 					icon.source: "/images/Config/ConS_ModulesSteer.png"
 
-					onClicked: {
-						closeAllConfig()
-						configTractorSteerSettings.visible = true
-						tractorMenu.visible = true
+                    checkable: true
+                    checked: false
+
+                    onCheckedChanged: {
+                        if (checked) {
+                            configTractorSteerSettings.visible = true
+                        } else {
+                            configTractorSteerSettings.visible = false
+                        }
 					}
 				}
 			}
@@ -142,60 +206,114 @@ Item {
 				icon.source: "/images/Config/Con_ImplementMenu.png"
 				width:100
 				height:75
-				onClicked:{
-					closeAllConfig()
-					implementMenu.visible = true
-					configImplement.visible = true
+                checkable: true
+
+                radius: 0
+
+                onClicked:{
+                    if(implementMenu.visible == true){
+                        //close the menu
+                        closeAllConfig()
+                        configWhichVehicle.visible = true //show default page
+                        implementMenu.visible = false
+                    }else{
+                        closeAllConfig()
+                        configImplement.visible = true
+                        implementMenu.visible = true
+                        implementMenuBtn.checked = true
+                        configImpSettings.checked = true
+                    }
 				}
 			}
 			Column{
 				id: implementMenu
 				visible: false
 				height: children.height
+                x: 25
+
+                ButtonGroup {
+                    buttons: [ configImpSettings, configImpDim, configImpSection, configImpTiming, configImpSwitches ]
+                }
 				IconButton{
 					id: configImpSettings
 					icon.source: "/images/Config/ConS_VehicleConfig.png"
-					onClicked: {
-						closeAllConfig()
-						configImplement.visible = true
-						implementMenu.visible = true
+
+                    checkable: true
+                    checked: false
+
+                    onCheckedChanged: {
+                        if(checked) {
+                            configImplement.visible = true
+                        } else {
+                            configImplement.visible = true
+                        }
 					}
 				}
 				IconButton{
 					id: configImpDim
 					icon.source: "/images/Config/ConS_ImplementHitch.png"
-					onClicked:{
-						closeAllConfig();
-						configImplementDimensions.visible = true
-						implementMenu.visible = true
+                    checkable: true
+                    checked: false
+
+                    onCheckedChanged: {
+                        if(checked) {
+                            if (utils.isTrue(settings.setTool_isToolRearFixed))
+                                configImplementRearDimensions.visible = true
+                            else if (utils.isTrue(settings.setTool_isToolFront))
+                                configImplementFrontDimensions.visible = true
+                            else if (utils.isTrue(settings.setTool_isToolTrailing) && ! utils.isTrue(settings.setTool_isToolTBT))
+                                configImplementTrailingDimensions.visible = true
+                            else
+                                configImplementTBTDimensions.visible = true
+                        } else {
+                            configImplementRearDimensions.visible = false
+                            configImplementFrontDimensions.visible = false
+                            configImplementTrailingDimensions.visible = false
+                            configImplementTBTDimensions.visible = false
+                        }
 					}
 				}
 				IconButton{
 					id: configImpSection
 					icon.source: "/images/Config/ConS_ImplementSection.png"
-					onClicked:{
-						closeAllConfig();
-                        configImplementSections.visible = true
-						implementMenu.visible = true
+                    checkable: true
+                    checked: false
+
+                    onCheckedChanged: {
+                        if(checked) {
+                            configImplementSections.visible = true
+                        } else {
+                            configImplementSections.visible = false
+                        }
 					}
 				}
 				IconButton{
 					id: configImpTiming
 					icon.source: "/images/Config/ConS_ImplementSettings.png"
-					onClicked:{
-						closeAllConfig();
-						configImplementTiming.visible = true
-						implementMenu.visible = true
+                    checkable: true
+                    checked: false
+
+                    onCheckedChanged: {
+                        if(checked) {
+                            configImplementTiming.visible = true
+                        } else {
+                            configImplementTiming.visible = false
+                        }
 					}
 
 				}
 				IconButton{
 					id: configImpSwitches
 					icon.source: "/images/Config/ConS_ImplementSwitch.png"
-					onClicked:{
-						closeAllConfig();
-						configImplementSwitches.visible = true
-						implementMenu.visible = true
+                    checkable: true
+                    checked: false
+
+                    onCheckedChanged: {
+                        if(checked) {
+                            configImplementSwitches.visible = true
+                        } else {
+                            configImplementSwitches.visible = false
+                        }
 					}
 
 				}
@@ -205,7 +323,8 @@ Item {
 				objectName: "btnSourcesMenu"
 				icon.source: "/images/Config/Con_SourcesMenu.png"
 				width:100
-				onClicked:{
+                checkable: true
+                onClicked:{
 					closeAllConfig()
 					configSources.visible = true
                     sourcesMenu.visible = true
@@ -241,9 +360,10 @@ Item {
 				icon.source: "/images/Config/Con_UTurnMenu.png"
 				width:100
 				height:75
-				onClicked:{
+                checkable: true
+                onClicked:{
 					closeAllConfig()
-					configYouTurn.visible = true
+                    configYouTurn.visible = true
 				}
 			}
 			IconButtonTransparent{
@@ -252,7 +372,8 @@ Item {
 				icon.source: "/images/Config/Con_ModulesMenu.png"
 				width:100
 				height:75
-				onClicked:{
+                checkable: true
+                onClicked:{
 					closeAllConfig()
 					configModules.visible = true
                     modulesMenu.visible = true
@@ -283,10 +404,11 @@ Item {
                 }
             }
             IconButtonTransparent{
-				id:tramMenu
+                id:tramMenu
 				objectName: "btnTramMenu"
 				icon.source: "/images/Config/Con_TramMenu.png"
-				width:100
+                checkable: true
+                width:100
 				height:75
 				onClicked: {
 					closeAllConfig()
@@ -294,17 +416,19 @@ Item {
 				}
 			}
 			IconButtonTransparent{
-				id:featureMenu
+                id:featureMenu
 				objectName: "btnFeatureMenu"
 				icon.source: "/images/Config/Con_FeatureMenu.png"
 				width:100
 				height:75
-				onClicked:{
+                checkable: true
+                onClicked:{
 					closeAllConfig()
 					configFeatures.visible = true
 				}
 			}
 		}
+        }
 
 		Rectangle{
 			id:bottomLine
@@ -330,14 +454,26 @@ Item {
 				width:parent.height
 				height: parent.height
 				icon.source: "/images/OK64"
-				onClicked: config.visible = false
+                onClicked: {
+                    closeAllConfig()
+                    //fix up signs on implement dimensions
+                    if ((utils.isTrue(settings.setTool_isToolFront) && Number(settings.setVehicle_hitchLength < 0)) ||
+                        (!utils.isTrue(settings.setTool_isToolFront) && Number(settings.setVehicle_hitchLength) > 0)) {
+                        //if front-mounted tool, make sure the hitchLength is positive and if rear-mounted, make sure
+                        //hitchLength is negative
+                        settings.setVehicle_hitchLength = -Number(settings.setVehicle_hitchLength)
+                        //console.debug("corrected sign on hitchLength")
+                    }
+
+                    accept()
+                }
 			}
 		}
 		Rectangle{
 			id: mainConfig
 			anchors.top: topLine.bottom
 			anchors.right: parent.right
-			anchors.left: leftColumn.right
+            anchors.left: leftColumnView.right
 			anchors.bottom: bottomLine.top
 			anchors.rightMargin: 8
 			color: "ghostwhite"
@@ -380,8 +516,26 @@ Item {
 			anchors.margins:1
 			visible: false
 		}
-		ConfigImplementDimensions{
-			id:configImplementDimensions
+        ConfigImplementFrontDimensions{
+            id:configImplementFrontDimensions
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: false
+        }
+        ConfigImplementRearDimensions{
+            id:configImplementRearDimensions
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: false
+        }
+        ConfigImplementTBTDimensions{
+            id:configImplementTBTDimensions
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: false
+        }
+        ConfigImplementTrailingDimensions{
+            id:configImplementTrailingDimensions
 			anchors.fill: mainConfig
 			anchors.margins:1
 			visible: false

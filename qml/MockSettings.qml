@@ -156,7 +156,7 @@ Item {
     property bool setVehicle_isSteerAxleAhead: true
     property string setVehicle_vehicleName: "Default Vehicle"
     property double setVehicle_slowSpeedCutoff: 0.5
-    property double setVehicle_tankTrailingHitchLength: 3
+    property double setVehicle_tankTrailingHitchLength: -3
     property int setVehicle_minCoverage: 100
     property double setVehicle_goalPointLookAhead: 3
     property double setVehicle_maxAngularVelocity: 0.64
@@ -205,9 +205,9 @@ Item {
     property int setDisplay_brightness: 80
     property double set_youTurnRadius: 8.1
     property int setDisplay_brightnessSystem: 80
-    property bool setTool_isSectionsNotZones: true
+    property bool setTool_isSectionsNotZones: false
     property int setTool_numSectionsMulti: 20
-    property var setTool_zones: [ 2,10,20,0,0,0,0,0,0 ]
+    property var setTool_zones: [ 4,5,10,15,20,0,0,0,0 ]
     property double setTool_sectionWidthMulti: 0.5
     property bool setDisplay_isBrightnessOn: true
     property string setKey_hotkeys: "ACFGMNPTYVW12345678"
