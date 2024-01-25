@@ -105,8 +105,8 @@ Item {
     signal settings_save() //sync to disk, and also copy to current vehicle file, if active
 
     signal vehicle_saveas(string vehicle_name)
-    signal vehicle_load(int index)
-    signal vehicle_delete(int index)
+    signal vehicle_load(string vehicle_name)
+    signal vehicle_delete(string vehicle_name)
     signal vehicle_update_list()
 
     property var vehicle_list: [
