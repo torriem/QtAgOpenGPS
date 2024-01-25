@@ -46,7 +46,7 @@ Item {
     property double northing: 0
     property double latitude: 0
     property double longitude: 0
-    property double heading: 0
+    property double heading: 0//is this fused, imu, or gps? David
     property double toolEasting: 0
     property double toolNorthing: 0
     property double toolLatitude: 0
@@ -61,6 +61,29 @@ Item {
     property bool steerSwitchHigh: false
 
 
+    //david added these
+    property string currentField: "value"
+    property double steerAngleActual: 0
+    property double steerAngleSet: 0
+    property double totalAcres: 0
+    property double workedAcresApplied: 0 //total acres covered
+    property double actualAcresApplied: 0 //actual acres covered. Doesn't count overlap.
+    property double elevation: 0
+    property double numOfSats: 0
+    property double HDOP: 0
+    property double frame: 0
+    property double rawHZ:0
+    property double HZ:0
+    property double missedSentences: 0
+    property double rtkAge: 0
+    property double angularVelocity: 0
+    property string gpsFixQuality: ""
+    property double crossTrackError:0//i guess this is probably the same as offlineDistance
+    property double distanceTraveled: 0
+    property double imuHeading: 0
+    property double gpsHeading: 0
+
+    //can we use these line properties for the Display?
     //AB Lines properties, signals, and methods
     property int currentABLine: -1 //use this instead of signals?
     property int currentABCurve: -1
