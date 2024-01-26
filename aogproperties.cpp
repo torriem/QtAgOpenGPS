@@ -156,7 +156,7 @@ AOGProperty property_setVehicle_isPivotBehindAntenna("vehicle/isPivotBehindAnten
 AOGProperty property_setVehicle_isSteerAxleAhead("vehicle/isSteerAxleAhead",true);
 AOGProperty property_setVehicle_vehicleName("vehicle/name","Default Vehicle");
 AOGProperty property_setVehicle_slowSpeedCutoff("vehicle/slowSpeedCutoff",0.5);
-AOGProperty property_setVehicle_tankTrailingHitchLength("tool/tankTrailingHitchLength",3);
+AOGProperty property_setVehicle_tankTrailingHitchLength("tool/tankTrailingHitchLength",-3);
 AOGProperty property_setVehicle_minCoverage("vehicle/minCoverage",100);
 AOGProperty property_setVehicle_goalPointLookAhead("vehicle/goalPointLookAhead",3);
 AOGProperty property_setVehicle_maxAngularVelocity("vehicle/maxAngularVelocity",0.64);

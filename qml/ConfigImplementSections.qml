@@ -18,13 +18,9 @@ Rectangle{
         Button{
             function toggleZones(){
                 if( utils.isTrue(settings.setTool_isSectionsNotZones)){
-                    image.source = "/images/Config/ConT_Symmetric.png"
                     settings.setTool_isSectionsNotZones = false
-                    console.log("zones")
                 }else{
-                    image.source ="/images/Config/ConT_Asymmetric.png"
                     settings.setTool_isSectionsNotZones = true
-                    console.log("sections")
                 }
             }
             width: 180
@@ -41,7 +37,7 @@ Rectangle{
                 Image{
                     id: image
 
-                    source:"/images/Config/ConT_Asymmetric.png"
+                    source: utils.isTrue(settings.setTool_isSectionsNotZones) ? "/images/Config/ConT_Asymmetric.png" : "/images/Config/ConT_Symmetric.png"
                     anchors.fill: parent
                 }
             }
@@ -117,7 +113,7 @@ Rectangle{
         anchors.bottom: bottomRow.top
         anchors.bottomMargin: 30
         anchors.margins: 15
-        visible: settings.setTool_isSectionsNotZones
+        visible: utils.isTrue(settings.setTool_isSectionsNotZones)
     }
     ConfigImplementSectionsZones{
         id: configImplementSectionsZones
@@ -128,7 +124,7 @@ Rectangle{
         anchors.bottom: bottomRow.top
         anchors.bottomMargin: 30
         anchors.margins: 15
-        visible: !settings.setTool_isSectionsNotZones
+        visible: !utils.isTrue(settings.setTool_isSectionsNotZones)
 
     }
 }

@@ -17,6 +17,8 @@
 #include "qmlsettings.h"
 #include "qmlsectionbuttons.h"
 
+QString caseInsensitiveFilename(QString directory, QString filename);
+
 extern QMLSettings qml_settings;
 
 void FormGPS::setupGui()
@@ -48,6 +50,24 @@ void FormGPS::setupGui()
     QObject *aog = qmlItem(qml_root, "aog");
     connect(aog,SIGNAL(sectionButtonStateChanged()), &tool.sectionButtonState, SLOT(onStatesUpdated()));
 
+    openGLControl = qml_root->findChild<AOGRendererInSG *>("openglcontrol");
+    //This is a bit hackish, but all rendering is done in this item, so
+    //we have to give it a way of calling our initialize and draw functions
+    openGLControl->setProperty("callbackObject",QVariant::fromValue((void *) this));
+    openGLControl->setProperty("initCallback",QVariant::fromValue<std::function<void (void)>>(std::bind(&FormGPS::openGLControl_Initialized, this)));
+    openGLControl->setProperty("paintCallback",QVariant::fromValue<std::function<void (void)>>(std::bind(&FormGPS::oglMain_Paint,this)));
+
+    openGLControl->setProperty("samples",settings->value("display/antiAliasSamples", 0));
+    openGLControl->setMirrorVertically(true);
+    connect(openGLControl,SIGNAL(clicked(QVariant)),this,SLOT(onGLControl_clicked(QVariant)));
+    connect(openGLControl,SIGNAL(dragged(int,int,int,int)),this,SLOT(onGLControl_dragged(int,int,int,int)));
+    connect(openGLControl,SIGNAL(zoomIn()),this,SLOT(onBtnZoomIn_clicked()));
+    connect(openGLControl,SIGNAL(zoomOut()),this,SLOT(onBtnZoomOut_clicked()));
+
+    //TODO: save and restore these numbers from settings
+    qml_root->setProperty("width",1024);
+    qml_root->setProperty("height",768);
+
     //AB Line Picker
     connect(aog,SIGNAL(currentABLineChanged()), this, SLOT(update_current_ABline_from_qml()));
     connect(aog,SIGNAL(currentABCurveChanged()), this, SLOT(update_current_ABline_from_qml()));
@@ -69,6 +89,12 @@ void FormGPS::setupGui()
     //connect settings dialog box
     connect(aog,SIGNAL(settings_reload()), this, SLOT(on_settings_reload()));
     connect(aog,SIGNAL(settings_save()), this, SLOT(on_settings_save()));
+
+    //vehicle saving and loading
+    connect(aog,SIGNAL(vehicle_update_list()), this, SLOT(vehicle_update_list()));
+    connect(aog,SIGNAL(vehicle_load(QString)), this, SLOT(vehicle_load(QString)));
+    connect(aog,SIGNAL(vehicle_delete(QString)), this, SLOT(vehicle_delete(QString)));
+    connect(aog,SIGNAL(vehicle_saveas(QString)), this, SLOT(vehicle_saveas(QString)));
 
     //connect qml button signals to callbacks (it's not automatic with qml)
 
@@ -130,24 +156,6 @@ void FormGPS::setupGui()
 
     //txtDistanceOffABLine = qmlItem(qml_root,"txtDistanceOffABLine");
 
-    openGLControl = qml_root->findChild<AOGRendererInSG *>("openglcontrol");
-    //This is a bit hackish, but all rendering is done in this item, so
-    //we have to give it a way of calling our initialize and draw functions
-    openGLControl->setProperty("callbackObject",QVariant::fromValue((void *) this));
-    openGLControl->setProperty("initCallback",QVariant::fromValue<std::function<void (void)>>(std::bind(&FormGPS::openGLControl_Initialized, this)));
-    openGLControl->setProperty("paintCallback",QVariant::fromValue<std::function<void (void)>>(std::bind(&FormGPS::oglMain_Paint,this)));
-
-    openGLControl->setProperty("samples",settings->value("display/antiAliasSamples", 0));
-    openGLControl->setMirrorVertically(true);
-    connect(openGLControl,SIGNAL(clicked(QVariant)),this,SLOT(onGLControl_clicked(QVariant)));
-    connect(openGLControl,SIGNAL(dragged(int,int,int,int)),this,SLOT(onGLControl_dragged(int,int,int,int)));
-    connect(openGLControl,SIGNAL(zoomIn()),this,SLOT(onBtnZoomIn_clicked()));
-    connect(openGLControl,SIGNAL(zoomOut()),this,SLOT(onBtnZoomOut_clicked()));
-
-    //TODO: save and restore these numbers from settings
-    qml_root->setProperty("width",1024);
-    qml_root->setProperty("height",768);
-
     tmrWatchdog = new QTimer(this);
     connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(tmrWatchdog_timeout()));
     tmrWatchdog->start(250); //fire every 50ms.
@@ -159,6 +167,8 @@ void FormGPS::setupGui()
     swFrame.start();
 
     stopwatch.start();
+
+    vehicle_update_list();
 
 }
 
@@ -620,8 +630,117 @@ void FormGPS::change_name_ABLine(int which_one, QString name)
 
 void FormGPS::on_settings_reload() {
     loadSettings();
+    //TODO: if vehicle name is set, write settings out to that
+    //vehicle json file
 }
 
 void FormGPS::on_settings_save() {
     settings->sync();
+
+    //update our saved copy as well
+    if((QString)property_setVehicle_vehicleName != "Default Vehicle") {
+        vehicle_saveas(property_setVehicle_vehicleName);
+    }
+    loadSettings();
+}
+
+void FormGPS::vehicle_saveas(QString vehicle_name) {
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Vehicles";
+
+    QDir saveDir(directoryName);
+    if (!saveDir.exists()) {
+        bool ok = saveDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, vehicle_name);
+
+    settings->saveJson(filename);
+
+}
+
+/*
+void FormGPS::vehicle_load(int index) {
+    QList<QVariant> vehicleList = aog->property("vehicle_list").value<QList<QVariant>>();
+    QMap<QString,QVariant> vehicle;
+    for(QVariant vehicleVariant: vehicleList) {
+        vehicle = vehicleVariant.toMap();
+        if (vehicle["index"].toInt() == index) {
+            vehicle_load(vehicle["index"].toInt());
+            break;
+        }
+    }
+
+
+}
+*/
+
+void FormGPS::vehicle_load(QString vehicle_name) {
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+                            + "/" + QCoreApplication::applicationName() + "/Vehicles";
+
+    QDir loadDir(directoryName);
+    if (!loadDir.exists()) {
+        bool ok = loadDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    if (!loadDir.exists(caseInsensitiveFilename(directoryName, vehicle_name)))
+        qWarning() << vehicle_name << " may not exist but will try to load it anyway.";
+
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, vehicle_name);
+
+    settings->loadJson(filename);
+}
+
+void FormGPS::vehicle_delete(QString vehicle_name) {
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+                            + "/" + QCoreApplication::applicationName() + "/Vehicles";
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, vehicle_name);
+
+    QDir vehicleDir(directoryName);
+    if (vehicleDir.exists()) {
+        if (! vehicleDir.remove(caseInsensitiveFilename(directoryName, vehicle_name)))
+            qWarning() << "Could not delete vehicle " << vehicle_name;
+    }
+}
+
+void FormGPS::vehicle_update_list() {
+    QObject *aog;
+
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+                            + "/" + QCoreApplication::applicationName() + "/Vehicles";
+
+    aog = qmlItem(qml_root, "aog");
+
+    QDir vehicleDirectory(directoryName);
+    if(!vehicleDirectory.exists()) {
+        vehicleDirectory.mkpath(directoryName);
+    }
+
+    vehicleDirectory.setFilter(QDir::Files);
+
+    QFileInfoList filesList = vehicleDirectory.entryInfoList();
+
+    QList<QVariant> vehicleList;
+    QMap<QString, QVariant>vehicle;
+    int index = 0;
+
+    for (QFileInfo file : filesList) {
+        vehicle.clear();
+        vehicle["index"] = index;
+        vehicle["name"] = file.fileName();
+        vehicleList.append(vehicle);
+        index++;
+    }
+
+    aog->setProperty("vehicle_list", vehicleList);
+
 }

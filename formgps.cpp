@@ -21,46 +21,53 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
 
     /* Temporary test data to see if drawing routines are working. */
 
-    //fieldColor = QColor(s.value("display/fieldColor", "#82781E").toString());
-    //sectionColor = QColor(s.value("display/sectionColor", "#32DCC8").toString());
-    property_setMenu_isCompassOn = true;
-    property_setMenu_isSpeedoOn = true;
+    if ((QString)property_setVehicle_vehicleName == "Default Vehicle") {
+        //set up a default vehicle
 
-    //just for debugging I think, force sections to be set
-    property_setSection_position1 = -3.3528;
-    property_setSection_position2 = -2.2352;
-    property_setSection_position3 = -1.1176;
-    property_setSection_position4 = 0;
-    property_setSection_position5 = 1.1176;
-    property_setSection_position6 = 2.2352;
-    property_setSection_position7 = 3.3528;
-    property_setVehicle_numSections = 6;
-    property_setVehicle_toolWidth = 6.7056;
+        //fieldColor = QColor(s.value("display/fieldColor", "#82781E").toString());
+        //sectionColor = QColor(s.value("display/sectionColor", "#32DCC8").toString());
+        property_setMenu_isCompassOn = true;
+        property_setMenu_isSpeedoOn = true;
+
+        //just for debugging I think, force sections to be set
+        property_setSection_position1 = -3.3528;
+        property_setSection_position2 = -2.2352;
+        property_setSection_position3 = -1.1176;
+        property_setSection_position4 = 0;
+        property_setSection_position5 = 1.1176;
+        property_setSection_position6 = 2.2352;
+        property_setSection_position7 = 3.3528;
+        property_setVehicle_numSections = 6;
+        property_setVehicle_toolWidth = 6.7056;
 
 
-    property_setTool_zones = QVector<int>( { 6,2,4,6,8,10,12,0,0 }); //2 rows per zone
-    property_setTool_numSectionsMulti = 12; //12 rows
-    property_setTool_sectionWidthMulti = .5588; //22" rows
-    property_setTool_isSectionsNotZones = false; //enable zones
+        property_setTool_zones = QVector<int>( { 6,2,4,6,8,10,12,0,0 }); //2 rows per zone
+        property_setTool_numSectionsMulti = 12; //12 rows
+        property_setTool_sectionWidthMulti = .5588; //22" rows
+        property_setTool_isSectionsNotZones = true; //enable zones
 
-    if (property_setTool_isSectionsNotZones) {
-        tool.sectionCalcWidths();
+        if (property_setTool_isSectionsNotZones) {
+            tool.sectionCalcWidths();
+        } else {
+            tool.sectionCalcMulti();
+        }
+
+
+
+        property_setVehicle_wheelbase = 3.1496;
+        property_setVehicle_trackWidth = 2.286;
+        property_setVehicle_hitchLength = -2.54;
+        property_setTool_isToolTBT=true;
+        property_setVehicle_tankTrailingHitchLength = -3;
+
+        property_setTool_isToolTrailing = true;
+        property_setTool_toolTrailingHitchLength = -4.572;
+        property_setVehicle_minTurningRadius = 8;
+        property_setVehicle_maxSteerAngle = 30;
     } else {
-        tool.sectionCalcMulti();
+        //reload our saved settings
+        vehicle_load(property_setVehicle_vehicleName);
     }
-
-
-
-    property_setVehicle_wheelbase = 3.1496;
-    property_setVehicle_trackWidth = 2.286;
-    property_setVehicle_hitchLength = -2.54;
-    property_setTool_isToolTBT=true;
-    property_setVehicle_tankTrailingHitchLength = -3;
-
-    property_setTool_isToolTrailing = true;
-    property_setTool_toolTrailingHitchLength = -4.572;
-    property_setVehicle_minTurningRadius = 8;
-    property_setVehicle_maxSteerAngle = 30;
 
     setupGui();
     loadSettings();

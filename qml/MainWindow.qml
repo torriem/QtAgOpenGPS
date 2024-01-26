@@ -183,6 +183,10 @@ Window {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
 
+        //for moving the center of the view around
+        property double shiftX: 0 //-1 left to 1 right
+        property double shiftY: 0 //-1 down to 1 up
+
         signal clicked(var mouse)
         signal dragged(int fromX, int fromY, int toX, int toY)
         signal zoomOut()
