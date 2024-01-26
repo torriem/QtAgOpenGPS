@@ -1348,6 +1348,11 @@ void FormGPS::fileSaveEverythingBeforeClosingField(QQuickCloseEvent *event)
 {
     qDebug() << "shutting down, saving field items.";
 
+    //update our settings to the vehicle as well
+    if((QString)property_setVehicle_vehicleName != "Default Vehicle") {
+        vehicle_saveas(property_setVehicle_vehicleName);
+    }
+
     //turn off contour line if on
     if (ct.isContourOn) ct.StopContourLine(contourSaveList);
 

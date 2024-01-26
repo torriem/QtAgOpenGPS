@@ -124,23 +124,23 @@ Item {
     property double setVehicle_toolOverlap: 0
     property double setTool_toolTrailingHitchLength: -2.5
     property int setVehicle_numSections: 3
-    property string setSection_position1: "-2"
-    property string setSection_position2: "-1"
-    property string setSection_position3: "1"
-    property string setSection_position4: "2"
-    property string setSection_position5: "0"
-    property string setSection_position6: "0"
-    property string setSection_position7: "0"
-    property string setSection_position8: "0"
-    property string setSection_position9: "0"
-    property string setSection_position10: "0"
-    property string setSection_position11: "0"
-    property string setSection_position12: "0"
-    property string setSection_position13: "0"
-    property string setSection_position14: "0"
-    property string setSection_position15: "0"
-    property string setSection_position16: "0"
-    property string setSection_position17: "0"
+    property double setSection_position1: -2
+    property double setSection_position2: -1
+    property double setSection_position3: 1
+    property double setSection_position4: 2
+    property double setSection_position5: 0
+    property double setSection_position6: 0
+    property double setSection_position7: 0
+    property double setSection_position8: 0
+    property double setSection_position9: 0
+    property double setSection_position10: 0
+    property double setSection_position11: 0
+    property double setSection_position12: 0
+    property double setSection_position13: 0
+    property double setSection_position14: 0
+    property double setSection_position15: 0
+    property double setSection_position16: 0
+    property double setSection_position17: 0
     property double purePursuitIntegralGainAB: 0.15
     property double set_youMoveDistance: 0.25
     property double setVehicle_antennaHeight: 3
@@ -205,9 +205,9 @@ Item {
     property int setDisplay_brightness: 80
     property double set_youTurnRadius: 8.1
     property int setDisplay_brightnessSystem: 80
-    property bool setTool_isSectionsNotZones: false
+    property bool setTool_isSectionsNotZones: true
     property int setTool_numSectionsMulti: 20
-    property var setTool_zones: [ 4,5,10,15,20,0,0,0,0 ]
+    property var setTool_zones: [ 2,10,20,0,0,0,0,0,0 ]
     property double setTool_sectionWidthMulti: 0.5
     property bool setDisplay_isBrightnessOn: true
     property string setKey_hotkeys: "ACFGMNPTYVW12345678"

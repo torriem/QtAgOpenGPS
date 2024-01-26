@@ -637,10 +637,6 @@ void FormGPS::on_settings_reload() {
 void FormGPS::on_settings_save() {
     settings->sync();
 
-    //update our saved copy as well
-    if((QString)property_setVehicle_vehicleName != "Default Vehicle") {
-        vehicle_saveas(property_setVehicle_vehicleName);
-    }
     loadSettings();
 }
 
@@ -701,6 +697,18 @@ void FormGPS::vehicle_load(QString vehicle_name) {
 }
 
 void FormGPS::vehicle_delete(QString vehicle_name) {
+    /*
+    if ((bool)property_setMenu_isMetric) {
+        settings->setValue("display/isMetric", "false");
+        qml_settings.insert("testing123","false");
+    } else {
+        settings->setValue("display/isMetric", "true");
+        qml_settings.insert("testing123","true");
+    }
+
+    return;
+    */
+
     QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
                             + "/" + QCoreApplication::applicationName() + "/Vehicles";
     QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, vehicle_name);
