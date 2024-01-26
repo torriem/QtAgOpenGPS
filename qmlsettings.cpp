@@ -84,7 +84,7 @@ void QMLSettings::updateSetting(const QString &settings_key) {
         }
      }
 
-    qDebug() << "updated " << settings_key << " from " << (*this)[qml_key] << " to " << settings_value;
+    //qDebug() << "updated " << settings_key << " from " << (*this)[qml_key] << " to " << settings_value;
 
     insert(qml_key, settings_value);
 }
