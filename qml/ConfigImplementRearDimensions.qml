@@ -26,19 +26,8 @@ Rectangle{
             anchors.rightMargin: parent.width * 0.6
             from: 10
             to:3000
-            value: Number(settings.setVehicle_hitchLength) < 0 ? -Number(settings.setVehicle_hitchLength) : Number(settings.setVehicle_hitchLength)
+            boundValue: settings.setVehicle_hitchLength < 0 ? -settings.setVehicle_hitchLength : settings.setVehicle_hitchLength
             onValueModified: settings.setVehicle_hitchLength = -value
-            Connections {
-                target: settings
-                function onSetVehicle_hitchLengthChanged(){
-                    //if the implement type was recently switched from front to rear, the sign of the hitchLength
-                    //will be wrong, so make it positive for the GUI
-                    if (Number(settings.setVehicle_hitchLength) > 0)
-                        hitchLength.setValue(Number(settings.setVehicle_hitchLength))
-                    else
-                        hitchLength.setValue(-Number(settings.setVehicle_hitchLength))
-                }
-            }
          }
     }
 }

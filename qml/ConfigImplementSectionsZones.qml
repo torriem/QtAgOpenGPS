@@ -280,8 +280,8 @@ Item {
             Layout.fillWidth: true
             id: numOfZones
             from: 1
-            value: Number(settings.setTool_zones[0])
-            to: Number(settings.setTool_numSectionsMulti) > 8 ? 8 : Number(settings.setTool_numSectionsMulti)
+            boundValue: settings.setTool_zones[0]
+            to: settings.setTool_numSectionsMulti > 8 ? 8 : settings.setTool_numSectionsMulti
             text: qsTr("Zones", "Zones as in zones of sections")
             editable: true
             onValueModified: {
@@ -311,24 +311,19 @@ Item {
             implicitWidth: 150
             implicitHeight: 50
             from: 10
-            value: Number(settings.setTool_sectionWidthMulti)
+            boundValue: settings.setTool_sectionWidthMulti
             to: 1000
             text: qsTr("Uniform Section Width")
             onValueModified: settings.setTool_sectionWidthMulti = value
-            Connections {
-                target: settings
-                function onSetTool_sectionWidthMultiChanged(){
-                    sectionWidthAllZones.setValue(Number(settings.setTool_sectionWidthMulti))
-                }
-            }
         }
+
         SpinBoxCustomized{
             Layout.fillWidth: true
             id: sectionsNumber
             implicitWidth: 150
             implicitHeight: 50
             from: numOfZones.value
-            value: Number(settings.setTool_numSectionsMulti)
+            boundValue: settings.setTool_numSectionsMulti
             to: 64
             text: qsTr("Sections")
             editable: true
