@@ -531,8 +531,10 @@
         <file>qml/LightBar.qml</file>
         <file>qml/OutlineText.qml</file>
         <file>qml/TrackNum.qml</file>
+        <file>qml/DisplayButtons.qml</file>
         <file>qml/ConfigImplementFrontDimensions.qml</file>
         <file>qml/ConfigImplementRearDimensions.qml</file>
         <file>qml/ConfigImplementTBTDimensions.qml</file>
+        <file>qml/StartUp.qml</file>
     </qresource>
 </RCC>

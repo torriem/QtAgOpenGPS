@@ -124,7 +124,7 @@ Window {
             implicitWidth: 75
             background: Rectangle{
                 Text {
-                    text: qsTr("0")
+                    text: aog.speedKph
                     font.bold: true
                     anchors.centerIn: parent
                     font.pixelSize: 35
@@ -286,6 +286,9 @@ Window {
             }
             Menu{
                 id: fileMenu
+                //anchors.left: buttonsArea.left
+                //anchors.top: buttonsArea.top
+                //anchors. margins: 200
                 MenuItem{ text: "Languages"}
                 MenuItem{ text: "Directories"}
                 MenuItem{ text: "Colors"}
@@ -320,26 +323,7 @@ Window {
                 objectName: "btnnavigationSettings"
                 buttonText: qsTr("Display")
                 icon.source: "/images/NavigationSettings.png"
-                property bool hideButtons: true
-
-                onHideButtonsChanged: {
-                    if (hideButtons == true) {
-                        displayButtons.visible = false
-                    }else{
-                        displayButtons.visible = true
-                    }
-                }
-
-                function toggle_displaybuttons(){
-                    if (hideButtons == true) {
-                        hideButtons = false
-                    }else{
-                        hideButtons = true
-                    }
-                }
-                onClicked: {
-                    toggle_displaybuttons()
-                }
+                onClicked: displayButtons.visible = !displayButtons.visible
             }
             IconButtonText {
                 id: btnSettings
@@ -354,56 +338,14 @@ Window {
                 objectName: "btnTools"
                 buttonText: qsTr("Tools")
                 icon.source: "/images/SpecialFunctions.png"
-                //pseudo state
-                property bool hideTools: true
-
-                onHideToolsChanged: {
-                    if (hideTools == true) {
-                        toolsWindow.visible = false
-                    } else {
-                        toolsWindow.visible = true
-                    }
-                }
-
-                function toggle_toolsmenu() {
-                    if (hideTools == true) {
-                        hideTools = false
-                    } else {
-                        hideTools = true
-                    }
-                }
-
-                onClicked: {
-                    toggle_toolsmenu();
-                }
+                onClicked: toolsWindow.visible = !toolsWindow.visible
             }
             IconButtonText{
                 id: btnFieldMenu
                 objectName: "btnFieldMenu"
                 buttonText: qsTr("Field")
                 icon.source: "/images/JobActive.png"
-                //pseudo state
-                property bool hideFieldMenu: true
-
-                onHideFieldMenuChanged: {
-                    if (hideFieldMenu == true) {
-                        fieldMenu.visible = false
-                    } else {
-                        fieldMenu.visible = true
-                    }
-                }
-
-                function toggle_fieldmenu() {
-                    if (hideFieldMenu == true) {
-                        hideFieldMenu = false
-                    } else {
-                        hideFieldMenu = true
-                    }
-                }
-
-                onClicked: {
-                    toggle_fieldmenu();
-                }
+                onClicked: fieldMenu.visible = !fieldMenu.visible
             }
             IconButtonText{
                 id: btnFieldTools
@@ -442,29 +384,7 @@ Window {
                     text: "Recorded Path"
                     icon.source: "/images/RecPath.png"
                     width: 300
-                    //pseudo state
-                    property bool hideRecordMenu: true
-
-                    onHideRecordMenuChanged: {
-                        if (hideRecordMenu == true) {
-                            recordButtons.visible = false
-                        } else {
-                            recordButtons.visible = true
-                        }
-                    }
-
-                    function toggle_recordmenu() {
-                        if (hideRecordMenu == true) {
-                            hideRecordMenu = false
-                        } else {
-                            hideRecordMenu = true
-                        }
-                    }
-
-                    onClicked: {
-                        toggle_recordmenu();
-                    }
-
+                    onClicked: recordButtons.visible = !recordButtons.visible
                 }
             }
 
@@ -479,28 +399,8 @@ Window {
                 objectName: "btnAutosteerConf"
                 buttonText: qsTr("Steer config")
                 icon.source: "/images/AutoSteerConf.png"
-                /*property bool hideSteerMenu: true
-
-                    onHideSteerMenuChanged: {
-                        if (hideSteerMenu == true) {
-                            steerConfigWindow.visible = false
-                        } else {
-                            steerConfigWindow.visible = true
-                        }
-                    }
-
-                    function toggle_steermenu() {
-                        if (hideSteerMenu == true) {
-                            hideSteerMenu = false
-                        } else {
-                            hideSteerMenu = true
-                        }
-                    }*/
-
                 onClicked: {
                         steerConfigWindow.visible = true
-
-                    //toggle_steermenu();
                 }
             }
         }
@@ -867,126 +767,10 @@ Window {
             //triState: btnSectionAuto.checked ? false : true
 
             anchors.bottom: bottomButtons.top
-            anchors.bottomMargin:10
+            anchors.bottomMargin: simBarRect.height + 25
             width: 500
         }
 
-        Rectangle{
-            id: displayButtons
-            width: childrenRect.width + 10
-            height: childrenRect.height + 10
-            anchors.left: leftColumn.right
-            anchors.leftMargin: 20
-            anchors.top: parent.top
-            anchors.topMargin: 20
-            color: "white"
-            visible: false
-            z:1
-            Grid {
-                id: tiltButtons
-                anchors.leftMargin: 5
-                anchors.topMargin: 5
-                spacing: 6
-                flow: Grid.TopToBottom
-                rows:6
-                columns:2
-
-                IconButtonTransparent {
-                    id: btnTiltDown
-                    objectName: "btnTiltDown"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/TiltDown.png"
-                }
-                IconButtonTransparent {
-                    id: btnCamera2d
-                    objectName: "btnCamera2d"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/Camera2D64.png"
-                }
-                IconButtonTransparent {
-                    id: btnCameraNorth2d
-                    objectName: "btnCameraNorth2d"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/CameraNorth2D.png"
-                }
-                IconButtonTransparent {
-                    id: btnZoomOut
-                    objectName: "btnZoomOut"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/ZoomOut48.png"
-                }
-                IconButtonTransparent {
-                    id: btnWindowDayNight
-                    objectName: "btnWindowDayNight"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/WindowDayMode.png"
-                }
-                IconButtonTransparent {
-                    id: btnBrightnessDown
-                    objectName: "btnBrightnessDown"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/BrightnessDn.png"
-                }
-                IconButtonTransparent {
-                    id: btnTiltUp
-                    objectName: "btnTiltUp"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/TiltUp.png"
-                }
-                IconButtonTransparent {
-                    id: btnCamera3d
-                    objectName: "btnCamera3d"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/Camera3D64.png"
-                }
-                IconButtonTransparent {
-                    id: btnCameraNorth3d
-                    objectName: "btnCameraNorth3d"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/CameraNorth64.png"
-                }
-                IconButtonTransparent {
-                    id: btnZoomIn
-                    objectName: "btnZoomIn"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/ZoomIn48.png"
-                }
-                Rectangle {
-                    id: btnHZ
-                    width: 70
-                    height: 70
-                    radius: 10
-                }
-                IconButtonTransparent {
-                    id: btnBrightnessUp
-                    objectName: "btnBrightnessUp"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/BrightnessUp.png"
-                }
-            }
-        }
 
         Item{
             objectName: "autoUTurnButton"
@@ -1147,7 +931,7 @@ Window {
             }
         }
 
-        SliderCustomized {
+        SliderCustomized { //quick dirty hack--the up and down buttons change this value, so the speed changes
             id: speedSlider
             objectName: "simSpeed"
             anchors.bottom: bottomButtons.top
@@ -1157,47 +941,97 @@ Window {
             from: -30
             to: 30
             value: 0
+            visible: false
         }
 
-        IconButton {
-            id: simStopButton
-            objectName: "simStopButton"
-            icon.source: "/images/Stop.png"
-            width: 50
-            height: 50
-            anchors.left: speedSlider.right
-            anchors.bottom: speedSlider.bottom
-            onClicked: {
-                speedSlider.value = 0;
-            }
-        }
-
-        SliderCustomized {
-            id: steerSlider
-            objectName: "simSteer"
-            anchors.bottom: simStopButton.top
-            anchors.leftMargin: 3
-            anchors.left: bottomButtons.left
-            multiplicationValue: 10
-            from: 0
-            to: 600
-            value: 300
-        }
-
-        IconButton {
-            id: centerSteerbutton
-            objectName: "simSteerCenter"
-            width: 50
-            height: 50
-            anchors.left: steerSlider.right
-            anchors.leftMargin: 50
-            anchors.bottom: steerSlider.bottom
-            icon.source: "/images/AutoSteerOn.png"
-            onClicked: {
-                steerSlider.value = 300;
+        Rectangle{
+            id: simBarRect
+            width: childrenRect.width +10
+            height: 60
+            anchors.bottom: bottomButtons.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottomMargin: 10
+            color: "gray"
+            visible: utils.isTrue(settings.setMenu_isSimulatorOn)
+            Connections{
+                target: settings
+                function onSetMenu_isSimulatorOnChanged(){
+                    simBarRect.visible = settings.setMenu_isSimulatorOn
+                }
             }
 
+            Row{
+                spacing: 4
+                width: childrenRect.width
+                height: 50
+                anchors.centerIn: parent
+                Button{
+                    text: "Reset"
+                    height: parent.height
+                    width: parent.height + 15
+                    onClicked: console.log("nothing doing")
+                }
+                Button{
+                    text: "wheelangle"
+                    font.pixelSize: 15
+                    height: parent.height
+                    width: parent.height + 15
+                    onClicked: steerSlider.value = 300
+                }
+                SliderCustomized {
+                    id: steerSlider
+                    objectName: "simSteer"
+                    multiplicationValue: 10
+                    from: 0
+                    to: 600
+                    value: 300
+                }
+                IconButtonTransparent{
+                    height: parent.height
+                    width: parent.height + 15
+                    icon.source: "/images/DnArrow64.png"
+                    onClicked: speedSlider.value -= 5
+                }
+                IconButtonTransparent{
+                    height: parent.height
+                    width: parent.height + 15
+                    icon.source: "/images/AutoStop.png"
+                    onClicked: speedSlider.value = 0
+                }
+                IconButtonTransparent{
+                    height: parent.height
+                    width: parent.height + 15
+                    icon.source: "/images/UpArrow64.png"
+                    onClicked: speedSlider.value += 5
+                }
+                IconButtonTransparent{
+                    height: parent.height
+                    width: parent.height + 15
+                    icon.source: "/images/YouTurn80.png"
+                    onClicked: console.log("nothing")
+                }
+
+            }
+
         }
+        StartUp{
+            id: startUp
+            z:10
+            visible: true
+        }
+
+        DisplayButtons{
+            id: displayButtons
+            width: childrenRect.width + 10
+            height: childrenRect.height + 10
+            anchors.left: leftColumn.right
+            anchors.leftMargin: 20
+            anchors.top: parent.top
+            anchors.topMargin: 20
+            visible: false
+            z:1
+        }
+
         FieldMenu {
             id: fieldMenu
             objectName: "slideoutMenu"
