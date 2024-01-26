@@ -535,5 +535,6 @@
         <file>qml/ConfigImplementFrontDimensions.qml</file>
         <file>qml/ConfigImplementRearDimensions.qml</file>
         <file>qml/ConfigImplementTBTDimensions.qml</file>
+        <file>qml/StartUp.qml</file>
     </qresource>
 </RCC>
