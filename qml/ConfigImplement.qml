@@ -36,7 +36,12 @@ Rectangle{
             icon.source: "/images/ToolChkRear.png"
             checkable: true
             isChecked: settings.setTool_isToolRearFixed
-            onCheckedChanged: settings.setTool_isToolRearFixed = checked
+            onClicked: {
+                settings.setTool_isToolRearFixed = true
+                settings.setTool_isToolFront = false
+                settings.setTool_isToolTrailing = false
+                settings.setTool_isToolTBT = false
+            }
 		}
 
 		IconButtonColor{
@@ -46,7 +51,12 @@ Rectangle{
             icon.source: "/images/ToolChkFront.png"
             checkable: true
             isChecked: settings.setTool_isToolFront
-            onCheckedChanged: settings.setTool_isToolFront = checked
+            onClicked: {
+                settings.setTool_isToolRearFixed = false
+                settings.setTool_isToolFront = true
+                settings.setTool_isToolTrailing = false
+                settings.setTool_isToolTBT = false
+            }
         }
 
 		IconButtonColor{
@@ -56,8 +66,10 @@ Rectangle{
             icon.source: "/images/ToolChkTrailing.png"
             checkable: true
             isChecked: settings.setTool_isToolTrailing && ! settings.setTool_isToolTBT
-            onCheckedChanged: {
-                settings.setTool_isToolTrailing = checked
+            onClicked: {
+                settings.setTool_isToolRearFixed = false
+                settings.setTool_isToolFront = false
+                settings.setTool_isToolTrailing = true
                 settings.setTool_isToolTBT = false
             }
         }
@@ -68,9 +80,11 @@ Rectangle{
             icon.source: "/images/ToolChkTBT.png"
             checkable: true
             isChecked: settings.setTool_isToolTBT
-            onCheckedChanged: {
-                settings.setTool_isToolTBT = true
+            onClicked: {
+                settings.setTool_isToolRearFixed = false
+                settings.setTool_isToolFront = false
                 settings.setTool_isToolTrailing = true
+                settings.setTool_isToolTBT = true
             }
         }
 	}
