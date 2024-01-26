@@ -10,6 +10,7 @@ Item {
 	property int stepSize: 1
 	property int decimals: 1
     property bool editable: true
+    property double boundValue
     width: spinner.width
     height: 100
 
@@ -18,6 +19,10 @@ Item {
     function setValue(newvalue) {
         spinner.value = newvalue * 10
         spinBox_singledigit.value = newvalue
+    }
+
+    onBoundValueChanged: {
+        value = boundValue
     }
 
     SpinBox {
