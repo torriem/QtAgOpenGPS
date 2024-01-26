@@ -17,13 +17,13 @@ add_props = {
                     'AOGProperty property_setDisplay_useTrackZero("display/useTrackZero", false);',
                     'extern AOGProperty property_setDisplay_useTrackZero;',
                     'property bool setDisplay_useTrackZero: false',
-                    '    addKey(QString("setDisplay_useTrackZero"),QString("display/useTrackZero"));' ],
+                    '    addKey(QString("setDisplay_useTrackZero"),QString("display/useTrackZero"),"bool");' ],
 
     'displayTopTrackNum' : [ 'display/topTrackNum',
                              'AOGProperty property_setDisplay_topTrackNum("display/topTrackNum", false);',
                              'extern AOGProperty property_setDisplay_topTrackNum;',
                              'property bool setDisplay_topTrackNum: false',
-                             '    addKey(QString("setDisplay_topTrackNum"),QString("display/topTrackNum"));' ],
+                             '    addKey(QString("setDisplay_topTrackNum"),QString("display/topTrackNum"),"bool");' ],
 }
 
 def parse_settings(file):
@@ -48,8 +48,9 @@ def parse_settings(file):
                 pass 
             if t == 'System.Int32' or \
                t == 'System.Double' or \
-               t == 'system.Decimal' or \
+               t == 'System.Decimal' or \
                t == 'System.Byte':
+
                 default_value = s.Value.contents[0]
 
                 #special case for a bad default value in Settings.settings
@@ -58,22 +59,27 @@ def parse_settings(file):
 
                 if t == 'System.Int32' or t == 'system.Byte':
                     mock_qml.append("property int %s: %s" % (n, default_value))
+                    qt = 'int'
                 else:
                     mock_qml.append("property double %s: %s" % (n, default_value))
+                    qt = 'double'
 
             elif t == 'System.Boolean':
                 default_value = s.Value.contents[0].lower()
                 mock_qml.append("property bool %s: %s" % (n, default_value))
+                qt = 'bool'
 
             elif t == 'System.String' and n == 'setTool_zones':
                 preamble.append('QVector<int> default_zones = { ' + s.Value.contents[0] + ' };')
                 mock_qml.append("property var %s: [ %s ]" % (n, s.Value.contents[0]))
                 default_value = 'default_zones'
+                qt = 'leavealone'
            
             elif t == 'System.String' and n == 'setRelay_pinConfig':
                 preamble.append('QVector<int> default_relay_pinConfig = { ' + s.Value.contents[0] + ' };')
                 mock_qml.append("property var %s: [ %s ]" % (n, s.Value.contents[0]))
                 default_value = 'default_relay_pinConfig'
+                qt = 'leavealone'
 
             elif t == 'System.String' or \
                  t == 'AgOpenGPS.TBrand' or \
@@ -86,10 +92,12 @@ def parse_settings(file):
                 else:
                     default_value = '""'
                 mock_qml.append("property string %s: %s" % (n, default_value))
+                qt = 'QString'
 
             elif t == 'System.Drawing.Point':
                 default_value = 'QPoint(%s)' % s.Value.contents[0]
                 mock_qml.append("property point %s: \"%s\"" % (n, s.Value.contents[0]))
+                qt = 'QPoint'
 
             elif t == 'System.Drawing.Color':
                 fields = s.Value.contents[0].split(',')
@@ -104,6 +112,7 @@ def parse_settings(file):
                 else:
                     colorstring = s.Value.contents[0]
                 mock_qml.append("property string %s: \"%s\"" % (n, colorstring))
+                qt = 'QColor'
 
             else:
                 if s.Value.contents:
@@ -111,6 +120,8 @@ def parse_settings(file):
                 else:
                     default_value = '""'
                 mock_qml.append("property string %s: %s" % (n, default_value))
+                qt = "QString"
+
 
             if s['Name'] in props:
                 qs_name = props[s['Name']]
@@ -119,7 +130,7 @@ def parse_settings(file):
                 qs_name = ""
 
             cpp.append('AOGProperty property_%s("%s",%s);'% (s['Name'], qs_name, default_value))
-            qml_cpp.append('    addKey(QString("%s"),QString("%s"));' % (s['Name'], qs_name));
+            qml_cpp.append('    addKey(QString("%s"),QString("%s"),"%s");' % (s['Name'], qs_name, qt));
             h.append('extern AOGProperty property_%s;' % s['Name'])
 
             #preamble.extend(cpp)
@@ -146,7 +157,7 @@ def parse_csettings(file):
                     props[name] = 'displayFeatures/%s' % parts[0]
                     qs_name = 'displayFeatures/%s' % parts[0]
                 cpp.append('AOGProperty property_%s("%s",%s);'% (name, qs_name, parts[1]))
-                qml_cpp.append('    addKey(QString("%s"),QString("%s"));' % (name, qs_name));
+                qml_cpp.append('    addKey(QString("%s"),QString("%s"), "bool");' % (name, qs_name));
                 h.append('extern AOGProperty property_%s;' % name)
                 mock_qml.append('property bool %s: %s' % (name, parts[1]))
 

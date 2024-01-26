@@ -20,6 +20,15 @@ import QtQuick.Controls 2.15
 Item {
     id: aogInterfaceType
 
+    /*
+    Connections {
+        target: settings
+        function onSetMenu_isMetricChanged() {
+            console.debug("isMetric is now",settings.setMenu_isMetric)
+        }
+    }
+    */
+
     property double frameTime: 0
 
     property bool isJobStarted: false
