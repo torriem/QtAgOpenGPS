@@ -9,6 +9,7 @@ Item {
     property string text: ""
 	property int stepSize: 1
     property bool editable
+    property int boundValue
 
     signal valueModified()
 
@@ -20,7 +21,10 @@ Item {
 
     function setValue(value) {
         spinner.value = value
+    }
 
+    onBoundValueChanged: {
+        value = boundValue
     }
 
     SpinBox {

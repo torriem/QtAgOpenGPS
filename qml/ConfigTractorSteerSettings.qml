@@ -36,17 +36,11 @@ Rectangle{
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: 0
-                value: Number(settings.setDisplay_lightbarCmPerPixel)
-                onValueModified: { settings.setDisplay_lightbarCmPerPixel = value }
-                Connections {
-                    target: settings
-                    function onSetDisplay_lightbarCmPerPixelChanged(){
-                        lightbarCmPerPixel.setValue(Number(settings.setDisplay_lightbarCmPerPixel))
-                    }
-                }
                 to: 15
+                boundValue: settings.setDisplay_lightbarCmPerPixel
+                onValueModified: settings.setDisplay_lightbarCmPerPixel = value
                 editable: true
-                text: qsTr("cm  /  pixel")
+                text: utils.cm_unit() + " " + qsTr("per pixel","As in units per pixel")
             }
         }
     }
@@ -72,7 +66,7 @@ Rectangle{
             anchors.top: linelengthtitletxt.bottom
             anchors.bottom: parent.bottom
             width: parent.width*.5
-            SpinBoxCustomized{
+            SpinBoxCM{
                 id: linelengthSetting
                 anchors.top: parent.top
                 anchors.topMargin: 25
@@ -80,17 +74,11 @@ Rectangle{
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: 200
-                value: Number(settings.setAB_lineLength)
-                onValueModified: { settings.setAB_lineLength = value }
-                Connections {
-                    target: settings
-                    function onSetAB_lineLengthChanged() {
-                        linelengthSetting.setValue(Number(settings.setAB_lineLength))
-                    }
-                }
-
                 to: 5000
-                text: qsTr("cm")
+                boundValue: settings.setAB_lineLength
+                onValueModified: settings.setAB_lineLength = value
+                editable: true
+                text: utils.cm_unit()
             }
         }
     }
@@ -113,18 +101,9 @@ Rectangle{
                 anchors.margins: 1
                 radius: 0
                 checkable: true
-                checked: utils.isTrue(settings.setAS_isConstantContourOn)
+                isChecked: settings.setAS_isConstantContourOn
                 icon.source: "/images/ContourOn.png"
-                onCheckedChanged: {
-                    settings.setAS_isConstantContourOn = checked
-                }
-                Connections {
-                    target: settings
-                    function onSetAS_isConstantContourOnChanged() {
-                        checked = utils.isTrue(settings.setAS_isConstantContourOn)
-                    }
-                }
-
+                onCheckedChanged: settings.setAS_isConstantContourOn = checked
             }
             Text{
                 width: 150
@@ -147,16 +126,8 @@ Rectangle{
                 icon.source: "/images/AutoSteerOn.png"
                 radius: 0
                 checkable: true
-                checked: utils.isTrue(settings.setAS_isAutoSteerAutoOn)
-                onCheckableChanged: {
-                    settings.setAS_isAutoSteerAutoOn = checked
-                }
-                Connections {
-                    target: settings
-                    function onSetAS_isAutoSteerAutoOnChanged() {
-                        checked = utils.isTrue(settings.setAS_isAutoSteerAutoOn)
-                    }
-                }
+                isChecked: settings.setAS_isAutoSteerAutoOn
+                onCheckableChanged: settings.setAS_isAutoSteerAutoOn = checked
             }
             Text{
                 text: qsTr("Steer Switch Control")
@@ -164,7 +135,6 @@ Rectangle{
                 anchors.left: parent.left
             }
         }
-
     }
     Rectangle{
         id: linewidthrect
@@ -196,17 +166,11 @@ Rectangle{
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: 1
-                value: Number(settings.setDisplay_lineWidth)
-                onValueModified: { settings.setDisplay_lineWidth = value}
-                Connections {
-                    target: settings
-                    function onSetDisplay_lineWidthChanged() {
-                        linewidthSetting.setValue(Number(settings.setDisplay_lineWidth))
-                    }
-                }
-
                 to: 8
+                boundValue: settings.setDisplay_lineWidth
+                onValueModified: settings.setDisplay_lineWidth = value
                 text: qsTr("pixels")
+                editable: true
             }
         }
     }
@@ -240,17 +204,11 @@ Rectangle{
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: 0
-                value: Number(settings.setAS_snapDistance)
-                onValueModified: { settings.setAS_snapDistance = value }
-                Connections {
-                    target: settings
-                    function onSetAS_snapDistanceChanged(){
-                        snapDistance.setValue(Number(settings.setAS_snapDistance))
-                    }
-                }
                 to: 1000
+                boundValue: settings.setAS_snapDistance
+                onValueModified: settings.setAS_snapDistance = value
                 editable: true
-                text: qsTr("cm")
+                text: utils.cm_unit()
             }
         }
     }
@@ -284,15 +242,10 @@ Rectangle{
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: .1
-                value: Number(settings.setAS_guidanceLookAheadTime)
-                onValueModified: {settings.setAS_guidanceLookAheadTime = value }
-                Connections {
-                    target: settings
-                    function onSetAS_guidanceLookAheadTimeChanged() {
-                        lineacqLAheadSetting.setValue(Number(settings.setAS_guidanceLookAheadTime))
-                    }
-                }
                 to: 10
+                boundValue: settings.setAS_guidanceLookAheadTime
+                onValueModified: settings.setAS_guidanceLookAheadTime = value
+                editable: true
                 text: qsTr("Seconds")
             }
         }

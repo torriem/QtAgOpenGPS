@@ -26,18 +26,8 @@ Rectangle{
             anchors.rightMargin: parent.width * 0.4
             from: 10
             to:3000
-            value: Number(settings.setVehicle_hitchLength) < 0 ? -Number(settings.setVehicle_hitchLength) : Number(settings.setVehicle_hitchLength)
+            boundValue: settings.setVehicle_hitchLength < 0 ? -settings.setVehicle_hitchLength : settings.setVehicle_hitchLength
             onValueModified: settings.setVehicle_hitchLength = value
-            Connections {
-                target: settings
-                function onSetVehicle_hitchLengthChanged() {
-                    //if switching between front and rear, preserve the number
-                    if (Number(settings.setVehicle_hitchLength) < 0)
-                        frontHitchLength.setValue(-Number(settings.setVehicle_hitchLength))
-                    else
-                        frontHitchLength.setValue(Number(settings.setVehicle_hitchLength))
-                }
-            }
         }
     }
 }

@@ -43,8 +43,6 @@ Button {
 
     //This is specific to this base type... must be re-implemented in subtypes
     onCheckedChanged: {
-        isChecked = checked
-
         if (checked && useIconChecked) {
             content_image.source = iconChecked
             //console.warn("icon should be ", content_image.source)

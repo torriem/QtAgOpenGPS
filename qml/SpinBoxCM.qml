@@ -14,6 +14,8 @@ Item {
     property bool editable: true
     property string text: ""
 
+    property double boundValue
+
     signal valueModified()
 
     width: spinner.width
@@ -22,6 +24,10 @@ Item {
     //set the spinner value without triggering valueChanged
     function setValue(value) {
         spinner.setValue(utils.cm_to_unit(value))
+    }
+
+    onBoundValueChanged: {
+        value = boundValue
     }
 
     Connections {

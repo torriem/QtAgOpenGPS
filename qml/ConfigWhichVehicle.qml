@@ -1,9 +1,7 @@
-import QtQuick 2.0
-import QtQuick.Controls 2.5
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 import QtQuick.Extras 1.4
-import Qt.labs.folderlistmodel 2.2
-
 
 /*todo:
   couldn't find the setting for the polygons
@@ -11,6 +9,13 @@ import Qt.labs.folderlistmodel 2.2
   */
 Item {
     anchors.fill: parent
+
+    onVisibleChanged: {
+        if(visible)
+            //ask backend to refresh our list of vehicles
+            aog.vehicle_update_list()
+    }
+
     Rectangle{
         id: configWhichVehicle
         anchors.fill: parent
@@ -31,14 +36,16 @@ Item {
                 objectName: "btnFieldTexture"
                 text: qsTr("Field Texture")
                 icon.source: "/images/Config/ConD_FloorTexture.png"
+                checkable: true
                 isChecked: settings.setDisplay_isTextureOn
                 onCheckedChanged: settings.setDisplay_isTextureOn = checked
             }
             IconButtonColor{
                 id: autoDayNight
                 objectName: "btnAutoDayNight"
-                checked: settings.setDisplay_isAutoDayNight
+                isChecked: settings.setDisplay_isAutoDayNight
                 onCheckedChanged: settings.setDisplay_isAutoDayNight = !checked
+                checkable: true
                 text: qsTr("Auto Day Night")
                 icon.source: "/images/Config/ConD_AutoDayNight.png"
             }
@@ -47,22 +54,17 @@ Item {
                 objectName: "btnStartFullScreen"
                 text: qsTr("Start FullScreen")
                 icon.source: "/images/Config/ConD_FullScreenBegin.png"
-                checked: settings.setDisplay_isStartFullScreen
+                checkable: true
+                isChecked: settings.setDisplay_isStartFullScreen
                 onCheckedChanged: settings.setDisplay_isStartFullScreen = checked
-            }
-            IconButtonColor{
-                id:polygons
-                objectName: "btnPolygons"
-                text: qsTr("Polygons")
-                icon.source: "/images/Config/ConD_Poligons.png"
-               // checked: settings.set
             }
             IconButtonColor{
                 id:grid
                 objectName: "btnGrid"
                 text: qsTr("Grid")
                 icon.source: "/images/Config/ConD_Grid.png"
-                checked: settings.setMenu_isGridOn
+                checkable: true
+                isChecked: settings.setMenu_isGridOn
                 onCheckedChanged: settings.setMenu_isGridOn = checked
             }
             IconButtonColor{
@@ -70,7 +72,8 @@ Item {
                 objectName: "btnSky"
                 text:qsTr("Sky")
                 icon.source: "/images/Config/ConD_Sky.png"
-                checked: settings.setMenu_isSkyOn
+                checkable: true
+                isChecked: settings.setMenu_isSkyOn
                 onCheckedChanged: settings.setMenu_isSkyOn = checked
             }
             IconButtonColor{
@@ -78,7 +81,8 @@ Item {
                 text:qsTr("Brightness")
                 objectName: "btnBrightness"
                 icon.source: "/images/BrightnessUp.png"
-                checked: settings.setDisplay_isBrightnessOn
+                checkable: true
+                isChecked: settings.setDisplay_isBrightnessOn
                 onCheckedChanged: settings.setDisplay_isBrightnessOn = checked
             }
             IconButtonColor{
@@ -86,29 +90,33 @@ Item {
                 objectName: "btnLightBar"
                 text:qsTr("Lightbar")
                 icon.source: "/images/Config/ConD_LightBar.png"
-                checked: settings.setMenu_isLightbarOn
+                checkable: true
+                isChecked: settings.setMenu_isLightbarOn
                 onCheckedChanged: settings.setMenu_isLightbarOn = checked
             }
             IconButtonColor{
                 id:logNMEA
                 objectName: "btnLonNMEA"
                 text: qsTr("Log NMEA")
-                isChecked: false
+                checkable: true
                 icon.source: "/images/Config/ConD_LogNMEA.png"
             }
+            /*
             IconButtonColor{ //delete this?
                 id:keyboard
                 objectName: "btnKeyboard"
                 text:qsTr("Keyboard")
                 icon.source: "/images/Config/ConD_KeyBoard.png"
+                checkable: true
                 isChecked: false
-            }
+            }*/
             IconButtonColor{
                 id: guideLines
                 objectName: "btnGuidelines"
                 text: qsTr("GuideLines")
                 icon.source: "/images/Config/ConD_ExtraGuides.png"
-                checked: settings.setMenu_isSideGuideLines
+                checkable: true
+                isChecked: settings.setMenu_isSideGuideLines
                 onCheckedChanged: settings.setMenu_isSideGuideLines = checked
             }
             IconButtonColor{
@@ -116,7 +124,8 @@ Item {
                 objectName: "btnSvennArrow"
                 text: qsTr("Svenn Arrow")
                 icon.source: "/images/SvennArrow.png"
-                checked: settings.setDisplay_isSvennArrowOn
+                checkable: true
+                isChecked: settings.setDisplay_isSvennArrowOn
                 onCheckedChanged: settings.setDisplay_isSvennArrowOn
             }
         }
@@ -126,48 +135,29 @@ Item {
             anchors.bottom: configWhichVehicle.bottom
             width: childrenRect.width
             height: childrenRect.height
+            ButtonGroup {
+                id: metricimp
+                buttons: [metric, imperial]
+            }
+
             IconButtonColor{
                 id:metric
                 objectName: "btnMetric"
                 icon.source: "/images/Config/ConD_Metric.png"
-                text: ""
-                isChecked: utils.isMetric()
-                onClicked:{
-                    imperial.checkable = true
-                    metric.checkable = false
-                    if(utils.isMetric){
-                        settings.setMenu_isMetric = true
-                    }
-                }
-                Connections{
-                    target: settings
-                    function onSetMenu_isMetricChanged(){
-                        metric.checked = settings.setMenu_isMetric
-                    }
-                }
+                //text: qsTr("Metric")
+                property bool settingsChecked: settings.setMenu_isMetric
+                checkable: true
+                isChecked: settings.setMenu_isMetric
+                onCheckedChanged: settings.setMenu_isMetric = checked
             }
             IconButtonColor{
                 id:imperial
                 objectName: "btnImperial"
                 icon.source: "/images/Config/ConD_Imperial.png"
                 text: ""
-                isChecked: !utils.isMetric()
-                onClicked:{
-                    metric.checkable = true
-                    imperial.checkable = false
-                    console.log("starting")
-                    if(utils.isMetric){
-                        settings.setMenu_isMetric = false
-                        console.log(settings.setMenu_isMetric)
-                    }
-                }
-                Connections{
-                    target: settings
-                    function onSetMenu_isMetricChanged(){
-                        imperial.checked = !settings.setMenu_isMetric
-                        console.log(settings.setMenu_isMetric)
-                    }
-                }
+                checkable: true
+                isChecked: !settings.setMenu_isMetric
+                onCheckedChanged: settings.setMenu_isMetric = !checked
             }
         }
         Rectangle{
@@ -180,27 +170,53 @@ Item {
             anchors.top:entryBox.bottom
             anchors.right: parent.right
 
+            function refresh_model() {
+                fieldList.clear()
+                for (var i=0; i < aog.vehicle_list.length ; i++) {
+                    //console.debug(aog.vehicle_list[i])
+                    fieldList.append( { index: aog.vehicle_list[i].index,
+                                         name: aog.vehicle_list[i].name })
+                }
+            }
+
+            Connections {
+                target: aog
+                function onVehicle_listChanged() {
+                    vehicleList.refresh_model()
+                }
+            }
+
+            Component.onCompleted: {
+                refresh_model()
+            }
 
             ListView {
                 id: vehicleListView
                 anchors.fill: parent
                 anchors.margins: 1
 
-                property Component mycomponent: fileName
-                model :FolderListModel{
+                model : ListModel{
                     id: fieldList
-                    showDirs: true
-                    folder: "file:/home/davidwedel/Documents/QtAgOpenGPS/Vehicles/"
                 }
+
+                property string selectedVehicle: ""
 
                 delegate: RadioButton{
                     id: control
-                        indicator: Rectangle{
-                            anchors.fill: parent
-                            anchors.margins: 2
-                            color: control.down ? "white" : "blue"
-                            visible: control.checked
+
+                    indicator: Rectangle{
+                        anchors.fill: parent
+                        anchors.margins: 2
+                        color: control.down ? "white" : "blue"
+                        visible: control.checked
+                    }
+
+                    onCheckedChanged: {
+                        if(checked) {
+                            vehicleListView.selectedVehicle = model.name
+                            saveAsVehicle.text = model.name
                         }
+                    }
 
                     width: vehicleListView.width
                     height: 50
@@ -210,8 +226,8 @@ Item {
                         anchors.left: parent.left
                         anchors.leftMargin: 5
                         anchors.verticalCenter: parent.verticalCenter
-                        text: fileName
-                        font.pixelSize: 25
+                        text: model.name
+                        font.pixelSize: 20
                         font.bold: true
                         color: control.checked ? "white" : "black"
                         z: 2
@@ -219,9 +235,16 @@ Item {
                 }
             }
         }
+        Label {
+            id: currentVehicle
+            text: qsTr("Current vehicle is") + "<h2>" + settings.setVehicle_vehicleName + "</h2>"
+            anchors.top: configWhichVehicle.top
+            anchors.horizontalCenter: entryBox.horizontalCenter
+            anchors.margins: 15
+        }
         Rectangle{
             id: entryBox
-            anchors.top: configWhichVehicle.top
+            anchors.top: currentVehicle.bottom
             anchors.right: configWhichVehicle.right
             height: 75
             width: vehicleList.width
@@ -234,6 +257,16 @@ Item {
                 width: 75
                 height: 75
                 icon.source: "/images/VehFileSaveAs"
+                onClicked: {
+                    if (saveAsVehicle.text != "") {
+                        //console.debug("Going to save", saveAsVehicle.text)
+                        aog.vehicle_saveas(saveAsVehicle.text)
+                        //just setting the name is probably enough to get it to save the vehicle
+                        settings.setVehicle_vehicleName = saveAsVehicle.text
+                        saveAsVehicle.text = ""
+                        aog.vehicle_update_list()
+                    }
+                }
             }
             Text {
                 id: saveAs
@@ -243,19 +276,15 @@ Item {
                 text: qsTr("Save As")
             }
 
-            Rectangle{
+            TextField{
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: saveAs.right
                 anchors.right: vehFileSaveAs.left
-                anchors.rightMargin: 50
-                height: 30
-                color:"white"
-                border.color: "gray"
-                TextInput{
-                    anchors.fill: parent
-                    text:""
-                    cursorVisible: true
-                }
+
+                id: saveAsVehicle
+                anchors.margins: 5
+                placeholderText: "vehicle and implement"
+                selectByMouse: true
             }
         }
         IconButtonText{
@@ -267,6 +296,13 @@ Item {
             text: qsTr("Load")
             color3: "white"
             border: 2
+            onClicked: {
+                if (vehicleListView.selectedVehicle != "" ) {
+                    aog.vehicle_load(vehicleListView.selectedVehicle)
+                    settings.setVehicle_vehicleName = vehicleListView.selectedVehicle
+                }
+            }
+
         }
         IconButtonText{
             id: deletefolder
@@ -277,6 +313,15 @@ Item {
             text: qsTr("Delete")
             color3: "white"
             border: 2
+            onClicked: {
+                //settings.setMenu_isMetric = !utils.isTrue(settings.setMenu_isMetric)
+                //console.debug("qml says settings ismetric is",settings.setMenu_isMetric)
+                //aog.vehicle_delete("testing123")
+                if (vehicleListView.selectedVehicle != "" ) {
+                    aog.vehicle_delete(vehicleListView.selectedVehicle)
+                    aog.vehicle_update_list()
+                }
+            }
         }
     }
 }
