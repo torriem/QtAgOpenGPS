@@ -37,7 +37,7 @@ Rectangle{
 				objectName: "btnWorkSwitch"
                 checkable: true
                 isChecked: settings.setF_isRemoteWorkSystemOn
-                onClicked: settings.setF_isRemoteWorkSystemOn = checked
+                onCheckedChanged: settings.setF_isRemoteWorkSystemOn = checked
 				text: qsTr("Work Switch")
 			}
 
@@ -51,7 +51,7 @@ Rectangle{
 				objectName: "btnWorkSwitchManual"
                 checkable: true
                 isChecked: settings.setF_isWorkSwitchManualSections
-                onClicked: settings.setF_isWorkSwitchManualSections = checked
+                onCheckedChanged: settings.setF_isWorkSwitchManualSections = checked
 				text: qsTr("Manual Sections")
 			}
 
@@ -61,7 +61,7 @@ Rectangle{
 				icon.source: "/images/SectionMasterOff.png"
                 checkable: true
                 isChecked: !settings.setF_isWorkSwitchManualSections
-                onClicked: settings.setF_isWorkSwitchManualSections = !checked
+                onCheckedChanged: settings.setF_isWorkSwitchManualSections = !checked
 				text: qsTr("Auto Sections")
 			}
 			IconButton{
@@ -106,7 +106,7 @@ Rectangle{
 			IconButtonTextBeside{
 				objectName: "btnSteerSwitch"
                 isChecked: settings.setF_isSteerWorkSwitchEnabled
-                onClicked: settings.setF_isSteerWorkSwitchEnabled = checked
+                onCheckedChanged: settings.setF_isSteerWorkSwitchEnabled = checked
 				text: qsTr("Steer Switch")
 				icon.source: "/images/AutoSteerOff.png"
 			}
@@ -119,7 +119,7 @@ Rectangle{
                 id: steerSwitchMan
 				objectName: "btnSteerSwitchManual"
                 isChecked: settings.setF_isSteerWorkSwitchManualSections
-                onClicked: settings.setF_isSteerWorkSwitchManualSections = checked
+                onCheckedChanged: settings.setF_isSteerWorkSwitchManualSections = checked
                 checkable: true
 				text: qsTr("Manual Sections")
 				icon.source: "/images/ManualOff.png"
@@ -128,7 +128,7 @@ Rectangle{
                 id: steerSwitchAuto
 				objectName: "btnSteerSwitchAuto"
                 isChecked: !settings.setF_isSteerWorkSwitchManualSections
-                onClicked: settings.setF_isSteerWorkSwitchManualSections = !checked
+                onCheckedChanged: settings.setF_isSteerWorkSwitchManualSections = !checked
 				text: qsTr("Auto Sections")
 				icon.source: "/images/SectionMasterOff.png"
 			}
