@@ -144,7 +144,7 @@ Rectangle{
         anchors.rightMargin: 5
         objectName: "btnSort"
         icon.source: "/images/Sort.png"
-        buttonText: "Sort"
+        text: "Sort"
     }
 
     RowLayout{
@@ -190,32 +190,32 @@ Rectangle{
             isChecked: false
             width: marker.width
             height: marker.height
-            icon: "/images/FlagRed.png"
-            buttonText: "Flags"
+            icon.source: "/images/FlagRed.png"
+            text: "Flags"
         }
         IconButtonColor{
             objectName: "btnKeepMapping"
             isChecked: false
             width: marker.width
             height: marker.height
-            icon: "/images/ManualOff.png"
-            buttonText: "Mapping"
+            icon.source: "/images/ManualOff.png"
+            text: "Mapping"
         }
         IconButtonColor{
             objectName: "btnKeepHeadland"
             isChecked: false
             width: marker.width
             height: marker.height
-            icon: "/images/HeadlandMenu.png"
-            buttonText: "Headland"
+            icon.source: "/images/HeadlandMenu.png"
+            text: "Headland"
         }
         IconButtonColor{
             objectName: "btnKeepLines"
             isChecked: false
             width: marker.width
             height: marker.height
-            icon: "/images/ABLineEdit.png"
-            buttonText: "Lines"
+            icon.source: "/images/ABLineEdit.png"
+            text: "Lines"
         }
     }
     Row{

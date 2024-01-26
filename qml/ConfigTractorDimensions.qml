@@ -1,5 +1,8 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
+/*todo:
+  switch to something with configImplementDimensions
+  */
 
 Rectangle{
     id: configTractorDimensions
@@ -9,36 +12,60 @@ Rectangle{
     visible: false
     Image {
         id: dimImage
-        source: "/images/RadiusWheelBase.png"
+        source: Number(settings.setVehicle_vehicleType === 0) ? "/images/RadiusWheelBase.png":
+                Number(settings.setVehicle_vehicleType === 1) ? "/images/RadiusWheelBaseHarvester.png" :
+                Number(settings.setVehicle_vehicleType === 2) ? "/images/RadiusWheelBase4WD.png":
+                "/images/Config/ConSt_Mandatory.png"
         width: 350
         height: 350
         anchors.centerIn: parent
     }
-    SpinBoxCustomized{
-        id: wheelBase
+    SpinBoxCM{
+        id: wheelbase
         anchors.verticalCenter: dimImage.verticalCenter
         anchors.right: dimImage.left
         from: 20
-        value: 20
+        value: Number(settings.setVehicle_wheelbase)
+        Connections {
+            target: settings
+            function onSetVehicle_wheelbaseChanged(){
+                wheelbase.setValue(Number(settings.setVehicle_wheelbase))
+            }
+        }
+        onValueModified: settings.setVehicle_wheelbase = value
         to: 787
-            text: "Wheelbase"
+            text: qsTr("Wheelbase")
     }
-    SpinBoxCustomized{
-        id: track
+    SpinBoxCM{
+        id: trackWidth
         anchors.top: dimImage.top
         anchors.left: dimImage.right
-        from: 20
-        value: 20
-        to: 3937
+        from: 50
+        value: Number(settings.setVehicle_trackWidth)
+        onValueModified: settings.setVehicle_trackWidth = value
+        Connections {
+            target: settings
+            function onSetVehicle_trackWidthChanged(){
+                trackWidth.setValue(Number(settings.setVehicle_trackWidth))
+            }
+        }
+        to: 9999
         text: qsTr("Track")
     }
-    SpinBoxCustomized{
-        id: turnRadius
+    SpinBoxCM{
+        id: minTurningRadius
         anchors.bottom: dimImage.bottom
         anchors.left: dimImage.right
-        from: 20
-        value: 20
-        to: 787
+        from: 50
+        value: Number(settings.setVehicle_minTurningRadius)
+        onValueModified: settings.setVehicle_minTurningRadius = value
+        Connections {
+            target: settings
+            function onSetVehicle_minTurningRadiusChanged(){
+                minTurningRadius.setValue(Number(settings.setVehicle_minTurningRadius))
+            }
+        }
+        to: 9999
         text: qsTr("Turn Radius")
     }
 }

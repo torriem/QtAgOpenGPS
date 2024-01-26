@@ -1,6 +1,9 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
+/*todo:
+  not sure how to handle "remove offset, zero roll, and reset IMU". Will leave for now
+  */
 Rectangle{
     id: configSourcesRoll
     anchors.fill: parent
@@ -12,17 +15,17 @@ Rectangle{
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 20
-        buttonText: qsTr("Remove Offset")
-        icon: "/images/Config/ConDa_RemoveOffset.png"
-        isChecked: false
+        text: qsTr("Remove Offset")
+        icon.source: "/images/Config/ConDa_RemoveOffset.png"
+
     }
     IconButtonColor{
         objectName: "zeroRoll"
-        buttonText: "Zero Roll"
+        text: qsTr("Zero Roll")
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 20
-        icon: "/images/Config/ConDa_RollSetZero.png"
+        icon.source: "/images/Config/ConDa_RollSetZero.png"
         isChecked: false
     }
     IconButtonColor{
@@ -30,7 +33,7 @@ Rectangle{
         anchors.left: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: 20
-        icon: "/images/Config/ConDa_ResetIMU.png"
+        icon.source: "/images/Config/ConDa_ResetIMU.png"
         isChecked: false
     }
 
@@ -39,9 +42,10 @@ Rectangle{
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.horizontalCenter
         anchors.topMargin: 20
-        buttonText: qsTr("Invert Roll")
-        icon: "/images/Config/ConDa_InvertRoll.png"
-        isChecked: false
+        text: qsTr("Invert Roll")
+        icon.source: "/images/Config/ConDa_InvertRoll.png"
+        checked: settings.setIMU_invertRoll
+        onCheckedChanged: settings.setIMU_invertRoll = checked
     }
     Rectangle{
         id: rollFilterSlider
@@ -57,7 +61,8 @@ Rectangle{
             anchors.fill: parent
             from: 0
             to: 98
-            value: 0
+            value: settings.setIMU_rollFilter
+            onValueChanged: settings.setIMU_rollFilter = value
             leftTopText: "Less"
             centerTopText: "Roll Filter"
             rightTopText: "More"

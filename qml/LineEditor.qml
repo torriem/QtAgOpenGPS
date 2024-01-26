@@ -73,7 +73,7 @@ Rectangle {
             color1: "transparent"
             color2: "transparent"
             color3: "transparent"
-            buttonText: "Cancel"
+            text: "Cancel"
             width: 75
             height: 75
         }
@@ -83,7 +83,7 @@ Rectangle {
             color1: "transparent"
             color2: "transparent"
             color3: "transparent"
-            buttonText: "For Now"
+            text: "For Now"
             width: 75
             height: 75
             onClicked: lineEditor.visible = false
@@ -94,7 +94,7 @@ Rectangle {
             color1: "transparent"
             color2: "transparent"
             color3: "transparent"
-            buttonText: "Save"
+            text: "Save"
             width: 75
             height: 75
             onClicked: lineEditor.visible = false

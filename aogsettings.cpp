@@ -79,7 +79,8 @@ QJsonObject AOGSettings::toJson()
         type = b.typeName();
 
         if (type == "QStringList" ||
-            type == "QVariantList" )
+            type == "QVariantList"  ||
+            type == "QJSValue")
         {
             QVector<int> list = value(key,QVector<int>());
             json_value="@List:";
@@ -91,7 +92,7 @@ QJsonObject AOGSettings::toJson()
         } else {
             json_value = b.toString();
         }
-        qWarning() << key <<", " << type << ", " << json_value;
+        //qDebug() << key <<", " << type << ", " << json_value;
         /*
         } else {
             QByteArray raw_value;

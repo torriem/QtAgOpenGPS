@@ -2,6 +2,10 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
 
+/*todo:
+ can't find setting for "invert relays"
+ not sure about the "send button"
+ */
     Rectangle{
         id: configModules
         anchors.fill: parent
@@ -41,12 +45,15 @@ import QtQuick.Controls 2.5
                     objectName: "btnHydLiftEnable"
                     height: 130
                     width: 170
-                    icon: "/images/SwitchOn.png"
+                    icon.source: "/images/SwitchOn.png"
+                    checked: settings.setArdMac_isHydEnabled
+                    onCheckedChanged: settings.setArdMac_isHydEnabled = checked
                 }
                 SpinBoxCustomized{
                     id: raiseTime
                     from:1
-                    value: 2
+                    value: settings.setArdMac_hydRaiseTime
+                    onValueChanged: settings.setArdMac_hydRaiseTime = value
                     to: 255
                     editable: true
                     text: qsTr("Raise Time(secs)")
@@ -59,7 +66,8 @@ import QtQuick.Controls 2.5
                 SpinBoxOneDecimal{
                     id: liftLookAhead
                     from:1
-                    value: 2
+                    value: settings.setVehicle_hydraulicLiftLookAhead
+                    onValueChanged: settings.setVehicle_hydraulicLiftLookAhead = value
                     to: 20
                     editable: true
                     text: qsTr("Hydraulic Lift Look Ahead
@@ -68,7 +76,8 @@ import QtQuick.Controls 2.5
                 SpinBoxCustomized{
                     id: lowerTime
                     from:1
-                    value: 5
+                    value: settings.setArdMac_hydLowerTime
+                    onValueChanged: settings.setArdMac_hydLowerTime = value
                     to: 255
                     editable: true
                     text: qsTr("Lower Time(secs)")
@@ -84,9 +93,10 @@ import QtQuick.Controls 2.5
             id: invertRel
             anchors.horizontalCenter: hydConfig.horizontalCenter
             anchors.bottom: parent.bottom
-            buttonText: "Invert Relays"
+            text: qsTr("Invert Relays")
             anchors.margins: 10
-            icon: "/images/Config/ConSt_InvertRelay.png"
+            icon.source: "/images/Config/ConSt_InvertRelay.png"
+            checked: false
         }
         Rectangle{
             anchors.bottom: parent.bottom
@@ -102,7 +112,8 @@ import QtQuick.Controls 2.5
                 SpinBoxCustomized{
                     id: user1
                     from: 0
-                    value: 1
+                    value: settings.setArdMac_user1
+                    onValueChanged: settings.setArdMac_user1
                     to: 255
                     editable: true
                     text: qsTr("User 1")
@@ -110,7 +121,8 @@ import QtQuick.Controls 2.5
                 SpinBoxCustomized{
                     id: user2
                     from: 0
-                    value: 2
+                    value: settings.setArdMac_user2
+                    onValueChanged: settings.setArdMac_user2
                     to: 255
                     editable: true
                     text: qsTr("User 2")
@@ -118,7 +130,8 @@ import QtQuick.Controls 2.5
                 SpinBoxCustomized{
                     id: user3
                     from: 0
-                    value: 3
+                    value: settings.setArdMac_user3
+                    onValueChanged: settings.setArdMac_user3
                     to: 255
                     editable: true
                     text: qsTr("User 3")
@@ -126,7 +139,8 @@ import QtQuick.Controls 2.5
                 SpinBoxCustomized{
                     id: user4
                     from: 0
-                    value: 4
+                    value: settings.setArdMac_user4
+                    onValueChanged: settings.setArdMac_user4
                     to: 255
                     editable: true
                     text: qsTr("User 4")
@@ -143,7 +157,7 @@ import QtQuick.Controls 2.5
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.left
                     anchors.rightMargin: 5
-                    text: "Send + Save"
+                    text: qsTr("Send + Save")
                 }
             }
         }

@@ -28,18 +28,25 @@ Rectangle{
             anchors.top: lightbartitletxt.bottom
             anchors.bottom: parent.bottom
             width: parent.width*.5
-            SpinBoxCustomized{
-                id: lightbarSetting
+            SpinBoxCM{
+                id: lightbarCmPerPixel
                 anchors.top: parent.top
                 anchors.topMargin: 25
                 height: 50
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: 0
-                value: 1
+                value: Number(settings.setDisplay_lightbarCmPerPixel)
+                onValueModified: { settings.setDisplay_lightbarCmPerPixel = value }
+                Connections {
+                    target: settings
+                    function onSetDisplay_lightbarCmPerPixelChanged(){
+                        lightbarCmPerPixel.setValue(Number(settings.setDisplay_lightbarCmPerPixel))
+                    }
+                }
                 to: 15
                 editable: true
-                text: qsTr("in  /  pixel")
+                text: qsTr("cm  /  pixel")
             }
         }
     }
@@ -72,10 +79,18 @@ Rectangle{
                 height: 50
                 anchors.left: parent.right
                 anchors.leftMargin: 10
-                from: 656
-                value: 5249
-                to: 16400
-                text: qsTr("ft")
+                from: 200
+                value: Number(settings.setAB_lineLength)
+                onValueModified: { settings.setAB_lineLength = value }
+                Connections {
+                    target: settings
+                    function onSetAB_lineLengthChanged() {
+                        linelengthSetting.setValue(Number(settings.setAB_lineLength))
+                    }
+                }
+
+                to: 5000
+                text: qsTr("cm")
             }
         }
     }
@@ -89,17 +104,32 @@ Rectangle{
         Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
-            width: 100
-            height: 100
-            radius: 5
+            width: 102
+            height: 102
+            radius: 0
             border.color: "black"
             IconButtonTransparent{
                 anchors.fill: parent
+                anchors.margins: 1
+                radius: 0
+                checkable: true
+                checked: utils.isTrue(settings.setAS_isConstantContourOn)
                 icon.source: "/images/ContourOn.png"
+                onCheckedChanged: {
+                    settings.setAS_isConstantContourOn = checked
+                }
+                Connections {
+                    target: settings
+                    function onSetAS_isConstantContourOnChanged() {
+                        checked = utils.isTrue(settings.setAS_isConstantContourOn)
+                    }
+                }
+
             }
             Text{
-                text: qsTr("Constant Contour
-Recording")
+                width: 150
+                wrapMode: Text.WordWrap
+                text: qsTr("Constant Contour Recording")
                 anchors.bottom: parent.top
                 anchors.left: parent.left
             }
@@ -107,13 +137,26 @@ Recording")
         Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            width: 100
-            height: 100
-            radius: 5
+            width: 102
+            height: 102
+            radius: 0
             border.color: "black"
             IconButtonTransparent{
                 anchors.fill: parent
+                anchors.margins: 1
                 icon.source: "/images/AutoSteerOn.png"
+                radius: 0
+                checkable: true
+                checked: utils.isTrue(settings.setAS_isAutoSteerAutoOn)
+                onCheckableChanged: {
+                    settings.setAS_isAutoSteerAutoOn = checked
+                }
+                Connections {
+                    target: settings
+                    function onSetAS_isAutoSteerAutoOnChanged() {
+                        checked = utils.isTrue(settings.setAS_isAutoSteerAutoOn)
+                    }
+                }
             }
             Text{
                 text: qsTr("Steer Switch Control")
@@ -153,7 +196,15 @@ Recording")
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: 1
-                value: 2
+                value: Number(settings.setDisplay_lineWidth)
+                onValueModified: { settings.setDisplay_lineWidth = value}
+                Connections {
+                    target: settings
+                    function onSetDisplay_lineWidthChanged() {
+                        linewidthSetting.setValue(Number(settings.setDisplay_lineWidth))
+                    }
+                }
+
                 to: 8
                 text: qsTr("pixels")
             }
@@ -181,18 +232,25 @@ Recording")
             anchors.top: nudgedisttitletxt.bottom
             anchors.bottom: parent.bottom
             width: parent.width*.5
-            SpinBoxOneDecimal{
-                id: nudgedistSetting
+            SpinBoxCM{
+                id: snapDistance
                 anchors.top: parent.top
                 anchors.topMargin: 25
                 height: 50
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: 0
-                value: 3
-                to: 155
+                value: Number(settings.setAS_snapDistance)
+                onValueModified: { settings.setAS_snapDistance = value }
+                Connections {
+                    target: settings
+                    function onSetAS_snapDistanceChanged(){
+                        snapDistance.setValue(Number(settings.setAS_snapDistance))
+                    }
+                }
+                to: 1000
                 editable: true
-                    text: qsTr("in")
+                text: qsTr("cm")
             }
         }
     }
@@ -225,8 +283,15 @@ Recording")
                 height: 50
                 anchors.left: parent.right
                 anchors.leftMargin: 10
-                from: 0
-                value: 1
+                from: .1
+                value: Number(settings.setAS_guidanceLookAheadTime)
+                onValueModified: {settings.setAS_guidanceLookAheadTime = value }
+                Connections {
+                    target: settings
+                    function onSetAS_guidanceLookAheadTimeChanged() {
+                        lineacqLAheadSetting.setValue(Number(settings.setAS_guidanceLookAheadTime))
+                    }
+                }
                 to: 10
                 text: qsTr("Seconds")
             }

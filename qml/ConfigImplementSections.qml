@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
-
+//todo: noticed % coverage was in wrong spot
 Rectangle{
     id: configImplementSection
     anchors.fill: parent
@@ -17,16 +17,10 @@ Rectangle{
         spacing: 90
         Button{
             function toggleZones(){
-                if(configImplementSectionsSection.visible == true){
-                    image.source = "/images/Config/ConT_Symmetric.png"
-                    configImplementSectionsZones.visible = true
-                    configImplementSectionsSection.visible = false
-                    console.log("zones")
+                if( utils.isTrue(settings.setTool_isSectionsNotZones)){
+                    settings.setTool_isSectionsNotZones = false
                 }else{
-                    image.source ="/images/Config/ConT_Asymmetric.png"
-                    configImplementSectionsZones.visible = false
-                    configImplementSectionsSection.visible = true
-                    console.log("sections")
+                    settings.setTool_isSectionsNotZones = true
                 }
             }
             width: 180
@@ -43,56 +37,72 @@ Rectangle{
                 Image{
                     id: image
 
-                    source:"/images/Config/ConT_Asymmetric.png"
+                    source: utils.isTrue(settings.setTool_isSectionsNotZones) ? "/images/Config/ConT_Asymmetric.png" : "/images/Config/ConT_Symmetric.png"
                     anchors.fill: parent
                 }
             }
         }
         SpinBoxCustomized{
+            id: percentCoverage
             objectName: "percentConverage"
             from: 0
             to: 100
-            value: 100
+            value: Number(settings.setVehicle_minCoverage)
             anchors.bottom: parent.bottom
-            text: "% Coverage"
-//            Text{
-//                anchors.bottom: parent.top
-//                text: "% Coverage"
-//            }
+            text: qsTr("% Coverage")
+            onValueModified: settings.setVehicle_minCoverage = value
+            Connections {
+                target: settings
+                function onSetVehicle_minCoverageChanged() {
+                    percentCoverage.setValue(Number(settings.setVehicle_minCoverage))
+                }
+            }
         }
         IconButton{
             objectName: "boundaryOff"
             icon.source: "/images/SectionOffBoundary.png"
-            iconChecked: "/images/SectionOnBounary.png"
+            iconChecked: "/images/SectionOnBoundary.png"
             anchors.bottom: parent.bottom
             implicitWidth: 100
             implicitHeight: 100
             border: 1
+            radius: 0
             color3: "white"
             colorChecked1: "green"
             colorChecked2: "green"
             colorChecked3: "green"
+            checked: utils.isTrue(settings.setTool_isSectionOffWhenOut)
+            onCheckedChanged: settings.setTool_isSectionOffWhenOut = checked
+            Connections {
+                target: settings
+                function onSetTool_isSectionOffWhenOutChanged() {
+                    checked = utils.isTrue(settings.setTool_isSectionOffWhenOut)
+                }
+            }
         }
         SpinBoxOneDecimal{
-            objectName: "speedBelowSectionOff"
-            from: 0.0
-            to: 30
-            value: 0.3
+            //todo: this should be made english/metric
+            id: slowSpeedCutoff
+            from: utils.speed_to_unit(0)
+            to: utils.speed_to_unit(30)
+            value: utils.speed_to_unit(Number(settings.setVehicle_slowSpeedCutoff))
             anchors.bottom: parent.bottom
+            onValueModified: settings.setVehicle_slowSpeedCutoff = utils.speed_from_unit(value)
+            text: utils.speed_unit()
+
+            Connections {
+                target: settings
+                function onSetVehicle_slowSpeedCutoffChanged() {
+                    slowSpeedCutoff.setValue(utils.speed_to_unit(Number(settings.setVehicle_slowSpeedCutoff)))
+                }
+            }
+
             Image{
                 anchors.bottom: parent.top
-                width: parent.width
-                height: parent.height +30
+                anchors.horizontalCenter: parent.horizontalCenter
                 source: "/images/SectionOffBelow.png"
             }
         }
-    }
-    Text{
-        id: bottomRightText
-        anchors.right: parent.right
-        text: "Km/H"
-        anchors.verticalCenter: bottomRow.verticalCenter
-        font.pixelSize: 25
     }
     ConfigImplementSectionsSection{
         id: configImplementSectionsSection
@@ -103,7 +113,7 @@ Rectangle{
         anchors.bottom: bottomRow.top
         anchors.bottomMargin: 30
         anchors.margins: 15
-        visible: true
+        visible: utils.isTrue(settings.setTool_isSectionsNotZones)
     }
     ConfigImplementSectionsZones{
         id: configImplementSectionsZones
@@ -114,6 +124,7 @@ Rectangle{
         anchors.bottom: bottomRow.top
         anchors.bottomMargin: 30
         anchors.margins: 15
-        visible: false
+        visible: !utils.isTrue(settings.setTool_isSectionsNotZones)
+
     }
 }

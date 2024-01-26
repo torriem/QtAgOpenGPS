@@ -6,46 +6,28 @@ import QtQuick 2.0
 //The from and to values are *cm*, but the final value output is in metres always
 
 Item {
-   id: spinBoxCM
-    property int from: 0 //these are in cm
-    property double value: 1 //meters
-    property int to: 30 //centimeters
+    id: spinBoxCM
+    property int from //these are in cm
+    property double value //meters
+    property int to //centimeters
     property int stepSize: 1
     property bool editable: true
     property string text: ""
 
-    property bool suppress_onchange_in: false
-    property bool suppress_onchange_out: false
+    signal valueModified()
 
     width: spinner.width
     height: spinner.height
 
-    onValueChanged: {
-        //value changed from the outside; we need
-        //the spin box to update itself but not set
-        //off the spinner's onValueChanged routine
-        //and try to set this value again, causing a loop
-        if (suppress_onchange_out)
-            return; //do nothing since it was the spinner that originated the change
-
-        //otherwise it came from outside
-
-        //value is always in metres.  but the from and to are in cm.
-
-        if ((value*100) < from) value = from/ 100.0
-        if ((value*100) > to) value = to / 100.0
-
-        suppress_onchange_in = true
-        spinner.value = utils.cm_to_unit(value)
-        suppress_onchange_in = false
+    //set the spinner value without triggering valueChanged
+    function setValue(value) {
+        spinner.setValue(utils.cm_to_unit(value))
     }
 
     Connections {
         target: settings
         function onSetMenu_isMetricChanged() {
-            suppress_onchange_in = true
             spinner.value = utils.cm_to_unit(value)
-            suppress_onchange_in = false
         }
     }
 
@@ -55,18 +37,13 @@ Item {
         to: utils.cm_to_unit(spinBoxCM.to / 100.0)
         editable: spinBoxCM.editable
         text: spinBoxCM.text
-        value: utils.cm_to_unit(SpinBoxCM.value) // should be in metres!
+        value: utils.cm_to_unit(spinBoxCM.value) // should be in metres!
         stepSize: spinBoxCM.stepSize
         anchors.fill: parent
 
-        onValueChanged: {
-            //Not sure if this is needed! test it.
-            if (spinBoxCM.suppress_onchange_in)
-                return;
-
-            spinBoxCM.suppress_onchange_out = true
-            spinBoxCM.value = utils.cm_from_unit(spinner.value)
-            spinBoxCM.suppress_onchange_out = false
+        onValueModified: {
+            spinBoxCM.value = utils.cm_from_unit(value)
+            spinBoxCM.valueModified()
         }
     }
 }

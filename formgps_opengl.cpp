@@ -26,15 +26,22 @@
 
 QVector3D FormGPS::mouseClickToPan(int mouseX, int mouseY)
 {
+    /* returns easting and northing relative to the tractor's hitch position,
+     * useful for drag to pan
+     */
+
     QMatrix4x4 modelview;
     QMatrix4x4 projection;
 
     int width = qmlItem(qml_root, "openglcontrol")->property("width").toReal();
     int height = qmlItem(qml_root, "openglcontrol")->property("height").toReal();
+    double shiftX = qmlItem(qml_root,"openglcontrol")->property("shiftX").toDouble();
+    double shiftY = qmlItem(qml_root,"openglcontrol")->property("shiftY").toDouble();
 
     projection.setToIdentity();
 
     //to shift, translate projection here. -1,0,0 is far left, 1,0,0 is far right.
+    projection.translate(shiftX,shiftY,0);
 
     //  Create a perspective transformation.
     projection.perspective(glm::toDegrees(fovy), width / (double)height, 1.0f, camDistanceFactor * camera.camSetDistance);
@@ -68,22 +75,27 @@ QVector3D FormGPS::mouseClickToPan(int mouseX, int mouseY)
     m.rotate(-vehicle.fixHeading, 0,0,1);
 
     QVector3D relative = QVector3D( { (float)mouseEasting, (float)mouseNorthing, 0 } );
-    //relative.setX(relative.x() + vehicle.hitchPos.easting);
-    //relative.setY(relative.y() + vehicle.hitchPos.northing);
     return relative;
 }
 
 QVector3D FormGPS::mouseClickToField(int mouseX, int mouseY)
 {
+    /* returns the field easting and northing position of a
+     * mouse click
+     */
+
     QMatrix4x4 modelview;
     QMatrix4x4 projection;
 
     int width = qmlItem(qml_root, "openglcontrol")->property("width").toReal();
     int height = qmlItem(qml_root, "openglcontrol")->property("height").toReal();
+    double shiftX = qmlItem(qml_root,"openglcontrol")->property("shiftX").toDouble();
+    double shiftY = qmlItem(qml_root,"openglcontrol")->property("shiftY").toDouble();
 
     projection.setToIdentity();
 
     //to shift, translate projection here. -1,0,0 is far left, 1,0,0 is far right.
+    projection.translate(shiftX,shiftY,0);
 
     //  Create a perspective transformation.
     projection.perspective(glm::toDegrees(fovy), width / (double)height, 1.0f, camDistanceFactor * camera.camSetDistance);
@@ -116,10 +128,8 @@ QVector3D FormGPS::mouseClickToField(int mouseX, int mouseY)
     QMatrix4x4 m;
     m.rotate(-vehicle.fixHeading, 0,0,1);
 
-    QVector3D relative = QVector3D( { (float)mouseEasting, (float)mouseNorthing, 0 } );
-    //relative.setX(relative.x() + vehicle.hitchPos.easting);
-    //relative.setY(relative.y() + vehicle.hitchPos.northing);
-    return relative;
+    QVector3D fieldCoord = QVector3D( { (float)mouseEasting, (float)mouseNorthing, 0 } );
+    return fieldCoord;
 }
 
 void FormGPS::oglMain_Paint()
@@ -147,6 +157,8 @@ void FormGPS::oglMain_Paint()
 
     int width = qmlItem(qml_root, "openglcontrol")->property("width").toReal();
     int height = qmlItem(qml_root, "openglcontrol")->property("height").toReal();
+    double shiftX = qmlItem(qml_root,"openglcontrol")->property("shiftX").toDouble();
+    double shiftY = qmlItem(qml_root,"openglcontrol")->property("shiftY").toDouble();
     gl->glViewport(0,0,width,height);
     //qDebug() << width << height;
 
@@ -181,6 +193,12 @@ void FormGPS::oglMain_Paint()
 
     //to shift, translate projection here. -1,0,0 is far left, 1,0,0 is far right.
 
+    //warning.  Moving in the Y direction alters the way the field tilts in 3D view.
+    //would need to adjust the camera.setWorldCam stuff.
+    //But can move in X direction without issue
+    projection.translate(shiftX,shiftY,0);
+
+
     //  Create a perspective transformation.
     projection.perspective(glm::toDegrees(fovy), width / (double)height, 1.0f, camDistanceFactor * camera.camSetDistance);
 
@@ -202,6 +220,8 @@ void FormGPS::oglMain_Paint()
         //modelview.rotate(-60, 1.0, 0.0, 0.0);
         modelview.rotate(deadCam, 0.0, 1.0, 0.0);
         deadCam += 5;
+
+        //TODO: replace with QML widget
 
         //draw with NoGPS texture 21
         color.setRgbF(1.25f, 1.25f, 1.275f, 0.75);
