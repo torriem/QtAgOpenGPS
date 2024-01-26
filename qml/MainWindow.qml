@@ -861,7 +861,7 @@ Window {
             //in one of the buttons columns, or the topline into here.
             id: inner
             anchors.left: leftColumn.right
-            anchors.top: topLine.bottom
+            anchors.top: parent.top
             anchors.right: rightColumn.left
             anchors.bottom: bottomButtons.top
             FieldData{
