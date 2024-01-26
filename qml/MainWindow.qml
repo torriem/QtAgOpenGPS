@@ -856,6 +856,21 @@ Window {
             }
 
         }
+        Item{
+            //plan to move everything on top of the aogRenderer that isn't
+            //in one of the buttons columns, or the topline into here.
+            id: inner
+            anchors.left: leftColumn.right
+            anchors.top: topLine.bottom
+            anchors.right: rightColumn.left
+            anchors.bottom: bottomButtons.top
+            FieldData{
+                id: fieldData
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                visible: true
+            }
+        }
 
         SectionButtons {
             id: sectionButtons
@@ -1302,6 +1317,7 @@ Window {
             width:1024
             visible:false
         }
+
         Rectangle{
             id: recordButtons
             anchors.bottom: bottomButtons.top
