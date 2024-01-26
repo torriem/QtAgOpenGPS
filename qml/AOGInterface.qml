@@ -62,18 +62,18 @@ Item {
 
 
     //david added these
-    property string currentField: "value"
+    property string currentField: "myvalue"
     property double steerAngleActual: 0
     property double steerAngleSet: 0
     property double totalAcres: 0
-    property double workedAcresApplied: 0 //total acres covered
-    property double actualAcresApplied: 0 //actual acres covered. Doesn't count overlap.
+    property double workedAcres: 0 //total acres covered
+    property double actualAcres: 0 //actual acres covered. Doesn't count overlap.
     property double elevation: 0
     property double numOfSats: 0
-    property double HDOP: 0
+    // property double HDOP: 0
     property double frame: 0
     property double rawHZ:0
-    property double HZ:0
+    // property double HZ:0
     property double missedSentences: 0
     property double rtkAge: 0
     property double angularVelocity: 0
