@@ -8,7 +8,11 @@ Rectangle{
     visible: false
     Image {
         id: antImage
-        source: "/images/AntennaTractor.png"
+        //3 vehicle types  tractor=0 harvestor=1 4wd=2
+        source: Number(settings.setVehicle_vehicleType === 0) ? "/images/AntennaTractor.png" :
+                Number(settings.setVehicle_vehicleType === 1) ? "/images/AntennaHarvester.png" :
+                Number(settings.setVehicle_vehicleType === 2) ? "/images/Antenna4WD.png" :
+                "/images/Config/ConSt_Mandatory.png"
         width: 350
         height: 350
         anchors.centerIn: parent
