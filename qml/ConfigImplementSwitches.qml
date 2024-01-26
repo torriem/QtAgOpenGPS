@@ -50,6 +50,7 @@ Rectangle{
 				icon.source: "/images/ManualOff.png"
 				objectName: "btnWorkSwitchManual"
                 checkable: true
+                enabled: settings.setF_isRemoteWorkSystemOn
                 isChecked: settings.setF_isWorkSwitchManualSections
                 onCheckedChanged: settings.setF_isWorkSwitchManualSections = checked
 				text: qsTr("Manual Sections")
@@ -60,10 +61,12 @@ Rectangle{
                 objectName: "btnWorkSwitchAuto"
 				icon.source: "/images/SectionMasterOff.png"
                 checkable: true
+                enabled: settings.setF_isRemoteWorkSystemOn
                 isChecked: !settings.setF_isWorkSwitchManualSections
                 onCheckedChanged: settings.setF_isWorkSwitchManualSections = !checked
 				text: qsTr("Auto Sections")
 			}
+
 			IconButton{
 				implicitWidth: 270
 				implicitHeight: 80
@@ -107,6 +110,7 @@ Rectangle{
 				objectName: "btnSteerSwitch"
                 isChecked: settings.setF_isSteerWorkSwitchEnabled
                 onCheckedChanged: settings.setF_isSteerWorkSwitchEnabled = checked
+                checkable: true
 				text: qsTr("Steer Switch")
 				icon.source: "/images/AutoSteerOff.png"
 			}
@@ -120,6 +124,7 @@ Rectangle{
 				objectName: "btnSteerSwitchManual"
                 isChecked: settings.setF_isSteerWorkSwitchManualSections
                 onCheckedChanged: settings.setF_isSteerWorkSwitchManualSections = checked
+                enabled: settings.setF_isSteerWorkSwitchEnabled
                 checkable: true
 				text: qsTr("Manual Sections")
 				icon.source: "/images/ManualOff.png"
@@ -129,7 +134,8 @@ Rectangle{
 				objectName: "btnSteerSwitchAuto"
                 isChecked: !settings.setF_isSteerWorkSwitchManualSections
                 onCheckedChanged: settings.setF_isSteerWorkSwitchManualSections = !checked
-				text: qsTr("Auto Sections")
+                enabled: settings.setF_isSteerWorkSwitchEnabled
+                text: qsTr("Auto Sections")
 				icon.source: "/images/SectionMasterOff.png"
 			}
 		}
