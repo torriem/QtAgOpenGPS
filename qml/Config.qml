@@ -12,28 +12,10 @@ Dialog {
     standardButtons: StandardButton.NoButton
     title: qsTr("General Settings")
 
+    function closeAll() {
+        //uncheck all the buttons maybe
 
-    function closeAllConfig(){
-        //configWhichVehicle.visible = false
-        //configTractor.visible = false
-        //configTractorAntenna.visible = false
-        //configTractorDimensions.visible = false
-        //configTractorSteerSettings.visible = false
-        configImplement.visible = false
-        configImplementRearDimensions.visible = false
-        configImplementFrontDimensions.visible = false
-        configImplementTBTDimensions.visible = false
-        configImplementTrailingDimensions.visible = false
-        configImplementSections.visible = false
-        configImplementSwitches.visible = false
-        configImplementTiming.visible = false
-        configSources.visible = false
-        configSourcesRoll.visible = false
-        configModules.visible = false
-        configModulesPins.visible = false
-        configYouTurn.visible = false
-        configTrams.visible = false
-        configFeatures.visible = false
+
     }
 
     Rectangle{
@@ -122,7 +104,6 @@ Dialog {
                         id: configTrSettings
                         icon.source: "/images/Config/ConS_VehicleConfig.png"
                         checkable: true
-                        checked: true
                         radius: 0
                     }
                     IconButtonTransparent{
@@ -169,33 +150,27 @@ Dialog {
                     IconButton{
                         id: configImpSettings
                         icon.source: "/images/Config/ConS_VehicleConfig.png"
-
                         checkable: true
-                        checked: false
                     }
                     IconButton{
                         id: configImpDim
                         icon.source: "/images/Config/ConS_ImplementHitch.png"
                         checkable: true
-                        checked: false
                     }
                     IconButton{
                         id: configImpSection
                         icon.source: "/images/Config/ConS_ImplementSection.png"
                         checkable: true
-                        checked: false
                     }
                     IconButton{
                         id: configImpTiming
                         icon.source: "/images/Config/ConS_ImplementSettings.png"
                         checkable: true
-                        checked: false
                     }
                     IconButton{
                         id: configImpSwitches
                         icon.source: "/images/Config/ConS_ImplementSwitch.png"
                         checkable: true
-                        checked: false
                     }
                 }
                 IconButtonTransparent{
@@ -327,8 +302,11 @@ Dialog {
                 height: parent.height
                 icon.source: "/images/OK64"
                 onClicked: {
-                    closeAllConfig()
+                    //closeAllConfig()
                     //fix up signs on implement dimensions
+
+                    //TODO, have to do this if rejected() also.
+
                     if ((utils.isTrue(settings.setTool_isToolFront) && Number(settings.setVehicle_hitchLength < 0)) ||
                             (!utils.isTrue(settings.setTool_isToolFront) && Number(settings.setVehicle_hitchLength) > 0)) {
                         //if front-mounted tool, make sure the hitchLength is positive and if rear-mounted, make sure
@@ -355,7 +333,16 @@ Dialog {
             id: configWhichVehicle
             anchors.fill: mainConfig
             anchors.margins: 1
-            visible: true //on by default
+            visible: true
+            /*
+            visible: ! tractorMenu.visible &&
+                     ! implementMenu.visible &&
+                     ! sourcesMenu.visible &&
+                     ! uTurnMenu.visible &&
+                     ! modulesMenu.visible &&
+                     ! tramMenu.visible &&
+                     ! configFeatures.visible
+                     */
         }
 
         ConfigTractor{
