@@ -150,6 +150,7 @@ Window {
                 height: parent.height
                 icon.source: "/images/WindowMinimize.png"
                 width: 75
+                onClicked: mainWindow.showMinimized()
             }
             IconButtonTransparent{
                 objectName: "btnWindowMaximize"
@@ -169,7 +170,9 @@ Window {
                 height: parent.height
                 width: 75
                 icon.source: "/images/WindowClose.png"
-                onClicked: closeDialog.visible = true
+                onClicked: aog.autoBtnState + aog.manualBtnState  > 0 ? timedMessage.addMessage(2000,qsTr("Section Control on. Shut off Section Control.")):
+                aog.isJobStarted ? closeDialog.visible = true:
+                Qt.quit()
             }
         }
     }
@@ -1105,6 +1108,7 @@ Window {
                 color2: "transparent"
                 color3: "transparent"
                 icon.source: "/images/ExitAOG.png"
+                onClicked: Qt.quit()
             }
         }
 

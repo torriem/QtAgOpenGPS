@@ -9,15 +9,40 @@ Rectangle {
     border.color: "black"
     border.width: 1.5
     Column{
-        Text{
-        text: "Total: "+ aog.totalAcres
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        TextLine{
+            text: qsTr("Total: "+ aog.totalAcres)
         }
-        Text {
-            text: "Worked: "+ aog.workedAcres
+        TextLine{
+            text: qsTr("Worked")
         }
-        Text {
-            text: "Worked: "+ aog.actualAcres
+        TextLine{
+            text: "--------------------"
+        }
+
+        TextLine {
+            text: qsTr("Applied: "+ aog.workedAcres)
+        }
+        TextLine{
+            text: qsTr("Remain: "+ aog.totalAcres - aog.workedAcres +
+                       "<br>" + "%<br>" + "hrs")
+        }
+        TextLine{
+            text: qsTr("Actual<br>--------------------")
+        }
+
+        TextLine {
+            text: qsTr("Applied: "+ aog.actualAcres)
+        }
+        TextLine{
+            text: qsTr("Remain: " + aog.totalAcres - aog.actualAcres)
+        }
+        TextLine{
+            text: qsTr("Overlap: " + "IDK")
+        }
+        TextLine {
+            text: qsTr("Rate: "+ "ha/hr")
         }
     }
-
 }
