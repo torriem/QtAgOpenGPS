@@ -232,5 +232,56 @@ Item {
             return distance * 1609.344 //convert miles to metres
     }
 
+    function area_unit()
+    {
+        if (isMetric())
+            return qsTr("ha", "hectares abbreviation")
+        else
+            return qsTr("ac", "acres abbreviation")
+    }
 
+    function area_to_unit(msquared)
+    {
+        if (isMetric())
+            return msquared * 0.0001 //10000 m^2 in a hectare
+        else
+            return msquared * 2.47104E-4 //convert to acres
+
+    }
+
+    function area_to_unit_string(msquared, decimal_places)
+    {
+        return Number(area_to_unit(msquared)).toLocaleString(Qt.locale(),'f', decimal_places)
+    }
+
+    function area_from_unit(ha_or_acres)
+    {
+        if (isMetric())
+            return ha_or_acres * 10000
+        else
+            return ha_or_acres * 4046.8726
+    }
+
+    function areaRate_unit()
+    {
+        if(isMetric())
+            return qsTr("ha/hr","Abbreviation for hectares per hour")
+        else
+            return qsTr("ac/hr","Abbreviation for acres per hour")
+    }
+
+    function areaRate_to_unit(msquaredperhour)
+    {
+        return area_to_unit(msquaredperhour)
+    }
+
+    function areaRate_to_unit_string(msquaredperhour, decimal_places)
+    {
+        return area_to_unit(msquaredperhour, decimal_places)
+    }
+
+    function areaRate_from_unit(areaRate)
+    {
+        return area_from_unit(areaRate)
+    }
 }
