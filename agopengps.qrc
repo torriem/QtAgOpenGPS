@@ -539,5 +539,6 @@
         <file>qml/FieldData.qml</file>
         <file>qml/SimController.qml</file>
         <file>qml/TextLine.qml</file>
+        <file>qml/GPSData.qml</file>
     </qresource>
 </RCC>

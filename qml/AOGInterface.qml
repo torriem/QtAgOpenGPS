@@ -79,10 +79,10 @@ Item {
     property double actualAcres: 0 //actual acres covered. Doesn't count overlap.
     property double elevation: 0
     property double numOfSats: 0
-    // property double HDOP: 0
+     property double gpsHDOP: 0
     property double frame: 0
     property double rawHZ:0
-    // property double HZ:0
+     property double hz:0
     property double missedSentences: 0
     property double rtkAge: 0
     property double angularVelocity: 0
@@ -91,6 +91,7 @@ Item {
     property double distanceTraveled: 0
     property double imuHeading: 0
     property double gpsHeading: 0
+    property double fusedHeading: 0
 
     //can we use these line properties for the Display?
     //AB Lines properties, signals, and methods

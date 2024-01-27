@@ -893,6 +893,13 @@ Window {
             anchors.verticalCenter: parent.verticalCenter
             visible: true
         }
+        GPSData{
+            id: gpsData
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            visible: false
+        }
+
         SimController{
             id: simBarRect
             anchors.bottom: parent.bottom
