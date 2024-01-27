@@ -537,5 +537,6 @@
         <file>qml/ConfigImplementTBTDimensions.qml</file>
         <file>qml/StartUp.qml</file>
         <file>qml/FieldData.qml</file>
+        <file>qml/SimController.qml</file>
     </qresource>
 </RCC>

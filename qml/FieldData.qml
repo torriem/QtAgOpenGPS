@@ -5,8 +5,9 @@ Rectangle {
     id: fieldData
     width: 200
     height: 500
-    anchors.fill: parent
-    color: "black"
+    color: "transparent"
+    border.color: "black"
+    border.width: 1.5
     Column{
         Text{
         text: "Total: "+ aog.totalAcres
