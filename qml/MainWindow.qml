@@ -726,7 +726,7 @@ Window {
         //----------------inside buttons-----------------------
         Item{
             //plan to move everything on top of the aogRenderer that isn't
-            //in one of the buttons columns, or the topline into here.
+            //in one of the buttons columns
             id: inner
             anchors.left: leftColumn.right
             anchors.top: parent.top
@@ -892,12 +892,22 @@ Window {
         }
         SimController{
             id: simBarRect
-            width: children.width +10
-            height: 60
             anchors.bottom: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottomMargin: 10
             visible: utils.isTrue(settings.setMenu_isSimulatorOn)
+        }
+        SectionButtons {
+            id: sectionButtons
+            visible: aog.isJobStarted ? true : false
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: simBarRect.top
+            anchors.bottomMargin: 15
+            //TODO: add logic to interact with the Auto and manual buttons
+
+            //only allow on and off when auto is on. TODO what about when Manual is on?
+            //triState: btnSectionAuto.checked ? false : true
+            width: 500
         }
         DisplayButtons{
             id: displayButtons
@@ -912,19 +922,6 @@ Window {
         }
     }
 
-    SectionButtons {
-            id: sectionButtons
-            visible: aog.isJobStarted ? true : false
-            anchors.horizontalCenter: parent.horizontalCenter
-            //TODO: add logic to interact with the Auto and manual buttons
-
-            //only allow on and off when auto is on. TODO what about when Manual is on?
-            //triState: btnSectionAuto.checked ? false : true
-
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: simBarRect.height + 25
-            width: 500
-        }
 
 
         SliderCustomized { //quick dirty hack--the up and down buttons change this value, so the speed changes

@@ -3,6 +3,8 @@ import QtQuick.Controls 2.5
 
 Rectangle{
     color: "gray"
+    height: 60
+    width: childrenRect.width + 10
     Connections{
         target: settings
         function onSetMenu_isSimulatorOnChanged(){
