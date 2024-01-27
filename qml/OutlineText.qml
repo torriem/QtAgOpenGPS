@@ -4,7 +4,7 @@ import QtQuick.Controls 2.15
 Label {
     id: outlineText
     text: "123"
-    font.pixelSize: 28
+    //font.pixelSize: 28
     property color outlineColor: "black"
 
     Repeater {
