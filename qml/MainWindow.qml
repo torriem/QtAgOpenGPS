@@ -150,6 +150,7 @@ Window {
                 height: parent.height
                 icon.source: "/images/WindowMinimize.png"
                 width: 75
+                onClicked: mainWindow.showMinimized()
             }
             IconButtonTransparent{
                 objectName: "btnWindowMaximize"
@@ -169,7 +170,9 @@ Window {
                 height: parent.height
                 width: 75
                 icon.source: "/images/WindowClose.png"
-                onClicked: closeDialog.visible = true
+                onClicked: aog.autoBtnState + aog.manualBtnState  > 0 ? timedMessage.addMessage(2000,qsTr("Section Control on. Shut off Section Control.")):
+                aog.isJobStarted ? closeDialog.visible = true:
+                Qt.quit()
             }
         }
     }
@@ -224,39 +227,6 @@ Window {
             }
         }
 
-        LightBar {
-            id: lightbar
-            anchors.top: glcontrolrect.top
-            anchors.horizontalCenter: glcontrolrect.horizontalCenter
-            anchors.margins: 5
-            dotDistance: aog.avgPivDistance / 10 //avgPivotDistance is averaged
-            visible: (aog.offlineDistance != 32000 &&
-                      (settings.setMenu_isLightbarOn === true ||
-                       settings.setMenu_isLightbarOn === "true")) ?
-                         true : false
-        }
-
-        TrackNum {
-           id: tracknum
-            anchors.top: lightbar.bottom
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.margins: 5
-
-            font.pixelSize: 24
-
-            //only use dir names for AB Lines with heading
-            useDirNames: (aog.currentABLine > -1)
-            currentTrack: aog.current_trackNum
-
-            trackHeading: aog.currentABLine > -1 ?
-                              aog.currentABLine_heading :
-                              0
-
-            visible: (utils.isTrue(settings.setDisplay_topTrackNum) &&
-                      ((aog.currentABLine > -1) ||
-                       (aog.currentABCurve > -1)))
-            //TODO add contour
-        }
     }
     //----------------------------------------------------------------------------------------left column
     Item {
@@ -315,7 +285,7 @@ Window {
                 objectName: "btnAcres"
                 buttonText: qsTr("0.00")
                 icon.source: "/images/TripOdometer.png"
-            visible: aog.isJobStarted ? true : false
+                visible: aog.isJobStarted ? true : false
 
             }
             IconButtonText {
@@ -353,7 +323,7 @@ Window {
                 buttonText: qsTr("Field Tools")
                 icon.source: "/images/FieldTools.png"
                 onClicked: fieldTools.popup()
-            visible: aog.isJobStarted ? true : false
+                visible: aog.isJobStarted ? true : false
             }
             Menu{
                 id: fieldTools
@@ -400,7 +370,7 @@ Window {
                 buttonText: qsTr("Steer config")
                 icon.source: "/images/AutoSteerConf.png"
                 onClicked: {
-                        steerConfigWindow.visible = true
+                    steerConfigWindow.visible = true
                 }
             }
         }
@@ -451,7 +421,7 @@ Window {
                 iconChecked: "/images/ContourOn.png"
                 buttonText: "Contour"
                 //color: "white"
-            visible: aog.isJobStarted ? true : false
+                visible: aog.isJobStarted ? true : false
             }
             IconButtonText{
                 id: btnABCurve
@@ -461,8 +431,8 @@ Window {
                 icon.source: "/images/CurveOff.png"
                 iconChecked: "/images/CurveOn.png"
                 buttonText: "ABCurve"
-				visible: aog.isJobStarted ? true : false
-				onClicked: {
+                visible: aog.isJobStarted ? true : false
+                onClicked: {
                     abCurvePicker.visible = true
                     if (aog.currentABCurve > -1) {
                         btnABCurve.checked = true
@@ -515,7 +485,7 @@ Window {
                 }
                 checked: aog.currentABLine > -1 ? true : false
                 buttonText: "ABLine"
-            visible: aog.isJobStarted ? true : false
+                visible: aog.isJobStarted ? true : false
             }
 
             IconButton{
@@ -524,7 +494,7 @@ Window {
                 icon.source: "/images/ABLineCycle.png"
                 width: btnABLine.width
                 height: btnABLine.height
-            visible: aog.isJobStarted ? true : false
+                visible: aog.isJobStarted ? true : false
             }
             IconButton{
                 id: btnABLineCycleBk
@@ -532,7 +502,7 @@ Window {
                 icon.source: "/images/ABLineCycleBk.png"
                 width: btnABLine.width
                 height: btnABLine.height
-            visible: aog.isJobStarted ? true : false
+                visible: aog.isJobStarted ? true : false
             }
 
             IconButtonText {
@@ -543,7 +513,7 @@ Window {
                 icon.source: "/images/ManualOff.png"
                 iconChecked: "/images/ManualOn.png"
                 buttonText: "Manual"
-            visible: aog.isJobStarted ? true : false
+                visible: aog.isJobStarted ? true : false
                 onCheckedChanged: {
                     if (checked) {
                         btnSectionAuto.checked = false;
@@ -562,7 +532,7 @@ Window {
                 icon.source: "/images/SectionMasterOff.png"
                 iconChecked: "/images/SectionMasterOn.png"
                 buttonText: "Auto"
-            visible: aog.isJobStarted ? true : false
+                visible: aog.isJobStarted ? true : false
                 onCheckedChanged: {
                     if (checked) {
                         btnSectionManual.checked = false;
@@ -588,7 +558,7 @@ Window {
                 iconChecked: "/images/AutoSteerOn.png"
                 checkable: true
                 checked: aog.isAutoSteerBtnOn
-            visible: aog.isJobStarted ? true : false
+                visible: aog.isJobStarted ? true : false
                 //Is remote activation of autosteer enabled?
                 buttonText: (settings.setAS_isAutoSteerAutoOn === true ? "R" : "M")
                 onClicked: {
@@ -703,7 +673,7 @@ Window {
                 id: btnSectionMapping
                 objectName: "btnSectionMapping"
                 icon.source: "/images/SectionMapping"
-            visible: aog.isJobStarted ? true : false
+                visible: aog.isJobStarted ? true : false
             }
 
             IconButtonText {
@@ -756,62 +726,16 @@ Window {
             }
 
         }
-
-        SectionButtons {
-            id: sectionButtons
-            visible: aog.isJobStarted ? true : false
-            anchors.horizontalCenter: parent.horizontalCenter
-            //TODO: add logic to interact with the Auto and manual buttons
-
-            //only allow on and off when auto is on. TODO what about when Manual is on?
-            //triState: btnSectionAuto.checked ? false : true
-
-            anchors.bottom: bottomButtons.top
-            anchors.bottomMargin: simBarRect.height + 25
-            width: 500
-        }
-
-
+        //----------------inside buttons-----------------------
         Item{
-            objectName: "autoUTurnButton"
-            id: autoUturn
+            //plan to move everything on top of the aogRenderer that isn't
+            //in one of the buttons columns
+            id: inner
+            anchors.left: leftColumn.right
             anchors.top: parent.top
+            anchors.topMargin: topLine.height
             anchors.right: rightColumn.left
-            anchors.topMargin: 50
-            anchors.rightMargin: 150
-            visible: aog.isJobStarted ? true : false
-            width: childrenRect.width
-            height: childrenRect.height
-            ColorOverlay{
-                id: myOverlay
-                color: "#40ff00"
-                anchors.fill: autoTurn
-                source: autoTurn
-                visible: true
-                Text{
-                    anchors.top: myOverlay.bottom
-                    anchors.topMargin: -25
-                    anchors.left: myOverlay.left
-                    text: " however ft"
-                    color: myOverlay.color
-                    font.pixelSize: 20
-                    visible: true
-                }
-                MouseArea{
-                    anchors.fill: parent
-                    id: mouseToggle
-                    onClicked:{
-                        function imageMirror(){
-                            if(autoTurnImage.mirror == true){
-                                autoTurnImage.mirror = false
-                            }else{
-                                autoTurnImage.mirror = true
-                            }
-                        }
-                        imageMirror()
-                    }
-                }
-            }
+            anchors.bottom: bottomButtons.top
             Item{
                 id: autoTurn
                 anchors.top:parent.top
@@ -828,209 +752,200 @@ Window {
                     anchors.fill: parent
                 }
             }
-        }
-        Item{
-            objectName: "manUTurnButtons"
-            id: manualUturnLateral
-            anchors.top: parent.top
-            anchors.left: leftColumn.right
-            anchors.topMargin: 50
-            anchors.leftMargin: 150
-            width: childrenRect.width
-            height: childrenRect.height
-            visible: (aog.currentABCurve > -1) || (aog.currentABLine > -1)
-            ColorOverlay{
-                color: "#e6e600"
-                anchors.fill: uturn
-                source: uturn
-
-                Button{
-                    background: Rectangle{color: "transparent"}
-                    objectName: "btnManUturnLeft"
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    anchors.left: parent.left
-                    anchors.right: parent.horizontalCenter
-                    onClicked: {
-                        if (settings.setAS_functionSpeedLimit > aog.speedKph)
-                            aog.uturn(false)
-                        else
-                            timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                    utils.speed_to_unit_text(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
-                    }
-                }
-                Button{
-                    background: Rectangle{color: "transparent"}
-                    objectName: "btnManUturnRight"
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    anchors.right: parent.right
-                    anchors.left: parent.horizontalCenter
-                    onClicked: {
-                        if (settings.setAS_functionSpeedLimit > aog.speedKph)
-                            aog.uturn(true)
-                        else
-                            timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                    utils.speed_to_unit_text(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
-                    }
-                }
-            }
-            Image{
-                id: uturn
-                anchors.top: parent.top
-                height: 60
+            Item{
+                objectName: "manUTurnButtons"
+                id: manualUturnLateral
+                anchors.top: lightbar.bottom
                 anchors.left: parent.left
-                width: 150
-                source: '/images/Images/z_TurnManual.png'
-                visible: false
-            }
-            ColorOverlay{
-                color: "#80aaff"
-                anchors.fill: lateral
-                source: lateral
-            }
-
-            Image{
-                visible: false
-                id: lateral
-                anchors.top: uturn.bottom
-                height: 60
-                anchors.left: parent.left
-                width: 150
-                source: '/images/Images/z_LateralManual.png'
-                Button{
-                    background: Rectangle{color: "transparent"}
-                    objectName: "btnManLateralLeft"
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    anchors.left: parent.left
-                    anchors.right: parent.horizontalCenter
-                    onClicked: {
-                        if (settings.setAS_functionSpeedLimit > aog.speedKph)
-                            aog.lateral(false)
-                        else
-                            timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                    aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
-                    }
-                }
-                Button{
-                    background: Rectangle{color: "transparent"}
-                    objectName: "btnManLateralRight"
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    anchors.right: parent.right
-                    anchors.left: parent.horizontalCenter
-                    onClicked: {
-                        if (settings.setAS_functionSpeedLimit > aog.speedKph)
-                            aog.lateral(false)
-                        else
-                            timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                    aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
-                    }
-                }
-            }
-        }
-
-        SliderCustomized { //quick dirty hack--the up and down buttons change this value, so the speed changes
-            id: speedSlider
-            objectName: "simSpeed"
-            anchors.bottom: bottomButtons.top
-            anchors.bottomMargin: 3
-            anchors.left:bottomButtons.left
-            anchors.leftMargin: 3
-            from: -30
-            to: 30
-            value: 0
-            visible: false
-        }
-
-        Rectangle{
-            id: simBarRect
-            width: childrenRect.width +10
-            height: 60
-            anchors.bottom: bottomButtons.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottomMargin: 10
-            color: "gray"
-            visible: utils.isTrue(settings.setMenu_isSimulatorOn)
-            Connections{
-                target: settings
-                function onSetMenu_isSimulatorOnChanged(){
-                    simBarRect.visible = settings.setMenu_isSimulatorOn
-                }
-            }
-
-            Row{
-                spacing: 4
+                anchors.topMargin: 30
+                anchors.leftMargin: 150
                 width: childrenRect.width
-                height: 50
-                anchors.centerIn: parent
-                Button{
-                    text: "Reset"
-                    height: parent.height
-                    width: parent.height + 15
-                    onClicked: console.log("nothing doing")
+                height: childrenRect.height
+                visible: (aog.currentABCurve > -1) || (aog.currentABLine > -1)
+                ColorOverlay{
+                    color: "#e6e600"
+                    anchors.fill: uturn
+                    source: uturn
+
+                    Button{
+                        background: Rectangle{color: "transparent"}
+                        objectName: "btnManUturnLeft"
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.left: parent.left
+                        anchors.right: parent.horizontalCenter
+                        onClicked: {
+                            if (settings.setAS_functionSpeedLimit > aog.speedKph)
+                                aog.uturn(false)
+                            else
+                                timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+                                                        utils.speed_to_unit_text(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
+                        }
+                    }
+                    Button{
+                        background: Rectangle{color: "transparent"}
+                        objectName: "btnManUturnRight"
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.right: parent.right
+                        anchors.left: parent.horizontalCenter
+                        onClicked: {
+                            if (settings.setAS_functionSpeedLimit > aog.speedKph)
+                                aog.uturn(true)
+                            else
+                                timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+                                                        utils.speed_to_unit_text(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
+                        }
+                    }
                 }
-                Button{
-                    text: "wheelangle"
-                    font.pixelSize: 15
-                    height: parent.height
-                    width: parent.height + 15
-                    onClicked: steerSlider.value = 300
+                Image{
+                    id: uturn
+                    anchors.top: parent.top
+                    height: 60
+                    anchors.left: parent.left
+                    width: 150
+                    source: '/images/Images/z_TurnManual.png'
+                    visible: false
                 }
-                SliderCustomized {
-                    id: steerSlider
-                    objectName: "simSteer"
-                    multiplicationValue: 10
-                    from: 0
-                    to: 600
-                    value: 300
-                }
-                IconButtonTransparent{
-                    height: parent.height
-                    width: parent.height + 15
-                    icon.source: "/images/DnArrow64.png"
-                    onClicked: speedSlider.value -= 5
-                }
-                IconButtonTransparent{
-                    height: parent.height
-                    width: parent.height + 15
-                    icon.source: "/images/AutoStop.png"
-                    onClicked: speedSlider.value = 0
-                }
-                IconButtonTransparent{
-                    height: parent.height
-                    width: parent.height + 15
-                    icon.source: "/images/UpArrow64.png"
-                    onClicked: speedSlider.value += 5
-                }
-                IconButtonTransparent{
-                    height: parent.height
-                    width: parent.height + 15
-                    icon.source: "/images/YouTurn80.png"
-                    onClicked: console.log("nothing")
+                ColorOverlay{
+                    color: "#80aaff"
+                    anchors.fill: lateral
+                    source: lateral
                 }
 
+                Image{
+                    visible: false
+                    id: lateral
+                    anchors.top: uturn.bottom
+                    height: 60
+                    anchors.left: parent.left
+                    width: 150
+                    source: '/images/Images/z_LateralManual.png'
+                    Button{
+                        background: Rectangle{color: "transparent"}
+                        objectName: "btnManLateralLeft"
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.left: parent.left
+                        anchors.right: parent.horizontalCenter
+                        onClicked: {
+                            if (settings.setAS_functionSpeedLimit > aog.speedKph)
+                                aog.lateral(false)
+                            else
+                                timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+                                                        aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
+                        }
+                    }
+                    Button{
+                        background: Rectangle{color: "transparent"}
+                        objectName: "btnManLateralRight"
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.right: parent.right
+                        anchors.left: parent.horizontalCenter
+                        onClicked: {
+                            if (settings.setAS_functionSpeedLimit > aog.speedKph)
+                                aog.lateral(false)
+                            else
+                                timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+                                                        aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
+                        }
+                    }
+                }
             }
-
+        LightBar {
+            id: lightbar
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.margins: 5
+            dotDistance: aog.avgPivDistance / 10 //avgPivotDistance is averaged
+            visible: (aog.offlineDistance != 32000 &&
+                      (settings.setMenu_isLightbarOn === true ||
+                       settings.setMenu_isLightbarOn === "true")) ?
+                         true : false
         }
-        StartUp{
-            id: startUp
-            z:10
+
+        TrackNum {
+            id: tracknum
+            anchors.top: lightbar.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.margins: 5
+
+            font.pixelSize: 24
+
+            //only use dir names for AB Lines with heading
+            useDirNames: (aog.currentABLine > -1)
+            currentTrack: aog.current_trackNum
+
+            trackHeading: aog.currentABLine > -1 ?
+                              aog.currentABLine_heading :
+                              0
+
+            visible: (utils.isTrue(settings.setDisplay_topTrackNum) &&
+                      ((aog.currentABLine > -1) ||
+                       (aog.currentABCurve > -1)))
+            //TODO add contour
+        }
+
+        FieldData{
+            id: fieldData
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
             visible: true
         }
+        SimController{
+            id: simBarRect
+            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottomMargin: 10
+            visible: utils.isTrue(settings.setMenu_isSimulatorOn)
+        }
+        SectionButtons {
+            id: sectionButtons
+            visible: aog.isJobStarted ? true : false
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: simBarRect.top
+            anchors.bottomMargin: 15
+            //TODO: add logic to interact with the Auto and manual buttons
 
+            //only allow on and off when auto is on. TODO what about when Manual is on?
+            //triState: btnSectionAuto.checked ? false : true
+            width: 500
+        }
         DisplayButtons{
             id: displayButtons
             width: childrenRect.width + 10
             height: childrenRect.height + 10
-            anchors.left: leftColumn.right
+            anchors.left: parent.left
             anchors.leftMargin: 20
             anchors.top: parent.top
             anchors.topMargin: 20
             visible: false
             z:1
         }
+    }
+
+
+
+        SliderCustomized { //quick dirty hack--the up and down buttons change this value, so the speed changes
+            id: speedSlider
+            objectName: "simSpeed"
+            //anchors.bottom: bottomButtons.top
+//            anchors.bottomMargin: 3
+//            anchors.left:bottomButtons.left
+//            anchors.leftMargin: 3
+            from: -30
+            to: 30
+            value: 0
+            visible: false
+        }
+
+        StartUp{
+            id: startUp
+            z:10
+            visible: true
+        }
+
 
         FieldMenu {
             id: fieldMenu
@@ -1065,11 +980,6 @@ Window {
         }
         Config {
             id:config
-            objectName: "config"
-            //anchors.horizontalCenter: parent.horizontalCenter
-            //anchors.bottom: parent.bottom
-            height: parent.height
-            //width:parent.width
             visible:false
 
             onAccepted: {
@@ -1136,6 +1046,7 @@ Window {
             width:1024
             visible:false
         }
+
         Rectangle{
             id: recordButtons
             anchors.bottom: bottomButtons.top
@@ -1197,6 +1108,7 @@ Window {
                 color2: "transparent"
                 color3: "transparent"
                 icon.source: "/images/ExitAOG.png"
+                onClicked: Qt.quit()
             }
         }
 

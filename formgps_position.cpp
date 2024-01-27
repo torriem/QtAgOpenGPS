@@ -1140,6 +1140,10 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("offlineDistance", vehicle.guidanceLineDistanceOff);
     aog->setProperty("speedKph", vehicle.avgSpeed);
 
+    // added by Alan Wedel
+    aog->setProperty("workedAcres", fd.WorkedAcres());
+    aog->setProperty("actualAcres", fd.ActualAreaWorkedAcres());
+
     if (ABLine.numABLineSelected > 0) {
         //currentABLine_heading is set in formgps_ui.cpp
         aog->setProperty("current_trackNum", ABLine.howManyPathsAway);
