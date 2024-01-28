@@ -973,9 +973,6 @@ Window {
             objectName: "slideoutMenu"
             height: 700
             width:1024
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.leftMargin: 15
             visible: false
 
         }
