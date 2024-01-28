@@ -5,7 +5,8 @@ Rectangle {
     id: fieldData
     width: 200
     height: 500
-    color: "transparent"
+    color: "black"
+    opacity: 0.7
     border.color: "black"
     border.width: 1.5
     Column{

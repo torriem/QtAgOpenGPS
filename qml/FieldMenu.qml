@@ -5,6 +5,12 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls.Styles 1.4
 
 Item{
+    id: fieldMenu
+
+    onVisibleChanged: {
+        aog.field_update_list()
+    }
+
     Rectangle{
         id: topLine
         anchors.top:parent.top
@@ -91,6 +97,9 @@ Item{
                 isChecked: false
                 text: "Close"
                 icon.source: "/images/FileClose.png"
+                enabled: aog.isJobStarted
+                onClicked: { aog.field_close() ; fieldMenu.visible = false }
+
             }
             IconButtonTextBeside{
                 objectName: "btnFieldOpen"
@@ -133,10 +142,16 @@ Item{
             visible: false
         }
         FieldOpen{
-            anchors.top:parent.top
-            anchors.topMargin: -50
-            anchors.horizontalCenter: parent.horizontalCenter
+            //anchors.top:parent.top
+            //anchors.topMargin: -50
+            //anchors.horizontalCenter: parent.horizontalCenter
             visible: false
+
+            onRejected: fieldMenu.visible = false
+            onAccepted: {
+                console.debug("File opened; close this menu.")
+                fieldMenu.visible = false
+            }
         }
     }
 }

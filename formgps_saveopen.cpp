@@ -3,6 +3,7 @@
 //#include "aogsettings.h"
 //#include "cmodulecomm.h"
 #include "cboundarylist.h"
+#include "aogproperty.h"
 
 QString caseInsensitiveFilename(QString directory, QString filename)
 {
@@ -447,7 +448,140 @@ void FormGPS::FileLoadABLines()
     linesFile.close();
 }
 
-bool FormGPS::FileOpenField(QString fieldDir)
+QMap<QString,QVariant> FormGPS::FileFieldInfo(QString fieldDir)
+{
+    QMap<QString,QVariant> field_info;
+
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + fieldDir;
+
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Field.txt");
+
+    QFile fieldFile(filename);
+    if (!fieldFile.open(QIODevice::ReadOnly))
+    {
+        qWarning() << "Couldn't open field " << filename << "for reading!";
+        //TODO timed messagebox
+        return field_info;
+    }
+
+    QTextStream reader(&fieldFile);
+    reader.setLocale(QLocale::C);
+
+    //start to read the file
+    QString line;
+
+    //Date time line
+    line = reader.readLine();
+
+    //dir header $FieldDir
+    line = reader.readLine();
+
+    //read field directory
+    line = reader.readLine();
+
+    field_info["name"] = line.trimmed();
+
+    //Offset header
+    line = reader.readLine();
+
+    //read the Offsets
+    line = reader.readLine();
+    QStringList offs = line.split(',');
+
+    //convergence angle update
+    if (!reader.atEnd())
+    {
+        line = reader.readLine(); //Convergence
+        line = reader.readLine();
+    }
+
+    //start positions
+    if (!reader.atEnd())
+    {
+        line = reader.readLine(); //eat StartFix
+        line = reader.readLine();
+        offs = line.split(',');
+        field_info["latitude"] = offs[0].toDouble();
+        field_info["longitude"] = offs[1].toDouble();
+    }
+
+    fieldFile.close();
+
+    //Boundaries
+    //Either exit or update running save
+    filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Boundary.txt");
+
+    QFile boundariesFile(filename);
+    field_info["hasBoundary"] = false;
+    field_info["boundaryArea"] = (double)-10;
+
+    if (boundariesFile.open(QIODevice::ReadOnly)) {
+        reader.setDevice(&boundariesFile);
+        //read header
+        line = reader.readLine();//Boundary
+
+        //only look at first boundary
+        if (!reader.atEnd()) {
+            //True or False OR points from older boundary files
+            line = reader.readLine();
+
+            //Check for older boundary files, then above line string is num of points
+            if (line == "True")
+            {
+                line = reader.readLine();
+            } else if (line == "False")
+            {
+                line = reader.readLine(); //number of points
+            }
+
+            //Check for latest boundary files, then above line string is num of points
+            if (line == "True" || line == "False")
+            {
+               line = reader.readLine(); //number of points
+            }
+
+            int numPoints = line.toInt();
+
+            if (numPoints > 0)
+            {
+                QVector<Vec3> pointList;
+                //load the line
+                for (int i = 0; i < numPoints; i++)
+                {
+                    line = reader.readLine();
+                    QStringList words = line.split(',');
+                    Vec3 vecPt( words[0].toDouble(),
+                                words[1].toDouble(),
+                                words[2].toDouble() );
+                    pointList.append(vecPt);
+                }
+
+                if (pointList.count() > 4) {
+                    double area = 0;
+
+                    //the last vertex is the 'previous' one to the first
+                    int j = pointList.count() - 1;
+
+                    for (int i = 0; i < pointList.count() ; j = i++) {
+                        //pretend they are square; we'll divide by 2 later
+                        area += (pointList[j].easting + pointList[i].easting) *
+                                (pointList[j].northing - pointList[i].northing);
+                    }
+
+                    field_info["hasBoundary"] = true;
+                    field_info["boundaryArea"] = fabs(area)/2;
+                }
+            }
+        }
+    }
+
+    boundariesFile.close();
+
+    return field_info;
+}
+
+bool FormGPS::FileOpenField(QString fieldDir, bool load_coverage)
 {
     QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
             + "/" + QCoreApplication::applicationName() + "/Fields/" + fieldDir;
@@ -469,7 +603,7 @@ bool FormGPS::FileOpenField(QString fieldDir)
     JobClose();
 
     //and open a new job
-    jobNew();
+    JobNew();
 
     //Saturday, February 11, 2017  -->  7:26:52 AM
     //$FieldDir
@@ -490,6 +624,7 @@ bool FormGPS::FileOpenField(QString fieldDir)
     line = reader.readLine();
 
     currentFieldDirectory = line.trimmed();
+    property_setF_CurrentDir = currentFieldDirectory;
 
     //Offset header
     line = reader.readLine();
@@ -578,71 +713,73 @@ bool FormGPS::FileOpenField(QString fieldDir)
         curve.refList.clear();
     }
 
-    //section patches
-    filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Sections.txt");
+    if (load_coverage) {
+        //section patches
+        filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Sections.txt");
 
-    QFile sectionsFile(filename);
-    if (!sectionsFile.open(QIODevice::ReadOnly))
-    {
-        qWarning() << "Couldn't open sections " << filename << "for reading!";
-        //TODO timed messagebox
-        //return;
-    } else
-    {
-
-        reader.setDevice(&sectionsFile);
-        bool isv3 = false;
-        fd.distanceUser = 0;
-        QVector3D vecFix;
-
-        //read header
-        while (!reader.atEnd())
+        QFile sectionsFile(filename);
+        if (!sectionsFile.open(QIODevice::ReadOnly))
         {
-            line = reader.readLine();
-            if (line.contains("ect"))
-            {
-                isv3 = true;
-                break;
-            }
+            qWarning() << "Couldn't open sections " << filename << "for reading!";
+            //TODO timed messagebox
+            //return;
+        } else
+        {
 
-            int verts = line.toInt();
+            reader.setDevice(&sectionsFile);
+            bool isv3 = false;
+            fd.distanceUser = 0;
+            QVector3D vecFix;
 
-            triStrip[0].triangleList = QSharedPointer<PatchTriangleList>( new PatchTriangleList);
-            triStrip[0].patchList.append(triStrip[0].triangleList);
-
-
-            for (int v = 0; v < verts; v++)
+            //read header
+            while (!reader.atEnd())
             {
                 line = reader.readLine();
-                QStringList words = line.split(',');
-                vecFix.setX(words[0].toDouble());
-                vecFix.setY(words[1].toDouble());
-                vecFix.setZ(words[2].toDouble());
-                triStrip[0].triangleList->append(vecFix);
-            }
-
-            //calculate area of this patch - AbsoluteValue of (Ax(By-Cy) + Bx(Cy-Ay) + Cx(Ay-By)/2)
-            verts -= 2;
-            if (verts >= 2)
-            {
-                for (int j = 1; j < verts; j++)
+                if (line.contains("ect"))
                 {
-                    double temp = 0;
-                    temp = (*triStrip[0].triangleList)[j].x() * ((*triStrip[0].triangleList)[j + 1].y() - (*triStrip[0].triangleList)[j + 2].y()) +
-                             (*triStrip[0].triangleList)[j + 1].x() * ((*triStrip[0].triangleList)[j + 2].y() - (*triStrip[0].triangleList)[j].y()) +
-                                 (*triStrip[0].triangleList)[j + 2].x() * ((*triStrip[0].triangleList)[j].y() - (*triStrip[0].triangleList)[j + 1].y());
+                    isv3 = true;
+                    break;
+                }
 
-                    fd.workedAreaTotal += fabs((temp * 0.5));
+                int verts = line.toInt();
+
+                triStrip[0].triangleList = QSharedPointer<PatchTriangleList>( new PatchTriangleList);
+                triStrip[0].patchList.append(triStrip[0].triangleList);
+
+
+                for (int v = 0; v < verts; v++)
+                {
+                    line = reader.readLine();
+                    QStringList words = line.split(',');
+                    vecFix.setX(words[0].toDouble());
+                    vecFix.setY(words[1].toDouble());
+                    vecFix.setZ(words[2].toDouble());
+                    triStrip[0].triangleList->append(vecFix);
+                }
+
+                //calculate area of this patch - AbsoluteValue of (Ax(By-Cy) + Bx(Cy-Ay) + Cx(Ay-By)/2)
+                verts -= 2;
+                if (verts >= 2)
+                {
+                    for (int j = 1; j < verts; j++)
+                    {
+                        double temp = 0;
+                        temp = (*triStrip[0].triangleList)[j].x() * ((*triStrip[0].triangleList)[j + 1].y() - (*triStrip[0].triangleList)[j + 2].y()) +
+                                 (*triStrip[0].triangleList)[j + 1].x() * ((*triStrip[0].triangleList)[j + 2].y() - (*triStrip[0].triangleList)[j].y()) +
+                                     (*triStrip[0].triangleList)[j + 2].x() * ((*triStrip[0].triangleList)[j].y() - (*triStrip[0].triangleList)[j + 1].y());
+
+                        fd.workedAreaTotal += fabs((temp * 0.5));
+                    }
+                }
+
+                //was old version prior to v4
+                if (isv3)
+                {
+                        //Append the current list to the field file
                 }
             }
-
-            //was old version prior to v4
-            if (isv3)
-            {
-                    //Append the current list to the field file
-            }
+            sectionsFile.close();
         }
-        sectionsFile.close();
     }
 
     // Contour points ----------------------------------------------------------------------------

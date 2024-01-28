@@ -1248,7 +1248,7 @@ void FormGPS::JobClose()
 
 }
 
-void FormGPS::jobNew()
+void FormGPS::JobNew()
 {
     isJobStarted = true;
     startCounter = 0;
@@ -1353,6 +1353,8 @@ void FormGPS::fileSaveEverythingBeforeClosingField(QQuickCloseEvent *event)
         vehicle_saveas(property_setVehicle_vehicleName);
     }
 
+    if (! isJobStarted) return;
+
     //turn off contour line if on
     if (ct.isContourOn) ct.StopContourLine(contourSaveList);
 
@@ -1378,7 +1380,8 @@ void FormGPS::fileSaveEverythingBeforeClosingField(QQuickCloseEvent *event)
     //ExportFieldAs_ISOXMLv3()
     //ExportFieldAs_ISOXMLv4()
 
-    property_setF_CurrentDir = currentFieldDirectory;
+    property_setF_CurrentDir = tr("None");
+    currentFieldDirectory = (QString)property_setF_CurrentDir;
     displayFieldName = tr("None");
 
     JobClose();

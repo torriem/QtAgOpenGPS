@@ -96,6 +96,13 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(vehicle_delete(QString)), this, SLOT(vehicle_delete(QString)));
     connect(aog,SIGNAL(vehicle_saveas(QString)), this, SLOT(vehicle_saveas(QString)));
 
+    //field saving and loading
+    connect(aog,SIGNAL(field_update_list()), this, SLOT(field_update_list()));
+    connect(aog,SIGNAL(field_close()), this, SLOT(field_close()));
+    connect(aog,SIGNAL(field_open(QString)), this, SLOT(field_open(QString)));
+    connect(aog,SIGNAL(field_new(QString)), this, SLOT(field_new(QString)));
+    connect(aog,SIGNAL(field_new_from(QString,QString)), this, SLOT(field_new_from(QString,QString)));
+
     //connect qml button signals to callbacks (it's not automatic with qml)
 
     /*btnPerimeter = qmlItem(qml_root,"btnPerimeter");
@@ -752,3 +759,85 @@ void FormGPS::vehicle_update_list() {
     aog->setProperty("vehicle_list", vehicleList);
 
 }
+
+void FormGPS::field_update_list() {
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+                            + "/" + QCoreApplication::applicationName() + "/Fields";
+
+    QObject *aog = qmlItem(qml_root, "aog");
+
+    QDir fieldsDirectory(directoryName);
+    fieldsDirectory.setFilter(QDir::Dirs);
+
+    QList<QVariant> fieldList;
+    QMap<QString, QVariant> field;
+
+    QFileInfoList fieldsDirList = fieldsDirectory.entryInfoList();
+
+    int index = 0;
+
+    for (QFileInfo fieldDir : fieldsDirList) {
+
+        if(fieldDir.fileName() == "." ||
+            fieldDir.fileName() == "..")
+            continue;
+        field = FileFieldInfo(fieldDir.fileName());
+
+        if(field.contains("latitude")) {
+            field["index"] = index;
+            fieldList.append(field);
+            index++;
+        }
+
+        field["name"] = fieldDir.fileName(); // in case Field.txt doesn't agree with dir name
+    }
+
+    aog->setProperty("field_list", fieldList);
+}
+
+void FormGPS::field_close() {
+    fileSaveEverythingBeforeClosingField(NULL);
+}
+
+void FormGPS::field_open(QString field_name) {
+    fileSaveEverythingBeforeClosingField(NULL);
+    FileOpenField(field_name);
+}
+
+void FormGPS::field_new(QString field_name) {
+    //assume the GUI will vet the name a little bit
+    currentFieldDirectory = field_name;
+    property_setF_CurrentDir = currentFieldDirectory;
+    JobNew();
+
+    pn.latStart = pn.latitude;
+    pn.lonStart = pn.longitude;
+    pn.SetLocalMetersPerDegree();
+
+    FileCreateField();
+    FileCreateSections();
+    FileCreateRecPath();
+    FileCreateContour();
+    FileCreateElevation();
+    FileSaveFlags();
+    FileCreateBoundary();
+}
+
+void FormGPS::field_new_from(QString existing, QString field_name) {
+    fileSaveEverythingBeforeClosingField(NULL);
+    FileOpenField(existing,false); //load everything except coverage
+    //change to new name
+    currentFieldDirectory = field_name;
+    property_setF_CurrentDir = currentFieldDirectory;
+    //write it out to disk
+    fileSaveEverythingBeforeClosingField(NULL);
+
+    //reopen it, with job set
+    FileOpenField(field_name);
+}
+
+void FormGPS::field_delete(QString field_name) {
+    //TODO
+}
+
+

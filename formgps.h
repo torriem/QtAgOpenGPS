@@ -494,7 +494,8 @@ public:
     void FileLoadCurveLines();
     void FileSaveABLines();
     void FileLoadABLines();
-    bool FileOpenField(QString fieldDir);
+    bool FileOpenField(QString fieldDir, bool loadCoverage=true);
+    QMap<QString, QVariant> FileFieldInfo(QString fieldDir);
     void FileCreateField();
     void FileCreateElevation();
     void FileSaveSections();
@@ -633,7 +634,7 @@ public:
     QString speedMPH();
     QString speedKPH();
 
-    void jobNew();
+    void JobNew();
     void JobClose();
 
     /******************************
@@ -684,6 +685,15 @@ public slots:
     void vehicle_delete(QString vehicle_name);
     void vehicle_update_list();
 
+
+    //field callbacks
+    void field_update_list();
+    void field_close();
+    void field_open(QString field_name);
+    void field_new(QString field_name);
+    void field_new_from(QString existing, QString field_name);
+    void field_delete(QString field_name);
+
     //left column
     void onBtnAcres_clicked();
     void onBtnSettings_clicked();
@@ -725,8 +735,8 @@ public slots:
     void swapDirection();
     void turnOffBoundAlarm();
 
-    void onBtnManUTurn_clicked(bool right);
-    void onBtnLateral_clicked(bool right);
+    void onBtnManUTurn_clicked(bool right); //TODO add the skip number as a parameter
+    void onBtnLateral_clicked(bool right); //TODO add the skip number as a parameter
 
     /***************************
      * from OpenGL.Designer.cs *

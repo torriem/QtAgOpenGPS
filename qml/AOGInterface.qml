@@ -31,7 +31,7 @@ Item {
 
     property double frameTime: 0
 
-    property bool isJobStarted: false
+    property bool isJobStarted: true
 
     property int manualBtnState: 0
     property int autoBtnState: 0
@@ -48,13 +48,14 @@ Item {
         console.debug("isAutoSteerBtnOn is now " + isAutoSteerBtnOn)
     }
 
+    //General FormGPS information updated at GPS rate.
     property double latStart: 53
     property double lonStart: -111
 
     property double easting: 0
     property double northing: 0
-    property double latitude: 0
-    property double longitude: 0
+    property double latitude: 53.2
+    property double longitude: -111.2
     property double heading: 0//is this fused, imu, or gps? David
     property double toolEasting: 0
     property double toolNorthing: 0
@@ -68,7 +69,6 @@ Item {
 
     property int steerModuleConnectedCounter: 0
     property bool steerSwitchHigh: false
-
 
     //david added these
     property string currentField: "myvalue"
@@ -143,6 +143,19 @@ Item {
 
     property var vehicle_list: [
         { index: 0, name: "tractor" }
+    ]
+
+    //Field loading saving interface
+    signal field_update_list()
+    signal field_new(string field_name)
+    signal field_open(string field_name)
+    signal field_new_from(string existing_field, string new_field)
+    signal field_close()
+    signal field_delete(string field_name)
+
+    property var field_list: [
+        { index: 0, name: "test1", latitude: 53, longitude: -111, hasBoundary: true, boundaryArea: 1232312 },
+        { index: 0, name: "test2", latitude: 53.004, longitude: -111, hasBoundary: true, boundaryArea: -10 }
     ]
 
     property double mPerDegreeLat
