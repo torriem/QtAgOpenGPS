@@ -544,5 +544,6 @@
         <file>images/TrackOn.png</file>
         <file>images/GPSQuality.png</file>
         <file>qml/FieldTable.qml</file>
+        <file>qml/TimedRectangle.qml</file>
     </qresource>
 </RCC>

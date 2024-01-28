@@ -736,7 +736,7 @@ Window {
             IconButtonText {
                 id: btnTrackOn
                 icon.source: "/images/TrackOn.png"
-                buttonText: "ABLineEdit"
+                buttonText: "Track"
             }
 
         }
