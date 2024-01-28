@@ -1,11 +1,17 @@
-import QtQuick 2.0
-import QtQuick.Controls 2.1
-import Qt.labs.folderlistmodel 2.2
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Controls.Material 2.15
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Styles 1.4
 
-Item{
+Drawer {
     id: fieldMenu
+    y: 20
+    modal: true
+    interactive: true
+    position: 0
+    visible: false
+
 
     onVisibleChanged: {
         aog.field_update_list()
