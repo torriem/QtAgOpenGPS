@@ -540,5 +540,8 @@
         <file>qml/SimController.qml</file>
         <file>qml/TextLine.qml</file>
         <file>qml/GPSData.qml</file>
+        <file>images/FieldStats.png</file>
+        <file>images/TrackOn.png</file>
+        <file>images/GPSQuality.png</file>
     </qresource>
 </RCC>

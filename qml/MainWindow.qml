@@ -117,7 +117,18 @@ Window {
             font.bold: true
             font.pixelSize: 15
         }
+        IconButtonColor{
+            id: rtkStatus
+            icon.source: "/images/GPSQuality.png"
+            implicitWidth: 75
+            implicitHeight: 40
+            anchors.top: parent.top
+            anchors.right: speed.left
+            anchors.rightMargin: 20
+        }
+
         Button{
+            id: speed
             implicitHeight: 30
             anchors.bottom: parent.bottom
             anchors.right: topRowWindow.left
@@ -204,6 +215,7 @@ Window {
 
             onClicked: {
                 parent.clicked(mouse);
+                console.log(aog.isTrackOn)
             }
 
             onPressed: {
@@ -494,7 +506,7 @@ Window {
                 icon.source: "/images/ABLineCycle.png"
                 width: btnABLine.width
                 height: btnABLine.height
-                visible: aog.isJobStarted ? true : false
+                visible: aog.isTrackOn
             }
             IconButton{
                 id: btnABLineCycleBk
@@ -502,7 +514,7 @@ Window {
                 icon.source: "/images/ABLineCycleBk.png"
                 width: btnABLine.width
                 height: btnABLine.height
-                visible: aog.isJobStarted ? true : false
+                visible: aog.isTrackOn
             }
 
             IconButtonText {
@@ -550,6 +562,7 @@ Window {
                 icon.source: "/images/YouTurnNo.png"
                 iconChecked: "/images/YouTurn80.png"
                 buttonText: "AutoUturn"
+                visible: aog.isTrackOn
             }
             IconButtonText {
                 id: btnAutoSteer
@@ -623,82 +636,6 @@ Window {
             anchors.rightMargin: 3
             Layout.fillWidth: true
             //spacing: parent.rowSpacing
-            IconButtonText {
-                id: btnResetTool
-                objectName: "btnResetTool"
-                icon.source: "/images/ResetTool.png"
-                buttonText: "Reset Tool"
-            }
-            IconButtonText {
-                id: btnHeadland
-                objectName: "btnHeadland"
-                isChecked: false
-                checkable: true
-                icon.source: "/images/HeadlandOff.png"
-                iconChecked: "/images/HeadlandOn.png"
-                buttonText: "Headland"
-            }
-            IconButtonText {
-                id: btnHydLift
-                objectName: "btnHydLift"
-                isChecked: false
-                checkable: true
-                icon.source: "/images/HydraulicLiftOff.png"
-                iconChecked: "/images/HydraulicLiftOn.png"
-                buttonText: "HydLift"
-                onClicked: warningWindow.visible = true
-            }
-            IconButtonText {
-                id: btnFlag
-                objectName: "btnFlag"
-                isChecked: false
-                icon.source: "/images/FlagRed.png"
-                onPressAndHold: {
-                    if (contextFlag.visible) {
-                        contextFlag.visible = false;
-                    } else {
-                        contextFlag.visible = true;
-                    }
-                }
-                buttonText: "Flag"
-            }
-
-            IconButtonText {
-                id: btnTramLines
-                objectName: "btnTramLines"
-                icon.source: "/images/TramLines.png"
-                buttonText: "Tram Lines"
-            }
-            IconButtonText {
-                id: btnSectionMapping
-                objectName: "btnSectionMapping"
-                icon.source: "/images/SectionMapping"
-                visible: aog.isJobStarted ? true : false
-            }
-
-            IconButtonText {
-                id: btnPointStart
-                objectName: "btnPointStart"
-                icon.source: "/images/PointStart.png"
-                buttonText: "LinePicker"
-                onClicked: lineDrawer.visible = true
-            }
-            IconButtonText {
-                id: btnABLineEdit
-                objectName: "btnABLineEdit"
-                icon.source: "/images/ABLineEdit.png"
-                buttonText: "ABLineEdit"
-                onClicked: lineEditor.visible = true
-            }
-            IconButtonText {
-                id: btnYouSkip
-                objectName: "btnYouSkip"
-                isChecked: false
-                checkable: true
-                icon.source: "/images/YouSkipOff.png"
-                iconChecked: "/images/YouSkipOn.png"
-                buttonText: "YouSkips"
-            }
             ComboBox {
                 id: skips
                 editable: true
@@ -723,6 +660,78 @@ Window {
                 }
                 implicitHeight:parent.height
                 implicitWidth: btnYouSkip.width
+            }
+            IconButtonText {
+                id: btnYouSkip
+                objectName: "btnYouSkip"
+                isChecked: false
+                checkable: true
+                icon.source: "/images/YouSkipOff.png"
+                iconChecked: "/images/YouSkipOn.png"
+                buttonText: "YouSkips"
+            }
+            IconButtonText {
+                id: btnResetTool
+                objectName: "btnResetTool"
+                icon.source: "/images/ResetTool.png"
+                buttonText: "Reset Tool"
+            }
+            IconButtonText {
+                id: btnSectionMapping
+                objectName: "btnSectionMapping"
+                icon.source: "/images/SectionMapping"
+                visible: aog.isJobStarted ? true : false
+            }
+            IconButtonText {
+                id: btnFieldInfo
+                icon.source: "/images/FieldStats.png"
+                visible: aog.isJobStarted ? true : false
+                onClicked: fieldData.visible = !fieldData.visible
+            }
+            IconButtonText {
+                id: btnTramLines
+                objectName: "btnTramLines"
+                icon.source: "/images/TramLines.png"
+                buttonText: "Tram Lines"
+            }
+            IconButtonText {
+                id: btnHydLift
+                objectName: "btnHydLift"
+                isChecked: false
+                checkable: true
+                icon.source: "/images/HydraulicLiftOff.png"
+                iconChecked: "/images/HydraulicLiftOn.png"
+                buttonText: "HydLift"
+                onClicked: warningWindow.visible = true
+            }
+            IconButtonText {
+                id: btnHeadland
+                objectName: "btnHeadland"
+                isChecked: false
+                checkable: true
+                icon.source: "/images/HeadlandOff.png"
+                iconChecked: "/images/HeadlandOn.png"
+                buttonText: "Headland"
+            }
+            IconButtonText {
+                id: btnFlag
+                objectName: "btnFlag"
+                isChecked: false
+                icon.source: "/images/FlagRed.png"
+                onPressAndHold: {
+                    if (contextFlag.visible) {
+                        contextFlag.visible = false;
+                    } else {
+                        contextFlag.visible = true;
+                    }
+                }
+                buttonText: "Flag"
+            }
+
+            IconButtonText {
+                id: btnTrackOn
+                icon.source: "/images/TrackOn.png"
+                buttonText: "ABLineEdit"
             }
 
         }
@@ -891,7 +900,7 @@ Window {
             id: fieldData
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
-            visible: true
+            visible: false
         }
         GPSData{
             id: gpsData

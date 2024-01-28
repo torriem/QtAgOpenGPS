@@ -91,15 +91,15 @@ Rectangle{
         height: childrenRect.height
         anchors.margins: 10
         spacing: 10
+//        Text{
+//            text: qsTr("Discussions at...")
+//        }
+//        Text{
+//            text: "<a href='https://discourse.agopengps.com'>https://discourse.agopengps.com</a>"
+//            textFormat: Text.RichText
+//        }
         Text{
-            text: qsTr("Discussions at...")
-        }
-        Text{
-            text: "<a href='https://discourse.agopengps.com'>https://discourse.agopengps.com</a>"
-            textFormat: Text.RichText
-        }
-        Text{
-            text: qsTr("Check for Updates")
+            text: qsTr("Official Repository")
         }
         Text{
             text: "<a href='https://github.com/torriem/QtAgOpenGPS'>https://github.com/torriem/QtAgOpenGPS</a>"

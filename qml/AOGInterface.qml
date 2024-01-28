@@ -92,9 +92,19 @@ Item {
     property double gpsHeading: 0
     property double fusedHeading: 0
 
+    property bool isTrackOn: false //checks if a guidance line is set.
+    onCurrentABLineChanged: {
+        if(currentABLine > -1 && isJobStarted === true){
+            isTrackOn = true
+        }
+        else{
+            isTrackOn = false
+        }
+    }
+
     //can we use these line properties for the Display?
     //AB Lines properties, signals, and methods
-    property int currentABLine: -1 //use this instead of signals?
+    property int currentABLine: -1
     property int currentABCurve: -1
 
     property double currentABLine_heading: 0
