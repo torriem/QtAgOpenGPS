@@ -284,4 +284,26 @@ Item {
     {
         return area_from_unit(areaRate)
     }
+
+    function distanceLatLon(latitude1, longitude1, latitude2, longitude2)
+    {
+        //This is a haversine based distance calculation formula
+        var EARTH_RADIUS = 6378137.00
+
+        //This portion converts the current and destination GPS coords from decDegrees to Radians
+        var lonR1 = longitude1 * Math.PI / 180
+        var lonR2 = longitude2 * Math.PI / 180
+        var latR1 = latitude1 * Math.PI / 180
+        var latR2 = latitude2 * Math.PI / 180
+
+        //This portion calculates the differences for the Radian latitudes and longitudes and saves them to variables
+        var dlon = lonR2 - lonR1;
+        var dlat = latR2 - latR1;
+
+        //This portion is the Haversine Formula for distance between two points. Returned value is in metres
+        var a = (Math.pow(Math.sin(dlat * 0.5),2)) + Math.cos(latR1) * Math.cos(latR2) * (Math.pow(Math.sin(dlon * 0.5),2));
+        var e = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) ;
+
+        return EARTH_RADIUS * e;
+    }
 }

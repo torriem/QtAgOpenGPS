@@ -44,7 +44,7 @@ SOURCES += main.cpp\
     classes/cpgn.cpp \
     classes/cturn.cpp \
     classes/cturnlines.cpp \
-        formgps.cpp \
+    formgps.cpp \
     classes/cabline.cpp \
     classes/vec2.cpp \
     classes/vec3.cpp \
@@ -60,6 +60,7 @@ SOURCES += main.cpp\
     qmlsectionbuttons.cpp \
     qmlsettings.cpp \
     qmlsettings_addkeys.cpp \
+    sortfilterproxymodel.cpp \
     testlists.cpp \
     classes/cnmea.cpp \
     classes/cvehicle.cpp \
@@ -114,7 +115,8 @@ HEADERS  += formgps.h \
     qmlsectionbuttons.h \
     qmlsettings.h \
     qmlutil.h \
-    aogsettings.h \ 
+    aogsettings.h \
+    sortfilterproxymodel.h \
     common.h \
     glutils.h \
     aogrenderer.h \

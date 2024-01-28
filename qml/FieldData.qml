@@ -5,7 +5,10 @@ Rectangle {
     id: fieldData
     width: 200
     height: childrenRect.height + 30
-    color: "#4d4d4d"
+    color: "black"
+    opacity: 0.7
+    border.color: "black"
+    border.width: 1.5
     Column{
         id: column
         anchors.top: parent.top

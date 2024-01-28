@@ -539,9 +539,13 @@
         <file>qml/FieldData.qml</file>
         <file>qml/SimController.qml</file>
         <file>qml/TextLine.qml</file>
+<<<<<<< HEAD
         <file>qml/GPSData.qml</file>
         <file>images/FieldStats.png</file>
         <file>images/TrackOn.png</file>
         <file>images/GPSQuality.png</file>
+=======
+        <file>qml/FieldTable.qml</file>
+>>>>>>> 687b06906ad7df2557d024099a15a4b68d38f8bd
     </qresource>
 </RCC>

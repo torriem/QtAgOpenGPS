@@ -22,6 +22,11 @@ Window {
     //    id: settings
     //}
 
+    Component.onCompleted: {
+        aog.field_update_list()
+    }
+
+
     AOGInterface {
         id: aog
         objectName: "aog"
@@ -977,10 +982,10 @@ Window {
         FieldOpen {
             id: fieldOpen
             objectName: "slideoutMenu"
-            anchors.top: parent.top
-            anchors.topMargin: 20
-            anchors.left: leftColumn.right
-            anchors.leftMargin: 15
+            //anchors.top: parent.top
+            //anchors.topMargin: 20
+            //anchors.left: leftColumn.right
+            //anchors.leftMargin: 15
             visible: false
 
         }

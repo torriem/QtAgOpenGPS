@@ -1,11 +1,10 @@
-import QtQuick 2.0
-import QtQuick.Controls 2.1
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
-import Qt.labs.folderlistmodel 2.2
 
-Rectangle{
+Dialog {
     id:fieldOpen
-    color: "ghostwhite"
+    //color: "ghostwhite"
     visible: false
     width: 1024
     height: 700
@@ -17,69 +16,17 @@ Rectangle{
         height: screenPixelDensity * 0.3 //.3" tall
         color: "ghostwhite"
         z: 4
-        Text {
-            id: field
-            text: "Field"
-            anchors.left: topLine.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: topLine.verticalCenter
-        }
-        Text {
-            id: distance
-            text: qsTr("Distance")
-            anchors.right: area.left
-            anchors.verticalCenter: topLine.verticalCenter
-            anchors.rightMargin: 100
-        }
-        Text {
-            id: area
-            text: qsTr("Area")
-            anchors.right: parent.right
-            anchors.verticalCenter: topLine.verticalCenter
-            anchors.rightMargin: 30
-        }
     }
-    ListView {
+    FieldTable {
+        id: fieldTable
         anchors.top: topLine.bottom
         anchors.bottom: grid3.top
         width:parent.width - 10
         anchors.left: parent.left
+        anchors.topMargin: 10
         anchors.leftMargin: 5
-        property Component mycomponent: fileName
-        model :FolderListModel{
-            id: fieldList
-            showDirs: true
-            showFiles: false
-            folder: "file:/home/davidwedel/Documents/QtAgOpenGPS/Fields/"
-        }
-
-        delegate: RadioButton{
-            id: control
-            indicator: Rectangle{
-                border.width: 1
-                border.color: "black"
-                anchors.fill: parent
-                color: "lightgray"
-                Rectangle{
-                    anchors.fill: parent
-                    anchors.margins: 1
-                    color: control.down ? "white" : "blue"
-                    visible: control.checked
-                }
-            }
-
-            width:parent.width
-            height:50
-            Text{
-                anchors.left: parent.left
-                anchors.leftMargin: 2
-                anchors.verticalCenter: parent.verticalCenter
-                text: fileName
-                font.pixelSize: 25
-                font.bold: true
-                color: control.checked ? "white" : "black"
-                z: 2
-            }
+        onCurrentRowChanged: {
+            console.debug("clicked on", fieldTable.currentRow)
         }
     }
 
@@ -106,25 +53,23 @@ Rectangle{
                 color3: "white"
                 border: 1
                 height: 75
-            }
-            IconButtonText {
-                id: sort
-                objectName: "btnSort"
-                icon.source: "/images/Sort.png"
-                text: "Sort"
-                color3: "white"
-                border: 1
-                height: 75
+                enabled: fieldTable.currentRow > -1
+                onClicked: {
+                    aog.field_delete(aog.field_list[fieldTable.currentRow].name)
+                    //backend should update the list
+                }
             }
             IconButtonText {
                 id: cancel
                 objectName: "btnCancel"
                 icon.source: "/images/Cancel64.png"
                 text: "Cancel"
-                onClicked: fieldOpen.visible = false
                 color3: "white"
                 border: 1
                 height: 75
+                onClicked: {
+                    fieldOpen.rejected()
+                }
             }
             IconButtonText {
                 id: useSelected
@@ -134,6 +79,11 @@ Rectangle{
                 color3: "white"
                 border: 1
                 height: 75
+                enabled: fieldTable.currentRow > -1
+                onClicked: {
+                    aog.field_open(aog.field_list[fieldTable.currentRow].name)
+                    fieldOpen.accepted()
+                }
             }
         }
     }
