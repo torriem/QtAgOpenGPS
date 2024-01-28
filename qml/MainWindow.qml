@@ -80,7 +80,7 @@ Window {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.leftMargin: 120
-            text: qsTr("Field: ")
+            text: qsTr("Field: "+ (aog.isJobStarted ? settings.setF_CurrentDir: "None"))
             anchors.bottom: parent.verticalCenter
             font.bold: true
             font.pixelSize: 15
