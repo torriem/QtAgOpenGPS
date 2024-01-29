@@ -1140,9 +1140,23 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("offlineDistance", vehicle.guidanceLineDistanceOff);
     aog->setProperty("speedKph", vehicle.avgSpeed);
 
-    // added by Alan Wedel
-    aog->setProperty("workedAcres", fd.WorkedAcres());
-    aog->setProperty("actualAcres", fd.ActualAreaWorkedAcres());
+    // added by Wedel
+    aog->setProperty("workedAreaTotal", fd.workedAreaTotal);
+    aog->setProperty("workedAreaTotalUser", fd.workedAreaTotalUser);
+    aog->setProperty("actualAreaCovered", fd.actualAreaCovered);
+    aog->setProperty("distanceUser", fd.distanceUser);
+    aog->setProperty("areaOuterBoundary", fd.areaOuterBoundary);
+    aog->setProperty("areaBoundaryOuterLessInner", fd.areaBoundaryOuterLessInner);
+    aog->setProperty("altitude", pn.altitude);
+    aog->setProperty("hdop", pn.hdop);
+    aog->setProperty("age", pn.age);
+    aog->setProperty("fixQuality", pn.fixQuality);
+    aog->setProperty("ageAlarm", pn.ageAlarm);
+    aog->setProperty("satellitesTracked", pn.satellitesTracked);
+    aog->setProperty("imuHeading", ahrs.imuHeading);
+    aog->setProperty("angVel", ahrs.angVel);
+
+
 
     if (ABLine.numABLineSelected > 0) {
         //currentABLine_heading is set in formgps_ui.cpp
