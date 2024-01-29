@@ -737,6 +737,7 @@ Window {
                 id: btnTrackOn
                 icon.source: "/images/TrackOn.png"
                 buttonText: "Track"
+                onClicked: trackButtons.visible = !trackButtons.visible
             }
 
         }
@@ -941,6 +942,14 @@ Window {
             anchors.leftMargin: 20
             anchors.top: parent.top
             anchors.topMargin: 20
+            visible: false
+            z:1
+        }
+        TrackButtons{
+            id: trackButtons
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.margins: 20
             visible: false
             z:1
         }
