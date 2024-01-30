@@ -86,6 +86,10 @@ Item {
     property int satellitesTracked: 0
     property double imuHeading: 0
     property int angVel: 0//angular velocity I assume
+    property string timeTilFinished: ""
+    property string workRate: "value"
+    property string percentOverlap: "value"
+    property string percentLeft: "value"
     //these not added yet
     property double steerAngleActual: 0
     property double steerAngleSet: 0
@@ -94,6 +98,8 @@ Item {
     property double missedSentences: 0
     property double gpsHeading: 0
     property double fusedHeading: 0
+
+
 
     property bool isTrackOn: false //checks if a guidance line is set.
     onCurrentABLineChanged: {

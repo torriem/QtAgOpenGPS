@@ -19,13 +19,13 @@ Rectangle {
         TextLine{ text: "---------------"}
         TextLine{ text: qsTr("Applied: "+ utils.area_to_unit_string(aog.workedAreaTotal, 2))}
         TextLine{ text: qsTr("Remain: "+ utils.area_to_unit_string((aog.areaBoundaryOuterLessInner - aog.workedAreaTotal), 2))}
-        TextLine{ text: qsTr("%")}
-        TextLine{ text: qsTr("hrs")}
+        TextLine{ text: qsTr(""+ (Number(aog.percentLeft).toLocaleString(Qt.locale(), 'f', 0))+"%")}
+        TextLine{ text: qsTr(""+ aog.timeTilFinished)}
         TextLine{ text: qsTr("Actual")}
         TextLine{ text: "----------------"}
         TextLine{ text: qsTr("Applied: "+ utils.area_to_unit_string(aog.actualAreaCovered, 2))}
         TextLine{ text: qsTr("Remain: " + utils.area_to_unit_string((aog.areaBoundaryOuterLessInner - aog.actualAreaCovered), 2))}
         TextLine{ text: qsTr("Overlap: " + utils.area_to_unit_string((aog.workedAreaTotal - aog.actualAreaCovered), 2))}
-        TextLine{ text: qsTr("Rate: "+ utils.areaRate_unit())}
+        TextLine{ text: qsTr(""+ aog.workRate)}
     }
 }
