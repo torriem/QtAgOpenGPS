@@ -56,7 +56,7 @@ Item {
     property double northing: 0
     property double latitude: 53.2
     property double longitude: -111.2
-    property double heading: 0//is this fused, imu, or gps? David
+    property double heading: 0//this is fix2fix heading
     property double toolEasting: 0
     property double toolNorthing: 0
     property double toolLatitude: 0
@@ -71,24 +71,27 @@ Item {
     property bool steerSwitchHigh: false
 
     //david added these
+    //formgps_position.cpp line 1144
+    property double workedAreaTotal: 0
+    property double workedAreaTotalUser: 0 //total acres covered
+    property double actualAreaCovered: 0 //actual acres covered. Doesn't count overlap.
+    property double distanceUser: 0
+    property double areaOuterBoundary: 0
+    property double areaBoundaryOuterLessInner//outer minus the inner
+    property double altitude: 0
+    property double hdop: 0
+    property double	age: 0
+    property int fixQuality: 0
+    property int ageAlarm: 0
+    property int satellitesTracked: 0
+    property double imuHeading: 0
+    property int angVel: 0//angular velocity I assume
+    //these not added yet
     property double steerAngleActual: 0
     property double steerAngleSet: 0
-    property double totalAcres: 0
-    property double workedAcres: 0 //total acres covered
-    property double actualAcres: 0 //actual acres covered. Doesn't count overlap.
-    property double elevation: 0
-    property double numOfSats: 0
-    property double gpsHDOP: 0
-    property double frame: 0
     property double rawHZ:0
     property double hz:0
     property double missedSentences: 0
-    property double rtkAge: 0
-    property double angularVelocity: 0
-    property string gpsFixQuality: ""
-    property double crossTrackError:0//i guess this is probably the same as offlineDistance
-    property double distanceTraveled: 0
-    property double imuHeading: 0
     property double gpsHeading: 0
     property double fusedHeading: 0
 
