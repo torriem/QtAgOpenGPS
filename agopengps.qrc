@@ -539,6 +539,17 @@
         <file>qml/FieldData.qml</file>
         <file>qml/SimController.qml</file>
         <file>qml/TextLine.qml</file>
+        <file>qml/GPSData.qml</file>
+        <file>images/FieldStats.png</file>
+        <file>images/TrackOn.png</file>
+        <file>images/GPSQuality.png</file>
         <file>qml/FieldTable.qml</file>
+        <file>qml/TimedRectangle.qml</file>
+        <file>qml/TrackButtons.qml</file>
+        <file>images/ABSnapNudgeMenu.png</file>
+        <file>images/ABSnapNudgeMenuRef.png</file>
+        <file>images/AutoSteerSnapToPivot.png</file>
+        <file>images/ABTracks.png</file>
+        <file>images/ABDraw.png</file>
     </qresource>
 </RCC>
