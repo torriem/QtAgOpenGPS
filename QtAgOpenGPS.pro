@@ -12,6 +12,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 lessThan(QT_MAJOR_VERSION, 5):error("requires Qt 5.9 or newer")
 equals(QT_MAJOR_VERSION,5):lessThan(QT_MINOR_VERSION,9):error("requires Qt 5.9 or newer")
 
+
 TARGET = QtAgOpenGPS
 TEMPLATE = app
 
@@ -60,7 +61,6 @@ SOURCES += main.cpp\
     qmlsectionbuttons.cpp \
     qmlsettings.cpp \
     qmlsettings_addkeys.cpp \
-    sortfilterproxymodel.cpp \
     testlists.cpp \
     classes/cnmea.cpp \
     classes/cvehicle.cpp \
@@ -116,7 +116,6 @@ HEADERS  += formgps.h \
     qmlsettings.h \
     qmlutil.h \
     aogsettings.h \
-    sortfilterproxymodel.h \
     common.h \
     glutils.h \
     aogrenderer.h \
