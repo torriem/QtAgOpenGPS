@@ -43,6 +43,8 @@ Drawer {
                 isChecked: false
                 text: "Drive In"
                 icon.source: "/images/AutoManualIsAuto.png"
+
+                onClicked: { fieldMenu.visible = false ; fieldOpen.sortBy = 2 ; fieldOpen.visible = true; }
             }
             IconButtonTextBeside{
                 objectName: "btnFieldISOXML"
@@ -76,6 +78,7 @@ Drawer {
                 isChecked: false
                 text: "Resume"
                 icon.source: "/images/FilePrevious.png"
+                onClicked: { aog.field_open(settings.setF_CurrentDir) }
             }
             IconButtonTextBeside{
                 objectName: "btnFieldClose"

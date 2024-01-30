@@ -11,6 +11,8 @@ Popup {
     height: 500
     modal: true
 
+    property int sortBy: 1
+
     Rectangle {
         id: topLine
         objectName: "topLine"
@@ -37,6 +39,8 @@ Popup {
         anchors.leftMargin: 5
         anchors.rightMargin: 15
         anchors.bottomMargin: 10
+
+        sortBy: fieldOpen.sortBy
 
         anchors.right: topLine.right
         ScrollBar.vertical: ScrollBar {
