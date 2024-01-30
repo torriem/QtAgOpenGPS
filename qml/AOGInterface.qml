@@ -77,7 +77,7 @@ Item {
     property double actualAreaCovered: 0 //actual acres covered. Doesn't count overlap.
     property double distanceUser: 0
     property double areaOuterBoundary: 0
-    property double areaBoundaryOuterLessInner//outer minus the inner
+    property double areaBoundaryOuterLessInner: 0//outer minus the inner
     property double altitude: 0
     property double hdop: 0
     property double	age: 0
