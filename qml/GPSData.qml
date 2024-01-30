@@ -9,18 +9,18 @@ Rectangle{
     Column{
         id: column
         anchors.margins: 15
-        TextLine{ text: qsTr(""+aog.latitude)}
-        TextLine{ text: qsTr(""+aog.longitude)}
-        TextLine{ text: qsTr("N " + aog.northing)}
-        TextLine{ text: qsTr("E "+ aog.easting)}
-        TextLine{ text: qsTr("Elev "+ aog.elevation)}
-        TextLine{ text: qsTr("# Sats "+ aog.numOfSats)}
-        TextLine{ text: qsTr("HDOP" + aog.gpsHDOP)}
-        TextLine{ text: qsTr("Frame "+ aog.frame)}
+        TextLine{ text: qsTr("Lat "+(Number(aog.latitude).toLocaleString(Qt.locale(), 'f', 9)))}
+        TextLine{ text: qsTr("Lon "+(Number(aog.longitude).toLocaleString(Qt.locale(), 'f', 9)))}
+        TextLine{ text: qsTr("N " + (Number(aog.northing).toLocaleString(Qt.locale(), 'f', 3)))}
+        TextLine{ text: qsTr("E "+ (Number(aog.easting).toLocaleString(Qt.locale(), 'f', 3)))}
+        TextLine{ text: qsTr("Elev "+ (Number(aog.altitude).toLocaleString(Qt.locale(), 'f', 2)))}
+        TextLine{ text: qsTr("# Sats "+ aog.satellitesTracked)}
+        TextLine{ text: qsTr("HDOP " + (Number(aog.hdop).toLocaleString(Qt.locale(), 'f', 3)))}
+        TextLine{ text: qsTr("Frame "+ (Number(aog.frameTime).toLocaleString(Qt.locale(), 'f', 1)))}
         TextLine{ text: qsTr("Raw Hz "+ aog.rawHZ)}
         TextLine{ text: qsTr("Hz "+ aog.hz)}
         TextLine{ text: qsTr("Missed "+ aog.missedSentences)}
-        TextLine{ text: qsTr("Fix2Fix "+ aog.gpsHeading)}
+        TextLine{ text: qsTr("Fix2Fix "+ aog.heading)}
         TextLine{ text: qsTr("IMU "+ aog.imuHeading)}
         TextLine{ text: qsTr("Heading "+ aog.fusedHeading)}
         Item{

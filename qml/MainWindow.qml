@@ -140,13 +140,14 @@ Window {
             implicitWidth: 75
             background: Rectangle{
                 Text {
-                    text: aog.speedKph
+                    text: utils.speed_to_unit_string(aog.speedKph, 1)
                     font.bold: true
                     anchors.centerIn: parent
                     font.pixelSize: 35
                 }
                 color: parent.down ? "gray" : "ghostwhite"
             }
+            onClicked: gpsData.visible = !gpsData.visible
         }
         Row{
             id: topRowWindow
@@ -188,7 +189,8 @@ Window {
                 icon.source: "/images/WindowClose.png"
                 onClicked: aog.autoBtnState + aog.manualBtnState  > 0 ? timedMessage.addMessage(2000,qsTr("Section Control on. Shut off Section Control.")):
                 aog.isJobStarted ? closeDialog.visible = true:
-                Qt.quit()
+                mainWindow.close()
+
             }
         }
     }
@@ -1135,7 +1137,7 @@ Window {
                 color2: "transparent"
                 color3: "transparent"
                 icon.source: "/images/ExitAOG.png"
-                onClicked: Qt.quit()
+                onClicked:mainWindow.close()
             }
         }
 

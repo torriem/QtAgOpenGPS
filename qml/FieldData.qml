@@ -14,18 +14,18 @@ Rectangle {
         anchors.top: parent.top
         anchors.margins: 15
         anchors.horizontalCenter: parent.horizontalCenter
-        TextLine{ text: qsTr("Total: "+ aog.totalAcres)}
+        TextLine{ text: qsTr("Total: "+ utils.area_to_unit_string(aog.areaBoundaryOuterLessInner, 2))}
         TextLine{ text: qsTr("Worked")}
         TextLine{ text: "---------------"}
-        TextLine{ text: qsTr("Applied: "+ aog.worked)}
-        TextLine{ text: qsTr("Remain: "+ (aog.totalAcres - aog.workedAcres))}
+        TextLine{ text: qsTr("Applied: "+ utils.area_to_unit_string(aog.workedAreaTotal, 2))}
+        TextLine{ text: qsTr("Remain: "+ utils.area_to_unit_string((aog.areaBoundaryOuterLessInner - aog.workedAreaTotal), 2))}
         TextLine{ text: qsTr("%")}
         TextLine{ text: qsTr("hrs")}
         TextLine{ text: qsTr("Actual")}
         TextLine{ text: "----------------"}
-        TextLine{ text: qsTr("Applied: "+ aog.actual)}
-        TextLine{ text: qsTr("Remain: " + aog.totalAcres - aog.actual)}
-        TextLine{ text: qsTr("Overlap: " + "IDK")}
-        TextLine{ text: qsTr("Rate: "+ "ha/hr")}
+        TextLine{ text: qsTr("Applied: "+ utils.area_to_unit_string(aog.actualAreaCovered, 2))}
+        TextLine{ text: qsTr("Remain: " + utils.area_to_unit_string((aog.areaBoundaryOuterLessInner - aog.actualAreaCovered), 2))}
+        TextLine{ text: qsTr("Overlap: " + utils.area_to_unit_string((aog.workedAreaTotal - aog.actualAreaCovered), 2))}
+        TextLine{ text: qsTr("Rate: "+ utils.areaRate_unit())}
     }
 }

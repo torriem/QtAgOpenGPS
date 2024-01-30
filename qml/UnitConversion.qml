@@ -117,7 +117,7 @@ Item {
             return speed * 0.62137 //convert to mph
     }
 
-    function speed_to_unit_text(speed, decimal_places) {
+    function speed_to_unit_string(speed, decimal_places) {
         if (isMetric())
             return Number(speed).toLocaleString(Qt.locale(), 'f', decimal_places)
         else
@@ -189,7 +189,7 @@ Item {
             return distance * 3.2808 //convert to ft
     }
 
-    function m_to_uniit_string(distance, decimal_places) {
+    function m_to_unit_string(distance, decimal_places) {
         if (isMetric())
             return Number(distance).toLocaleString(Qt.locale(),'f', decimal_places)
         else
