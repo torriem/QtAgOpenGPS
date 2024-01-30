@@ -20,9 +20,9 @@ Rectangle{
         TextLine{ text: qsTr("Raw Hz "+ aog.rawHZ)}
         TextLine{ text: qsTr("Hz "+ aog.hz)}
         TextLine{ text: qsTr("Missed "+ aog.missedSentences)}
-        TextLine{ text: qsTr("Fix2Fix "+ aog.heading)}
-        TextLine{ text: qsTr("IMU "+ aog.imuHeading)}
-        TextLine{ text: qsTr("Heading "+ aog.fusedHeading)}
+        TextLine{ text: qsTr("Fix2Fix "+ (Number(aog.heading * 180 / Math.PI).toLocaleString(Qt.locale(), 'f', 1)))}
+        TextLine{ text: qsTr("IMU "+ (Number(aog.imuHeading * 180 / Math.PI).toLocaleString(Qt.locale(), 'f', 1)))}
+        TextLine{ text: qsTr("Heading "+ (Number(aog.fusedHeading * 180 / Math.PI).toLocaleString(Qt.locale(), 'f', 1)))}
         Item{
             visible: false //should reference a setting if rtk is turned on
             TextLine{ text: "<br>"}
