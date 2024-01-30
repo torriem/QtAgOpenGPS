@@ -147,7 +147,10 @@ Window {
                 }
                 color: parent.down ? "gray" : "ghostwhite"
             }
-            onClicked: gpsData.visible = !gpsData.visible
+            onClicked: {
+                gpsData.visible = !gpsData.visible
+                fieldData.visible = false
+            }
         }
         Row{
             id: topRowWindow
@@ -289,7 +292,7 @@ Window {
                     checked: settings.setMenu_isSimulatorOn
                     onCheckedChanged: {
                         settings.setMenu_isSimulatorOn = checked
-                        console.log(settings.setMenu_isSimulatorOn)
+                        console.log("Sim = "+settings.setMenu_isSimulatorOn)
                     }
                 }
                 MenuItem{ text: "Reset All"}
@@ -693,7 +696,10 @@ Window {
                 id: btnFieldInfo
                 icon.source: "/images/FieldStats.png"
                 visible: aog.isJobStarted ? true : false
-                onClicked: fieldData.visible = !fieldData.visible
+                onClicked: {
+                    fieldData.visible = !fieldData.visible
+                    gpsData.visible = false
+                }
             }
             IconButtonText {
                 id: btnTramLines
@@ -709,7 +715,6 @@ Window {
                 icon.source: "/images/HydraulicLiftOff.png"
                 iconChecked: "/images/HydraulicLiftOn.png"
                 buttonText: "HydLift"
-                onClicked: warningWindow.visible = true
             }
             IconButtonText {
                 id: btnHeadland
