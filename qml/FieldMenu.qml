@@ -135,6 +135,7 @@ Drawer {
             visible: false
         }
         FieldOpen{
+            id: fieldOpen
             //anchors.top:parent.top
             //anchors.topMargin: -50
             //anchors.horizontalCenter: parent.horizontalCenter
