@@ -154,8 +154,18 @@ Item {
     signal field_delete(string field_name)
 
     property var field_list: [
-        { index: 0, name: "test1", latitude: 53, longitude: -111, hasBoundary: true, boundaryArea: 1232312 },
-        { index: 0, name: "test2", latitude: 53.004, longitude: -111, hasBoundary: true, boundaryArea: -10 }
+        { index: 0, name: "test3", latitude: 53, longitude: -111, hasBoundary: true, boundaryArea: 1232312 },
+        { index: 1, name: "test1", latitude: 53.004, longitude: -111, hasBoundary: true, boundaryArea: -10 },
+        { index: 2, name: "test2", latitude: 53.1, longitude: -111.2, hasBoundary: true, boundaryArea: -10 },
+        { index: 3, name: "test3", latitude: 53.02, longitude: -111, hasBoundary: true, boundaryArea: 1232312 },
+        { index: 4, name: "test1", latitude: 53.004, longitude: -111, hasBoundary: true, boundaryArea: -10 },
+        { index: 5, name: "test2", latitude: 53.1, longitude: -111.2, hasBoundary: true, boundaryArea: -10 },
+        { index: 6, name: "test3", latitude: 53.009, longitude: -111, hasBoundary: true, boundaryArea: 1232312 },
+        { index: 7, name: "test1", latitude: 53.004, longitude: -111, hasBoundary: true, boundaryArea: -10 },
+        { index: 8, name: "test2", latitude: 53.1, longitude: -111.2, hasBoundary: true, boundaryArea: -10 },
+        { index: 9, name: "test3", latitude: 53.2, longitude: -111, hasBoundary: true, boundaryArea: 1232312 },
+        { index: 10, name: "test1", latitude: 53.004, longitude: -111, hasBoundary: true, boundaryArea: -10 },
+        { index: 11, name: "test2", latitude: 53.1, longitude: -111.2, hasBoundary: true, boundaryArea: -10 }
     ]
 
     property double mPerDegreeLat

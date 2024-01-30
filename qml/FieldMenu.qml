@@ -1,57 +1,45 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Controls.Material 2.15
+//import QtQuick.Controls.Material 2.15
 import QtQuick.Layouts 1.3
-import QtQuick.Controls.Styles 1.4
+//import QtQuick.Controls.Styles 1.4
 
 Drawer {
     id: fieldMenu
-    y: 20
-    modal: true
-    interactive: true
-    position: 0
+    //modal: false
+    //height: mainWindow.height
+    width: 300
+    height: mainWindow.height
     visible: false
-
+    modal: true
 
     onVisibleChanged: {
         aog.field_update_list()
     }
 
-    Rectangle{
-        id: topLine
-        anchors.top:parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: 1
-        height: 30
-        color: "white"
-        Text {
-            text: qsTr("Start New Field")
-            font.pixelSize: 20
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
-            anchors.leftMargin: 5
-        }
-    }
-    Rectangle{
+    contentItem: Rectangle{
         id: mainFieldMenu
         anchors.bottom: parent.bottom
         anchors.left: parent.left
+        anchors.top: parent.top
         anchors.right: parent.right
-        anchors.top: topLine.bottom
-        border.color: "lightblue"
-        border.width: 2
+
+        //border.color: "lightblue"
+        //border.width: 2
         color: "black"
+
+        ScrollView {
+            anchors.fill: parent
+
+            clip: true
+
         ColumnLayout{
-            anchors.left: parent.left
-            anchors.leftMargin: 40
-            anchors.top: parent.top
-            anchors.topMargin: 5
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 5
-            width: children.width
+            anchors.fill: parent
+
+
             IconButtonTextBeside{
                 objectName: "btnFieldDriveIn"
+                Layout.fillWidth: true
                 isChecked: false
                 text: "Drive In"
                 icon.source: "/images/AutoManualIsAuto.png"
@@ -83,15 +71,6 @@ Drawer {
                 icon.source: "/images/FileNew.png"
                 onClicked: fieldNew.visible = true
             }
-        }
-        ColumnLayout{
-            anchors.right: parent.right
-            anchors.rightMargin: 40
-            anchors.top: parent.top
-            anchors.topMargin: 5
-            anchors.bottom: fieldCancel.top
-            anchors.bottomMargin: 5
-            width: children.width
             IconButtonTextBeside{
                 objectName: "btnFieldResume"
                 isChecked: false
@@ -112,25 +91,30 @@ Drawer {
                 isChecked: false
                 text: "Open"
                 icon.source: "/images/FileOpen"
-                onClicked: fieldOpen.visible = true;
+                onClicked: { fieldMenu.visible = false ; fieldOpen.visible = true; }
             }
         }
+        }
+
+        /*
         IconButtonTransparent{
-            anchors.bottom: parent.bottom
-            anchors.right: parent.right
+            anchors.top: buttons1.bottom
+            anchors.left: parent.left
             anchors.margins: 10
+            anchors.leftMargin: 100
             id: fieldCancel
             icon.source: "/images/Cancel64.png"
             //buttonText: "Cancel"
             onClicked: fieldMenu.visible = false
             height: 75
         }
+        */
 
         FieldFromExisting{
             id: fieldFromExisting
-            anchors.top:parent.top
-            anchors.topMargin: -50
-            anchors.horizontalCenter: parent.horizontalCenter
+            //anchors.top:parent.top
+            //anchors.topMargin: -50
+            //anchors.horizontalCenter: parent.horizontalCenter
             visible: false
         }
         FieldNew{
@@ -151,13 +135,10 @@ Drawer {
             //anchors.top:parent.top
             //anchors.topMargin: -50
             //anchors.horizontalCenter: parent.horizontalCenter
+            x: 100
+            y: 75
             visible: false
 
-            onRejected: fieldMenu.visible = false
-            onAccepted: {
-                console.debug("File opened; close this menu.")
-                fieldMenu.visible = false
-            }
         }
     }
 }

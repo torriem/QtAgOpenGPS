@@ -1,7 +1,7 @@
 import QtQuick 2.8
 import QtGraphicalEffects 1.15
-import QtQuick.Window 2.0
-import QtQuick.Controls 2.1
+import QtQuick.Window 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 import AgOpenGPS 1.0
 
@@ -955,20 +955,7 @@ Window {
         FieldMenu {
             id: fieldMenu
             objectName: "slideoutMenu"
-            height: 700
-            width:1024
             visible: false
-
-        }
-        FieldOpen {
-            id: fieldOpen
-            objectName: "slideoutMenu"
-            //anchors.top: parent.top
-            //anchors.topMargin: 20
-            //anchors.left: leftColumn.right
-            //anchors.leftMargin: 15
-            visible: false
-
         }
         ToolsWindow {
             id: toolsWindow

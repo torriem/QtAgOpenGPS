@@ -4,7 +4,6 @@
 #include <QLabel>
 #include "aogrenderer.h"
 #include "aogproperty.h"
-#include "sortfilterproxymodel.h"
 
 QLabel *grnPixelsWindow;
 AOGSettings *settings;
@@ -29,7 +28,6 @@ int main(int argc, char *argv[])
     //from this version of AOG:
     QCoreApplication::setApplicationVersion("4.1.0");
     qmlRegisterType<AOGRendererInSG>("AgOpenGPS",1,0,"AOGRenderer");
-    qmlRegisterType<SortFilterProxyModel>("org.qtproject.example.sortfilterproxymodel", 1, 0, "SortFilterProxyModel");
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     qRegisterMetaTypeStreamOperators<QList<int> >("QList<int>");
     qRegisterMetaTypeStreamOperators<QVector<int> >("QVector<int>");
