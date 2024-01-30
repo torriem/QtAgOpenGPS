@@ -223,6 +223,7 @@ Window {
             onClicked: {
                 parent.clicked(mouse);
                 console.log(aog.isTrackOn)
+                utils.timeTillFinished()
             }
 
             onPressed: {
