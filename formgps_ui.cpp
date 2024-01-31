@@ -43,6 +43,7 @@ void FormGPS::setupGui()
     //have to do this for each type we use
     AOGIFace_Property<int>::set_qml_root(qmlItem(qml_root, "aog"));
     AOGIFace_Property<bool>::set_qml_root(qmlItem(qml_root, "aog"));
+    AOGIFace_Property<double>::set_qml_root(qmlItem(qml_root, "aog"));
     AOGIFace_Property<btnStates>::set_qml_root(qmlItem(qml_root, "aog"));
     QMLSectionButtons::set_aog_root(qmlItem(qml_root, "aog"));
 
@@ -101,7 +102,7 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(field_close()), this, SLOT(field_close()));
     connect(aog,SIGNAL(field_open(QString)), this, SLOT(field_open(QString)));
     connect(aog,SIGNAL(field_new(QString)), this, SLOT(field_new(QString)));
-    connect(aog,SIGNAL(field_new_from(QString,QString)), this, SLOT(field_new_from(QString,QString)));
+    connect(aog,SIGNAL(field_new_from(QString,QString,int)), this, SLOT(field_new_from(QString,QString,int)));
 
     //connect qml button signals to callbacks (it's not automatic with qml)
 
@@ -818,15 +819,19 @@ void FormGPS::field_new(QString field_name) {
 
 void FormGPS::field_new_from(QString existing, QString field_name, int flags) {
     fileSaveEverythingBeforeClosingField(NULL);
-    FileOpenField(existing,false); //load everything except coverage
+    FileOpenField(existing,flags); //load everything except coverage
     //change to new name
     currentFieldDirectory = field_name;
     property_setF_CurrentDir = currentFieldDirectory;
-    //write it out to disk
-    fileSaveEverythingBeforeClosingField(NULL);
 
-    //reopen it, with job set
-    FileOpenField(field_name, flags);
+    FileCreateField();
+    FileCreateSections();
+    FileCreateElevation();
+    FileSaveFlags();
+    FileSaveABLines();
+    FileSaveCurveLines();
+    FileSaveContour();
+    FileSaveRecPath();
 }
 
 void FormGPS::field_delete(QString field_name) {

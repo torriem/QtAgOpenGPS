@@ -68,7 +68,7 @@ void FormGPS::UpdateFixPosition()
         //#region Start
 
         distanceCurrentStepFixDisplay = glm::Distance(prevDistFix, pn.fix);
-        if ((fd.distanceUser += distanceCurrentStepFixDisplay) > 999) fd.distanceUser = 0;
+        if ((double)(fd.distanceUser += distanceCurrentStepFixDisplay) > 999) fd.distanceUser = 0;
         distanceCurrentStepFixDisplay *= 100;
 
         prevDistFix = pn.fix;
@@ -612,7 +612,7 @@ void FormGPS::UpdateFixPosition()
         distanceCurrentStepFix = glm::Distance(pn.fix, prevDistFix);
 
         //userDistance can be reset
-        if ((fd.distanceUser += distanceCurrentStepFix) > 999) fd.distanceUser = 0;
+        if ((double)(fd.distanceUser += distanceCurrentStepFix) > 999) fd.distanceUser = 0;
 
         distanceCurrentStepFixDisplay = distanceCurrentStepFix * 100;
         prevDistFix = pn.fix;
@@ -1141,12 +1141,6 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("speedKph", vehicle.avgSpeed);
 
     // added by Wedel
-    aog->setProperty("workedAreaTotal", fd.workedAreaTotal);
-    aog->setProperty("workedAreaTotalUser", fd.workedAreaTotalUser);
-    aog->setProperty("actualAreaCovered", fd.actualAreaCovered);
-    aog->setProperty("distanceUser", fd.distanceUser);
-    aog->setProperty("areaOuterBoundary", fd.areaOuterBoundary);
-    aog->setProperty("areaBoundaryOuterLessInner", fd.areaBoundaryOuterLessInner);
     aog->setProperty("altitude", pn.altitude);
     aog->setProperty("hdop", pn.hdop);
     aog->setProperty("age", pn.age);
