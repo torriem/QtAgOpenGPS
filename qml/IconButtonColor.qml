@@ -76,17 +76,7 @@ Button {
         id: icon_button_content
         anchors.fill: parent
         color: "transparent"
-
-        Text {
-            id: text1
-            text: icon_button.text
-            anchors.bottom: parent.top
-            anchors.left: parent.left
-            font.bold: true
-            font.pixelSize: parent.height * 0.2
-            z: 1
-            visible: true
-        }
+        z: 1
 
         Image {
             id: content_image
@@ -107,6 +97,17 @@ Button {
             visible: ! icon_button.enabled
         }
 
+        Text {
+            id: text1
+            text: icon_button.text
+            anchors.bottom: parent.top
+            anchors.left: parent.left
+            font.bold: true
+            font.pixelSize: parent.height * 0.2
+            visible: true
+        }
+
+
 
     }
 
@@ -115,6 +116,7 @@ Button {
         //border.width: icon_button.border
         radius: 10
         id: icon_button_background
+        z: 0
         gradient: Gradient {
             GradientStop {
                 id: gradientStop1

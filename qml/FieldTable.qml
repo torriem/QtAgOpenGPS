@@ -16,6 +16,11 @@ ListView {
 
     onSortByChanged: sort()
 
+    function clear_selection() {
+        currentIndex = -1
+        currentFieldName = ""
+    }
+
     function update_model() {
         var distance = 0.0
 

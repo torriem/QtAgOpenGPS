@@ -47,8 +47,9 @@ Button {
 
     }
 
-    property url iconChecked: ""
+    property url iconChecked: icon.source
     property bool useIconChecked: false
+
     onIconCheckedChanged: {
         if (iconChecked != "") {
             useIconChecked = true

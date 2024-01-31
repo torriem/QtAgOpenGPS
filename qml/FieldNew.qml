@@ -1,10 +1,11 @@
-import QtQuick 2.0
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
-Rectangle{
+Popup {
     id: fieldNew
     width: 500
     height: 300
-    color: "lightgray"
+    //color: "lightgray"
     Rectangle{
         id: textEntry
         width: 450
@@ -22,9 +23,11 @@ Rectangle{
             font.pixelSize: 15
             text: qsTr("Enter Field Name")
         }
-        TextInput{
-            objectName: "fieldNew"
+        TextField{
+            id: newField
             anchors.fill: parent
+            selectByMouse: true
+            placeholderText: "New Field Name"
         }
     }
     Row{
@@ -41,6 +44,11 @@ Rectangle{
                 anchors.verticalCenter: parent.verticalCenter
                 text: "+"
             }
+            onClicked: {
+                var time = new Date().toLocaleDateString(Qt.locale(), Locale.ShortFormat)
+                newField.text += " " + time
+            }
+
         }
         IconButtonTransparent{
             objectName: "btnAddTime"
@@ -49,6 +57,10 @@ Rectangle{
                 anchors.right: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 text: "+"
+            }
+            onClicked: {
+                var time = new Date().toLocaleTimeString(Qt.locale())
+                newField.text += " " + time
             }
         }
     }
@@ -62,12 +74,22 @@ Rectangle{
         height: children.height
         spacing: 10
         IconButtonTransparent{
-            onClicked: fieldNew.visible = false
+            onClicked: {
+                fieldNew.visible = false
+                newField.text = ""
+            }
             icon.source: "/images/Cancel64.png"
         }
         IconButtonTransparent{
+            enabled: newField.text != ""
             objectName: "btnSave"
             icon.source: "/images/OK64.png"
+
+            onClicked: {
+                fieldNew.visible = false
+                aog.field_new(fieldNew.text)
+                newField.text = ""
+            }
         }
     }
 }
