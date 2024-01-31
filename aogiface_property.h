@@ -25,7 +25,18 @@ public:
     static inline void set_qml_root(QObject *aogiface_root) {prop_root = aogiface_root; }
     inline operator bool() { return prop_root->property(prop_name).toBool(); }
     inline operator int() { return prop_root->property(prop_name).toInt(); }
+    inline operator double() { return prop_root->property(prop_name).toDouble(); }
     inline operator btnStates() { return static_cast<btnStates>(prop_root->property(prop_name).toInt()); }
+    inline AOGIFace_Property &operator+=(double rhs) {
+        prop_root->setProperty(prop_name, QVariant((double)(*this) + rhs));
+
+        return *this;
+    }
+    inline AOGIFace_Property &operator-=(double rhs) {
+        prop_root->setProperty(prop_name, QVariant((double)(*this) - rhs));
+
+        return *this;
+    }
 
     inline AOGIFace_Property &operator=(T newvalue) { prop_root->setProperty(prop_name, QVariant(newvalue)); return *this;}
 

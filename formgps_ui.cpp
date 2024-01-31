@@ -43,6 +43,7 @@ void FormGPS::setupGui()
     //have to do this for each type we use
     AOGIFace_Property<int>::set_qml_root(qmlItem(qml_root, "aog"));
     AOGIFace_Property<bool>::set_qml_root(qmlItem(qml_root, "aog"));
+    AOGIFace_Property<double>::set_qml_root(qmlItem(qml_root, "aog"));
     AOGIFace_Property<btnStates>::set_qml_root(qmlItem(qml_root, "aog"));
     QMLSectionButtons::set_aog_root(qmlItem(qml_root, "aog"));
 
