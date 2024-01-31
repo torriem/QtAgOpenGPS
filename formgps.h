@@ -257,8 +257,6 @@ public:
     AOGIFace_Property<btnStates> manualBtnState = AOGIFace_Property<btnStates>("manualBtnState");
     AOGIFace_Property<btnStates> autoBtnState = AOGIFace_Property<btnStates>("manualBtnState");
 
-    void FixPanelsAndMenus();
-
 private:
 public:
     //for animated submenu
@@ -494,7 +492,7 @@ public:
     void FileLoadCurveLines();
     void FileSaveABLines();
     void FileLoadABLines();
-    bool FileOpenField(QString fieldDir, bool loadCoverage=true);
+    bool FileOpenField(QString fieldDir, int flags = -1);
     QMap<QString, QVariant> FileFieldInfo(QString fieldDir);
     void FileCreateField();
     void FileCreateElevation();
@@ -691,7 +689,7 @@ public slots:
     void field_close();
     void field_open(QString field_name);
     void field_new(QString field_name);
-    void field_new_from(QString existing, QString field_name);
+    void field_new_from(QString existing, QString field_name, int flags);
     void field_delete(QString field_name);
 
     //left column

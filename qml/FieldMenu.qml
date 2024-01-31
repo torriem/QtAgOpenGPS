@@ -64,21 +64,30 @@ Drawer {
                 isChecked: false
                 text: "From Existing"
                 icon.source: "/images/FileExisting.png"
-                onClicked: fieldFromExisting.visible = true
+                onClicked: {
+                    fieldMenu.visible = false
+                    fieldFromExisting.visible = true
+                }
             }
             IconButtonTextBeside{
                 objectName: "New"
                 isChecked: false
                 text: "New"
                 icon.source: "/images/FileNew.png"
-                onClicked: fieldNew.visible = true
+                onClicked: {
+                    fieldMenu.visible = false
+                    fieldNew.visible = true
+                }
             }
             IconButtonTextBeside{
                 objectName: "btnFieldResume"
                 isChecked: false
                 text: "Resume"
                 icon.source: "/images/FilePrevious.png"
-                onClicked: { aog.field_open(settings.setF_CurrentDir) }
+                onClicked: {
+                    fieldMenu.visible = false
+                    aog.field_open(settings.setF_CurrentDir)
+                }
             }
             IconButtonTextBeside{
                 objectName: "btnFieldClose"
@@ -86,7 +95,10 @@ Drawer {
                 text: "Close"
                 icon.source: "/images/FileClose.png"
                 enabled: aog.isJobStarted
-                onClicked: { aog.field_close() ; fieldMenu.visible = false }
+                onClicked: {
+                    aog.field_close()
+                    fieldMenu.visible = false
+                }
 
             }
             IconButtonTextBeside{
@@ -94,7 +106,10 @@ Drawer {
                 isChecked: false
                 text: "Open"
                 icon.source: "/images/FileOpen"
-                onClicked: { fieldMenu.visible = false ; fieldOpen.visible = true; }
+                onClicked: {
+                    fieldMenu.visible = false
+                    fieldOpen.visible = true;
+                }
             }
         }
         }
@@ -122,9 +137,6 @@ Drawer {
         }
         FieldNew{
             id: fieldNew
-            anchors.top:parent.top
-            anchors.topMargin: -50
-            anchors.horizontalCenter: parent.horizontalCenter
             visible: false
         }
         FieldFromKML{

@@ -1337,7 +1337,6 @@ void FormGPS::JobNew()
     //isPanelABHidden = false;
 
     //FieldMenuButtonEnableDisable(true);
-    FixPanelsAndMenus();
     SetZoom();
     minuteCounter = 25;
 

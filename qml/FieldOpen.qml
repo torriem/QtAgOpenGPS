@@ -112,6 +112,7 @@ Popup {
                 border: 1
                 height: 75
                 onClicked: {
+                    fieldTable.clear_selection()
                     fieldOpen.close()
                 }
             }
@@ -127,6 +128,7 @@ Popup {
                 enabled: fieldTable.currentIndex > -1
                 onClicked: {
                     aog.field_open(fieldTable.currentFieldName)
+                    fieldTable.clear_selection()
                     fieldOpen.close()
                 }
             }

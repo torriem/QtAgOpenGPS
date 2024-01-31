@@ -435,13 +435,6 @@ void FormGPS::turnOffBoundAlarm()
     //TODO implement sounds
 }
 
-void FormGPS::FixPanelsAndMenus()
-{
-    //TODO QML, perhaps not much needed to do here
-    //nearly everything is in QML already
-
-}
-
 void FormGPS::FixTramModeButton()
 {
     //TODO QML
@@ -823,7 +816,7 @@ void FormGPS::field_new(QString field_name) {
     FileCreateBoundary();
 }
 
-void FormGPS::field_new_from(QString existing, QString field_name) {
+void FormGPS::field_new_from(QString existing, QString field_name, int flags) {
     fileSaveEverythingBeforeClosingField(NULL);
     FileOpenField(existing,false); //load everything except coverage
     //change to new name
@@ -833,7 +826,7 @@ void FormGPS::field_new_from(QString existing, QString field_name) {
     fileSaveEverythingBeforeClosingField(NULL);
 
     //reopen it, with job set
-    FileOpenField(field_name);
+    FileOpenField(field_name, flags);
 }
 
 void FormGPS::field_delete(QString field_name) {

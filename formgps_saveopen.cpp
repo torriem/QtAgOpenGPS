@@ -5,6 +5,13 @@
 #include "cboundarylist.h"
 #include "aogproperty.h"
 
+enum OPEN_FLAGS {
+    LOAD_MAPPING = 1,
+    LOAD_HEADLAND = 2,
+    LOAD_LINES = 4,
+    LOAD_FLAGS = 8
+};
+
 QString caseInsensitiveFilename(QString directory, QString filename)
 {
     //A bit of a hack to work with files from AOG that might not have
@@ -581,7 +588,7 @@ QMap<QString,QVariant> FormGPS::FileFieldInfo(QString fieldDir)
     return field_info;
 }
 
-bool FormGPS::FileOpenField(QString fieldDir, bool load_coverage)
+bool FormGPS::FileOpenField(QString fieldDir, int flags)
 {
     QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
             + "/" + QCoreApplication::applicationName() + "/Fields/" + fieldDir;
@@ -672,48 +679,51 @@ bool FormGPS::FileOpenField(QString fieldDir, bool load_coverage)
     fieldFile.close();
 
 
-    // ABLine -------------------------------------------------------------------------------------------------
-    FileLoadABLines();
+    if (flags & LOAD_FLAGS) {
 
-    if (ABLine.lineArr.count() > 0)
-    {
-        ABLine.numABLineSelected = 1;
-        ABLine.refPoint1 = ABLine.lineArr[ABLine.numABLineSelected - 1].origin;
-        //ABLine.refPoint2 = ABLine.lineArr[ABLine.numABLineSelected - 1].ref2;
-        ABLine.abHeading = ABLine.lineArr[ABLine.numABLineSelected - 1].heading;
-        ABLine.SetABLineByHeading();
-        ABLine.isABLineSet = false;
-        ABLine.isABLineLoaded = true;
-    }
-    else
-    {
-        ABLine.isABLineSet = false;
-        ABLine.isABLineLoaded = false;
-    }
+        // ABLine -------------------------------------------------------------------------------------------------
+        FileLoadABLines();
 
-
-    //CurveLines
-    FileLoadCurveLines();
-    if (curve.curveArr.count() > 0)
-    {
-        curve.numCurveLineSelected = 1;
-        int idx = curve.numCurveLineSelected - 1;
-        curve.aveLineHeading = curve.curveArr[idx].aveHeading;
-
-        curve.refList.clear();
-        for (int i = 0; i < curve.curveArr[idx].curvePts.count(); i++)
+        if (ABLine.lineArr.count() > 0)
         {
-            curve.refList.append(curve.curveArr[idx].curvePts[i]);
+            ABLine.numABLineSelected = 1;
+            ABLine.refPoint1 = ABLine.lineArr[ABLine.numABLineSelected - 1].origin;
+            //ABLine.refPoint2 = ABLine.lineArr[ABLine.numABLineSelected - 1].ref2;
+            ABLine.abHeading = ABLine.lineArr[ABLine.numABLineSelected - 1].heading;
+            ABLine.SetABLineByHeading();
+            ABLine.isABLineSet = false;
+            ABLine.isABLineLoaded = true;
         }
-        curve.isCurveSet = true;
-    }
-    else
-    {
-        curve.isCurveSet = false;
-        curve.refList.clear();
+        else
+        {
+            ABLine.isABLineSet = false;
+            ABLine.isABLineLoaded = false;
+        }
+
+
+        //CurveLines
+        FileLoadCurveLines();
+        if (curve.curveArr.count() > 0)
+        {
+            curve.numCurveLineSelected = 1;
+            int idx = curve.numCurveLineSelected - 1;
+            curve.aveLineHeading = curve.curveArr[idx].aveHeading;
+
+            curve.refList.clear();
+            for (int i = 0; i < curve.curveArr[idx].curvePts.count(); i++)
+            {
+                curve.refList.append(curve.curveArr[idx].curvePts[i]);
+            }
+            curve.isCurveSet = true;
+        }
+        else
+        {
+            curve.isCurveSet = false;
+            curve.refList.clear();
+        }
     }
 
-    if (load_coverage) {
+    if (flags & LOAD_MAPPING) {
         //section patches
         filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Sections.txt");
 
@@ -826,72 +836,75 @@ bool FormGPS::FileOpenField(QString fieldDir, bool load_coverage)
 
     // Flags -------------------------------------------------------------------------------------------------
 
-    //Either exit or update running save
-    filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Flags.txt");
+    if (flags & LOAD_FLAGS) {
 
-    QFile flagsFile(filename);
-    if (!flagsFile.open(QIODevice::ReadOnly))
-    {
-        qWarning() << "Couldn't open flags " << filename << "for reading!";
-        //TODO timed messagebox
-        //return;
-    } else
-    {
+        //Either exit or update running save
+        filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Flags.txt");
 
-        reader.setDevice(&flagsFile);
-
-        flagPts.clear();
-        //read header
-        line = reader.readLine();
-
-        //number of flags
-        line = reader.readLine();
-        int points = line.toInt();
-
-        if (points > 0)
+        QFile flagsFile(filename);
+        if (!flagsFile.open(QIODevice::ReadOnly))
         {
-            double lat;
-            double longi;
-            double east;
-            double nort;
-            double head;
-            int color, ID;
-            QString notes;
+            qWarning() << "Couldn't open flags " << filename << "for reading!";
+            //TODO timed messagebox
+            //return;
+        } else
+        {
 
-            for (int v = 0; v < points; v++)
+            reader.setDevice(&flagsFile);
+
+            flagPts.clear();
+            //read header
+            line = reader.readLine();
+
+            //number of flags
+            line = reader.readLine();
+            int points = line.toInt();
+
+            if (points > 0)
             {
-                line = reader.readLine();
-                QStringList words = line.split(',');
+                double lat;
+                double longi;
+                double east;
+                double nort;
+                double head;
+                int color, ID;
+                QString notes;
 
-                if (words.count() == 8)
+                for (int v = 0; v < points; v++)
                 {
-                    lat = words[0].toDouble();
-                    longi = words[1].toDouble();
-                    east = words[2].toDouble();
-                    nort = words[3].toDouble();
-                    head = words[4].toDouble();
-                    color = words[5].toInt();
-                    ID = words[6].toInt();
-                    notes = words[7].trimmed();
-                }
-                else
-                {
-                    lat = words[0].toDouble();
-                    longi = words[1].toDouble();
-                    east = words[2].toDouble();
-                    nort = words[3].toDouble();
-                    head = 0;
-                    color = words[4].toInt();
-                    ID = words[5].toInt();
-                    notes = "";
-                }
+                    line = reader.readLine();
+                    QStringList words = line.split(',');
 
-                CFlag flagPt(lat, longi, east, nort, head, color, ID, notes);
-                flagPts.append(flagPt);
+                    if (words.count() == 8)
+                    {
+                        lat = words[0].toDouble();
+                        longi = words[1].toDouble();
+                        east = words[2].toDouble();
+                        nort = words[3].toDouble();
+                        head = words[4].toDouble();
+                        color = words[5].toInt();
+                        ID = words[6].toInt();
+                        notes = words[7].trimmed();
+                    }
+                    else
+                    {
+                        lat = words[0].toDouble();
+                        longi = words[1].toDouble();
+                        east = words[2].toDouble();
+                        nort = words[3].toDouble();
+                        head = 0;
+                        color = words[4].toInt();
+                        ID = words[5].toInt();
+                        notes = "";
+                    }
+
+                    CFlag flagPt(lat, longi, east, nort, head, color, ID, notes);
+                    flagPts.append(flagPt);
+                }
             }
-        }
-        flagsFile.close();
+            flagsFile.close();
 
+        }
     }
 
     //Boundaries
@@ -988,65 +1001,67 @@ bool FormGPS::FileOpenField(QString fieldDir, bool load_coverage)
         boundariesFile.close();
     }
     // Headland  -------------------------------------------------------------------------------------------------
-    filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Headland.txt");
+    if (flags & LOAD_HEADLAND) {
+        filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "Headland.txt");
 
-    QFile headlandFile(filename);
-    if (!headlandFile.open(QIODevice::ReadOnly))
-    {
-        qWarning() << "Couldn't open headland " << filename << "for reading!";
-        //TODO timed messagebox
-    } else {
-        reader.setDevice(&headlandFile);
-
-        //read header
-        line = reader.readLine();
-
-        for (int k = 0; true; k++)
+        QFile headlandFile(filename);
+        if (!headlandFile.open(QIODevice::ReadOnly))
         {
-            if (reader.atEnd()) break;
+            qWarning() << "Couldn't open headland " << filename << "for reading!";
+            //TODO timed messagebox
+        } else {
+            reader.setDevice(&headlandFile);
 
-            if (bnd.bndList.count() > k)
+            //read header
+            line = reader.readLine();
+
+            for (int k = 0; true; k++)
             {
-                bnd.bndList[k].hdLine.clear();
+                if (reader.atEnd()) break;
 
-                //read the number of points
-                line = reader.readLine();
-                int numPoints = line.toInt();
-
-                if (numPoints > 0)
+                if (bnd.bndList.count() > k)
                 {
-                    //load the line
-                    for (int i = 0; i < numPoints; i++)
+                    bnd.bndList[k].hdLine.clear();
+
+                    //read the number of points
+                    line = reader.readLine();
+                    int numPoints = line.toInt();
+
+                    if (numPoints > 0)
                     {
-                        line = reader.readLine();
-                        QStringList words = line.split(',');
-                        Vec3 vecPt(words[0].toDouble(),
-                                   words[1].toDouble(),
-                                   words[2].toDouble());
-                        bnd.bndList[k].hdLine.append(vecPt);
+                        //load the line
+                        for (int i = 0; i < numPoints; i++)
+                        {
+                            line = reader.readLine();
+                            QStringList words = line.split(',');
+                            Vec3 vecPt(words[0].toDouble(),
+                                       words[1].toDouble(),
+                                       words[2].toDouble());
+                            bnd.bndList[k].hdLine.append(vecPt);
+                        }
                     }
                 }
             }
         }
-    }
 
-    if (bnd.bndList.count() > 0 && bnd.bndList[0].hdLine.count() > 0)
-    {
-        bnd.isHeadlandOn = true;
-        //TODO: tell GUI to enable headlands
-        //btnHeadlandOnOff.Image = Properties.Resources.HeadlandOn;
-        //btnHeadlandOnOff.Visible = true;
-        //btnHydLift.Visible = true;
-        //btnHydLift.Image = Properties.Resources.HydraulicLiftOff;
+        if (bnd.bndList.count() > 0 && bnd.bndList[0].hdLine.count() > 0)
+        {
+            bnd.isHeadlandOn = true;
+            //TODO: tell GUI to enable headlands
+            //btnHeadlandOnOff.Image = Properties.Resources.HeadlandOn;
+            //btnHeadlandOnOff.Visible = true;
+            //btnHydLift.Visible = true;
+            //btnHydLift.Image = Properties.Resources.HydraulicLiftOff;
 
-    }
-    else
-    {
-        bnd.isHeadlandOn = false;
-        //TODO: tell GUI
-        //btnHeadlandOnOff.Image = Properties.Resources.HeadlandOff;
-        //btnHeadlandOnOff.Visible = false;
-        //btnHydLift.Visible = false;
+        }
+        else
+        {
+            bnd.isHeadlandOn = false;
+            //TODO: tell GUI
+            //btnHeadlandOnOff.Image = Properties.Resources.HeadlandOff;
+            //btnHeadlandOnOff.Visible = false;
+            //btnHydLift.Visible = false;
+        }
     }
 
     //trams ---------------------------------------------------------------------------------
@@ -1061,7 +1076,7 @@ bool FormGPS::FileOpenField(QString fieldDir, bool load_coverage)
     QFile tramFile(filename);
     if (!tramFile.open(QIODevice::ReadOnly))
     {
-        qWarning() << "Couldn't open headland " << filename << "for reading!";
+        qWarning() << "Couldn't open tram file " << filename << "for reading!";
         //TODO timed messagebox
     } else {
         reader.setDevice(&tramFile);
@@ -1139,10 +1154,7 @@ bool FormGPS::FileOpenField(QString fieldDir, bool load_coverage)
         FixTramModeButton();
     }
 
-    FixPanelsAndMenus();
     SetZoom();
-
-
 
     //Recorded Path
     filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "RecPath.txt");

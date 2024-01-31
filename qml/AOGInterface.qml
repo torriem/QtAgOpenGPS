@@ -162,9 +162,14 @@ Item {
     signal field_update_list()
     signal field_new(string field_name)
     signal field_open(string field_name)
-    signal field_new_from(string existing_field, string new_field)
+    signal field_new_from(string existing_field, string new_field, int flags)
     signal field_close()
     signal field_delete(string field_name)
+
+    readonly property int loadMapping: 1
+    readonly property int loadHeadland: 2
+    readonly property int loadLines: 4
+    readonly property int loadFlags: 8
 
     property var field_list: [
         { index: 0, name: "test3", latitude: 53, longitude: -111, hasBoundary: true, boundaryArea: 1232312 },
