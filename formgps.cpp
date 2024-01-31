@@ -1379,8 +1379,8 @@ void FormGPS::fileSaveEverythingBeforeClosingField(QQuickCloseEvent *event)
     //ExportFieldAs_ISOXMLv3()
     //ExportFieldAs_ISOXMLv4()
 
-    property_setF_CurrentDir = tr("None");
-    currentFieldDirectory = (QString)property_setF_CurrentDir;
+    //property_setF_CurrentDir = tr("None");
+    //currentFieldDirectory = (QString)property_setF_CurrentDir;
     displayFieldName = tr("None");
 
     JobClose();

@@ -114,7 +114,7 @@ Popup {
                     text: "+"
                 }
                 onClicked: {
-                    newField.text += " " + settings.setVehicle_vehicleNAme
+                    newField.text += " " + settings.setVehicle_vehicleName
                 }
             }
             IconButtonTransparent{

@@ -18,7 +18,14 @@ public:
 
     AOGIFace_Property() : prop_name(NULL) {}
 
-    ~AOGIFace_Property() { if(prop_name != NULL) delete prop_name; }
+    ~AOGIFace_Property() {
+        //let it leak
+
+        //if(prop_name != NULL) {
+        //    free(prop_name);
+        //    prop_name = NULL;
+        //}
+    }
 
     //inline operator QString() { return prop_root->property(prop_name).toString(); }
     //TODO add types as needed
@@ -27,13 +34,15 @@ public:
     inline operator int() { return prop_root->property(prop_name).toInt(); }
     inline operator double() { return prop_root->property(prop_name).toDouble(); }
     inline operator btnStates() { return static_cast<btnStates>(prop_root->property(prop_name).toInt()); }
-    inline AOGIFace_Property &operator+=(double rhs) {
-        prop_root->setProperty(prop_name, QVariant((double)(*this) + rhs));
+
+    //operators for int and double
+    inline AOGIFace_Property &operator+=(T rhs) {
+        prop_root->setProperty(prop_name, QVariant((T)(*this) + rhs));
 
         return *this;
     }
     inline AOGIFace_Property &operator-=(double rhs) {
-        prop_root->setProperty(prop_name, QVariant((double)(*this) - rhs));
+        prop_root->setProperty(prop_name, QVariant((T)(*this) - rhs));
 
         return *this;
     }

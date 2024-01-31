@@ -5,6 +5,13 @@ Popup {
     id: fieldNew
     width: 500
     height: 300
+
+    onVisibleChanged: {
+        if (visible)
+            newField.text = ""
+    }
+
+
     //color: "lightgray"
     Rectangle{
         id: textEntry
@@ -87,8 +94,7 @@ Popup {
 
             onClicked: {
                 fieldNew.visible = false
-                aog.field_new(fieldNew.text)
-                newField.text = ""
+                aog.field_new(newField.text)
             }
         }
     }
