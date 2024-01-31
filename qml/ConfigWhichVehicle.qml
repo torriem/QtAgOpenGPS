@@ -20,146 +20,16 @@ Item {
         id: configWhichVehicle
         anchors.fill: parent
         color: "ghostwhite"
-        GridLayout{
-            id:buttonsMain
-            anchors.top: parent.top
-            anchors.topMargin: 10
-            anchors.bottom: units.top
-            anchors.left: parent.left
-            anchors.right: load.left
-            rows: 6
-            columns:2
-            rowSpacing: 10
-            flow: Grid.TopToBottom
-            IconButtonColor{
-                id: fieldTexture
-                objectName: "btnFieldTexture"
-                text: qsTr("Field Texture")
-                icon.source: "/images/Config/ConD_FloorTexture.png"
-                checkable: true
-                isChecked: settings.setDisplay_isTextureOn
-                onCheckedChanged: settings.setDisplay_isTextureOn = checked
-            }
-            IconButtonColor{
-                id: autoDayNight
-                objectName: "btnAutoDayNight"
-                isChecked: settings.setDisplay_isAutoDayNight
-                onCheckedChanged: settings.setDisplay_isAutoDayNight = !checked
-                checkable: true
-                text: qsTr("Auto Day Night")
-                icon.source: "/images/Config/ConD_AutoDayNight.png"
-            }
-            IconButtonColor{
-                id:startFullScreen
-                objectName: "btnStartFullScreen"
-                text: qsTr("Start FullScreen")
-                icon.source: "/images/Config/ConD_FullScreenBegin.png"
-                checkable: true
-                isChecked: settings.setDisplay_isStartFullScreen
-                onCheckedChanged: settings.setDisplay_isStartFullScreen = checked
-            }
-            IconButtonColor{
-                id:grid
-                objectName: "btnGrid"
-                text: qsTr("Grid")
-                icon.source: "/images/Config/ConD_Grid.png"
-                checkable: true
-                isChecked: settings.setMenu_isGridOn
-                onCheckedChanged: settings.setMenu_isGridOn = checked
-            }
-            IconButtonColor{
-                id:sky
-                objectName: "btnSky"
-                text:qsTr("Sky")
-                icon.source: "/images/Config/ConD_Sky.png"
-                checkable: true
-                isChecked: settings.setMenu_isSkyOn
-                onCheckedChanged: settings.setMenu_isSkyOn = checked
-            }
-            IconButtonColor{
-                id:brightness
-                text:qsTr("Brightness")
-                objectName: "btnBrightness"
-                icon.source: "/images/BrightnessUp.png"
-                checkable: true
-                isChecked: settings.setDisplay_isBrightnessOn
-                onCheckedChanged: settings.setDisplay_isBrightnessOn = checked
-            }
-            IconButtonColor{
-                id:lightBar
-                objectName: "btnLightBar"
-                text:qsTr("Lightbar")
-                icon.source: "/images/Config/ConD_LightBar.png"
-                checkable: true
-                isChecked: settings.setMenu_isLightbarOn
-                onCheckedChanged: settings.setMenu_isLightbarOn = checked
-            }
-            IconButtonColor{
-                id:logNMEA
-                objectName: "btnLonNMEA"
-                text: qsTr("Log NMEA")
-                checkable: true
-                icon.source: "/images/Config/ConD_LogNMEA.png"
-            }
-            /*
-            IconButtonColor{ //delete this?
-                id:keyboard
-                objectName: "btnKeyboard"
-                text:qsTr("Keyboard")
-                icon.source: "/images/Config/ConD_KeyBoard.png"
-                checkable: true
-                isChecked: false
-            }*/
-            IconButtonColor{
-                id: guideLines
-                objectName: "btnGuidelines"
-                text: qsTr("GuideLines")
-                icon.source: "/images/Config/ConD_ExtraGuides.png"
-                checkable: true
-                isChecked: settings.setMenu_isSideGuideLines
-                onCheckedChanged: settings.setMenu_isSideGuideLines = checked
-            }
-            IconButtonColor{
-                id:svennArrow
-                objectName: "btnSvennArrow"
-                text: qsTr("Svenn Arrow")
-                icon.source: "/images/SvennArrow.png"
-                checkable: true
-                isChecked: settings.setDisplay_isSvennArrowOn
-                onCheckedChanged: settings.setDisplay_isSvennArrowOn
-            }
-        }
-        Row{
-            id:units
-            anchors.left: configWhichVehicle.left
-            anchors.bottom: configWhichVehicle.bottom
-            width: childrenRect.width
-            height: childrenRect.height
-            ButtonGroup {
-                id: metricimp
-                buttons: [metric, imperial]
-            }
-
-            IconButtonColor{
-                id:metric
-                objectName: "btnMetric"
-                icon.source: "/images/Config/ConD_Metric.png"
-                //text: qsTr("Metric")
-                property bool settingsChecked: settings.setMenu_isMetric
-                checkable: true
-                isChecked: settings.setMenu_isMetric
-                onCheckedChanged: settings.setMenu_isMetric = checked
-            }
-            IconButtonColor{
-                id:imperial
-                objectName: "btnImperial"
-                icon.source: "/images/Config/ConD_Imperial.png"
-                text: ""
-                checkable: true
-                isChecked: !settings.setMenu_isMetric
-                onCheckedChanged: settings.setMenu_isMetric = !checked
-            }
-        }
+//    ColumnLayout{ will continue here 1/31
+//        id: column
+//        anchors.top: parent.top
+//        anchors.left: parent.left
+//        anchors.bottom: parent.bottom
+//        anchors.right: vehicleList.left
+//        anchors.margins: 10
+//        spacing: 5
+//        TextLine{ text: qsTr("")
+//    }
         Rectangle{
             id: vehicleList
             border.color: "black"
@@ -168,7 +38,8 @@ Item {
             anchors.bottom:configWhichVehicle.bottom
             width:configWhichVehicle.width /2
             anchors.top:entryBox.bottom
-            anchors.right: parent.right
+            anchors.right: load.left
+            anchors.rightMargin: 30
 
             function refresh_model() {
                 fieldList.clear()
@@ -289,8 +160,8 @@ Item {
         }
         IconButtonText{
             id: load
-            anchors.right: entryBox.left
-            anchors.rightMargin: 30
+            anchors.right: parent.right
+            anchors.margins: 30
             anchors.top: vehicleList.top
             icon.source: "/images/VehFileLoad.png"
             text: qsTr("Load")
@@ -307,7 +178,7 @@ Item {
         IconButtonText{
             id: deletefolder
             anchors.top:load.bottom
-            anchors.topMargin: 50
+            anchors.margins: 30
             anchors.horizontalCenter: load.horizontalCenter
             icon.source: "/images/VehFileDelete.png"
             text: qsTr("Delete")

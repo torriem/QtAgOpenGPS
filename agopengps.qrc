@@ -551,5 +551,7 @@
         <file>images/AutoSteerSnapToPivot.png</file>
         <file>images/ABTracks.png</file>
         <file>images/ABDraw.png</file>
+        <file>images/Config/Con_Display.png</file>
+        <file>qml/ConfigDisplay.qml</file>
     </qresource>
 </RCC>
