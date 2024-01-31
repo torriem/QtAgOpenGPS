@@ -81,15 +81,25 @@ Window {
         color: "ghostwhite"
         height: 50
         visible: true
-        Text {
-            anchors.top: parent.top
+        Text{
+            anchors.top:parent.top
             anchors.left: parent.left
-            anchors.leftMargin: 120
-            text: qsTr("Field: "+ (aog.isJobStarted ? settings.setF_CurrentDir: "None"))
-            anchors.bottom: parent.verticalCenter
+            anchors.leftMargin: leftColumn.width+20
+            text: qsTr(""+aog.fixQuality+ ": Age: "+ aog.age)
             font.bold: true
-            font.pixelSize: 15
+            font.pixelSize: 20
+            anchors.bottom: parent.verticalCenter
         }
+
+//        Text {
+//            anchors.top: parent.top
+//            anchors.left: parent.left
+//            anchors.leftMargin: 120
+//            text: qsTr("Field: "+ (aog.isJobStarted ? settings.setF_CurrentDir: "None"))
+//            anchors.bottom: parent.verticalCenter
+//            font.bold: true
+//            font.pixelSize: 15
+//        }
         Text {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
@@ -106,59 +116,34 @@ Window {
             font.bold: true
             font.pixelSize: 15
         }
-        Text {
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.rightMargin: 300
-            text: qsTr("Age: ")
-            font.pixelSize: 15
-            font.bold: true
-        }
-        Text {
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.rightMargin: 150
-            text: qsTr("Fixtype")
-            font.bold: true
-            font.pixelSize: 15
-        }
-        IconButtonColor{
-            id: rtkStatus
-            icon.source: "/images/GPSQuality.png"
-            implicitWidth: 75
-            implicitHeight: 40
-            anchors.top: parent.top
-            anchors.right: speed.left
-            anchors.rightMargin: 20
-        }
-
-        Button{
-            id: speed
-            implicitHeight: 30
-            anchors.bottom: parent.bottom
-            anchors.right: topRowWindow.left
-            implicitWidth: 75
-            background: Rectangle{
-                Text {
-                    text: utils.speed_to_unit_string(aog.speedKph, 1)
-                    font.bold: true
-                    anchors.centerIn: parent
-                    font.pixelSize: 35
-                }
-                color: parent.down ? "gray" : "ghostwhite"
-            }
-            onClicked: {
-                gpsData.visible = !gpsData.visible
-                fieldData.visible = false
-            }
-        }
         Row{
             id: topRowWindow
             width: childrenRect.width
             height: parent.height
             anchors.top: parent.top
             anchors.right: parent.right
+            IconButtonColor{
+                id: rtkStatus
+                icon.source: "/images/GPSQuality.png"
+                implicitWidth: 75
+                implicitHeight: parent.height
+                onClicked: {
+                    gpsData.visible = !gpsData.visible
+                    fieldData.visible = false
+                }
+            }
 
+            Text{
+                id: speed
+                anchors.verticalCenter: parent.verticalCenter
+                width: 75
+                height:parent.height
+                text: utils.speed_to_unit_string(aog.speedKph, 1)
+                font.bold: true
+                font.pixelSize: 35
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
             IconButtonTransparent{
                 objectName: "btnHelp"
                 height: parent.height
@@ -303,13 +288,44 @@ Window {
                 closePolicy: Popup.CloseOnPressOutsideParent
             }
 
-            IconButtonText {
+            Button {
                 id: btnAcres
-                objectName: "btnAcres"
-                buttonText: qsTr("0.00")
-                icon.source: "/images/TripOdometer.png"
-                visible: aog.isJobStarted ? true : false
+                implicitWidth: parent.width
+                implicitHeight: parent.width / 2
+                onClicked: {
+                    aog.distanceUser = "0"
+                    aog.workedAreaTotalUser = "0"
+                }
 
+                background: Rectangle{
+                    anchors.fill: parent
+                    color: "white"
+                    radius: 10
+                    Text{
+                        anchors.top: parent.top
+                        anchors.bottom: parent.verticalCenter
+                        anchors.margins: 5
+                        width: parent.width
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: utils.m_to_unit_string(aog.distanceUser, 2)
+                        font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        font.pixelSize: parent.height * .33
+                    }
+                    Text{
+                        anchors.top: parent.verticalCenter
+                        anchors.bottom: parent.bottom
+                        anchors.margins: 5
+                        width: parent.width
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: utils.area_to_unit_string(aog.workedAreaTotalUser, 2)
+                        font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        font.pixelSize: parent.height * .33
+                    }
+                }
             }
             IconButtonText {
                 id: btnnavigationSettings
