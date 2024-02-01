@@ -84,6 +84,8 @@ Drawer {
                 isChecked: false
                 text: "Resume"
                 icon.source: "/images/FilePrevious.png"
+                enabled: settings.setF_CurrentDir != "Default"
+
                 onClicked: {
                     fieldMenu.visible = false
                     aog.field_open(settings.setF_CurrentDir)

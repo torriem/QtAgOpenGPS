@@ -206,7 +206,7 @@ Popup {
                     if(newField.text != "" && existingField.text != "" &&
                             newField.text != existingField.text) {
                         var flag = 0;
-                        if (btnKeepFlags.checkd)
+                        if (btnKeepFlags.checked)
                             flag |= aog.loadFlags
                         if (btnKeepHeadland.checked)
                             flag |= aog.loadHeadland

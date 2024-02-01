@@ -665,21 +665,21 @@ bool FormGPS::FileOpenField(QString fieldDir, int flags)
         pn.latStart = offs[0].toDouble();
         pn.lonStart = offs[1].toDouble();
 
-        if (timerSim.isActive())
-        {
+        //if (timerSim.isActive())
+        //{
             pn.latitude = pn.latStart;
             pn.longitude = pn.lonStart;
 
             sim.latitude = pn.latStart;
             sim.longitude = pn.lonStart;
-        }
+        //}
         pn.SetLocalMetersPerDegree();
     }
 
     fieldFile.close();
 
 
-    if (flags & LOAD_FLAGS) {
+    if (flags & LOAD_LINES) {
 
         // ABLine -------------------------------------------------------------------------------------------------
         FileLoadABLines();

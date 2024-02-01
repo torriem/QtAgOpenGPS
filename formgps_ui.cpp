@@ -795,7 +795,12 @@ void FormGPS::field_close() {
 
 void FormGPS::field_open(QString field_name) {
     fileSaveEverythingBeforeClosingField(NULL);
-    FileOpenField(field_name);
+    if (! FileOpenField(field_name)) {
+        TimedMessageBox(4000, tr("Field does not exist"), QString(tr("Cannot find the requested saved field.")) + " " +
+                                                                field_name);
+
+        property_setF_CurrentDir = "Default";
+    }
 }
 
 void FormGPS::field_new(QString field_name) {
@@ -815,11 +820,15 @@ void FormGPS::field_new(QString field_name) {
     FileCreateElevation();
     FileSaveFlags();
     FileCreateBoundary();
+    FileSaveTram();
 }
 
 void FormGPS::field_new_from(QString existing, QString field_name, int flags) {
     fileSaveEverythingBeforeClosingField(NULL);
-    FileOpenField(existing,flags); //load everything except coverage
+    if (! FileOpenField(existing,flags)) { //load whatever is requested from existing field
+        TimedMessageBox(4000, tr("Existing field cannot be found"), QString(tr("Cannot find the existing saved field.")) + " " +
+                                                                existing);
+    }
     //change to new name
     currentFieldDirectory = field_name;
     property_setF_CurrentDir = currentFieldDirectory;
@@ -830,8 +839,21 @@ void FormGPS::field_new_from(QString existing, QString field_name, int flags) {
     FileSaveFlags();
     FileSaveABLines();
     FileSaveCurveLines();
+
+    contourSaveList.clear();
+    contourSaveList.append(ct.ptList);
     FileSaveContour();
+
     FileSaveRecPath();
+    FileSaveTram();
+
+    //some how we have to write the existing patches to the disk.
+    //FileSaveSections only write pending triangles
+
+    for(QSharedPointer<PatchTriangleList> l: triStrip[0].patchList) {
+        tool.patchSaveList.append(l);
+    }
+    FileSaveSections();
 }
 
 void FormGPS::field_delete(QString field_name) {
