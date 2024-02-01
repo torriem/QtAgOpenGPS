@@ -274,8 +274,14 @@ Window {
                 MenuItem{ text: "Top Field View"}
                 MenuItem{ text: "Enter Sim Coords"}
                 MenuItem{
+                    property bool isChecked: settings.setMenu_isSimulatorOn
+                    onIsCheckedChanged: {
+                        checked = isChecked
+                    }
+
                     text: "Simulator On"
-                    checked: settings.setMenu_isSimulatorOn
+                    checkable: true
+                    checked: isChecked
                     onCheckedChanged: {
                         settings.setMenu_isSimulatorOn = checked
                         console.log("Sim = "+settings.setMenu_isSimulatorOn)
