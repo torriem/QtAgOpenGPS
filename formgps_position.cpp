@@ -1118,6 +1118,8 @@ void FormGPS::UpdateFixPosition()
     //pn: latitude, longitude, easting, northing, heading
     //vehicle: avgSpeed
     //ahrs:  imuRoll
+    //qDebug() << "frame time after processing a new position " << swFrame.elapsed();
+
     QObject *aog = qmlItem(qml_root,"aog");
 
     aog->setProperty("latitude",pn.latitude);
@@ -1173,6 +1175,7 @@ void FormGPS::UpdateFixPosition()
 
     newframe = true;
     lock.unlock();
+    //qDebug() << "frame time after processing a new position part 2 " << swFrame.elapsed();
 
 }
 
