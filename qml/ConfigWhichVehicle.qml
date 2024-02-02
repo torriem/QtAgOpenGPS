@@ -20,11 +20,6 @@ Item {
         id: configWhichVehicle
         anchors.fill: parent
         color: "ghostwhite"
-        Rectangle{
-            anchors.fill: column
-            color: "yellow"
-        }
-
     Column{
         id: column
         anchors.top: parent.top
@@ -34,15 +29,15 @@ Item {
         anchors.margins: 10
         anchors.topMargin: 130
         spacing: 15
-        TextLine{ text: qsTr("Units: "+ utils.isMetric() ? "Metric" : "Imperial")}
-        TextLine{ text: qsTr("Width: "+ utils.m_to_unit_string(settings.setVehicle_toolWidth, 2))}
+        TextLine{ text: qsTr("Units: "+ (utils.isMetric() ? "Metric" : "Imperial"))}
+        TextLine{ text: qsTr("Width: "+ utils.m_to_ft_string(settings.setVehicle_toolWidth))}
         TextLine{ text: qsTr("Sections: "+ settings.setVehicle_numSections)}
-        TextLine{ text: qsTr("Offset: "+  utils.m_to_unit_string(settings.setVehicle_toolOffset, 0)+ " "+ utils.cm_unit_abbrev())}
-        TextLine{ text: qsTr("Overlap: "+  utils.m_to_unit_string(settings.setVehicle_toolOverlap, 0)+ " "+ utils.cm_unit_abbrev())}
-        TextLine{ text: qsTr("LookAhead: "+ utils.m_to_unit_string(settings.setVehicle_toolLookAheadOn, 0)+ " "+ utils.cm_unit_abbrev())}
-        TextLine{ text: qsTr("Nudge: "+ utils.m_to_unit_string(settings.setVehicle_setAS_snapDistance, 0)+ " "+ utils.cm_unit_abbrev())}
-        TextLine{ text: qsTr("Tram Width: "+ settings.setTram_tramWidth )}
-        TextLine{ text: qsTr("Wheelbase: "+ utils.m_to_unit_string(settings.setVehicle_wheelbase, 0)+ " "+ utils.cm_unit_abbrev()) }
+        TextLine{ text: qsTr("Offset: "+  utils.cm_to_unit_string(settings.setVehicle_toolOffset, 0)+ " "+ utils.cm_unit_abbrev())}
+        TextLine{ text: qsTr("Overlap: "+  utils.cm_to_unit_string(settings.setVehicle_toolOverlap, 0)+ " "+ utils.cm_unit_abbrev())}
+        TextLine{ text: qsTr("LookAhead: "+ settings.setVehicle_toolLookAheadOn)}
+        TextLine{ text: qsTr("Nudge: "+ utils.cm_to_unit_string(settings.setVehicle_setAS_snapDistance, 0)+ " "+ utils.cm_unit_abbrev())}
+        TextLine{ text: qsTr("Tram Width: "+ utils.m_to_ft_string(settings.setTram_tramWidth ))}
+        TextLine{ text: qsTr("Wheelbase: "+ utils.cm_to_unit_string(settings.setVehicle_wheelbase, 0)+ " "+ utils.cm_unit_abbrev()) }
     }
         Rectangle{
             id: vehicleList

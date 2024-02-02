@@ -195,6 +195,17 @@ Item {
         else
             return Number(distance * 3.2808).toLocaleString(Qt.locale(), 'f', decimal_places) //convert to ft
     }
+    
+    function m_to_ft_string(distance) {
+        if (isMetric())
+            return qsTr(Number(distance).toLocaleString(Qt.locale(), 'f', 2)+ "m")
+        else{
+            var ftwithDec = distance * 3.2808
+            var ft = Math.floor(ftwithDec)
+            var inch = (ftwithDec - ft) * 12
+            return qsTr((Number(ft).toLocaleString(Qt.locale(), 'f', 0))+ "' "+ (Number(inch).toLocaleString(Qt.locale(), 'f', 0))+ '"')
+        }
+    }
 
     function m_from_unit(distance) {
         if (isMetric())

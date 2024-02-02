@@ -781,6 +781,16 @@ Window {
             anchors.topMargin: topLine.height
             anchors.right: rightColumn.left
             anchors.bottom: bottomButtons.top
+            OutlineText{
+                visible: settings.setMenu_isSimulatorOn
+                anchors.top: parent.top
+                anchors.topMargin: lightbar.height+ 10
+                anchors.horizontalCenter: lightbar.horizontalCenter
+                font.pixelSize: 30
+                color: "#cc5200"
+                text: qsTr("Simulator On")
+            }
+
             Item{
                 id: autoTurn
                 anchors.top:parent.top
