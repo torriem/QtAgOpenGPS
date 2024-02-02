@@ -16,7 +16,7 @@ Popup {
     Rectangle{
         id: textEntry
         width: 450
-        height: 30
+        height: 40
         anchors.top:parent.top
         anchors.topMargin: 50
         anchors.horizontalCenter: parent.horizontalCenter
@@ -24,6 +24,7 @@ Popup {
         border.color: "darkgray"
         border.width: 1
         Text {
+            id: newFieldLabel
             anchors.left: parent.left
             anchors.bottom: parent.top
             font.bold: true
@@ -32,9 +33,28 @@ Popup {
         }
         TextField{
             id: newField
-            anchors.fill: parent
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: newFieldLabel.bottom
             selectByMouse: true
             placeholderText: "New Field Name"
+            onTextChanged: {
+                for (var i=0; i < aog.field_list.length ; i++) {
+                    if (text === aog.field_list[i].name) {
+                        errorMessage.visible = true
+                        break
+                    } else
+                        errorMessage.visible = false
+                }
+            }
+        }
+        Text {
+            id: errorMessage
+            anchors.top: newField.bottom
+            anchors.left: newField.left
+            color: "red"
+            visible: false
+            text: qsTr("This field exists already; please choose another name.")
         }
     }
     Row{
@@ -88,7 +108,7 @@ Popup {
             icon.source: "/images/Cancel64.png"
         }
         IconButtonTransparent{
-            enabled: newField.text != ""
+            enabled: newField.text != "" && errorMessage.visible == false;
             objectName: "btnSave"
             icon.source: "/images/OK64.png"
 

@@ -231,6 +231,7 @@ ListView {
 
             id: name
             text: model.name
+            elide: Text.ElideRight
             font.pointSize: 18
         }
         Text {
@@ -259,7 +260,6 @@ ListView {
             id: thisisdumb
             anchors.fill: parent
             onClicked: {
-                console.debug(index)
                 currentIndex = index
                 currentFieldName = model.name
             }

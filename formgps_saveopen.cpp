@@ -467,7 +467,7 @@ QMap<QString,QVariant> FormGPS::FileFieldInfo(QString fieldDir)
     QFile fieldFile(filename);
     if (!fieldFile.open(QIODevice::ReadOnly))
     {
-        qWarning() << "Couldn't open field " << filename << "for reading!";
+        qWarning() << fieldDir << " is not a valid field";
         //TODO timed messagebox
         return field_info;
     }
@@ -488,6 +488,9 @@ QMap<QString,QVariant> FormGPS::FileFieldInfo(QString fieldDir)
     line = reader.readLine();
 
     field_info["name"] = line.trimmed();
+    if (field_info["name"] != fieldDir) {
+        field_info["name"] = fieldDir;
+    }
 
     //Offset header
     line = reader.readLine();
@@ -665,21 +668,21 @@ bool FormGPS::FileOpenField(QString fieldDir, int flags)
         pn.latStart = offs[0].toDouble();
         pn.lonStart = offs[1].toDouble();
 
-        if (timerSim.isActive())
-        {
+        //if (timerSim.isActive())
+        //{
             pn.latitude = pn.latStart;
             pn.longitude = pn.lonStart;
 
             sim.latitude = pn.latStart;
             sim.longitude = pn.lonStart;
-        }
+        //}
         pn.SetLocalMetersPerDegree();
     }
 
     fieldFile.close();
 
 
-    if (flags & LOAD_FLAGS) {
+    if (flags & LOAD_LINES) {
 
         // ABLine -------------------------------------------------------------------------------------------------
         FileLoadABLines();

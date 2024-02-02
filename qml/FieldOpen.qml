@@ -45,7 +45,8 @@ Popup {
         anchors.right: topLine.right
         ScrollBar.vertical: ScrollBar {
             id: scrollbar
-            anchors.left: parent.right
+            anchors.left: fieldOpen.right
+            anchors.rightMargin: 10
             width: 10
             policy: ScrollBar.AlwaysOn
             active: true

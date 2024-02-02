@@ -274,8 +274,14 @@ Window {
                 MenuItem{ text: "Top Field View"}
                 MenuItem{ text: "Enter Sim Coords"}
                 MenuItem{
+                    property bool isChecked: settings.setMenu_isSimulatorOn
+                    onIsCheckedChanged: {
+                        checked = isChecked
+                    }
+
                     text: "Simulator On"
-                    checked: settings.setMenu_isSimulatorOn
+                    checkable: true
+                    checked: isChecked
                     onCheckedChanged: {
                         settings.setMenu_isSimulatorOn = checked
                         console.log("Sim = "+settings.setMenu_isSimulatorOn)
@@ -952,11 +958,7 @@ Window {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: simBarRect.top
             anchors.bottomMargin: 15
-            //TODO: add logic to interact with the Auto and manual buttons
-
-            //only allow on and off when auto is on. TODO what about when Manual is on?
-            //triState: btnSectionAuto.checked ? false : true
-            width: 500
+            width: 500 //TODO: make this adjust with the width of the parent window
         }
         DisplayButtons{
             id: displayButtons
