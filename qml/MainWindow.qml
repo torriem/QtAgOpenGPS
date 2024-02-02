@@ -818,7 +818,7 @@ Window {
                                 aog.uturn(false)
                             else
                                 timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                        utils.speed_to_unit_text(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
+                                                        utils.speed_to_unit_string(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
                         }
                     }
                     Button{
@@ -833,7 +833,7 @@ Window {
                                 aog.uturn(true)
                             else
                                 timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                        utils.speed_to_unit_text(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
+                                                        utils.speed_to_unit_string(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
                         }
                     }
                 }
