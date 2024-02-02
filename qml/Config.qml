@@ -69,7 +69,7 @@ Dialog {
                 visible: true
                 spacing: 15
                 ButtonGroup {
-                    buttons: [ vehicleMenu, implementMenuBtn, sourcesMenubtn, uTurnMenu,  modulesMenubtn, tramMenu, featureMenu ]
+                    buttons: [ vehicleMenu, implementMenuBtn, sourcesMenubtn, uTurnMenu,  modulesMenubtn, tramMenu, displayMenu, featureMenu ]
                 }
                 IconButtonTransparent{
                     id:vehicleMenu
@@ -292,6 +292,18 @@ Dialog {
                     onPressed: if (checked) toggle=true
                 }
                 IconButtonTransparent{
+                    id:displayMenu
+                    icon.source: "/images/Config/Con_Display.png"
+                    checkable: true
+                    width:100
+                    height:75
+                    radius: 0
+                    //todo put logic in IconButton
+                    property bool toggle: false
+                    onClicked: if (toggle) { checked = false ; toggle = false }
+                    onPressed: if (checked) toggle=true
+                }
+                IconButtonTransparent{
                     id:featureMenu
                     objectName: "btnFeatureMenu"
                     icon.source: "/images/Config/Con_FeatureMenu.png"
@@ -483,6 +495,13 @@ Dialog {
             anchors.margins:1
             visible: tramMenu.checked
         }
+        ConfigDisplay{
+            id: configDisplay
+            anchors.fill: mainConfig
+            anchors.margins: 1
+            visible: displayMenu.checked
+        }
+
         ConfigFeatures{
             id:configFeatures
             anchors.fill: mainConfig
