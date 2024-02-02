@@ -958,11 +958,7 @@ Window {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: simBarRect.top
             anchors.bottomMargin: 15
-            //TODO: add logic to interact with the Auto and manual buttons
-
-            //only allow on and off when auto is on. TODO what about when Manual is on?
-            //triState: btnSectionAuto.checked ? false : true
-            width: 500
+            width: 500 //TODO: make this adjust with the width of the parent window
         }
         DisplayButtons{
             id: displayButtons

@@ -33,7 +33,8 @@ Popup {
 
         ScrollBar.vertical: ScrollBar {
             id: scrollbar
-            anchors.left: parent.right
+            anchors.left: fieldFromExisting.right
+            anchors.rightMargin: 10
             width: 10
             policy: ScrollBar.AlwaysOn
             active: true
@@ -75,16 +76,37 @@ Popup {
             TextField{
                 id: newField
                 objectName: "fieldFromExisting"
+                placeholderText: qsTr("New field name")
                 anchors.fill: parent
                 selectByMouse: true
+
+                onTextChanged: {
+                    for (var i=0; i < aog.field_list.length ; i++) {
+                        if (text === aog.field_list[i].name) {
+                            errorMessage.visible = true
+                            break
+                        } else
+                            errorMessage.visible = false
+                    }
+                }
             }
             Text {
+                id: newFieldLabel
                 anchors.left: parent.left
                 anchors.top: parent.bottom
                 font.bold: true
                 font.pixelSize: 15
                 text: qsTr("Edit Field Name")
             }
+            Text {
+                id: errorMessage
+                anchors.top: newFieldLabel.bottom
+                anchors.left: newFieldLabel.left
+                color: "red"
+                visible: false
+                text: qsTr("This field exists already; please change the new name.")
+            }
+
         }
         IconButtonTransparent{
             anchors.verticalCenter: editFieldName.verticalCenter
@@ -201,7 +223,8 @@ Popup {
                 objectName: "btnSave"
                 icon.source: "/images/OK64.png"
                 enabled: (newField.text !== "" && existingField.text !== "" &&
-                          newField.text != existingField.text)
+                          newField.text != existingField.text &&
+                          errorMessage.visible == false)
                 onClicked: {
                     if(newField.text != "" && existingField.text != "" &&
                             newField.text != existingField.text) {

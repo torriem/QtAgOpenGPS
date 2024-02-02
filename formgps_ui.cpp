@@ -103,6 +103,7 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(field_open(QString)), this, SLOT(field_open(QString)));
     connect(aog,SIGNAL(field_new(QString)), this, SLOT(field_new(QString)));
     connect(aog,SIGNAL(field_new_from(QString,QString,int)), this, SLOT(field_new_from(QString,QString,int)));
+    connect(aog,SIGNAL(field_delete(QString)), this, SLOT(field_delete(QString)));
 
     //connect qml button signals to callbacks (it's not automatic with qml)
 
@@ -790,21 +791,26 @@ void FormGPS::field_update_list() {
 }
 
 void FormGPS::field_close() {
+    lock.lockForWrite();
     fileSaveEverythingBeforeClosingField(NULL);
+    lock.unlock();
 }
 
 void FormGPS::field_open(QString field_name) {
+    lock.lockForWrite();
     fileSaveEverythingBeforeClosingField(NULL);
     if (! FileOpenField(field_name)) {
-        TimedMessageBox(4000, tr("Field does not exist"), QString(tr("Cannot find the requested saved field.")) + " " +
+        TimedMessageBox(8000, tr("Saved field does not exist."), QString(tr("Cannot find the requested saved field.")) + " " +
                                                                 field_name);
 
         property_setF_CurrentDir = "Default";
     }
+    lock.unlock();
 }
 
 void FormGPS::field_new(QString field_name) {
     //assume the GUI will vet the name a little bit
+    lock.lockForWrite();
     currentFieldDirectory = field_name;
     property_setF_CurrentDir = currentFieldDirectory;
     JobNew();
@@ -821,12 +827,14 @@ void FormGPS::field_new(QString field_name) {
     FileSaveFlags();
     FileCreateBoundary();
     FileSaveTram();
+    lock.unlock();
 }
 
 void FormGPS::field_new_from(QString existing, QString field_name, int flags) {
+    lock.lockForWrite();
     fileSaveEverythingBeforeClosingField(NULL);
     if (! FileOpenField(existing,flags)) { //load whatever is requested from existing field
-        TimedMessageBox(4000, tr("Existing field cannot be found"), QString(tr("Cannot find the existing saved field.")) + " " +
+        TimedMessageBox(8000, tr("Existing field cannot be found"), QString(tr("Cannot find the existing saved field.")) + " " +
                                                                 existing);
     }
     //change to new name
@@ -854,10 +862,22 @@ void FormGPS::field_new_from(QString existing, QString field_name, int flags) {
         tool.patchSaveList.append(l);
     }
     FileSaveSections();
+    lock.unlock();
 }
 
 void FormGPS::field_delete(QString field_name) {
-    //TODO
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+                            + "/" + QCoreApplication::applicationName() + "/Fields/" + field_name;
+
+    QDir fieldDir(directoryName);
+
+    if(! fieldDir.exists()) {
+        TimedMessageBox(8000,tr("Cannot find saved field"),QString(tr("Cannot find saved field to delete.")) + " " + field_name);
+        return;
+    }
+
+    QFile::moveToTrash(directoryName);
+    field_update_list();
 }
 
 
