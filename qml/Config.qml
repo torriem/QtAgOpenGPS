@@ -96,6 +96,11 @@ Dialog {
                     visible: vehicleMenu.checked
                     height: children.height
 
+                    onVisibleChanged: {
+                        if (visible)
+                            configTrSettings.checked = true
+                    }
+
                     ButtonGroup {
                         buttons: [configTrSettings, configTrDim, btnconfigTrAntDim, btnconfigTrSteerSett ]
                     }
@@ -144,33 +149,42 @@ Dialog {
                     height: children.height
                     x: 25
 
+                    onVisibleChanged: {
+                        if (visible)
+                            configImpSettings.checked = true
+                    }
                     ButtonGroup {
                         buttons: [ configImpSettings, configImpDim, configImpSection, configImpTiming, configImpSwitches ]
                     }
-                    IconButton{
+                    IconButtonTransparent{
                         id: configImpSettings
                         icon.source: "/images/Config/ConS_VehicleConfig.png"
                         checkable: true
+                        radius: 0
                     }
-                    IconButton{
+                    IconButtonTransparent{
                         id: configImpDim
                         icon.source: "/images/Config/ConS_ImplementHitch.png"
                         checkable: true
+                        radius: 0
                     }
-                    IconButton{
+                    IconButtonTransparent{
                         id: configImpSection
                         icon.source: "/images/Config/ConS_ImplementSection.png"
                         checkable: true
+                        radius: 0
                     }
-                    IconButton{
+                    IconButtonTransparent{
                         id: configImpTiming
                         icon.source: "/images/Config/ConS_ImplementSettings.png"
                         checkable: true
+                        radius: 0
                     }
-                    IconButton{
+                    IconButtonTransparent{
                         id: configImpSwitches
                         icon.source: "/images/Config/ConS_ImplementSwitch.png"
                         checkable: true
+                        radius: 0
                     }
                 }
                 IconButtonTransparent{
@@ -187,21 +201,29 @@ Dialog {
                     onPressed: if (checked) toggle=true
                 }
                 ButtonGroup {
-                    buttons: [ sourcesMenu, configsrcRoll ]
+                    buttons: [ configsrcHeading, configsrcRoll ]
                 }
                 Column{
                     id: sourcesMenu
                     visible: sourcesMenubtn.checked
                     height: children.height
-                    IconButton{
+                    x: 25
+                    onVisibleChanged: {
+                        if (visible)
+                            configsrcHeading.checked = true
+                    }
+
+                    IconButtonTransparent{
                         id: configsrcHeading
                         checkable: true
                         icon.source: "/images/Config/ConS_VehicleConfig.png"
+                        radius: 0
                     }
-                    IconButton{
+                    IconButtonTransparent{
                         id: configsrcRoll
                         checkable: true
                         icon.source: "/images/Config/ConS_ImplementHitch.png"
+                        radius: 0
                     }
                 }
                 IconButtonTransparent{
@@ -237,15 +259,23 @@ Dialog {
                     id: modulesMenu
                     visible: modulesMenubtn.checked
                     height: children.height
-                    IconButton{
+                    x: 25
+                    onVisibleChanged: {
+                        if (visible)
+                            configModulesSettings.checked = true
+                    }
+
+                    IconButtonTransparent{
                         id: configModulesSettings
                         checkable: true
                         icon.source: "/images/Config/ConS_ModulesMachine.png"
+                        radius: 0
                     }
-                    IconButton{
+                    IconButtonTransparent{
                         id: configModulesPinsbtn
                         checkable: true
                         icon.source: "/images/Config/ConS_ImplementSection.png"
+                        radius: 0
                     }
                 }
                 IconButtonTransparent{

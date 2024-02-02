@@ -85,6 +85,7 @@ Button {
             anchors.margins: 10
             fillMode: Image.PreserveAspectFit
             source: icon_button.icon.source
+            z:1
         }
 
         Colorize {
@@ -157,12 +158,11 @@ Button {
                     target: icon_button_background
                     border.width: 5
                 }*/
-                /*
+
                 PropertyChanges {
                     target: content_image
                     source: icon_button.icon.source
                 }
-                */
 
             },
             State {
@@ -186,7 +186,7 @@ Button {
                 }*/
                 PropertyChanges {
                     target: content_image
-                    source: icon_button.icon.source
+                    source: icon_button.iconChecked != "" ? icon_button.iconChecked : icon_button.icon.source
                 }
             },
             State {
@@ -208,12 +208,12 @@ Button {
                     target: icon_button_background
                     border.width: 0
                 }*/
-                /*
+
                 PropertyChanges {
                     target: content_image
-                    source: (icon_button.iconChecked ? icon_button.iconChecked : icon_button.icon.source)
+                    source: icon_button.iconChecked != "" ? icon_button.iconChecked : icon_button.icon.source
                 }
-                */
+
             },
             State {
                 when: ! icon_button.down && ! icon_button.checked && ! icon_button.hovered
@@ -234,12 +234,10 @@ Button {
                     target: icon_button_background
                     border.width: 0
                 }*/
-                /*
                 PropertyChanges {
                     target: content_image
                     source: icon_button.icon.source
                 }
-                */
            },
             State {
                 when: icon_button.hovered
@@ -260,12 +258,10 @@ Button {
                     target: gradientStop3
                     color: icon_button.colorHover3
                 }
-                /*
                 PropertyChanges {
                     target: content_image
                     source: icon_button.icon.source
                 }
-                */
             }
         ]
 
