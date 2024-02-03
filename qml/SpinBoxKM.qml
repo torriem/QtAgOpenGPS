@@ -7,9 +7,9 @@ import QtQuick 2.0
 
 Item {
     id: spinBoxKM
-    property int from //these are in cm
-    property double value //meters
-    property int to //centimeters
+    property int from //these are in km
+    property double value //km
+    property int to //kmeters
     property int stepSize: 1
     property bool editable: true
     property string text: ""
@@ -39,8 +39,8 @@ Item {
 
     SpinBoxCustomized {
         id: spinner
-        from: utils.km_to_unit(spinBoxKM.from * 100.0)
-        to: utils.km_to_unit(spinBoxKM.to * 100.0)
+        from: utils.km_to_unit(spinBoxKM.from)
+        to: utils.km_to_unit(spinBoxKM.to)
         editable: spinBoxKM.editable
         text: spinBoxKM.text
         value: utils.km_to_unit(spinBoxKM.value) // should be in metres!
