@@ -43,7 +43,6 @@
 #include "cguidance.h"
 #include "cheadline.h"
 #include "cpgn.h"
-#include "aogiface_property.h"
 
 //forward declare classes referred to below, to break circular
 //references in the code

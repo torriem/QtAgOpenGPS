@@ -16,8 +16,7 @@
 #include "aogrenderer.h"
 #include "qmlsettings.h"
 #include "qmlsectionbuttons.h"
-#include "aogiface_property.h"
-#include "interface_property.h"
+#include "interfaceproperty.h"
 
 QString caseInsensitiveFilename(QString directory, QString filename);
 

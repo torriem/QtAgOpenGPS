@@ -5,7 +5,7 @@
 #include "cboundarylist.h"
 #include "glm.h"
 #include <QLocale>
-#include "aogiface_property.h"
+#include "interfaceproperty.h"
 
 class CVehicle;
 

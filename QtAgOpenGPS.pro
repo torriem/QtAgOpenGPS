@@ -110,7 +110,7 @@ HEADERS  += formgps.h \
     classes/cboundary.h \
     btnenum.h \
     classes/vecfix2fix.h \
-    interface_property.h \
+    interfaceproperty.h \
     properties.h \
     qmlsectionbuttons.h \
     qmlsettings.h \
