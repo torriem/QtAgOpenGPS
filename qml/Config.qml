@@ -12,10 +12,15 @@ Dialog {
     standardButtons: StandardButton.NoButton
     title: qsTr("General Settings")
 
-    function closeAll() {
-        //uncheck all the buttons maybe
-
-
+    onVisibleChanged: {
+        vehicleMenu.checked = false
+        implementMenuBtn.checked = false
+        sourcesMenubtn.checked = false
+        uTurnMenu.checked = false
+        modulesMenubtn.checked = false
+        tramMenu.checked = false
+        displayMenu.checked = false
+        featureMenu.checked = false
     }
 
     Rectangle{

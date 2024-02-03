@@ -144,15 +144,18 @@ Button {
                 name: "pressedUnchecked"
                 PropertyChanges {
                     target: gradientStop1
-                    color: icon_button.color3
+                    //color: icon_button.color3
+                    color: icon_button.colorChecked1
                 }
                 PropertyChanges {
                     target: gradientStop2
-                    color: icon_button.color3
+                    //color: icon_button.color3
+                    color: icon_button.colorChecked2
                 }
                 PropertyChanges {
                     target: gradientStop3
-                    color: icon_button.color1
+                    //color: icon_button.color1
+                    color: icon_button.colorChecked3
                 }
                /* PropertyChanges {
                     target: icon_button_background

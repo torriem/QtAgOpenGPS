@@ -53,6 +53,8 @@ public:
 signals:
 
 public slots:
+    void changeImuHeading(double newImuHeading);
+    void changeImuRoll(double newImuRoll);
 };
 
 #endif // CAHRS_H

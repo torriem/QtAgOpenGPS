@@ -51,6 +51,7 @@ Slider{
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
                 text: ">"
+                color: sliderCustomized.enabled ? "black" : "grey"
 
             }
         }
@@ -69,18 +70,21 @@ Slider{
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 text: "<"
+                color: sliderCustomized.enabled ? "black" : "grey"
             }
         }
     }
     Text{
         id: leftText
         text: sliderCustomized.leftText
+        color: sliderCustomized.enabled ? "black" : "grey"
         anchors.right: parent.left
         anchors.verticalCenter: backgroundRect.verticalCenter
     }
     Text{
         id: rightText
         text: sliderCustomized.rightText
+        color: sliderCustomized.enabled ? "black" : "grey"
         anchors.left: parent.right
         anchors.verticalCenter: backgroundRect.verticalCenter
     }
@@ -101,6 +105,7 @@ Slider{
     Text{
         id: centerTopText
         text: sliderCustomized.centerTopText
+        color: sliderCustomized.enabled ? "black" : "grey"
         anchors.bottom: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
     }

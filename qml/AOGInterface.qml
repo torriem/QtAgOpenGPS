@@ -66,6 +66,8 @@ Item {
     property double toolLongitude: 0
     property double toolHeading: 0
     property double imuRollDegrees: 0
+    signal changeImuRoll(double new_roll) //usually just set to 88888;
+
     property double speedKph: 0
     property double offlineDistance: 32000
     property double avgPivDistance: 32000
@@ -87,7 +89,10 @@ Item {
     property int fixQuality: 0
     property int ageAlarm: 0
     property int satellitesTracked: 0
+
     property double imuHeading: 0
+    signal changeImuHeading(double newImuHeading)
+
     property int angVel: 0//angular velocity I assume
     property string timeTilFinished: ""
     property string workRate: "value"
@@ -101,8 +106,6 @@ Item {
     property double missedSentences: 0
     property double gpsHeading: 0
     property double fusedHeading: 0
-
-
 
     property bool isTrackOn: false //checks if a guidance line is set.
     onCurrentABLineChanged: {

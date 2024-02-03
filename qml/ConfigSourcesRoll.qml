@@ -17,7 +17,9 @@ Rectangle{
         anchors.leftMargin: 20
         text: qsTr("Remove Offset")
         icon.source: "/images/Config/ConDa_RemoveOffset.png"
-
+        onClicked: {
+            settings.setIMU_rollZero = 0
+        }
     }
     IconButtonColor{
         objectName: "zeroRoll"
@@ -27,6 +29,13 @@ Rectangle{
         anchors.leftMargin: 20
         icon.source: "/images/Config/ConDa_RollSetZero.png"
         isChecked: false
+        onClicked: {
+            if (aog.imuRollDegrees != 88888) {
+                var roll = aog.imuRollDegrees + settings.setIMU_rollZero
+                settings.setIMU_rollZero = roll;
+                aog.changeImuRoll(roll)
+            }
+        }
     }
     IconButtonColor{
         objectName: "btnResetIMU"
@@ -35,6 +44,10 @@ Rectangle{
         anchors.topMargin: 20
         icon.source: "/images/Config/ConDa_ResetIMU.png"
         isChecked: false
+        onClicked: {
+            aog.changeImuHeading(88888);
+            aog.changeImuRoll(99999)
+        }
     }
 
     IconButtonColor{
@@ -61,8 +74,9 @@ Rectangle{
             anchors.fill: parent
             from: 0
             to: 98
-            value: settings.setIMU_rollFilter
-            onValueChanged: settings.setIMU_rollFilter = value
+            property double boundValue: settings.setIMU_rollFilter
+            value: settings.setIMU_rollFilter * 100
+            onValueChanged: settings.setIMU_rollFilter = value / 100.0
             leftTopText: "Less"
             centerTopText: "Roll Filter"
             rightTopText: "More"

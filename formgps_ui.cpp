@@ -70,6 +70,7 @@ void FormGPS::setupGui()
     QObject *vehicleInterface = qmlItem(qml_root, "vehicleInterface");
     QObject *fieldInterface = qmlItem(qml_root, "fieldInterface");
 
+    //react to UI changing this property
     connect(aog,SIGNAL(sectionButtonStateChanged()), &tool.sectionButtonState, SLOT(onStatesUpdated()));
 
     openGLControl = qml_root->findChild<AOGRendererInSG *>("openglcontrol");
@@ -91,8 +92,10 @@ void FormGPS::setupGui()
     qml_root->setProperty("height",768);
 
     //AB Line Picker
+    //react to UI changing these properties
     connect(aog,SIGNAL(currentABLineChanged()), this, SLOT(update_current_ABline_from_qml()));
     connect(aog,SIGNAL(currentABCurveChanged()), this, SLOT(update_current_ABline_from_qml()));
+    //linesInterface signals
     connect(linesInterface,SIGNAL(abLine_updateLines()),this,SLOT(update_ABlines_in_qml()));
     connect(linesInterface,SIGNAL(abLine_addLine(QString, double, double, double)), this, SLOT(add_new_ABline(QString,double,double,double)));
     connect(linesInterface,SIGNAL(abLine_setA(bool,double,double,double)), this, SLOT(start_newABLine(bool,double,double,double)));
@@ -125,6 +128,10 @@ void FormGPS::setupGui()
     connect(fieldInterface,SIGNAL(field_new(QString)), this, SLOT(field_new(QString)));
     connect(fieldInterface,SIGNAL(field_new_from(QString,QString,int)), this, SLOT(field_new_from(QString,QString,int)));
     connect(fieldInterface,SIGNAL(field_delete(QString)), this, SLOT(field_delete(QString)));
+
+    //React to UI changing imuHeading, in order to reset the IMU heading
+    connect(aog, SIGNAL(changeImuHeading(double)), &ahrs, SLOT(changeImuHeading(double)));
+    connect(aog, SIGNAL(changeImuRoll(double)), &ahrs, SLOT(changeImuRoll(double)));
 
     //connect qml button signals to callbacks (it's not automatic with qml)
 
