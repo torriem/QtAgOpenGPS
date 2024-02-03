@@ -8,29 +8,26 @@ Rectangle{
     anchors.fill: parent
     visible: true
     color: "ghostwhite"
-    Rectangle{
+    TitleFrame {
         id:antennaType
         width: 360
-        height: childrenRect.height+ 10
+        height: sourceRow.height + titleHeight + 10
         anchors.top: parent.top
+        anchors.margins: 5
         anchors.horizontalCenter: parent.horizontalCenter
         color: "ghostwhite"
         border.color: "black"
         visible: true
+        title: qsTr("Antenna Type", "GPS Antenna type, fixed or dual")
+        font.pointSize: 16
 
-        Text {
-            id: text
-            text: qsTr("Antenna Type")
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
         Row{
             id: sourceRow
-            anchors.top: text.bottom
-            anchors.topMargin: 10
+            anchors.top: parent.top
+            anchors.margins: 10
+            anchors.topMargin: 25
             anchors.horizontalCenter: parent.horizontalCenter
-            height: childrenRect.height
-            width: childrenRect.width
+            height: childrenRect.height  + 25
             spacing: 10
 
             ButtonGroup {
@@ -91,26 +88,27 @@ Rectangle{
         }
     }
 
-    Rectangle{
+    TitleFrame {
         id:rtkAlarm
         width: parent.width /2
-        height: childrenRect.height+ 10
+        height: rtkAlarmRow.height + titleHeight + 10
         anchors.bottom: parent.bottom
         anchors.left: parent.left
+        anchors.margins: 5
         color: "ghostwhite"
         visible: true
+        title: qsTr("RTK Alarm")
+        font.pointSize: 16
 
-        Text {
-            id: textRTK
-            text: qsTr("RTK Alarm")
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
         Row{
-            anchors.top: textRTK.bottom
+            id: rtkAlarmRow
+            anchors.top: parent.top
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 10
+            height: childrenRect.height + 10
+
+            Component.onCompleted: console.debug(height)
 
             IconButtonColor{
                 width:150
@@ -120,8 +118,14 @@ Rectangle{
                 isChecked: settings.setGPS_ageAlarm
                 onClicked: settings.setGPS_ageAlarm = true
             }
-            Text{
-                text: "  ->  "
+            Rectangle {
+                height: 100
+                width: childrenRect.width
+
+                Text{
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "  ->  "
+                }
             }
             IconButtonColor{
                 width:150
@@ -134,29 +138,27 @@ Rectangle{
             }
         }
     }
-    Rectangle{
+    TitleFrame{
         id:singleAntennaSettings
         anchors.bottom: parent.bottom
-        border.color: fixBtn.checked ? "black" : "grey"
+        enabled: fixBtn.checked
         anchors.right: parent.right
         anchors.left: rtkAlarm.right
-        anchors.leftMargin: 5
         anchors.top: antennaType.bottom
-        anchors.topMargin: 20
+        anchors.margins: 5
+
+        border.color: enabled ? "black" : "grey"
+
         color: "ghostwhite"
 
-        Text{
-            id: singleText
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("Single Antenna Settings")
-            color: fixBtn.checked ? "black" : "grey"
-        }
+        title: qsTr("Single Antenna Settings")
+        font.pointSize: 16
 
         Row {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.topMargin: 10
+            anchors.leftMargin: 10
 
             id: minGPSStep
             Label {
@@ -169,7 +171,6 @@ Rectangle{
                 width: 180
                 height: 50
                 checkable: true
-                enabled: fixBtn.checked
 
                 color: "light blue"
 
@@ -190,6 +191,7 @@ Rectangle{
             anchors.top: minGPSStep.bottom
             anchors.left: parent.left
             anchors.topMargin: 10
+            anchors.leftMargin: 10
 
             Label {
                 color: fixBtn.checked ? "black" : "grey"
@@ -213,7 +215,6 @@ Rectangle{
             border.color: fixBtn.checked ? "black" : "grey"
             color: "ghostwhite"
             SliderCustomized{
-                enabled: fixBtn.checked
                 leftText: 100 - value
                 rightText: value
                 leftTopText: "IMU <"
@@ -253,14 +254,13 @@ Rectangle{
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 30
             anchors.horizontalCenter: parent.horizontalCenter
-            enabled: fixBtn.checked
             color: "white"
             colorChecked: "green"
             isChecked: settings.setIMU_isReverseOn
             onClicked: settings.setIMU_isReverseOn = checked
         }
     }
-    Rectangle{
+    TitleFrame {
         id: dualAntennaSettings
         anchors.top: antennaType.bottom
         anchors.right: singleAntennaSettings.left
@@ -269,14 +269,10 @@ Rectangle{
         anchors.margins: 5
         border.color: "black"
         color: "ghostwhite"
-        Text{
-            id: textdual
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: 5
-            text: qsTr("Dual Antenna Settings")
-            color: dualBtn.checked ? "black" : "grey"
-        }
+        title: qsTr("Dual Antenna Settings")
+        font.pointSize: 16
+        enabled: dualBtn.checked
+
         Image {
             id: head
             source: "/images/Config/Con_SourcesHead.png"
@@ -292,19 +288,12 @@ Rectangle{
             anchors.left: head.right
             anchors.bottom: head.bottom
             anchors.leftMargin: 50
-            enabled: dualBtn.checked ? "black" : "grey"
             from: -100
             boundValue: settings.setGPS_dualHeadingOffset
             onValueChanged: settings.setGPS_dualHeadingOffset = value
             to: 100
             editable: true
-        }
-        Text{
-            anchors.bottom: headingOffSet.top
-            anchors.bottomMargin: 15
-            anchors.horizontalCenter: headingOffSet.horizontalCenter
-            text: qsTr("Heading Offset (Degree)")
-            color: dualBtn.checked ? "black" : "grey"
+            text: qsTr("Heading Offset (Degrees)")
         }
         ButtonColor{
             id: dualAsIMU
@@ -313,7 +302,6 @@ Rectangle{
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 30
             anchors.horizontalCenter: parent.horizontalCenter
-            enabled: dualBtn.checked
             checkable: true
             color: "white"
             colorChecked: "green"
