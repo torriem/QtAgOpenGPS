@@ -296,6 +296,14 @@ Item {
         return area_from_unit(areaRate)
     }
 
+    function deg_to_radians(degrees){
+        return degrees* Math.PI/180
+    }
+
+    function radians_to_deg(radians){
+        return radians * 180 / Math.PI
+    }
+
     function distanceLatLon(latitude1, longitude1, latitude2, longitude2)
     {
         //This is a haversine based distance calculation formula
