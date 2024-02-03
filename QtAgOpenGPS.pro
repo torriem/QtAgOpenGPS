@@ -88,7 +88,6 @@ SOURCES += main.cpp\
     formgps_saveopen.cpp
 
 HEADERS  += formgps.h \
-    aogiface_property.h \
     aogproperty.h \
     classes/cabline.h \
     classes/cboundarylist.h \
@@ -111,6 +110,7 @@ HEADERS  += formgps.h \
     classes/cboundary.h \
     btnenum.h \
     classes/vecfix2fix.h \
+    interface_property.h \
     properties.h \
     qmlsectionbuttons.h \
     qmlsettings.h \

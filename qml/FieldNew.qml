@@ -39,8 +39,8 @@ Popup {
             selectByMouse: true
             placeholderText: "New Field Name"
             onTextChanged: {
-                for (var i=0; i < aog.field_list.length ; i++) {
-                    if (text === aog.field_list[i].name) {
+                for (var i=0; i < fieldInterface.field_list.length ; i++) {
+                    if (text === fieldInterface.field_list[i].name) {
                         errorMessage.visible = true
                         break
                     } else
@@ -114,7 +114,7 @@ Popup {
 
             onClicked: {
                 fieldNew.visible = false
-                aog.field_new(newField.text)
+                fieldInterface.field_new(newField.text)
             }
         }
     }

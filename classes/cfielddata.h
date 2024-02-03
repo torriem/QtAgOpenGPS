@@ -14,29 +14,29 @@ class CFieldData
 
 public:
     //all the section area added up;
-    AOGIFace_Property<double> workedAreaTotal = AOGIFace_Property<double>("workedAreaTotal");
+    InterfaceProperty<AOGInterface, double> workedAreaTotal = InterfaceProperty<AOGInterface, double>("workedAreaTotal");
 
     //just a cumulative tally based on distance and eq width.
-    AOGIFace_Property<double> workedAreaTotalUser = AOGIFace_Property<double>("workedAreaTotalUser");
+    InterfaceProperty<AOGInterface, double> workedAreaTotalUser = InterfaceProperty<AOGInterface, double>("workedAreaTotalUser");
 
     //accumulated user distance
-    AOGIFace_Property<double> distanceUser = AOGIFace_Property<double>("distanceUser");
+    InterfaceProperty<AOGInterface, double> distanceUser = InterfaceProperty<AOGInterface, double>("distanceUser");
 
     double barPercent = 0;
 
     double overlapPercent = 0;
 
     //Outside area minus inner boundaries areas (m)
-    AOGIFace_Property<double> areaBoundaryOuterLessInner = AOGIFace_Property<double>("areaBoundaryOuterLessInner");
+    InterfaceProperty<AOGInterface, double> areaBoundaryOuterLessInner = InterfaceProperty<AOGInterface, double>("areaBoundaryOuterLessInner");
 
     //used for overlap calcs - total done minus overlap
-    AOGIFace_Property<double> actualAreaCovered = AOGIFace_Property<double>("actualAreaCovered");
+    InterfaceProperty<AOGInterface, double> actualAreaCovered = InterfaceProperty<AOGInterface, double>("actualAreaCovered");
 
     //Inner area of outer boundary(m)
-    AOGIFace_Property<double> areaOuterBoundary = AOGIFace_Property<double>("areaOuterBoundary");
+    InterfaceProperty<AOGInterface, double> areaOuterBoundary = InterfaceProperty<AOGInterface, double>("areaOuterBoundary");
 
     //not really used - but if needed
-    AOGIFace_Property<double> userSquareMetersAlarm = AOGIFace_Property<double>("userSquareMetersAlarm");
+    InterfaceProperty<AOGInterface, double> userSquareMetersAlarm = InterfaceProperty<AOGInterface, double>("userSquareMetersAlarm");
 
     CFieldData();
 

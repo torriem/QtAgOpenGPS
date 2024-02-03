@@ -144,8 +144,8 @@ public:
     bool /*isJobStarted = false,*/ isAreaOnRight = true /*, isAutoSteerBtnOn = false*/;
 
     //this bool actually lives in the QML aog object.
-    AOGIFace_Property<bool> isJobStarted = AOGIFace_Property<bool>("isJobStarted");
-    AOGIFace_Property<bool> isAutoSteerBtnOn = AOGIFace_Property<bool>("isAutoSteerBtnOn");
+    InterfaceProperty<AOGInterface,bool> isJobStarted = InterfaceProperty<AOGInterface,bool>("isJobStarted");
+    InterfaceProperty<AOGInterface,bool> isAutoSteerBtnOn = InterfaceProperty<AOGInterface,bool>("isAutoSteerBtnOn");
 
     //if we are saving a file
     bool isSavingFile = false, isLogElevation = false;
@@ -254,8 +254,8 @@ public:
     //master Manual and Auto, 3 states possible
     //btnStates manualBtnState = btnStates::Off;
     //btnStates autoBtnState = btnStates::Off;
-    AOGIFace_Property<btnStates> manualBtnState = AOGIFace_Property<btnStates>("manualBtnState");
-    AOGIFace_Property<btnStates> autoBtnState = AOGIFace_Property<btnStates>("manualBtnState");
+    InterfaceProperty<AOGInterface,btnStates> manualBtnState = InterfaceProperty<AOGInterface,btnStates>("manualBtnState");
+    InterfaceProperty<AOGInterface,btnStates> autoBtnState = InterfaceProperty<AOGInterface,btnStates>("manualBtnState");
 
 private:
 public:

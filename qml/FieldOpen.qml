@@ -82,7 +82,7 @@ Popup {
                 height: 75
                 enabled: fieldTable.currentIndex > -1
                 onClicked: {
-                    aog.field_delete(fieldTable.currentFieldName)
+                    fieldInterface.field_delete(fieldTable.currentFieldName)
                     //backend should update the list
                 }
             }
@@ -128,7 +128,7 @@ Popup {
                 height: 75
                 enabled: fieldTable.currentIndex > -1
                 onClicked: {
-                    aog.field_open(fieldTable.currentFieldName)
+                    fieldInterface.field_open(fieldTable.currentFieldName)
                     fieldTable.clear_selection()
                     fieldOpen.close()
                 }
