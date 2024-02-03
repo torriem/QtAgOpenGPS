@@ -553,5 +553,6 @@
         <file>images/ABDraw.png</file>
         <file>images/Config/Con_Display.png</file>
         <file>qml/ConfigDisplay.qml</file>
+        <file>qml/SpinBoxKM.qml</file>
     </qresource>
 </RCC>
