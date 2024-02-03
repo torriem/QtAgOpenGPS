@@ -22,7 +22,7 @@ Rectangle{
         }
     }
     IconButtonColor{
-        objectName: "zeroRoll"
+        id: zeroRollBtn
         text: qsTr("Zero Roll")
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
@@ -37,6 +37,35 @@ Rectangle{
             }
         }
     }
+
+    Label {
+        id: rollZeroDisplay
+        anchors.left: zeroRollBtn.right
+        anchors.verticalCenter: zeroRollBtn.verticalCenter
+        anchors.leftMargin: 20
+        text: Number(settings.setIMU_rollZero).toLocaleString(Qt.locale(), 'f', 2);
+    }
+
+    IconButtonTransparent {
+        id: rollOffsetUpBtn
+        anchors.left: rollZeroDisplay.right
+        anchors.verticalCenter: zeroRollBtn.verticalCenter
+        anchors.leftMargin: 20
+
+        icon.source: "/images/UpArrow64.png"
+        onClicked: settings.setIMU_rollZero += 0.1
+    }
+
+    IconButtonTransparent {
+        id: rollOffsetDownBtn
+        anchors.left: rollOffsetUpBtn.right
+        anchors.verticalCenter: zeroRollBtn.verticalCenter
+        anchors.leftMargin: 5
+
+        icon.source: "/images/DnArrow64.png"
+        onClicked: settings.setIMU_rollZero -= 0.1
+    }
+
     IconButtonColor{
         objectName: "btnResetIMU"
         anchors.left: parent.horizontalCenter
