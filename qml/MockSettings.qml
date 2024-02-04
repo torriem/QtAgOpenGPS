@@ -112,7 +112,7 @@ Item {
     property string setBrand_TBrand: "AGOpenGPS"
     property bool setHeadland_isSectionControlled: true
     property bool setSound_isAutoSteerOn: true
-    property var setRelay_pinConfig: [ 1,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ]
+    property var setRelay_pinConfig: [ 1,2,3,17,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ]
     property int setDisplay_camSmooth: 50
     property double setGPS_dualHeadingOffset: 0
     property bool setF_isSteerWorkSwitchEnabled: false
@@ -221,7 +221,7 @@ Item {
     property double setAS_minSteerSpeed: 1
     property string setBrand_HBrand: "AgOpenGPS"
     property string setBrand_WDBrand: "AgOpenGPS"
-    property double setIMU_fusionWeight2: 0.06
+    property double setIMU_fusionWeight2: 0.3
     property bool setDisplay_isSvennArrowOn: true
     property bool setTool_isTramOuterInverted: false
     property point setJobMenu_location: "100, 100"
