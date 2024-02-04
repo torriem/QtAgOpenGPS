@@ -244,7 +244,6 @@ Item {
     }
     function km_to_mi(distance){
         if (isMetric()){
-            console.log(distance)
             return distance
         }else
             return distance *  0.62137

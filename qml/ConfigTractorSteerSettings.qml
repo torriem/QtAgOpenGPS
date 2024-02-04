@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
 
 Rectangle{
@@ -6,7 +7,7 @@ Rectangle{
     anchors.fill: parent
     color: "ghostwhite"
     visible: false
-    Rectangle{
+/*    Rectangle{
         id: lightbarrect
         anchors.left: parent.left
         anchors.top: parent.top
@@ -112,36 +113,26 @@ Rectangle{
                 anchors.bottom: parent.top
                 anchors.left: parent.left
             }
-        }
-        Rectangle{
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-            width: 102
-            height: 102
-            radius: 0
-            border.color: "black"
-            IconButtonTransparent{
-                anchors.fill: parent
-                anchors.margins: 1
+        }*/
+            IconButtonColor{
+                anchors.right: parent.right
+                anchors.top:parent.top
+                anchors.margins: 40
                 icon.source: "/images/AutoSteerOn.png"
-                radius: 0
                 checkable: true
                 isChecked: settings.setAS_isAutoSteerAutoOn
                 onCheckableChanged: settings.setAS_isAutoSteerAutoOn = checked
-            }
-            Text{
                 text: qsTr("Steer Switch Control")
-                anchors.bottom: parent.top
-                anchors.left: parent.left
             }
-        }
-    }
+
+        //}
+    //}
     Rectangle{
         id: linewidthrect
-        anchors.right: parent.right
-        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.top: nudgedistrect.bottom
         height: 150
-        width: 400
+        width: 250
         anchors.margins: 20
         color: "transparent"
         Text{
@@ -176,10 +167,10 @@ Rectangle{
     }
     Rectangle{
         id: nudgedistrect
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        height: 150
-        width: 400
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        height: 100
+        width: 350
         anchors.margins: 20
         color: "transparent"
         Text{
@@ -214,11 +205,11 @@ Rectangle{
     }
     Rectangle{
         id: lineacqLAheadrect
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        height: 150
-        width: 400
-        anchors.margins: 20
+        anchors.left: linewidthrect.right
+        anchors.verticalCenter: linewidthrect.verticalCenter
+        anchors.margins: 50
+        height: 100
+        width: 350
         color: "transparent"
         Text{
             id: lineacqLAheadtitletxt
@@ -248,6 +239,90 @@ Rectangle{
                 editable: true
                 text: qsTr("Seconds")
             }
+        }
+    }
+    RowLayout{
+        id: safety
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: 100
+        height: 150
+        Column{
+            id: manualTurnsLimit
+            height: 130
+            width: 100
+            TextLine{ text: qsTr("Manual Turns Limit")}
+            Image{
+                source: "/images/Config/con_VehicleFunctionSpeedLimit.png"
+                width: parent.width
+                height: 90
+            }
+            SpinBoxKM{
+                from: 0
+                to: 20
+                editable: true
+                boundValue: settings.setAS_functionSpeedLimit
+                onValueModified: settings.setAS_functionSpeedLimit = value
+            }
+            TextLine{ text: qsTr(utils.speed_unit())}
+        }
+
+        Column{
+            id: minSpeed
+            width: 100
+            height: 130
+            TextLine{ text: qsTr("Min AutoSteer Speed")}
+            Image{
+                source: "/images/Config/ConV_MinAutoSteer.png"
+                width: parent.width
+                height: 90
+            }
+            SpinBoxKM{
+                from: 0
+                to: 50
+                editable: true
+                boundValue: settings.setAS_minSteerSpeed
+                onValueModified: settings.setAS_minSteerSpeed = value
+            }
+            TextLine{ text: qsTr(utils.speed_unit())}
+        }
+        Column{
+            id: maxSpeed
+            width: 100
+            height: 130
+            TextLine{ text: qsTr("Max AutoSteer Speed")}
+            Image{
+                source: "/images/Config/ConV_MaxAutoSteer.png"
+                width: parent.width
+                height: 90
+            }
+            SpinBoxCM{
+                from: 0
+                to: 50
+                editable: true
+                boundValue: settings.setAS_maxSteerSpeed
+                onValueModified: settings.setAS_maxSteerSpeed = value
+            }
+            TextLine{ text: qsTr(utils.speed_unit())}
+        }
+        Column{
+            id: maxTurnRate
+            width: 100
+            height: 130
+            TextLine{ text: qsTr("Max Turn Rate")}
+            Image{
+                source: "/images/Config/ConV_MaxAngVel.png"
+                width: parent.width
+                height: 90
+            }
+            /*SpinBoxCustomized{
+                from: 5
+                to: 100
+                boundValue: settings.setVehicle_maxAngularVelocity
+                onValueModified: settings.setVehicle_maxAngularVelocity = value
+            }*/
+            TextLine{ text: qsTr("Degrees/sec")}
         }
     }
 }
