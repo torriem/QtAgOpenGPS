@@ -11,6 +11,7 @@
 QOpenGLShaderProgram *simpleColorShader = 0;
 QOpenGLShaderProgram *texShader = 0;
 QOpenGLShaderProgram *interpColorShader = 0;
+QOpenGLShaderProgram *singleColorLineShader = 0;
 
 QVector<QOpenGLTexture *> texture;
 
@@ -31,6 +32,10 @@ bool texturesLoaded = false;
 void initializeShaders() {
     //GL context must be bound by caller, and this must be called from
     //a QThread context
+    qDebug() << "version: "
+             << QLatin1String(reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+    qDebug() << "GSLS version: "
+             << QLatin1String(reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
 
     //All shader memory will be managed by the current QThread
     if (!simpleColorShader) {
@@ -50,6 +55,13 @@ void initializeShaders() {
         assert(interpColorShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/colors_vshader.vsh"));
         assert(interpColorShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/colors_fshader.fsh"));
         assert(interpColorShader->link());
+    }
+
+    if (!singleColorLineShader) {
+        singleColorLineShader = new QOpenGLShaderProgram(QThread::currentThread()); //memory managed by Qt
+        assert(singleColorLineShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/color_line.vsh"));
+        assert(singleColorLineShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/color_line.fsh"));
+        assert(singleColorLineShader->link());
     }
 }
 
