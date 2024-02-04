@@ -242,6 +242,19 @@ Item {
         else
             return distance * 1609.344 //convert miles to metres
     }
+    function km_to_mi(distance){
+        if (isMetric()){
+            console.log(distance)
+            return distance
+        }else
+            return distance *  0.62137
+    }
+    function mi_to_km(distance){
+        if (isMetric())
+            return distance
+        else
+            return distance /  0.62137
+    }
 
     function area_unit()
     {
