@@ -133,6 +133,9 @@ void FormGPS::setupGui()
     connect(aog, SIGNAL(changeImuHeading(double)), &ahrs, SLOT(changeImuHeading(double)));
     connect(aog, SIGNAL(changeImuRoll(double)), &ahrs, SLOT(changeImuRoll(double)));
 
+    //React to UI setting hyd life settings
+    connect(aog, SIGNAL(modules_send_238()), this, SLOT(modules_send_238()));
+
     //connect qml button signals to callbacks (it's not automatic with qml)
 
     /*btnPerimeter = qmlItem(qml_root,"btnPerimeter");
@@ -908,4 +911,18 @@ void FormGPS::field_delete(QString field_name) {
     field_update_list();
 }
 
+void FormGPS::modules_send_238() {
+    qDebug() << "Sending 238 message to AgIO";
+    p_238.pgn[p_238.set0] = (int)property_setArdMac_setting0;
+    p_238.pgn[p_238.raiseTime] = (int)property_setArdMac_hydRaiseTime;
+    p_238.pgn[p_238.lowerTime] = (int)property_setArdMac_hydLowerTime;
+
+    p_238.pgn[p_238.user1] = (int)property_setArdMac_user1;
+    p_238.pgn[p_238.user2] = (int)property_setArdMac_user2;
+    p_238.pgn[p_238.user3] = (int)property_setArdMac_user3;
+    p_238.pgn[p_238.user4] = (int)property_setArdMac_user4;
+
+    qDebug() << p_238.pgn;
+    SendPgnToLoop(p_238.pgn);
+}
 

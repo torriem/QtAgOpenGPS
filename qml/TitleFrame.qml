@@ -17,6 +17,8 @@ Rectangle {
     onEnabledChanged: setEnabled()
     Component.onCompleted: setEnabled()
 
+    color: "transparent"
+
     function setEnabled() {
         for( var i = 0; i < contentRect.children.length ; i ++) {
             if (typeof(contentRect.children[i].enabled) !== "undefined") {

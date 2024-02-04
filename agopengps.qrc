@@ -557,5 +557,6 @@
         <file>qml/interfaces/VehicleInterface.qml</file>
         <file>qml/interfaces/LinesInterface.qml</file>
         <file>qml/TitleFrame.qml</file>
+        <file>qml/SpinBoxM.qml</file>
     </qresource>
 </RCC>

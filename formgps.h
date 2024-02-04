@@ -691,6 +691,9 @@ public slots:
     void field_new_from(QString existing, QString field_name, int flags);
     void field_delete(QString field_name);
 
+    //modules ui callback
+    void modules_send_238();
+
     //left column
     void onBtnAcres_clicked();
     void onBtnSettings_clicked();

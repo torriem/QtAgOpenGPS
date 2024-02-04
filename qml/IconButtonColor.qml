@@ -13,7 +13,12 @@ Button {
     icon.color: "transparent"
 
     property double iconHeightScaleText: 0.75
-    property int border: 2
+
+    property alias border: icon_button_background.border
+    property alias radius: icon_button_background.radius
+
+    property color borderColorEnabled: "black"
+    property color borderColorDisabled: "grey"
 
     property color color1: "white"
     property color color2: "#ffffff"
@@ -107,14 +112,14 @@ Button {
             font.pixelSize: parent.height * 0.2
             visible: true
         }
-
-
-
     }
 
     background: Rectangle {
-        border.width: icon_button.border
+        border.width: 1
         //border.width: icon_button.border
+        border.color: icon_button.enabled ?
+                          icon_button.borderColorEnabled :
+                          icon_button.borderColorDisabled
         radius: 10
         id: icon_button_background
         z: 0

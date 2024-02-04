@@ -142,7 +142,7 @@ Item {
     property bool isBoundaryBeingMade: false
     property double createBndOffset: 0
 
-
+    signal modules_send_238()
 
     property double mPerDegreeLat
     property double mPerDegreeLon
