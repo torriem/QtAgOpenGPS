@@ -19,8 +19,8 @@ Rectangle{
 	GridLayout{
 		anchors.top: text.bottom
 		anchors.horizontalCenter: parent.horizontalCenter
-		width: 500
-		height: 400
+        width: 650
+        height: 450
 		rows:2
 		columns: 2
         flow:Grid.TopToBottom
@@ -30,8 +30,8 @@ Rectangle{
         }
 
 		IconButtonColor{
-			width:200
-			height:150
+            implicitWidth:300
+            implicitHeight:200
 			id: i3pt
             icon.source: "/images/ToolChkRear.png"
             checkable: true
@@ -45,8 +45,8 @@ Rectangle{
 		}
 
 		IconButtonColor{
-			width:200
-			height:150
+            implicitWidth:300
+            implicitHeight:200
 			id: i3ptfront
             icon.source: "/images/ToolChkFront.png"
             checkable: true
@@ -60,8 +60,8 @@ Rectangle{
         }
 
 		IconButtonColor{
-			width:200
-			height:150
+            implicitWidth:300
+            implicitHeight:200
 			id: itrailed
             icon.source: "/images/ToolChkTrailing.png"
             checkable: true
@@ -74,8 +74,8 @@ Rectangle{
             }
         }
 		IconButtonColor{
-			width:200
-			height:150
+            implicitWidth:300
+            implicitHeight:200
 			id: iTBT
             icon.source: "/images/ToolChkTBT.png"
             checkable: true
