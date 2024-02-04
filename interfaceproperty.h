@@ -1,24 +1,30 @@
-#ifndef AOGIFACE_PROPERTY_H
-#define AOGIFACE_PROPERTY_H
+#ifndef INTERFACEPROPERTY_H
+#define INTERFACEPROPERTY_H
 
 #include <QString>
 #include <QVariant>
 #include "btnenum.h"
 
-template <class T>
-class AOGIFace_Property {
+class AOGInterface;
+class FieldInterface;
+class VehicleInterface;
+class LinesInterface;
+
+template <typename WhichInterface, class T>
+class InterfaceProperty {
+protected:
     char * prop_name;
 public:
     static inline QObject *prop_root = NULL;
 
-    AOGIFace_Property(const char *qml_prop_name)
+    InterfaceProperty(const char *qml_prop_name)
     {
         prop_name = strdup(qml_prop_name);
     }
 
-    AOGIFace_Property() : prop_name(NULL) {}
+    InterfaceProperty() : prop_name(NULL) {}
 
-    ~AOGIFace_Property() {
+    ~InterfaceProperty() {
         //let it leak
 
         //if(prop_name != NULL) {
@@ -36,19 +42,19 @@ public:
     inline operator btnStates() { return static_cast<btnStates>(prop_root->property(prop_name).toInt()); }
 
     //operators for int and double
-    inline AOGIFace_Property &operator+=(T rhs) {
+    inline InterfaceProperty &operator+=(T rhs) {
         prop_root->setProperty(prop_name, QVariant((T)(*this) + rhs));
 
         return *this;
     }
-    inline AOGIFace_Property &operator-=(double rhs) {
+    inline InterfaceProperty &operator-=(double rhs) {
         prop_root->setProperty(prop_name, QVariant((T)(*this) - rhs));
 
         return *this;
     }
 
-    inline AOGIFace_Property &operator=(T newvalue) { prop_root->setProperty(prop_name, QVariant(newvalue)); return *this;}
+    inline InterfaceProperty &operator=(T newvalue) { prop_root->setProperty(prop_name, QVariant(newvalue)); return *this;}
 
 };
 
-#endif // AOGIFACE_PROPERTY_H
+#endif // INTERFACEPROPERTY_H

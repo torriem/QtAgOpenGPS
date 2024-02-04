@@ -554,5 +554,10 @@
         <file>images/Config/Con_Display.png</file>
         <file>qml/ConfigDisplay.qml</file>
         <file>qml/SpinBoxKM.qml</file>
+        <file>qml/interfaces/FieldInterface.qml</file>
+        <file>qml/interfaces/VehicleInterface.qml</file>
+        <file>qml/interfaces/LinesInterface.qml</file>
+        <file>qml/TitleFrame.qml</file>
+        <file>qml/SpinBoxM.qml</file>
     </qresource>
 </RCC>

@@ -176,7 +176,7 @@ Item {
 
     function m_unit() {
         if (isMetric())
-            return qsTr("metre", "metre")
+            return qsTr("metres")
         else
             return qsTr("feet", "imperial feet")
     }

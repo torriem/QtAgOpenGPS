@@ -36,7 +36,6 @@ Button {
     //This is specific to this base type... must be re-implemented in subtypes
     onCheckedChanged: {
         isChecked = checked
-
     }
 
 
@@ -52,47 +51,10 @@ Button {
 
     background: Rectangle {
         border.width: icon_button.border
-        //border.width: icon_button.border
+        border.color: icon_button.enabled ? "black" : "grey"
         radius: 10
         id: icon_button_background
-//        color: icon_button.color
+        color: icon_button.checked ? icon_button.colorChecked : icon_button.color
 
-//        states: [
-//            State {
-//                when: icon_button.down
-//                name: "pressedUnchecked"
-//                color: icon_button.color
-//            },
-//            State {
-//                when: icon_button.down && icon_button.checked
-//                name: "pressedChecked"
-//                color: icon_button.color
-//            },
-//            State {
-//                when: ! icon_button.down && icon_button.checked
-//                name: "checked"
-//                color: icon_button.colorChecked
-//            },
-//            State {
-//                when: ! icon_button.down && ! icon_button.checked && ! icon_button.hovered
-//                name: "up"
-//                color: icon_button.color
-//            },
-//            State {
-//                when: icon_button.hovered
-//                name: "hovered"
-//                color: icon_button.colorHover
-//            }
-//        ]
-//        Text {
-//            id: text1
-//            text: icon_button.text
-//            anchors.bottom: parent.top
-//            anchors.left: parent.left
-//            font.bold: true
-//            font.pixelSize: parent.height * 0.2
-//            z: 1
-//            visible: true
-//        }
     }
 }

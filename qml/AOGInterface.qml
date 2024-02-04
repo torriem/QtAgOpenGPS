@@ -28,6 +28,9 @@ Item {
         }
     }
     */
+    //Primarily these properties are updated by the backend c++ code
+    //signals and data structures for specific UI functions are now
+    //in the interfaces qml directory
 
     property double frameTime: 0
 
@@ -63,6 +66,8 @@ Item {
     property double toolLongitude: 0
     property double toolHeading: 0
     property double imuRollDegrees: 0
+    signal changeImuRoll(double new_roll) //usually just set to 88888;
+
     property double speedKph: 0
     property double offlineDistance: 32000
     property double avgPivDistance: 32000
@@ -84,7 +89,10 @@ Item {
     property int fixQuality: 0
     property int ageAlarm: 0
     property int satellitesTracked: 0
+
     property double imuHeading: 0
+    signal changeImuHeading(double newImuHeading)
+
     property int angVel: 0//angular velocity I assume
     property string timeTilFinished: ""
     property string workRate: "value"
@@ -98,8 +106,6 @@ Item {
     property double missedSentences: 0
     property double gpsHeading: 0
     property double fusedHeading: 0
-
-
 
     property bool isTrackOn: false //checks if a guidance line is set.
     onCurrentABLineChanged: {
@@ -116,32 +122,9 @@ Item {
     property int currentABLine: -1
     property int currentABCurve: -1
 
-    property double currentABLine_heading: 0
+    property double currentABLine_heading: 0 //TODO delete or move to interfaces/LinesInterface.qml.  seems to be unused
 
     property int current_trackNum: 0
-
-    property var abLinesList: [
-        {index: 0, name: "one", easting: 3, northing: 4, heading: 75, visible: true },
-        {index: 1, name: "two", easting: 3, northing: 4, heading: 75, visible: true },
-        {index: 2, name: "three", easting: 3, northing: 4, heading: 75, visible: true },
-        {index: 3, name: "four", easting: 3, northing: 4, heading: 75, visible: true }
-    ]
-
-    property var abCurvesList: [
-        {index: 0, name: "one", visible: true },
-        {index: 1, name: "two", visible: true },
-        {index: 2, name: "three", visible: true }
-    ]
-
-    signal abLine_updateLines()
-
-    signal abLine_addLine(string name, double easting, double northing, double heading)
-    signal abLine_deleteLine(int index)
-    //signal changeABLineName(int lineno, string new_name)
-    signal abLine_changeName(int which_one, string new_name)
-    signal abLine_setA(bool start_or_cancel, double easting, double northing, double heading) //true to mark point, false to cancel new point
-    signal abLine_swapHeading(int index)
-
 
     //on-screen buttons
 
@@ -155,42 +138,11 @@ Item {
     signal settings_revert() //revert to temporary copy of all settings
     signal settings_save() //sync to disk, and also copy to current vehicle file, if active
 
-    signal vehicle_saveas(string vehicle_name)
-    signal vehicle_load(string vehicle_name)
-    signal vehicle_delete(string vehicle_name)
-    signal vehicle_update_list()
+    //boundary properties from main form
+    property bool isBoundaryBeingMade: false
+    property double createBndOffset: 0
 
-    property var vehicle_list: [
-        { index: 0, name: "tractor" }
-    ]
-
-    //Field loading saving interface
-    signal field_update_list()
-    signal field_new(string field_name)
-    signal field_open(string field_name)
-    signal field_new_from(string existing_field, string new_field, int flags)
-    signal field_close()
-    signal field_delete(string field_name)
-
-    readonly property int loadMapping: 1
-    readonly property int loadHeadland: 2
-    readonly property int loadLines: 4
-    readonly property int loadFlags: 8
-
-    property var field_list: [
-        { index: 0, name: "test3", latitude: 53, longitude: -111, hasBoundary: true, boundaryArea: 1232312 },
-        { index: 1, name: "test1", latitude: 53.004, longitude: -111, hasBoundary: true, boundaryArea: -10 },
-        { index: 2, name: "test2", latitude: 53.1, longitude: -111.2, hasBoundary: true, boundaryArea: -10 },
-        { index: 3, name: "test3", latitude: 53.02, longitude: -111, hasBoundary: true, boundaryArea: 1232312 },
-        { index: 4, name: "test1", latitude: 53.004, longitude: -111, hasBoundary: true, boundaryArea: -10 },
-        { index: 5, name: "test2", latitude: 53.1, longitude: -111.2, hasBoundary: true, boundaryArea: -10 },
-        { index: 6, name: "test3", latitude: 53.009, longitude: -111, hasBoundary: true, boundaryArea: 1232312 },
-        { index: 7, name: "test1", latitude: 53.004, longitude: -111, hasBoundary: true, boundaryArea: -10 },
-        { index: 8, name: "test2", latitude: 53.1, longitude: -111.2, hasBoundary: true, boundaryArea: -10 },
-        { index: 9, name: "test3", latitude: 53.2, longitude: -111, hasBoundary: true, boundaryArea: 1232312 },
-        { index: 10, name: "test1", latitude: 53.004, longitude: -111, hasBoundary: true, boundaryArea: -10 },
-        { index: 11, name: "test2", latitude: 53.1, longitude: -111.2, hasBoundary: true, boundaryArea: -10 }
-    ]
+    signal modules_send_238()
 
     property double mPerDegreeLat
     property double mPerDegreeLon

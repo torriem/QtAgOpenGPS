@@ -14,7 +14,7 @@ Drawer {
     modal: true
 
     onVisibleChanged: {
-        aog.field_update_list()
+        fieldInterface.field_update_list()
     }
 
     contentItem: Rectangle{
@@ -88,7 +88,7 @@ Drawer {
 
                 onClicked: {
                     fieldMenu.visible = false
-                    aog.field_open(settings.setF_CurrentDir)
+                    fieldInterface.field_open(settings.setF_CurrentDir)
                 }
             }
             IconButtonTextBeside{
@@ -98,7 +98,7 @@ Drawer {
                 icon.source: "/images/FileClose.png"
                 enabled: aog.isJobStarted
                 onClicked: {
-                    aog.field_close()
+                    fieldInterface.field_close()
                     fieldMenu.visible = false
                 }
 

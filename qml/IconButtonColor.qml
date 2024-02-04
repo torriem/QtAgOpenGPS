@@ -13,7 +13,12 @@ Button {
     icon.color: "transparent"
 
     property double iconHeightScaleText: 0.75
-    property int border: 2
+
+    property alias border: icon_button_background.border
+    property alias radius: icon_button_background.radius
+
+    property color borderColorEnabled: "black"
+    property color borderColorDisabled: "grey"
 
     property color color1: "white"
     property color color2: "#ffffff"
@@ -85,6 +90,7 @@ Button {
             anchors.margins: 10
             fillMode: Image.PreserveAspectFit
             source: icon_button.icon.source
+            z:1
         }
 
         Colorize {
@@ -106,14 +112,14 @@ Button {
             font.pixelSize: parent.height * 0.2
             visible: true
         }
-
-
-
     }
 
     background: Rectangle {
-        border.width: icon_button.border
+        border.width: 1
         //border.width: icon_button.border
+        border.color: icon_button.enabled ?
+                          icon_button.borderColorEnabled :
+                          icon_button.borderColorDisabled
         radius: 10
         id: icon_button_background
         z: 0
@@ -143,26 +149,28 @@ Button {
                 name: "pressedUnchecked"
                 PropertyChanges {
                     target: gradientStop1
-                    color: icon_button.color3
+                    //color: icon_button.color3
+                    color: icon_button.colorChecked1
                 }
                 PropertyChanges {
                     target: gradientStop2
-                    color: icon_button.color3
+                    //color: icon_button.color3
+                    color: icon_button.colorChecked2
                 }
                 PropertyChanges {
                     target: gradientStop3
-                    color: icon_button.color1
+                    //color: icon_button.color1
+                    color: icon_button.colorChecked3
                 }
                /* PropertyChanges {
                     target: icon_button_background
                     border.width: 5
                 }*/
-                /*
+
                 PropertyChanges {
                     target: content_image
                     source: icon_button.icon.source
                 }
-                */
 
             },
             State {
@@ -186,7 +194,7 @@ Button {
                 }*/
                 PropertyChanges {
                     target: content_image
-                    source: icon_button.icon.source
+                    source: icon_button.iconChecked != "" ? icon_button.iconChecked : icon_button.icon.source
                 }
             },
             State {
@@ -208,12 +216,12 @@ Button {
                     target: icon_button_background
                     border.width: 0
                 }*/
-                /*
+
                 PropertyChanges {
                     target: content_image
-                    source: (icon_button.iconChecked ? icon_button.iconChecked : icon_button.icon.source)
+                    source: icon_button.iconChecked != "" ? icon_button.iconChecked : icon_button.icon.source
                 }
-                */
+
             },
             State {
                 when: ! icon_button.down && ! icon_button.checked && ! icon_button.hovered
@@ -234,12 +242,10 @@ Button {
                     target: icon_button_background
                     border.width: 0
                 }*/
-                /*
                 PropertyChanges {
                     target: content_image
                     source: icon_button.icon.source
                 }
-                */
            },
             State {
                 when: icon_button.hovered
@@ -260,12 +266,10 @@ Button {
                     target: gradientStop3
                     color: icon_button.colorHover3
                 }
-                /*
                 PropertyChanges {
                     target: content_image
                     source: icon_button.icon.source
                 }
-                */
             }
         ]
 

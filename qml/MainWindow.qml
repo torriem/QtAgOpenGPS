@@ -5,6 +5,8 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 import AgOpenGPS 1.0
 
+import "interfaces"
+
 Window {
 
     //We draw native opengl to this root object
@@ -22,19 +24,24 @@ Window {
     //    id: settings
     //}
 
-    Component.onCompleted: {
-        aog.field_update_list()
-    }
-
-
     AOGInterface {
         id: aog
         objectName: "aog"
+    }
 
-        onIsJobStartedChanged: {
-            console.debug("isJobStarted changed!")
-        }
+    LinesInterface {
+        objectName: "linesInterface"
+        id: linesInterface
+    }
 
+    FieldInterface {
+        id: fieldInterface
+        objectName: "fieldInterface"
+    }
+
+    VehicleInterface {
+        id: vehicleInterface
+        objectName: "vehicleInterface"
     }
 
     UnitConversion {

@@ -43,7 +43,6 @@
 #include "cguidance.h"
 #include "cheadline.h"
 #include "cpgn.h"
-#include "aogiface_property.h"
 
 //forward declare classes referred to below, to break circular
 //references in the code
@@ -144,8 +143,8 @@ public:
     bool /*isJobStarted = false,*/ isAreaOnRight = true /*, isAutoSteerBtnOn = false*/;
 
     //this bool actually lives in the QML aog object.
-    AOGIFace_Property<bool> isJobStarted = AOGIFace_Property<bool>("isJobStarted");
-    AOGIFace_Property<bool> isAutoSteerBtnOn = AOGIFace_Property<bool>("isAutoSteerBtnOn");
+    InterfaceProperty<AOGInterface,bool> isJobStarted = InterfaceProperty<AOGInterface,bool>("isJobStarted");
+    InterfaceProperty<AOGInterface,bool> isAutoSteerBtnOn = InterfaceProperty<AOGInterface,bool>("isAutoSteerBtnOn");
 
     //if we are saving a file
     bool isSavingFile = false, isLogElevation = false;
@@ -254,8 +253,8 @@ public:
     //master Manual and Auto, 3 states possible
     //btnStates manualBtnState = btnStates::Off;
     //btnStates autoBtnState = btnStates::Off;
-    AOGIFace_Property<btnStates> manualBtnState = AOGIFace_Property<btnStates>("manualBtnState");
-    AOGIFace_Property<btnStates> autoBtnState = AOGIFace_Property<btnStates>("manualBtnState");
+    InterfaceProperty<AOGInterface,btnStates> manualBtnState = InterfaceProperty<AOGInterface,btnStates>("manualBtnState");
+    InterfaceProperty<AOGInterface,btnStates> autoBtnState = InterfaceProperty<AOGInterface,btnStates>("manualBtnState");
 
 private:
 public:
@@ -691,6 +690,9 @@ public slots:
     void field_new(QString field_name);
     void field_new_from(QString existing, QString field_name, int flags);
     void field_delete(QString field_name);
+
+    //modules ui callback
+    void modules_send_238();
 
     //left column
     void onBtnAcres_clicked();

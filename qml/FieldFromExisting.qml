@@ -81,8 +81,8 @@ Popup {
                 selectByMouse: true
 
                 onTextChanged: {
-                    for (var i=0; i < aog.field_list.length ; i++) {
-                        if (text === aog.field_list[i].name) {
+                    for (var i=0; i < fieldInterface.field_list.length ; i++) {
+                        if (text === fieldInterface.field_list[i].name) {
                             errorMessage.visible = true
                             break
                         } else
@@ -230,16 +230,16 @@ Popup {
                             newField.text != existingField.text) {
                         var flag = 0;
                         if (btnKeepFlags.checked)
-                            flag |= aog.loadFlags
+                            flag |= fieldInterface.loadFlags
                         if (btnKeepHeadland.checked)
-                            flag |= aog.loadHeadland
+                            flag |= fieldInterface.loadHeadland
                         if (btnKeepLines.checked)
-                            flag |= aog.loadLines
+                            flag |= fieldInterface.loadLines
                         if (btnKeepMapping.checked)
-                            flag |= aog.loadMapping
+                            flag |= fieldInterface.loadMapping
 
                         fieldFromExisting.visible = false
-                        aog.field_new_from(fieldView.currentFieldName, newField.text, flag)
+                        fieldInterface.field_new_from(fieldView.currentFieldName, newField.text, flag)
                         newField.text = ""
                         existingField.text = ""
                         fieldView.clear_selection()

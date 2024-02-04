@@ -13,7 +13,7 @@ Item {
     onVisibleChanged: {
         if(visible)
             //ask backend to refresh our list of vehicles
-            aog.vehicle_update_list()
+            vehicleInterface.vehicle_update_list()
     }
 
     Rectangle{
@@ -40,7 +40,7 @@ Item {
         TextLine{ text: qsTr("Wheelbase: ")+ utils.cm_to_unit_string(settings.setVehicle_wheelbase, 0)+ " "+ utils.cm_unit_abbrev() }
     }
         Rectangle{
-            id: vehicleList
+            id: vehicleListRect
             border.color: "black"
             color: "light gray"
             visible: true
@@ -51,18 +51,18 @@ Item {
             anchors.rightMargin: 30
 
             function refresh_model() {
-                fieldList.clear()
-                for (var i=0; i < aog.vehicle_list.length ; i++) {
-                    //console.debug(aog.vehicle_list[i])
-                    fieldList.append( { index: aog.vehicle_list[i].index,
-                                         name: aog.vehicle_list[i].name })
+                vehicleList.clear()
+                for (var i=0; i < vehicleInterface.vehicle_list.length ; i++) {
+                    //console.debug(vehicleInterface.vehicle_list[i])
+                    vehicleList.append( { index: vehicleInterface.vehicle_list[i].index,
+                                         name: vehicleInterface.vehicle_list[i].name })
                 }
             }
 
             Connections {
-                target: aog
+                target: vehicleInterface
                 function onVehicle_listChanged() {
-                    vehicleList.refresh_model()
+                    vehicleListRect.refresh_model()
                 }
             }
 
@@ -76,7 +76,7 @@ Item {
                 anchors.margins: 1
 
                 model : ListModel{
-                    id: fieldList
+                    id: vehicleList
                 }
 
                 property string selectedVehicle: ""
@@ -127,7 +127,7 @@ Item {
             anchors.top: currentVehicle.bottom
             anchors.right: configWhichVehicle.right
             height: 75
-            width: vehicleList.width
+            width: vehicleListRect.width
             color: parent.color
             IconButtonTransparent{
                 id: vehFileSaveAs
@@ -140,11 +140,11 @@ Item {
                 onClicked: {
                     if (saveAsVehicle.text != "") {
                         //console.debug("Going to save", saveAsVehicle.text)
-                        aog.vehicle_saveas(saveAsVehicle.text)
+                        vehicleInterface.vehicle_saveas(saveAsVehicle.text)
                         //just setting the name is probably enough to get it to save the vehicle
                         settings.setVehicle_vehicleName = saveAsVehicle.text
                         saveAsVehicle.text = ""
-                        aog.vehicle_update_list()
+                        vehicleInterface.vehicle_update_list()
                     }
                 }
             }
@@ -178,7 +178,7 @@ Item {
             border: 2
             onClicked: {
                 if (vehicleListView.selectedVehicle != "" ) {
-                    aog.vehicle_load(vehicleListView.selectedVehicle)
+                    vehicleInterface.vehicle_load(vehicleListView.selectedVehicle)
                     settings.setVehicle_vehicleName = vehicleListView.selectedVehicle
                 }
             }
@@ -196,10 +196,10 @@ Item {
             onClicked: {
                 //settings.setMenu_isMetric = !utils.isTrue(settings.setMenu_isMetric)
                 //console.debug("qml says settings ismetric is",settings.setMenu_isMetric)
-                //aog.vehicle_delete("testing123")
+                //vehicleInterface.vehicle_delete("testing123")
                 if (vehicleListView.selectedVehicle != "" ) {
-                    aog.vehicle_delete(vehicleListView.selectedVehicle)
-                    aog.vehicle_update_list()
+                    vehicleInterface.vehicle_delete(vehicleListView.selectedVehicle)
+                    vehicleInterface.vehicle_update_list()
                 }
             }
         }
