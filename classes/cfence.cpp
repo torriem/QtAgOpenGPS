@@ -52,7 +52,8 @@ bool CBoundary::IsPointInsideFenceArea(Vec2 testPoint) const
 
 void CBoundary::DrawFenceLines(const CVehicle &v, const CModuleComm &mc,
                                QOpenGLFunctions *gl,
-                                 const QMatrix4x4 &mvp)
+                               const QMatrix4x4 &mvp,
+                               QVector2D viewport)
 {
     QColor color;
     float line_width;
@@ -73,7 +74,7 @@ void CBoundary::DrawFenceLines(const CVehicle &v, const CModuleComm &mc,
 
     for (int i = 0; i < bndList.count(); i++)
     {
-        DrawPolygon(gl,mvp,bndList[i].fenceLineEar,line_width,color);
+        DrawPolygon(gl,mvp,bndList[i].fenceLineEar,line_width,color, true, viewport);
     }
 
 

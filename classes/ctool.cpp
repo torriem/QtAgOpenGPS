@@ -249,10 +249,12 @@ void CTool::DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 pro
         color.setRgbF(0.5f, 0.80f, 0.950f);
         for (int i = 1; i < zones; i++)
         {
+            gldraw.append(QVector3D(section[zoneRanges[i]].positionLeft, trailingTool - 0.6, 0));
             gldraw.append(QVector3D(section[zoneRanges[i]].positionLeft, trailingTool - 0.4, 0));
             gldraw.append(QVector3D(section[zoneRanges[i]].positionLeft, trailingTool + 0.2, 0));
+            gldraw.append(QVector3D(section[zoneRanges[i]].positionLeft, trailingTool + 0.4, 0));
         }
-        gldraw.draw(gl, projection * mv, color, GL_LINES, 2.0f);
+        gldraw.draw(gl, projection * mv, color, GL_LINES_ADJACENCY, 2.0f, true, viewport);
     }
 
     float pointSize;

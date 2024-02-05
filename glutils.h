@@ -98,8 +98,8 @@ void drawText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString 
 void drawText3D(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp, double x1, double y1, QString text, double size = 1.0, bool colorize = false, QColor color = QColor::fromRgbF(1,1,1));
 void drawTextVehicle(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp, double x, double y, QString text, double size = 1.0, bool colorize = false, QColor color = QColor::fromRgbF(1,1,1));
 
-void DrawPolygon(QOpenGLFunctions *gl, QMatrix4x4 mvp, QVector<Vec2> &polygon, float size, QColor color);
-void DrawPolygon(QOpenGLFunctions *gl, QMatrix4x4 mvp, QVector<Vec3> &polygon, float size, QColor color);
+void DrawPolygon(QOpenGLFunctions *gl, QMatrix4x4 mvp, QVector<Vec2> &polygon, float size, QColor color, bool use_geometry = false, QVector2D viewport = QVector2D(0,0));
+void DrawPolygon(QOpenGLFunctions *gl, QMatrix4x4 mvp, QVector<Vec3> &polygon, float size, QColor color, bool use_geometry = false, QVector2D viewport = QVector2D(0,0));
 
 class GLHelperOneColor: public QVector<QVector3D>
 {

@@ -429,18 +429,18 @@ void FormGPS::oglMain_Paint()
             if (bnd.bndList.count() > 0 || bnd.isBndBeingMade == true)
             {
                 //draw Boundaries
-                bnd.DrawFenceLines(vehicle, mc, gl, projection*modelview);
+                bnd.DrawFenceLines(vehicle, mc, gl, projection*modelview, QVector2D(width, height));
 
                 //draw the turnLines
                 if (yt.isYouTurnBtnOn && ! ct.isContourBtnOn)
                 {
-                    bnd.DrawFenceLines(vehicle,mc,gl,projection*modelview);
+                    bnd.DrawFenceLines(vehicle,mc,gl,projection*modelview, QVector2D(width, height));
 
                     color.setRgbF(0.0f, 0.95f, 0.95f); //TODO: not sure what color turnLines should actually be
 
                     for (int i = 0; i < bnd.bndList.count(); i++)
                     {
-                        DrawPolygon(gl,projection*modelview,bnd.bndList[i].turnLine,(float)property_setDisplay_lineWidth,color);
+                        DrawPolygon(gl,projection*modelview,bnd.bndList[i].turnLine,(float)property_setDisplay_lineWidth,color, true, QVector2D(width, height));
                     }
                 }
 
@@ -448,7 +448,7 @@ void FormGPS::oglMain_Paint()
                 if (bnd.isHeadlandOn)
                 {
                     color.setRgbF(0.960f, 0.96232f, 0.30f);
-                    DrawPolygon(gl,projection*modelview,bnd.bndList[0].hdLine,(float)property_setDisplay_lineWidth,color);
+                    DrawPolygon(gl,projection*modelview,bnd.bndList[0].hdLine,(float)property_setDisplay_lineWidth,color, true, QVector2D(width, height));
                 }
             }
 

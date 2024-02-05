@@ -331,29 +331,56 @@ void glDrawArraysTexture(QOpenGLFunctions *gl,
     texShader->release();
     gl->glDisable(GL_TEXTURE_2D);
 }
-void DrawPolygon(QOpenGLFunctions *gl, QMatrix4x4 mvp, QVector<Vec2> &polygon, float size, QColor color)
+void DrawPolygon(QOpenGLFunctions *gl, QMatrix4x4 mvp, QVector<Vec2> &polygon, float size, QColor color, bool use_geometry, QVector2D viewport)
 {
     GLHelperOneColor gldraw;
     if (polygon.count() > 2)
     {
+        if(use_geometry)
+            gldraw.append( {0,0,0} ); //spot for adjacent vertex
+
         for (int i = 0; i < polygon.count() ; i++)
         {
             gldraw.append(QVector3D(polygon[i].easting, polygon[i].northing, 0));
         }
-        gldraw.draw(gl, mvp, color, GL_LINE_LOOP, size);
+
+        if (use_geometry) {
+            //add the last point as the first adjacent point
+            gldraw[0] = gldraw[polygon.count()];
+            //add the first point as the last point
+            gldraw.append(gldraw.at(1));
+            //add the second point as final adjacent point
+            gldraw.append(gldraw.at(2));
+            gldraw.draw(gl, mvp, color, GL_LINE_STRIP_ADJACENCY, size, use_geometry, viewport);
+        } else {
+            gldraw.draw(gl, mvp, color, GL_LINE_LOOP, size);
+        }
     }
 }
 
-void DrawPolygon(QOpenGLFunctions *gl, QMatrix4x4 mvp, QVector<Vec3> &polygon, float size, QColor color)
+void DrawPolygon(QOpenGLFunctions *gl, QMatrix4x4 mvp, QVector<Vec3> &polygon, float size, QColor color, bool use_geometry, QVector2D viewport)
 {
     GLHelperOneColor gldraw;
     if (polygon.count() > 2)
     {
+        if(use_geometry)
+            gldraw.append( {0,0,0} ); //spot for adjacent vertex
+
         for (int i = 0; i < polygon.count() ; i++)
         {
             gldraw.append(QVector3D(polygon[i].easting, polygon[i].northing, 0));
         }
-        gldraw.draw(gl, mvp, color, GL_LINE_LOOP, size);
+        if (use_geometry) {
+            //add the last point as the first adjacent point
+            gldraw[0] = gldraw[polygon.count()];
+            //add the first point as the last point
+            gldraw.append(gldraw.at(1));
+            //add the second point as final adjacent point
+            gldraw.append(gldraw.at(2));
+            gldraw.draw(gl, mvp, color, GL_LINE_STRIP_ADJACENCY, size, use_geometry, viewport);
+        } else {
+            gldraw.draw(gl, mvp, color, GL_LINE_LOOP, size);
+        }
     }
 }
 

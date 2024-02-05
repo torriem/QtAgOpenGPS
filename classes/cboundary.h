@@ -68,7 +68,8 @@ public:
     //CFence.cs
     bool IsPointInsideFenceArea(Vec3 testPoint) const ;
     bool IsPointInsideFenceArea(Vec2 testPoint) const;
-    void DrawFenceLines(const CVehicle &v, const CModuleComm &mc, QOpenGLFunctions *g, const QMatrix4x4 &mvp);
+    void DrawFenceLines(const CVehicle &v, const CModuleComm &mc, QOpenGLFunctions *g, const QMatrix4x4 &mvp,
+                        QVector2D viewport);
 
     //CTurn.sh
     int IsPointInsideTurnArea(Vec3 pt) const;
