@@ -10,7 +10,7 @@ Rectangle{
 	anchors.fill: parent
 	visible: true
 	color: "ghostwhite"
-	Text{
+    TextLine{
 		id: text
 		anchors.top: parent.top
 		anchors.horizontalCenter: parent.horizontalCenter

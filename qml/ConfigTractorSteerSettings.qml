@@ -123,6 +123,9 @@ Rectangle{
                 isChecked: settings.setAS_isAutoSteerAutoOn
                 onCheckableChanged: settings.setAS_isAutoSteerAutoOn = checked
                 text: qsTr("Steer Switch Control")
+                font.pixelSize:15
+                implicitWidth: 120
+                implicitHeight: 150
             }
 
         //}
@@ -135,7 +138,7 @@ Rectangle{
         width: 250
         anchors.margins: 20
         color: "transparent"
-        Text{
+        TextLine{
             id: linewidthtitletxt
             text: qsTr("Line Width")
             anchors.top: parent.top
@@ -173,7 +176,7 @@ Rectangle{
         width: 350
         anchors.margins: 20
         color: "transparent"
-        Text{
+        TextLine{
             id: nudgedisttitletxt
             text: qsTr("Nudge Distance")
             anchors.top: parent.top
@@ -211,7 +214,7 @@ Rectangle{
         height: 100
         width: 350
         color: "transparent"
-        Text{
+        TextLine{
             id: lineacqLAheadtitletxt
             text: qsTr("Line Acquire Look Ahead")
             anchors.top: parent.top
@@ -316,12 +319,17 @@ Rectangle{
                 width: parent.width
                 height: 90
             }
-            /*SpinBoxCustomized{
+
+            //The from and to values are deg/sce, but the final value output is in radians always
+            SpinBoxCustomized {
+                id: spinner
                 from: 5
                 to: 100
-                boundValue: settings.setVehicle_maxAngularVelocity
-                onValueModified: settings.setVehicle_maxAngularVelocity = value
-            }*/
+                editable: true
+                value: utils.radians_to_deg(settings.setVehicle_maxAngularVelocity) // should be in radians!
+                onValueChanged: settings.setVehicle_maxAngularVelocity = utils.deg_to_radians(value)
+                //stepSize: spinBoxCM.stepSize
+            }
             TextLine{ text: qsTr("Degrees/sec")}
         }
     }

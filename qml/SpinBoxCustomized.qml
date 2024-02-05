@@ -10,6 +10,7 @@ Item {
 	property int stepSize: 1
     property bool editable
     property int boundValue
+    property int fontPixelSize: 15
 
     signal valueModified()
 
@@ -65,6 +66,7 @@ Item {
         text: spinBox_Customized.text
         anchors.bottom: spinner.top
         anchors.left: spinner.left
+        font.pixelSize: spinBox_Customized.fontPixelSize
     }
 
     Text {

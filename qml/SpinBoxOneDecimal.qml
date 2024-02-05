@@ -67,6 +67,7 @@ Item {
         text: spinBox_singledigit.text
         anchors.bottom: spinner.top
         anchors.left: spinner.left
+        font.pixelSize: 15
     }
     Text {
         id: spin_message

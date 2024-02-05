@@ -109,7 +109,8 @@ Button {
             anchors.bottom: parent.top
             anchors.left: parent.left
             font.bold: true
-            font.pixelSize: parent.height * 0.2
+            font.pixelSize: 15
+            //font.pixelSize: parent.height * 0.2
             visible: true
         }
     }
