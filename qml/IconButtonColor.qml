@@ -20,17 +20,19 @@ Button {
     property color borderColorEnabled: "black"
     property color borderColorDisabled: "grey"
 
-    property color color1: "white"
-    property color color2: "#ffffff"
-    property color color3: "#ffffff"
+    property color color1: color //redneck code
+    property color color2: color
+    property color color3: color
 
     property color colorHover1: "white"
     property color colorHover2: "white"
     property color colorHover3: "white"
 
-    property color colorChecked1: "green"
-    property color colorChecked2: "green"
-    property color colorChecked3: "green"
+    property color colorChecked1: colorChecked
+    property color colorChecked2: colorChecked
+    property color colorChecked3: colorChecked
+    property color color: "white"
+    property color colorChecked: "green"
 
 
     //For compatibility with the old IconButton and friends

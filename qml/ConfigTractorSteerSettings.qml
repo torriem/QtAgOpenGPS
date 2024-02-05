@@ -118,8 +118,10 @@ Rectangle{
                 anchors.right: parent.right
                 anchors.top:parent.top
                 anchors.margins: 40
-                icon.source: "/images/AutoSteerOn.png"
+                icon.source: "/images/AutoSteerOff.png"
+                iconChecked: "/images/AutoSteerOn.png"
                 checkable: true
+                color: "red"
                 isChecked: settings.setAS_isAutoSteerAutoOn
                 onCheckableChanged: settings.setAS_isAutoSteerAutoOn = checked
                 text: qsTr("Steer Switch Control")
