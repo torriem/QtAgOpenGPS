@@ -91,7 +91,8 @@ public:
     //additiona transformations need to be done.
     void DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 projection,
                   bool isJobStarted,
-                  CVehicle &v, CCamera &camera, CTram &tram);
+                  CVehicle &v, CCamera &camera, CTram &tram,
+                  QVector2D viewport);
 };
 
 #endif // CTOOL_H

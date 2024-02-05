@@ -466,7 +466,7 @@ void FormGPS::oglMain_Paint()
 
             //draw the vehicle/implement
             QMatrix4x4 mv = modelview; //push matrix
-            tool.DrawTool(gl,modelview, projection,isJobStarted,vehicle, camera,tram);
+            tool.DrawTool(gl,modelview, projection,isJobStarted,vehicle, camera,tram, QVector2D(width, height));
             double steerangle;
             if(timerSim.isActive()) steerangle = sim.steerangleAve;
             else steerangle = mc.actualSteerAngleDegrees;
