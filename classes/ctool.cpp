@@ -116,22 +116,13 @@ void CTool::DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 pro
         gldraw.append(QVector3D(-0.57, trailingTank, 0.0));
         gldraw.append(QVector3D(0, 0, 0));
         gldraw.append(QVector3D(0.57,trailingTank, 0.0));
-
-
-        gldraw.append(QVector3D(-0.57, trailingTank, 0.0));
-        gldraw.append(QVector3D(0, 0, 0));
-        gldraw.append(QVector3D(0.57,trailingTank, 0.0));
-        gldraw.append(QVector3D(-0.57, trailingTank, 0.0));
-
-        gldraw.append(QVector3D(0, 0, 0));
-        gldraw.append(QVector3D(0.57,trailingTank, 0.0));
         gldraw.append(QVector3D(-0.57, trailingTank, 0.0));
         gldraw.append(QVector3D(0, 0, 0));
 
-        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.0, 0.0, 0.0), GL_LINES_ADJACENCY, 6.0f, true, viewport );
+        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.0, 0.0, 0.0), GL_LINE_STRIP_ADJACENCY, 6.0f, true, viewport );
 
         //draw the rigid hitch
-        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.765f, 0.76f, 0.32f),GL_LINES_ADJACENCY, 1.0f);
+        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.765f, 0.76f, 0.32f),GL_LINE_STRIP_ADJACENCY, 1.0f);
 
         //move down the tank hitch, unwind, rotate to section heading
         mv.translate(0.0, trailingTank, 0.0);
