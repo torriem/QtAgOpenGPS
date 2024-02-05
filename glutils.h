@@ -72,7 +72,11 @@ void glDrawArraysColor(QOpenGLFunctions *gl, QMatrix4x4 mvp,
                        GLenum operation, QColor color,
                        QOpenGLBuffer &vertexBuffer, GLenum glType,
                        int count,
-                       float pointSize=1.0f);
+                       float pointSize=1.0f,
+                       bool use_geometry = false,
+                       QVector2D viewport = QVector2D(1,1)
+                       );
+
 //Simple wrapper to draw primitives using lists of vec3s or QVector3Ds
 //with a color per vertex. Buffer format is 7 values per vertice:
 //x,y,z,r,g,b,a
@@ -101,7 +105,7 @@ class GLHelperOneColor: public QVector<QVector3D>
 {
 public:
     GLHelperOneColor();
-    void draw(QOpenGLFunctions *gl, QMatrix4x4 mvp, QColor color, GLenum operation, float point_size);
+    void draw(QOpenGLFunctions *gl, QMatrix4x4 mvp, QColor color, GLenum operation, float point_size, bool use_geometry=false, QVector2D viewport = QVector2D(1,1));
 };
 
 class GLHelperColors: public QVector<ColorVertex>

@@ -59,8 +59,9 @@ void initializeShaders() {
 
     if (!singleColorLineShader) {
         singleColorLineShader = new QOpenGLShaderProgram(QThread::currentThread()); //memory managed by Qt
-        assert(singleColorLineShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/color_line.vsh"));
-        assert(singleColorLineShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/color_line.fsh"));
+        assert(singleColorLineShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/thick_vshader.vsh"));
+        assert(singleColorLineShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/thick_fshader.fsh"));
+        assert(singleColorLineShader->addShaderFromSourceFile(QOpenGLShader::Geometry, ":/shaders/thick_gshader.gsh"));
         assert(singleColorLineShader->link());
     }
 }
@@ -185,25 +186,35 @@ void glDrawArraysColor(QOpenGLFunctions *gl,
                        QOpenGLBuffer &vertexBuffer,
                        GLenum GL_type,
                        int count,
-                       float pointSize)
+                       float pointSize,
+                       bool use_geometry,
+                       QVector2D viewport)
 {
+    QOpenGLShaderProgram *shader;
+
+    if(use_geometry)
+        shader = singleColorLineShader;
+    else
+        shader = simpleColorShader;
+
     //bind shader
-    assert(simpleColorShader->bind());
+    assert(shader->bind());
     //set color
-    simpleColorShader->setUniformValue("color", color);
+    shader->setUniformValue("color", color);
     //set mvp matrix
-    simpleColorShader->setUniformValue("mvpMatrix", mvp);
+    shader->setUniformValue("mvpMatrix", mvp);
 
-    simpleColorShader->setUniformValue("pointSize", pointSize);
-
+    shader->setUniformValue("pointSize", pointSize);
+    shader->setUniformValue("miterLimit", (float)0.75);
+    shader->setUniformValue("Viewport", viewport);
 
     vertexBuffer.bind();
 
     //TODO: these require a VBA to be bound; we need to create them I suppose.
     //enable the vertex attribute array in shader
-    simpleColorShader->enableAttributeArray("vertex");
+    shader->enableAttributeArray("vertex");
     //use attribute array from buffer, using non-normalized vertices
-    gl->glVertexAttribPointer(simpleColorShader->attributeLocation("vertex"),
+    gl->glVertexAttribPointer(shader->attributeLocation("vertex"),
                               3, //3D vertices
                               GL_type, //type of data GL_FLAOT or GL_DOUBLE
                               GL_FALSE, //not normalized vertices!
@@ -216,7 +227,7 @@ void glDrawArraysColor(QOpenGLFunctions *gl,
     //release buffer
     vertexBuffer.release();
     //release shader
-    simpleColorShader->release();
+    shader->release();
 }
 
 //Buffer should be a list of 7D tuples.  3 values for x,y,z,
@@ -570,7 +581,9 @@ void drawTextVehicle(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp
 GLHelperOneColor::GLHelperOneColor() {
 }
 
-void GLHelperOneColor::draw(QOpenGLFunctions *gl, QMatrix4x4 mvp, QColor color, GLenum operation, float point_size) {
+void GLHelperOneColor::draw(QOpenGLFunctions *gl, QMatrix4x4 mvp, QColor color,
+                            GLenum operation, float point_size,
+                            bool use_geometry, QVector2D viewport) {
     QOpenGLBuffer vertexBuffer;
 
     vertexBuffer.create();
@@ -581,7 +594,7 @@ void GLHelperOneColor::draw(QOpenGLFunctions *gl, QMatrix4x4 mvp, QColor color, 
 
     glDrawArraysColor(gl, mvp,operation,
                       color, vertexBuffer, GL_FLOAT,
-                      size(),point_size);
+                      size(),point_size, use_geometry, viewport);
 
 }
 
