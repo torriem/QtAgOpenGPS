@@ -1,3 +1,5 @@
+#version 330
+
 #ifdef GL_ES
 precision highp int;
 precision highp float;
@@ -5,9 +7,12 @@ precision highp float;
 /* A very simple fragment shader that paints everything a
  * single color, defined by the color attribute
  */
-uniform vec4 color;
+in VertexData{
+    vec2 mTexCoord;
+    vec4 mColor;
+} VertexIn;
 
 void main(void)
 {
-    gl_FragColor = color;
+    gl_FragColor = VertexIn.mColor;
 }
