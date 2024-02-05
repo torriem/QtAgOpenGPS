@@ -558,7 +558,8 @@
         <file>qml/interfaces/LinesInterface.qml</file>
         <file>qml/TitleFrame.qml</file>
         <file>qml/SpinBoxM.qml</file>
-        <file>shaders/color_line.fsh</file>
-        <file>shaders/color_line.vsh</file>
+        <file>shaders/thick_gshader.gsh</file>
+        <file>shaders/thick_fshader.fsh</file>
+        <file>shaders/thick_vshader.vsh</file>
     </qresource>
 </RCC>
