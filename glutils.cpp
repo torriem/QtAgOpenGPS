@@ -351,7 +351,7 @@ void DrawPolygon(QOpenGLFunctions *gl, QMatrix4x4 mvp, QVector<Vec2> &polygon, f
             gldraw.append(gldraw.at(1));
             //add the second point as final adjacent point
             gldraw.append(gldraw.at(2));
-            gldraw.draw(gl, mvp, color, GL_LINE_STRIP_ADJACENCY, size, use_geometry, viewport);
+            gldraw.draw(gl, mvp, color, GL_LINE_STRIP_ADJACENCY_EXT, size, use_geometry, viewport);
         } else {
             gldraw.draw(gl, mvp, color, GL_LINE_LOOP, size);
         }
@@ -377,7 +377,7 @@ void DrawPolygon(QOpenGLFunctions *gl, QMatrix4x4 mvp, QVector<Vec3> &polygon, f
             gldraw.append(gldraw.at(1));
             //add the second point as final adjacent point
             gldraw.append(gldraw.at(2));
-            gldraw.draw(gl, mvp, color, GL_LINE_STRIP_ADJACENCY, size, use_geometry, viewport);
+            gldraw.draw(gl, mvp, color, GL_LINE_STRIP_ADJACENCY_EXT, size, use_geometry, viewport);
         } else {
             gldraw.draw(gl, mvp, color, GL_LINE_LOOP, size);
         }
