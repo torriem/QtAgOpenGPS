@@ -159,7 +159,7 @@ Dialog {
                             configImpSettings.checked = true
                     }
                     ButtonGroup {
-                        buttons: [ configImpSettings, configImpDim, configImpSection, configImpTiming, configImpSwitches ]
+                        buttons: [ configImpSettings, configImpDim, configImpAxle, configImpOffset, configImpSection, configImpTiming, configImpSwitches ]
                     }
                     IconButtonTransparent{
                         id: configImpSettings
@@ -170,6 +170,18 @@ Dialog {
                     IconButtonTransparent{
                         id: configImpDim
                         icon.source: "/images/Config/ConS_ImplementHitch.png"
+                        checkable: true
+                        radius: 0
+                    }
+                    IconButtonTransparent{
+                        id: configImpAxle
+                        icon.source: "/images/Config/ConS_ImplementPivot.png"
+                        checkable: true
+                        radius: 0
+                    }
+                    IconButtonTransparent{
+                        id: configImpOffset
+                        icon.source: "/images/Config/ConS_ImplementOffset.png"
                         checkable: true
                         radius: 0
                     }
@@ -445,6 +457,18 @@ Dialog {
             anchors.fill: mainConfig
             anchors.margins:1
             visible: implementMenu.visible && configImpDim.checked && settings.setTool_isToolTrailing && !settings.setTool_isToolTBT
+        }
+        ConfigImplementAxle{
+            id:configImplementAxle
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: implementMenu.visible && configImpAxle.checked
+        }
+        ConfigImplementOffset{
+            id:configImplementOffset
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: implementMenu.visible && configImpOffset.checked
         }
         ConfigImplementSections{
             id:configImplementSections
