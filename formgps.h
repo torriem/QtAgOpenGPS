@@ -696,6 +696,17 @@ public slots:
     //modules ui callback
     void modules_send_238();
 
+    //boundary UI for recording new boundary
+    void boundary_calculate_area();
+    void boundary_update_list();
+    void boundary_start();
+    void boundary_stop();
+    void boundary_add_point();
+    void boundary_delete_last_point();
+    void boundary_pause();
+    void boundary_record();
+    void boundary_restart();
+
     //left column
     void onBtnAcres_clicked();
     void onBtnSettings_clicked();

@@ -3,9 +3,9 @@ import QtQuick 2.15
 Item {
     id: boundaryInterface
 
-    property bool isBoundaryBeingMade: false
+    //property bool isBndBeingMade: false //may not be needed here
     property double createBndOffset: 0
-    property bool isDrawRightside: false
+    property bool isDrawRightside: true
     property bool isOutOfBounds: false //must be updated from mc.isOutOfBounds
 
     property double area: 0
@@ -16,10 +16,13 @@ Item {
     //should update beingMadeArea and beingMadePts above
     signal calculate_area()
     signal update_list()
-    signal stop(bool save) //save or cancel boundary being made
+    signal start()
+    signal stop() //save or cancel boundary being made
     signal add_point() //add the current location as a boundary point
     signal delete_last_point()
-    signal restart()
+    signal pause()
+    signal record()
+    signal reset();
 
 
     function setIsOutOfBoundsTrue() {

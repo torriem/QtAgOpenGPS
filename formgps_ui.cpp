@@ -41,7 +41,7 @@ void FormGPS::setupGui()
 
     qml_root->setProperty("visible",true);
 
-    //have to do this for each type we use
+    //have to do this for each Interface and supported data type.
     InterfaceProperty<AOGInterface, int>::set_qml_root(qmlItem(qml_root, "aog"));
     InterfaceProperty<AOGInterface, bool>::set_qml_root(qmlItem(qml_root, "aog"));
     InterfaceProperty<AOGInterface, double>::set_qml_root(qmlItem(qml_root, "aog"));
@@ -114,6 +114,7 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(uturn(bool)), this, SLOT(onBtnManUTurn_clicked(bool)));
     connect(aog,SIGNAL(lateral(bool)), this, SLOT(onBtnLateral_clicked(bool)));
 
+    //TODO interface with UI's are you sure close dialog
     connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
 
 
@@ -145,7 +146,15 @@ void FormGPS::setupGui()
 
     //boundary signals and slots
     connect(&yt, SIGNAL(outOfBounds()),boundaryInterface,SLOT(setIsOutOfBoundsTrue()));
-
+    connect(boundaryInterface, SIGNAL(calculate_area()), this, SLOT(boundary_calculate_area()));
+    connect(boundaryInterface, SIGNAL(update_list()), this, SLOT(boundary_update_list()));
+    connect(boundaryInterface, SIGNAL(start()), this, SLOT(boundary_start()));
+    connect(boundaryInterface, SIGNAL(stop()), this, SLOT(boundary_stop()));
+    connect(boundaryInterface, SIGNAL(add_point()), this, SLOT(boundary_add_point()));
+    connect(boundaryInterface, SIGNAL(delete_last_point()), this, SLOT(boundary_delete_last_point()));
+    connect(boundaryInterface, SIGNAL(pause()), this, SLOT(boundary_pause()));
+    connect(boundaryInterface, SIGNAL(record()), this, SLOT(boundary_record()));
+    connect(boundaryInterface, SIGNAL(reset()), this, SLOT(boundary_reset()));
 
     //connect qml button signals to callbacks (it's not automatic with qml)
 
@@ -937,3 +946,88 @@ void FormGPS::modules_send_238() {
     SendPgnToLoop(p_238.pgn);
 }
 
+void FormGPS::boundary_calculate_area() {
+    int ptCount = bnd.bndBeingMadePts.count();
+    double area = 0;
+
+    if (ptCount > 0)
+    {
+        int j = ptCount - 1;  // The last vertex is the 'previous' one to the first
+
+        for (int i = 0; i < ptCount; j = i++)
+        {
+            area += (bnd.bndBeingMadePts[j].easting + bnd.bndBeingMadePts[i].easting) * (bnd.bndBeingMadePts[j].northing - bnd.bndBeingMadePts[i].northing);
+        }
+        area = fabs(area / 2);
+    }
+
+    qmlItem(qml_root,"boundaryInterface")->setProperty("area", area);
+    qmlItem(qml_root,"boundaryInterface")->setProperty("pts", ptCount);
+}
+
+void FormGPS::boundary_update_list() {
+    //TODO
+}
+
+void FormGPS::boundary_start() {
+    bnd.createBndOffset = tool.width * 0.5;
+    bnd.isBndBeingMade = true;
+    bnd.bndBeingMadePts.clear();
+    boundary_calculate_area();
+}
+
+void FormGPS::boundary_stop() {
+    if (bnd.bndBeingMadePts.count() > 2)
+    {
+        CBoundaryList New;
+
+        for (int i = 0; i < bnd.bndBeingMadePts.count(); i++)
+        {
+            New.fenceLine.append(bnd.bndBeingMadePts[i]);
+        }
+
+        New.CalculateFenceArea(bnd.bndList.count());
+        New.FixFenceLine(bnd.bndList.count());
+
+        bnd.bndList.append(New);
+        fd.UpdateFieldBoundaryGUIAreas(bnd.bndList);
+
+        //turn lines made from boundaries
+        calculateMinMax();
+        FileSaveBoundary();
+        bnd.BuildTurnLines(fd);
+    }
+
+    //stop it all for adding
+    bnd.isOkToAddPoints = false;
+    bnd.isBndBeingMade = false;
+    bnd.bndBeingMadePts.clear();
+
+    boundary_update_list();
+}
+
+void FormGPS::boundary_add_point() {
+    bnd.isOkToAddPoints = true;
+    AddBoundaryPoint();
+    bnd.isOkToAddPoints = false;
+}
+
+void FormGPS::boundary_delete_last_point() {
+    int ptCount = bnd.bndBeingMadePts.count();
+    if (ptCount > 0)
+        bnd.bndBeingMadePts.pop_back();
+    boundary_calculate_area();
+}
+
+void FormGPS::boundary_pause(){
+    bnd.isOkToAddPoints = false;
+}
+
+void FormGPS::boundary_record() {
+    bnd.isOkToAddPoints = true;
+}
+
+void FormGPS::boundary_restart() {
+    bnd.bndBeingMadePts.clear();
+    boundary_calculate_area();
+}

@@ -1407,8 +1407,8 @@ void FormGPS::AddBoundaryPoint()
         if (bnd.isDrawRightSide)
         {
             //Right side
-            Vec3 point(vehicle.pivotAxlePos.easting + sin(vehicle.pivotAxlePos.heading - glm::PIBy2) * -bnd.createBndOffset,
-                       vehicle.pivotAxlePos.northing + cos(vehicle.pivotAxlePos.heading - glm::PIBy2) * -bnd.createBndOffset,
+            Vec3 point(vehicle.pivotAxlePos.easting + sin(vehicle.pivotAxlePos.heading - glm::PIBy2) * -(double)bnd.createBndOffset,
+                       vehicle.pivotAxlePos.northing + cos(vehicle.pivotAxlePos.heading - glm::PIBy2) * -(double)bnd.createBndOffset,
                        vehicle.pivotAxlePos.heading);
             bnd.bndBeingMadePts.append(point);
         }
@@ -1417,8 +1417,8 @@ void FormGPS::AddBoundaryPoint()
         else
         {
             //Right side
-            Vec3 point(vehicle.pivotAxlePos.easting + sin(vehicle.pivotAxlePos.heading - glm::PIBy2) * bnd.createBndOffset,
-                       vehicle.pivotAxlePos.northing + cos(vehicle.pivotAxlePos.heading - glm::PIBy2) * bnd.createBndOffset,
+            Vec3 point(vehicle.pivotAxlePos.easting + sin(vehicle.pivotAxlePos.heading - glm::PIBy2) * (double)bnd.createBndOffset,
+                       vehicle.pivotAxlePos.northing + cos(vehicle.pivotAxlePos.heading - glm::PIBy2) * (double)bnd.createBndOffset,
                        vehicle.pivotAxlePos.heading);
             bnd.bndBeingMadePts.append(point);
         }
