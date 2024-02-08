@@ -44,6 +44,11 @@ Window {
         objectName: "vehicleInterface"
     }
 
+    BoundaryInterface {
+        id: bnd
+        objectName: "bnd"
+    }
+
     UnitConversion {
         id: utils
     }

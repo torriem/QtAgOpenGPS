@@ -131,16 +131,11 @@ Item {
     signal uturn(bool turn_right)
     signal lateral(bool go_right)
 
-
     //general settings
     signal settings_reload() //tell backend classes to reload settings from store
     signal settings_tempsave() //save a temporary copy of all the settings
     signal settings_revert() //revert to temporary copy of all settings
     signal settings_save() //sync to disk, and also copy to current vehicle file, if active
-
-    //boundary properties from main form
-    property bool isBoundaryBeingMade: false
-    property double createBndOffset: 0
 
     signal modules_send_238()
 
