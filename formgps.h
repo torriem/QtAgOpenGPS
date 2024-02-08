@@ -464,6 +464,8 @@ public:
 
     int minSteerSpeedTimer = 0;
 
+    InterfaceProperty<BoundaryInterface,bool> isOutOfBounds = InterfaceProperty<BoundaryInterface,bool>("isOutOfBounds");
+
     void UpdateFixPosition(); //process a new position
     void TheRest();
     void CalculatePositionHeading(); // compute all headings and fixes

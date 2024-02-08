@@ -1009,6 +1009,7 @@ void FormGPS::UpdateFixPosition()
         if (!yt.isYouTurnBtnOn)
         {
             mc.isOutOfBounds = !bnd.IsPointInsideFenceArea(vehicle.pivotAxlePos);
+            isOutOfBounds = mc.isOutOfBounds;
         }
         else //Youturn is on
         {
@@ -1019,6 +1020,7 @@ void FormGPS::UpdateFixPosition()
             if (isInTurnBounds)
             {
                 mc.isOutOfBounds = false;
+                isOutOfBounds = false;
                 //now check to make sure we are not in an inner turn boundary - drive thru is ok
                 if (yt.youTurnPhase != 3)
                 {
@@ -1071,6 +1073,7 @@ void FormGPS::UpdateFixPosition()
                 {
                     yt.ResetCreatedYouTurn();
                     mc.isOutOfBounds = !bnd.IsPointInsideFenceArea(vehicle.pivotAxlePos);
+                    isOutOfBounds = mc.isOutOfBounds;
                 }
 
             }
@@ -1099,6 +1102,7 @@ void FormGPS::UpdateFixPosition()
     else
     {
         mc.isOutOfBounds = false;
+        isOutOfBounds = false;
     }
 
     //#endregion

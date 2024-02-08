@@ -62,6 +62,11 @@ void FormGPS::setupGui()
     InterfaceProperty<VehicleInterface, double>::set_qml_root(qmlItem(qml_root, "vehicleInterface"));
     InterfaceProperty<VehicleInterface, btnStates>::set_qml_root(qmlItem(qml_root, "vehicleInterface"));
 
+    InterfaceProperty<BoundaryInterface, int>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
+    InterfaceProperty<BoundaryInterface, bool>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
+    InterfaceProperty<BoundaryInterface, double>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
+    InterfaceProperty<BoundaryInterface, btnStates>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
+
     QMLSectionButtons::set_aog_root(qmlItem(qml_root, "aog"));
 
     //hook up our AOGInterface properties
@@ -69,6 +74,7 @@ void FormGPS::setupGui()
     QObject *linesInterface = qmlItem(qml_root, "linesInterface");
     QObject *vehicleInterface = qmlItem(qml_root, "vehicleInterface");
     QObject *fieldInterface = qmlItem(qml_root, "fieldInterface");
+    QObject *boundaryInterface = qmlItem(qml_root, "boundaryInterface");
 
     //react to UI changing this property
     connect(aog,SIGNAL(sectionButtonStateChanged()), &tool.sectionButtonState, SLOT(onStatesUpdated()));
@@ -135,6 +141,11 @@ void FormGPS::setupGui()
 
     //React to UI setting hyd life settings
     connect(aog, SIGNAL(modules_send_238()), this, SLOT(modules_send_238()));
+
+
+    //boundary signals and slots
+    connect(&yt, SIGNAL(outOfBounds()),boundaryInterface,SLOT(setIsOutOfBoundsTrue()));
+
 
     //connect qml button signals to callbacks (it's not automatic with qml)
 

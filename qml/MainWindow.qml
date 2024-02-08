@@ -45,8 +45,8 @@ Window {
     }
 
     BoundaryInterface {
-        id: bnd
-        objectName: "bnd"
+        id: boundaryInterface
+        objectName: "boundaryInterface"
     }
 
     UnitConversion {
