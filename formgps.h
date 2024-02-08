@@ -706,6 +706,9 @@ public slots:
     void boundary_pause();
     void boundary_record();
     void boundary_restart();
+    void boundary_delete(int which_boundary);
+    void boundary_set_drivethru(int which_boundary, bool drive_through);
+    void boundary_delete_all();
 
     //left column
     void onBtnAcres_clicked();
@@ -718,7 +721,6 @@ public slots:
     void onBtnToggleAB_clicked();
     void onBtnToggleABBack_clicked();
     void onBtnAutoYouTurn_clicked();
-    void onBtnAutoSteer_clicked();
     void onBtnContourPriority_clicked();
     //bottom row
     void onBtnResetTool_clicked();

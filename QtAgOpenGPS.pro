@@ -58,6 +58,10 @@ SOURCES += main.cpp\
     formgps_classcallbacks.cpp \
     formgps_sections.cpp \
     formgps_settings.cpp \
+    formgps_ui_boundary.cpp \
+    formgps_ui_field.cpp \
+    formgps_ui_tracks.cpp \
+    formgps_ui_vehicle.cpp \
     qmlsectionbuttons.cpp \
     qmlsettings.cpp \
     qmlsettings_addkeys.cpp \

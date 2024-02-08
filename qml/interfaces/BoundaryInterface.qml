@@ -22,7 +22,10 @@ Item {
     signal delete_last_point()
     signal pause()
     signal record()
-    signal reset();
+    signal reset()
+    signal delete_boundary(int which_boundary)
+    signal set_drive_through(int which_boundary, bool through)
+    signal delete_all()
 
 
     function setIsOutOfBoundsTrue() {
