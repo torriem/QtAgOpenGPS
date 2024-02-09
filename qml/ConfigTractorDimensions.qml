@@ -23,8 +23,8 @@ Rectangle{
         id: wheelbase
         anchors.bottom: dimImage.bottom
         anchors.right: dimImage.right
-        anchors.rightMargin: dimImage.width * .33
-        anchors.bottomMargin: dimImage.height *.2
+        anchors.rightMargin: dimImage.width * .65
+        anchors.bottomMargin: dimImage.height *.15
         from: 20
         to: 787
         boundValue: settings.setVehicle_wheelbase
@@ -34,7 +34,7 @@ Rectangle{
     SpinBoxCM{
         id: trackWidth
         anchors.top: dimImage.top
-        anchors.topMargin: dimImage.height *.3
+        anchors.topMargin: dimImage.height *.25
         anchors.right: dimImage.right
         from: 50
         to: 9999
