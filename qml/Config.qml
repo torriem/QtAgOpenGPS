@@ -346,14 +346,23 @@ Dialog {
             anchors.bottomMargin: 8
             anchors.horizontalCenter: parent.horizontalCenter
             z: 3
-            Text{
+            TextLine{
                 id: vehicle
-                text:qsTr("vehicle, units and tool width all not working")
-                anchors.left: parent.left
-                anchors.horizontalCenter: parent.horizontalCenter
-                width:parent.width/2
-                height: parent.height
+                text: utils.cm_unit()
+                anchors.verticalCenter: parent.verticalCenter
+                color: "green"
+                font.pixelSize: parent.height/2
             }
+            TextLine {
+                id: sections
+                text: utils.m_to_ft_string(settings.setVehicle_toolWidth)
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: saveAndClose.left
+                anchors.rightMargin: 80
+                font.pixelSize: parent.height/2
+                anchors.horizontalCenter: undefined
+            }
+
             IconButtonTransparent{
                 id: saveAndClose
                 anchors.right: parent.right
