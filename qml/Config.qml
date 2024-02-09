@@ -159,7 +159,7 @@ Dialog {
                             configImpSettings.checked = true
                     }
                     ButtonGroup {
-                        buttons: [ configImpSettings, configImpDim, configImpSection, configImpTiming, configImpSwitches ]
+                        buttons: [ configImpSettings, configImpDim, configImpAxle, configImpOffset, configImpSection, configImpTiming, configImpSwitches ]
                     }
                     IconButtonTransparent{
                         id: configImpSettings
@@ -170,6 +170,18 @@ Dialog {
                     IconButtonTransparent{
                         id: configImpDim
                         icon.source: "/images/Config/ConS_ImplementHitch.png"
+                        checkable: true
+                        radius: 0
+                    }
+                    IconButtonTransparent{
+                        id: configImpAxle
+                        icon.source: "/images/Config/ConS_ImplementPivot.png"
+                        checkable: true
+                        radius: 0
+                    }
+                    IconButtonTransparent{
+                        id: configImpOffset
+                        icon.source: "/images/Config/ConS_ImplementOffset.png"
                         checkable: true
                         radius: 0
                     }
@@ -334,14 +346,23 @@ Dialog {
             anchors.bottomMargin: 8
             anchors.horizontalCenter: parent.horizontalCenter
             z: 3
-            Text{
+            TextLine{
                 id: vehicle
-                text:qsTr("vehicle, units and tool width all not working")
-                anchors.left: parent.left
-                anchors.horizontalCenter: parent.horizontalCenter
-                width:parent.width/2
-                height: parent.height
+                text: utils.cm_unit()
+                anchors.verticalCenter: parent.verticalCenter
+                color: "green"
+                font.pixelSize: parent.height/2
             }
+            TextLine {
+                id: sections
+                text: utils.m_to_ft_string(settings.setVehicle_toolWidth)
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: saveAndClose.left
+                anchors.rightMargin: 80
+                font.pixelSize: parent.height/2
+                anchors.horizontalCenter: undefined
+            }
+
             IconButtonTransparent{
                 id: saveAndClose
                 anchors.right: parent.right
@@ -445,6 +466,18 @@ Dialog {
             anchors.fill: mainConfig
             anchors.margins:1
             visible: implementMenu.visible && configImpDim.checked && settings.setTool_isToolTrailing && !settings.setTool_isToolTBT
+        }
+        ConfigImplementAxle{
+            id:configImplementAxle
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: implementMenu.visible && configImpAxle.checked
+        }
+        ConfigImplementOffset{
+            id:configImplementOffset
+            anchors.fill: mainConfig
+            anchors.margins:1
+            visible: implementMenu.visible && configImpOffset.checked
         }
         ConfigImplementSections{
             id:configImplementSections

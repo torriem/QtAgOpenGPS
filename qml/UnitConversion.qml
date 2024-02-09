@@ -140,9 +140,9 @@ Item {
 
     function cm_unit() {
         if (isMetric())
-            return qsTr("cm", "centimeter abbreviation")
+            return qsTr("Centimeter", "centimeter unit")
         else
-            return qsTr("inches", "inches unit")
+            return qsTr("Inches", "inches unit")
 
     }
 
