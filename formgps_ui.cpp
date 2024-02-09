@@ -17,6 +17,7 @@
 #include "qmlsettings.h"
 #include "qmlsectionbuttons.h"
 #include "interfaceproperty.h"
+#include "cboundarylist.h"
 
 QString caseInsensitiveFilename(QString directory, QString filename);
 
@@ -41,7 +42,7 @@ void FormGPS::setupGui()
 
     qml_root->setProperty("visible",true);
 
-    //have to do this for each type we use
+    //have to do this for each Interface and supported data type.
     InterfaceProperty<AOGInterface, int>::set_qml_root(qmlItem(qml_root, "aog"));
     InterfaceProperty<AOGInterface, bool>::set_qml_root(qmlItem(qml_root, "aog"));
     InterfaceProperty<AOGInterface, double>::set_qml_root(qmlItem(qml_root, "aog"));
@@ -62,6 +63,11 @@ void FormGPS::setupGui()
     InterfaceProperty<VehicleInterface, double>::set_qml_root(qmlItem(qml_root, "vehicleInterface"));
     InterfaceProperty<VehicleInterface, btnStates>::set_qml_root(qmlItem(qml_root, "vehicleInterface"));
 
+    InterfaceProperty<BoundaryInterface, int>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
+    InterfaceProperty<BoundaryInterface, bool>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
+    InterfaceProperty<BoundaryInterface, double>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
+    InterfaceProperty<BoundaryInterface, btnStates>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
+
     QMLSectionButtons::set_aog_root(qmlItem(qml_root, "aog"));
 
     //hook up our AOGInterface properties
@@ -69,6 +75,7 @@ void FormGPS::setupGui()
     QObject *linesInterface = qmlItem(qml_root, "linesInterface");
     QObject *vehicleInterface = qmlItem(qml_root, "vehicleInterface");
     QObject *fieldInterface = qmlItem(qml_root, "fieldInterface");
+    QObject *boundaryInterface = qmlItem(qml_root, "boundaryInterface");
 
     //react to UI changing this property
     connect(aog,SIGNAL(sectionButtonStateChanged()), &tool.sectionButtonState, SLOT(onStatesUpdated()));
@@ -108,6 +115,7 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(uturn(bool)), this, SLOT(onBtnManUTurn_clicked(bool)));
     connect(aog,SIGNAL(lateral(bool)), this, SLOT(onBtnLateral_clicked(bool)));
 
+    //TODO interface with UI's are you sure close dialog
     connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
 
 
@@ -135,6 +143,22 @@ void FormGPS::setupGui()
 
     //React to UI setting hyd life settings
     connect(aog, SIGNAL(modules_send_238()), this, SLOT(modules_send_238()));
+
+
+    //boundary signals and slots
+    connect(&yt, SIGNAL(outOfBounds()),boundaryInterface,SLOT(setIsOutOfBoundsTrue()));
+    connect(boundaryInterface, SIGNAL(calculate_area()), this, SLOT(boundary_calculate_area()));
+    connect(boundaryInterface, SIGNAL(update_list()), this, SLOT(boundary_update_list()));
+    connect(boundaryInterface, SIGNAL(start()), this, SLOT(boundary_start()));
+    connect(boundaryInterface, SIGNAL(stop()), this, SLOT(boundary_stop()));
+    connect(boundaryInterface, SIGNAL(add_point()), this, SLOT(boundary_add_point()));
+    connect(boundaryInterface, SIGNAL(delete_last_point()), this, SLOT(boundary_delete_last_point()));
+    connect(boundaryInterface, SIGNAL(pause()), this, SLOT(boundary_pause()));
+    connect(boundaryInterface, SIGNAL(record()), this, SLOT(boundary_record()));
+    connect(boundaryInterface, SIGNAL(reset()), this, SLOT(boundary_reset()));
+    connect(boundaryInterface, SIGNAL(delete_boundary(int)), this, SLOT(boundary_delete(int)));
+    connect(boundaryInterface, SIGNAL(set_drive_through(int, bool)), this, SLOT(boundary_set_drivethru(int,bool)));
+    connect(boundaryInterface, SIGNAL(delete_all()), this, SLOT(boundary_delete_all()));
 
     //connect qml button signals to callbacks (it's not automatic with qml)
 
@@ -289,18 +313,6 @@ void FormGPS::onBtnSnapToPivot_clicked(){
 }
 void FormGPS::onBtnYouSkip_clicked(){
     qDebug()<<"you skip";
-}
-
-
-
-void FormGPS::onBtnAutoSteer_clicked(){
-    /*TODO implement in QML
-    if (ABLine.isABLineSet || ct.isContourBtnOn) {
-    } else {
-        isAutoSteerBtnOn = false;
-        TimedMessageBox(2000, tr("No Guidance Lines"), tr("Turn on Contour or set an AB Line."));
-    }
-    */
 }
 
 void FormGPS::onBtnFlag_clicked() {
@@ -481,186 +493,6 @@ void FormGPS::FixTramModeButton()
     //make sure tram has right icon.  DO this through javascript
 
 }
-
-void FormGPS::update_current_ABline_from_qml()
-{
-    //AOGInterface currentABLine property changed; sync our
-    //local ABLine.numABLineSelected with it.
-
-    QObject *aog = qmlItem(qml_root, "aog"); //TODO save this in formgps.h
-
-    //the property will be -1 if nothing is selected, ABLine uses base 1
-    //so add one to it
-    ABLine.numABLineSelected = aog->property("currentABLine").toInt() + 1;
-    if (ABLine.numABLineSelected > ABLine.lineArr.count())
-        ABLine.numABLineSelected = 0;
-
-    ABLine.isABValid = false; //recalculate the closest line to us
-    ABLine.moveDistance = 0;
-
-    if (ABLine.numABLineSelected > 0) {
-        ABLine.abHeading = ABLine.lineArr[ABLine.numABLineSelected-1].heading;
-        ABLine.refPoint1 = ABLine.lineArr[ABLine.numABLineSelected-1].origin;
-        ABLine.SetABLineByHeading();
-        ABLine.isBtnABLineOn = true;
-        ABLine.isABLineSet = true;
-        ABLine.isABLineLoaded = true;
-        ABLine.isABLineBeingSet = false;
-        aog->setProperty("currentABLine_heading", ABLine.abHeading);
-    } else {
-        ABLine.isBtnABLineOn = false;
-        ABLine.isABLineSet = false;
-        ABLine.isABLineLoaded = false;
-        ABLine.isABLineBeingSet = false;
-    }
-
-    int selectedItem = aog->property("currentABCurve").toInt();
-    //reset to generate new reference
-    curve.isCurveValid = false;
-    curve.moveDistance = 0;
-    curve.desList.clear();
-
-    FileSaveCurveLines(); // in case a new one was added
-
-    if (selectedItem > -1 && selectedItem <= curve.curveArr.count())
-    {
-        int idx = selectedItem;
-        curve.numCurveLineSelected = idx + 1;
-
-        curve.aveLineHeading = curve.curveArr[idx].aveHeading;
-        curve.refList.clear();
-        for (int i = 0; i < curve.curveArr[idx].curvePts.count(); i++)
-        {
-            curve.refList.append(curve.curveArr[idx].curvePts[i]);
-        }
-        curve.isCurveSet = true;
-        yt.ResetYouTurn();
-    }
-    else
-    {
-        curve.numCurveLineSelected = 0;
-        curve.isOkToAddDesPoints = false;
-        curve.isCurveSet = false;
-        curve.refList.clear();
-        curve.isCurveSet = false;
-        //DisableYouTurnButtons();
-        //done in QML
-        curve.isBtnCurveOn = false;
-    }
-
-    if (ABLine.numABLineSelected == 0 && curve.numCurveLineSelected == 0 && ct.isContourBtnOn == false) {
-        isAutoSteerBtnOn = false;
-    }
-}
-
-void FormGPS::update_ABlines_in_qml()
-{
-    QObject *linesInterface = qmlItem(qml_root,"linesInterface");
-
-    QList<QVariant> list;
-    QMap<QString, QVariant>line;
-
-    for(int i=0; i < ABLine.lineArr.count(); i++) {
-        line.clear();
-        line["index"] = i;
-        line["name"] = ABLine.lineArr[i].Name;
-        line["easting"] = ABLine.lineArr[i].origin.easting;
-        line["northing"] = ABLine.lineArr[i].origin.northing;
-        line["heading"] = ABLine.lineArr[i].heading;
-        line["visible"] = ABLine.lineArr[i].isVisible;
-        list.append(line);
-    }
-
-    linesInterface->setProperty("abLinesList",list);
-
-    list.clear();
-    for(int i=0; i < curve.curveArr.count(); i++) {
-        line.clear();
-        line["index"] = i;
-        line["name"] = curve.curveArr[i].Name;
-        line["visible"] = curve.curveArr[i].isVisible;
-        list.append(line);
-    }
-
-    linesInterface->setProperty("abCurvesList",list);
-}
-
-void FormGPS::add_new_ABline(QString name, double easting, double northing, double heading)
-{
-    qDebug() << name << easting << northing << heading;
-    CABLines line;
-    line.origin = Vec2(easting, northing);
-    line.heading = heading;
-    line.Name = name;
-    ABLine.lineArr.append(line);
-    FileSaveABLines();
-    update_ABlines_in_qml();
-}
-
-void FormGPS::start_newABLine(bool start_or_cancel, double easting, double northing, double heading)
-{
-    if (!start_or_cancel) {
-        ABLine.isABLineBeingSet = false;
-        return;
-    }
-
-    ABLine.desPoint1.easting = easting + cos(heading) * (double)property_setVehicle_toolOffset;
-    ABLine.desPoint2.northing = northing + sin(heading) * (double)property_setVehicle_toolOffset;
-
-    ABLine.desHeading = heading;
-
-    ABLine.desPoint2.easting = 99999;
-    ABLine.desPoint2.northing = 99999;
-
-    ABLine.isABLineBeingSet = true;
-
-    ABLine.desHeading = heading;
-    ABLine.desP1.easting = ABLine.desPoint1.easting - (sin(ABLine.desHeading) * (double)property_setAB_lineLength);
-    ABLine.desP1.northing = ABLine.desPoint1.northing - (cos(ABLine.desHeading) * (double)property_setAB_lineLength);
-    ABLine.desP2.easting = ABLine.desPoint1.easting + (sin(ABLine.desHeading) * (double)property_setAB_lineLength);
-    ABLine.desP2.northing = ABLine.desPoint1.northing + (cos(ABLine.desHeading) * (double)property_setAB_lineLength);
-}
-
-void FormGPS::delete_ABLine(int which_one)
-{
-    QObject *linesInterface = qmlItem(qml_root,"linesInterface");
-
-    if ((which_one < 0) || (which_one >= ABLine.lineArr.count()))
-        return;
-
-    ABLine.lineArr.removeAt(which_one);
-
-    linesInterface->setProperty("currentABLine", -1);
-
-    update_ABlines_in_qml();
-    update_current_ABline_from_qml();
-    FileSaveABLines();
-}
-
-void FormGPS::swap_heading_ABLine(int which_one)
-{
-    if ((which_one < 0) || (which_one >= ABLine.lineArr.count()))
-        return;
-
-    double heading = ABLine.lineArr[which_one].heading + M_PI;
-    if (heading > glm::twoPI) //if over 360
-        heading -= glm::twoPI;
-
-    ABLine.lineArr[which_one].heading = heading;
-    update_ABlines_in_qml();
-    FileSaveABLines();
-}
-
-void FormGPS::change_name_ABLine(int which_one, QString name)
-{
-    qDebug() << "changing name of " << which_one << " to " << name;
-    if (which_one > -1) {
-        ABLine.lineArr[which_one].Name = name;
-        update_ABlines_in_qml();
-        FileSaveABLines();
-    }
-}
-
 void FormGPS::on_settings_reload() {
     loadSettings();
     //TODO: if vehicle name is set, write settings out to that
@@ -671,244 +503,6 @@ void FormGPS::on_settings_save() {
     settings->sync();
 
     loadSettings();
-}
-
-void FormGPS::vehicle_saveas(QString vehicle_name) {
-    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
-            + "/" + QCoreApplication::applicationName() + "/Vehicles";
-
-    QDir saveDir(directoryName);
-    if (!saveDir.exists()) {
-        bool ok = saveDir.mkpath(directoryName);
-        if (!ok) {
-            qWarning() << "Couldn't create path " << directoryName;
-            return;
-        }
-    }
-
-    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, vehicle_name);
-
-    settings->saveJson(filename);
-
-}
-
-/*
-void FormGPS::vehicle_load(int index) {
-    QList<QVariant> vehicleList = aog->property("vehicle_list").value<QList<QVariant>>();
-    QMap<QString,QVariant> vehicle;
-    for(QVariant vehicleVariant: vehicleList) {
-        vehicle = vehicleVariant.toMap();
-        if (vehicle["index"].toInt() == index) {
-            vehicle_load(vehicle["index"].toInt());
-            break;
-        }
-    }
-
-
-}
-*/
-
-void FormGPS::vehicle_load(QString vehicle_name) {
-    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
-                            + "/" + QCoreApplication::applicationName() + "/Vehicles";
-
-    QDir loadDir(directoryName);
-    if (!loadDir.exists()) {
-        bool ok = loadDir.mkpath(directoryName);
-        if (!ok) {
-            qWarning() << "Couldn't create path " << directoryName;
-            return;
-        }
-    }
-
-    if (!loadDir.exists(caseInsensitiveFilename(directoryName, vehicle_name)))
-        qWarning() << vehicle_name << " may not exist but will try to load it anyway.";
-
-    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, vehicle_name);
-
-    settings->loadJson(filename);
-}
-
-void FormGPS::vehicle_delete(QString vehicle_name) {
-    /*
-    if ((bool)property_setMenu_isMetric) {
-        settings->setValue("display/isMetric", "false");
-        qml_settings.insert("testing123","false");
-    } else {
-        settings->setValue("display/isMetric", "true");
-        qml_settings.insert("testing123","true");
-    }
-
-    return;
-    */
-
-    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
-                            + "/" + QCoreApplication::applicationName() + "/Vehicles";
-    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, vehicle_name);
-
-    QDir vehicleDir(directoryName);
-    if (vehicleDir.exists()) {
-        if (! vehicleDir.remove(caseInsensitiveFilename(directoryName, vehicle_name)))
-            qWarning() << "Could not delete vehicle " << vehicle_name;
-    }
-}
-
-void FormGPS::vehicle_update_list() {
-    QObject *vehicleInterface;
-
-    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
-                            + "/" + QCoreApplication::applicationName() + "/Vehicles";
-
-    vehicleInterface = qmlItem(qml_root, "vehicleInterface");
-
-    QDir vehicleDirectory(directoryName);
-    if(!vehicleDirectory.exists()) {
-        vehicleDirectory.mkpath(directoryName);
-    }
-
-    vehicleDirectory.setFilter(QDir::Files);
-
-    QFileInfoList filesList = vehicleDirectory.entryInfoList();
-
-    QList<QVariant> vehicleList;
-    QMap<QString, QVariant>vehicle;
-    int index = 0;
-
-    for (QFileInfo file : filesList) {
-        vehicle.clear();
-        vehicle["index"] = index;
-        vehicle["name"] = file.fileName();
-        vehicleList.append(vehicle);
-        index++;
-    }
-
-    vehicleInterface->setProperty("vehicle_list", vehicleList);
-
-}
-
-void FormGPS::field_update_list() {
-    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
-                            + "/" + QCoreApplication::applicationName() + "/Fields";
-
-    QObject *fieldInterface = qmlItem(qml_root, "fieldInterface");
-
-    QDir fieldsDirectory(directoryName);
-    fieldsDirectory.setFilter(QDir::Dirs);
-
-    QList<QVariant> fieldList;
-    QMap<QString, QVariant> field;
-
-    QFileInfoList fieldsDirList = fieldsDirectory.entryInfoList();
-
-    int index = 0;
-
-    for (QFileInfo fieldDir : fieldsDirList) {
-
-        if(fieldDir.fileName() == "." ||
-            fieldDir.fileName() == "..")
-            continue;
-        field = FileFieldInfo(fieldDir.fileName());
-
-        if(field.contains("latitude")) {
-            field["index"] = index;
-            fieldList.append(field);
-            index++;
-        }
-
-        field["name"] = fieldDir.fileName(); // in case Field.txt doesn't agree with dir name
-    }
-
-    fieldInterface->setProperty("field_list", fieldList);
-}
-
-void FormGPS::field_close() {
-    lock.lockForWrite();
-    fileSaveEverythingBeforeClosingField(NULL);
-    lock.unlock();
-}
-
-void FormGPS::field_open(QString field_name) {
-    lock.lockForWrite();
-    fileSaveEverythingBeforeClosingField(NULL);
-    if (! FileOpenField(field_name)) {
-        TimedMessageBox(8000, tr("Saved field does not exist."), QString(tr("Cannot find the requested saved field.")) + " " +
-                                                                field_name);
-
-        property_setF_CurrentDir = "Default";
-    }
-    lock.unlock();
-}
-
-void FormGPS::field_new(QString field_name) {
-    //assume the GUI will vet the name a little bit
-    lock.lockForWrite();
-    currentFieldDirectory = field_name;
-    property_setF_CurrentDir = currentFieldDirectory;
-    JobNew();
-
-    pn.latStart = pn.latitude;
-    pn.lonStart = pn.longitude;
-    pn.SetLocalMetersPerDegree();
-
-    FileCreateField();
-    FileCreateSections();
-    FileCreateRecPath();
-    FileCreateContour();
-    FileCreateElevation();
-    FileSaveFlags();
-    FileCreateBoundary();
-    FileSaveTram();
-    lock.unlock();
-}
-
-void FormGPS::field_new_from(QString existing, QString field_name, int flags) {
-    lock.lockForWrite();
-    fileSaveEverythingBeforeClosingField(NULL);
-    if (! FileOpenField(existing,flags)) { //load whatever is requested from existing field
-        TimedMessageBox(8000, tr("Existing field cannot be found"), QString(tr("Cannot find the existing saved field.")) + " " +
-                                                                existing);
-    }
-    //change to new name
-    currentFieldDirectory = field_name;
-    property_setF_CurrentDir = currentFieldDirectory;
-
-    FileCreateField();
-    FileCreateSections();
-    FileCreateElevation();
-    FileSaveFlags();
-    FileSaveABLines();
-    FileSaveCurveLines();
-
-    contourSaveList.clear();
-    contourSaveList.append(ct.ptList);
-    FileSaveContour();
-
-    FileSaveRecPath();
-    FileSaveTram();
-
-    //some how we have to write the existing patches to the disk.
-    //FileSaveSections only write pending triangles
-
-    for(QSharedPointer<PatchTriangleList> l: triStrip[0].patchList) {
-        tool.patchSaveList.append(l);
-    }
-    FileSaveSections();
-    lock.unlock();
-}
-
-void FormGPS::field_delete(QString field_name) {
-    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
-                            + "/" + QCoreApplication::applicationName() + "/Fields/" + field_name;
-
-    QDir fieldDir(directoryName);
-
-    if(! fieldDir.exists()) {
-        TimedMessageBox(8000,tr("Cannot find saved field"),QString(tr("Cannot find saved field to delete.")) + " " + field_name);
-        return;
-    }
-
-    QFile::moveToTrash(directoryName);
-    field_update_list();
 }
 
 void FormGPS::modules_send_238() {

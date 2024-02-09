@@ -10,6 +10,7 @@
 #include "cboundarylist.h"
 #include "btnenum.h"
 #include <QObject>
+#include "interfaceproperty.h"
 
 
 class QOpenGLFunctions;
@@ -39,10 +40,11 @@ public:
 
     QVector<Vec3> bndBeingMadePts;
 
-    double createBndOffset;
-    bool isBndBeingMade;
+    InterfaceProperty<BoundaryInterface,double> createBndOffset = InterfaceProperty<BoundaryInterface,double>("createBndOffset");
+    //InterfaceProperty<BoundaryInterface,bool> isBndBeingMade = InterfaceProperty<BoundaryInterface,bool>("isBndBeingMade");
+    bool isBndBeingMade = false;
 
-    bool isDrawRightSide = true;
+    InterfaceProperty<BoundaryInterface,bool> isDrawRightSide = InterfaceProperty<BoundaryInterface,bool>("isDrawRightSide");
     bool isOkToAddPoints = false;
 
     int closestFenceNum;

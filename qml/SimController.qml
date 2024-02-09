@@ -2,7 +2,7 @@ import QtQuick 2.0
 import QtQuick.Controls 2.5
 
 Rectangle{
-    color: "gray"
+    color: boundaryInterface.isOutOfBounds ? "darksalmon" : "gray"
     height: 60
     width: childrenRect.width + 10
     Connections{
@@ -21,7 +21,7 @@ Rectangle{
             text: "Reset"
             height: parent.height
             width: parent.height + 15
-            onClicked: console.log("nothing doing")
+            onClicked: console.log("nothing doing") //TODO: emit AOGInterface signal, connect in backend
         }
         Button{
             text: "wheelangle"

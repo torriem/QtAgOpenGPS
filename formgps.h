@@ -464,6 +464,8 @@ public:
 
     int minSteerSpeedTimer = 0;
 
+    InterfaceProperty<BoundaryInterface,bool> isOutOfBounds = InterfaceProperty<BoundaryInterface,bool>("isOutOfBounds");
+
     void UpdateFixPosition(); //process a new position
     void TheRest();
     void CalculatePositionHeading(); // compute all headings and fixes
@@ -694,6 +696,20 @@ public slots:
     //modules ui callback
     void modules_send_238();
 
+    //boundary UI for recording new boundary
+    void boundary_calculate_area();
+    void boundary_update_list();
+    void boundary_start();
+    void boundary_stop();
+    void boundary_add_point();
+    void boundary_delete_last_point();
+    void boundary_pause();
+    void boundary_record();
+    void boundary_restart();
+    void boundary_delete(int which_boundary);
+    void boundary_set_drivethru(int which_boundary, bool drive_through);
+    void boundary_delete_all();
+
     //left column
     void onBtnAcres_clicked();
     void onBtnSettings_clicked();
@@ -705,7 +721,6 @@ public slots:
     void onBtnToggleAB_clicked();
     void onBtnToggleABBack_clicked();
     void onBtnAutoYouTurn_clicked();
-    void onBtnAutoSteer_clicked();
     void onBtnContourPriority_clicked();
     //bottom row
     void onBtnResetTool_clicked();

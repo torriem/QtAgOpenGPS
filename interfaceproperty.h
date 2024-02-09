@@ -9,6 +9,7 @@ class AOGInterface;
 class FieldInterface;
 class VehicleInterface;
 class LinesInterface;
+class BoundaryInterface;
 
 template <typename WhichInterface, class T>
 class InterfaceProperty {
