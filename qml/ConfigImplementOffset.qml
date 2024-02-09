@@ -17,8 +17,8 @@ Rectangle{
         anchors.left: parent.left
         anchors.leftMargin: 30
         anchors.bottomMargin: 100
-        height: left.height + 70
-        width: left.width*2+ 45
+        height: leftBtn.height + 70
+        width: leftBtn.width*2+ 45
         border.width: 1
         Row{
             id: offsetBns
@@ -28,7 +28,7 @@ Rectangle{
             spacing: 10
             IconButtonTransparent{
                 icon.source: "/images/SteerZeroSmall.png"
-                onClicked: offsetSpin.boundValue = 0
+                onClicked: {offsetSpin.value = 0; offsetSpin.boundValue = 0}
                 anchors.verticalCenter: parent.verticalCenter
             }
             SpinBoxCM{
@@ -38,18 +38,33 @@ Rectangle{
                 anchors.verticalCenter: parent.verticalCenter
                 boundValue: Math.abs(settings.setVehicle_toolOffset)
                 onValueChanged: {
-                    if(left.checked){
+                    if(leftBtn.checked){
                         settings.setVehicle_toolOffset = -value
                     } else {
                         settings.setVehicle_toolOffset = value
                     }
+                    if(value===0){
+                        leftBtn.checked = false
+                        leftBtn.checkable = false
+                        rightBtn.checked = false
+                        rightBtn.checkable = false
+                    }else{
+                        rightBtn.checkable = true
+                        leftBtn.checkable = true
+                    }
                 }
             }
-            TextLine{ text: utils.m_unit_abbrev()}
+            TextLine{
+                anchors.horizontalCenter: undefined;
+                anchors.verticalCenter: parent.verticalCenter
+                text: utils.cm_unit_abbrev()
+            }
         }
-                ButtonGroup {
-                    buttons: [ leftBtn, rightBtn ]
-                }
+        Item{
+            ButtonGroup {
+                buttons: [ leftBtn, rightBtn ]
+            }
+        }
 
         IconButtonColor{
             id: leftBtn
@@ -58,12 +73,15 @@ Rectangle{
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.margins: 15
-            checkable: true
-            checked: (settings.setVehicle_tooloffset < 0)
+            checkable: !checked
+            checked: (settings.setVehicle_toolOffset < 0)
+            property string offsetNum: settings.setVehicle_toolOffset
+            onOffsetNumChanged: {
+                console.log(offsetNum)
+                if(offsetNum < 0)
+                    leftBtn.checked = true
+            }
             icon.source: "/images/Config/ToolOffsetNegativeLeft.png"
-            property bool toggle: false
-            onClicked: if (toggle) { checked = false ; toggle = false }
-            onPressed: if (checked) toggle=true
         }
 
         IconButtonColor{
@@ -74,12 +92,16 @@ Rectangle{
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.margins: 15
-            checkable: true
-            checked: (settings.setVehicle_tooloffset > 0)
+            checked: (settings.setVehicle_toolOffset > 0)
+            checkable: !checked
+            property double offsetNum: settings.setVehicle_toolOffset
+            onOffsetNumChanged: {
+                console.log(offsetNum)
+                if(offsetNum > 0)
+                    console.log("flag")
+                    rightBtn.checked = true
+            }
             icon.source: "/images/Config/ToolOffsetPositiveRight.png"
-            property bool toggle: false
-            onClicked: if (toggle) { checked = false ; toggle = false }
-            onPressed: if (checked) toggle=true
             TextLine{ text: qsTr("Tool Right"); anchors.top: right.bottom}
         }
     }
@@ -91,8 +113,8 @@ Rectangle{
         anchors.right: parent.right
         anchors.rightMargin: 30
         anchors.bottomMargin: 100
-        height: left.height + 70
-        width: left.width*2+ 45
+        height: leftBtn.height + 70
+        width: leftBtn.width*2+ 45
         border.width: 1
         Row{
             id: overlapGapBns
@@ -110,9 +132,35 @@ Rectangle{
                 id: overlapGapSpin
                 from: 0
                 to: 2500
-                value: 0
+                boundValue: Math.abs(settings.setVehicle_toolOverlap)
+                onValueChanged: {
+                    if(overlap.checked){
+                        settings.setVehicle_toolOverlap = -value
+                    } else {
+                        settings.setVehicle_toolOverlap = value
+                    }
+                    if(value===0){
+                        overlap.checked = false
+                        overlap.checkable = false
+                        gap.checked = false
+                        gap.checkable = false
+                    }else{
+                        overlap.checkable = true
+                        gap.checkable = true
+                    }
+                }
             }
-            TextLine{ text: utils.m_unit_abbrev()}
+            TextLine{
+                anchors.horizontalCenter: undefined;
+                anchors.verticalCenter: parent.verticalCenter
+                text: utils.cm_unit_abbrev()
+            }
+
+        }
+        Item{
+            ButtonGroup {
+                buttons: [ overlap, gap ]
+            }
         }
         IconButtonColor{
             id: overlap
@@ -121,6 +169,14 @@ Rectangle{
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.margins: 15
+            checkable: !checked
+            checked: (settings.setVehicle_toolOverlap < 0)
+            property string overlapGapNum: settings.setVehicle_toolOverlap
+            onOverlapGapNumChanged: {
+                console.log(overlapGapNum)
+                if(overlapGapNum < 0)
+                    overlap.checked = true
+            }
             icon.source: "/images/Config/ToolOverlap.png"
             TextLine{ text: qsTr("Overlap"); anchors.top: left.bottom}
         }
@@ -133,8 +189,21 @@ Rectangle{
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.margins: 15
+            checked: (settings.setVehicle_toolOverlap > 0)
+            checkable: !checked
+            property double overlapGapNum: settings.setVehicle_toolOverlap
+            onOverlapGapNumChanged: {
+                console.log(overlapGapNum)
+                if(overlapGapNum > 0)
+                    console.log("flag")
+                    gap.checked = true
+            }
             icon.source: "/images/Config/ToolGap.png"
-            TextLine{ text: qsTr("Gap"); anchors.top: right.bottom}
+            TextLine{
+                anchors.horizontalCenter: undefined;
+                anchors.verticalCenter: parent.verticalCenter
+                text: utils.cm_unit_abbrev()
+            }
         }
     }
 }

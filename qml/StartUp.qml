@@ -10,7 +10,7 @@ Rectangle{
         anchors.fill: parent
     }
 
-    Text{
+    TextLine{
         id: about
         anchors.top: parent.top
         anchors.left: parent.left

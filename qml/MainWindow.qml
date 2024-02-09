@@ -217,8 +217,7 @@ Window {
 
             onClicked: {
                 parent.clicked(mouse);
-                console.log(aog.isTrackOn)
-                utils.timeTillFinished()
+                console.log(settings.setVehicle_toolOverlap)
             }
 
             onPressed: {
