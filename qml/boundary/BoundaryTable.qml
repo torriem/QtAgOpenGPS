@@ -121,7 +121,7 @@ ListView {
                 //anchors.verticalCenter: parent.verticalCenter
 
                 text: qsTr("Boundary")
-                font.pointSize: 20
+                font.pointSize: 16
             }
             /*
             MouseArea {
@@ -158,7 +158,7 @@ ListView {
                 id: bndAreaHeaderText
 
                 text: qsTr("Area")
-                font.pointSize: 20
+                font.pointSize: 16
             }
             /*
             MouseArea {
@@ -194,7 +194,7 @@ ListView {
                 id: areaHeader
 
                 text: qsTr("Drive Through")
-                font.pointSize: 20
+                font.pointSize: 16
             }
             /*
             MouseArea {
@@ -234,7 +234,7 @@ ListView {
                       qsTr("Inner", "inner boundary") + " " +
                       Number(model.index).toLocaleString(Qt.locale(),'f',0)
             elide: Text.ElideRight
-            font.pointSize: 18
+            font.pointSize: 16
         }
         Text {
             anchors.top: parent.top

@@ -103,7 +103,7 @@ Item {
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
                 icon.source: "/images/Cancel64.png"
-                onClicked: boundaryType.visible = false
+                onClicked: boundaryTypePopup.visible = false
             }
         }
     }

@@ -9,6 +9,7 @@ Item {
     id: boundaryMenu
 
     function show() {
+        boundaryInterface.update_list()
         boundaryMenuPopup.visible = true
     }
 
@@ -48,6 +49,10 @@ Item {
                     policy: ScrollBar.AlwaysOn
                     active: true
                     contentItem.opacity: 1
+                }
+
+                onChangeDriveThrough: {
+                    boundaryInterface.set_drive_through(index, drive_through)
                 }
 
             }
