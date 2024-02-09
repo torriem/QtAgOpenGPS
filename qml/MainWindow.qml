@@ -1,9 +1,12 @@
 import QtQuick 2.8
 import QtGraphicalEffects 1.15
-import QtQuick.Window 2.0
-import QtQuick.Controls 2.1
+import QtQuick.Window 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 import AgOpenGPS 1.0
+
+import "interfaces"
+import "boundary"
 
 Window {
 
@@ -25,11 +28,26 @@ Window {
     AOGInterface {
         id: aog
         objectName: "aog"
+    }
 
-        onIsJobStartedChanged: {
-            console.debug("isJobStarted changed!")
-        }
+    LinesInterface {
+        objectName: "linesInterface"
+        id: linesInterface
+    }
 
+    FieldInterface {
+        id: fieldInterface
+        objectName: "fieldInterface"
+    }
+
+    VehicleInterface {
+        id: vehicleInterface
+        objectName: "vehicleInterface"
+    }
+
+    BoundaryInterface {
+        id: boundaryInterface
+        objectName: "boundaryInterface"
     }
 
     UnitConversion {
@@ -76,15 +94,25 @@ Window {
         color: "ghostwhite"
         height: 50
         visible: true
-        Text {
-            anchors.top: parent.top
+        Text{
+            anchors.top:parent.top
             anchors.left: parent.left
-            anchors.leftMargin: 120
-            text: qsTr("Field: ")
-            anchors.bottom: parent.verticalCenter
+            anchors.leftMargin: leftColumn.width+20
+            text: qsTr(""+aog.fixQuality+ ": Age: "+ aog.age)
             font.bold: true
-            font.pixelSize: 15
+            font.pixelSize: 20
+            anchors.bottom: parent.verticalCenter
         }
+
+//        Text {
+//            anchors.top: parent.top
+//            anchors.left: parent.left
+//            anchors.leftMargin: 120
+//            text: qsTr("Field: "+ (aog.isJobStarted ? settings.setF_CurrentDir: "None"))
+//            anchors.bottom: parent.verticalCenter
+//            font.bold: true
+//            font.pixelSize: 15
+//        }
         Text {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
@@ -101,44 +129,34 @@ Window {
             font.bold: true
             font.pixelSize: 15
         }
-        Text {
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.rightMargin: 300
-            text: qsTr("Age: ")
-            font.pixelSize: 15
-            font.bold: true
-        }
-        Text {
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.rightMargin: 150
-            text: qsTr("Fixtype")
-            font.bold: true
-            font.pixelSize: 15
-        }
-        Button{
-            implicitHeight: 30
-            anchors.bottom: parent.bottom
-            anchors.right: topRowWindow.left
-            implicitWidth: 75
-            background: Rectangle{
-                Text {
-                    text: qsTr("0")
-                    font.bold: true
-                    anchors.centerIn: parent
-                    font.pixelSize: 35
-                }
-                color: parent.down ? "gray" : "ghostwhite"
-            }
-        }
         Row{
             id: topRowWindow
             width: childrenRect.width
             height: parent.height
             anchors.top: parent.top
             anchors.right: parent.right
+            IconButtonColor{
+                id: rtkStatus
+                icon.source: "/images/GPSQuality.png"
+                implicitWidth: 75
+                implicitHeight: parent.height
+                onClicked: {
+                    gpsData.visible = !gpsData.visible
+                    fieldData.visible = false
+                }
+            }
 
+            Text{
+                id: speed
+                anchors.verticalCenter: parent.verticalCenter
+                width: 75
+                height:parent.height
+                text: utils.speed_to_unit_string(aog.speedKph, 1)
+                font.bold: true
+                font.pixelSize: 35
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
             IconButtonTransparent{
                 objectName: "btnHelp"
                 height: parent.height
@@ -150,6 +168,7 @@ Window {
                 height: parent.height
                 icon.source: "/images/WindowMinimize.png"
                 width: 75
+                onClicked: mainWindow.showMinimized()
             }
             IconButtonTransparent{
                 objectName: "btnWindowMaximize"
@@ -169,7 +188,10 @@ Window {
                 height: parent.height
                 width: 75
                 icon.source: "/images/WindowClose.png"
-                onClicked: closeDialog.visible = true
+                onClicked: aog.autoBtnState + aog.manualBtnState  > 0 ? timedMessage.addMessage(2000,qsTr("Section Control on. Shut off Section Control.")):
+                aog.isJobStarted ? closeDialog.visible = true:
+                mainWindow.close()
+
             }
         }
     }
@@ -201,6 +223,7 @@ Window {
 
             onClicked: {
                 parent.clicked(mouse);
+                console.log(settings.setVehicle_toolOverlap)
             }
 
             onPressed: {
@@ -224,39 +247,6 @@ Window {
             }
         }
 
-        LightBar {
-            id: lightbar
-            anchors.top: glcontrolrect.top
-            anchors.horizontalCenter: glcontrolrect.horizontalCenter
-            anchors.margins: 5
-            dotDistance: aog.avgPivDistance / 10 //avgPivotDistance is averaged
-            visible: (aog.offlineDistance != 32000 &&
-                      (settings.setMenu_isLightbarOn === true ||
-                       settings.setMenu_isLightbarOn === "true")) ?
-                         true : false
-        }
-
-        TrackNum {
-           id: tracknum
-            anchors.top: lightbar.bottom
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.margins: 5
-
-            font.pixelSize: 24
-
-            //only use dir names for AB Lines with heading
-            useDirNames: (aog.currentABLine > -1)
-            currentTrack: aog.current_trackNum
-
-            trackHeading: aog.currentABLine > -1 ?
-                              aog.currentABLine_heading :
-                              0
-
-            visible: (utils.isTrue(settings.setDisplay_topTrackNum) &&
-                      ((aog.currentABLine > -1) ||
-                       (aog.currentABCurve > -1)))
-            //TODO add contour
-        }
     }
     //----------------------------------------------------------------------------------------left column
     Item {
@@ -286,6 +276,9 @@ Window {
             }
             Menu{
                 id: fileMenu
+                //anchors.left: buttonsArea.left
+                //anchors.top: buttonsArea.top
+                //anchors. margins: 200
                 MenuItem{ text: "Languages"}
                 MenuItem{ text: "Directories"}
                 MenuItem{ text: "Colors"}
@@ -293,11 +286,17 @@ Window {
                 MenuItem{ text: "Top Field View"}
                 MenuItem{ text: "Enter Sim Coords"}
                 MenuItem{
+                    property bool isChecked: settings.setMenu_isSimulatorOn
+                    onIsCheckedChanged: {
+                        checked = isChecked
+                    }
+
                     text: "Simulator On"
-                    checked: settings.setMenu_isSimulatorOn
+                    checkable: true
+                    checked: isChecked
                     onCheckedChanged: {
                         settings.setMenu_isSimulatorOn = checked
-                        console.log(settings.setMenu_isSimulatorOn)
+                        console.log("Sim = "+settings.setMenu_isSimulatorOn)
                     }
                 }
                 MenuItem{ text: "Reset All"}
@@ -307,39 +306,51 @@ Window {
                 closePolicy: Popup.CloseOnPressOutsideParent
             }
 
-            IconButtonText {
+            Button {
                 id: btnAcres
-                objectName: "btnAcres"
-                buttonText: qsTr("0.00")
-                icon.source: "/images/TripOdometer.png"
-            visible: aog.isJobStarted ? true : false
+                implicitWidth: parent.width
+                implicitHeight: parent.width / 2
+                onClicked: {
+                    aog.distanceUser = "0"
+                    aog.workedAreaTotalUser = "0"
+                }
 
+                background: Rectangle{
+                    anchors.fill: parent
+                    color: "white"
+                    radius: 10
+                    Text{
+                        anchors.top: parent.top
+                        anchors.bottom: parent.verticalCenter
+                        anchors.margins: 5
+                        width: parent.width
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: utils.m_to_unit_string(aog.distanceUser, 2)
+                        font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        font.pixelSize: parent.height * .33
+                    }
+                    Text{
+                        anchors.top: parent.verticalCenter
+                        anchors.bottom: parent.bottom
+                        anchors.margins: 5
+                        width: parent.width
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: utils.area_to_unit_string(aog.workedAreaTotalUser, 2)
+                        font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        font.pixelSize: parent.height * .33
+                    }
+                }
             }
             IconButtonText {
                 id: btnnavigationSettings
                 objectName: "btnnavigationSettings"
                 buttonText: qsTr("Display")
                 icon.source: "/images/NavigationSettings.png"
-                property bool hideButtons: true
-
-                onHideButtonsChanged: {
-                    if (hideButtons == true) {
-                        displayButtons.visible = false
-                    }else{
-                        displayButtons.visible = true
-                    }
-                }
-
-                function toggle_displaybuttons(){
-                    if (hideButtons == true) {
-                        hideButtons = false
-                    }else{
-                        hideButtons = true
-                    }
-                }
-                onClicked: {
-                    toggle_displaybuttons()
-                }
+                onClicked: displayButtons.visible = !displayButtons.visible
             }
             IconButtonText {
                 id: btnSettings
@@ -354,118 +365,28 @@ Window {
                 objectName: "btnTools"
                 buttonText: qsTr("Tools")
                 icon.source: "/images/SpecialFunctions.png"
-                //pseudo state
-                property bool hideTools: true
-
-                onHideToolsChanged: {
-                    if (hideTools == true) {
-                        toolsWindow.visible = false
-                    } else {
-                        toolsWindow.visible = true
-                    }
-                }
-
-                function toggle_toolsmenu() {
-                    if (hideTools == true) {
-                        hideTools = false
-                    } else {
-                        hideTools = true
-                    }
-                }
-
-                onClicked: {
-                    toggle_toolsmenu();
-                }
+                onClicked: toolsWindow.visible = true
             }
             IconButtonText{
                 id: btnFieldMenu
                 objectName: "btnFieldMenu"
                 buttonText: qsTr("Field")
                 icon.source: "/images/JobActive.png"
-                //pseudo state
-                property bool hideFieldMenu: true
-
-                onHideFieldMenuChanged: {
-                    if (hideFieldMenu == true) {
-                        fieldMenu.visible = false
-                    } else {
-                        fieldMenu.visible = true
-                    }
-                }
-
-                function toggle_fieldmenu() {
-                    if (hideFieldMenu == true) {
-                        hideFieldMenu = false
-                    } else {
-                        hideFieldMenu = true
-                    }
-                }
-
-                onClicked: {
-                    toggle_fieldmenu();
-                }
+                onClicked: fieldMenu.visible = true
             }
             IconButtonText{
                 id: btnFieldTools
                 objectName: "btnFieldTools"
                 buttonText: qsTr("Field Tools")
                 icon.source: "/images/FieldTools.png"
-                onClicked: fieldTools.popup()
-            visible: aog.isJobStarted ? true : false
+                onClicked: fieldTools.visible = true
+                visible: aog.isJobStarted ? true : false
             }
-            Menu{
+            FieldToolsMenu {
                 id: fieldTools
                 width: 300
-                IconButtonTextBeside{
-                    text: "Boundary"
-                    icon.source: "/images/MakeBoundary.png"
-                    width: 300
-                    onClicked: boundaryMenu.visible = true
-                }
-                IconButtonTextBeside{
-                    text: "Headland"
-                    icon.source: "/images/HeadlandMenu.png"
-                    width: 300
-                }
-                IconButtonTextBeside{
-                    text: "Headland (Build)"
-                    icon.source: "/images/Headache.png"
-                    width: 300
-                }
-                IconButtonTextBeside{
-                    text: "Tram Lines"
-                    icon.source: "/images/TramLines.png"
-                    width: 300
-                    onClicked: tramLinesEditor.visible = true
-                }
-                IconButtonTextBeside{
-                    text: "Recorded Path"
-                    icon.source: "/images/RecPath.png"
-                    width: 300
-                    //pseudo state
-                    property bool hideRecordMenu: true
-
-                    onHideRecordMenuChanged: {
-                        if (hideRecordMenu == true) {
-                            recordButtons.visible = false
-                        } else {
-                            recordButtons.visible = true
-                        }
-                    }
-
-                    function toggle_recordmenu() {
-                        if (hideRecordMenu == true) {
-                            hideRecordMenu = false
-                        } else {
-                            hideRecordMenu = true
-                        }
-                    }
-
-                    onClicked: {
-                        toggle_recordmenu();
-                    }
-
-                }
+                visible: false
+                height: mainWindow.height
             }
 
             IconButtonText {
@@ -479,28 +400,8 @@ Window {
                 objectName: "btnAutosteerConf"
                 buttonText: qsTr("Steer config")
                 icon.source: "/images/AutoSteerConf.png"
-                /*property bool hideSteerMenu: true
-
-                    onHideSteerMenuChanged: {
-                        if (hideSteerMenu == true) {
-                            steerConfigWindow.visible = false
-                        } else {
-                            steerConfigWindow.visible = true
-                        }
-                    }
-
-                    function toggle_steermenu() {
-                        if (hideSteerMenu == true) {
-                            hideSteerMenu = false
-                        } else {
-                            hideSteerMenu = true
-                        }
-                    }*/
-
                 onClicked: {
-                        steerConfigWindow.visible = true
-
-                    //toggle_steermenu();
+                    steerConfigWindow.visible = true
                 }
             }
         }
@@ -551,7 +452,7 @@ Window {
                 iconChecked: "/images/ContourOn.png"
                 buttonText: "Contour"
                 //color: "white"
-            visible: aog.isJobStarted ? true : false
+                visible: aog.isJobStarted ? true : false
             }
             IconButtonText{
                 id: btnABCurve
@@ -561,8 +462,8 @@ Window {
                 icon.source: "/images/CurveOff.png"
                 iconChecked: "/images/CurveOn.png"
                 buttonText: "ABCurve"
-				visible: aog.isJobStarted ? true : false
-				onClicked: {
+                visible: aog.isJobStarted ? true : false
+                onClicked: {
                     abCurvePicker.visible = true
                     if (aog.currentABCurve > -1) {
                         btnABCurve.checked = true
@@ -615,7 +516,7 @@ Window {
                 }
                 checked: aog.currentABLine > -1 ? true : false
                 buttonText: "ABLine"
-            visible: aog.isJobStarted ? true : false
+                visible: aog.isJobStarted ? true : false
             }
 
             IconButton{
@@ -624,7 +525,7 @@ Window {
                 icon.source: "/images/ABLineCycle.png"
                 width: btnABLine.width
                 height: btnABLine.height
-            visible: aog.isJobStarted ? true : false
+                visible: aog.isTrackOn
             }
             IconButton{
                 id: btnABLineCycleBk
@@ -632,7 +533,7 @@ Window {
                 icon.source: "/images/ABLineCycleBk.png"
                 width: btnABLine.width
                 height: btnABLine.height
-            visible: aog.isJobStarted ? true : false
+                visible: aog.isTrackOn
             }
 
             IconButtonText {
@@ -643,7 +544,7 @@ Window {
                 icon.source: "/images/ManualOff.png"
                 iconChecked: "/images/ManualOn.png"
                 buttonText: "Manual"
-            visible: aog.isJobStarted ? true : false
+                visible: aog.isJobStarted ? true : false
                 onCheckedChanged: {
                     if (checked) {
                         btnSectionAuto.checked = false;
@@ -662,7 +563,7 @@ Window {
                 icon.source: "/images/SectionMasterOff.png"
                 iconChecked: "/images/SectionMasterOn.png"
                 buttonText: "Auto"
-            visible: aog.isJobStarted ? true : false
+                visible: aog.isJobStarted ? true : false
                 onCheckedChanged: {
                     if (checked) {
                         btnSectionManual.checked = false;
@@ -680,6 +581,7 @@ Window {
                 icon.source: "/images/YouTurnNo.png"
                 iconChecked: "/images/YouTurn80.png"
                 buttonText: "AutoUturn"
+                visible: aog.isTrackOn
             }
             IconButtonText {
                 id: btnAutoSteer
@@ -688,7 +590,7 @@ Window {
                 iconChecked: "/images/AutoSteerOn.png"
                 checkable: true
                 checked: aog.isAutoSteerBtnOn
-            visible: aog.isJobStarted ? true : false
+                visible: aog.isJobStarted ? true : false
                 //Is remote activation of autosteer enabled?
                 buttonText: (settings.setAS_isAutoSteerAutoOn === true ? "R" : "M")
                 onClicked: {
@@ -753,82 +655,6 @@ Window {
             anchors.rightMargin: 3
             Layout.fillWidth: true
             //spacing: parent.rowSpacing
-            IconButtonText {
-                id: btnResetTool
-                objectName: "btnResetTool"
-                icon.source: "/images/ResetTool.png"
-                buttonText: "Reset Tool"
-            }
-            IconButtonText {
-                id: btnHeadland
-                objectName: "btnHeadland"
-                isChecked: false
-                checkable: true
-                icon.source: "/images/HeadlandOff.png"
-                iconChecked: "/images/HeadlandOn.png"
-                buttonText: "Headland"
-            }
-            IconButtonText {
-                id: btnHydLift
-                objectName: "btnHydLift"
-                isChecked: false
-                checkable: true
-                icon.source: "/images/HydraulicLiftOff.png"
-                iconChecked: "/images/HydraulicLiftOn.png"
-                buttonText: "HydLift"
-                onClicked: warningWindow.visible = true
-            }
-            IconButtonText {
-                id: btnFlag
-                objectName: "btnFlag"
-                isChecked: false
-                icon.source: "/images/FlagRed.png"
-                onPressAndHold: {
-                    if (contextFlag.visible) {
-                        contextFlag.visible = false;
-                    } else {
-                        contextFlag.visible = true;
-                    }
-                }
-                buttonText: "Flag"
-            }
-
-            IconButtonText {
-                id: btnTramLines
-                objectName: "btnTramLines"
-                icon.source: "/images/TramLines.png"
-                buttonText: "Tram Lines"
-            }
-            IconButtonText {
-                id: btnSectionMapping
-                objectName: "btnSectionMapping"
-                icon.source: "/images/SectionMapping"
-            visible: aog.isJobStarted ? true : false
-            }
-
-            IconButtonText {
-                id: btnPointStart
-                objectName: "btnPointStart"
-                icon.source: "/images/PointStart.png"
-                buttonText: "LinePicker"
-                onClicked: lineDrawer.visible = true
-            }
-            IconButtonText {
-                id: btnABLineEdit
-                objectName: "btnABLineEdit"
-                icon.source: "/images/ABLineEdit.png"
-                buttonText: "ABLineEdit"
-                onClicked: lineEditor.visible = true
-            }
-            IconButtonText {
-                id: btnYouSkip
-                objectName: "btnYouSkip"
-                isChecked: false
-                checkable: true
-                icon.source: "/images/YouSkipOff.png"
-                iconChecked: "/images/YouSkipOn.png"
-                buttonText: "YouSkips"
-            }
             ComboBox {
                 id: skips
                 editable: true
@@ -854,180 +680,103 @@ Window {
                 implicitHeight:parent.height
                 implicitWidth: btnYouSkip.width
             }
-
-        }
-
-        SectionButtons {
-            id: sectionButtons
-            visible: aog.isJobStarted ? true : false
-            anchors.horizontalCenter: parent.horizontalCenter
-            //TODO: add logic to interact with the Auto and manual buttons
-
-            //only allow on and off when auto is on. TODO what about when Manual is on?
-            //triState: btnSectionAuto.checked ? false : true
-
-            anchors.bottom: bottomButtons.top
-            anchors.bottomMargin:10
-            width: 500
-        }
-
-        Rectangle{
-            id: displayButtons
-            width: childrenRect.width + 10
-            height: childrenRect.height + 10
-            anchors.left: leftColumn.right
-            anchors.leftMargin: 20
-            anchors.top: parent.top
-            anchors.topMargin: 20
-            color: "white"
-            visible: false
-            z:1
-            Grid {
-                id: tiltButtons
-                anchors.leftMargin: 5
-                anchors.topMargin: 5
-                spacing: 6
-                flow: Grid.TopToBottom
-                rows:6
-                columns:2
-
-                IconButtonTransparent {
-                    id: btnTiltDown
-                    objectName: "btnTiltDown"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/TiltDown.png"
-                }
-                IconButtonTransparent {
-                    id: btnCamera2d
-                    objectName: "btnCamera2d"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/Camera2D64.png"
-                }
-                IconButtonTransparent {
-                    id: btnCameraNorth2d
-                    objectName: "btnCameraNorth2d"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/CameraNorth2D.png"
-                }
-                IconButtonTransparent {
-                    id: btnZoomOut
-                    objectName: "btnZoomOut"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/ZoomOut48.png"
-                }
-                IconButtonTransparent {
-                    id: btnWindowDayNight
-                    objectName: "btnWindowDayNight"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/WindowDayMode.png"
-                }
-                IconButtonTransparent {
-                    id: btnBrightnessDown
-                    objectName: "btnBrightnessDown"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/BrightnessDn.png"
-                }
-                IconButtonTransparent {
-                    id: btnTiltUp
-                    objectName: "btnTiltUp"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/TiltUp.png"
-                }
-                IconButtonTransparent {
-                    id: btnCamera3d
-                    objectName: "btnCamera3d"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/Camera3D64.png"
-                }
-                IconButtonTransparent {
-                    id: btnCameraNorth3d
-                    objectName: "btnCameraNorth3d"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/CameraNorth64.png"
-                }
-                IconButtonTransparent {
-                    id: btnZoomIn
-                    objectName: "btnZoomIn"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/ZoomIn48.png"
-                }
-                Rectangle {
-                    id: btnHZ
-                    width: 70
-                    height: 70
-                    radius: 10
-                }
-                IconButtonTransparent {
-                    id: btnBrightnessUp
-                    objectName: "btnBrightnessUp"
-                    width: 70
-                    height: 70
-                    radius: 10
-                    icon.source: "/images/BrightnessUp.png"
+            IconButtonText {
+                id: btnYouSkip
+                objectName: "btnYouSkip"
+                isChecked: false
+                checkable: true
+                icon.source: "/images/YouSkipOff.png"
+                iconChecked: "/images/YouSkipOn.png"
+                buttonText: "YouSkips"
+            }
+            IconButtonText {
+                id: btnResetTool
+                objectName: "btnResetTool"
+                icon.source: "/images/ResetTool.png"
+                buttonText: "Reset Tool"
+            }
+            IconButtonText {
+                id: btnSectionMapping
+                objectName: "btnSectionMapping"
+                icon.source: "/images/SectionMapping"
+                visible: aog.isJobStarted ? true : false
+            }
+            IconButtonText {
+                id: btnFieldInfo
+                icon.source: "/images/FieldStats.png"
+                visible: aog.isJobStarted ? true : false
+                onClicked: {
+                    fieldData.visible = !fieldData.visible
+                    gpsData.visible = false
                 }
             }
-        }
-
-        Item{
-            objectName: "autoUTurnButton"
-            id: autoUturn
-            anchors.top: parent.top
-            anchors.right: rightColumn.left
-            anchors.topMargin: 50
-            anchors.rightMargin: 150
-            visible: aog.isJobStarted ? true : false
-            width: childrenRect.width
-            height: childrenRect.height
-            ColorOverlay{
-                id: myOverlay
-                color: "#40ff00"
-                anchors.fill: autoTurn
-                source: autoTurn
-                visible: true
-                Text{
-                    anchors.top: myOverlay.bottom
-                    anchors.topMargin: -25
-                    anchors.left: myOverlay.left
-                    text: " however ft"
-                    color: myOverlay.color
-                    font.pixelSize: 20
-                    visible: true
-                }
-                MouseArea{
-                    anchors.fill: parent
-                    id: mouseToggle
-                    onClicked:{
-                        function imageMirror(){
-                            if(autoTurnImage.mirror == true){
-                                autoTurnImage.mirror = false
-                            }else{
-                                autoTurnImage.mirror = true
-                            }
-                        }
-                        imageMirror()
+            IconButtonText {
+                id: btnTramLines
+                objectName: "btnTramLines"
+                icon.source: "/images/TramLines.png"
+                buttonText: "Tram Lines"
+            }
+            IconButtonText {
+                id: btnHydLift
+                objectName: "btnHydLift"
+                isChecked: false
+                checkable: true
+                icon.source: "/images/HydraulicLiftOff.png"
+                iconChecked: "/images/HydraulicLiftOn.png"
+                buttonText: "HydLift"
+            }
+            IconButtonText {
+                id: btnHeadland
+                objectName: "btnHeadland"
+                isChecked: false
+                checkable: true
+                icon.source: "/images/HeadlandOff.png"
+                iconChecked: "/images/HeadlandOn.png"
+                buttonText: "Headland"
+            }
+            IconButtonText {
+                id: btnFlag
+                objectName: "btnFlag"
+                isChecked: false
+                icon.source: "/images/FlagRed.png"
+                onPressAndHold: {
+                    if (contextFlag.visible) {
+                        contextFlag.visible = false;
+                    } else {
+                        contextFlag.visible = true;
                     }
                 }
+                buttonText: "Flag"
             }
+
+            IconButtonText {
+                id: btnTrackOn
+                icon.source: "/images/TrackOn.png"
+                buttonText: "Track"
+                onClicked: trackButtons.visible = !trackButtons.visible
+            }
+
+        }
+        //----------------inside buttons-----------------------
+        Item{
+            //plan to move everything on top of the aogRenderer that isn't
+            //in one of the buttons columns
+            id: inner
+            anchors.left: leftColumn.right
+            anchors.top: parent.top
+            anchors.topMargin: topLine.height
+            anchors.right: rightColumn.left
+            anchors.bottom: bottomButtons.top
+            OutlineText{
+                visible: settings.setMenu_isSimulatorOn
+                anchors.top: parent.top
+                anchors.topMargin: lightbar.height+ 10
+                anchors.horizontalCenter: lightbar.horizontalCenter
+                font.pixelSize: 30
+                color: "#cc5200"
+                text: qsTr("Simulator On")
+            }
+
             Item{
                 id: autoTurn
                 anchors.top:parent.top
@@ -1044,180 +793,216 @@ Window {
                     anchors.fill: parent
                 }
             }
-        }
-        Item{
-            objectName: "manUTurnButtons"
-            id: manualUturnLateral
+            Item{
+                objectName: "manUTurnButtons"
+                id: manualUturnLateral
+                anchors.top: lightbar.bottom
+                anchors.left: parent.left
+                anchors.topMargin: 30
+                anchors.leftMargin: 150
+                width: childrenRect.width
+                height: childrenRect.height
+                visible: (aog.currentABCurve > -1) || (aog.currentABLine > -1)
+                ColorOverlay{
+                    color: "#e6e600"
+                    anchors.fill: uturn
+                    source: uturn
+
+                    Button{
+                        background: Rectangle{color: "transparent"}
+                        objectName: "btnManUturnLeft"
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.left: parent.left
+                        anchors.right: parent.horizontalCenter
+                        onClicked: {
+                            if (settings.setAS_functionSpeedLimit > aog.speedKph)
+                                aog.uturn(false)
+                            else
+                                timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+                                                        utils.speed_to_unit_string(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
+                        }
+                    }
+                    Button{
+                        background: Rectangle{color: "transparent"}
+                        objectName: "btnManUturnRight"
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.right: parent.right
+                        anchors.left: parent.horizontalCenter
+                        onClicked: {
+                            if (settings.setAS_functionSpeedLimit > aog.speedKph)
+                                aog.uturn(true)
+                            else
+                                timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+                                                        utils.speed_to_unit_string(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
+                        }
+                    }
+                }
+                Image{
+                    id: uturn
+                    anchors.top: parent.top
+                    height: 60
+                    anchors.left: parent.left
+                    width: 150
+                    source: '/images/Images/z_TurnManual.png'
+                    visible: false
+                }
+                ColorOverlay{
+                    color: "#80aaff"
+                    anchors.fill: lateral
+                    source: lateral
+                }
+
+                Image{
+                    visible: false
+                    id: lateral
+                    anchors.top: uturn.bottom
+                    height: 60
+                    anchors.left: parent.left
+                    width: 150
+                    source: '/images/Images/z_LateralManual.png'
+                    Button{
+                        background: Rectangle{color: "transparent"}
+                        objectName: "btnManLateralLeft"
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.left: parent.left
+                        anchors.right: parent.horizontalCenter
+                        onClicked: {
+                            if (settings.setAS_functionSpeedLimit > aog.speedKph)
+                                aog.lateral(false)
+                            else
+                                timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+                                                        aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
+                        }
+                    }
+                    Button{
+                        background: Rectangle{color: "transparent"}
+                        objectName: "btnManLateralRight"
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.right: parent.right
+                        anchors.left: parent.horizontalCenter
+                        onClicked: {
+                            if (settings.setAS_functionSpeedLimit > aog.speedKph)
+                                aog.lateral(false)
+                            else
+                                timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+                                                        aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
+                        }
+                    }
+                }
+            }
+        LightBar {
+            id: lightbar
             anchors.top: parent.top
-            anchors.left: leftColumn.right
-            anchors.topMargin: 50
-            anchors.leftMargin: 150
-            width: childrenRect.width
-            height: childrenRect.height
-            visible: (aog.currentABCurve > -1) || (aog.currentABLine > -1)
-            ColorOverlay{
-                color: "#e6e600"
-                anchors.fill: uturn
-                source: uturn
-
-                Button{
-                    background: Rectangle{color: "transparent"}
-                    objectName: "btnManUturnLeft"
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    anchors.left: parent.left
-                    anchors.right: parent.horizontalCenter
-                    onClicked: {
-                        if (settings.setAS_functionSpeedLimit > aog.speedKph)
-                            aog.uturn(false)
-                        else
-                            timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                    utils.speed_to_unit_text(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
-                    }
-                }
-                Button{
-                    background: Rectangle{color: "transparent"}
-                    objectName: "btnManUturnRight"
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    anchors.right: parent.right
-                    anchors.left: parent.horizontalCenter
-                    onClicked: {
-                        if (settings.setAS_functionSpeedLimit > aog.speedKph)
-                            aog.uturn(true)
-                        else
-                            timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                    utils.speed_to_unit_text(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
-                    }
-                }
-            }
-            Image{
-                id: uturn
-                anchors.top: parent.top
-                height: 60
-                anchors.left: parent.left
-                width: 150
-                source: '/images/Images/z_TurnManual.png'
-                visible: false
-            }
-            ColorOverlay{
-                color: "#80aaff"
-                anchors.fill: lateral
-                source: lateral
-            }
-
-            Image{
-                visible: false
-                id: lateral
-                anchors.top: uturn.bottom
-                height: 60
-                anchors.left: parent.left
-                width: 150
-                source: '/images/Images/z_LateralManual.png'
-                Button{
-                    background: Rectangle{color: "transparent"}
-                    objectName: "btnManLateralLeft"
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    anchors.left: parent.left
-                    anchors.right: parent.horizontalCenter
-                    onClicked: {
-                        if (settings.setAS_functionSpeedLimit > aog.speedKph)
-                            aog.lateral(false)
-                        else
-                            timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                    aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
-                    }
-                }
-                Button{
-                    background: Rectangle{color: "transparent"}
-                    objectName: "btnManLateralRight"
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    anchors.right: parent.right
-                    anchors.left: parent.horizontalCenter
-                    onClicked: {
-                        if (settings.setAS_functionSpeedLimit > aog.speedKph)
-                            aog.lateral(false)
-                        else
-                            timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                    aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
-                    }
-                }
-            }
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.margins: 5
+            dotDistance: aog.avgPivDistance / 10 //avgPivotDistance is averaged
+            visible: (aog.offlineDistance != 32000 &&
+                      (settings.setMenu_isLightbarOn === true ||
+                       settings.setMenu_isLightbarOn === "true")) ?
+                         true : false
         }
 
-        SliderCustomized {
+        TrackNum {
+            id: tracknum
+            anchors.top: lightbar.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.margins: 5
+
+            font.pixelSize: 24
+
+            //only use dir names for AB Lines with heading
+            useDirNames: (aog.currentABLine > -1)
+            currentTrack: aog.current_trackNum
+
+            trackHeading: aog.currentABLine > -1 ?
+                              aog.currentABLine_heading :
+                              0
+
+            visible: (utils.isTrue(settings.setDisplay_topTrackNum) &&
+                      ((aog.currentABLine > -1) ||
+                       (aog.currentABCurve > -1)))
+            //TODO add contour
+        }
+
+        FieldData{
+            id: fieldData
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            visible: false
+        }
+        GPSData{
+            id: gpsData
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            visible: false
+        }
+
+        SimController{
+            id: simBarRect
+            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottomMargin: 10
+            visible: utils.isTrue(settings.setMenu_isSimulatorOn)
+        }
+        SectionButtons {
+            id: sectionButtons
+            visible: aog.isJobStarted ? true : false
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: simBarRect.top
+            anchors.bottomMargin: 15
+            width: 500 //TODO: make this adjust with the width of the parent window
+        }
+        DisplayButtons{
+            id: displayButtons
+            width: childrenRect.width + 10
+            height: childrenRect.height + 10
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            anchors.top: parent.top
+            anchors.topMargin: 20
+            visible: false
+            z:1
+        }
+        TrackButtons{
+            id: trackButtons
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.margins: 20
+            visible: false
+            z:1
+        }
+    }
+
+
+
+        SliderCustomized { //quick dirty hack--the up and down buttons change this value, so the speed changes
             id: speedSlider
             objectName: "simSpeed"
-            anchors.bottom: bottomButtons.top
-            anchors.bottomMargin: 3
-            anchors.left:bottomButtons.left
-            anchors.leftMargin: 3
+            //anchors.bottom: bottomButtons.top
+//            anchors.bottomMargin: 3
+//            anchors.left:bottomButtons.left
+//            anchors.leftMargin: 3
             from: -30
             to: 30
             value: 0
+            visible: false
         }
 
-        IconButton {
-            id: simStopButton
-            objectName: "simStopButton"
-            icon.source: "/images/Stop.png"
-            width: 50
-            height: 50
-            anchors.left: speedSlider.right
-            anchors.bottom: speedSlider.bottom
-            onClicked: {
-                speedSlider.value = 0;
-            }
+        StartUp{
+            id: startUp
+            z:10
+            visible: true
         }
 
-        SliderCustomized {
-            id: steerSlider
-            objectName: "simSteer"
-            anchors.bottom: simStopButton.top
-            anchors.leftMargin: 3
-            anchors.left: bottomButtons.left
-            multiplicationValue: 10
-            from: 0
-            to: 600
-            value: 300
-        }
 
-        IconButton {
-            id: centerSteerbutton
-            objectName: "simSteerCenter"
-            width: 50
-            height: 50
-            anchors.left: steerSlider.right
-            anchors.leftMargin: 50
-            anchors.bottom: steerSlider.bottom
-            icon.source: "/images/AutoSteerOn.png"
-            onClicked: {
-                steerSlider.value = 300;
-            }
-
-        }
         FieldMenu {
             id: fieldMenu
             objectName: "slideoutMenu"
-            height: 700
-            width:1024
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.leftMargin: 15
             visible: false
-
-        }
-        FieldOpen {
-            id: fieldOpen
-            objectName: "slideoutMenu"
-            anchors.top: parent.top
-            anchors.topMargin: 20
-            anchors.left: leftColumn.right
-            anchors.leftMargin: 15
-            visible: false
-
         }
         ToolsWindow {
             id: toolsWindow
@@ -1231,11 +1016,6 @@ Window {
         }
         Config {
             id:config
-            objectName: "config"
-            //anchors.horizontalCenter: parent.horizontalCenter
-            //anchors.bottom: parent.bottom
-            height: parent.height
-            //width:parent.width
             visible:false
 
             onAccepted: {
@@ -1287,10 +1067,10 @@ Window {
         }
         BoundaryMenu{
             id: boundaryMenu
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.rightMargin: 150
-            anchors.topMargin: 50
+            //anchors.right: parent.right
+            //anchors.top: parent.top
+            //anchors.rightMargin: 150
+            //anchors.topMargin: 50
             visible: false
         }
 
@@ -1302,6 +1082,7 @@ Window {
             width:1024
             visible:false
         }
+
         Rectangle{
             id: recordButtons
             anchors.bottom: bottomButtons.top
@@ -1363,6 +1144,7 @@ Window {
                 color2: "transparent"
                 color3: "transparent"
                 icon.source: "/images/ExitAOG.png"
+                onClicked:mainWindow.close()
             }
         }
 

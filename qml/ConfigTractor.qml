@@ -29,22 +29,8 @@ Rectangle{
             height:100
             checkable: true
             icon.source: "/images/vehiclePageHarvester.png"
-            checked: Number(settings.setVehicle_vehicleType) === 1 ? true: false
-            onClicked: {
-                if (checked)
-                    settings.setVehicle_vehicleType = 1
-            }
-
-            Connections{
-                target: settings
-                function onSetVehicle_vehicleTypeChanged(){
-                    if(Number(settings.setVehicle_vehicleType) === 1){
-                        harvester.checked = true
-                    }else{
-                        harvester.checked = false
-                    }
-                }
-            }
+            isChecked: settings.setVehicle_vehicleType === 1
+            onClicked: settings.setVehicle_vehicleType = 1
         }
         IconButtonColor{
             width:150
@@ -52,21 +38,8 @@ Rectangle{
             id: tractor
             icon.source: "/images/vehiclePageTractor.png"
             checkable: true
-            checked: Number(settings.setVehicle_vehicleType) === 0 ? true: false
-            onClicked: {
-                if (checked)
-                    settings.setVehicle_vehicleType = 0
-            }
-            Connections{
-                target: settings
-                function onSetVehicle_vehicleTypeChanged(){
-                    if(Number(settings.setVehicle_vehicleType) === 0){
-                        tractor.checked = true
-                    }else{
-                        tractor.checked = false
-                    }
-                }
-            }
+            isChecked: settings.setVehicle_vehicleType === 0
+            onClicked: settings.setVehicle_vehicleType = 0
         }
         IconButtonColor{
             width:150
@@ -74,27 +47,15 @@ Rectangle{
             id: tr4wd
             icon.source: "/images/vehiclePage4WD.png"
             checkable: true
-            checked: Number(settings.setVehicle_vehicleType) === 2 ? true: false
-            onClicked: {
-                if (checked)
-                    settings.setVehicle_vehicleType = 2
-            }
-
-            Connections{
-                target: settings
-                function onSetVehicle_vehicleTypeChanged(){
-                    if(Number(settings.setVehicle_vehicleType) === 2){
-                        tr4wd.checked = true
-                    }else{
-                        tr4wd.checked = false
-                    }
-                }
-            }
+            isChecked: settings.setVehicle_vehicleType === 2
+            onClicked: settings.setVehicle_vehicleType = 2
         }
     }
+    /*
     Text {
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         text: qsTr("I consider the rest of this page nonessential for now and will be added at a later date")
     }
+    */
 }

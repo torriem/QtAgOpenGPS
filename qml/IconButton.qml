@@ -16,7 +16,7 @@ Button {
     property int border: 0
 
     property color color1: "#ffffff"
-    property color color2: "#ffffff"
+    property color color2: "#cccccc"
     property color color3: "#888888"
 
     property color colorHover1: "#ffffff"
@@ -37,8 +37,6 @@ Button {
 
     //This is specific to this base type... must be re-implemented in subtypes
     onCheckedChanged: {
-        isChecked = checked
-
         if (checked && useIconChecked) {
             content_image.source = iconChecked
             //console.warn("icon should be ", content_image.source)
@@ -49,8 +47,9 @@ Button {
 
     }
 
-    property url iconChecked: ""
+    property url iconChecked: icon.source
     property bool useIconChecked: false
+
     onIconCheckedChanged: {
         if (iconChecked != "") {
             useIconChecked = true
@@ -86,6 +85,7 @@ Button {
             font.pixelSize: parent.height * 0.15
             z: 1
             visible: icon_button ? true : false
+            color: enabled ? "black" : "grey"
         }
 
         Image {
@@ -117,6 +117,7 @@ Button {
 
     background: Rectangle {
         border.width: icon_button.border
+        border.color: enabled ? "black" : "grey"
         //border.width: icon_button.border
         radius: 10
         id: icon_button_background

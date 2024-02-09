@@ -12,6 +12,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 lessThan(QT_MAJOR_VERSION, 5):error("requires Qt 5.9 or newer")
 equals(QT_MAJOR_VERSION,5):lessThan(QT_MINOR_VERSION,9):error("requires Qt 5.9 or newer")
 
+
 TARGET = QtAgOpenGPS
 TEMPLATE = app
 
@@ -44,7 +45,7 @@ SOURCES += main.cpp\
     classes/cpgn.cpp \
     classes/cturn.cpp \
     classes/cturnlines.cpp \
-        formgps.cpp \
+    formgps.cpp \
     classes/cabline.cpp \
     classes/vec2.cpp \
     classes/vec3.cpp \
@@ -57,6 +58,10 @@ SOURCES += main.cpp\
     formgps_classcallbacks.cpp \
     formgps_sections.cpp \
     formgps_settings.cpp \
+    formgps_ui_boundary.cpp \
+    formgps_ui_field.cpp \
+    formgps_ui_tracks.cpp \
+    formgps_ui_vehicle.cpp \
     qmlsectionbuttons.cpp \
     qmlsettings.cpp \
     qmlsettings_addkeys.cpp \
@@ -87,7 +92,6 @@ SOURCES += main.cpp\
     formgps_saveopen.cpp
 
 HEADERS  += formgps.h \
-    aogiface_property.h \
     aogproperty.h \
     classes/cabline.h \
     classes/cboundarylist.h \
@@ -110,11 +114,12 @@ HEADERS  += formgps.h \
     classes/cboundary.h \
     btnenum.h \
     classes/vecfix2fix.h \
+    interfaceproperty.h \
     properties.h \
     qmlsectionbuttons.h \
     qmlsettings.h \
     qmlutil.h \
-    aogsettings.h \ 
+    aogsettings.h \
     common.h \
     glutils.h \
     aogrenderer.h \

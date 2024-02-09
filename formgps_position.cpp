@@ -68,7 +68,7 @@ void FormGPS::UpdateFixPosition()
         //#region Start
 
         distanceCurrentStepFixDisplay = glm::Distance(prevDistFix, pn.fix);
-        if ((fd.distanceUser += distanceCurrentStepFixDisplay) > 999) fd.distanceUser = 0;
+        if ((double)(fd.distanceUser += distanceCurrentStepFixDisplay) > 999) fd.distanceUser = 0;
         distanceCurrentStepFixDisplay *= 100;
 
         prevDistFix = pn.fix;
@@ -612,7 +612,7 @@ void FormGPS::UpdateFixPosition()
         distanceCurrentStepFix = glm::Distance(pn.fix, prevDistFix);
 
         //userDistance can be reset
-        if ((fd.distanceUser += distanceCurrentStepFix) > 999) fd.distanceUser = 0;
+        if ((double)(fd.distanceUser += distanceCurrentStepFix) > 999) fd.distanceUser = 0;
 
         distanceCurrentStepFixDisplay = distanceCurrentStepFix * 100;
         prevDistFix = pn.fix;
@@ -1009,6 +1009,7 @@ void FormGPS::UpdateFixPosition()
         if (!yt.isYouTurnBtnOn)
         {
             mc.isOutOfBounds = !bnd.IsPointInsideFenceArea(vehicle.pivotAxlePos);
+            isOutOfBounds = mc.isOutOfBounds;
         }
         else //Youturn is on
         {
@@ -1019,6 +1020,7 @@ void FormGPS::UpdateFixPosition()
             if (isInTurnBounds)
             {
                 mc.isOutOfBounds = false;
+                isOutOfBounds = false;
                 //now check to make sure we are not in an inner turn boundary - drive thru is ok
                 if (yt.youTurnPhase != 3)
                 {
@@ -1071,6 +1073,7 @@ void FormGPS::UpdateFixPosition()
                 {
                     yt.ResetCreatedYouTurn();
                     mc.isOutOfBounds = !bnd.IsPointInsideFenceArea(vehicle.pivotAxlePos);
+                    isOutOfBounds = mc.isOutOfBounds;
                 }
 
             }
@@ -1099,6 +1102,7 @@ void FormGPS::UpdateFixPosition()
     else
     {
         mc.isOutOfBounds = false;
+        isOutOfBounds = false;
     }
 
     //#endregion
@@ -1118,6 +1122,8 @@ void FormGPS::UpdateFixPosition()
     //pn: latitude, longitude, easting, northing, heading
     //vehicle: avgSpeed
     //ahrs:  imuRoll
+    //qDebug() << "frame time after processing a new position " << swFrame.elapsed();
+
     QObject *aog = qmlItem(qml_root,"aog");
 
     aog->setProperty("latitude",pn.latitude);
@@ -1140,6 +1146,18 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("offlineDistance", vehicle.guidanceLineDistanceOff);
     aog->setProperty("speedKph", vehicle.avgSpeed);
 
+    // added by Wedel
+    aog->setProperty("altitude", pn.altitude);
+    aog->setProperty("hdop", pn.hdop);
+    aog->setProperty("age", pn.age);
+    aog->setProperty("fixQuality", pn.fixQuality);
+    aog->setProperty("ageAlarm", pn.ageAlarm);
+    aog->setProperty("satellitesTracked", pn.satellitesTracked);
+    aog->setProperty("imuHeading", ahrs.imuHeading);
+    aog->setProperty("angVel", ahrs.angVel);
+
+
+
     if (ABLine.numABLineSelected > 0) {
         //currentABLine_heading is set in formgps_ui.cpp
         aog->setProperty("current_trackNum", ABLine.howManyPathsAway);
@@ -1161,6 +1179,7 @@ void FormGPS::UpdateFixPosition()
 
     newframe = true;
     lock.unlock();
+    //qDebug() << "frame time after processing a new position part 2 " << swFrame.elapsed();
 
 }
 
@@ -1388,8 +1407,8 @@ void FormGPS::AddBoundaryPoint()
         if (bnd.isDrawRightSide)
         {
             //Right side
-            Vec3 point(vehicle.pivotAxlePos.easting + sin(vehicle.pivotAxlePos.heading - glm::PIBy2) * -bnd.createBndOffset,
-                       vehicle.pivotAxlePos.northing + cos(vehicle.pivotAxlePos.heading - glm::PIBy2) * -bnd.createBndOffset,
+            Vec3 point(vehicle.pivotAxlePos.easting + sin(vehicle.pivotAxlePos.heading - glm::PIBy2) * -(double)bnd.createBndOffset,
+                       vehicle.pivotAxlePos.northing + cos(vehicle.pivotAxlePos.heading - glm::PIBy2) * -(double)bnd.createBndOffset,
                        vehicle.pivotAxlePos.heading);
             bnd.bndBeingMadePts.append(point);
         }
@@ -1398,12 +1417,12 @@ void FormGPS::AddBoundaryPoint()
         else
         {
             //Right side
-            Vec3 point(vehicle.pivotAxlePos.easting + sin(vehicle.pivotAxlePos.heading - glm::PIBy2) * bnd.createBndOffset,
-                       vehicle.pivotAxlePos.northing + cos(vehicle.pivotAxlePos.heading - glm::PIBy2) * bnd.createBndOffset,
+            Vec3 point(vehicle.pivotAxlePos.easting + sin(vehicle.pivotAxlePos.heading - glm::PIBy2) * (double)bnd.createBndOffset,
+                       vehicle.pivotAxlePos.northing + cos(vehicle.pivotAxlePos.heading - glm::PIBy2) * (double)bnd.createBndOffset,
                        vehicle.pivotAxlePos.heading);
             bnd.bndBeingMadePts.append(point);
         }
-
+        boundary_calculate_area(); //in formgps_ui_boundary.cpp
     }
 }
 

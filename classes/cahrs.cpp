@@ -1,5 +1,6 @@
 #include "cahrs.h"
 #include "aogproperty.h"
+#include <QDebug>
 
 CAHRS::CAHRS(QObject *parent) : QObject(parent)
 {
@@ -22,4 +23,15 @@ void CAHRS::loadSettings()
     reverseComp = property_setGPS_reverseComp;
     fusionWeight = property_setIMU_fusionWeight2;
 
+}
+
+void CAHRS::changeImuHeading(double newImuHeading) {
+    imuHeading = newImuHeading;
+    qDebug() << "changed imuHeading to " << newImuHeading;
+}
+
+void CAHRS::changeImuRoll(double newImuRoll) {
+    //new roll number
+    imuRoll = newImuRoll;
+    qDebug() << "changed imuRoll to " << newImuRoll;
 }

@@ -20,9 +20,21 @@ import QtQuick.Controls 2.15
 Item {
     id: aogInterfaceType
 
+    /*
+    Connections {
+        target: settings
+        function onSetMenu_isMetricChanged() {
+            console.debug("isMetric is now",settings.setMenu_isMetric)
+        }
+    }
+    */
+    //Primarily these properties are updated by the backend c++ code
+    //signals and data structures for specific UI functions are now
+    //in the interfaces qml directory
+
     property double frameTime: 0
 
-    property bool isJobStarted: false
+    property bool isJobStarted: true
 
     property int manualBtnState: 0
     property int autoBtnState: 0
@@ -39,20 +51,23 @@ Item {
         console.debug("isAutoSteerBtnOn is now " + isAutoSteerBtnOn)
     }
 
+    //General FormGPS information updated at GPS rate.
     property double latStart: 53
     property double lonStart: -111
 
     property double easting: 0
     property double northing: 0
-    property double latitude: 0
-    property double longitude: 0
-    property double heading: 0
+    property double latitude: 53.2
+    property double longitude: -111.2
+    property double heading: 0//this is fix2fix heading
     property double toolEasting: 0
     property double toolNorthing: 0
     property double toolLatitude: 0
     property double toolLongitude: 0
     property double toolHeading: 0
     property double imuRollDegrees: 0
+    signal changeImuRoll(double new_roll) //usually just set to 88888;
+
     property double speedKph: 0
     property double offlineDistance: 32000
     property double avgPivDistance: 32000
@@ -60,43 +75,61 @@ Item {
     property int steerModuleConnectedCounter: 0
     property bool steerSwitchHigh: false
 
+    //david added these
+    //formgps_position.cpp line 1144
+    property double workedAreaTotal: 0
+    property double workedAreaTotalUser: 0 //total acres covered
+    property double actualAreaCovered: 0 //actual acres covered. Doesn't count overlap.
+    property double distanceUser: 0
+    property double areaOuterBoundary: 0
+    property double areaBoundaryOuterLessInner: 0//outer minus the inner
+    property double altitude: 0
+    property double hdop: 0
+    property double	age: 0
+    property int fixQuality: 0
+    property int ageAlarm: 0
+    property int satellitesTracked: 0
 
+    property double imuHeading: 0
+    signal changeImuHeading(double newImuHeading)
+
+    property int angVel: 0//angular velocity I assume
+    property string timeTilFinished: ""
+    property string workRate: "value"
+    property string percentOverlap: "value"
+    property string percentLeft: "value"
+    //these not added yet
+    property double steerAngleActual: 0
+    property double steerAngleSet: 0
+    property double rawHZ:0
+    property double hz:0
+    property double missedSentences: 0
+    property double gpsHeading: 0
+    property double fusedHeading: 0
+
+    property bool isTrackOn: false //checks if a guidance line is set.
+    onCurrentABLineChanged: {
+        if(currentABLine > -1 && isJobStarted === true){
+            isTrackOn = true
+        }
+        else{
+            isTrackOn = false
+        }
+    }
+
+    //can we use these line properties for the Display?
     //AB Lines properties, signals, and methods
-    property int currentABLine: -1 //use this instead of signals?
+    property int currentABLine: -1
     property int currentABCurve: -1
 
-    property double currentABLine_heading: 0
+    property double currentABLine_heading: 0 //TODO delete or move to interfaces/LinesInterface.qml.  seems to be unused
 
     property int current_trackNum: 0
-
-    property var abLinesList: [
-        {index: 0, name: "one", easting: 3, northing: 4, heading: 75, visible: true },
-        {index: 1, name: "two", easting: 3, northing: 4, heading: 75, visible: true },
-        {index: 2, name: "three", easting: 3, northing: 4, heading: 75, visible: true },
-        {index: 3, name: "four", easting: 3, northing: 4, heading: 75, visible: true }
-    ]
-
-    property var abCurvesList: [
-        {index: 0, name: "one", visible: true },
-        {index: 1, name: "two", visible: true },
-        {index: 2, name: "three", visible: true }
-    ]
-
-    signal abLine_updateLines()
-
-    signal abLine_addLine(string name, double easting, double northing, double heading)
-    signal abLine_deleteLine(int index)
-    //signal changeABLineName(int lineno, string new_name)
-    signal abLine_changeName(int which_one, string new_name)
-    signal abLine_setA(bool start_or_cancel, double easting, double northing, double heading) //true to mark point, false to cancel new point
-    signal abLine_swapHeading(int index)
-
 
     //on-screen buttons
 
     signal uturn(bool turn_right)
     signal lateral(bool go_right)
-
 
     //general settings
     signal settings_reload() //tell backend classes to reload settings from store
@@ -104,14 +137,7 @@ Item {
     signal settings_revert() //revert to temporary copy of all settings
     signal settings_save() //sync to disk, and also copy to current vehicle file, if active
 
-    signal vehicle_saveas(string vehicle_name)
-    signal vehicle_load(string vehicle_name)
-    signal vehicle_delete(string vehicle_name)
-    signal vehicle_update_list()
-
-    property var vehicle_list: [
-        { index: 0, name: "tractor" }
-    ]
+    signal modules_send_238()
 
     property double mPerDegreeLat
     property double mPerDegreeLon

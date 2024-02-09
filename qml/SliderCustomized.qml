@@ -21,18 +21,18 @@ Slider{
         y: parent.topPadding + parent.availableHeight / 2 - height / 2
         implicitWidth: 250 + 30
         implicitHeight: 50
-        width: parent.availableWidth
-        height: implicitHeight
         radius: 2
-        color: "lightgray"
+        color: "white"
 
     }
 
     handle: Rectangle{
-        height: parent.height
+        id: handleRect
+        height: parent.height - 4
+        radius: 2
         width: 20
         visible: true
-        color: "grey"
+        color: "lightgray"
         x: parent.leftPadding + parent.visualPosition * (parent.availableWidth - width)
         y: parent.topPadding + parent.availableHeight / 2 - height / 2
 
@@ -40,37 +40,51 @@ Slider{
     Button{
         id: rightSliderButton
         anchors.right: sliderCustomized.right
+        anchors.left: handleRect.right
         anchors.top: sliderCustomized.top
         anchors.bottom: sliderCustomized.bottom
         width: 20
         onClicked: sliderCustomized.value = sliderCustomized.value +1 * multiplicationValue
-        Text{
-            anchors.centerIn: parent
-            text: qsTr(">")
+        background: Rectangle{
+            color: "transparent"
+            Text{
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                text: ">"
+                color: sliderCustomized.enabled ? "black" : "grey"
 
+            }
         }
+
     }
     Button{
         id: leftSliderButton
         anchors.left: sliderCustomized.left
+        anchors.right: handleRect.left
         anchors.top: sliderCustomized.top
         onClicked: sliderCustomized.value = sliderCustomized.value -1 * multiplicationValue
         anchors.bottom: sliderCustomized.bottom
         width: 20
-        Text{
-            anchors.centerIn: parent
-            text: qsTr("<")
+        background: Rectangle{
+            Text{
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                text: "<"
+                color: sliderCustomized.enabled ? "black" : "grey"
+            }
         }
     }
     Text{
         id: leftText
         text: sliderCustomized.leftText
+        color: sliderCustomized.enabled ? "black" : "grey"
         anchors.right: parent.left
         anchors.verticalCenter: backgroundRect.verticalCenter
     }
     Text{
         id: rightText
         text: sliderCustomized.rightText
+        color: sliderCustomized.enabled ? "black" : "grey"
         anchors.left: parent.right
         anchors.verticalCenter: backgroundRect.verticalCenter
     }
@@ -91,6 +105,7 @@ Slider{
     Text{
         id: centerTopText
         text: sliderCustomized.centerTopText
+        color: sliderCustomized.enabled ? "black" : "grey"
         anchors.bottom: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
     }

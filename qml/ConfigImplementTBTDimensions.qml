@@ -26,14 +26,8 @@ Rectangle{
             anchors.rightMargin: parent.width * 0.70
             from: 10
             to:3000
-            value: -Number(settings.setTool_toolTrailingHitchLength)
+            boundValue: -settings.setTool_toolTrailingHitchLength
             onValueModified: settings.setTool_toolTrailingHitchLength = -value
-            Connections {
-                target: settings
-                function onSetTool_toolTrailingHitchLengthChanged(){
-                    toolTrailingHitchLength.setValue(-Number(settings.setTool_toolTrailingHitchLength))
-                }
-            }
         }
         SpinBoxCM{
             id: toolTBTHitchLength
@@ -42,14 +36,8 @@ Rectangle{
             anchors.rightMargin: parent.width * 0.35
             from: 10
             to:3000
-            value: -Number(settings.setVehicle_tankTrailingHitchLength)
+            boundValue: -settings.setVehicle_tankTrailingHitchLength
             onValueModified: settings.setVehicle_tankTrailingHitchLength = -value
-            Connections {
-                target: settings
-                function onSetVehicle_tankTrailingHitchLengthChanged() {
-                    toolTBTHitchLength.setValue(-Number(settings.setVehicle_tankTrailingHitchLength))
-                }
-            }
         }
         SpinBoxCM{
             id: hitchLength
@@ -58,19 +46,8 @@ Rectangle{
             anchors.rightMargin: parent.width * 0.07
             from: 10
             to:3000
-            value: Number(settings.setVehicle_hitchLength) < 0 ? -Number(settings.setVehicle_hitchLength) : Number(settings.setVehicle_hitchLength)
+            boundValue: settings.setVehicle_hitchLength < 0 ? -settings.setVehicle_hitchLength : settings.setVehicle_hitchLength
             onValueModified: settings.setVehicle_hitchLength = -value
-            Connections {
-                target: settings
-                function onSetVehicle_hitchLengthChanged(){
-                    //if the implement type was recently switched from front to rear, the sign of the hitchLength
-                    //will be wrong, so make it positive for the GUI
-                    if (Number(settings.setVehicle_hitchLength) > 0)
-                        hitchLength.setValue(Number(settings.setVehicle_hitchLength))
-                    else
-                        hitchLength.setValue(-Number(settings.setVehicle_hitchLength))
-                }
-            }
         }
     }
 }

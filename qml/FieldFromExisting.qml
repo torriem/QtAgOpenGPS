@@ -1,239 +1,251 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
-import Qt.labs.folderlistmodel 2.2
 
-Rectangle {
+Popup {
     id: fieldFromExisting
     height: 700
     width:1024
-    color: "lightgray"
-    border.color: "black"
-    border.width: 1
-    Item{
-        id: fieldPicker
+    Rectangle{
+        id: topLine
         anchors.top:parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: 40
+        z: 1
+        color: "ghostwhite"
+        Text{
+            anchors.fill: parent
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "Create New Field from Existing Field"
+            font.pixelSize: 30
+        }
+    }
+
+    FieldTable {
+        id: fieldView
+        anchors.top: topLine.bottom
         anchors.bottom: bottomRect.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: 1
-        anchors.bottomMargin: 20
-        Rectangle{
-            id: topLine
-            anchors.top:parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: 40
-            z: 1
-            color: "ghostwhite"
-            Text{
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                text: "Field"
-                font.pixelSize: 30
-            }
-            Text{
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.right: rightText.left
-                anchors.rightMargin: 50
-                text: "Distance"
-                font.pixelSize: 30
-            }
-            Text{
-                id: rightText
-                anchors.right: parent.right
-                anchors.rightMargin: 50
-                anchors.verticalCenter: parent.verticalCenter
-                text: "Area"
-                font.pixelSize: 30
-            }
+        anchors.rightMargin: 20
+
+        ScrollBar.vertical: ScrollBar {
+            id: scrollbar
+            anchors.left: fieldFromExisting.right
+            anchors.rightMargin: 10
+            width: 10
+            policy: ScrollBar.AlwaysOn
+            active: true
+            contentItem.opacity: 1
         }
 
-        ListView {
-            id: listView
-            anchors.top: topLine.bottom
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            property Component mycomponent: fileName
-            model :FolderListModel{
-                id: fieldList
-                showDirs: true
-                showFiles: false
-                folder: "file:/home/davidwedel/Documents/QtAgOpenGPS/Fields/"
-            }
+        onCurrentFieldNameChanged: {
+            existingField.text = currentFieldName
+            newField.text = currentFieldName
+        }
+    }
 
-            delegate: RadioButton{
-                id: control
-                indicator: Rectangle{
-                    border.width: 1
-                    border.color: "black"
-                    color: "lightgray"
-                    anchors.fill: parent
-                    Rectangle{
-                        anchors.fill: parent
-                        anchors.margins: 1
-                        color: control.down ? "gray" : "blue"
-                        visible: control.checked
+    Rectangle{
+        id: bottomRect
+        height: 200
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        color: "ghostwhite"
+        Rectangle{
+            id: editFieldName
+            height: 30
+            width: 550
+            anchors.left: parent.left
+            anchors.bottom: bottomButtons.top
+            anchors.bottomMargin: 50
+            anchors.leftMargin: 10
+            color: "lightgray"
+            border.color: "darkgray"
+            border.width: 1
+            Text {
+                id: existingField
+                anchors.left: parent.left
+                anchors.bottom: parent.top
+                font.bold: true
+                font.pixelSize: 15
+                text: qsTr("---")
+            }
+            TextField{
+                id: newField
+                objectName: "fieldFromExisting"
+                placeholderText: qsTr("New field name")
+                anchors.fill: parent
+                selectByMouse: true
+
+                onTextChanged: {
+                    for (var i=0; i < fieldInterface.field_list.length ; i++) {
+                        if (text === fieldInterface.field_list[i].name) {
+                            errorMessage.visible = true
+                            break
+                        } else
+                            errorMessage.visible = false
                     }
                 }
+            }
+            Text {
+                id: newFieldLabel
+                anchors.left: parent.left
+                anchors.top: parent.bottom
+                font.bold: true
+                font.pixelSize: 15
+                text: qsTr("Edit Field Name")
+            }
+            Text {
+                id: errorMessage
+                anchors.top: newFieldLabel.bottom
+                anchors.left: newFieldLabel.left
+                color: "red"
+                visible: false
+                text: qsTr("This field exists already; please change the new name.")
+            }
 
-                width:listView.width
-                height:50
+        }
+        IconButtonTransparent{
+            anchors.verticalCenter: editFieldName.verticalCenter
+            anchors.left: editFieldName.right
+            anchors.leftMargin: 5
+            objectName: "btnBackSpace"
+            icon.source: "/images/BackSpace.png"
+            onClicked: newField.text = ""
+        }
+
+        RowLayout{
+            id: bottomButtons
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.right: saveClose.left
+            anchors.rightMargin: 10
+            anchors.bottomMargin: 20
+            anchors.leftMargin: 10
+            width: children.width
+            height: children.height
+            IconButtonTransparent{
+                id: btnAddVehicleName
+                icon.source: "/images/Config/Con_VehicleMenu.png"
                 Text{
-                    anchors.left: parent.left
-                    anchors.leftMargin: 2
+                    anchors.right: parent.left
                     anchors.verticalCenter: parent.verticalCenter
-                    text: fileName
-                    font.pixelSize: 25
-                    font.bold: true
-                    color: control.checked ? "white" : "black"
-                    z: 2
+                    text: "+"
+                }
+                onClicked: {
+                    newField.text += " " + settings.setVehicle_vehicleName
+                }
+            }
+            IconButtonTransparent{
+                id: marker
+                icon.source: "/images/JobNameCalendar.png"
+                Text{
+                    anchors.right: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "+"
+                }
+                onClicked: {
+                    var time = new Date().toLocaleDateString(Qt.locale(), Locale.ShortFormat)
+                    newField.text += " " + time
+                }
+            }
+            IconButtonTransparent{
+                id: btnAddTime
+                icon.source: "/images/JobNameTime.png"
+                Text{
+                    anchors.right: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "+"
+                }
+                onClicked: {
+                    var time = new Date().toLocaleTimeString(Qt.locale())
+                    newField.text += " " + time
+                }
+            }
+            IconButtonColor{
+                id: btnKeepFlags
+                checkable: true
+                checked: false
+                width: marker.width
+                height: marker.height
+                icon.source: "/images/FlagRed.png"
+                text: "Flags"
+            }
+            IconButtonColor{
+                id: btnKeepMapping
+                checkable: true
+                checked: false
+                width: marker.width
+                height: marker.height
+                icon.source: "/images/ManualOff.png"
+                text: "Mapping"
+            }
+            IconButtonColor{
+                id: btnKeepHeadland
+                checkable: true
+                checked: true
+                width: marker.width
+                height: marker.height
+                icon.source: "/images/HeadlandMenu.png"
+                text: "Headland"
+            }
+            IconButtonColor{
+                id: btnKeepLines
+                checkable: true
+                checked: true
+                width: marker.width
+                height: marker.height
+                icon.source: "/images/ABLineEdit.png"
+                text: "Lines"
+            }
+        }
+        Row{
+            id: saveClose
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.margins: 5
+            width: children.width
+            height: children.height
+            spacing: 10
+            IconButtonTransparent{
+                onClicked: {
+                    fieldFromExisting.visible = false
+                    newField.text = ""
+                    existingField.text = ""
+                    fieldView.clear_selection()
+                }
+                icon.source: "/images/Cancel64.png"
+            }
+            IconButtonTransparent{
+                objectName: "btnSave"
+                icon.source: "/images/OK64.png"
+                enabled: (newField.text !== "" && existingField.text !== "" &&
+                          newField.text != existingField.text &&
+                          errorMessage.visible == false)
+                onClicked: {
+                    if(newField.text != "" && existingField.text != "" &&
+                            newField.text != existingField.text) {
+                        var flag = 0;
+                        if (btnKeepFlags.checked)
+                            flag |= fieldInterface.loadFlags
+                        if (btnKeepHeadland.checked)
+                            flag |= fieldInterface.loadHeadland
+                        if (btnKeepLines.checked)
+                            flag |= fieldInterface.loadLines
+                        if (btnKeepMapping.checked)
+                            flag |= fieldInterface.loadMapping
+
+                        fieldFromExisting.visible = false
+                        fieldInterface.field_new_from(fieldView.currentFieldName, newField.text, flag)
+                        newField.text = ""
+                        existingField.text = ""
+                        fieldView.clear_selection()
+                    }
                 }
             }
         }
     }
-Rectangle{
-    id: bottomRect
-    height: 200
-    anchors.bottom: parent.bottom
-    anchors.left: parent.left
-    anchors.right: parent.right
-    color: "ghostwhite"
-    Rectangle{
-        id: editFieldName
-        height: 30
-        width: 550
-        anchors.left: parent.left
-        anchors.bottom: bottomButtons.top
-        anchors.bottomMargin: 50
-        anchors.leftMargin: 10
-        color: "lightgray"
-        border.color: "darkgray"
-        border.width: 1
-        Text {
-            anchors.left: parent.left
-            anchors.bottom: parent.top
-            font.bold: true
-            font.pixelSize: 15
-            text: qsTr("---")
-        }
-        TextInput{
-            objectName: "fieldFromExisting"
-            anchors.fill: parent
-        }
-        Text {
-            anchors.left: parent.left
-            anchors.top: parent.bottom
-            font.bold: true
-            font.pixelSize: 15
-            text: qsTr("Edit Field Name")
-        }
-    }
-    IconButtonTransparent{
-        anchors.verticalCenter: editFieldName.verticalCenter
-        anchors.left: editFieldName.right
-        anchors.leftMargin: 5
-        objectName: "btnBackSpace"
-        icon.source: "/images/BackSpace.png"
-    }
-
-    IconButtonTextBeside{
-        anchors.verticalCenter: editFieldName.verticalCenter
-        anchors.right: parent.right
-        anchors.rightMargin: 5
-        objectName: "btnSort"
-        icon.source: "/images/Sort.png"
-        text: "Sort"
-    }
-
-    RowLayout{
-        id: bottomButtons
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: saveClose.left
-        anchors.rightMargin: 10
-        anchors.bottomMargin: 20
-        anchors.leftMargin: 10
-        width: children.width
-        height: children.height
-        IconButtonTransparent{
-            objectName: "btnAddVehicleName"
-            icon.source: "/images/Config/Con_VehicleMenu.png"
-            Text{
-                anchors.right: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                text: "+"
-            }
-        }
-        IconButtonTransparent{
-            objectName: "btnAddDate"
-            id: marker
-            icon.source: "/images/JobNameCalendar.png"
-            Text{
-                anchors.right: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                text: "+"
-            }
-        }
-        IconButtonTransparent{
-            objectName: "btnAddTime"
-            icon.source: "/images/JobNameTime.png"
-            Text{
-                anchors.right: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                text: "+"
-            }
-        }
-        IconButtonColor{
-            objectName: "btnKeepFlags"
-            isChecked: false
-            width: marker.width
-            height: marker.height
-            icon.source: "/images/FlagRed.png"
-            text: "Flags"
-        }
-        IconButtonColor{
-            objectName: "btnKeepMapping"
-            isChecked: false
-            width: marker.width
-            height: marker.height
-            icon.source: "/images/ManualOff.png"
-            text: "Mapping"
-        }
-        IconButtonColor{
-            objectName: "btnKeepHeadland"
-            isChecked: false
-            width: marker.width
-            height: marker.height
-            icon.source: "/images/HeadlandMenu.png"
-            text: "Headland"
-        }
-        IconButtonColor{
-            objectName: "btnKeepLines"
-            isChecked: false
-            width: marker.width
-            height: marker.height
-            icon.source: "/images/ABLineEdit.png"
-            text: "Lines"
-        }
-    }
-    Row{
-        id: saveClose
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        anchors.margins: 5
-        width: children.width
-        height: children.height
-        spacing: 10
-        IconButtonTransparent{
-            onClicked: fieldFromExisting.visible = false
-            icon.source: "/images/Cancel64.png"
-        }
-        IconButtonTransparent{
-            objectName: "btnSave"
-            icon.source: "/images/OK64.png"
-        }
-    }
-}
 }

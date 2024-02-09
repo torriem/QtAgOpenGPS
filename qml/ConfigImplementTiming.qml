@@ -6,21 +6,49 @@ Rectangle{
     anchors.fill: parent
     color: "ghostwhite"
     visible: false
-    Image{
-        id: configImpImage
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.top: parent.top
+    Text{
+        font.pixelSize: 25
+        font.bold: true
+        text: qsTr("Look Ahead Time Settings")
+        anchors.bottom: offPic.top
         anchors.bottomMargin: 70
-        anchors.rightMargin: 30
-        anchors.leftMargin: 200
-        anchors.topMargin: 100
-        source: "/images/ImplementSettings.png"
+        anchors.horizontalCenter: offPic.horizontalCenter
+    }
+        AnimatedImage{
+            id: onPic
+            width: parent.width /3 -10
+            anchors.margins: 5
+            anchors.left: parent.left
+            height: parent.height/2 + 50
+            anchors.verticalCenter: parent.verticalCenter
+            cache: true
+            source: "/images/Config/SectionOnLookAhead.gif"
+        }
+        AnimatedImage{
+            id: offPic
+            width: parent.width /3 -10
+            anchors.margins: 5
+            anchors.horizontalCenter: parent.horizontalCenter
+            height: parent.height/2 + 50
+            anchors.verticalCenter: parent.verticalCenter
+            cache: true
+            source: "/images/Config/SectionLookAheadOff.gif"
+        }
+        AnimatedImage{
+            id: offDelayPic
+            width: parent.width /3 -10
+            anchors.margins: 5
+            anchors.right: parent.right
+            height: parent.height/2 + 50
+            anchors.verticalCenter: parent.verticalCenter
+            cache: true
+            source: "/images/Config/SectionLookAheadDelay.gif"
+        }
 
         SpinBoxOneDecimal{
-            anchors.right: parent.left
-            anchors.top: parent.top
+            anchors.horizontalCenter: onPic.horizontalCenter
+            anchors.top: onPic.bottom
+            anchors.topMargin: 10
             from: 0.2
             value: settings.setVehicle_toolLookAheadOn
             onValueChanged: settings.setVehicle_toolLookAheadOn = value
@@ -28,8 +56,9 @@ Rectangle{
             text: qsTr("On (secs)")
         }
         SpinBoxOneDecimal{
-            anchors.right: parent.left
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: offPic.horizontalCenter
+            anchors.top: offPic.bottom
+            anchors.topMargin: 10
             from: 0
             value:settings.setVehicle_toolLookAheadOff
             onValueChanged: settings.setVehicle_toolLookAheadOff = value
@@ -38,8 +67,9 @@ Rectangle{
             text: qsTr("Off (secs)")
         }
         SpinBoxOneDecimal{
-            anchors.right: parent.left
-            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: offDelayPic.horizontalCenter
+            anchors.top: offDelayPic.bottom
+            anchors.topMargin: 10
             from: 0
             value: settings.setVehicle_toolOffDelay
             onValueChanged: settings.setVehicle_toolOffDelay = value
@@ -47,42 +77,4 @@ Rectangle{
             editable: true
             text: qsTr("Delay (secs)")
         }
-        SpinBoxCM{
-            id: toolOffset
-            anchors.left: parent.left
-            anchors.leftMargin: 500
-            anchors.top: parent.bottom
-            anchors.bottomMargin: -10
-            from: -2500
-            value: settings.setVehicle_toolOffset
-            onValueChanged: settings.setVehicle_toolOffset = value
-            to: 2500
-            Connections {
-                target: settings
-                function onSetVehicle_toolOffsetChanged(){
-                    toolOffset.value = settings.setVehicle_toolOffset
-                }
-            }
-            editable: true
-            text: qsTr("Offset")
-        }
-        SpinBoxCM{
-            anchors.right: parent.right
-            anchors.rightMargin: 120
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 100
-            from: -3000
-            value: settings.setVehicle_toolOverlap
-            onValueChanged: settings.setVehicle_toolOverlap
-            to: 3000
-            editable: true
-            text: qsTr("Overlap / Gap")
-            Connections {
-                target: settings
-                function onSetVehicle_toolOverlapChanged(){
-                    hitchLength.value = settings.setVehicle_toolOverlap
-                }
-            }
-        }
     }
-}

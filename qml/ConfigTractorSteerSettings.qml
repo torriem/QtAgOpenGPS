@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
 
 Rectangle{
@@ -6,7 +7,7 @@ Rectangle{
     anchors.fill: parent
     color: "ghostwhite"
     visible: false
-    Rectangle{
+/*    Rectangle{
         id: lightbarrect
         anchors.left: parent.left
         anchors.top: parent.top
@@ -36,17 +37,11 @@ Rectangle{
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: 0
-                value: Number(settings.setDisplay_lightbarCmPerPixel)
-                onValueModified: { settings.setDisplay_lightbarCmPerPixel = value }
-                Connections {
-                    target: settings
-                    function onSetDisplay_lightbarCmPerPixelChanged(){
-                        lightbarCmPerPixel.setValue(Number(settings.setDisplay_lightbarCmPerPixel))
-                    }
-                }
                 to: 15
+                boundValue: settings.setDisplay_lightbarCmPerPixel
+                onValueModified: settings.setDisplay_lightbarCmPerPixel = value
                 editable: true
-                text: qsTr("cm  /  pixel")
+                text: utils.cm_unit() + " " + qsTr("per pixel","As in units per pixel")
             }
         }
     }
@@ -72,7 +67,7 @@ Rectangle{
             anchors.top: linelengthtitletxt.bottom
             anchors.bottom: parent.bottom
             width: parent.width*.5
-            SpinBoxCustomized{
+            SpinBoxCM{
                 id: linelengthSetting
                 anchors.top: parent.top
                 anchors.topMargin: 25
@@ -80,17 +75,11 @@ Rectangle{
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: 200
-                value: Number(settings.setAB_lineLength)
-                onValueModified: { settings.setAB_lineLength = value }
-                Connections {
-                    target: settings
-                    function onSetAB_lineLengthChanged() {
-                        linelengthSetting.setValue(Number(settings.setAB_lineLength))
-                    }
-                }
-
                 to: 5000
-                text: qsTr("cm")
+                boundValue: settings.setAB_lineLength
+                onValueModified: settings.setAB_lineLength = value
+                editable: true
+                text: utils.cm_unit()
             }
         }
     }
@@ -113,18 +102,9 @@ Rectangle{
                 anchors.margins: 1
                 radius: 0
                 checkable: true
-                checked: utils.isTrue(settings.setAS_isConstantContourOn)
+                isChecked: settings.setAS_isConstantContourOn
                 icon.source: "/images/ContourOn.png"
-                onCheckedChanged: {
-                    settings.setAS_isConstantContourOn = checked
-                }
-                Connections {
-                    target: settings
-                    function onSetAS_isConstantContourOnChanged() {
-                        checked = utils.isTrue(settings.setAS_isConstantContourOn)
-                    }
-                }
-
+                onCheckedChanged: settings.setAS_isConstantContourOn = checked
             }
             Text{
                 width: 150
@@ -133,48 +113,34 @@ Rectangle{
                 anchors.bottom: parent.top
                 anchors.left: parent.left
             }
-        }
-        Rectangle{
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-            width: 102
-            height: 102
-            radius: 0
-            border.color: "black"
-            IconButtonTransparent{
-                anchors.fill: parent
-                anchors.margins: 1
-                icon.source: "/images/AutoSteerOn.png"
-                radius: 0
+        }*/
+            IconButtonColor{
+                anchors.right: parent.right
+                anchors.top:parent.top
+                anchors.margins: 40
+                icon.source: "/images/AutoSteerOff.png"
+                iconChecked: "/images/AutoSteerOn.png"
                 checkable: true
-                checked: utils.isTrue(settings.setAS_isAutoSteerAutoOn)
-                onCheckableChanged: {
-                    settings.setAS_isAutoSteerAutoOn = checked
-                }
-                Connections {
-                    target: settings
-                    function onSetAS_isAutoSteerAutoOnChanged() {
-                        checked = utils.isTrue(settings.setAS_isAutoSteerAutoOn)
-                    }
-                }
-            }
-            Text{
+                color: "red"
+                isChecked: settings.setAS_isAutoSteerAutoOn
+                onCheckableChanged: settings.setAS_isAutoSteerAutoOn = checked
                 text: qsTr("Steer Switch Control")
-                anchors.bottom: parent.top
-                anchors.left: parent.left
+                font.pixelSize:15
+                implicitWidth: 120
+                implicitHeight: 150
             }
-        }
 
-    }
+        //}
+    //}
     Rectangle{
         id: linewidthrect
-        anchors.right: parent.right
-        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.top: nudgedistrect.bottom
         height: 150
-        width: 400
+        width: 250
         anchors.margins: 20
         color: "transparent"
-        Text{
+        TextLine{
             id: linewidthtitletxt
             text: qsTr("Line Width")
             anchors.top: parent.top
@@ -196,29 +162,23 @@ Rectangle{
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: 1
-                value: Number(settings.setDisplay_lineWidth)
-                onValueModified: { settings.setDisplay_lineWidth = value}
-                Connections {
-                    target: settings
-                    function onSetDisplay_lineWidthChanged() {
-                        linewidthSetting.setValue(Number(settings.setDisplay_lineWidth))
-                    }
-                }
-
                 to: 8
+                boundValue: settings.setDisplay_lineWidth
+                onValueModified: settings.setDisplay_lineWidth = value
                 text: qsTr("pixels")
+                editable: true
             }
         }
     }
     Rectangle{
         id: nudgedistrect
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        height: 150
-        width: 400
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        height: 100
+        width: 350
         anchors.margins: 20
         color: "transparent"
-        Text{
+        TextLine{
             id: nudgedisttitletxt
             text: qsTr("Nudge Distance")
             anchors.top: parent.top
@@ -240,29 +200,23 @@ Rectangle{
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: 0
-                value: Number(settings.setAS_snapDistance)
-                onValueModified: { settings.setAS_snapDistance = value }
-                Connections {
-                    target: settings
-                    function onSetAS_snapDistanceChanged(){
-                        snapDistance.setValue(Number(settings.setAS_snapDistance))
-                    }
-                }
                 to: 1000
+                boundValue: settings.setAS_snapDistance
+                onValueModified: settings.setAS_snapDistance = value
                 editable: true
-                text: qsTr("cm")
+                text: utils.cm_unit()
             }
         }
     }
     Rectangle{
         id: lineacqLAheadrect
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        height: 150
-        width: 400
-        anchors.margins: 20
+        anchors.left: linewidthrect.right
+        anchors.verticalCenter: linewidthrect.verticalCenter
+        anchors.margins: 50
+        height: 100
+        width: 350
         color: "transparent"
-        Text{
+        TextLine{
             id: lineacqLAheadtitletxt
             text: qsTr("Line Acquire Look Ahead")
             anchors.top: parent.top
@@ -284,17 +238,101 @@ Rectangle{
                 anchors.left: parent.right
                 anchors.leftMargin: 10
                 from: .1
-                value: Number(settings.setAS_guidanceLookAheadTime)
-                onValueModified: {settings.setAS_guidanceLookAheadTime = value }
-                Connections {
-                    target: settings
-                    function onSetAS_guidanceLookAheadTimeChanged() {
-                        lineacqLAheadSetting.setValue(Number(settings.setAS_guidanceLookAheadTime))
-                    }
-                }
                 to: 10
+                boundValue: settings.setAS_guidanceLookAheadTime
+                onValueModified: settings.setAS_guidanceLookAheadTime = value
+                editable: true
                 text: qsTr("Seconds")
             }
+        }
+    }
+    RowLayout{
+        id: safety
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: 100
+        height: 150
+        Column{
+            id: manualTurnsLimit
+            height: 130
+            width: 100
+            TextLine{ text: qsTr("Manual Turns Limit")}
+            Image{
+                source: "/images/Config/con_VehicleFunctionSpeedLimit.png"
+                width: parent.width
+                height: 90
+            }
+            SpinBoxKM{
+                from: 0
+                to: 20
+                editable: true
+                boundValue: settings.setAS_functionSpeedLimit
+                onValueModified: settings.setAS_functionSpeedLimit = value
+            }
+            TextLine{ text: qsTr(utils.speed_unit())}
+        }
+
+        Column{
+            id: minSpeed
+            width: 100
+            height: 130
+            TextLine{ text: qsTr("Min AutoSteer Speed")}
+            Image{
+                source: "/images/Config/ConV_MinAutoSteer.png"
+                width: parent.width
+                height: 90
+            }
+            SpinBoxKM{
+                from: 0
+                to: 50
+                editable: true
+                boundValue: settings.setAS_minSteerSpeed
+                onValueModified: settings.setAS_minSteerSpeed = value
+            }
+            TextLine{ text: qsTr(utils.speed_unit())}
+        }
+        Column{
+            id: maxSpeed
+            width: 100
+            height: 130
+            TextLine{ text: qsTr("Max AutoSteer Speed")}
+            Image{
+                source: "/images/Config/ConV_MaxAutoSteer.png"
+                width: parent.width
+                height: 90
+            }
+            SpinBoxCM{
+                from: 0
+                to: 50
+                editable: true
+                boundValue: settings.setAS_maxSteerSpeed
+                onValueModified: settings.setAS_maxSteerSpeed = value
+            }
+            TextLine{ text: qsTr(utils.speed_unit())}
+        }
+        Column{
+            id: maxTurnRate
+            width: 100
+            height: 130
+            TextLine{ text: qsTr("Max Turn Rate")}
+            Image{
+                source: "/images/Config/ConV_MaxAngVel.png"
+                width: parent.width
+                height: 90
+            }
+
+            //The from and to values are deg/sce, but the final value output is in radians always
+            SpinBoxCustomized {
+                id: spinner
+                from: 5
+                to: 100
+                editable: true
+                value: utils.radians_to_deg(settings.setVehicle_maxAngularVelocity) // should be in radians!
+                onValueChanged: settings.setVehicle_maxAngularVelocity = utils.deg_to_radians(value)
+                //stepSize: spinBoxCM.stepSize
+            }
+            TextLine{ text: qsTr("Degrees/sec")}
         }
     }
 }
