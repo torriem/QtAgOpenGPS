@@ -5,7 +5,7 @@ Item {
 
     //property bool isBndBeingMade: false //may not be needed here
     property double createBndOffset: 0
-    property bool isDrawRightside: true
+    property bool isDrawRightSide: true
     property bool isOutOfBounds: false //must be updated from mc.isOutOfBounds
 
     property double area: 0

@@ -573,5 +573,6 @@
         <file>images/Config/ConS_ImplementPivot.png</file>
         <file>images/Config/ConS_ImplementOffset.png</file>
         <file>qml/interfaces/BoundaryInterface.qml</file>
+        <file>qml/BoundaryTable.qml</file>
     </qresource>
 </RCC>

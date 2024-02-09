@@ -20,7 +20,7 @@ Item {
         border.width: 2
         border.color: "aqua"
         color: "lightgray"
-        Rectangle{
+        BoundaryTable {
             id: boundaryList
             anchors.left: parent.left
             anchors.right: parent.right
@@ -28,83 +28,17 @@ Item {
             anchors.bottom: parent.bottom
             anchors.margins: 20
             anchors.topMargin: 50
-            Text{
-                anchors.bottom: parent.top
-                anchors.left: parent.left
-                font.pixelSize: 20
-                text: "Bounds"
+            ScrollBar.vertical: ScrollBar {
+                id: scrollbar
+                anchors.left: boundaryMain.right
+                anchors.rightMargin: 10
+                width: 10
+                policy: ScrollBar.AlwaysOn
+                active: true
+                contentItem.opacity: 1
             }
-            Text{
-                anchors.bottom: parent.top
-                anchors.horizontalCenter: parent.horizontalCenter
-                font.pixelSize: 20
-                text: "Area"
-            }
-            Text{
-                anchors.bottom: parent.top
-                anchors.right: parent.right
-                font.pixelSize: 20
-                text: "Drive Thru"
-            }
-            Grid{
-                anchors.fill: parent
-                anchors.margins: 5
-                flow: Grid.LeftToRight
-                columns: 3
-                rows: 4
-                rowSpacing: 15
-                columnSpacing: 20
-                Button{
-                    text: "Outer"
-                    width: 150
-                }
-                Button{
-                    text: "ar"
-                    width: 150
-                }
-                Button{
-                    text: "dt"
-                    width: 70
-                }
-                Button{
-                    text: "Inner 2"
-                    width: 150
-                }
-                Button{
-                    text: "ar"
-                    width: 150
-                }
-                Button{
-                    text: "dt"
-                    width: 70
-                }
-                Button{
-                    text: "Inner 3"
-                    width: 150
-                }
-                Button{
-                    text: "ar"
-                    width: 150
-                }
-                Button{
-                    text: "dt"
-                    width: 70
-                }
-                Button{
-                    text: "Inner 4"
-                    width: 150
-                }
-                Button{
-                    text: "ar"
-                    width: 150
-                }
-                Button{
-                    text: "dt"
-                    width: 70
-                }
-            }
-        }
 
+        }
 
         RowLayout{
             id: buttonsRow
@@ -115,10 +49,16 @@ Item {
             IconButtonTransparent{
                 objectName: "btnBoundaryDeleteCurrent"
                 icon.source: "/images/BoundaryDelete.png"
+                enabled: (boundaryList.currentIndex === 0 &&
+                          boundaryInterface.boundary_list.length === 1) ||
+                         (boundaryList.currentIndex > 0)
+                onClicked: boundaryInterface.delete_boundary(boundaryList.currentIndex)
             }
             IconButtonTransparent{
                 objectName: "btnBoundaryDeleteAll"
                 icon.source: "/images/BoundaryDeleteAll.png"
+
+                //TODO: popup are you sure dialog
             }
             IconButtonTransparent{
                 objectName: "btnBoundaryOpenGE"
@@ -130,7 +70,10 @@ Item {
             }
             IconButtonTransparent{
                 icon.source: "/images/AddNew.png"
-                onClicked: boundaryType.visible = true
+                onClicked: {
+                    boundaryType.visible = true
+                    boundaryMain.visible = false
+                }
 
             }
             IconButtonTransparent{
@@ -147,6 +90,7 @@ Item {
         width: 250
         height: 400
         visible: false
+
         Rectangle{
             id: typeTopLine
             anchors.top:parent.top
@@ -203,11 +147,17 @@ Item {
                 IconButtonTransparent{
                     objectName: "btnBoundaryFromKML"
                     icon.source: "/images/BoundaryLoadFromGE.png"
-                    onClicked: boundaryKMLType.visible = true
+                    onClicked: {
+                        boundaryKMLType.visible = true
+                        boundaryType.visible = false
+                    }
                 }
                 IconButtonTransparent{
                     icon.source: "/images/SteerRight.png"
-                    onClicked: boundaryRecord.visible = true
+                    onClicked: {
+                        boundaryRecord.visible = true
+                        boundaryType.visible = false
+                    }
                     Text{
                         anchors.bottom: parent.top
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -325,6 +275,14 @@ Item {
         width: 250
         visible: false
         height: 415
+
+        onVisibleChanged: {
+            if (visible) {
+                boundaryRecordBtn.checked = false
+                boundaryInterface.start()
+            }
+        }
+
         Rectangle{
             id: recordTopLine
             anchors.top:parent.top
@@ -371,7 +329,7 @@ Item {
             color: "lightgray"
             border.color: "aqua"
             border.width: 2
-            SpinBoxCustomized{
+            SpinBoxCM{
                 height: 50
                 anchors.left: parent.left
                 anchors.right: side2Record.left
@@ -380,21 +338,31 @@ Item {
                 objectName: "boundaryRecordOffset"
                 text: "Centimeter"
                 from: 0
-                value: 79
                 to: 1968
+                boundValue: boundaryInterface.createBndOffset
+                onValueChanged: boundaryInterface.createBndOffset = value
             }
             IconButtonTransparent{
                 id: side2Record
                 objectName: "btnBoundarySide2Record"
                 icon.source: "/images/BoundaryRight.png"
                 iconChecked: "/images/BoundaryLeft.png"
+                checkable: true
                 anchors.top: recordBoundaryWindow.top
                 anchors.right: parent.right
                 anchors.margins: 5
                 border: 1
                 width: 80
                 height: 80
+                isChecked: ! boundaryInterface.isDrawRightSide
+                onClicked: {
+                    if (checked)
+                        boundaryInterface.isDrawRightSide = false
+                    else
+                        boundaryInterface.isDrawRightSide = true
+                }
             }
+
             Row{
                 anchors.top: side2Record.bottom
                 anchors.margins: 5
@@ -409,16 +377,17 @@ Item {
                     icon.source: "/images/BoundaryDelete.png"
                     width: 80
                     height: 80
+                    onClicked: boundaryInterface.reset()
                 }
                 Column{
                     height: boundaryDelete.height
                     width: boundaryDelete.width
                     spacing: 20
                     Text{
-                        text: "Area: 0"
+                        text: qsTr("Area:") + " " + utils.area_to_unit_string(boundaryInterface.area,1) + " " + utils.area_unit()
                     }
                     Text{
-                        text: "Points: 1"
+                        text: qsTr("Points:") + " " + boundaryInterface.pts
                     }
                 }
             }
@@ -440,6 +409,7 @@ Item {
                     icon.source: "/images/PointAdd.png"
                     width: 80
                     height: 80
+                    onClicked: boundaryInterface.add_point()
                 }
                 IconButtonTransparent{
                     border: 1
@@ -447,18 +417,32 @@ Item {
                     icon.source: "/images/PointDelete.png"
                     width: 80
                     height: 80
+                    onClicked: boundaryInterface.delete_last_point()
                 }
                 IconButtonTransparent{
+                    id: boundaryRecordBtn
                     objectName: "btnBoundaryRecordRecord"
                     icon.source: "/images/BoundaryRecord.png"
+                    checkable: true
                     width: 80
                     height: 80
                     border: 1
+
+                    onCheckedChanged: {
+                        if (checked)
+                            boundaryInterface.record()
+                        else
+                            boundaryInterface.pause()
+                    }
                 }
+
                 IconButtonTransparent{
                     objectName: "btnBoundaryRecordSave"
                     icon.source: "/images/OK64.png"
-                    onClicked: boundaryRecord.visible = false
+                    onClicked: {
+                        boundaryRecord.visible = false
+                        boundaryInterface.stop()
+                    }
                     width: 80
                     height: 80
                 }
