@@ -559,5 +559,18 @@
         <file>qml/interfaces/LinesInterface.qml</file>
         <file>qml/TitleFrame.qml</file>
         <file>qml/SpinBoxM.qml</file>
+        <file>qml/ConfigImplementOffset.qml</file>
+        <file>qml/ConfigImplementAxle.qml</file>
+        <file>images/Config/ToolOverlap.png</file>
+        <file>images/Config/ToolOffsetPositiveRight.png</file>
+        <file>images/Config/ToolOffsetNegativeLeft.png</file>
+        <file>images/Config/ToolHitchPivotOffsetPos.png</file>
+        <file>images/Config/ToolHitchPivotOffsetNeg.png</file>
+        <file>images/Config/ToolGap.png</file>
+        <file>images/Config/SectionOnLookAhead.gif</file>
+        <file>images/Config/SectionLookAheadOff.gif</file>
+        <file>images/Config/SectionLookAheadDelay.gif</file>
+        <file>images/Config/ConS_ImplementPivot.png</file>
+        <file>images/Config/ConS_ImplementOffset.png</file>
     </qresource>
 </RCC>
