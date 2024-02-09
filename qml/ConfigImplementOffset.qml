@@ -43,15 +43,6 @@ Rectangle{
                     } else {
                         settings.setVehicle_toolOffset = value
                     }
-                    if(value===0){
-                        leftBtn.checked = false
-                        leftBtn.checkable = false
-                        rightBtn.checked = false
-                        rightBtn.checkable = false
-                    }else{
-                        rightBtn.checkable = true
-                        leftBtn.checkable = true
-                    }
                 }
             }
             TextLine{
@@ -73,15 +64,11 @@ Rectangle{
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.margins: 15
-            checkable: !checked
-            checked: (settings.setVehicle_toolOffset < 0)
+            checkable: true
+            isChecked: (settings.setVehicle_toolOffset < 0)
             property string offsetNum: settings.setVehicle_toolOffset
-            onOffsetNumChanged: {
-                console.log(offsetNum)
-                if(offsetNum < 0)
-                    leftBtn.checked = true
-            }
             icon.source: "/images/Config/ToolOffsetNegativeLeft.png"
+            onClicked: settings.setVehicle_toolOffset = -Math.abs(settings.setVehicle_toolOffset)
         }
 
         IconButtonColor{
@@ -92,15 +79,9 @@ Rectangle{
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.margins: 15
-            checked: (settings.setVehicle_toolOffset > 0)
-            checkable: !checked
-            property double offsetNum: settings.setVehicle_toolOffset
-            onOffsetNumChanged: {
-                console.log(offsetNum)
-                if(offsetNum > 0)
-                    console.log("flag")
-                    rightBtn.checked = true
-            }
+            isChecked: (settings.setVehicle_toolOffset >= 0)
+            checkable: true
+            onClicked: settings.setVehicle_toolOffset = Math.abs(settings.setVehicle_toolOffset)
             icon.source: "/images/Config/ToolOffsetPositiveRight.png"
             TextLine{ text: qsTr("Tool Right"); anchors.top: right.bottom}
         }
@@ -139,15 +120,6 @@ Rectangle{
                     } else {
                         settings.setVehicle_toolOverlap = value
                     }
-                    if(value===0){
-                        overlap.checked = false
-                        overlap.checkable = false
-                        gap.checked = false
-                        gap.checkable = false
-                    }else{
-                        overlap.checkable = true
-                        gap.checkable = true
-                    }
                 }
             }
             TextLine{
@@ -169,14 +141,9 @@ Rectangle{
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.margins: 15
-            checkable: !checked
-            checked: (settings.setVehicle_toolOverlap < 0)
-            property string overlapGapNum: settings.setVehicle_toolOverlap
-            onOverlapGapNumChanged: {
-                console.log(overlapGapNum)
-                if(overlapGapNum < 0)
-                    overlap.checked = true
-            }
+            checkable: true
+            isChecked: (settings.setVehicle_toolOverlap >= 0)
+            onClicked: settings.setVehicle_toolOverlap = Math.abs(settings.setVehicle_toolOverlap)
             icon.source: "/images/Config/ToolOverlap.png"
             TextLine{ text: qsTr("Overlap"); anchors.top: left.bottom}
         }
@@ -189,15 +156,9 @@ Rectangle{
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.margins: 15
-            checked: (settings.setVehicle_toolOverlap > 0)
-            checkable: !checked
-            property double overlapGapNum: settings.setVehicle_toolOverlap
-            onOverlapGapNumChanged: {
-                console.log(overlapGapNum)
-                if(overlapGapNum > 0)
-                    console.log("flag")
-                    gap.checked = true
-            }
+            isChecked: (settings.setVehicle_toolOverlap < 0)
+            onClicked: settings.setVehicle_toolOverlap = -Math.abs(settings.setVehicle_toolOverlap)
+            checkable: true
             icon.source: "/images/Config/ToolGap.png"
             TextLine{
                 anchors.horizontalCenter: undefined;
