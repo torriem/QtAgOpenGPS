@@ -256,7 +256,6 @@ ListView {
             enabled: model.index !== 0
             font.pointSize: 16
             onClicked: {
-                console.debug("clicked")
                 model.drive_through = !model.drive_through
                 changeDriveThrough(model.index, model.drive_through)
             }
