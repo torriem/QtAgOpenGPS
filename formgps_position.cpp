@@ -1422,7 +1422,7 @@ void FormGPS::AddBoundaryPoint()
                        vehicle.pivotAxlePos.heading);
             bnd.bndBeingMadePts.append(point);
         }
-
+        boundary_calculate_area(); //in formgps_ui_boundary.cpp
     }
 }
 

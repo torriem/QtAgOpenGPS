@@ -560,5 +560,6 @@
         <file>qml/TitleFrame.qml</file>
         <file>qml/SpinBoxM.qml</file>
         <file>qml/interfaces/BoundaryInterface.qml</file>
+        <file>qml/BoundaryTable.qml</file>
     </qresource>
 </RCC>

@@ -155,7 +155,7 @@ void FormGPS::setupGui()
     connect(boundaryInterface, SIGNAL(delete_last_point()), this, SLOT(boundary_delete_last_point()));
     connect(boundaryInterface, SIGNAL(pause()), this, SLOT(boundary_pause()));
     connect(boundaryInterface, SIGNAL(record()), this, SLOT(boundary_record()));
-    connect(boundaryInterface, SIGNAL(reset()), this, SLOT(boundary_reset()));
+    connect(boundaryInterface, SIGNAL(reset()), this, SLOT(boundary_restart()));
     connect(boundaryInterface, SIGNAL(delete_boundary(int)), this, SLOT(boundary_delete(int)));
     connect(boundaryInterface, SIGNAL(set_drive_through(int, bool)), this, SLOT(boundary_set_drivethru(int,bool)));
     connect(boundaryInterface, SIGNAL(delete_all()), this, SLOT(boundary_delete_all()));

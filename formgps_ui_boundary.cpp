@@ -32,7 +32,7 @@ void FormGPS::boundary_update_list() {
         bndMap["drive_through"] = b.isDriveThru;
         boundList.append(bndMap);
     }
-    qmlItem(qml_root,"boundaryList")->setProperty("boundary_list", boundList);
+    qmlItem(qml_root,"boundaryInterface")->setProperty("boundary_list", boundList);
 }
 
 void FormGPS::boundary_start() {

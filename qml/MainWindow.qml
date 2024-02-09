@@ -389,7 +389,10 @@ Window {
                     text: "Boundary"
                     icon.source: "/images/MakeBoundary.png"
                     width: 300
-                    onClicked: boundaryMenu.visible = true
+                    onClicked: {
+                        fieldTools.close()
+                        boundaryMenu.visible = true
+                    }
                 }
                 IconButtonTextBeside{
                     text: "Headland"
