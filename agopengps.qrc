@@ -474,7 +474,7 @@
         <file>images/BackSpace.png</file>
         <file>qml/FieldNew.qml</file>
         <file>qml/FieldFromKML.qml</file>
-        <file>qml/BoundaryMenu.qml</file>
+        <file>qml/boundary/BoundaryMenu.qml</file>
         <file>qml/LineDrawer.qml</file>
         <file>qml/TopLine.qml</file>
         <file>images/Images/VehicleOpacity.png</file>
@@ -573,6 +573,9 @@
         <file>images/Config/ConS_ImplementPivot.png</file>
         <file>images/Config/ConS_ImplementOffset.png</file>
         <file>qml/interfaces/BoundaryInterface.qml</file>
-        <file>qml/BoundaryTable.qml</file>
+        <file>qml/boundary/BoundaryTable.qml</file>
+        <file>qml/FieldToolsMenu.qml</file>
+        <file>qml/boundary/BoundaryRecord.qml</file>
+        <file>qml/boundary/BoundaryType.qml</file>
     </qresource>
 </RCC>

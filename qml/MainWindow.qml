@@ -6,6 +6,7 @@ import QtQuick.Layouts 1.3
 import AgOpenGPS 1.0
 
 import "interfaces"
+import "boundary"
 
 Window {
 
@@ -364,57 +365,28 @@ Window {
                 objectName: "btnTools"
                 buttonText: qsTr("Tools")
                 icon.source: "/images/SpecialFunctions.png"
-                onClicked: toolsWindow.visible = !toolsWindow.visible
+                onClicked: toolsWindow.visible = true
             }
             IconButtonText{
                 id: btnFieldMenu
                 objectName: "btnFieldMenu"
                 buttonText: qsTr("Field")
                 icon.source: "/images/JobActive.png"
-                onClicked: fieldMenu.visible = !fieldMenu.visible
+                onClicked: fieldMenu.visible = true
             }
             IconButtonText{
                 id: btnFieldTools
                 objectName: "btnFieldTools"
                 buttonText: qsTr("Field Tools")
                 icon.source: "/images/FieldTools.png"
-                onClicked: fieldTools.popup()
+                onClicked: fieldTools.visible = true
                 visible: aog.isJobStarted ? true : false
             }
-            Menu{
+            FieldToolsMenu {
                 id: fieldTools
                 width: 300
-                IconButtonTextBeside{
-                    text: "Boundary"
-                    icon.source: "/images/MakeBoundary.png"
-                    width: 300
-                    onClicked: {
-                        fieldTools.close()
-                        boundaryMenu.visible = true
-                    }
-                }
-                IconButtonTextBeside{
-                    text: "Headland"
-                    icon.source: "/images/HeadlandMenu.png"
-                    width: 300
-                }
-                IconButtonTextBeside{
-                    text: "Headland (Build)"
-                    icon.source: "/images/Headache.png"
-                    width: 300
-                }
-                IconButtonTextBeside{
-                    text: "Tram Lines"
-                    icon.source: "/images/TramLines.png"
-                    width: 300
-                    onClicked: tramLinesEditor.visible = true
-                }
-                IconButtonTextBeside{
-                    text: "Recorded Path"
-                    icon.source: "/images/RecPath.png"
-                    width: 300
-                    onClicked: recordButtons.visible = !recordButtons.visible
-                }
+                visible: false
+                height: mainWindow.height
             }
 
             IconButtonText {
@@ -1095,10 +1067,10 @@ Window {
         }
         BoundaryMenu{
             id: boundaryMenu
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.rightMargin: 150
-            anchors.topMargin: 50
+            //anchors.right: parent.right
+            //anchors.top: parent.top
+            //anchors.rightMargin: 150
+            //anchors.topMargin: 50
             visible: false
         }
 
