@@ -577,5 +577,7 @@
         <file>qml/FieldToolsMenu.qml</file>
         <file>qml/boundary/BoundaryRecord.qml</file>
         <file>qml/boundary/BoundaryType.qml</file>
+        <file>images/YouTurnU.png</file>
+        <file>qml/HeadlandDesigner.qml</file>
     </qresource>
 </RCC>
