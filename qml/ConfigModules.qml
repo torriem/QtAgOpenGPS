@@ -186,10 +186,11 @@ import QtQuick.Controls 2.5
             anchors.right: parent.right
             anchors.top: titleText.bottom
             anchors.margins: 5
-            Column{
+            ColumnLayout{
                 anchors.top: parent.top
-                height: children.height
-                spacing: 40
+                width: parent.width
+                anchors.bottom: modulesSave.top
+                anchors.bottomMargin: 20
                 anchors.horizontalCenter: parent.horizontalCenter
                 SpinBoxCustomized{
                     id: nudUser1
