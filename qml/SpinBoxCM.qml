@@ -28,7 +28,7 @@ Item {
 
     onBoundValueChanged: {
         value = boundValue
-        spinner.value = boundValue
+        spinner.value = utils.cm_to_unit(spinBoxCM.value)
     }
 
     Connections {
