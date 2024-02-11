@@ -577,5 +577,18 @@
         <file>qml/FieldToolsMenu.qml</file>
         <file>qml/boundary/BoundaryRecord.qml</file>
         <file>qml/boundary/BoundaryType.qml</file>
+        <file>images/YouTurnU.png</file>
+        <file>qml/HeadlandDesigner.qml</file>
+        <file>images/ABTrackAB.png</file>
+        <file>images/ABTrackCurve.png</file>
+        <file>images/APlusMinusA.png</file>
+        <file>images/APlusMinusB.png</file>
+        <file>images/APlusPlusA.png</file>
+        <file>images/APlusPlusB.png</file>
+        <file>images/HeadlandReset.png</file>
+        <file>images/HeadlandBuild.png</file>
+        <file>images/HeadlandSlice.png</file>
+        <file>images/HeadlandSectionOff.png</file>
+        <file>images/ZoomOGL.png</file>
     </qresource>
 </RCC>

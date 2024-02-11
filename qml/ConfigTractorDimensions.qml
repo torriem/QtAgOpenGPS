@@ -16,14 +16,15 @@ Rectangle{
                 Number(settings.setVehicle_vehicleType) === 1 ? "/images/RadiusWheelBaseHarvester.png" :
                 Number(settings.setVehicle_vehicleType) === 2 ? "/images/RadiusWheelBase4WD.png":
                 "/images/Config/ConSt_Mandatory.png"
-        width: 350
-        height: 350
-        anchors.centerIn: parent
+        anchors.fill: parent
+        anchors.margins: 15
     }
     SpinBoxCM{
         id: wheelbase
-        anchors.verticalCenter: dimImage.verticalCenter
-        anchors.right: dimImage.left
+        anchors.bottom: dimImage.bottom
+        anchors.right: dimImage.right
+        anchors.rightMargin: dimImage.width * .65
+        anchors.bottomMargin: dimImage.height *.15
         from: 20
         to: 787
         boundValue: settings.setVehicle_wheelbase
@@ -33,7 +34,8 @@ Rectangle{
     SpinBoxCM{
         id: trackWidth
         anchors.top: dimImage.top
-        anchors.left: dimImage.right
+        anchors.topMargin: dimImage.height *.25
+        anchors.right: dimImage.right
         from: 50
         to: 9999
         boundValue: settings.setVehicle_trackWidth
@@ -43,11 +45,22 @@ Rectangle{
     SpinBoxCM{
         id: minTurningRadius
         anchors.bottom: dimImage.bottom
-        anchors.left: dimImage.right
+        anchors.bottomMargin: dimImage.height *.18
+        anchors.right: dimImage.right
         from: 50
         to: 9999
         boundValue: settings.setVehicle_minTurningRadius
         onValueModified: settings.setVehicle_minTurningRadius = value
         text: qsTr("Turn Radius")
+    }
+    SpinBoxCM{
+        id: hitchLength
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: dimImage.left
+        from: 10
+        to:3000
+        boundValue: settings.setVehicle_hitchLength < 0 ? -settings.setVehicle_hitchLength : settings.setVehicle_hitchLength
+        onValueModified: settings.setVehicle_hitchLength = -value
+        visible: settings.setTool_isToolTrailing
     }
 }

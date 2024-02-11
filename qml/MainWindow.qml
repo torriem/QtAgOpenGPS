@@ -383,7 +383,7 @@ Window {
                 buttonText: qsTr("Field Tools")
                 icon.source: "/images/FieldTools.png"
                 onClicked: fieldTools.visible = true
-                visible: aog.isJobStarted ? true : false
+                disabled: aog.isJobStarted ? false : true
             }
             FieldToolsMenu {
                 id: fieldTools
@@ -855,16 +855,8 @@ Window {
                     color: "#80aaff"
                     anchors.fill: lateral
                     source: lateral
-                }
 
-                Image{
-                    visible: false
-                    id: lateral
-                    anchors.top: uturn.bottom
-                    height: 60
-                    anchors.left: parent.left
-                    width: 150
-                    source: '/images/Images/z_LateralManual.png'
+
                     Button{
                         background: Rectangle{color: "transparent"}
                         objectName: "btnManLateralLeft"
@@ -889,12 +881,22 @@ Window {
                         anchors.left: parent.horizontalCenter
                         onClicked: {
                             if (settings.setAS_functionSpeedLimit > aog.speedKph)
-                                aog.lateral(false)
+                                aog.lateral(true)
                             else
                                 timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
                                                         aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
                         }
                     }
+                }
+
+                Image{
+                    visible: false
+                    id: lateral
+                    anchors.top: uturn.bottom
+                    height: 60
+                    anchors.left: parent.left
+                    width: 150
+                    source: '/images/Images/z_LateralManual.png'
                 }
             }
         LightBar {
@@ -1032,6 +1034,12 @@ Window {
                 aog.settings_reload()
             }
 
+        }
+        HeadlandDesigner{
+            id: headlandDesigner
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            visible: false
         }
         SteerConfigWindow {
             id:steerConfigWindow

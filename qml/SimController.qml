@@ -14,7 +14,7 @@ Rectangle{
 
     Row{
         spacing: 4
-        width: childrenRect.width
+        width: children.width
         height: 50
         anchors.centerIn: parent
         Button{
