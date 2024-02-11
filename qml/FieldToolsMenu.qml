@@ -36,6 +36,10 @@ Drawer {
                     text: "Headland"
                     icon.source: "/images/HeadlandMenu.png"
                     width: 300
+                    onClicked: {
+                        fieldToolsMenu.visible = false
+                        headlandDesigner.show()
+                    }
                 }
                 IconButtonTextBeside{
                     text: "Headland (Build)"
@@ -54,9 +58,6 @@ Drawer {
                     width: 300
                     onClicked: recordButtons.visible = !recordButtons.visible
                 }
-
-
-
             }
         }
     }
