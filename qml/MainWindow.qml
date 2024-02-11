@@ -380,7 +380,7 @@ Window {
                 buttonText: qsTr("Field Tools")
                 icon.source: "/images/FieldTools.png"
                 onClicked: fieldTools.visible = true
-                visible: aog.isJobStarted ? true : false
+                disabled: aog.isJobStarted ? false : true
             }
             FieldToolsMenu {
                 id: fieldTools
