@@ -61,7 +61,7 @@ public:
     Vec3 closestTurnPt = Vec3(-10000, -10000, 9);
     Vec3 closePt;
 
-    bool isHeadlandOn;
+    InterfaceProperty<BoundaryInterface,bool> isHeadlandOn = InterfaceProperty<BoundaryInterface,bool>("isHeadlandOn");
     bool isToolInHeadland, isToolOuterPointsInHeadland, isSectionControlledByHeadland;
 
 
