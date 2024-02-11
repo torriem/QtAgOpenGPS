@@ -48,24 +48,26 @@ Rectangle{
         }
         IconButtonColor{
             id: headlandCurve
-            checked: true
+            checkable: true
+            isChecked: true
             icon.source: "/images/ABTrackCurve.png"
         }
         IconButtonColor{
             id: headlandAB
+            checkable: true
             icon.source: "/images/ABTrackAB.png"
         }
         SpinBoxM{
             from: 0
             to: 200
             value: 0
-            TextLine{anchors.top: parent.bottom; text: "( m )"}
+            TextLine{anchors.top: parent.bottom; text: "( "+ utils.m_unit_abbrev()+" )"}
         }
         SpinBoxCustomized{
            from: 0
            to: 10
            value: 0
-           TextLine{anchors.top: parent.bottom; text: qsTr("Tool: ")+ settings.setVehicle_toolWidth + " m"}
+           TextLine{anchors.top: parent.bottom; text: qsTr("Tool: ")+ utils.m_to_ft_string(settings.setVehicle_toolWidth)}
         }
         IconButtonColor{
             icon.source: "/images/ZoomOGL.png"
@@ -88,11 +90,17 @@ Rectangle{
         }
         IconButtonTransparent{
             icon.source: "/images/SwitchOff.png"
-            onClicked: headlandDesigner.visible = false
+            onClicked: {
+                boundaryInterface.isHeadlandOn = false
+                headlandDesigner.visible = false
+            }
         }
         IconButtonTransparent{
             icon.source: "/images/OK64.png"
-            onClicked: headlandDesigner.visible = false
+            onClicked: {
+                boundaryInterface.isHeadlandOn = true
+                headlandDesigner.visible = false
+            }
         }
     }
 }
