@@ -27,6 +27,7 @@ Item {
     }
 
     onBoundValueChanged: {
+        spinner.value = boundValue
         value = boundValue
     }
 

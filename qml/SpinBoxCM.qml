@@ -28,6 +28,7 @@ Item {
 
     onBoundValueChanged: {
         value = boundValue
+        spinner.value = boundValue
     }
 
     Connections {
