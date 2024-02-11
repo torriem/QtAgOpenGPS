@@ -989,7 +989,7 @@ Window {
 //            anchors.left:bottomButtons.left
 //            anchors.leftMargin: 3
             from: -30
-            to: 30
+            to: 300
             value: 0
             visible: false
         }
