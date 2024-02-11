@@ -988,7 +988,7 @@ Window {
 //            anchors.bottomMargin: 3
 //            anchors.left:bottomButtons.left
 //            anchors.leftMargin: 3
-            from: -30
+            from: -80
             to: 300
             value: 0
             visible: false
