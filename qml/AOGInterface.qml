@@ -139,6 +139,9 @@ Item {
 
     signal modules_send_238()
 
+    signal sim_bump_speed(bool up)
+    signal sim_zero_speed()
+
     property double mPerDegreeLat
     property double mPerDegreeLon
 

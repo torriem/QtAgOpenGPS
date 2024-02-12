@@ -62,6 +62,7 @@ SOURCES += main.cpp\
     formgps_ui_field.cpp \
     formgps_ui_tracks.cpp \
     formgps_ui_vehicle.cpp \
+    formheadland.cpp \
     qmlsectionbuttons.cpp \
     qmlsettings.cpp \
     qmlsettings_addkeys.cpp \
@@ -114,6 +115,7 @@ HEADERS  += formgps.h \
     classes/cboundary.h \
     btnenum.h \
     classes/vecfix2fix.h \
+    formheadland.h \
     interfaceproperty.h \
     properties.h \
     qmlsectionbuttons.h \

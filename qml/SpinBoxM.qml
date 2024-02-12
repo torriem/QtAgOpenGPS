@@ -27,6 +27,7 @@ Item {
     }
 
     onBoundValueChanged: {
+        spinner.value = utils.m_to_unit(boundValue)
         value = boundValue
     }
 

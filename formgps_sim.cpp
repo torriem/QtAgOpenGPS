@@ -61,13 +61,14 @@ void FormGPS::onSimNewSteerAngle(double steerAngleAve)
 void FormGPS::onSimTimerTimeout()
 {
     //qWarning() << "sim tick.";
-    QObject *qmlobject = qmlItem(qml_root,"simSpeed");
-    double stepDistance = qmlobject->property("value").toReal() / 10.0 /gpsHz;
-    sim.setSimStepDistance(stepDistance);
+    QObject *qmlobject;
+    //double stepDistance = qmlobject->property("value").toReal() / 10.0 /gpsHz;
+    //sim.setSimStepDistance(stepDistance);
     if (recPath.isDrivingRecordedPath || (isAutoSteerBtnOn && (vehicle.guidanceLineDistanceOff !=32000)))
     {
         sim.DoSimTick(vehicle.guidanceLineSteerAngle * 0.01);
     } else {
+        //TODO redirect through AOGInterface
         qmlobject = qmlItem(qml_root, "simSteer");
         double steerAngle = (qmlobject->property("value").toReal() - 300) * 0.1;
         sim.DoSimTick(steerAngle); //drive straight for now until UI

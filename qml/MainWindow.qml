@@ -220,10 +220,13 @@ Window {
 
             property int fromX: 0
             property int fromY: 0
+            property Matrix4x4 clickModelView
+            property Matrix4x4 clickProjection
+            property Matrix4x4 panModelView
+            property Matrix4x4 panProjection
 
             onClicked: {
-                parent.clicked(mouse);
-                console.log(settings.setVehicle_toolOverlap)
+                parent.clicked(mouse)
             }
 
             onPressed: {

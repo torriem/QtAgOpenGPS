@@ -144,6 +144,8 @@ void FormGPS::setupGui()
     //React to UI setting hyd life settings
     connect(aog, SIGNAL(modules_send_238()), this, SLOT(modules_send_238()));
 
+    connect(aog, SIGNAL(sim_bump_speed(bool)), &sim, SLOT(speed_bump(bool)));
+    connect(aog, SIGNAL(sim_zero_speed()), &sim, SLOT(speed_zero()));
 
     //boundary signals and slots
     connect(&yt, SIGNAL(outOfBounds()),boundaryInterface,SLOT(setIsOutOfBoundsTrue()));
@@ -519,4 +521,3 @@ void FormGPS::modules_send_238() {
     qDebug() << p_238.pgn;
     SendPgnToLoop(p_238.pgn);
 }
-
