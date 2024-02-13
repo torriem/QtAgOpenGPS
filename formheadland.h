@@ -10,6 +10,7 @@ class CBoundary;
 class CHeadLine;
 class CTool;
 class CVehicle;
+class QOpenGLFunctions;
 
 class HeadlandDesigner;
 
@@ -22,7 +23,7 @@ protected:
     double fieldCenterX;
     double fieldCenterY;
 
-    //Point fixPt;
+    int fixX, fixY;
     InterfaceProperty<HeadlandDesigner,bool> isA = InterfaceProperty<HeadlandDesigner,bool>("isA");
     int start = 99999, end = 99999;
     int bndSelect = 0, mode;
@@ -36,16 +37,23 @@ protected:
     InterfaceProperty<HeadlandDesigner,double> lineDistance = InterfaceProperty<HeadlandDesigner,double>("lineDistance");
 
     bool zoomToggle;
-    double zoom = 1, sX = 0, sY = 0;
+    InterfaceProperty<HeadlandDesigner,double> zoom = InterfaceProperty<HeadlandDesigner,double>("zoom");
+    InterfaceProperty<HeadlandDesigner,double> sX = InterfaceProperty<HeadlandDesigner,double>("sX");
+    InterfaceProperty<HeadlandDesigner,double> sY = InterfaceProperty<HeadlandDesigner,double>("sY");
 
     Vec3 pint = Vec3(0,1,0);
+
+    void SetLineDistance();
+    QVector3D mouseClickToField(int mouseX, int mouseY);
+
+    void DrawBuiltLines(QOpenGLFunctions *gl, QMatrix4x4 mvp);
 
 public:
     CBoundary *bnd;
     CHeadLine *hdl;
     CTool *tool;
     CVehicle *vehicle;
-    QObject *qml_object;
+    QObject *headland_designer_instance;
 
     explicit FormHeadland(QObject *parent = nullptr);
 
