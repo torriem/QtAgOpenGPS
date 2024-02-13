@@ -1037,6 +1037,7 @@ Window {
         }
         HeadlandDesigner{
             id: headlandDesigner
+            objectName: "headlandDesigner"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             visible: false

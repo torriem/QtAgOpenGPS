@@ -43,6 +43,7 @@ SOURCES += main.cpp\
     classes/cheadline.cpp \
     classes/cpatches.cpp \
     classes/cpgn.cpp \
+    classes/ctrack.cpp \
     classes/cturn.cpp \
     classes/cturnlines.cpp \
     formgps.cpp \
@@ -100,6 +101,7 @@ HEADERS  += formgps.h \
     classes/cheadline.h \
     classes/cpatches.h \
     classes/cpgn.h \
+    classes/ctrack.h \
     classes/vec2.h \
     classes/vec3.h \
     classes/vec4.h \
