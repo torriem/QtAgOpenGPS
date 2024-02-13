@@ -121,7 +121,7 @@ Item {
                             objectName: "wasZeroSlider"
                             width: 200
                             leftText: value
-                            from: -30
+                            from: -30//idk
                             to: 30
                             value: 5
                             centerTopText: "WAS Zero"
@@ -131,9 +131,10 @@ Item {
                             objectName: "cpDegSlider"
                             width: 200
                             centerTopText: "Counts per Degree"
-                            from: -30
-                            to: 30
-                            value: 5
+                            from: 1
+                            to: 255
+                            value: settings.setAS_countsPerDegree
+                            onValueChanged: settings.setAS_countsPerDegree = value
                             leftText: value
                         }
                         SliderCustomized {
@@ -141,10 +142,11 @@ Item {
                             objectName: "ackermannSlider"
                             width: 200
                             centerTopText: "AckerMann"
-                            from: -30
-                            to: 30
+                            from: 1
+                            to: 200
                             leftText: value
-                            value: 5
+                            value: settings.setAS_ackerman
+                            onValueChanged: settings.setAS_ackerman = value
                         }
                         SliderCustomized {
                             id: maxSteerSlider
@@ -152,9 +154,10 @@ Item {
                             width: 200
                             leftText: value
                             centerTopText:"Max Steer Angle"
-                            from: -30
-                            to: 30
-                            value: 5
+                            from: 10
+                            to: 80
+                            value: settings.setAS_maxSteerSpeed
+                            onValueChanged: settings.setAS_maxSteerSpeed = value
                         }
                     }
                     Image {
@@ -188,8 +191,8 @@ Item {
                             objectName: "progGainSlider"
                             leftText: value
                             width: 200
-                            from: -30
-                            to: 30
+                            from: 0
+                            to: 200
                             value: 5
                             centerTopText: "Proportional Gain"
                         }
@@ -199,16 +202,16 @@ Item {
                             centerTopText: "Maximum Limit"
                             leftText: value
                             width: 200
-                            from: -30
-                            to: 30
+                            from: 0
+                            to: 254
                             value: 5
                         }
                         SliderCustomized {
                             id: min2moveSlider
                             objectName: "min2moveSlider"
                             width: 200
-                            from: -30
-                            to: 30
+                            from: 0
+                            to: 100
                             value: 5
                             leftText: value
                             centerTopText: "Minimum to Move"
@@ -244,8 +247,8 @@ Item {
                             id: stanleyAggressivenessSlider
                             objectName: "stanleyAgressivenessSlider"
                             width: 200
-                            from: -30
-                            to: 30
+                            from: .1
+                            to: 4
                             value: 5
                             leftText: value
                             centerTopText: "Agressiveness"
@@ -254,8 +257,8 @@ Item {
                             id: overShootReductionSlider
                             objectName: "overShootReductionSlider"
                             width: 200
-                            from: -30
-                            to: 30
+                            from: .1
+                            to: 1.5
                             value: 5
                             leftText: value
                             centerTopText: "OverShoot Reduction"
@@ -264,8 +267,8 @@ Item {
                             id: integralStanleySlider
                             objectName: "integralStanleySlider"
                             width: 200
-                            from: -30
-                            to: 30
+                            from: 0
+                            to: 100
                             value: 5
                             leftText: value
                             centerTopText: "Integral"
@@ -301,8 +304,8 @@ Item {
                             id: acqLookAheadSlider
                             objectName: "acqLookAheadSlider"
                             width: 200
-                            from: -30
-                            to: 30
+                            from: 1
+                            to: 5
                             value: 5
                             leftText: value
                             centerTopText: "Acquire Look Ahead"
@@ -311,8 +314,8 @@ Item {
                             id: holdLookAheadSlider
                             objectName: "holdLookAheadSlider"
                             width: 200
-                            from: -30
-                            to: 30
+                            from: 1
+                            to: 0
                             value: 5
                             leftText: value
                             centerTopText: "Hold Look Ahead"
@@ -321,8 +324,8 @@ Item {
                             id: lookAheadSpeedGainSlider
                             objectName: "lookAheadSpeedGainSlider"
                             width: 200
-                            from: -30
-                            to: 30
+                            from: .5
+                            to: 3
                             value: 5
                             leftText: value
                             centerTopText: "Look Ahead Speed Gain"
@@ -331,8 +334,8 @@ Item {
                             id: ppIntegralSlider
                             objectName: "ppIntegralSlider"
                             width: 200
-                            from: -30
-                            to: 30
+                            from: 0
+                            to: 100
                             value: 5
                             leftText: value
                             centerTopText: "Integral"
