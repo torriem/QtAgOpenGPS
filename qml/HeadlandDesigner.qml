@@ -22,8 +22,8 @@ Rectangle{
     signal load()
     signal close() //vs exit?
     signal mouseClicked(int x, int y)
-    signal mouseDragged(int fromX, int fromY, int toX, int toY)
-    signal zoom(bool checked)
+    //signal mouseDragged(int fromX, int fromY, int toX, int toY)
+    //signal zoom(bool checked)
     signal slice()
     signal deletePoints()
     signal undo()
@@ -32,6 +32,7 @@ Rectangle{
     signal bshrink()
     signal blength()
     signal headlandOff()
+    signal isSectionControlled(bool wellIsIt)
 
     Rectangle{//renderer goes here
         id: headlandRenderer

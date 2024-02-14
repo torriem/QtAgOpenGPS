@@ -66,6 +66,7 @@ public:
 
 
     CBoundary(QObject *parent = 0);
+    void loadSettings();
 
     //CFence.cs
     bool IsPointInsideFenceArea(Vec3 testPoint) const ;
