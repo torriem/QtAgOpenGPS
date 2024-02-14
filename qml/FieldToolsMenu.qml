@@ -45,6 +45,10 @@ Drawer {
                     text: "Headland (Build)"
                     icon.source: "/images/Headache.png"
                     width: 300
+                    onClicked: {
+                        fieldToolsMenu.visible = false
+                        headAcheDesigner.show()
+                    }
                 }
                 IconButtonTextBeside{
                     text: "Tram Lines"

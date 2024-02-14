@@ -1043,6 +1043,13 @@ Window {
             anchors.verticalCenter: parent.verticalCenter
             visible: false
         }
+        HeadAcheDesigner{
+            id: headAcheDesigner
+            objectName: "headAcheDesigner"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            visible: false
+        }
         SteerConfigWindow {
             id:steerConfigWindow
             objectName: "steerConfigWindow"

@@ -591,6 +591,6 @@
         <file>images/HeadlandSectionOff.png</file>
         <file>images/ZoomOGL.png</file>
         <file>qml/MoveablePopup.qml</file>
-        <file>qml/HeadacheDesigner.qml</file>
+        <file>qml/HeadAcheDesigner.qml</file>
     </qresource>
 </RCC>
