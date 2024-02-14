@@ -156,8 +156,8 @@ Item {
                             centerTopText:"Max Steer Angle"
                             from: 10
                             to: 80
-                            value: settings.setAS_maxSteerSpeed
-                            onValueChanged: settings.setAS_maxSteerSpeed = value
+                            value: settings.setVehicle_maxSteerAngle
+                            onValueChanged: settings.setVehicle_maxSteerAngle= value
                         }
                     }
                     Image {
@@ -193,7 +193,8 @@ Item {
                             width: 200
                             from: 0
                             to: 200
-                            value: 5
+                            value: settings.setAS_Kp
+                            onValueChanged: settings.setAS_Kp = value
                             centerTopText: "Proportional Gain"
                         }
                         SliderCustomized {
@@ -204,7 +205,8 @@ Item {
                             width: 200
                             from: 0
                             to: 254
-                            value: 5
+                            value: settings.setAS_highSteerPWM
+                            onValueChanged: settings.setAS_highSteerPWM = value
                         }
                         SliderCustomized {
                             id: min2moveSlider
@@ -212,7 +214,8 @@ Item {
                             width: 200
                             from: 0
                             to: 100
-                            value: 5
+                            value: settings.setAS_minSteerPWM
+                            onValueChanged: settings.setAS_minSteerPWM = value
                             leftText: value
                             centerTopText: "Minimum to Move"
                         }
@@ -249,7 +252,8 @@ Item {
                             width: 200
                             from: .1
                             to: 4
-                            value: 5
+                            value: settings.stanleyDistanceErrorGain
+                            onValueChanged: settings.stanleyDistanceErrorGain = value
                             leftText: value
                             centerTopText: "Agressiveness"
                         }
@@ -259,7 +263,8 @@ Item {
                             width: 200
                             from: .1
                             to: 1.5
-                            value: 5
+                            value: settings.stanleyHeadingErrorGain
+                            onValueChanged: settings.stanleyHeadingErrorGain = value
                             leftText: value
                             centerTopText: "OverShoot Reduction"
                         }
@@ -269,7 +274,8 @@ Item {
                             width: 200
                             from: 0
                             to: 100
-                            value: 5
+                            value: settings.stanleyIntegralGainAB * 100
+                            onValueChanged: settings.stanleyIntegralGainAB = value /100
                             leftText: value
                             centerTopText: "Integral"
                         }
@@ -306,7 +312,8 @@ Item {
                             width: 200
                             from: 1
                             to: 5
-                            value: 5
+                            value: settings.setVehicle_goalPointLookAhead
+                            onValueChanged: settings.setVehicle_goalPointLookAhead = value
                             leftText: value
                             centerTopText: "Acquire Look Ahead"
                         }
@@ -315,8 +322,9 @@ Item {
                             objectName: "holdLookAheadSlider"
                             width: 200
                             from: 1
-                            to: 0
-                            value: 5
+                            to: 5
+                            value: settings.setVehicle_goalPointLookAheadHold
+                            onValueChanged: settings.setVehicle_goalPointLookAheadHold = value
                             leftText: value
                             centerTopText: "Hold Look Ahead"
                         }
@@ -326,7 +334,8 @@ Item {
                             width: 200
                             from: .5
                             to: 3
-                            value: 5
+                            value: settings.setVehicle_goalPointLookAheadMult
+                            onValueChanged: settings.setVehicle_goalPointLookAheadMult = value
                             leftText: value
                             centerTopText: "Look Ahead Speed Gain"
                         }
@@ -336,7 +345,8 @@ Item {
                             width: 200
                             from: 0
                             to: 100
-                            value: 5
+                            value: settings.purePursuitIntegralGainAB *100
+                            onValueChanged: settings.purePursuitIntegralGainAB = value /100
                             leftText: value
                             centerTopText: "Integral"
                         }
