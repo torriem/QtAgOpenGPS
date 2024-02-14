@@ -47,8 +47,13 @@ protected:
     QVector3D mouseClickToField(int mouseX, int mouseY);
 
     void DrawBuiltLines(QOpenGLFunctions *gl, QMatrix4x4 mvp);
+    void DrawABTouchLine(QOpenGLFunctions *gl, QMatrix4x4 mvp);
+
 
 public:
+    double iE = 0, iN = 0;
+    QVector<int> crossings;
+
     CBoundary *bnd;
     CHeadLine *hdl;
     CTool *tool;
@@ -73,6 +78,17 @@ public slots:
     void ogl_paint();
     void ogl_initialize();
 
+    void btn_Exit_Click();
+    void isSectionControlled(bool wellIsIt);
+    void btnBndLoop_Click();
+    void btnSlice_Click();
+    void btnDeletePoints_Click();
+    void btnUndo_Click();
+    void btnALength_Click();
+    void btnBLength_Click();
+    void btnBShrink_Click();
+    void btnAShrink_Click();
+    void btnHeadlandOff_Click();
 
 signals:
     void turnOffAutoSteerBtn();
