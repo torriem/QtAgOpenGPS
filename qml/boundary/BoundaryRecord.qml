@@ -5,7 +5,7 @@ import QtQuick.Controls 2.5
 
 import ".."
 
-Popup {
+MoveablePopup {
     id: boundaryRecord
     //anchors.top: parent.top
     //anchors.left: parent.left
