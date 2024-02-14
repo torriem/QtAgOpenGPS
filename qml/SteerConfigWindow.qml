@@ -3,16 +3,10 @@ import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
 
 Item {
-        function hideTabs(){
-            steerTab.visible = false
-            gainTab.visible = false
-            stanleyTab.visible = false
-            ppTab.visible = false
-        }
     id: steerConfigWindow
         Rectangle{
             id: steerConfigFirst
-            color: "#a6a6a6"
+            color: "#cccccc"
             border.color: "black"
             border.width: 1
             visible: true
@@ -58,55 +52,51 @@ Item {
         anchors.top: topLine.bottom
         height: 500
         width:450
+        ButtonGroup {
+            buttons: buttonsTop.children
+        }
+
         RowLayout{
             id: buttonsTop
             width: parent.width
             IconButtonColor{
                 id: steerBtn
                 icon.source: "/images/Steer/ST_SteerTab.png"
-                onClicked: {
-                    hideTabs()
-                    steerTab.visible = true
-                }
                 implicitWidth: parent.width /4 - 4
+                checkable: true
+                checked: true
+                colorChecked: "lightgray"
             }
             IconButtonColor{
                 id: gainBtn
                 icon.source: "/images/Steer/ST_GainTab.png"
-                onClicked: {
-                    hideTabs()
-                    gainTab.visible = true
-                }
                 implicitWidth: parent.width /4 - 4
+                checkable: true
+                colorChecked: "lightgray"
             }
             IconButtonColor{
                 id: stanleyBtn
                 icon.source: "/images/Steer/ST_StanleyTab.png"
-                onClicked: {
-                    hideTabs()
-                    stanleyTab.visible = true
-                }
                 implicitWidth: parent.width /4 - 4
+                checkable: true
+                colorChecked: "lightgray"
             }
             IconButtonColor{
                 id: ppBtn
                 icon.source: "/images/Steer/Sf_PPTab.png"
-                onClicked: {
-                    hideTabs()
-                    ppTab.visible = true
-                }
                 implicitWidth: parent.width /4 - 4
+                checkable: true
+                colorChecked: "lightgray"
             }
         }
 
-                Rectangle{
+                Item{
                     id: steerTab
-                    visible: true
+                    visible: steerBtn.checked
                     anchors.top: buttonsTop.bottom
                     anchors.right: parent.right
                     anchors.left: parent.left
                     anchors.bottom: angleInfo.top
-                    color: "white"
                     Column{
                         id: steerColumn
                         anchors.bottom: parent.bottom
@@ -136,6 +126,7 @@ Item {
                             value: settings.setAS_countsPerDegree
                             onValueChanged: settings.setAS_countsPerDegree = value
                             leftText: value
+                            stepSize: 1
                         }
                         SliderCustomized {
                             id: ackermannSlider
@@ -147,6 +138,7 @@ Item {
                             leftText: value
                             value: settings.setAS_ackerman
                             onValueChanged: settings.setAS_ackerman = value
+                            stepSize: 1
                         }
                         SliderCustomized {
                             id: maxSteerSlider
@@ -158,6 +150,7 @@ Item {
                             to: 80
                             value: settings.setVehicle_maxSteerAngle
                             onValueChanged: settings.setVehicle_maxSteerAngle= value
+                            stepSize: 1
                         }
                     }
                     Image {
@@ -169,14 +162,13 @@ Item {
                     }
 
                 }
-                Rectangle{
+                Item{
                     id: gainTab
                     anchors.top: buttonsTop.bottom
                     anchors.right: parent.right
                     anchors.left: parent.left
                     anchors.bottom: angleInfo.top
-                    visible: false
-                    color: "white"
+                    visible: gainBtn.checked
                     Column{
                         id: gainColumn
                         anchors.bottom: parent.bottom
@@ -196,6 +188,7 @@ Item {
                             value: settings.setAS_Kp
                             onValueChanged: settings.setAS_Kp = value
                             centerTopText: "Proportional Gain"
+                            stepSize: 1
                         }
                         SliderCustomized {
                             id: maxLimitSlider
@@ -207,6 +200,7 @@ Item {
                             to: 254
                             value: settings.setAS_highSteerPWM
                             onValueChanged: settings.setAS_highSteerPWM = value
+                            stepSize: 1
                         }
                         SliderCustomized {
                             id: min2moveSlider
@@ -218,6 +212,7 @@ Item {
                             onValueChanged: settings.setAS_minSteerPWM = value
                             leftText: value
                             centerTopText: "Minimum to Move"
+                            stepSize: 1
                         }
                     }
                     Image {
@@ -229,14 +224,13 @@ Item {
                     }
 
                 }
-                Rectangle{
+                Item{
                     id: stanleyTab
                     anchors.top: buttonsTop.bottom
                     anchors.right: parent.right
                     anchors.left: parent.left
                     anchors.bottom: angleInfo.top
-                    visible: false
-                    color: "white"
+                    visible: stanleyBtn.checked
                     Column{
                         id: stanleyColumn
                         anchors.bottom: parent.bottom
@@ -256,6 +250,7 @@ Item {
                             onValueChanged: settings.stanleyDistanceErrorGain = value
                             leftText: value
                             centerTopText: "Agressiveness"
+                            stepSize: .1
                         }
                         SliderCustomized {
                             id: overShootReductionSlider
@@ -267,6 +262,7 @@ Item {
                             onValueChanged: settings.stanleyHeadingErrorGain = value
                             leftText: value
                             centerTopText: "OverShoot Reduction"
+                            stepSize: .1
                         }
                         SliderCustomized {
                             id: integralStanleySlider
@@ -278,6 +274,7 @@ Item {
                             onValueChanged: settings.stanleyIntegralGainAB = value /100
                             leftText: value
                             centerTopText: "Integral"
+                            stepSize: 1
                         }
                     }
                     Image {
@@ -289,14 +286,13 @@ Item {
                     }
 
                 }
-                Rectangle{
+                Item{
                     id: ppTab
-                    visible: false
+                    visible: ppBtn.checked
                     anchors.top: buttonsTop.bottom
                     anchors.right: parent.right
                     anchors.left: parent.left
                     anchors.bottom: angleInfo.top
-                    color: "white"
                     Column{
                         id: ppColumn
                         anchors.bottom: parent.bottom
@@ -316,6 +312,7 @@ Item {
                             onValueChanged: settings.setVehicle_goalPointLookAhead = value
                             leftText: value
                             centerTopText: "Acquire Look Ahead"
+                            stepSize: .1
                         }
                         SliderCustomized {
                             id: holdLookAheadSlider
@@ -327,6 +324,7 @@ Item {
                             onValueChanged: settings.setVehicle_goalPointLookAheadHold = value
                             leftText: value
                             centerTopText: "Hold Look Ahead"
+                            stepSize: .1
                         }
                         SliderCustomized {
                             id: lookAheadSpeedGainSlider
@@ -338,6 +336,7 @@ Item {
                             onValueChanged: settings.setVehicle_goalPointLookAheadMult = value
                             leftText: value
                             centerTopText: "Look Ahead Speed Gain"
+                            stepSize: .1
                         }
                         SliderCustomized {
                             id: ppIntegralSlider
@@ -349,6 +348,7 @@ Item {
                             onValueChanged: settings.purePursuitIntegralGainAB = value /100
                             leftText: value
                             centerTopText: "Integral"
+                            stepSize: 1
                         }
                     }
                     Image {
