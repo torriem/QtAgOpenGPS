@@ -24,7 +24,9 @@ protected:
     double fieldCenterY;
 
     int fixX, fixY;
-    InterfaceProperty<HeadlandDesigner,bool> isA = InterfaceProperty<HeadlandDesigner,bool>("isA");
+    //InterfaceProperty<HeadlandDesigner,bool> isA = InterfaceProperty<HeadlandDesigner,bool>("isA");
+    bool isA = false;
+    bool draw = false;
     int start = 99999, end = 99999;
     int bndSelect = 0, mode;
     QVector<Vec3> sliceArr;
@@ -89,6 +91,7 @@ public slots:
     void btnBShrink_Click();
     void btnAShrink_Click();
     void btnHeadlandOff_Click();
+    void close_headline();
 
 signals:
     void turnOffAutoSteerBtn();

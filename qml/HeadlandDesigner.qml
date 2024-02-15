@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
+import AgOpenGPS 1.0
 
 Rectangle{
     id: headlandDesigner
@@ -15,6 +16,8 @@ Rectangle{
     property int backupCount: 0
     property int hdlIndex: -1
     property bool curveLine: false
+    property double lineDistance: 0
+
     property double zoom: 1
     property double sX: 0
     property double sY: 0
@@ -34,14 +37,22 @@ Rectangle{
     signal headlandOff()
     signal isSectionControlled(bool wellIsIt)
 
-    Rectangle{//renderer goes here
+    onVisibleChanged: {
+        if(visible) {
+            load()
+        } else {
+            close()
+        }
+    }
+
+    AOGRenderer {//renderer goes here
         id: headlandRenderer
         objectName: "headlandRenderer"
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         height: parent.height
         width: parent.width * .6
-        color: "white"
+        //color: "white"
 
         MouseArea {
             id: headlandMouseArea
@@ -57,6 +68,9 @@ Rectangle{
                     zoom = 0.1
                 } else {
                     headlandDesigner.mouseClicked(mouseX, mouseY)
+                    zoom = 1.0;
+                    sX = 0;
+                    xY = 0;
                 }
             }
 
@@ -94,18 +108,30 @@ Rectangle{
         IconButtonTransparent{
             objectName: "btnBLength"
             icon.source: "/images/APlusPlusB.png"
+            onClicked: {
+                headlandDesigner.blength()
+            }
         }
         IconButtonTransparent{
             objectName: "btnBShrink"
             icon.source: "/images/APlusMinusB.png"
+            onClicked: {
+                headlandDesigner.bshrink()
+            }
         }
         IconButtonTransparent{
             objectName: "btnALength"
             icon.source: "/images/APlusPlusA.png"
+            onClicked: {
+                headlandDesigner.alength()
+            }
         }
         IconButtonTransparent{
             objectName: "btnAShrink"
             icon.source: "/images/APlusMinusA.png"
+            onClicked: {
+                headlandDesigner.ashrink()
+            }
         }
         IconButtonColor{
             id: headlandCurve
@@ -113,26 +139,37 @@ Rectangle{
             checkable: true
             isChecked: true
             icon.source: "/images/ABTrackCurve.png"
+            onClicked: curveLine = true
         }
         IconButtonColor{
             id: headlandAB
             objectName: "rbtnCurve"
             checkable: true
             icon.source: "/images/ABTrackAB.png"
+            onClicked: curveLine = false
         }
         SpinBoxM {
             objectName: "nudSetDistance"
             from: 0
             to: 2000
             boundValue: numTracks.value * settings.setVehicle_toolWidth
-            TextLine{anchors.top: parent.bottom; text: "( "+ utils.m_unit_abbrev()+" )"}
+            TextLine {
+                anchors.top: parent.bottom;
+                text: "( "+ utils.m_unit_abbrev()+" )"
+            }
+            onValueChanged: {
+                lineDistance = value
+            }
         }
         SpinBoxCustomized{
             id: numTracks
             from: 0
             to: 10
             value: 0
-            TextLine{anchors.top: parent.bottom; text: qsTr("Tool: ")+ utils.m_to_ft_string(settings.setVehicle_toolWidth)}
+            TextLine {
+                anchors.top: parent.bottom;
+                text: qsTr("Tool: ")+ utils.m_to_ft_string(settings.setVehicle_toolWidth)
+            }
         }
         IconButtonColor{
             id: cboxIsZoom
@@ -144,6 +181,8 @@ Rectangle{
         IconButtonTransparent{
             objectName: "btnSlice"
             icon.source: "/images/HeadlandSlice.png"
+            enabled: (sliceCount > 0)
+            onClicked: slice()
         }
         IconButtonTransparent{
             objectName: "btnBndLoop"
@@ -152,23 +191,25 @@ Rectangle{
         IconButtonTransparent{
             objectName: "btnDeletePoints"
             icon.source: "/images/HeadlandReset.png"
+            onClicked: deletePoints()
         }
         IconButtonTransparent{
             objectName: "btnUndo"
             icon.source: "/images/back-button.png"
+            enabled: (backupCount > 0)
+            onClicked: undo()
         }
         IconButtonTransparent{
             objectName: "cBoxIsSectionControlled"
             icon.source: "/images/HeadlandSectionOff.png"
             iconChecked: "/images/HeadlandSectionOn.png"
             checkable: true
+            isChecked: settings.setHeadland_isSectionControlled
+            onCheckedChanged: isSectionControlled(checked)
         }
         IconButtonTransparent{
             icon.source: "/images/SwitchOff.png"
-            onClicked: {
-                boundaryInterface.isHeadlandOn = false
-                headlandDesigner.visible = false
-            }
+            onClicked: headlandDesigner.headlandOff()
         }
         IconButtonTransparent{
             icon.source: "/images/OK64.png"

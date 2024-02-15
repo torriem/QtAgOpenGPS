@@ -271,6 +271,7 @@ void FormHeadland::load_headline() {
     }
     sliceCount = sliceArr.count();
     backupCount = backupList.count();
+    draw = true;
 }
 
 void FormHeadland::clicked(int mouseX, int mouseY) {
@@ -280,11 +281,6 @@ void FormHeadland::clicked(int mouseX, int mouseY) {
 
     pint.easting = fieldCoords.x();
     pint.northing = fieldCoords.y();
-
-    zoomToggle = false;
-    zoom = 1;
-    sX = 0;
-    sY = 0;
 
     if (isA)
     {
@@ -517,7 +513,7 @@ void FormHeadland::clicked(int mouseX, int mouseY) {
 }
 
 void FormHeadland::ogl_initialize() {
-
+    qDebug() << "headline ogl initize.";
 }
 
 void FormHeadland::ogl_paint() {
@@ -526,6 +522,8 @@ void FormHeadland::ogl_paint() {
 
     QMatrix4x4 modelview;
     QMatrix4x4 projection;
+
+    if(!draw) return;
 
     int width = qmlItem(headland_designer_instance, "headlandRenderer")->property("width").toReal();
     int height = qmlItem(headland_designer_instance, "headlandRenderer")->property("height").toReal();
@@ -1020,3 +1018,9 @@ void FormHeadland::btnHeadlandOff_Click()
     vehicle->isHydLiftOn = false;
 }
 
+void FormHeadland::close_headline()
+{
+    draw = false;
+
+
+}
