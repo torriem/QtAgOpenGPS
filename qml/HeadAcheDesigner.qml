@@ -11,7 +11,7 @@ Rectangle{
         headAcheDesigner.visible = true
     }
 
-/*    property int sliceCount: 0
+    /*    property int sliceCount: 0
     property int backupCount: 0
     property int hdlIndex: -1
     property bool curveLine: false
@@ -40,7 +40,7 @@ Rectangle{
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         height: parent.height
-        width: parent.width * .6
+        width: parent.width * .7
         color: "white"
 
         MouseArea {
@@ -76,105 +76,147 @@ Rectangle{
         }
     }
 
-    GridLayout{
+    Column{
         id: buttons
         anchors.left: headAcheRenderer.right
         anchors.bottom: parent.bottom
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.margins: 10
-        flow: Grid.LeftToRight // NOTE!! this is not how I normally do it
-                               //but it seems to make the most sense here
-        columns: 2
-        rows: 9
+        spacing: 30
         ButtonGroup{
             buttons: [ headAcheAB, headAcheCurve ]
         }
-
-        IconButtonTransparent{
-            //objectName: "btnBLength"
-            icon.source: "/images/APlusPlusB.png"
-        }
-        IconButtonTransparent{
-            //objectName: "btnBShrink"
-            icon.source: "/images/APlusMinusB.png"
-        }
-        IconButtonTransparent{
-            //objectName: "btnALength"
-            icon.source: "/images/APlusPlusA.png"
-        }
-        IconButtonTransparent{
-            //objectName: "btnAShrink"
-            icon.source: "/images/APlusMinusA.png"
-        }
-        IconButtonColor{
-            id: headAcheCurve
-            //objectName: "rbtnLine"
-            checkable: true
-            isChecked: true
-            icon.source: "/images/ABTrackCurve.png"
-        }
-        IconButtonColor{
-            id: headAcheAB
-            //objectName: "rbtnCurve"
-            checkable: true
-            icon.source: "/images/ABTrackAB.png"
-        }
-        SpinBoxM {
-            //objectName: "nudSetDistance"
-            from: 0
-            to: 2000
-            boundValue: numTracks.value * settings.setVehicle_toolWidth
-            TextLine{anchors.top: parent.bottom; text: "( "+ utils.m_unit_abbrev()+" )"}
-        }
-        SpinBoxCustomized{
-            id: numTracks
-            from: 0
-            to: 10
-            value: 0
-            TextLine{anchors.top: parent.bottom; text: qsTr("Tool: ")+ utils.m_to_ft_string(settings.setVehicle_toolWidth)}
-        }
-        IconButtonColor{
-            id: cboxIsZoom
-            //objectName: "cboxIsZoom"
-            checkable: true
-            icon.source: "/images/ZoomOGL.png"
-        }
-
-        IconButtonTransparent{
-            //objectName: "btnSlice"
-            icon.source: "/images/HeadlandSlice.png"
-        }
-        IconButtonTransparent{
-            //objectName: "btnBndLoop"
-            icon.source: "/images/HeadlandBuild.png"
-        }
-        IconButtonTransparent{
-            //objectName: "btnDeletePoints"
-            icon.source: "/images/HeadlandReset.png"
-        }
-        IconButtonTransparent{
-            //objectName: "btnUndo"
-            icon.source: "/images/back-button.png"
-        }
-        IconButtonTransparent{
-            //objectName: "cBoxIsSectionControlled"
-            icon.source: "/images/HeadlandSectionOff.png"
-            iconChecked: "/images/HeadlandSectionOn.png"
-            checkable: true
-        }
-        IconButtonTransparent{
-            icon.source: "/images/SwitchOff.png"
-            onClicked: {
-                boundaryInterface.isHeadlandOn = false
-                headAcheDesigner.visible = false
+        GridLayout{
+            id: top6btns
+            flow: Grid.LeftToRight // NOTE!! this is not how I normally do it
+            //but it seems to make the most sense here
+            columns: 3
+            rows: 2
+            width: parent.width
+            rowSpacing: buttons.spacing
+            IconButtonTransparent{
+                //objectName: "btnBLength"
+                icon.source: "/images/APlusPlusB.png"
+                Layout.alignment: Qt.AlignCenter
+            }
+            IconButtonTransparent{
+                //objectName: "btnBShrink"
+                icon.source: "/images/APlusMinusB.png"
+                Layout.alignment: Qt.AlignCenter
+            }
+            IconButtonTransparent{
+                //objectName: "cBoxIsSectionControlled"
+                icon.source: "/images/HeadlandSectionOff.png"
+                iconChecked: "/images/HeadlandSectionOn.png"
+                checkable: true
+                Layout.alignment: Qt.AlignCenter
+            }
+            IconButtonTransparent{
+                //objectName: "btnALength"
+                icon.source: "/images/APlusPlusA.png"
+                Layout.alignment: Qt.AlignCenter
+            }
+            IconButtonTransparent{
+                //objectName: "btnAShrink"
+                icon.source: "/images/APlusMinusA.png"
+                Layout.alignment: Qt.AlignCenter
+            }
+            IconButtonTransparent{
+                //objectName: "btnAShrink"
+                icon.source: "/images/HeadlandDeletePoints.png"
+                Layout.alignment: Qt.AlignCenter
             }
         }
-        IconButtonTransparent{
-            icon.source: "/images/OK64.png"
-            onClicked: {
-                boundaryInterface.isHeadlandOn = true
-                headAcheDesigner.visible = false
+        GridLayout{
+            flow: Grid.LeftToRight
+            rows: 3
+            width: parent.width
+            columns: 2
+            rowSpacing: buttons.spacing
+            IconButtonColor{
+                id: headAcheCurve
+                //objectName: "rbtnLine"
+                checkable: true
+                isChecked: true
+                Layout.alignment: Qt.AlignCenter
+                icon.source: "/images/ABTrackCurve.png"
+            }
+            IconButtonColor{
+                id: headAcheAB
+                //objectName: "rbtnCurve"
+                checkable: true
+                Layout.alignment: Qt.AlignCenter
+                icon.source: "/images/ABTrackAB.png"
+            }
+            SpinBoxM {
+                //objectName: "nudSetDistance"
+                from: 0
+                to: 2000
+                boundValue: numTracks.value * settings.setVehicle_toolWidth
+                Layout.alignment: Qt.AlignCenter
+                TextLine{anchors.top: parent.bottom; text: "( "+ utils.m_unit_abbrev()+" )"}
+            }
+            SpinBoxCustomized{
+                id: numTracks
+                from: 0
+                to: 10
+                value: 0
+                Layout.alignment: Qt.AlignCenter
+                TextLine{anchors.top: parent.bottom; text: qsTr("Tool: ")+ utils.m_to_ft_string(settings.setVehicle_toolWidth)}
+            }
+            IconButtonColor{
+                id: cboxIsZoom
+                //objectName: "cboxIsZoom"
+                checkable: true
+                icon.source: "/images/ZoomOGL.png"
+                Layout.alignment: Qt.AlignCenter
+            }
+
+            IconButtonTransparent{
+                //objectName: "btnBndLoop"
+                icon.source: "/images/HeadlandBuild.png"
+                Layout.alignment: Qt.AlignCenter
+            }
+        }
+        GridLayout{
+            flow: Grid.LeftToRight
+            rows: 2
+            columns: 3
+            rowSpacing: buttons.spacing
+            width: parent.width
+            IconButtonTransparent{
+                //objectName: "btnDeletePoints"
+                icon.source: "/images/HeadlandReset.png"
+                Layout.alignment: Qt.AlignCenter
+            }
+            IconButtonTransparent{
+                icon.source: "/images/ABLineCycleBk.png"
+                Layout.alignment: Qt.AlignCenter
+            }
+            IconButtonTransparent{
+                icon.source: "/images/ABLineCycle.png"
+                Layout.alignment: Qt.AlignCenter
+            }
+            IconButtonTransparent{
+                icon.source: "/images/SwitchOff.png"
+                Layout.alignment: Qt.AlignCenter
+                onClicked: {
+                    boundaryInterface.isHeadlandOn = false
+                    headAcheDesigner.visible = false
+                }
+            }
+            IconButtonTransparent{
+                icon.source: "/images/Trash.png"
+                Layout.alignment: Qt.AlignCenter
+            }
+            IconButtonTransparent{
+                icon.source: "/images/OK64.png"
+                Layout.alignment: Qt.AlignCenter
+                onClicked: {
+                    boundaryInterface.isHeadlandOn = true
+                    headAcheDesigner.visible = false
+                }
             }
         }
     }

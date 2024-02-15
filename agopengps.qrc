@@ -592,5 +592,6 @@
         <file>images/ZoomOGL.png</file>
         <file>qml/MoveablePopup.qml</file>
         <file>qml/HeadAcheDesigner.qml</file>
+        <file>images/TrashApplied.png</file>
     </qresource>
 </RCC>
