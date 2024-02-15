@@ -130,6 +130,8 @@ Item {
 
     signal uturn(bool turn_right)
     signal lateral(bool go_right)
+    signal autoYouTurn()
+    signal swapAutoYouTurnDirection()
 
     //general settings
     signal settings_reload() //tell backend classes to reload settings from store

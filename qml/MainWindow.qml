@@ -601,6 +601,7 @@ Window {
                 iconChecked: "/images/YouTurn80.png"
                 buttonText: "AutoUturn"
                 visible: aog.isTrackOn
+                onClicked: aog.autoYouTurn()
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
