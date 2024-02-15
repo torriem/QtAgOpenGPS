@@ -314,6 +314,7 @@ Window {
                 id: btnAcres
                 implicitWidth: parent.width
                 implicitHeight: parent.width / 2
+                Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     aog.distanceUser = "0"
                     aog.workedAreaTotalUser = "0"
@@ -355,6 +356,7 @@ Window {
                 buttonText: qsTr("Display")
                 icon.source: "/images/NavigationSettings.png"
                 onClicked: displayButtons.visible = !displayButtons.visible
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnSettings
@@ -362,7 +364,7 @@ Window {
                 buttonText: qsTr("Settings")
                 icon.source: "/images/Settings48.png"
                 onClicked: config.open()
-
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnTools
@@ -370,6 +372,7 @@ Window {
                 buttonText: qsTr("Tools")
                 icon.source: "/images/SpecialFunctions.png"
                 onClicked: toolsWindow.visible = true
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText{
                 id: btnFieldMenu
@@ -377,6 +380,7 @@ Window {
                 buttonText: qsTr("Field")
                 icon.source: "/images/JobActive.png"
                 onClicked: fieldMenu.visible = true
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText{
                 id: btnFieldTools
@@ -385,12 +389,14 @@ Window {
                 icon.source: "/images/FieldTools.png"
                 onClicked: fieldTools.visible = true
                 disabled: aog.isJobStarted ? false : true
+                Layout.alignment: Qt.AlignCenter
             }
             FieldToolsMenu {
                 id: fieldTools
                 width: 300
                 visible: false
                 height: mainWindow.height
+                Layout.alignment: Qt.AlignCenter
             }
 
             IconButtonText {
@@ -398,12 +404,14 @@ Window {
                 objectName: "btnAgIO"
                 buttonText: qsTr("AgIO")
                 icon.source: "/images/AgIO.png"
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnautoSteerConf
                 objectName: "btnAutosteerConf"
                 buttonText: qsTr("Steer config")
                 icon.source: "/images/AutoSteerConf.png"
+                Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     steerConfigWindow.visible = true
                 }
@@ -457,6 +465,7 @@ Window {
                 buttonText: "Contour"
                 //color: "white"
                 visible: aog.isJobStarted ? true : false
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText{
                 id: btnABCurve
@@ -467,6 +476,7 @@ Window {
                 iconChecked: "/images/CurveOn.png"
                 buttonText: "ABCurve"
                 visible: aog.isJobStarted ? true : false
+                Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     abCurvePicker.visible = true
                     if (aog.currentABCurve > -1) {
@@ -499,6 +509,7 @@ Window {
                 //Also the types of lines are all mutually exclusive
                 icon.source: "/images/ABLineOff.png"
                 iconChecked: "/images/ABLineOn.png"
+                Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     abLinePicker.visible = true
                     if (aog.currentABLine > -1)
@@ -530,6 +541,7 @@ Window {
                 width: btnABLine.width
                 height: btnABLine.height
                 visible: aog.isTrackOn
+                Layout.alignment: Qt.AlignCenter
             }
             IconButton{
                 id: btnABLineCycleBk
@@ -538,6 +550,7 @@ Window {
                 width: btnABLine.width
                 height: btnABLine.height
                 visible: aog.isTrackOn
+                Layout.alignment: Qt.AlignCenter
             }
 
             IconButtonText {
@@ -549,6 +562,7 @@ Window {
                 iconChecked: "/images/ManualOn.png"
                 buttonText: "Manual"
                 visible: aog.isJobStarted ? true : false
+                Layout.alignment: Qt.AlignCenter
                 onCheckedChanged: {
                     if (checked) {
                         btnSectionAuto.checked = false;
@@ -568,6 +582,7 @@ Window {
                 iconChecked: "/images/SectionMasterOn.png"
                 buttonText: "Auto"
                 visible: aog.isJobStarted ? true : false
+                Layout.alignment: Qt.AlignCenter
                 onCheckedChanged: {
                     if (checked) {
                         btnSectionManual.checked = false;
@@ -586,6 +601,7 @@ Window {
                 iconChecked: "/images/YouTurn80.png"
                 buttonText: "AutoUturn"
                 visible: aog.isTrackOn
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnAutoSteer
@@ -597,6 +613,7 @@ Window {
                 visible: aog.isJobStarted ? true : false
                 //Is remote activation of autosteer enabled?
                 buttonText: (settings.setAS_isAutoSteerAutoOn === true ? "R" : "M")
+                Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     if (checked && ((aog.currentABCurve > -1) || (aog.currentABLine > -1))) {
                         console.debug("okay to turn on autosteer button.")
@@ -662,6 +679,7 @@ Window {
             ComboBox {
                 id: skips
                 editable: true
+                Layout.alignment: Qt.AlignCenter
                 model: ListModel {
                     id: model
                     ListElement {text: "1"}
@@ -692,23 +710,27 @@ Window {
                 icon.source: "/images/YouSkipOff.png"
                 iconChecked: "/images/YouSkipOn.png"
                 buttonText: "YouSkips"
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnResetTool
                 objectName: "btnResetTool"
                 icon.source: "/images/ResetTool.png"
                 buttonText: "Reset Tool"
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnSectionMapping
                 objectName: "btnSectionMapping"
                 icon.source: "/images/SectionMapping"
                 visible: aog.isJobStarted ? true : false
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnFieldInfo
                 icon.source: "/images/FieldStats.png"
                 visible: aog.isJobStarted ? true : false
+                Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     fieldData.visible = !fieldData.visible
                     gpsData.visible = false
@@ -719,6 +741,7 @@ Window {
                 objectName: "btnTramLines"
                 icon.source: "/images/TramLines.png"
                 buttonText: "Tram Lines"
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnHydLift
@@ -728,6 +751,7 @@ Window {
                 icon.source: "/images/HydraulicLiftOff.png"
                 iconChecked: "/images/HydraulicLiftOn.png"
                 buttonText: "HydLift"
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnHeadland
@@ -737,12 +761,14 @@ Window {
                 icon.source: "/images/HeadlandOff.png"
                 iconChecked: "/images/HeadlandOn.png"
                 buttonText: "Headland"
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnFlag
                 objectName: "btnFlag"
                 isChecked: false
                 icon.source: "/images/FlagRed.png"
+                Layout.alignment: Qt.AlignCenter
                 onPressAndHold: {
                     if (contextFlag.visible) {
                         contextFlag.visible = false;
@@ -758,6 +784,7 @@ Window {
                 icon.source: "/images/TrackOn.png"
                 buttonText: "Track"
                 onClicked: trackButtons.visible = !trackButtons.visible
+                Layout.alignment: Qt.AlignCenter
             }
 
         }
