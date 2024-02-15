@@ -44,6 +44,8 @@
 #include "cheadline.h"
 #include "cpgn.h"
 
+#include "formheadland.h"
+
 //forward declare classes referred to below, to break circular
 //references in the code
 class QOpenGLShaderProgram;
@@ -324,6 +326,8 @@ public:
     CFieldData fd;
 
     CHeadLine hdl;
+
+    FormHeadland headland_form;
 
     /*
      * PGNs *

@@ -162,6 +162,14 @@ void FormGPS::setupGui()
     connect(boundaryInterface, SIGNAL(set_drive_through(int, bool)), this, SLOT(boundary_set_drivethru(int,bool)));
     connect(boundaryInterface, SIGNAL(delete_all()), this, SLOT(boundary_delete_all()));
 
+
+    headland_form.bnd = &bnd;
+    headland_form.vehicle = &vehicle;
+    headland_form.hdl = &hdl;
+    headland_form.tool = &tool;
+
+    headland_form.connect_ui(qmlItem(qml_root, "headlandDesigner"));
+
     //connect qml button signals to callbacks (it's not automatic with qml)
 
     /*btnPerimeter = qmlItem(qml_root,"btnPerimeter");
