@@ -127,6 +127,7 @@ void FormHeadland::connect_ui(QObject *headland_designer_instance) {
     connect(headland_designer_instance,SIGNAL(update_lines()),this,SLOT(update_lines()));
     connect(headland_designer_instance,SIGNAL(mouseClicked(int, int)),this,SLOT(clicked(int,int)));
     connect(headland_designer_instance,SIGNAL(slice()),this,SLOT(btnSlice_Click()));
+    connect(headland_designer_instance,SIGNAL(create_headland()),this,SLOT(btnBndLoop_Click()));
     connect(headland_designer_instance,SIGNAL(deletePoints()),this,SLOT(btnDeletePoints_Click()));
     connect(headland_designer_instance,SIGNAL(undo()),this,SLOT(btnUndo_Click()));
     connect(headland_designer_instance,SIGNAL(ashrink()),this,SLOT(btnAShrink_Click()));
@@ -954,6 +955,7 @@ void FormHeadland::btnBndLoop_Click() {
         }
     }
 
+    update_headland();
     emit saveHeadland();
 }
 
@@ -1083,6 +1085,7 @@ void FormHeadland::btnSlice_Click() {
     sliceCount = sliceArr.count();
     backupCount = backupList.count();
     update_headland();
+    update_slice();
 }
 
 void FormHeadland::btnDeletePoints_Click() {
@@ -1101,6 +1104,8 @@ void FormHeadland::btnDeletePoints_Click() {
     }
     sliceCount = sliceArr.count();
     backupCount = backupList.count();
+    update_headland();
+    update_slice();
 }
 
 void FormHeadland::btnUndo_Click() {
@@ -1111,6 +1116,8 @@ void FormHeadland::btnUndo_Click() {
     }
     backupList.clear();
     backupCount = backupList.count();
+    update_headland();
+    update_slice();
 }
 
 void FormHeadland::btnALength_Click() {
@@ -1168,6 +1175,8 @@ void FormHeadland::btnAShrink_Click()
 void FormHeadland::btnHeadlandOff_Click()
 {
     bnd->bndList[0].hdLine.clear();
+    update_headland();
+    update_slice();
     emit saveHeadland();
     bnd->isHeadlandOn = false;
     vehicle->isHydLiftOn = false;

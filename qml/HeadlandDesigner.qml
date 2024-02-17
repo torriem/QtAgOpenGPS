@@ -41,6 +41,7 @@ Rectangle{
     //signal zoom(bool checked)
     signal slice()
     signal deletePoints()
+    signal create_headland()
     signal undo()
     signal ashrink()
     signal alength()
@@ -246,7 +247,7 @@ Rectangle{
             onClicked: {
                 if (cboxIsZoom.checked && headlandDesigner.zoom === 1) {
                     sX = ((parent.width / 2 - mouseX) / parent.width) * 1.1
-                    sY = ((parent.width / 2 - mouseY) / parent.width) * 1.1
+                    sY = ((parent.width / 2 - mouseY) / -parent.width) * 1.1
                     zoom = 0.1
                     headlandDesigner.update_lines()
                 } else {
@@ -373,6 +374,7 @@ Rectangle{
         IconButtonTransparent{
             objectName: "btnBndLoop"
             icon.source: "/images/HeadlandBuild.png"
+            onClicked: create_headland()
         }
         IconButtonTransparent{
             objectName: "btnDeletePoints"
@@ -395,7 +397,10 @@ Rectangle{
         }
         IconButtonTransparent{
             icon.source: "/images/SwitchOff.png"
-            onClicked: headlandDesigner.headlandOff()
+            onClicked: {
+                headlandDesigner.headlandOff()
+                headlandDesigner.visible = false
+            }
         }
         IconButtonTransparent{
             icon.source: "/images/OK64.png"
