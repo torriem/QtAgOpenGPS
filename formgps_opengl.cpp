@@ -164,7 +164,7 @@ void FormGPS::oglMain_Paint()
     int height = qmlItem(qml_root, "openglcontrol")->property("height").toReal();
     double shiftX = qmlItem(qml_root,"openglcontrol")->property("shiftX").toDouble();
     double shiftY = qmlItem(qml_root,"openglcontrol")->property("shiftY").toDouble();
-    gl->glViewport(0,0,width,height);
+    //gl->glViewport(0,0,width,height);
     //qDebug() << width << height;
 
     /*
@@ -1405,4 +1405,5 @@ void FormGPS::calculateMinMax()
         fieldCenterY = (maxFieldY + minFieldY) / 2.0;
     }
 
+    headland_form.setFieldInfo(maxFieldDistance,fieldCenterX,fieldCenterY);
 }

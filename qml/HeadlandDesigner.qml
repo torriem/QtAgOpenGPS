@@ -1,7 +1,7 @@
-import QtQuick 2.0
+import QtQuick 2.15
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
-import AgOpenGPS 1.0
+import QtQuick.Shapes 1.15
 
 Rectangle{
     id: headlandDesigner
@@ -15,14 +15,26 @@ Rectangle{
     property int sliceCount: 0
     property int backupCount: 0
     property int hdlIndex: -1
-    property bool curveLine: false
+    property bool curveLine: true
     property double lineDistance: 0
 
     property double zoom: 1
     property double sX: 0
     property double sY: 0
 
+    property double maxFieldDistance;
+    property double fieldCenterX;
+    property double fieldCenterY;
+    property point apoint: Qt.point(0,0)
+    property point bpoint: Qt.point(0,0)
+    property bool showa: false
+    property bool showb: false
+    property color acolor: "red"
+    property color bcolor: "blue"
+
     signal load()
+    signal update_lines();
+
     signal close() //vs exit?
     signal mouseClicked(int x, int y)
     //signal mouseDragged(int fromX, int fromY, int toX, int toY)
@@ -37,6 +49,53 @@ Rectangle{
     signal headlandOff()
     signal isSectionControlled(bool wellIsIt)
 
+    property var boundaryLines: [
+        {
+            index: 0,
+            color: "#FF0000",
+            width: 4,
+            points: [
+                Qt.point(50, 50),
+                Qt.point(100, 50),
+                Qt.point(100, 100),
+                Qt.point(50, 100),
+                Qt.point(50, 50)
+            ]
+        },
+        {
+            index: 1,
+            color: "#00FF00",
+            width: 4,
+            points: [
+                Qt.point(25, 25),
+                Qt.point(75, 25),
+                Qt.point(75, 75),
+                Qt.point(25, 75),
+                Qt.point(25, 25)
+            ]
+        }
+    ]
+
+    property var headlandLine: [
+        Qt.point(0,0),
+        Qt.point(100,20)
+    ]
+
+    property var sliceLine: [
+        Qt.point(0,0),
+        Qt.point(20,100)
+    ]
+
+
+    onHeadlandLineChanged: {
+        if (headlandLine.length > 0)
+            headlandShapePath.p = headlandLine
+    }
+
+    onSliceLineChanged: {
+        sliceShapePath.p = sliceLine
+    }
+
     onVisibleChanged: {
         if(visible) {
             load()
@@ -45,14 +104,137 @@ Rectangle{
         }
     }
 
-    AOGRenderer {//renderer goes here
+    Rectangle {//renderer goes here
         id: headlandRenderer
         objectName: "headlandRenderer"
+        property string myname: "headlandRenderer"
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         height: parent.height
         width: parent.width * .6
-        //color: "white"
+        color: "black"
+
+        Rectangle {
+            id: a_rect
+            visible: headlandDesigner.showa
+            width: 24
+            height: 24
+            radius: 12
+            color: headlandDesigner.acolor
+            x: headlandDesigner.apoint.x - 12
+            y: headlandDesigner.apoint.y - 12
+            z: 1
+        }
+
+        Rectangle {
+            id: b_rect
+            visible: headlandDesigner.showb
+            width: 24
+            height: 24
+            radius: 12
+            color: headlandDesigner.bcolor
+            x: headlandDesigner.bpoint.x - 12
+            y: headlandDesigner.bpoint.y - 12
+            z: 1
+        }
+
+        Repeater {
+            id: boundaryRepeater
+
+            model: boundaryLines.length
+
+            Shape {
+                property int outerIndex: index
+
+                anchors.fill: parent
+                Connections {
+                    target: headlandDesigner
+                    function onBoundaryLinesChanged() {
+                        shapePath.draw_boundaries()
+                    }
+                }
+
+                ShapePath {
+                    id: shapePath
+                    strokeColor: boundaryLines[index].color
+                    strokeWidth: boundaryLines[index].width
+                    fillColor: "transparent"
+                    startX: p[0].x
+                    startY: p[0].y
+                    scale: Qt.size(1,1)
+                    joinStyle: ShapePath.RoundJoin
+
+                    property var p: [Qt.point(0,0), Qt.point(headlandRenderer.width, headlandRenderer.height)]
+
+                    PathPolyline {
+                        id: ps
+                        path: shapePath.p
+                    }
+
+
+                    Component.onCompleted: draw_boundaries()
+
+
+                    function draw_boundaries()
+                    {
+                    //    console.debug(boundaryLines[index].points)
+                        p = boundaryLines[index].points
+                    }
+                }
+            }
+        }
+
+        Shape {
+            id: headlandShape
+            visible: headlandLine.length > 0
+            anchors.fill: parent
+            ShapePath {
+                id: headlandShapePath
+                strokeColor: "#f1e817"
+                strokeWidth: 8
+                fillColor: "transparent"
+                startX: p[0].x
+                startY: p[0].y
+                joinStyle: ShapePath.RoundJoin
+
+                property var p: [
+                    Qt.point(0,0),
+                    Qt.point(20,100),
+                    Qt.point(200,150)
+                ]
+
+                PathPolyline {
+                    id: headlandShapePolyLine
+                    path: headlandShapePath.p
+                }
+            }
+        }
+
+        Shape {
+            id: sliceShape
+            visible: sliceCount != 0
+            anchors.fill: parent
+            ShapePath {
+                id: sliceShapePath
+                strokeColor: btnABCurve.checked ? "#f31700" : "#21f305"
+                strokeWidth: 8
+                fillColor: "transparent"
+                startX: sliceShape.p[0].x
+                startY: sliceShape.p[0].y
+                joinStyle: ShapePath.RoundJoin
+
+                property var p: [
+                    Qt.point(0,0),
+                    Qt.point(100,20),
+                ]
+
+                PathPolyline {
+                    id: sliceShapePolyLine
+                    path: sliceShapePath.p
+                }
+            }
+        }
+
 
         MouseArea {
             id: headlandMouseArea
@@ -64,13 +246,17 @@ Rectangle{
             onClicked: {
                 if (cboxIsZoom.checked && headlandDesigner.zoom === 1) {
                     sX = ((parent.width / 2 - mouseX) / parent.width) * 1.1
-                    sY = ((parent.width / 2 - mouseY) / -parent.width) * 1.1
+                    sY = ((parent.width / 2 - mouseY) / parent.width) * 1.1
                     zoom = 0.1
+                    headlandDesigner.update_lines()
                 } else {
                     headlandDesigner.mouseClicked(mouseX, mouseY)
-                    zoom = 1.0;
-                    sX = 0;
-                    xY = 0;
+                    if (zoom != 1.0) {
+                        zoom = 1.0;
+                        sX = 0;
+                        sY = 0;
+                        headlandDesigner.update_lines()
+                    }
                 }
             }
 

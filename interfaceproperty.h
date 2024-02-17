@@ -14,13 +14,13 @@ class BoundaryInterface;
 template <typename WhichInterface, class T>
 class InterfaceProperty {
 protected:
-    char * prop_name;
+    char prop_name[128];
 public:
     static inline QObject *prop_root = NULL;
 
     InterfaceProperty(const char *qml_prop_name)
     {
-        prop_name = strdup(qml_prop_name);
+        strncpy(prop_name, qml_prop_name, 127); //dirty. can we use qstring?
     }
 
     InterfaceProperty() : prop_name(NULL) {}

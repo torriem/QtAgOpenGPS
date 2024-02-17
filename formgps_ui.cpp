@@ -169,6 +169,8 @@ void FormGPS::setupGui()
     headland_form.tool = &tool;
 
     headland_form.connect_ui(qmlItem(qml_root, "headlandDesigner"));
+    connect(&headland_form, SIGNAL(saveHeadland()),this,SLOT(TimedMessageBox(int,QString,QString)));
+    //TODO: connect the other signals in headland_form
 
     //connect qml button signals to callbacks (it's not automatic with qml)
 

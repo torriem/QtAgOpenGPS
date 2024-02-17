@@ -19,9 +19,13 @@ class FormHeadland : public QObject
 {
     Q_OBJECT
 protected:
-    double maxFieldDistance;
-    double fieldCenterX;
-    double fieldCenterY;
+    InterfaceProperty<HeadlandDesigner,double> maxFieldDistance = InterfaceProperty<HeadlandDesigner,double>("maxFieldDistance");
+    InterfaceProperty<HeadlandDesigner,double> fieldCenterX = InterfaceProperty<HeadlandDesigner,double>("fieldCenterX");
+    InterfaceProperty<HeadlandDesigner,double> fieldCenterY = InterfaceProperty<HeadlandDesigner,double>("fieldCenterY");
+    InterfaceProperty<HeadlandDesigner,bool> showa = InterfaceProperty<HeadlandDesigner,bool>("showa");
+    InterfaceProperty<HeadlandDesigner,bool> showb = InterfaceProperty<HeadlandDesigner,bool>("showb");
+    InterfaceProperty<HeadlandDesigner,QPoint> apoint = InterfaceProperty<HeadlandDesigner,QPoint>("apoint");
+    InterfaceProperty<HeadlandDesigner,QPoint> bpoint = InterfaceProperty<HeadlandDesigner,QPoint>("bpoint");
 
     int fixX, fixY;
     //InterfaceProperty<HeadlandDesigner,bool> isA = InterfaceProperty<HeadlandDesigner,bool>("isA");
@@ -47,6 +51,8 @@ protected:
 
     void SetLineDistance();
     QVector3D mouseClickToField(int mouseX, int mouseY);
+
+    void setup_matrices(QMatrix4x4 &modelview, QMatrix4x4 &projection);
 
     void DrawBuiltLines(QOpenGLFunctions *gl, QMatrix4x4 mvp);
     void DrawABTouchLine(QOpenGLFunctions *gl, QMatrix4x4 mvp);
@@ -74,6 +80,10 @@ public slots:
                       double fieldCenterY);
 
     void load_headline();
+    void update_lines(); //update the boundary lines in GUI
+    void update_headland(); //update headland line
+    void update_slice(); //update slice and A B points in GUI
+
     void clicked(int mouseX, int mouseY);
 
     void ogl_resize();
