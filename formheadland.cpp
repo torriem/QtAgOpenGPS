@@ -136,6 +136,7 @@ void FormHeadland::connect_ui(QObject *headland_designer_instance) {
     connect(headland_designer_instance,SIGNAL(blength()),this,SLOT(btnBLength_Click()));
     connect(headland_designer_instance,SIGNAL(headlandOff()),this,SLOT(btnHeadlandOff_Click()));
     connect(headland_designer_instance,SIGNAL(isSectionControlled(bool)),this,SLOT(isSectionControlled(bool)));
+    connect(headland_designer_instance,SIGNAL(exit()),this,SLOT(btn_Exit_Click()));
 }
 
 void FormHeadland::setFieldInfo(double maxFieldDistance, double fieldCenterX, double fieldCenterY) {
@@ -425,6 +426,10 @@ void FormHeadland::update_headland() {
 }
 
 void FormHeadland::clicked(int mouseX, int mouseY) {
+    if ((double)lineDistance == 0 && (bool)curveLine) {
+        timedMessageBox(3000, tr("Distance Error"), tr("Distance Set to 0, Nothing to Move"));
+        return;
+    }
     sliceArr.clear();
 
     QVector3D fieldCoords = mouseClickToField(mouseX, mouseY);

@@ -35,7 +35,7 @@ Rectangle{
     signal load()
     signal update_lines();
 
-    signal close() //vs exit?
+    signal exit()
     signal mouseClicked(int x, int y)
     //signal mouseDragged(int fromX, int fromY, int toX, int toY)
     //signal zoom(bool checked)
@@ -406,7 +406,8 @@ Rectangle{
         IconButtonTransparent{
             icon.source: "/images/OK64.png"
             onClicked: {
-                boundaryInterface.isHeadlandOn = true
+                exit()
+                //boundaryInterface.isHeadlandOn = true
                 headlandDesigner.visible = false
             }
         }

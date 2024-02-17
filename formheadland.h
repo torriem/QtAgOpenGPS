@@ -105,7 +105,7 @@ public slots:
 
 signals:
     void turnOffAutoSteerBtn();
-    void turnOffYouTubeBtn();
+    void turnOffYouTurnBtn();
     void timedMessageBox(int, QString, QString);
     void saveHeadland();
 };
