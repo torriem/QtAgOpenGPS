@@ -227,8 +227,8 @@ QVector3D FormHeadland::mouseClickToField(int mouseX, int mouseY) {
 
     float x,y;
     x = mouseX;
-    //y = height - mouseY;
-    y = mouseY;
+    y = height - mouseY;
+    //y = mouseY;
 
     //get point on the near plane
     QVector3D worldpoint_near = QVector3D( { x, y, 0} ).unproject(modelview,projection,QRect(0,0,width, height));
@@ -335,7 +335,7 @@ void FormHeadland::update_lines() {
                            bnd->bndList[j].fenceLine[i].northing,
                            0);
             s = p.project(modelview, projection, QRect(0,0,width,height));
-            linepoint = QPoint(s.x(),s.y());
+            linepoint = QPoint(s.x(),height - s.y());
             linepoints.append(linepoint);
         }
         linemap["points"] = linepoints;
@@ -364,7 +364,7 @@ void FormHeadland::update_slice() {
         p = QVector3D(bnd->bndList[bndSelect].fenceLine[start].easting, bnd->bndList[bndSelect].fenceLine[start].northing, 0);
         s = p.project(modelview, projection, QRect(0,0,width,height));
         showa = true;
-        apoint = QPoint(s.x(), s.y());
+        apoint = QPoint(s.x(), height - s.y());
     } else {
         showa = false;
     }
@@ -379,7 +379,7 @@ void FormHeadland::update_slice() {
         {
             p = QVector3D( item.easting, item.northing, 0);
             s = p.project(modelview, projection, QRect(0,0,width,height));
-            linepoint = QPoint(s.x(),s.y());
+            linepoint = QPoint(s.x(),height - s.y());
             line.append(linepoint);
         }
 
@@ -417,7 +417,7 @@ void FormHeadland::update_headland() {
                            0);
             s = p.project(modelview, projection, QRect(0,0,width,height));
 
-            linepoint = QPoint(s.x(),s.y());
+            linepoint = QPoint(s.x(),height - s.y());
             line.append(linepoint);
         }
     }

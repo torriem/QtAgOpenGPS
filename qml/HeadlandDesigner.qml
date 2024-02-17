@@ -121,7 +121,7 @@ Rectangle{
             width: 24
             height: 24
             radius: 12
-            color: headlandDesigner.acolor
+            color: "#ffc059"
             x: headlandDesigner.apoint.x - 12
             y: headlandDesigner.apoint.y - 12
             z: 1
@@ -133,7 +133,7 @@ Rectangle{
             width: 24
             height: 24
             radius: 12
-            color: headlandDesigner.bcolor
+            color:  "#80c0ff"
             x: headlandDesigner.bpoint.x - 12
             y: headlandDesigner.bpoint.y - 12
             z: 1
