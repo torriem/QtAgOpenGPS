@@ -590,5 +590,6 @@
         <file>images/HeadlandSlice.png</file>
         <file>images/HeadlandSectionOff.png</file>
         <file>images/ZoomOGL.png</file>
+        <file>images/HeadlandSectionOn.png</file>
     </qresource>
 </RCC>

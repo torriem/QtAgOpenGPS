@@ -3,11 +3,13 @@ import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
 import QtQuick.Shapes 1.15
 
-Rectangle{
+Popup{
     id: headlandDesigner
-    width: 1024
-    height: 763
-    color: "ghostwhite"
+    width: parent.width
+    height: parent.height
+    closePolicy: Popup.NoAutoClose
+
+    //color: "ghostwhite"
     function show(){
         headlandDesigner.visible = true
     }
@@ -35,7 +37,7 @@ Rectangle{
     signal load()
     signal update_lines();
 
-    signal exit()
+    signal save_exit()
     signal mouseClicked(int x, int y)
     //signal mouseDragged(int fromX, int fromY, int toX, int toY)
     //signal zoom(bool checked)
@@ -49,6 +51,10 @@ Rectangle{
     signal blength()
     signal headlandOff()
     signal isSectionControlled(bool wellIsIt)
+
+    //onClosed: { console.debug("closed.") }
+    onWidthChanged: if(aog.isJobStarted) update_lines()
+    onHeightChanged: if(aog.isJobStarted) update_lines()
 
     property var boundaryLines: [
         {
@@ -220,8 +226,8 @@ Rectangle{
                 strokeColor: btnABCurve.checked ? "#f31700" : "#21f305"
                 strokeWidth: 8
                 fillColor: "transparent"
-                startX: sliceShape.p[0].x
-                startY: sliceShape.p[0].y
+                startX: p[0].x
+                startY: p[0].y
                 joinStyle: ShapePath.RoundJoin
 
                 property var p: [
@@ -248,7 +254,7 @@ Rectangle{
                 if (cboxIsZoom.checked && headlandDesigner.zoom === 1) {
                     sX = ((parent.width / 2 - mouseX) / parent.width) * 1.1
                     sY = ((parent.height / 2 - mouseY) / -parent.height) * 1.1
-                    console.debug("width,mouse, sx,sy",parent.width / 2, mouseX, mouseY, sX,sY);
+                    //console.debug("width,mouse, sx,sy",parent.width / 2, mouseX, mouseY, sX,sY);
                     zoom = 0.1
                     headlandDesigner.update_lines()
                 } else {
@@ -406,8 +412,8 @@ Rectangle{
         IconButtonTransparent{
             icon.source: "/images/OK64.png"
             onClicked: {
-                exit()
-                //boundaryInterface.isHeadlandOn = true
+                save_exit()
+                boundaryInterface.isHeadlandOn = true
                 headlandDesigner.visible = false
             }
         }

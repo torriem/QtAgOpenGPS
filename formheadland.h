@@ -86,10 +86,6 @@ public slots:
 
     void clicked(int mouseX, int mouseY);
 
-    void ogl_resize();
-    void ogl_paint();
-    void ogl_initialize();
-
     void btn_Exit_Click();
     void isSectionControlled(bool wellIsIt);
     void btnBndLoop_Click();
@@ -101,7 +97,6 @@ public slots:
     void btnBShrink_Click();
     void btnAShrink_Click();
     void btnHeadlandOff_Click();
-    void close_headline();
 
 signals:
     void turnOffAutoSteerBtn();

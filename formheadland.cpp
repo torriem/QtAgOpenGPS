@@ -115,13 +115,6 @@ void FormHeadland::connect_ui(QObject *headland_designer_instance) {
     InterfaceProperty<HeadlandDesigner,QColor>::set_qml_root(headland_designer_instance);
     InterfaceProperty<HeadlandDesigner,QPoint>::set_qml_root(headland_designer_instance);
 
-    //set up OpenGL renderer
-    //QObject *renderer = qmlItem(headland_designer_instance,"headlandRenderer");
-    //renderer->setProperty("callbackObject", QVariant::fromValue((void *) this));
-    //renderer->setProperty("initCallback",QVariant::fromValue<std::function<void (void)>>(std::bind(&FormHeadland::ogl_initialize, this)));
-    //renderer->setProperty("paintCallback",QVariant::fromValue<std::function<void (void)>>(std::bind(&FormHeadland::ogl_paint, this)));
-    //renderer->setProperty("samples",settings->value("display/antiAliasSamples", 0));
-
     //connect UI signals
     connect(headland_designer_instance,SIGNAL(load()),this,SLOT(load_headline()));
     connect(headland_designer_instance,SIGNAL(update_lines()),this,SLOT(update_lines()));
@@ -136,7 +129,7 @@ void FormHeadland::connect_ui(QObject *headland_designer_instance) {
     connect(headland_designer_instance,SIGNAL(blength()),this,SLOT(btnBLength_Click()));
     connect(headland_designer_instance,SIGNAL(headlandOff()),this,SLOT(btnHeadlandOff_Click()));
     connect(headland_designer_instance,SIGNAL(isSectionControlled(bool)),this,SLOT(isSectionControlled(bool)));
-    connect(headland_designer_instance,SIGNAL(exit()),this,SLOT(btn_Exit_Click()));
+    connect(headland_designer_instance,SIGNAL(save_exit()),this,SLOT(btn_Exit_Click()));
 }
 
 void FormHeadland::setFieldInfo(double maxFieldDistance, double fieldCenterX, double fieldCenterY) {
@@ -436,7 +429,6 @@ void FormHeadland::clicked(int mouseX, int mouseY) {
 
     pint.easting = fieldCoords.x();
     pint.northing = fieldCoords.y();
-    qDebug() << "field coords:" << pint.easting << pint.northing;
 
     if (isA)
     {
@@ -667,79 +659,6 @@ void FormHeadland::clicked(int mouseX, int mouseY) {
     sliceCount = sliceArr.count();
     backupCount = sliceArr.count();
     update_slice();
-}
-
-void FormHeadland::ogl_initialize() {
-    qDebug() << "headline ogl initize.";
-}
-
-void FormHeadland::ogl_paint() {
-    QOpenGLContext *glContext = QOpenGLContext::currentContext();
-    QOpenGLFunctions *gl = glContext->functions();
-
-    QMatrix4x4 modelview;
-    QMatrix4x4 projection;
-
-    if(!draw) return;
-
-    int width = qmlItem(headland_designer_instance, "headlandRenderer")->property("width").toReal();
-    int height = qmlItem(headland_designer_instance, "headlandRenderer")->property("height").toReal();
-
-    projection.setToIdentity();
-
-    //to shift, translate projection here. -1,0,0 is far left, 1,0,0 is far right.
-    //58 degrees view
-    projection.viewport(0,0,width,height);
-    projection.perspective(58, 1.0f, 1.0f, 20000);
-
-    modelview.setToIdentity();
-    //back the camera up
-    modelview.translate(0, 0, -(double)maxFieldDistance * (double)zoom);
-
-    //translate to that spot in the world
-    modelview.translate(-(double)fieldCenterX + (double)sX * (double)maxFieldDistance, -(double)fieldCenterY + (double)sY * (double)maxFieldDistance, 0);
-
-    gl->glCullFace(GL_BACK);
-    gl->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    gl->glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-
-    //draw all the boundaries
-    double lineWidth = 4;
-
-    GLHelperOneColor gldraw;
-    QColor color;
-
-    for (int j = 0; j < bnd->bndList.count(); j++)
-    {
-        if (j == bndSelect)
-            color = QColor::fromRgbF(0.75f, 0.75f, 0.750f);
-        else
-            color = QColor::fromRgbF(0.0f, 0.25f, 0.10f);
-
-        gldraw.clear();
-        for (int i = 0; i < bnd->bndList[j].fenceLine.count(); i++)
-        {
-            gldraw.append( QVector3D (bnd->bndList[j].fenceLine[i].easting,
-                           bnd->bndList[j].fenceLine[i].northing, 0) );
-        }
-
-        gldraw.draw(gl,projection * modelview, color, GL_LINE_STRIP,lineWidth);
-    }
-
-    //the vehicle
-    gldraw.clear();
-    gldraw.append( QVector3D ( vehicle->pivotAxlePos.easting, vehicle->pivotAxlePos.northing, 0.0 ) );
-    color = QColor::fromRgbF(0.95f, 0.190f, 0.20f);
-    gldraw.draw(gl, projection * modelview, color, GL_POINTS, 16.0f);
-
-    if (start != 99999 || end != 99999) DrawABTouchLine(gl, projection * modelview);
-
-    //draw the actual built lines
-    DrawBuiltLines(gl, projection * modelview);
-}
-
-void FormHeadland::ogl_resize() {
-
 }
 
 void FormHeadland::DrawBuiltLines(QOpenGLFunctions *gl, QMatrix4x4 mvp) {
@@ -1185,9 +1104,4 @@ void FormHeadland::btnHeadlandOff_Click()
     emit saveHeadland();
     bnd->isHeadlandOn = false;
     vehicle->isHydLiftOn = false;
-}
-
-void FormHeadland::close_headline()
-{
-    draw = false;
 }
