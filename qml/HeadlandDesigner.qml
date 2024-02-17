@@ -247,7 +247,8 @@ Rectangle{
             onClicked: {
                 if (cboxIsZoom.checked && headlandDesigner.zoom === 1) {
                     sX = ((parent.width / 2 - mouseX) / parent.width) * 1.1
-                    sY = ((parent.width / 2 - mouseY) / -parent.width) * 1.1
+                    sY = ((parent.height / 2 - mouseY) / -parent.height) * 1.1
+                    console.debug("width,mouse, sx,sy",parent.width / 2, mouseX, mouseY, sX,sY);
                     zoom = 0.1
                     headlandDesigner.update_lines()
                 } else {
