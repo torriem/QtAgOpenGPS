@@ -94,6 +94,47 @@ Window {
         color: "ghostwhite"
         height: 50
         visible: true
+
+        IconButtonTransparent {
+            id: btnfileMenu
+            height: parent.height
+            width: 75
+            objectName: "btnfileMenu"
+            icon.source: "/images/fileMenu.png"
+            onClicked: fileMenu.popup()
+        }
+        Menu{
+            id: fileMenu
+            //anchors.left: buttonsArea.left
+            //anchors.top: buttonsArea.top
+            //anchors. margins: 200
+            MenuItem{ text: "Languages"}
+            MenuItem{ text: "Directories"}
+            MenuItem{ text: "Colors"}
+            MenuItem{ text: "Section Colors"}
+            MenuItem{ text: "Top Field View"}
+            MenuItem{ text: "Enter Sim Coords"}
+            MenuItem{
+                property bool isChecked: settings.setMenu_isSimulatorOn
+                onIsCheckedChanged: {
+                    checked = isChecked
+                }
+
+                text: "Simulator On"
+                checkable: true
+                checked: isChecked
+                onCheckedChanged: {
+                    settings.setMenu_isSimulatorOn = checked
+                    console.log("Sim = "+settings.setMenu_isSimulatorOn)
+                }
+            }
+            MenuItem{ text: "Reset All"}
+            MenuItem{ text: "HotKeys"}
+            MenuItem{ text: "About..."}
+            MenuItem{ text: "Help"}
+            closePolicy: Popup.CloseOnPressOutsideParent
+        }
+
         Text{
             anchors.top:parent.top
             anchors.left: parent.left
@@ -264,50 +305,10 @@ Window {
         ColumnLayout {
             id: leftColumn
             anchors.top: parent.top
+            anchors.topMargin: topLine.height
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             width: children.width + 6
-
-
-            IconButtonText {
-                id: btnfileMenu
-                width: 75
-                objectName: "btnfileMenu"
-                buttonText: qsTr("FileMenu")
-                icon.source: "/images/fileMenu.png"
-                onClicked: fileMenu.popup()
-            }
-            Menu{
-                id: fileMenu
-                //anchors.left: buttonsArea.left
-                //anchors.top: buttonsArea.top
-                //anchors. margins: 200
-                MenuItem{ text: "Languages"}
-                MenuItem{ text: "Directories"}
-                MenuItem{ text: "Colors"}
-                MenuItem{ text: "Section Colors"}
-                MenuItem{ text: "Top Field View"}
-                MenuItem{ text: "Enter Sim Coords"}
-                MenuItem{
-                    property bool isChecked: settings.setMenu_isSimulatorOn
-                    onIsCheckedChanged: {
-                        checked = isChecked
-                    }
-
-                    text: "Simulator On"
-                    checkable: true
-                    checked: isChecked
-                    onCheckedChanged: {
-                        settings.setMenu_isSimulatorOn = checked
-                        console.log("Sim = "+settings.setMenu_isSimulatorOn)
-                    }
-                }
-                MenuItem{ text: "Reset All"}
-                MenuItem{ text: "HotKeys"}
-                MenuItem{ text: "About..."}
-                MenuItem{ text: "Help"}
-                closePolicy: Popup.CloseOnPressOutsideParent
-            }
 
             Button {
                 id: btnAcres
@@ -991,8 +992,8 @@ Window {
 //            anchors.bottomMargin: 3
 //            anchors.left:bottomButtons.left
 //            anchors.leftMargin: 3
-            from: -30
-            to: 30
+            from: -80
+            to: 300
             value: 0
             visible: false
         }
@@ -1040,6 +1041,13 @@ Window {
             objectName: "headlandDesigner"
             //anchors.horizontalCenter: parent.horizontalCenter
             //anchors.verticalCenter: parent.verticalCenter
+            visible: false
+        }
+        HeadAcheDesigner{
+            id: headAcheDesigner
+            objectName: "headAcheDesigner"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
             visible: false
         }
         SteerConfigWindow {

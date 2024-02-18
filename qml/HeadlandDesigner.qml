@@ -118,7 +118,7 @@ Popup{
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         height: parent.height
-        width: parent.width * .6
+        width: parent.width * .7
         color: "black"
 
         Rectangle {
@@ -242,7 +242,6 @@ Popup{
             }
         }
 
-
         MouseArea {
             id: headlandMouseArea
             anchors.fill: parent
@@ -302,6 +301,7 @@ Popup{
         IconButtonTransparent{
             objectName: "btnBLength"
             icon.source: "/images/APlusPlusB.png"
+            Layout.alignment: Qt.AlignCenter
             onClicked: {
                 headlandDesigner.blength()
             }
@@ -309,6 +309,7 @@ Popup{
         IconButtonTransparent{
             objectName: "btnBShrink"
             icon.source: "/images/APlusMinusB.png"
+            Layout.alignment: Qt.AlignCenter
             onClicked: {
                 headlandDesigner.bshrink()
             }
@@ -316,6 +317,7 @@ Popup{
         IconButtonTransparent{
             objectName: "btnALength"
             icon.source: "/images/APlusPlusA.png"
+            Layout.alignment: Qt.AlignCenter
             onClicked: {
                 headlandDesigner.alength()
             }
@@ -323,6 +325,7 @@ Popup{
         IconButtonTransparent{
             objectName: "btnAShrink"
             icon.source: "/images/APlusMinusA.png"
+            Layout.alignment: Qt.AlignCenter
             onClicked: {
                 headlandDesigner.ashrink()
             }
@@ -333,6 +336,7 @@ Popup{
             checkable: true
             isChecked: true
             icon.source: "/images/ABTrackCurve.png"
+            Layout.alignment: Qt.AlignCenter
             onClicked: curveLine = true
         }
         IconButtonColor{
@@ -340,6 +344,7 @@ Popup{
             objectName: "rbtnCurve"
             checkable: true
             icon.source: "/images/ABTrackAB.png"
+            Layout.alignment: Qt.AlignCenter
             onClicked: curveLine = false
         }
         SpinBoxM {
@@ -347,6 +352,7 @@ Popup{
             from: 0
             to: 2000
             boundValue: numTracks.value * settings.setVehicle_toolWidth
+            Layout.alignment: Qt.AlignCenter
             TextLine {
                 anchors.top: parent.bottom;
                 text: "( "+ utils.m_unit_abbrev()+" )"
@@ -360,6 +366,7 @@ Popup{
             from: 0
             to: 10
             value: 0
+            Layout.alignment: Qt.AlignCenter
             TextLine {
                 anchors.top: parent.bottom;
                 text: qsTr("Tool: ")+ utils.m_to_ft_string(settings.setVehicle_toolWidth)
@@ -370,28 +377,33 @@ Popup{
             objectName: "cboxIsZoom"
             checkable: true
             icon.source: "/images/ZoomOGL.png"
+            Layout.alignment: Qt.AlignCenter
         }
 
         IconButtonTransparent{
             objectName: "btnSlice"
             icon.source: "/images/HeadlandSlice.png"
             enabled: (sliceCount > 0)
+            Layout.alignment: Qt.AlignCenter
             onClicked: slice()
         }
         IconButtonTransparent{
             objectName: "btnBndLoop"
             icon.source: "/images/HeadlandBuild.png"
             onClicked: create_headland()
+            Layout.alignment: Qt.AlignCenter
         }
         IconButtonTransparent{
             objectName: "btnDeletePoints"
             icon.source: "/images/HeadlandReset.png"
+            Layout.alignment: Qt.AlignCenter
             onClicked: deletePoints()
         }
         IconButtonTransparent{
             objectName: "btnUndo"
             icon.source: "/images/back-button.png"
             enabled: (backupCount > 0)
+            Layout.alignment: Qt.AlignCenter
             onClicked: undo()
         }
         IconButtonTransparent{
@@ -400,6 +412,7 @@ Popup{
             iconChecked: "/images/HeadlandSectionOn.png"
             checkable: true
             isChecked: settings.setHeadland_isSectionControlled
+            Layout.alignment: Qt.AlignCenter
             onCheckedChanged: isSectionControlled(checked)
         }
         IconButtonTransparent{
@@ -408,9 +421,11 @@ Popup{
                 headlandDesigner.headlandOff()
                 headlandDesigner.visible = false
             }
+            Layout.alignment: Qt.AlignCenter
         }
         IconButtonTransparent{
             icon.source: "/images/OK64.png"
+            Layout.alignment: Qt.AlignCenter
             onClicked: {
                 save_exit()
                 boundaryInterface.isHeadlandOn = true
