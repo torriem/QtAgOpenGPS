@@ -119,7 +119,6 @@ Popup{
         anchors.left: parent.left
         height: parent.height
         width: parent.width * .7
-        //color: "white"
         color: "black"
 
         Rectangle {
@@ -242,7 +241,6 @@ Popup{
                 }
             }
         }
-
 
         MouseArea {
             id: headlandMouseArea
@@ -392,8 +390,8 @@ Popup{
         IconButtonTransparent{
             objectName: "btnBndLoop"
             icon.source: "/images/HeadlandBuild.png"
-            Layout.alignment: Qt.AlignCenter
             onClicked: create_headland()
+            Layout.alignment: Qt.AlignCenter
         }
         IconButtonTransparent{
             objectName: "btnDeletePoints"
@@ -424,6 +422,7 @@ Popup{
                 headlandDesigner.headlandOff()
                 headlandDesigner.visible = false
             }
+            Layout.alignment: Qt.AlignCenter
         }
         IconButtonTransparent{
             icon.source: "/images/OK64.png"
