@@ -94,6 +94,47 @@ Window {
         color: "ghostwhite"
         height: 50
         visible: true
+
+        IconButtonTransparent {
+            id: btnfileMenu
+            height: parent.height
+            width: 75
+            objectName: "btnfileMenu"
+            icon.source: "/images/fileMenu.png"
+            onClicked: fileMenu.popup()
+        }
+        Menu{
+            id: fileMenu
+            //anchors.left: buttonsArea.left
+            //anchors.top: buttonsArea.top
+            //anchors. margins: 200
+            MenuItem{ text: "Languages"}
+            MenuItem{ text: "Directories"}
+            MenuItem{ text: "Colors"}
+            MenuItem{ text: "Section Colors"}
+            MenuItem{ text: "Top Field View"}
+            MenuItem{ text: "Enter Sim Coords"}
+            MenuItem{
+                property bool isChecked: settings.setMenu_isSimulatorOn
+                onIsCheckedChanged: {
+                    checked = isChecked
+                }
+
+                text: "Simulator On"
+                checkable: true
+                checked: isChecked
+                onCheckedChanged: {
+                    settings.setMenu_isSimulatorOn = checked
+                    console.log("Sim = "+settings.setMenu_isSimulatorOn)
+                }
+            }
+            MenuItem{ text: "Reset All"}
+            MenuItem{ text: "HotKeys"}
+            MenuItem{ text: "About..."}
+            MenuItem{ text: "Help"}
+            closePolicy: Popup.CloseOnPressOutsideParent
+        }
+
         Text{
             anchors.top:parent.top
             anchors.left: parent.left
@@ -220,10 +261,13 @@ Window {
 
             property int fromX: 0
             property int fromY: 0
+            property Matrix4x4 clickModelView
+            property Matrix4x4 clickProjection
+            property Matrix4x4 panModelView
+            property Matrix4x4 panProjection
 
             onClicked: {
-                parent.clicked(mouse);
-                console.log(settings.setVehicle_toolOverlap)
+                parent.clicked(mouse)
             }
 
             onPressed: {
@@ -261,50 +305,10 @@ Window {
         ColumnLayout {
             id: leftColumn
             anchors.top: parent.top
+            anchors.topMargin: topLine.height
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             width: children.width + 6
-
-
-            IconButtonText {
-                id: btnfileMenu
-                width: 75
-                objectName: "btnfileMenu"
-                buttonText: qsTr("FileMenu")
-                icon.source: "/images/fileMenu.png"
-                onClicked: fileMenu.popup()
-            }
-            Menu{
-                id: fileMenu
-                //anchors.left: buttonsArea.left
-                //anchors.top: buttonsArea.top
-                //anchors. margins: 200
-                MenuItem{ text: "Languages"}
-                MenuItem{ text: "Directories"}
-                MenuItem{ text: "Colors"}
-                MenuItem{ text: "Section Colors"}
-                MenuItem{ text: "Top Field View"}
-                MenuItem{ text: "Enter Sim Coords"}
-                MenuItem{
-                    property bool isChecked: settings.setMenu_isSimulatorOn
-                    onIsCheckedChanged: {
-                        checked = isChecked
-                    }
-
-                    text: "Simulator On"
-                    checkable: true
-                    checked: isChecked
-                    onCheckedChanged: {
-                        settings.setMenu_isSimulatorOn = checked
-                        console.log("Sim = "+settings.setMenu_isSimulatorOn)
-                    }
-                }
-                MenuItem{ text: "Reset All"}
-                MenuItem{ text: "HotKeys"}
-                MenuItem{ text: "About..."}
-                MenuItem{ text: "Help"}
-                closePolicy: Popup.CloseOnPressOutsideParent
-            }
 
             Button {
                 id: btnAcres
@@ -380,7 +384,7 @@ Window {
                 buttonText: qsTr("Field Tools")
                 icon.source: "/images/FieldTools.png"
                 onClicked: fieldTools.visible = true
-                visible: aog.isJobStarted ? true : false
+                disabled: aog.isJobStarted ? false : true
             }
             FieldToolsMenu {
                 id: fieldTools
@@ -852,16 +856,8 @@ Window {
                     color: "#80aaff"
                     anchors.fill: lateral
                     source: lateral
-                }
 
-                Image{
-                    visible: false
-                    id: lateral
-                    anchors.top: uturn.bottom
-                    height: 60
-                    anchors.left: parent.left
-                    width: 150
-                    source: '/images/Images/z_LateralManual.png'
+
                     Button{
                         background: Rectangle{color: "transparent"}
                         objectName: "btnManLateralLeft"
@@ -886,12 +882,22 @@ Window {
                         anchors.left: parent.horizontalCenter
                         onClicked: {
                             if (settings.setAS_functionSpeedLimit > aog.speedKph)
-                                aog.lateral(false)
+                                aog.lateral(true)
                             else
                                 timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
                                                         aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
                         }
                     }
+                }
+
+                Image{
+                    visible: false
+                    id: lateral
+                    anchors.top: uturn.bottom
+                    height: 60
+                    anchors.left: parent.left
+                    width: 150
+                    source: '/images/Images/z_LateralManual.png'
                 }
             }
         LightBar {
@@ -986,8 +992,8 @@ Window {
 //            anchors.bottomMargin: 3
 //            anchors.left:bottomButtons.left
 //            anchors.leftMargin: 3
-            from: -30
-            to: 30
+            from: -80
+            to: 300
             value: 0
             visible: false
         }
@@ -1029,6 +1035,20 @@ Window {
                 aog.settings_reload()
             }
 
+        }
+        HeadlandDesigner{
+            id: headlandDesigner
+            objectName: "headlandDesigner"
+            //anchors.horizontalCenter: parent.horizontalCenter
+            //anchors.verticalCenter: parent.verticalCenter
+            visible: false
+        }
+        HeadAcheDesigner{
+            id: headAcheDesigner
+            objectName: "headAcheDesigner"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            visible: false
         }
         SteerConfigWindow {
             id:steerConfigWindow

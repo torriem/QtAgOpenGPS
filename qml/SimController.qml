@@ -14,7 +14,7 @@ Rectangle{
 
     Row{
         spacing: 4
-        width: childrenRect.width
+        width: children.width
         height: 50
         anchors.centerIn: parent
         Button{
@@ -42,19 +42,19 @@ Rectangle{
             height: parent.height
             width: parent.height + 15
             icon.source: "/images/DnArrow64.png"
-            onClicked: speedSlider.value -= 5
+            onClicked: aog.sim_bump_speed(false)
         }
         IconButtonTransparent{
             height: parent.height
             width: parent.height + 15
             icon.source: "/images/AutoStop.png"
-            onClicked: speedSlider.value = 0
+            onClicked: aog.sim_zero_speed()
         }
         IconButtonTransparent{
             height: parent.height
             width: parent.height + 15
             icon.source: "/images/UpArrow64.png"
-            onClicked: speedSlider.value += 5
+            onClicked: aog.sim_bump_speed(true)
         }
         IconButtonTransparent{
             height: parent.height

@@ -12,7 +12,6 @@ Rectangle{
         id: bottomRow
         anchors.left: parent.left
         anchors.bottom: parent.bottom
-        anchors.right: bottomRightText.left
         anchors.margins: 10
         spacing: 90
         Button{

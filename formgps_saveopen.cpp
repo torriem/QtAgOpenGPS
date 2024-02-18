@@ -1043,6 +1043,9 @@ bool FormGPS::FileOpenField(QString fieldDir, int flags)
                             bnd.bndList[k].hdLine.append(vecPt);
                         }
                     }
+                } else {
+                    TimedMessageBox(4000, tr("Corrupt Headland File"), tr("Headland file is corrupt. Field still loaded."));
+                    break;
                 }
             }
         }

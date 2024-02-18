@@ -23,6 +23,7 @@ Slider{
         implicitHeight: 50
         radius: 2
         color: "white"
+        z: 5
 
     }
 
@@ -44,7 +45,7 @@ Slider{
         anchors.top: sliderCustomized.top
         anchors.bottom: sliderCustomized.bottom
         width: 20
-        onClicked: sliderCustomized.value = sliderCustomized.value +1 * multiplicationValue
+        onClicked: sliderCustomized.value = sliderCustomized.value + sliderCustomized.stepSize * multiplicationValue
         background: Rectangle{
             color: "transparent"
             Text{
@@ -62,7 +63,7 @@ Slider{
         anchors.left: sliderCustomized.left
         anchors.right: handleRect.left
         anchors.top: sliderCustomized.top
-        onClicked: sliderCustomized.value = sliderCustomized.value -1 * multiplicationValue
+        onClicked: sliderCustomized.value = sliderCustomized.value - sliderCustomized.stepSize * multiplicationValue
         anchors.bottom: sliderCustomized.bottom
         width: 20
         background: Rectangle{

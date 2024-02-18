@@ -13,31 +13,27 @@ Rectangle{
     color: "ghostwhite"
     visible: false
     Image{
+        id: image1
         source: "/images/ToolHitchPageTrailing.png"
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottom: parent.bottom
+        anchors.top: parent.top
         anchors.margins: 15
         height: parent.height*.75
-        SpinBoxCM{
-            id: toolTrailingHitchLength
-            anchors.bottom: parent.top
-            anchors.right: parent.right
-            anchors.rightMargin: 500
-            from: 10
-            to:3000
-            boundValue: -settings.setTool_toolTrailingHitchLength
-            onValueModified: settings.setTool_toolTrailingHitchLength = -value
-        }
-        SpinBoxCM{
-            id: hitchLength
-            anchors.bottom: parent.top
-            anchors.right: parent.right
-            anchors.rightMargin: 50
-            from: 10
-            to:3000
-            boundValue: settings.setVehicle_hitchLength < 0 ? -settings.setVehicle_hitchLength : settings.setVehicle_hitchLength
-            onValueModified: settings.setVehicle_hitchLength = -value
+    }
+    SpinBoxCM{
+        id: toolTrailingHitchLength
+        anchors.top: image1.bottom
+        anchors.right: parent.right
+        anchors.rightMargin: 400
+        from: 10
+        to:3000
+        boundValue: -settings.setTool_toolTrailingHitchLength
+        onValueModified: settings.setTool_toolTrailingHitchLength = -value
+        TextLine{
+            text: qsTr("Units: ")+ utils.cm_unit_abbrev()
+            font.bold: true
+            anchors.top: parent.bottom
         }
     }
 }

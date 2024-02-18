@@ -3,16 +3,10 @@ import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
 
 Item {
-        function hideTabs(){
-            steerTab.visible = false
-            gainTab.visible = false
-            stanleyTab.visible = false
-            ppTab.visible = false
-        }
     id: steerConfigWindow
         Rectangle{
             id: steerConfigFirst
-            color: "#a6a6a6"
+            color: "#cccccc"
             border.color: "black"
             border.width: 1
             visible: true
@@ -58,55 +52,51 @@ Item {
         anchors.top: topLine.bottom
         height: 500
         width:450
+        ButtonGroup {
+            buttons: buttonsTop.children
+        }
+
         RowLayout{
             id: buttonsTop
             width: parent.width
             IconButtonColor{
                 id: steerBtn
                 icon.source: "/images/Steer/ST_SteerTab.png"
-                onClicked: {
-                    hideTabs()
-                    steerTab.visible = true
-                }
                 implicitWidth: parent.width /4 - 4
+                checkable: true
+                checked: true
+                colorChecked: "lightgray"
             }
             IconButtonColor{
                 id: gainBtn
                 icon.source: "/images/Steer/ST_GainTab.png"
-                onClicked: {
-                    hideTabs()
-                    gainTab.visible = true
-                }
                 implicitWidth: parent.width /4 - 4
+                checkable: true
+                colorChecked: "lightgray"
             }
             IconButtonColor{
                 id: stanleyBtn
                 icon.source: "/images/Steer/ST_StanleyTab.png"
-                onClicked: {
-                    hideTabs()
-                    stanleyTab.visible = true
-                }
                 implicitWidth: parent.width /4 - 4
+                checkable: true
+                colorChecked: "lightgray"
             }
             IconButtonColor{
                 id: ppBtn
                 icon.source: "/images/Steer/Sf_PPTab.png"
-                onClicked: {
-                    hideTabs()
-                    ppTab.visible = true
-                }
                 implicitWidth: parent.width /4 - 4
+                checkable: true
+                colorChecked: "lightgray"
             }
         }
 
-                Rectangle{
+                Item{
                     id: steerTab
-                    visible: true
+                    visible: steerBtn.checked
                     anchors.top: buttonsTop.bottom
                     anchors.right: parent.right
                     anchors.left: parent.left
                     anchors.bottom: angleInfo.top
-                    color: "white"
                     Column{
                         id: steerColumn
                         anchors.bottom: parent.bottom
@@ -121,7 +111,7 @@ Item {
                             objectName: "wasZeroSlider"
                             width: 200
                             leftText: value
-                            from: -30
+                            from: -30//idk
                             to: 30
                             value: 5
                             centerTopText: "WAS Zero"
@@ -131,20 +121,24 @@ Item {
                             objectName: "cpDegSlider"
                             width: 200
                             centerTopText: "Counts per Degree"
-                            from: -30
-                            to: 30
-                            value: 5
+                            from: 1
+                            to: 255
+                            value: settings.setAS_countsPerDegree
+                            onValueChanged: settings.setAS_countsPerDegree = value
                             leftText: value
+                            stepSize: 1
                         }
                         SliderCustomized {
                             id: ackermannSlider
                             objectName: "ackermannSlider"
                             width: 200
                             centerTopText: "AckerMann"
-                            from: -30
-                            to: 30
+                            from: 1
+                            to: 200
                             leftText: value
-                            value: 5
+                            value: settings.setAS_ackerman
+                            onValueChanged: settings.setAS_ackerman = value
+                            stepSize: 1
                         }
                         SliderCustomized {
                             id: maxSteerSlider
@@ -152,9 +146,11 @@ Item {
                             width: 200
                             leftText: value
                             centerTopText:"Max Steer Angle"
-                            from: -30
-                            to: 30
-                            value: 5
+                            from: 10
+                            to: 80
+                            value: settings.setVehicle_maxSteerAngle
+                            onValueChanged: settings.setVehicle_maxSteerAngle= value
+                            stepSize: 1
                         }
                     }
                     Image {
@@ -166,14 +162,13 @@ Item {
                     }
 
                 }
-                Rectangle{
+                Item{
                     id: gainTab
                     anchors.top: buttonsTop.bottom
                     anchors.right: parent.right
                     anchors.left: parent.left
                     anchors.bottom: angleInfo.top
-                    visible: false
-                    color: "white"
+                    visible: gainBtn.checked
                     Column{
                         id: gainColumn
                         anchors.bottom: parent.bottom
@@ -188,10 +183,12 @@ Item {
                             objectName: "progGainSlider"
                             leftText: value
                             width: 200
-                            from: -30
-                            to: 30
-                            value: 5
+                            from: 0
+                            to: 200
+                            value: settings.setAS_Kp
+                            onValueChanged: settings.setAS_Kp = value
                             centerTopText: "Proportional Gain"
+                            stepSize: 1
                         }
                         SliderCustomized {
                             id: maxLimitSlider
@@ -199,19 +196,23 @@ Item {
                             centerTopText: "Maximum Limit"
                             leftText: value
                             width: 200
-                            from: -30
-                            to: 30
-                            value: 5
+                            from: 0
+                            to: 254
+                            value: settings.setAS_highSteerPWM
+                            onValueChanged: settings.setAS_highSteerPWM = value
+                            stepSize: 1
                         }
                         SliderCustomized {
                             id: min2moveSlider
                             objectName: "min2moveSlider"
                             width: 200
-                            from: -30
-                            to: 30
-                            value: 5
+                            from: 0
+                            to: 100
+                            value: settings.setAS_minSteerPWM
+                            onValueChanged: settings.setAS_minSteerPWM = value
                             leftText: value
                             centerTopText: "Minimum to Move"
+                            stepSize: 1
                         }
                     }
                     Image {
@@ -223,14 +224,13 @@ Item {
                     }
 
                 }
-                Rectangle{
+                Item{
                     id: stanleyTab
                     anchors.top: buttonsTop.bottom
                     anchors.right: parent.right
                     anchors.left: parent.left
                     anchors.bottom: angleInfo.top
-                    visible: false
-                    color: "white"
+                    visible: stanleyBtn.checked
                     Column{
                         id: stanleyColumn
                         anchors.bottom: parent.bottom
@@ -244,31 +244,37 @@ Item {
                             id: stanleyAggressivenessSlider
                             objectName: "stanleyAgressivenessSlider"
                             width: 200
-                            from: -30
-                            to: 30
-                            value: 5
+                            from: .1
+                            to: 4
+                            value: settings.stanleyDistanceErrorGain
+                            onValueChanged: settings.stanleyDistanceErrorGain = value
                             leftText: value
                             centerTopText: "Agressiveness"
+                            stepSize: .1
                         }
                         SliderCustomized {
                             id: overShootReductionSlider
                             objectName: "overShootReductionSlider"
                             width: 200
-                            from: -30
-                            to: 30
-                            value: 5
+                            from: .1
+                            to: 1.5
+                            value: settings.stanleyHeadingErrorGain
+                            onValueChanged: settings.stanleyHeadingErrorGain = value
                             leftText: value
                             centerTopText: "OverShoot Reduction"
+                            stepSize: .1
                         }
                         SliderCustomized {
                             id: integralStanleySlider
                             objectName: "integralStanleySlider"
                             width: 200
-                            from: -30
-                            to: 30
-                            value: 5
+                            from: 0
+                            to: 100
+                            value: settings.stanleyIntegralGainAB * 100
+                            onValueChanged: settings.stanleyIntegralGainAB = value /100
                             leftText: value
                             centerTopText: "Integral"
+                            stepSize: 1
                         }
                     }
                     Image {
@@ -280,14 +286,13 @@ Item {
                     }
 
                 }
-                Rectangle{
+                Item{
                     id: ppTab
-                    visible: false
+                    visible: ppBtn.checked
                     anchors.top: buttonsTop.bottom
                     anchors.right: parent.right
                     anchors.left: parent.left
                     anchors.bottom: angleInfo.top
-                    color: "white"
                     Column{
                         id: ppColumn
                         anchors.bottom: parent.bottom
@@ -301,41 +306,49 @@ Item {
                             id: acqLookAheadSlider
                             objectName: "acqLookAheadSlider"
                             width: 200
-                            from: -30
-                            to: 30
-                            value: 5
+                            from: 1
+                            to: 5
+                            value: settings.setVehicle_goalPointLookAhead
+                            onValueChanged: settings.setVehicle_goalPointLookAhead = value
                             leftText: value
                             centerTopText: "Acquire Look Ahead"
+                            stepSize: .1
                         }
                         SliderCustomized {
                             id: holdLookAheadSlider
                             objectName: "holdLookAheadSlider"
                             width: 200
-                            from: -30
-                            to: 30
-                            value: 5
+                            from: 1
+                            to: 5
+                            value: settings.setVehicle_goalPointLookAheadHold
+                            onValueChanged: settings.setVehicle_goalPointLookAheadHold = value
                             leftText: value
                             centerTopText: "Hold Look Ahead"
+                            stepSize: .1
                         }
                         SliderCustomized {
                             id: lookAheadSpeedGainSlider
                             objectName: "lookAheadSpeedGainSlider"
                             width: 200
-                            from: -30
-                            to: 30
-                            value: 5
+                            from: .5
+                            to: 3
+                            value: settings.setVehicle_goalPointLookAheadMult
+                            onValueChanged: settings.setVehicle_goalPointLookAheadMult = value
                             leftText: value
                             centerTopText: "Look Ahead Speed Gain"
+                            stepSize: .1
                         }
                         SliderCustomized {
                             id: ppIntegralSlider
                             objectName: "ppIntegralSlider"
                             width: 200
-                            from: -30
-                            to: 30
-                            value: 5
+                            from: 0
+                            to: 100
+                            value: settings.purePursuitIntegralGainAB *100
+                            onValueChanged: settings.purePursuitIntegralGainAB = value /100
                             leftText: value
                             centerTopText: "Integral"
+                            stepSize: 1
                         }
                     }
                     Image {

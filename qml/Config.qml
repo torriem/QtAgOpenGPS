@@ -423,13 +423,13 @@ Dialog {
             id:configTractorAntenna
             anchors.fill: mainConfig
             anchors.margins:1
-            visible: tractorMenu.visible && configTrDim.checked
+            visible: tractorMenu.visible && btnconfigTrAntDim.checked
         }
         ConfigTractorDimensions{
             id:configTractorDimensions
             anchors.fill: mainConfig
             anchors.margins:1
-            visible: tractorMenu.visible && btnconfigTrAntDim.checked
+            visible: tractorMenu.visible && configTrDim.checked
         }
         ConfigTractorSteerSettings{
             id:configTractorSteerSettings

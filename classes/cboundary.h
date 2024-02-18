@@ -61,11 +61,12 @@ public:
     Vec3 closestTurnPt = Vec3(-10000, -10000, 9);
     Vec3 closePt;
 
-    bool isHeadlandOn;
+    InterfaceProperty<BoundaryInterface,bool> isHeadlandOn = InterfaceProperty<BoundaryInterface,bool>("isHeadlandOn");
     bool isToolInHeadland, isToolOuterPointsInHeadland, isSectionControlledByHeadland;
 
 
     CBoundary(QObject *parent = 0);
+    void loadSettings();
 
     //CFence.cs
     bool IsPointInsideFenceArea(Vec3 testPoint) const ;

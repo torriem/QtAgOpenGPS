@@ -15,6 +15,8 @@ Button {
     property double iconHeightScaleText: 0.75
     property int border: 0
 
+    property bool disabled: false
+
     property color color1: "#ffffff"
     property color color2: "#cccccc"
     property color color3: "#888888"
@@ -73,6 +75,7 @@ Button {
     contentItem: Rectangle {
         id: icon_button_content
         anchors.fill: parent
+        visible: !disabled
         color: "transparent"
 
         Text {
@@ -115,164 +118,177 @@ Button {
 
     }
 
-    background: Rectangle {
-        border.width: icon_button.border
-        border.color: enabled ? "black" : "grey"
-        //border.width: icon_button.border
-        radius: 10
-        id: icon_button_background
-        gradient: Gradient {
-            GradientStop {
-                id: gradientStop1
-                position: 0
-                color: icon_button.color1
-            }
-
-            GradientStop {
-                id: gradientStop2
-                position: 0.5
-                color: icon_button.color2
-            }
-
-            GradientStop {
-                id: gradientStop3
-                position: 1
-                color: icon_button.color3
+    background: Item{
+        Rectangle{
+            anchors.fill: parent
+            color: "transparent"
+            visible: disabled
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {}
             }
         }
 
-        states: [
-            State {
-                when: icon_button.down
-                name: "pressedUnchecked"
-                PropertyChanges {
-                    target: gradientStop1
-                    color: icon_button.color3
-                }
-                PropertyChanges {
-                    target: gradientStop2
-                    color: icon_button.color3
-                }
-                PropertyChanges {
-                    target: gradientStop3
+        Rectangle {
+            visible: !disabled
+            anchors.fill: parent
+            border.width: icon_button.border
+            border.color: enabled ? "black" : "grey"
+            //border.width: icon_button.border
+            radius: 10
+            id: icon_button_background
+            gradient: Gradient {
+                GradientStop {
+                    id: gradientStop1
+                    position: 0
                     color: icon_button.color1
                 }
-               /* PropertyChanges {
+
+                GradientStop {
+                    id: gradientStop2
+                    position: 0.5
+                    color: icon_button.color2
+                }
+
+                GradientStop {
+                    id: gradientStop3
+                    position: 1
+                    color: icon_button.color3
+                }
+            }
+
+            states: [
+                State {
+                    when: icon_button.down
+                    name: "pressedUnchecked"
+                    PropertyChanges {
+                        target: gradientStop1
+                        color: icon_button.color3
+                    }
+                    PropertyChanges {
+                        target: gradientStop2
+                        color: icon_button.color3
+                    }
+                    PropertyChanges {
+                        target: gradientStop3
+                        color: icon_button.color1
+                    }
+                    /* PropertyChanges {
                     target: icon_button_background
                     border.width: 5
                 }*/
-                /*
+                    /*
                 PropertyChanges {
                     target: content_image
                     source: icon_button.icon.source
                 }
                 */
 
-            },
-            State {
-                when: icon_button.down && icon_button.checked
-                name: "pressedChecked"
-                PropertyChanges {
-                    target: gradientStop1
-                    color: icon_button.color3
-                }
-                PropertyChanges {
-                    target: gradientStop2
-                    color: icon_button.color3
-                }
-                PropertyChanges {
-                    target: gradientStop3
-                    color: icon_button.color1
-                }
-             /*   PropertyChanges {
+                },
+                State {
+                    when: icon_button.down && icon_button.checked
+                    name: "pressedChecked"
+                    PropertyChanges {
+                        target: gradientStop1
+                        color: icon_button.color3
+                    }
+                    PropertyChanges {
+                        target: gradientStop2
+                        color: icon_button.color3
+                    }
+                    PropertyChanges {
+                        target: gradientStop3
+                        color: icon_button.color1
+                    }
+                    /*   PropertyChanges {
                     target: icon_button_background
                     border.width: 1
                 }*/
-                PropertyChanges {
-                    target: content_image
-                    source: icon_button.icon.source
-                }
-            },
-            State {
-                when: ! icon_button.down && icon_button.checked
-                name: "checked"
-                PropertyChanges {
-                    target: gradientStop1
-                    color: icon_button.colorChecked1
-                }
-                PropertyChanges {
-                    target: gradientStop2
-                    color: icon_button.colorChecked2
-                }
-                PropertyChanges {
-                    target: gradientStop3
-                    color: icon_button.colorChecked3
-                }
-               /* PropertyChanges {
+                    PropertyChanges {
+                        target: content_image
+                        source: icon_button.icon.source
+                    }
+                },
+                State {
+                    when: ! icon_button.down && icon_button.checked
+                    name: "checked"
+                    PropertyChanges {
+                        target: gradientStop1
+                        color: icon_button.colorChecked1
+                    }
+                    PropertyChanges {
+                        target: gradientStop2
+                        color: icon_button.colorChecked2
+                    }
+                    PropertyChanges {
+                        target: gradientStop3
+                        color: icon_button.colorChecked3
+                    }
+                    /* PropertyChanges {
                     target: icon_button_background
                     border.width: 0
                 }*/
-                /*
+                    /*
                 PropertyChanges {
                     target: content_image
                     source: (icon_button.iconChecked ? icon_button.iconChecked : icon_button.icon.source)
                 }
                 */
-            },
-            State {
-                when: ! icon_button.down && ! icon_button.checked && ! icon_button.hovered
-                name: "up"
-                PropertyChanges {
-                    target: gradientStop1
-                    color: icon_button.color1
-                }
-                PropertyChanges {
-                    target: gradientStop2
-                    color: icon_button.color2
-                }
-                PropertyChanges {
-                    target: gradientStop3
-                    color: icon_button.color3
-                }
-                /*PropertyChanges {
+                },
+                State {
+                    when: ! icon_button.down && ! icon_button.checked && ! icon_button.hovered
+                    name: "up"
+                    PropertyChanges {
+                        target: gradientStop1
+                        color: icon_button.color1
+                    }
+                    PropertyChanges {
+                        target: gradientStop2
+                        color: icon_button.color2
+                    }
+                    PropertyChanges {
+                        target: gradientStop3
+                        color: icon_button.color3
+                    }
+                    /*PropertyChanges {
                     target: icon_button_background
                     border.width: 0
                 }*/
-                /*
+                    /*
                 PropertyChanges {
                     target: content_image
                     source: icon_button.icon.source
                 }
                 */
-           },
-            State {
-                when: icon_button.hovered
-                name: "hovered"
-               /* PropertyChanges {
+                },
+                State {
+                    when: icon_button.hovered
+                    name: "hovered"
+                    /* PropertyChanges {
                     target: icon_button_background
                     border.width: 1
                 }*/
-                PropertyChanges {
-                    target: gradientStop1
-                    color: icon_button.colorHover1
-                }
-                PropertyChanges {
-                    target: gradientStop2
-                    color: icon_button.colorHover2
-                }
-                PropertyChanges {
-                    target: gradientStop3
-                    color: icon_button.colorHover3
-                }
-                /*
+                    PropertyChanges {
+                        target: gradientStop1
+                        color: icon_button.colorHover1
+                    }
+                    PropertyChanges {
+                        target: gradientStop2
+                        color: icon_button.colorHover2
+                    }
+                    PropertyChanges {
+                        target: gradientStop3
+                        color: icon_button.colorHover3
+                    }
+                    /*
                 PropertyChanges {
                     target: content_image
                     source: icon_button.icon.source
                 }
                 */
-            }
-        ]
+                }
+            ]
 
-
+        }
     }
 }

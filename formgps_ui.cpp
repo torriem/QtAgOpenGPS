@@ -144,6 +144,8 @@ void FormGPS::setupGui()
     //React to UI setting hyd life settings
     connect(aog, SIGNAL(modules_send_238()), this, SLOT(modules_send_238()));
 
+    connect(aog, SIGNAL(sim_bump_speed(bool)), &sim, SLOT(speed_bump(bool)));
+    connect(aog, SIGNAL(sim_zero_speed()), &sim, SLOT(speed_zero()));
 
     //boundary signals and slots
     connect(&yt, SIGNAL(outOfBounds()),boundaryInterface,SLOT(setIsOutOfBoundsTrue()));
@@ -159,6 +161,17 @@ void FormGPS::setupGui()
     connect(boundaryInterface, SIGNAL(delete_boundary(int)), this, SLOT(boundary_delete(int)));
     connect(boundaryInterface, SIGNAL(set_drive_through(int, bool)), this, SLOT(boundary_set_drivethru(int,bool)));
     connect(boundaryInterface, SIGNAL(delete_all()), this, SLOT(boundary_delete_all()));
+
+
+    headland_form.bnd = &bnd;
+    headland_form.vehicle = &vehicle;
+    headland_form.hdl = &hdl;
+    headland_form.tool = &tool;
+
+    headland_form.connect_ui(qmlItem(qml_root, "headlandDesigner"));
+    connect(&headland_form, SIGNAL(saveHeadland()),this,SLOT(headland_save()));
+    connect(&headland_form, SIGNAL(timedMessageBox(int,QString,QString)),this,SLOT(TimedMessageBox(int,QString,QString)));
+    //TODO: connect the other signals in headland_form: turnOffAutoSteerBtn, turnOffYouTubeBtn
 
     //connect qml button signals to callbacks (it's not automatic with qml)
 
@@ -520,3 +533,8 @@ void FormGPS::modules_send_238() {
     SendPgnToLoop(p_238.pgn);
 }
 
+void FormGPS::headland_save() {
+    //TODO make FileHeadland() a slot so we don't have to have this
+    //wrapper.
+    FileSaveHeadland();
+}

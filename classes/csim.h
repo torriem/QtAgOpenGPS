@@ -45,6 +45,10 @@ signals:
 
 public slots:
     void setSimStepDistance(double);
+    void speed_bump(bool up);
+    void speed_zero();
+    void reverse();
+    void forward();
 
 };
 

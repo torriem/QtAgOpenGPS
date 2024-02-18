@@ -36,11 +36,19 @@ Drawer {
                     text: "Headland"
                     icon.source: "/images/HeadlandMenu.png"
                     width: 300
+                    onClicked: {
+                        fieldToolsMenu.visible = false
+                        headlandDesigner.show()
+                    }
                 }
                 IconButtonTextBeside{
                     text: "Headland (Build)"
                     icon.source: "/images/Headache.png"
                     width: 300
+                    onClicked: {
+                        fieldToolsMenu.visible = false
+                        headAcheDesigner.show()
+                    }
                 }
                 IconButtonTextBeside{
                     text: "Tram Lines"
@@ -54,9 +62,6 @@ Drawer {
                     width: 300
                     onClicked: recordButtons.visible = !recordButtons.visible
                 }
-
-
-
             }
         }
     }

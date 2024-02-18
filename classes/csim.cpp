@@ -130,3 +130,36 @@ void CSim::setSimStepDistance(double _stepDistance)
 {
     stepDistance = _stepDistance;
 }
+
+void CSim::speed_bump(bool up) {
+    if (up) {
+        if (stepDistance < 0)
+        {
+            stepDistance = 0;
+            return;
+        }
+        if (stepDistance < 0.2 ) stepDistance += 0.02;
+        else
+            stepDistance *= 1.15;
+
+        if (stepDistance > 7.5) stepDistance = 7.5;
+    } else {
+        if (stepDistance < 0.2 && stepDistance > -0.51) stepDistance -= 0.02;
+        else stepDistance *= 0.8;
+        if (stepDistance < -0.5) stepDistance = -0.5;
+    }
+}
+
+void CSim::speed_zero() {
+    stepDistance = 0;
+}
+
+void CSim::reverse() {
+    stepDistance = 0;
+    isAccelBack = true;
+}
+
+void CSim::forward() {
+    stepDistance = 0;
+    isAccelForward = true;
+}

@@ -44,6 +44,8 @@
 #include "cheadline.h"
 #include "cpgn.h"
 
+#include "formheadland.h"
+
 //forward declare classes referred to below, to break circular
 //references in the code
 class QOpenGLShaderProgram;
@@ -324,6 +326,8 @@ public:
     CFieldData fd;
 
     CHeadLine hdl;
+
+    FormHeadland headland_form;
 
     /*
      * PGNs *
@@ -658,9 +662,6 @@ public slots:
     void tmrWatchdog_timeout();
     void processSectionLookahead(); //called when section lookahead GL stuff is rendered
 
-    void onGLControl_clicked(const QVariant &event);
-    void onGLControl_dragged(int startX, int startY, int mouseX, int mouseY);
-
     void TimedMessageBox(int timeout, QString s1, QString s2);
 
     //AB Lines in GUI. TODO: rename these, make them consistent
@@ -709,6 +710,10 @@ public slots:
     void boundary_delete(int which_boundary);
     void boundary_set_drivethru(int which_boundary, bool drive_through);
     void boundary_delete_all();
+
+    void headland_save();
+
+    //headland creation
 
     //left column
     void onBtnAcres_clicked();
@@ -760,6 +765,8 @@ public slots:
     void openGLControl_Initialized();
     void openGLControl_Shutdown();
     //void openGLControl_Resize();
+    void onGLControl_clicked(const QVariant &event);
+    void onGLControl_dragged(int startX, int startY, int mouseX, int mouseY);
 
     void oglBack_Paint();
     void openGLControlBack_Initialized();
@@ -769,13 +776,6 @@ public slots:
      * formgps_udpcomm.cpp
      ***/
     void ReceiveFromAgIO(); // in slots below
-
-
-    /*
-     * From Position.Designer.cs
-     */
-    //moved to public slots
-    //void processSectionLookahead(); //called when section lookahead GL stuff is rendered
 
     /*******************
      * simulator       *
