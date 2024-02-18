@@ -422,7 +422,6 @@ Popup{
                 headlandDesigner.headlandOff()
                 headlandDesigner.visible = false
             }
-            Layout.alignment: Qt.AlignCenter
         }
         IconButtonTransparent{
             icon.source: "/images/OK64.png"
