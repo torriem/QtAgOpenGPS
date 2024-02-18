@@ -172,6 +172,9 @@ void FormGPS::setupGui()
     headland_form.tool = &tool;
 
     headland_form.connect_ui(qmlItem(qml_root, "headlandDesigner"));
+    connect(&headland_form, SIGNAL(saveHeadland()),this,SLOT(headland_save()));
+    connect(&headland_form, SIGNAL(timedMessageBox(int,QString,QString)),this,SLOT(TimedMessageBox(int,QString,QString)));
+    //TODO: connect the other signals in headland_form: turnOffAutoSteerBtn, turnOffYouTubeBtn
 
     //connect qml button signals to callbacks (it's not automatic with qml)
 
@@ -576,4 +579,10 @@ void FormGPS::modules_send_238() {
 
     qDebug() << p_238.pgn;
     SendPgnToLoop(p_238.pgn);
+}
+
+void FormGPS::headland_save() {
+    //TODO make FileHeadland() a slot so we don't have to have this
+    //wrapper.
+    FileSaveHeadland();
 }

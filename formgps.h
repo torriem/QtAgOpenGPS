@@ -711,6 +711,8 @@ public slots:
     void boundary_set_drivethru(int which_boundary, bool drive_through);
     void boundary_delete_all();
 
+    void headland_save();
+
     //headland creation
 
     //left column
