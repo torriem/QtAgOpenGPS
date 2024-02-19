@@ -23,7 +23,7 @@ public:
         strncpy(prop_name, qml_prop_name, 127); //dirty. can we use qstring?
     }
 
-    InterfaceProperty() : prop_name(NULL) {}
+    InterfaceProperty() {}
 
     ~InterfaceProperty() {
         //let it leak
