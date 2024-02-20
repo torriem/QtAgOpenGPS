@@ -1085,11 +1085,6 @@ Window {
         SteerConfigWindow {
             id:steerConfigWindow
             objectName: "steerConfigWindow"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            visible:false
-            height: 600
-            width:450
         }
         ABCurvePicker{
             id: abCurvePicker
@@ -1119,10 +1114,6 @@ Window {
         }
         BoundaryMenu{
             id: boundaryMenu
-            //anchors.right: parent.right
-            //anchors.top: parent.top
-            //anchors.rightMargin: 150
-            //anchors.topMargin: 50
             visible: false
         }
 

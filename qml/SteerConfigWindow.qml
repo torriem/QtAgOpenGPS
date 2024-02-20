@@ -2,8 +2,12 @@ import QtQuick 2.0
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
 
-Item {
+MoveablePopup {
     id: steerConfigWindow
+    modal: false
+    visible: false
+    height: 600
+    width:450
         Rectangle{
             id: steerConfigFirst
             color: "#cccccc"
@@ -123,7 +127,7 @@ Item {
                             centerTopText: "Counts per Degree"
                             from: 1
                             to: 255
-                            value: settings.setAS_countsPerDegree
+                            value: Math.round(settings.setAS_countsPerDegree, 0)
                             onValueChanged: settings.setAS_countsPerDegree = value
                             leftText: value
                             stepSize: 1
@@ -136,7 +140,7 @@ Item {
                             from: 1
                             to: 200
                             leftText: value
-                            value: settings.setAS_ackerman
+                            value: Math.round(settings.setAS_ackerman, 0)
                             onValueChanged: settings.setAS_ackerman = value
                             stepSize: 1
                         }
@@ -148,7 +152,7 @@ Item {
                             centerTopText:"Max Steer Angle"
                             from: 10
                             to: 80
-                            value: settings.setVehicle_maxSteerAngle
+                            value: Math.round(settings.setVehicle_maxSteerAngle)
                             onValueChanged: settings.setVehicle_maxSteerAngle= value
                             stepSize: 1
                         }
@@ -185,7 +189,7 @@ Item {
                             width: 200
                             from: 0
                             to: 200
-                            value: settings.setAS_Kp
+                            value: Math.round(settings.setAS_Kp, 0)
                             onValueChanged: settings.setAS_Kp = value
                             centerTopText: "Proportional Gain"
                             stepSize: 1
@@ -198,7 +202,7 @@ Item {
                             width: 200
                             from: 0
                             to: 254
-                            value: settings.setAS_highSteerPWM
+                            value: Math.round(settings.setAS_highSteerPWM, 0)
                             onValueChanged: settings.setAS_highSteerPWM = value
                             stepSize: 1
                         }
@@ -208,7 +212,7 @@ Item {
                             width: 200
                             from: 0
                             to: 100
-                            value: settings.setAS_minSteerPWM
+                            value: Math.round(settings.setAS_minSteerPWM, 0)
                             onValueChanged: settings.setAS_minSteerPWM = value
                             leftText: value
                             centerTopText: "Minimum to Move"
@@ -246,7 +250,7 @@ Item {
                             width: 200
                             from: .1
                             to: 4
-                            value: settings.stanleyDistanceErrorGain
+                            value: Math.round(settings.stanleyDistanceErrorGain, 0)
                             onValueChanged: settings.stanleyDistanceErrorGain = value
                             leftText: value
                             centerTopText: "Agressiveness"
@@ -258,7 +262,7 @@ Item {
                             width: 200
                             from: .1
                             to: 1.5
-                            value: settings.stanleyHeadingErrorGain
+                            value: Math.round(settings.stanleyHeadingErrorGain, 0)
                             onValueChanged: settings.stanleyHeadingErrorGain = value
                             leftText: value
                             centerTopText: "OverShoot Reduction"
@@ -270,7 +274,7 @@ Item {
                             width: 200
                             from: 0
                             to: 100
-                            value: settings.stanleyIntegralGainAB * 100
+                            value: Math.round(settings.stanleyIntegralGainAB * 100, 0)
                             onValueChanged: settings.stanleyIntegralGainAB = value /100
                             leftText: value
                             centerTopText: "Integral"
@@ -308,7 +312,7 @@ Item {
                             width: 200
                             from: 1
                             to: 5
-                            value: settings.setVehicle_goalPointLookAhead
+                            value: Math.round(settings.setVehicle_goalPointLookAhead, 1)
                             onValueChanged: settings.setVehicle_goalPointLookAhead = value
                             leftText: value
                             centerTopText: "Acquire Look Ahead"
@@ -320,7 +324,7 @@ Item {
                             width: 200
                             from: 1
                             to: 5
-                            value: settings.setVehicle_goalPointLookAheadHold
+                            value: Math.round(settings.setVehicle_goalPointLookAheadHold, 1)
                             onValueChanged: settings.setVehicle_goalPointLookAheadHold = value
                             leftText: value
                             centerTopText: "Hold Look Ahead"
@@ -332,7 +336,7 @@ Item {
                             width: 200
                             from: .5
                             to: 3
-                            value: settings.setVehicle_goalPointLookAheadMult
+                            value: Math.round(settings.setVehicle_goalPointLookAheadMult, 1)
                             onValueChanged: settings.setVehicle_goalPointLookAheadMult = value
                             leftText: value
                             centerTopText: "Look Ahead Speed Gain"
@@ -344,7 +348,7 @@ Item {
                             width: 200
                             from: 0
                             to: 100
-                            value: settings.purePursuitIntegralGainAB *100
+                            value: Math.round(settings.purePursuitIntegralGainAB *100, 0)
                             onValueChanged: settings.purePursuitIntegralGainAB = value /100
                             leftText: value
                             centerTopText: "Integral"
