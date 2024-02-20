@@ -104,7 +104,11 @@ int GetLineIntersection(double p0x, double p0y, double p1x, double p1y,
 
 FormHeadland::FormHeadland(QObject *parent)
     : QObject{parent}
-{}
+{
+    connect(&updateVehiclePositionTimer, &QTimer::timeout,
+            this, &FormHeadland::updateVehiclePosition);
+
+}
 
 void FormHeadland::connect_ui(QObject *headland_designer_instance) {
     this->headland_designer_instance = headland_designer_instance;
@@ -273,6 +277,8 @@ void FormHeadland::load_headline() {
     sliceCount = sliceArr.count();
     backupCount = backupList.count();
     update_lines();
+
+    updateVehiclePositionTimer.start(1000);
 }
 
 void FormHeadland::setup_matrices(QMatrix4x4 &modelview, QMatrix4x4 &projection) {
@@ -290,6 +296,28 @@ void FormHeadland::setup_matrices(QMatrix4x4 &modelview, QMatrix4x4 &projection)
     modelview.translate(-(double)fieldCenterX + (double)sX * (double)maxFieldDistance,
                         -(double)fieldCenterY + (double)sY * (double)maxFieldDistance,
                         0);
+}
+
+void FormHeadland::updateVehiclePosition() {
+    if (vehicle == NULL) return;
+
+    QMatrix4x4 modelview;
+    QMatrix4x4 projection;
+
+    QVector3D s;
+    QVector3D p;
+
+    setup_matrices(modelview, projection);
+
+    int width = qmlItem(headland_designer_instance, "headlandRenderer")->property("width").toReal();
+    int height = qmlItem(headland_designer_instance, "headlandRenderer")->property("height").toReal();
+
+    p = QVector3D(vehicle->pivotAxlePos.easting,
+                  vehicle->pivotAxlePos.northing,
+                  0);
+    s = p.project(modelview, projection, QRect(0,0,width,height));
+
+    vehiclePoint = QPoint(s.x(), height-s.y());
 }
 
 
@@ -385,7 +413,6 @@ void FormHeadland::update_slice() {
         showb = true;
 
     }
-
 }
 
 void FormHeadland::update_headland() {
@@ -781,6 +808,7 @@ void FormHeadland::btn_Exit_Click() {
         bnd->bndList[0].hdLine.append(ptEnd);
     }
 
+    updateVehiclePositionTimer.stop();
     emit saveHeadland();
 }
 
@@ -880,6 +908,7 @@ void FormHeadland::btnBndLoop_Click() {
     }
 
     update_headland();
+    updateVehiclePositionTimer.stop();
     emit saveHeadland();
 }
 
@@ -1104,4 +1133,5 @@ void FormHeadland::btnHeadlandOff_Click()
     emit saveHeadland();
     bnd->isHeadlandOn = false;
     vehicle->isHydLiftOn = false;
+    updateVehiclePositionTimer.stop();
 }

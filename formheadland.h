@@ -5,6 +5,7 @@
 #include <QVector>
 #include "vec3.h"
 #include "interfaceproperty.h"
+#include <QTimer>
 
 class CBoundary;
 class CHeadLine;
@@ -26,6 +27,7 @@ protected:
     InterfaceProperty<HeadlandDesigner,bool> showb = InterfaceProperty<HeadlandDesigner,bool>("showb");
     InterfaceProperty<HeadlandDesigner,QPoint> apoint = InterfaceProperty<HeadlandDesigner,QPoint>("apoint");
     InterfaceProperty<HeadlandDesigner,QPoint> bpoint = InterfaceProperty<HeadlandDesigner,QPoint>("bpoint");
+    InterfaceProperty<HeadlandDesigner,QPoint> vehiclePoint = InterfaceProperty<HeadlandDesigner,QPoint>("vehiclePoint");
 
     int fixX, fixY;
     //InterfaceProperty<HeadlandDesigner,bool> isA = InterfaceProperty<HeadlandDesigner,bool>("isA");
@@ -49,6 +51,8 @@ protected:
 
     Vec3 pint = Vec3(0,1,0);
 
+    QTimer updateVehiclePositionTimer;
+
     void SetLineDistance();
     QVector3D mouseClickToField(int mouseX, int mouseY);
 
@@ -65,7 +69,7 @@ public:
     CBoundary *bnd;
     CHeadLine *hdl;
     CTool *tool;
-    CVehicle *vehicle;
+    CVehicle *vehicle = NULL;
     QObject *headland_designer_instance;
 
     explicit FormHeadland(QObject *parent = nullptr);
@@ -97,6 +101,8 @@ public slots:
     void btnBShrink_Click();
     void btnAShrink_Click();
     void btnHeadlandOff_Click();
+
+    void updateVehiclePosition();
 
 signals:
     void turnOffAutoSteerBtn();

@@ -34,6 +34,8 @@ Popup{
     property color acolor: "red"
     property color bcolor: "blue"
 
+    property point vehiclePoint: Qt.point(-100,-100)
+
     signal load()
     signal update_lines();
 
@@ -142,6 +144,18 @@ Popup{
             color:  "#80c0ff"
             x: headlandDesigner.bpoint.x - 12
             y: headlandDesigner.bpoint.y - 12
+            z: 1
+        }
+
+        Rectangle {
+            id: vehicle_point
+            visible: true
+            width: 24
+            height: 24
+            radius: 12
+            color:  "#f33033"
+            x: headlandDesigner.vehiclePoint.x - 12
+            y: headlandDesigner.vehiclePoint.y - 12
             z: 1
         }
 
