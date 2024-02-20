@@ -139,7 +139,11 @@ Window {
             anchors.top:parent.top
             anchors.left: parent.left
             anchors.leftMargin: leftColumn.width+20
-            text: qsTr(""+aog.fixQuality+ ": Age: "+ aog.age)
+            text: qsTr(aog.fixQuality ===1 ? "GPS Single":
+                        aog.fixQuality ===2 ? "DGPS":
+                        aog.fixQuality ===3 ? "RTK Float":
+                        aog.fixQuality ===4 ? "RTK Fix":
+                         "Invalid" + ": Age: "+ Math.round(aog.age, 1))
             font.bold: true
             font.pixelSize: 20
             anchors.bottom: parent.verticalCenter
