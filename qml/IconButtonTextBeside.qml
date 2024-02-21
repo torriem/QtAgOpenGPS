@@ -15,17 +15,19 @@ Button {
     property double iconHeightScaleText: 0.75
     property int border: 1
 
-    property color color1: "#ffffff"
-    property color color2: "#ffffff"
-    property color color3: "#ffffff"
+    property color color1: color //redneck code
+    property color color2: color
+    property color color3: color
 
     property color colorHover1: "#ffffff"
     property color colorHover2: "#ffffff"
     property color colorHover3: "#888888"
 
-    property color colorChecked1: enabled ? "green" : "pale green"
-    property color colorChecked2: enabled ? "green" : "pale green"
-    property color colorChecked3: enabled ? "green" : "pale green"
+    property color colorChecked1: colorChecked
+    property color colorChecked2: colorChecked
+    property color colorChecked3: colorChecked
+    property color color: "white"
+    property color colorChecked: enabled ? "green" : "pale green"
 
     property color textColor: enabled ? "black" : "grey"
     property color borderColor: enabled ? "black" : "grey"
