@@ -9,6 +9,9 @@ MoveablePopup {
     visible: false
     height: 600
     width:450
+    x: settings.setWindow_steerSettingsLocation.x
+    y: settings.setWindow_steerSettingsLocation.y
+
     Rectangle{
         id: steerConfigFirst
         color: "#cccccc"
@@ -38,8 +41,13 @@ MoveablePopup {
                 width: parent.height+3
                 height:parent.height
                 anchors.right: parent.right
-                onClicked: steerConfigWindow.visible = false
-
+                onClicked: {
+                    if(!pwmWindow.visible){
+                        settings.setWindow_steerSettingsLocation.x = steerConfigWindow.x
+                        settings.setWindow_steerSettingsLocation.y = steerConfigWindow.y
+                    }
+                    steerConfigWindow.visible = false
+                }
             }
             Button {
                 id: help
@@ -375,16 +383,22 @@ MoveablePopup {
                     anchors.fill: parent
                     onClicked: {
                         function showHide(){
-                            if(pwmWindow.visible == false){
+                            if(pwmWindow.visible == false){//show full menu
                                 steerConfigWindow.height = 768
                                 steerConfigWindow.width=1024
                                 pwmWindow.visible = true
                                 steerConfig.visible = true
-                            }else{
+                                settings.setWindow_steerSettingsLocation.x = steerConfigWindow.x
+                                settings.setWindow_steerSettingsLocation.y = steerConfigWindow.y
+                                steerConfigWindow.x = 0
+                                steerConfigWindow.y = 0
+                            }else{//hide
                                 steerConfigWindow.height = 600
                                 steerConfigWindow.width=450
                                 pwmWindow.visible = false
                                 steerConfig.visible = false
+                                steerConfigWindow.x = settings.setWindow_steerSettingsLocation.x
+                                steerConfigWindow.y = settings.setWindow_steerSettingsLocation.y
                             }
                         }
                         showHide()
