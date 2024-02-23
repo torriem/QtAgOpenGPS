@@ -7,6 +7,7 @@ import AgOpenGPS 1.0
 
 import "interfaces"
 import "boundary"
+import "steerconfig"
 
 Window {
 
@@ -418,6 +419,7 @@ Window {
                 Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     steerConfigWindow.visible = true
+                    steerConfigWindow.show()
                 }
             }
         }
@@ -1084,7 +1086,7 @@ Window {
         }
         SteerConfigWindow {
             id:steerConfigWindow
-            objectName: "steerConfigWindow"
+            visible: false
         }
         ABCurvePicker{
             id: abCurvePicker

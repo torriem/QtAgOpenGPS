@@ -436,7 +436,6 @@
         <file>images/YouTurnH.png</file>
         <file>images/Config/ConT_TramOverride.png</file>
         <file>qml/ConfigWhichVehicle.qml</file>
-        <file>qml/SteerConfigWindow.qml</file>
         <file>images/Steer/Sf_GainTab.png</file>
         <file>images/Steer/Sf_PP.png</file>
         <file>images/Steer/Sf_PPTab.png</file>
@@ -599,5 +598,13 @@
         <file>qml/HeadAcheDesigner.qml</file>
         <file>images/TrashApplied.png</file>
         <file>qml/ComboBoxCustomized.qml</file>
+        <file>qml/steerconfig/SteerConfigWindow.qml</file>
+        <file>qml/WheelAngleSensorTab.qml</file>
+        <file>qml/PWMSettingsTab.qml</file>
+        <file>qml/PurePursuitTab.qml</file>
+        <file>qml/StanleyTab.qml</file>
+        <file>qml/steerconfig/SensorsTab.qml</file>
+        <file>qml/steerconfig/SettingsTab.qml</file>
+        <file>qml/steerconfig/ConfigTab.qml</file>
     </qresource>
 </RCC>
