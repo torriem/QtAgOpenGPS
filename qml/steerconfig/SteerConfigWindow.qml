@@ -9,8 +9,8 @@ MoveablePopup {
     closePolicy: Popup.NoAutoClose
     modal: false
     visible: false
-    height: 600
-    width:450
+    height: 475
+    width:400
     x: settings.setWindow_steerSettingsLocation.x
     y: settings.setWindow_steerSettingsLocation.y
     function show (){
@@ -28,10 +28,9 @@ MoveablePopup {
             id:topLine
             color:"white"
             visible: true
-            width: parent.width-2
-            height: 40
+            width: parent.width
+            height: 25
             anchors.top: parent.top
-            anchors.topMargin: 1
             anchors.horizontalCenter: parent.horizontalCenter
             Text{
                 anchors.left: parent.left
@@ -68,8 +67,8 @@ MoveablePopup {
             id: steerSlidersConfig
             anchors.left: parent.left
             anchors.top: topLine.bottom
-            height: 500
-            width:450
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
             ButtonGroup {
                 buttons: buttonsTop.children
             }
@@ -81,6 +80,7 @@ MoveablePopup {
                     id: steerBtn
                     icon.source: "/images/Steer/ST_SteerTab.png"
                     implicitWidth: parent.width /4 - 4
+                    implicitHeight: 50
                     checkable: true
                     checked: true
                     colorChecked: "lightgray"
@@ -89,6 +89,7 @@ MoveablePopup {
                     id: gainBtn
                     icon.source: "/images/Steer/ST_GainTab.png"
                     implicitWidth: parent.width /4 - 4
+                    implicitHeight: 50
                     checkable: true
                     colorChecked: "lightgray"
                 }
@@ -96,6 +97,7 @@ MoveablePopup {
                     id: stanleyBtn
                     icon.source: "/images/Steer/ST_StanleyTab.png"
                     implicitWidth: parent.width /4 - 4
+                    implicitHeight: 50
                     checkable: true
                     colorChecked: "lightgray"
                 }
@@ -103,6 +105,7 @@ MoveablePopup {
                     id: ppBtn
                     icon.source: "/images/Steer/Sf_PPTab.png"
                     implicitWidth: parent.width /4 - 4
+                    implicitHeight: 50
                     checkable: true
                     colorChecked: "lightgray"
                 }
@@ -135,10 +138,9 @@ MoveablePopup {
             Rectangle{
                 id: angleInfo
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 8
-                anchors.left: buttonsTop.left
-                width: buttonsTop.width
-                height: 30
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 50
                 MouseArea{
                     anchors.fill: parent
                     onClicked: {

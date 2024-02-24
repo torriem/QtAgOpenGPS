@@ -599,12 +599,13 @@
         <file>images/TrashApplied.png</file>
         <file>qml/ComboBoxCustomized.qml</file>
         <file>qml/steerconfig/SteerConfigWindow.qml</file>
-        <file>qml/WheelAngleSensorTab.qml</file>
-        <file>qml/PWMSettingsTab.qml</file>
-        <file>qml/PurePursuitTab.qml</file>
-        <file>qml/StanleyTab.qml</file>
         <file>qml/steerconfig/SensorsTab.qml</file>
         <file>qml/steerconfig/SettingsTab.qml</file>
         <file>qml/steerconfig/ConfigTab.qml</file>
+        <file>images/Config/ConS_Pins.png</file>
+        <file>qml/steerconfig/StanleyTab.qml</file>
+        <file>qml/steerconfig/WheelAngleSensorTab.qml</file>
+        <file>qml/steerconfig/PWMSettingsTab.qml</file>
+        <file>qml/steerconfig/PurePursuitTab.qml</file>
     </qresource>
 </RCC>

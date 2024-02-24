@@ -5,17 +5,8 @@ import QtQuick.Layouts 1.3
 import ".."
 Item{
     id: configWindow
-    visible: configBtn.checked
-    anchors.top: settingsBtns.bottom
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.bottom: parent.bottom
-    anchors.margins: 5
     GridLayout{
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        anchors.right: columnOfDropDown.left
+        anchors.fill: parent
         rows: 4
         columns: 2
         flow: Grid.TopToBottom

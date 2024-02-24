@@ -1,6 +1,8 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
+import ".."
+
 Item{
     id: gainTab
     Column{
@@ -53,7 +55,7 @@ Item{
         width: parent.width
         anchors.left: parent.left
         anchors.bottom: parent.bottom
-        height: ppColumn.height
+        height: parent.height
         source: "/images/Steer/Sf_GainTab.png"
     }
 
