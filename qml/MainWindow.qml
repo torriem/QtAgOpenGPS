@@ -14,6 +14,15 @@ Window {
     id: mainWindow
     width: 1000
     height: 700
+
+    signal save_everything()
+
+    onClosing: {
+        if (aog.isJobStarted) {
+            closeDialog.visible = true
+            close.accepted = false
+        }
+    }
     //objectName: "openGLControl"
     //width:800
     //height:600
@@ -229,9 +238,12 @@ Window {
                 height: parent.height
                 width: 75
                 icon.source: "/images/WindowClose.png"
-                onClicked: aog.autoBtnState + aog.manualBtnState  > 0 ? timedMessage.addMessage(2000,qsTr("Section Control on. Shut off Section Control.")):
-                aog.isJobStarted ? closeDialog.visible = true:
-                mainWindow.close()
+                onClicked: {
+                    if (aog.autoBtnState + aog.manualBtnState  > 0) {
+                        timedMessage.addMessage(2000,qsTr("Section Control on. Shut off Section Control."))
+                    }
+                    mainWindow.close()
+                }
 
             }
         }
@@ -1044,10 +1056,10 @@ Window {
             visible: false
         }
         HeadAcheDesigner{
-            id: headAcheDesigner
-            objectName: "headAcheDesigner"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
+            id: headacheDesigner
+            objectName: "headacheDesigner"
+            //anchors.horizontalCenter: parent.horizontalCenter
+            //anchors.verticalCenter: parent.verticalCenter
             visible: false
         }
         SteerConfigWindow {
@@ -1164,7 +1176,10 @@ Window {
                 color2: "transparent"
                 color3: "transparent"
                 icon.source: "/images/ExitAOG.png"
-                onClicked:mainWindow.close()
+                onClicked: {
+                    mainWindow.save_everything()
+                    Qt.quit()
+                }
             }
         }
 

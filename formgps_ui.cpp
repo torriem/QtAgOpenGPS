@@ -115,8 +115,8 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(uturn(bool)), this, SLOT(onBtnManUTurn_clicked(bool)));
     connect(aog,SIGNAL(lateral(bool)), this, SLOT(onBtnLateral_clicked(bool)));
 
-    //TODO interface with UI's are you sure close dialog
-    connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
+    connect(qmlItem(qml_root,"mainWindow"), SIGNAL(save_everything()), this, SLOT(fileSaveEverythingBeforeClosingField()));
+    //connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
 
 
     //connect settings dialog box

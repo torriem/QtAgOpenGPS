@@ -568,7 +568,7 @@ void FormGPS::oglMain_Paint()
         gl->glFlush();
     }
     lock.unlock();
-    if(newframe) {
+    if(newframe && (bool)isJobStarted) {
         //if we just had a new position and updated the back buffer then
         //proecss the section lookaheads:
         QTimer::singleShot(0,this, &FormGPS::processSectionLookahead);

@@ -795,7 +795,7 @@ public slots:
     /*
      * misc
      */
-    void fileSaveEverythingBeforeClosingField(QQuickCloseEvent *event);
+    void fileSaveEverythingBeforeClosingField();
 
     /* formgps_classcallbacks.cpp */
     void onStopAutoSteer(); //cancel autosteer and ensure button state
