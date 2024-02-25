@@ -76,7 +76,7 @@ public slots:
     void load_headline();
     void update_lines(); //update the boundary lines in GUI
     void update_headland(); //update headland line
-    //void update_slice(); //update slice and A B points in GUI
+    void update_ab(); //update slice and A B points in GUI
 
     void clicked(int mouseX, int mouseY);
 

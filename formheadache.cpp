@@ -110,6 +110,8 @@ QVector3D FormHeadache::mouseClickToField(int mouseX, int mouseY) {
 
 void FormHeadache::load_headline() {
     hdl->idx = -1;
+    headache_designer_instance->setProperty("showa", false);
+    headache_designer_instance->setProperty("showb", false);
 
     emit saveHeadlines();
     update_lines();
@@ -239,15 +241,40 @@ void FormHeadache::update_lines() {
 
             int cnt = hdl->tracksArr[hdl->idx].trackPts.count() - 1;
 
-            headache_designer_instance->setProperty("apoint",QPoint(hdl->tracksArr[hdl->idx].trackPts[0].easting, hdl->tracksArr[hdl->idx].trackPts[0].northing));
-            headache_designer_instance->setProperty("showa",true);
-            headache_designer_instance->setProperty("bpoint",QPoint(hdl->tracksArr[hdl->idx].trackPts[cnt].easting, hdl->tracksArr[hdl->idx].trackPts[cnt].northing));
-            headache_designer_instance->setProperty("showb",true);
+            apoint = QPoint(hdl->tracksArr[hdl->idx].trackPts[0].easting, hdl->tracksArr[hdl->idx].trackPts[0].northing);
+            showa = true;
+            bpoint = QPoint(hdl->tracksArr[hdl->idx].trackPts[cnt].easting, hdl->tracksArr[hdl->idx].trackPts[cnt].northing);
+            showb = true;
         }
+
         headache_designer_instance->setProperty("headacheLines", lines);
     }
 
+    update_ab();
+
     update_headland();
+}
+
+void FormHeadache::update_ab() {
+    QMatrix4x4 modelview, projection;
+    QVector3D p, s;
+
+    //draw A and B points
+    if (start != 99999) {
+        p = QVector3D(bnd->bndList[bndSelect].fenceLine[start].easting, bnd->bndList[bndSelect].fenceLine[start].northing, 0);
+        s = p.project(modelview, projection, QRect(0,0,width,height));
+        showa = true;
+        apoint = QPoint(s.x(), height - s.y());
+    } //else {
+        //showa = false;
+    //}
+    if (end != 99999) {
+        p = QVector3D(bnd->bndList[bndSelect].fenceLine[end].easting, bnd->bndList[bndSelect].fenceLine[end].northing, 0);
+        s = p.project(modelview, projection, QRect(0,0,width,height));
+        bpoint = QPoint(s.x(), height - s.y());
+        showb = true;
+    }
+
 }
 
 void FormHeadache::update_headland() {
@@ -293,6 +320,8 @@ void FormHeadache::clicked(int mouseX, int mouseY) {
 
     bnd->bndList[0].hdLine.clear();
     hdl->idx = -1;
+    headache_designer_instance->setProperty("showa", false);
+    headache_designer_instance->setProperty("showb", false);
 
     if (isA)
     {
@@ -703,6 +732,7 @@ void FormHeadache::btnBndLoop_Click() {
         }
     }
 
+    update_ab();
     update_headland();
     emit saveHeadlines();
 }
