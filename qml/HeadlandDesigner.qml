@@ -1,5 +1,5 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.5
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 import QtQuick.Shapes 1.15
 
@@ -16,7 +16,6 @@ Popup{
 
     property int sliceCount: 0
     property int backupCount: 0
-    property int hdlIndex: -1
     property bool curveLine: true
     property double lineDistance: 0
 
@@ -113,193 +112,206 @@ Popup{
         }
     }
 
-    Rectangle {//renderer goes here
-        id: headlandRenderer
-        objectName: "headlandRenderer"
-        property string myname: "headlandRenderer"
-        anchors.verticalCenter: parent.verticalCenter
+    Rectangle {
+        id: leftSide
         anchors.left: parent.left
-        height: parent.height
-        width: parent.width * .7
-        color: "black"
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.right: buttons.left
+        anchors.rightMargin: 20
+        layer.enabled: true
+        layer.samples: 8
 
-        Rectangle {
-            id: a_rect
-            visible: headlandDesigner.showa
-            width: 24
-            height: 24
-            radius: 12
-            color: "#ffc059"
-            x: headlandDesigner.apoint.x - 12
-            y: headlandDesigner.apoint.y - 12
-            z: 1
-        }
+        Rectangle {//renderer goes here
+            id: headlandRenderer
+            objectName: "headlandRenderer"
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
 
-        Rectangle {
-            id: b_rect
-            visible: headlandDesigner.showb
-            width: 24
-            height: 24
-            radius: 12
-            color:  "#80c0ff"
-            x: headlandDesigner.bpoint.x - 12
-            y: headlandDesigner.bpoint.y - 12
-            z: 1
-        }
+            width: parent.width > parent.height ? parent.height : parent.width
+            height: width  //1:1 aspect ratio
+            //width: parent.width * .7
+            color: "black"
 
-        Rectangle {
-            id: vehicle_point
-            visible: true
-            width: 24
-            height: 24
-            radius: 12
-            color:  "#f33033"
-            x: headlandDesigner.vehiclePoint.x - 12
-            y: headlandDesigner.vehiclePoint.y - 12
-            z: 1
-        }
+            Rectangle {
+                id: a_rect
+                visible: headlandDesigner.showa
+                width: 24
+                height: 24
+                radius: 12
+                color: "#ffc059"
+                x: headlandDesigner.apoint.x - 12
+                y: headlandDesigner.apoint.y - 12
+                z: 1
+            }
 
-        Repeater {
-            id: boundaryRepeater
+            Rectangle {
+                id: b_rect
+                visible: headlandDesigner.showb
+                width: 24
+                height: 24
+                radius: 12
+                color:  "#80c0ff"
+                x: headlandDesigner.bpoint.x - 12
+                y: headlandDesigner.bpoint.y - 12
+                z: 1
+            }
 
-            model: boundaryLines.length
+            Rectangle {
+                id: vehicle_point
+                visible: true
+                width: 24
+                height: 24
+                radius: 12
+                color:  "#f33033"
+                x: headlandDesigner.vehiclePoint.x - 12
+                y: headlandDesigner.vehiclePoint.y - 12
+            }
 
-            Shape {
-                property int outerIndex: index
+            Repeater {
+                id: boundaryRepeater
 
-                anchors.fill: parent
-                Connections {
-                    target: headlandDesigner
-                    function onBoundaryLinesChanged() {
-                        shapePath.draw_boundaries()
+                model: boundaryLines.length
+
+                Shape {
+                    property int outerIndex: index
+                    smooth: true
+
+                    anchors.fill: parent
+                    Connections {
+                        target: headlandDesigner
+                        function onBoundaryLinesChanged() {
+                            shapePath.draw_boundaries()
+                        }
+                    }
+
+                    ShapePath {
+                        id: shapePath
+                        strokeColor: boundaryLines[index].color
+                        strokeWidth: boundaryLines[index].width
+                        fillColor: "transparent"
+                        startX: p[0].x
+                        startY: p[0].y
+                        scale: Qt.size(1,1)
+                        joinStyle: ShapePath.RoundJoin
+
+                        property var p: [Qt.point(0,0), Qt.point(headlandRenderer.width, headlandRenderer.height)]
+
+                        PathPolyline {
+                            id: ps
+                            path: shapePath.p
+                        }
+
+
+                        Component.onCompleted: draw_boundaries()
+
+
+                        function draw_boundaries()
+                        {
+                        //    console.debug(boundaryLines[index].points)
+                            p = boundaryLines[index].points
+                        }
                     }
                 }
+            }
 
+            Shape {
+                id: headlandShape
+                visible: headlandLine.length > 0
+                anchors.fill: parent
                 ShapePath {
-                    id: shapePath
-                    strokeColor: boundaryLines[index].color
-                    strokeWidth: boundaryLines[index].width
+                    id: headlandShapePath
+                    strokeColor: "#f1e817"
+                    strokeWidth: 8
                     fillColor: "transparent"
                     startX: p[0].x
                     startY: p[0].y
-                    scale: Qt.size(1,1)
                     joinStyle: ShapePath.RoundJoin
 
-                    property var p: [Qt.point(0,0), Qt.point(headlandRenderer.width, headlandRenderer.height)]
+                    property var p: [
+                        Qt.point(0,0),
+                        Qt.point(20,100),
+                        Qt.point(200,150)
+                    ]
 
                     PathPolyline {
-                        id: ps
-                        path: shapePath.p
-                    }
-
-
-                    Component.onCompleted: draw_boundaries()
-
-
-                    function draw_boundaries()
-                    {
-                    //    console.debug(boundaryLines[index].points)
-                        p = boundaryLines[index].points
+                        id: headlandShapePolyLine
+                        path: headlandShapePath.p
                     }
                 }
             }
-        }
 
-        Shape {
-            id: headlandShape
-            visible: headlandLine.length > 0
-            anchors.fill: parent
-            ShapePath {
-                id: headlandShapePath
-                strokeColor: "#f1e817"
-                strokeWidth: 8
-                fillColor: "transparent"
-                startX: p[0].x
-                startY: p[0].y
-                joinStyle: ShapePath.RoundJoin
+            Shape {
+                id: sliceShape
+                visible: sliceCount != 0
+                anchors.fill: parent
+                ShapePath {
+                    id: sliceShapePath
+                    strokeColor: btnABCurve.checked ? "#f31700" : "#21f305"
+                    strokeWidth: 8
+                    fillColor: "transparent"
+                    startX: p[0].x
+                    startY: p[0].y
+                    joinStyle: ShapePath.RoundJoin
 
-                property var p: [
-                    Qt.point(0,0),
-                    Qt.point(20,100),
-                    Qt.point(200,150)
-                ]
+                    property var p: [
+                        Qt.point(0,0),
+                        Qt.point(100,20),
+                    ]
 
-                PathPolyline {
-                    id: headlandShapePolyLine
-                    path: headlandShapePath.p
+                    PathPolyline {
+                        id: sliceShapePolyLine
+                        path: sliceShapePath.p
+                    }
                 }
             }
-        }
 
-        Shape {
-            id: sliceShape
-            visible: sliceCount != 0
-            anchors.fill: parent
-            ShapePath {
-                id: sliceShapePath
-                strokeColor: btnABCurve.checked ? "#f31700" : "#21f305"
-                strokeWidth: 8
-                fillColor: "transparent"
-                startX: p[0].x
-                startY: p[0].y
-                joinStyle: ShapePath.RoundJoin
+            MouseArea {
+                id: headlandMouseArea
+                anchors.fill: parent
 
-                property var p: [
-                    Qt.point(0,0),
-                    Qt.point(100,20),
-                ]
+                property int fromX: 0
+                property int fromY: 0
 
-                PathPolyline {
-                    id: sliceShapePolyLine
-                    path: sliceShapePath.p
-                }
-            }
-        }
-
-        MouseArea {
-            id: headlandMouseArea
-            anchors.fill: parent
-
-            property int fromX: 0
-            property int fromY: 0
-
-            onClicked: {
-                if (cboxIsZoom.checked && headlandDesigner.zoom === 1) {
-                    sX = ((parent.width / 2 - mouseX) / parent.width) * 1.1
-                    sY = ((parent.height / 2 - mouseY) / -parent.height) * 1.1
-                    //console.debug("width,mouse, sx,sy",parent.width / 2, mouseX, mouseY, sX,sY);
-                    zoom = 0.1
-                    headlandDesigner.update_lines()
-                } else {
-                    headlandDesigner.mouseClicked(mouseX, mouseY)
-                    if (zoom != 1.0) {
-                        zoom = 1.0;
-                        sX = 0;
-                        sY = 0;
+                onClicked: {
+                    if (cboxIsZoom.checked && headlandDesigner.zoom === 1) {
+                        sX = ((parent.width / 2 - mouseX) / parent.width) * 1.1
+                        sY = ((parent.height / 2 - mouseY) / -parent.height) * 1.1
+                        //console.debug("width,mouse, sx,sy",parent.width / 2, mouseX, mouseY, sX,sY);
+                        zoom = 0.1
                         headlandDesigner.update_lines()
+                    } else {
+                        headlandDesigner.mouseClicked(mouseX, mouseY)
+                        if (zoom != 1.0) {
+                            zoom = 1.0;
+                            sX = 0;
+                            sY = 0;
+                            headlandDesigner.update_lines()
+                        }
                     }
                 }
-            }
 
-            onPressed: {
-                //save a copy of the coordinates
-                fromX = mouseX
-                fromY = mouseY
-            }
+                onPressed: {
+                    //save a copy of the coordinates
+                    fromX = mouseX
+                    fromY = mouseY
+                }
 
-            onPositionChanged: {
-                headlandDesigner.mouseDragged(fromX, fromY, mouseX, mouseY)
-                fromX = mouseX
-                fromY = mouseY
-            }
+                onPositionChanged: {
+                    headlandDesigner.mouseDragged(fromX, fromY, mouseX, mouseY)
+                    fromX = mouseX
+                    fromY = mouseY
+                }
 
-            //onWheel: {}
+                //onWheel: {}
+            }
         }
     }
 
     GridLayout{
         id: buttons
-        anchors.left: headlandRenderer.right
+        //anchors.left: headlandRenderer.right
+        //width: distanceSpinBox.implicitWidth * 2
         anchors.bottom: parent.bottom
         anchors.top: parent.top
         anchors.right: parent.right
@@ -362,6 +374,7 @@ Popup{
             onClicked: curveLine = false
         }
         SpinBoxM {
+            id: distanceSpinBox
             objectName: "nudSetDistance"
             from: 0
             to: 2000

@@ -40,7 +40,6 @@ protected:
 
     InterfaceProperty<HeadlandDesigner,int> sliceCount = InterfaceProperty<HeadlandDesigner,int>("sliceCount");
     InterfaceProperty<HeadlandDesigner,int> backupCount = InterfaceProperty<HeadlandDesigner,int>("backupCount");
-    InterfaceProperty<HeadlandDesigner,int> hdlIndex = InterfaceProperty<HeadlandDesigner,int>("hdlIndex");
     InterfaceProperty<HeadlandDesigner,bool> curveLine = InterfaceProperty<HeadlandDesigner,bool>("curveLine");
     InterfaceProperty<HeadlandDesigner,double> lineDistance = InterfaceProperty<HeadlandDesigner,double>("lineDistance");
 
@@ -57,10 +56,6 @@ protected:
     QVector3D mouseClickToField(int mouseX, int mouseY);
 
     void setup_matrices(QMatrix4x4 &modelview, QMatrix4x4 &projection);
-
-    void DrawBuiltLines(QOpenGLFunctions *gl, QMatrix4x4 mvp);
-    void DrawABTouchLine(QOpenGLFunctions *gl, QMatrix4x4 mvp);
-
 
 public:
     double iE = 0, iN = 0;
@@ -109,6 +104,7 @@ signals:
     void turnOffYouTurnBtn();
     void timedMessageBox(int, QString, QString);
     void saveHeadland();
+    void loadHeadland();
 };
 
 #endif // FORMHEADLAND_H
