@@ -301,7 +301,7 @@ void FormGPS::StartLoopbackServer()
     if(udpSocket) stopUDPServer();
 
     udpSocket = new QUdpSocket(this); //should auto delete with the form
-    udpSocket->bind(port); //by default, bind to all interfaces.
+    udpSocket->bind(QHostAddress::Any, port); //by default, bind to all interfaces.
     //TODO: change to localhost
 
     connect(udpSocket,SIGNAL(readyRead()),this,SLOT(ReceiveFromAgIO()));
