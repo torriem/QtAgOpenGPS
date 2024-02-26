@@ -436,7 +436,6 @@
         <file>images/YouTurnH.png</file>
         <file>images/Config/ConT_TramOverride.png</file>
         <file>qml/ConfigWhichVehicle.qml</file>
-        <file>qml/SteerConfigWindow.qml</file>
         <file>images/Steer/Sf_GainTab.png</file>
         <file>images/Steer/Sf_PP.png</file>
         <file>images/Steer/Sf_PPTab.png</file>
@@ -590,9 +589,23 @@
         <file>images/HeadlandSlice.png</file>
         <file>images/HeadlandSectionOff.png</file>
         <file>images/ZoomOGL.png</file>
+        <file>qml/MoveablePopup.qml</file>
+        <file>qml/HeadAcheDesigner.qml</file>
+        <file>images/TrashApplied.png</file>
+        <file>images/HeadlandSectionOn.png</file>
         <file>images/HeadlandSectionOn.png</file>
         <file>qml/MoveablePopup.qml</file>
         <file>qml/HeadAcheDesigner.qml</file>
         <file>images/TrashApplied.png</file>
+        <file>qml/ComboBoxCustomized.qml</file>
+        <file>qml/steerconfig/SteerConfigWindow.qml</file>
+        <file>qml/steerconfig/SensorsTab.qml</file>
+        <file>qml/steerconfig/SettingsTab.qml</file>
+        <file>qml/steerconfig/ConfigTab.qml</file>
+        <file>images/Config/ConS_Pins.png</file>
+        <file>qml/steerconfig/StanleyTab.qml</file>
+        <file>qml/steerconfig/WheelAngleSensorTab.qml</file>
+        <file>qml/steerconfig/PWMSettingsTab.qml</file>
+        <file>qml/steerconfig/PurePursuitTab.qml</file>
     </qresource>
 </RCC>

@@ -3,6 +3,8 @@ import QtQuick.Controls 2.5
 
 Popup {
     id: rootPopup
+    padding: 0
+    property alias topBar: topBar
     MouseArea {
             anchors.fill: topBar
             property point lastMousePos: Qt.point(0, 0)

@@ -114,6 +114,9 @@ void FormGPS::setupGui()
     //manual youturn buttons
     connect(aog,SIGNAL(uturn(bool)), this, SLOT(onBtnManUTurn_clicked(bool)));
     connect(aog,SIGNAL(lateral(bool)), this, SLOT(onBtnLateral_clicked(bool)));
+    connect(aog,SIGNAL(autoYouTurn()), this, SLOT(onBtnAutoYouTurn_clicked()));
+    connect(aog,SIGNAL(swapAutoYouTurnDirection()), this, SLOT(onBtnSwapAutoYouTurnDirection_clicked()));
+
 
     connect(qmlItem(qml_root,"mainWindow"), SIGNAL(save_everything()), this, SLOT(fileSaveEverythingBeforeClosingField()));
     //connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
@@ -300,9 +303,6 @@ void FormGPS::onBtnToggleAB_clicked(){
 void FormGPS::onBtnToggleABBack_clicked(){
     qDebug()<<"toggle AB back";
 }
-void FormGPS::onBtnAutoYouTurn_clicked(){
-    qDebug()<<"activate youturn";
-}
 void FormGPS::onBtnResetTool_clicked(){
     qDebug()<<"REset tool";
 }
@@ -463,6 +463,54 @@ void FormGPS::onBtnDeleteAllFlags_clicked()
     flagNumberPicked = 0;
     //TODO: FileSaveFlags
 }
+void FormGPS::onBtnAutoYouTurn_clicked(){
+    qDebug()<<"activate youturn";
+    yt.isTurnCreationTooClose = false;
+
+//     if (bnd.bndArr.Count == 0)    this needs to be moved to qml
+//     {
+//         TimedMessageBox(2000, gStr.gsNoBoundary, gStr.gsCreateABoundaryFirst);
+//         return;
+//     }
+
+     if (!yt.isYouTurnBtnOn)
+     {
+         //new direction so reset where to put turn diagnostic
+         yt.ResetCreatedYouTurn();
+
+         if (!isAutoSteerBtnOn) return;
+         yt.isYouTurnBtnOn = true;
+         yt.isTurnCreationTooClose = false;
+         yt.isTurnCreationNotCrossingError = false;
+         yt.ResetYouTurn();
+         //mc.autoSteerData[mc.sdX] = 0;
+//         mc.machineControlData[mc.cnYouTurn] = 0;
+//         btnAutoYouTurn.Image = Properties.Resources.Youturn80;
+     }
+     else
+     {
+         yt.isYouTurnBtnOn = false;
+//         yt.rowSkipsWidth = Properties.Vehicle.Default.set_youSkipWidth;
+//         btnAutoYouTurn.Image = Properties.Resources.YouTurnNo;
+         yt.ResetYouTurn();
+
+         //new direction so reset where to put turn diagnostic
+         yt.ResetCreatedYouTurn();
+
+         //mc.autoSteerData[mc.sdX] = 0;commented in aog
+//         mc.machineControlData[mc.cnYouTurn] = 0;
+     }
+}
+void FormGPS::onBtnSwapAutoYouTurnDirection_clicked()
+ {
+     if (!yt.isYouTurnTriggered)
+     {
+         yt.isYouTurnRight = !yt.isYouTurnRight;
+         yt.ResetCreatedYouTurn();
+     }
+     //else if (yt.isYouTurnBtnOn)
+         //btnAutoYouTurn.PerformClick();
+ }
 
 void FormGPS::onBtnManUTurn_clicked(bool right)
 {

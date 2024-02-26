@@ -13,23 +13,29 @@ TimedRectangle {
         IconButtonTransparent{
             id: marker
             icon.source: "/images/ABSnapNudgeMenuRef.png"
+            Layout.alignment: Qt.AlignCenter
         }
         IconButtonColor{
             icon.source: "/images/AutoSteerSnapToPivot.png"
             implicitWidth: marker.width
             implicitHeight: marker.width
+            Layout.alignment: Qt.AlignCenter
         }
         IconButtonTransparent{
             icon.source: "/images/SwitchOff.png"
+            Layout.alignment: Qt.AlignCenter
         }
         IconButtonTransparent{
             icon.source: "/images/ABDraw.png"
+            Layout.alignment: Qt.AlignCenter
         }
         IconButtonTransparent{
             icon.source: "/images/ABTracks.png"
+            Layout.alignment: Qt.AlignCenter
         }
         IconButtonTransparent{
             icon.source: "/images/ABSnapNudgeMenu.png"
+            Layout.alignment: Qt.AlignCenter
         }
     }
 }

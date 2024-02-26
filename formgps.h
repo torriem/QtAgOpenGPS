@@ -726,6 +726,7 @@ public slots:
     void onBtnToggleAB_clicked();
     void onBtnToggleABBack_clicked();
     void onBtnAutoYouTurn_clicked();
+    void onBtnSwapAutoYouTurnDirection_clicked();
     void onBtnContourPriority_clicked();
     //bottom row
     void onBtnResetTool_clicked();
