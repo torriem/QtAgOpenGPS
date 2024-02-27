@@ -27,7 +27,6 @@ Popup{
     signal mouseClicked(int x, int y)
     //signal mouseDragged(int fromX, int fromY, int toX, int toY)
     //signal zoom(bool checked)
-    signal slice()
     signal deletePoint()
     signal deletePoints() //delete all the headache lines
     signal remove_headland()
@@ -38,6 +37,10 @@ Popup{
     signal bshrink()
     signal blength()
     signal headlandOff()
+    signal cycleForward()
+    signal cycleBackward()
+    signal deleteCurve()
+
     signal isSectionControlled(bool wellIsIt)
 
     onWidthChanged: if(aog.isJobStarted) update_lines()

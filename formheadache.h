@@ -80,12 +80,16 @@ public slots:
 
     void clicked(int mouseX, int mouseY);
 
+    void btnCycleForward_Click();
+    void btnCycleBackward_Click();
+    void btnDeleteCurve_Click();
+
+
     void btn_Exit_Click();
     void isSectionControlled(bool wellIsIt);
     void btnBndLoop_Click();
     void btnSlice_Click();
     void btnDeletePoints_Click();
-    void btnUndo_Click();
     void btnALength_Click();
     void btnBLength_Click();
     void btnBShrink_Click();

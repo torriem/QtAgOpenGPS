@@ -39,12 +39,14 @@ void FormHeadache::connect_ui(QObject *headache_designer_instance) {
     connect(headache_designer_instance,SIGNAL(load()),this,SLOT(load_headline()));
     connect(headache_designer_instance,SIGNAL(update_lines()),this,SLOT(update_lines()));
     connect(headache_designer_instance,SIGNAL(mouseClicked(int, int)),this,SLOT(clicked(int,int)));
-    connect(headache_designer_instance,SIGNAL(slice()),this,SLOT(btnSlice_Click()));
+    connect(headache_designer_instance,SIGNAL(cycleForward()),this,SLOT(btnCycleForward_Click()));
+    connect(headache_designer_instance,SIGNAL(cycleBackward()),this,SLOT(btnCycleBackward_Click()));
+    connect(headache_designer_instance,SIGNAL(deleteCurve()),this,SLOT(btnDeleteCurve_Click()));
+
     connect(headache_designer_instance,SIGNAL(remove_headland()),this,SLOT(btn));
     connect(headache_designer_instance,SIGNAL(create_headland()),this,SLOT(btnBndLoop_Click()));
     connect(headache_designer_instance,SIGNAL(deletePoint()),this,SLOT(btn));
     connect(headache_designer_instance,SIGNAL(deletePoints()),this,SLOT(btnDeletePoints_Click()));
-    connect(headache_designer_instance,SIGNAL(undo()),this,SLOT(btnUndo_Click()));
     connect(headache_designer_instance,SIGNAL(ashrink()),this,SLOT(btnAShrink_Click()));
     connect(headache_designer_instance,SIGNAL(bshrink()),this,SLOT(btnBShrink_Click()));
     connect(headache_designer_instance,SIGNAL(alength()),this,SLOT(btnALength_Click()));
@@ -310,6 +312,36 @@ void FormHeadache::update_headland() {
         }
     }
     headache_designer_instance->setProperty("headlandLine", line);
+}
+
+void FormHeadache::btnCycleBackward_Click()
+{
+    bnd->bndList[0].hdLine.clear();
+
+    if (hdl->tracksArr.count() > 0)
+    {
+        hdl->idx++;
+        if (hdl->idx > (hdl->tracksArr.count() - 1)) hdl->idx = 0;
+    }
+    else
+    {
+        hdl->idx = -1;
+    }
+}
+
+void FormHeadache::btnCycleForward_Click()
+{
+    bnd->bndList[0].hdLine.clear();
+
+    if (hdl->tracksArr.count() > 0)
+    {
+        hdl->idx--;
+        if (hdl->idx < 0) hdl->idx = (hdl->tracksArr.count() - 1);
+    }
+    else
+    {
+        hdl->idx = -1;
+    }
 }
 
 void FormHeadache::clicked(int mouseX, int mouseY) {
@@ -634,12 +666,35 @@ void FormHeadache::clicked(int mouseX, int mouseY) {
     }
 }
 
+void FormHeadache::btnDeleteCurve_Click()
+{
+    //bnd->bndList[0].hdLine.clear();
+
+    if (hdl->tracksArr.count() > 0 && hdl->idx > -1)
+    {
+        hdl->tracksArr.remove(hdl->idx);
+        hdl->idx--;
+    }
+
+    if (hdl->tracksArr.count() > 0)
+    {
+        if (hdl->idx == -1)
+        {
+            hdl->idx++;
+        }
+    }
+    else hdl->idx = -1;
+
+}
+
 void FormHeadache::btn_Exit_Click() {
-    if (hdl->idx == -1)
+    emit saveHeadlines();
+    /*if (hdl->idx == -1)
     {
         emit turnOffAutoSteerBtn();
         emit turnOffYouTurnBtn();
     }
+    */
 }
 
 void FormHeadache::isSectionControlled(bool wellIsIt) {
@@ -648,97 +703,139 @@ void FormHeadache::isSectionControlled(bool wellIsIt) {
 }
 
 void FormHeadache::btnBndLoop_Click() {
-    int ptCount = bnd->bndList[0].fenceLine.count();
+    //sort the lines using CHeadPath::operator<
+    std::sort(hdl->tracksArr.begin(), hdl->tracksArr.end());
+    emit saveHeadlines();
 
-    if ((double)lineDistance == 0)
+    hdl->idx = -1;
+
+    //build the headland
+    bnd->bndList[0].hdLine.clear();
+
+    //int numOfLines = hdl->tracksArr.count();
+    int nextLine = 0;
+    crossings.clear();
+
+    int isStart = 0;
+
+    for (int lineNum = 0; lineNum < hdl->tracksArr.count(); lineNum++)
     {
-        hdl->desList.clear();
+        nextLine = lineNum - 1;
+        if (nextLine < 0) nextLine = hdl->tracksArr.count() - 1;
 
-        bnd->bndList[0].hdLine.clear();
-
-        for (int i = 0; i < ptCount; i++)
+        if (nextLine == lineNum)
         {
-            bnd->bndList[0].hdLine.append(Vec3(bnd->bndList[0].fenceLine[i]));
-        }
-    }
-    else
-    {
-        hdl->desList.clear();
-
-        //outside point
-        Vec3 pt3;
-
-        double moveDist = (double)lineDistance;
-        double distSq = (moveDist) * (moveDist) * 0.999;
-
-        //make the boundary tram outer array
-        for (int i = 0; i < ptCount; i++)
-        {
-            //calculate the point inside the boundary
-            pt3.easting = bnd->bndList[0].fenceLine[i].easting -
-                          (sin(glm::PIBy2 + bnd->bndList[0].fenceLine[i].heading) * (moveDist));
-
-            pt3.northing = bnd->bndList[0].fenceLine[i].northing -
-                           (cos(glm::PIBy2 + bnd->bndList[0].fenceLine[i].heading) * (moveDist));
-
-            pt3.heading = bnd->bndList[0].fenceLine[i].heading;
-
-            bool Add = true;
-
-            for (int j = 0; j < ptCount; j++)
-            {
-                double check = glm::DistanceSquared(pt3.northing, pt3.easting,
-                                                    bnd->bndList[0].fenceLine[j].northing, bnd->bndList[0].fenceLine[j].easting);
-                if (check < distSq)
-                {
-                    Add = false;
-                    break;
-                }
-            }
-
-            if (Add)
-            {
-                if (hdl->desList.count() > 0)
-                {
-                    double dist = ((pt3.easting - hdl->desList[hdl->desList.count() - 1].easting) * (pt3.easting - hdl->desList[hdl->desList.count() - 1].easting))
-                                  + ((pt3.northing - hdl->desList[hdl->desList.count() - 1].northing) * (pt3.northing - hdl->desList[hdl->desList.count() - 1].northing));
-                    if (dist > 1)
-                        hdl->desList.append(pt3);
-                }
-                else hdl->desList.append(pt3);
-            }
-        }
-
-        if (hdl->desList.count() == 0)
-        {
+            emit timedMessageBox(2000, tr("Create Error"), tr("Is there maybe only one line?"));
             return;
         }
 
-        pt3 = hdl->desList[0];
-        hdl->desList.append(pt3);
-
-        int cnt = hdl->desList.count();
-        if (cnt > 3)
+        for (int i = 0; i < hdl->tracksArr[lineNum].trackPts.count() - 2; i++)
         {
-            pt3 = hdl->desList[0];
-            hdl->desList.append(pt3);
-
-            //make sure point distance isn't too big
-            MakePointMinimumSpacing(hdl->desList, 1.2);
-            CalculateHeadings(hdl->desList);
-
-            bnd->bndList[0].hdLine.clear();
-
-            //write out the Points
-            for (Vec3 item: hdl->desList)
+            for (int k = 0; k < hdl->tracksArr[nextLine].trackPts.count() - 2; k++)
             {
-                bnd->bndList[0].hdLine.append(item);
+                int res = GetLineIntersection(
+                    hdl->tracksArr[lineNum].trackPts[i].easting,
+                    hdl->tracksArr[lineNum].trackPts[i].northing,
+                    hdl->tracksArr[lineNum].trackPts[i + 1].easting,
+                    hdl->tracksArr[lineNum].trackPts[i + 1].northing,
+
+                    hdl->tracksArr[nextLine].trackPts[k].easting,
+                    hdl->tracksArr[nextLine].trackPts[k].northing,
+                    hdl->tracksArr[nextLine].trackPts[k + 1].easting,
+                    hdl->tracksArr[nextLine].trackPts[k + 1].northing,
+                    iE, iN);
+                if (res == 1)
+                {
+                    if (isStart == 0) i++;
+                    crossings.append(i);
+                    isStart++;
+                    if (isStart == 2) goto again;
+                    nextLine = lineNum + 1;
+
+                    if (nextLine > hdl->tracksArr.count() - 1) nextLine = 0;
+                }
             }
+        }
+
+    again:
+        isStart = 0;
+    }
+
+    if (crossings.count() != hdl->tracksArr.count() * 2)
+    {
+        emit timedMessageBox(2000, tr("Crosings Error"), tr("Make sure all ends cross only once"));
+        bnd->bndList[0].hdLine.clear();
+        return;
+    }
+
+    for (int i = 0; i < hdl->tracksArr.count(); i++)
+    {
+        int low = crossings[i * 2];
+        int high = crossings[i * 2 + 1];
+        for (int k = low; k < high; k++)
+        {
+            bnd->bndList[0].hdLine.append(hdl->tracksArr[i].trackPts[k]);
         }
     }
 
-    update_ab();
-    update_headland();
+    //for (int i = 0; i < hdl->tracksArr.count(); i++)
+    //{
+    //    hdl->desList.clear();
+
+    //    int low = crossings[i * 2];
+    //    int high = crossings[i * 2 + 1];
+    //    for (int k = low; k < high; k++)
+    //    {
+    //        hdl->desList.append(hdl->tracksArr[i].trackPts[k]);
+    //    }
+
+    //    hdl->tracksArr[i].trackPts.clear();
+
+    //    foreach (var item in hdl->desList)
+    //    {
+    //        hdl->tracksArr[i].trackPts.append(Vec3(item));
+    //    }
+    //}
+
+    QVector<Vec3> hdArr;
+
+    if (bnd->bndList[0].hdLine.count() > 0)
+    {
+        hdArr = bnd->bndList[0].hdLine;
+    }
+    else
+    {
+        bnd->bndList[0].hdLine.clear();
+        return;
+    }
+
+    //middle points
+    for (int i = 1; i < hdArr.count(); i++)
+    {
+        hdArr[i - 1].heading = atan2(hdArr[i - 1].easting - hdArr[i].easting, hdArr[i - 1].northing - hdArr[i].northing);
+        if (hdArr[i].heading < 0) hdArr[i].heading += glm::twoPI;
+    }
+
+    double delta = 0;
+    for (int i = 0; i < hdArr.count(); i++)
+    {
+        if (i == 0)
+        {
+            bnd->bndList[0].hdLine.append(Vec3(hdArr[i].easting, hdArr[i].northing, hdArr[i].heading));
+            continue;
+        }
+        delta += (hdArr[i - 1].heading - hdArr[i].heading);
+
+        if (fabs(delta) > 0.005)
+        {
+            Vec3 pt(hdArr[i].easting, hdArr[i].northing, hdArr[i].heading);
+
+            bnd->bndList[0].hdLine.append(pt);
+            delta = 0;
+        }
+    }
+
+
     emit saveHeadlines();
 }
 
@@ -881,16 +978,6 @@ void FormHeadache::btnDeletePoints_Click() {
     {
         bnd->bndList[0].hdLine.append(bnd->bndList[0].fenceLine[i]);
     }
-    update_headland();
-}
-
-void FormHeadache::btnUndo_Click() {
-    bnd->bndList[0].hdLine.clear();
-    for (auto item: backupList)
-    {
-        bnd->bndList[0].hdLine.append(item);
-    }
-    backupList.clear();
     update_headland();
 }
 
