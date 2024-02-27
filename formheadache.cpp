@@ -259,6 +259,11 @@ void FormHeadache::update_ab() {
     QMatrix4x4 modelview, projection;
     QVector3D p, s;
 
+    setup_matrices(modelview, projection);
+
+    int width = qmlItem(headache_designer_instance, "headacheRenderer")->property("width").toReal();
+    int height = qmlItem(headache_designer_instance, "headacheRenderer")->property("height").toReal();
+
     //draw A and B points
     if (start != 99999) {
         p = QVector3D(bnd->bndList[bndSelect].fenceLine[start].easting, bnd->bndList[bndSelect].fenceLine[start].northing, 0);
