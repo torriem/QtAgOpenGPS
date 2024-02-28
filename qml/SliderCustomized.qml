@@ -23,12 +23,26 @@ Slider{
     rightPadding: rightInset
     */topInset: topText.textHeight
     topPadding: topInset
-    leftInset: leftText.text.length * leftText.font.pixelSize
+    leftInset: leftText.textWidth
     leftPadding: leftInset
-    rightInset: rightText.text.length
+    rightInset: rightText.textWidth
     rightPadding: rightInset
-    height: 75
-    width: 200
+    implicitHeight: 75
+    implicitWidth: 200
+
+    /*As was noted on the Qt forum, the text is still part of
+      the clickable area, the idea is catcher will catch those
+      and keep them from actually doing anything.
+      */
+    MouseArea{
+        id: catcher
+        anchors.top: parent.top
+        anchors.bottom: backgroundRect.top
+        anchors.right: parent.right
+        anchors.left: parent.left
+        onClicked: ("")
+
+    }
 
     background: Rectangle {
         id: backgroundRect
@@ -51,12 +65,12 @@ Slider{
         id: handleRect
         height: backgroundRect.height - 4
         radius: 2
-        width: 20
+        width: 8
         visible: true
         color: "lightgray"
         x: parent.leftPadding + parent.visualPosition * (parent.availableWidth - width)
         y: parent.topPadding + parent.availableHeight / 2 - height / 2
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenter: backgroundRect.verticalCenter
     }
     /*Button{
         id: rightSliderButton
@@ -98,6 +112,7 @@ Slider{
     TextLine{
         id: leftText
         text: ""
+        property int textWidth: (text.length > 0) ? 30 : 0
         color: sliderCustomized.enabled ? "black" : "grey"
         anchors.left: parent.left
         anchors.verticalCenter: backgroundRect.verticalCenter
@@ -105,6 +120,7 @@ Slider{
     TextLine{
         id: rightText
         text: ""
+        property int textWidth: (text.length > 0) ? 30 : 0
         color: sliderCustomized.enabled ? "black" : "grey"
         anchors.right: parent.right
         anchors.verticalCenter: backgroundRect.verticalCenter
@@ -125,7 +141,7 @@ Slider{
     }
     TextLine{
         id: topText
-        property int textHeight: text.length * font.pixelSize
+        property int textHeight: (text.length > 0) ? 18 : 0
         text: ""
         color: sliderCustomized.enabled ? "black" : "grey"
         anchors.top: parent.top

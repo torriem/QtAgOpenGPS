@@ -17,7 +17,7 @@ Item{
         SliderCustomized {
             id: acqLookAheadSlider
             objectName: "acqLookAheadSlider"
-            width: 200
+            implicitHeight: 50
             from: 1
             to: 5
             value: Math.round(settings.setVehicle_goalPointLookAhead, 1)
@@ -30,6 +30,7 @@ Item{
             id: holdLookAheadSlider
             objectName: "holdLookAheadSlider"
             width: 200
+            implicitHeight: 50
             from: 1
             to: 5
             value: Math.round(settings.setVehicle_goalPointLookAheadHold, 1)
@@ -42,6 +43,7 @@ Item{
             id: lookAheadSpeedGainSlider
             objectName: "lookAheadSpeedGainSlider"
             width: 200
+            implicitHeight: 50
             from: .5
             to: 3
             value: Math.round(settings.setVehicle_goalPointLookAheadMult, 1)
@@ -55,6 +57,7 @@ Item{
             objectName: "ppIntegralSlider"
             width: 200
             from: 0
+            implicitHeight: 50
             to: 100
             value: Math.round(settings.purePursuitIntegralGainAB *100, 0)
             onValueChanged: settings.purePursuitIntegralGainAB = value /100
