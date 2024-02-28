@@ -29,6 +29,9 @@ protected:
     InterfaceProperty<HeadlandDesigner,QPoint> bpoint = InterfaceProperty<HeadlandDesigner,QPoint>("bpoint");
     InterfaceProperty<HeadlandDesigner,QPoint> vehiclePoint = InterfaceProperty<HeadlandDesigner,QPoint>("vehiclePoint");
 
+    InterfaceProperty<AOGInterface,bool> isBtnAutoSteerOn = InterfaceProperty<AOGInterface,bool>("isBtnAutoSteerOn");
+    InterfaceProperty<AOGInterface,bool> isYouTurnBtnOn = InterfaceProperty<AOGInterface,bool>("isYouTurnBtnOn");
+
     int fixX, fixY;
     //InterfaceProperty<HeadlandDesigner,bool> isA = InterfaceProperty<HeadlandDesigner,bool>("isA");
     bool isA = false;
@@ -82,7 +85,7 @@ public slots:
     void update_lines(); //update the boundary lines in GUI
     void update_headland(); //update headland line
     void update_slice(); //update slice and A B points in GUI
-
+    void FormHeadLine_FormClosing();
     void clicked(int mouseX, int mouseY);
 
     void btn_Exit_Click();
@@ -100,11 +103,8 @@ public slots:
     void updateVehiclePosition();
 
 signals:
-    void turnOffAutoSteerBtn();
-    void turnOffYouTurnBtn();
     void timedMessageBox(int, QString, QString);
     void saveHeadland();
-    void loadHeadland();
 };
 
 #endif // FORMHEADLAND_H

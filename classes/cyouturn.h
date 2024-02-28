@@ -9,6 +9,7 @@
 #include "vec4.h"
 #include "vec3.h"
 #include "vec2.h"
+#include "interfaceproperty.h"
 
 class CABLine;
 class CBoundary;
@@ -35,7 +36,7 @@ public:
     bool isYouTurnRight;
 
     // Is the youturn button enabled?
-    bool isYouTurnBtnOn;
+    InterfaceProperty<AOGInterface,bool> isYouTurnBtnOn = InterfaceProperty<AOGInterface,bool>("isYouTurnBtnOn");
 
     double boundaryAngleOffPerpendicular, youTurnRadius;
 

@@ -42,6 +42,7 @@ Popup{
     signal mouseClicked(int x, int y)
     //signal mouseDragged(int fromX, int fromY, int toX, int toY)
     //signal zoom(bool checked)
+    signal close()
     signal slice()
     signal deletePoints()
     signal create_headland()

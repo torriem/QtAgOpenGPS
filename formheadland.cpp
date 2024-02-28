@@ -121,6 +121,7 @@ void FormHeadland::connect_ui(QObject *headland_designer_instance) {
 
     //connect UI signals
     connect(headland_designer_instance,SIGNAL(load()),this,SLOT(load_headline()));
+    connect(headland_designer_instance,SIGNAL(close()),this,SLOT(FormHeadLine_FormClosing()));
     connect(headland_designer_instance,SIGNAL(update_lines()),this,SLOT(update_lines()));
     connect(headland_designer_instance,SIGNAL(mouseClicked(int, int)),this,SLOT(clicked(int,int)));
     connect(headland_designer_instance,SIGNAL(slice()),this,SLOT(btnSlice_Click()));
@@ -443,6 +444,22 @@ void FormHeadland::update_headland() {
         }
     }
     headland_designer_instance->setProperty("headlandLine", line);
+}
+
+void FormHeadland::FormHeadLine_FormClosing()
+{
+    //hdl
+    if (hdl->idx == -1)
+    {
+        isBtnAutoSteerOn = false;
+        isYouTurnBtnOn = false;
+    }
+
+    if (sliceArr.count() > 0)
+    {
+        hdl->idx = 0;
+    }
+    else hdl->idx = -1;
 }
 
 void FormHeadland::clicked(int mouseX, int mouseY) {
