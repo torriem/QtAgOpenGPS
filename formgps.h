@@ -43,7 +43,8 @@
 #include "cguidance.h"
 #include "cheadline.h"
 #include "cpgn.h"
-#include "aogiface_property.h"
+
+#include "formheadland.h"
 
 //forward declare classes referred to below, to break circular
 //references in the code
@@ -144,8 +145,8 @@ public:
     bool /*isJobStarted = false,*/ isAreaOnRight = true /*, isAutoSteerBtnOn = false*/;
 
     //this bool actually lives in the QML aog object.
-    AOGIFace_Property<bool> isJobStarted = AOGIFace_Property<bool>("isJobStarted");
-    AOGIFace_Property<bool> isAutoSteerBtnOn = AOGIFace_Property<bool>("isAutoSteerBtnOn");
+    InterfaceProperty<AOGInterface,bool> isJobStarted = InterfaceProperty<AOGInterface,bool>("isJobStarted");
+    InterfaceProperty<AOGInterface,bool> isAutoSteerBtnOn = InterfaceProperty<AOGInterface,bool>("isAutoSteerBtnOn");
 
     //if we are saving a file
     bool isSavingFile = false, isLogElevation = false;
@@ -254,10 +255,8 @@ public:
     //master Manual and Auto, 3 states possible
     //btnStates manualBtnState = btnStates::Off;
     //btnStates autoBtnState = btnStates::Off;
-    AOGIFace_Property<btnStates> manualBtnState = AOGIFace_Property<btnStates>("manualBtnState");
-    AOGIFace_Property<btnStates> autoBtnState = AOGIFace_Property<btnStates>("manualBtnState");
-
-    void FixPanelsAndMenus();
+    InterfaceProperty<AOGInterface,btnStates> manualBtnState = InterfaceProperty<AOGInterface,btnStates>("manualBtnState");
+    InterfaceProperty<AOGInterface,btnStates> autoBtnState = InterfaceProperty<AOGInterface,btnStates>("manualBtnState");
 
 private:
 public:
@@ -327,6 +326,8 @@ public:
     CFieldData fd;
 
     CHeadLine hdl;
+
+    FormHeadland headland_form;
 
     /*
      * PGNs *
@@ -467,6 +468,8 @@ public:
 
     int minSteerSpeedTimer = 0;
 
+    InterfaceProperty<BoundaryInterface,bool> isOutOfBounds = InterfaceProperty<BoundaryInterface,bool>("isOutOfBounds");
+
     void UpdateFixPosition(); //process a new position
     void TheRest();
     void CalculatePositionHeading(); // compute all headings and fixes
@@ -494,7 +497,8 @@ public:
     void FileLoadCurveLines();
     void FileSaveABLines();
     void FileLoadABLines();
-    bool FileOpenField(QString fieldDir);
+    bool FileOpenField(QString fieldDir, int flags = -1);
+    QMap<QString, QVariant> FileFieldInfo(QString fieldDir);
     void FileCreateField();
     void FileCreateElevation();
     void FileSaveSections();
@@ -633,7 +637,7 @@ public:
     QString speedMPH();
     QString speedKPH();
 
-    void jobNew();
+    void JobNew();
     void JobClose();
 
     /******************************
@@ -658,9 +662,6 @@ public slots:
     void tmrWatchdog_timeout();
     void processSectionLookahead(); //called when section lookahead GL stuff is rendered
 
-    void onGLControl_clicked(const QVariant &event);
-    void onGLControl_dragged(int startX, int startY, int mouseX, int mouseY);
-
     void TimedMessageBox(int timeout, QString s1, QString s2);
 
     //AB Lines in GUI. TODO: rename these, make them consistent
@@ -684,6 +685,36 @@ public slots:
     void vehicle_delete(QString vehicle_name);
     void vehicle_update_list();
 
+
+    //field callbacks
+    void field_update_list();
+    void field_close();
+    void field_open(QString field_name);
+    void field_new(QString field_name);
+    void field_new_from(QString existing, QString field_name, int flags);
+    void field_delete(QString field_name);
+
+    //modules ui callback
+    void modules_send_238();
+
+    //boundary UI for recording new boundary
+    void boundary_calculate_area();
+    void boundary_update_list();
+    void boundary_start();
+    void boundary_stop();
+    void boundary_add_point();
+    void boundary_delete_last_point();
+    void boundary_pause();
+    void boundary_record();
+    void boundary_restart();
+    void boundary_delete(int which_boundary);
+    void boundary_set_drivethru(int which_boundary, bool drive_through);
+    void boundary_delete_all();
+
+    void headland_save();
+
+    //headland creation
+
     //left column
     void onBtnAcres_clicked();
     void onBtnSettings_clicked();
@@ -695,7 +726,6 @@ public slots:
     void onBtnToggleAB_clicked();
     void onBtnToggleABBack_clicked();
     void onBtnAutoYouTurn_clicked();
-    void onBtnAutoSteer_clicked();
     void onBtnContourPriority_clicked();
     //bottom row
     void onBtnResetTool_clicked();
@@ -725,8 +755,8 @@ public slots:
     void swapDirection();
     void turnOffBoundAlarm();
 
-    void onBtnManUTurn_clicked(bool right);
-    void onBtnLateral_clicked(bool right);
+    void onBtnManUTurn_clicked(bool right); //TODO add the skip number as a parameter
+    void onBtnLateral_clicked(bool right); //TODO add the skip number as a parameter
 
     /***************************
      * from OpenGL.Designer.cs *
@@ -735,6 +765,8 @@ public slots:
     void openGLControl_Initialized();
     void openGLControl_Shutdown();
     //void openGLControl_Resize();
+    void onGLControl_clicked(const QVariant &event);
+    void onGLControl_dragged(int startX, int startY, int mouseX, int mouseY);
 
     void oglBack_Paint();
     void openGLControlBack_Initialized();
@@ -744,13 +776,6 @@ public slots:
      * formgps_udpcomm.cpp
      ***/
     void ReceiveFromAgIO(); // in slots below
-
-
-    /*
-     * From Position.Designer.cs
-     */
-    //moved to public slots
-    //void processSectionLookahead(); //called when section lookahead GL stuff is rendered
 
     /*******************
      * simulator       *

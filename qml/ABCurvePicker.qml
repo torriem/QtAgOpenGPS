@@ -18,7 +18,7 @@ Dialog {
     signal deleteCurve(int lineno)
 
     Connections {
-        target: aog
+        target: linesInterface
         function onAbCurvesListChanged() {
             abCurvePickerDialog.reloadModel()
         }
@@ -26,8 +26,8 @@ Dialog {
 
     function reloadModel() {
         abcurveModel.clear()
-        for( var i = 0; i < aog.abCurvesList.length ; i++ ) {
-            abcurveModel.append(aog.abCurvesList[i])
+        for( var i = 0; i < linesInterface.abCurvesList.length ; i++ ) {
+            abcurveModel.append(linesInterface.abCurvesList[i])
         }
         if (aog.currentABCurve >-1){
             abcurveView.currentIndex = aog.currentABCurve
@@ -44,7 +44,7 @@ Dialog {
         //preselect first AB line if none was in use before
         //to make it faster for user
         if (abcurveView.currentIndex < 0)
-            if (aog.abCurvesList.length > 0)
+            if (linesInterface.abCurvesList.length > 0)
                 abcurveView.currentIndex = 0
     }
 

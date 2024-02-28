@@ -13,48 +13,27 @@ Rectangle{
     color: "ghostwhite"
     visible: false
     Image{
+        id: image1
         source: "/images/ToolHitchPageTrailing.png"
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottom: parent.bottom
+        anchors.top: parent.top
         anchors.margins: 15
         height: parent.height*.75
-        SpinBoxCM{
-            id: toolTrailingHitchLength
-            anchors.bottom: parent.top
-            anchors.right: parent.right
-            anchors.rightMargin: 500
-            from: 10
-            to:3000
-            value: -Number(settings.setTool_toolTrailingHitchLength)
-            onValueModified: settings.setTool_toolTrailingHitchLength = -value
-            Connections {
-                target: settings
-                function onSetTool_toolTrailingHitchLengthChanged(){
-                    toolTrailingHitchLength.setValue(-Number(settings.setTool_toolTrailingHitchLength))
-                }
-            }
+    }
+    SpinBoxCM{
+        id: toolTrailingHitchLength
+        anchors.top: image1.bottom
+        anchors.right: parent.right
+        anchors.rightMargin: 400
+        from: 10
+        to:3000
+        boundValue: -settings.setTool_toolTrailingHitchLength
+        onValueModified: settings.setTool_toolTrailingHitchLength = -value
+        TextLine{
+            text: qsTr("Units: ")+ utils.cm_unit_abbrev()
+            font.bold: true
+            anchors.top: parent.bottom
         }
-        SpinBoxCM{
-            id: hitchLength
-            anchors.bottom: parent.top
-            anchors.right: parent.right
-            anchors.rightMargin: 50
-            from: 10
-            to:3000
-            value: Number(settings.setVehicle_hitchLength) < 0 ? -Number(settings.setVehicle_hitchLength) : Number(settings.setVehicle_hitchLength)
-            onValueModified: settings.setVehicle_hitchLength = -value
-            Connections {
-                target: settings
-                function onSetVehicle_hitchLengthChanged(){
-                    //if the implement type was recently switched from front to rear, the sign of the hitchLength
-                    //will be wrong, so make it positive for the GUI
-                    if (Number(settings.setVehicle_hitchLength) > 0)
-                        hitchLength.setValue(Number(settings.setVehicle_hitchLength))
-                    else
-                        hitchLength.setValue(-Number(settings.setVehicle_hitchLength))
-                }
-            }
-         }
     }
 }

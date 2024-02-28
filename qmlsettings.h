@@ -15,10 +15,11 @@ class QMLSettings : public QQmlPropertyMap
 public:
     QMap<QString, QString> qml_to_settings_map; //map of qml property keys to settings path keys
     QMap<QString, QString> settings_to_qml_map; //map of qml property keys to settings path keys
+    QMap<QString, QString> settings_type_map; //map of qml property keys to settings path keys
 
     QMLSettings(QObject *parent = 0);
 
-    void addKey(QString qml_key, QString settings_key);
+    void addKey(QString qml_key, QString settings_key, QString type_name);
     void setupKeys();
 
     void loadSettings();

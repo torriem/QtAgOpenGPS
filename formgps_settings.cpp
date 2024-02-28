@@ -148,7 +148,8 @@ void FormGPS::loadSettings()
     ahrs.loadSettings();
     camera.loadSettings();
     pn.loadSettings();
-    sim.loadSettings();
+    if(!isJobStarted)
+        sim.loadSettings();
     vehicle.loadSettings();
     yt.loadSettings();
 }

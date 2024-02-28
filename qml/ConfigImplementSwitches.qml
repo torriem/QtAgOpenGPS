@@ -35,24 +35,38 @@ Rectangle{
 			IconButtonTextBeside{
 				icon.source: "/images/HydraulicLiftOff.png"
 				objectName: "btnWorkSwitch"
-                checked: settings.setF_isRemoteWorkSystemOn
+                checkable: true
+                isChecked: settings.setF_isRemoteWorkSystemOn
                 onCheckedChanged: settings.setF_isRemoteWorkSystemOn = checked
 				text: qsTr("Work Switch")
 			}
-			IconButtonTextBeside{
+
+            ButtonGroup {
+                buttons: [workSwitchMan, workSwitchAuto ]
+            }
+
+            IconButtonTextBeside{
+                id: workSwitchMan
 				icon.source: "/images/ManualOff.png"
 				objectName: "btnWorkSwitchManual"
-                checked: settings.setF_isWorkSwitchManualSections
-                onCheckedChanged: settings.setF_isWorkSwitchManualSections
+                checkable: true
+                enabled: settings.setF_isRemoteWorkSystemOn
+                isChecked: settings.setF_isWorkSwitchManualSections
+                onCheckedChanged: settings.setF_isWorkSwitchManualSections = checked
 				text: qsTr("Manual Sections")
 			}
 
-			IconButtonTextBeside{
-				objectName: "btnWorkSwitchAuto"
+            IconButtonTextBeside{
+                id: workSwitchAuto
+                objectName: "btnWorkSwitchAuto"
 				icon.source: "/images/SectionMasterOff.png"
-                checked: !settings.setF_isWorkSwitchManualSections
+                checkable: true
+                enabled: settings.setF_isRemoteWorkSystemOn
+                isChecked: !settings.setF_isWorkSwitchManualSections
+                onCheckedChanged: settings.setF_isWorkSwitchManualSections = !checked
 				text: qsTr("Auto Sections")
 			}
+
 			IconButton{
 				implicitWidth: 270
 				implicitHeight: 80
@@ -64,11 +78,13 @@ Rectangle{
 				colorChecked1: "green"
 				colorChecked2: "green"
 				colorChecked3: "green"
-                checked: settings.setF_isWorkSwitchActiveLow
+                checkable: true
+                isChecked: settings.setF_isWorkSwitchActiveLow
                 onCheckedChanged: settings.setF_isWorkSwitchActiveLow = checked
 			}
 		}
 	}
+
 	Rectangle{
 		anchors.right:  parent.right
 		anchors.bottom: parent.bottom
@@ -92,22 +108,34 @@ Rectangle{
 			anchors.margins: 15
 			IconButtonTextBeside{
 				objectName: "btnSteerSwitch"
-                checked: settings.setF_isSteerWorkSwitchEnabled
-                onCheckedChanged: settings.setF_isSteerWorkSwitchEnabled
+                isChecked: settings.setF_isSteerWorkSwitchEnabled
+                onCheckedChanged: settings.setF_isSteerWorkSwitchEnabled = checked
+                checkable: true
 				text: qsTr("Steer Switch")
 				icon.source: "/images/AutoSteerOff.png"
 			}
-			IconButtonTextBeside{
+
+            ButtonGroup {
+                buttons: [steerSwitchMan, steerSwitchAuto ]
+            }
+
+            IconButtonTextBeside{
+                id: steerSwitchMan
 				objectName: "btnSteerSwitchManual"
-                checked: settings.setF_isSteerWorkSwitchManualSections
+                isChecked: settings.setF_isSteerWorkSwitchManualSections
                 onCheckedChanged: settings.setF_isSteerWorkSwitchManualSections = checked
+                enabled: settings.setF_isSteerWorkSwitchEnabled
+                checkable: true
 				text: qsTr("Manual Sections")
 				icon.source: "/images/ManualOff.png"
 			}
 			IconButtonTextBeside{
+                id: steerSwitchAuto
 				objectName: "btnSteerSwitchAuto"
-                checked: !settings.setF_isSteerWorkSwitchManualSections
-				text: qsTr("Auto Sections")
+                isChecked: !settings.setF_isSteerWorkSwitchManualSections
+                onCheckedChanged: settings.setF_isSteerWorkSwitchManualSections = !checked
+                enabled: settings.setF_isSteerWorkSwitchEnabled
+                text: qsTr("Auto Sections")
 				icon.source: "/images/SectionMasterOff.png"
 			}
 		}

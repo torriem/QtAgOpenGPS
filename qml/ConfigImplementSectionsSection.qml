@@ -269,7 +269,7 @@ Item{
 
                 id: spinner
                 from: 3
-                to: 300
+                to: 7000
                 editable: true
                 value: model.width
                 onValueModified: {
@@ -293,22 +293,16 @@ Item{
             implicitWidth: 150
             implicitHeight: 50
             from: 10
-            value: Number(settings.setTool_defaultSectionWidth)
-            to: 1000
+            boundValue: settings.setTool_defaultSectionWidth
+            to: 7000
             editable: true
             text: qsTr("Default Section Width")
             onValueModified: settings.setTool_defaultSectionWidth = value
-            Connections {
-                target: settings
-                function onSetTool_defaultSectionWidthChanged(){
-                    defaultSectionWidth.setValue(Number(settings.setTool_defaultSectionWidth))
-                }
-            }
         }
 
         ComboBox{
             id: numOfSections
-            currentIndex: Number(settings.setVehicle_numSections) - 1
+            currentIndex: settings.setVehicle_numSections - 1
 
             onActivated: function(which) {
                 which += 1

@@ -13,64 +13,38 @@ Rectangle{
     color: "ghostwhite"
     visible: false
     Image{
+        id: image1
         source: "/images/ToolHitchPageTBT.png"
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottom: parent.bottom
+        anchors.top: parent.top
         anchors.margins: 15
         height: parent.height*.75
         SpinBoxCM{
             id: toolTrailingHitchLength
-            anchors.bottom: parent.top
-            anchors.right: parent.right
-            anchors.rightMargin: parent.width * 0.70
+            anchors.top: parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.rightMargin: 80
             from: 10
             to:3000
-            value: -Number(settings.setTool_toolTrailingHitchLength)
+            boundValue: -settings.setTool_toolTrailingHitchLength
             onValueModified: settings.setTool_toolTrailingHitchLength = -value
-            Connections {
-                target: settings
-                function onSetTool_toolTrailingHitchLengthChanged(){
-                    toolTrailingHitchLength.setValue(-Number(settings.setTool_toolTrailingHitchLength))
-                }
-            }
         }
         SpinBoxCM{
             id: toolTBTHitchLength
-            anchors.bottom: parent.top
+            anchors.top: parent.bottom
             anchors.right: parent.right
-            anchors.rightMargin: parent.width * 0.35
+            anchors.rightMargin: 130
             from: 10
             to:3000
-            value: -Number(settings.setVehicle_tankTrailingHitchLength)
+            boundValue: -settings.setVehicle_tankTrailingHitchLength
             onValueModified: settings.setVehicle_tankTrailingHitchLength = -value
-            Connections {
-                target: settings
-                function onSetVehicle_tankTrailingHitchLengthChanged() {
-                    toolTBTHitchLength.setValue(-Number(settings.setVehicle_tankTrailingHitchLength))
-                }
-            }
-        }
-        SpinBoxCM{
-            id: hitchLength
-            anchors.bottom: parent.top
-            anchors.right: parent.right
-            anchors.rightMargin: parent.width * 0.07
-            from: 10
-            to:3000
-            value: Number(settings.setVehicle_hitchLength) < 0 ? -Number(settings.setVehicle_hitchLength) : Number(settings.setVehicle_hitchLength)
-            onValueModified: settings.setVehicle_hitchLength = -value
-            Connections {
-                target: settings
-                function onSetVehicle_hitchLengthChanged(){
-                    //if the implement type was recently switched from front to rear, the sign of the hitchLength
-                    //will be wrong, so make it positive for the GUI
-                    if (Number(settings.setVehicle_hitchLength) > 0)
-                        hitchLength.setValue(Number(settings.setVehicle_hitchLength))
-                    else
-                        hitchLength.setValue(-Number(settings.setVehicle_hitchLength))
-                }
-            }
         }
     }
+        TextLine{
+            text: qsTr("Units: ")+ utils.cm_unit_abbrev()
+            font.bold: true
+            anchors.top: image1.bottom
+            anchors.topMargin: toolTrailingHitchLength.height + 15
+        }
 }

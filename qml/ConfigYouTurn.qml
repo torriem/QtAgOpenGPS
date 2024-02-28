@@ -40,62 +40,62 @@ Item {
                 height: 150
                 width: 150
             }
-            SpinBoxTwoDecimal{
+            SpinBoxOneDecimal{
                 objectName: "UturnRadius"
-                from: 2
-                value: settings.set_youTurnRadius
-                onValueChanged: settings.set_youTurnRadius = value
-                to:100
+                from: utils.m_to_unit(2)
+                boundValue: utils.m_to_unit(settings.set_youTurnRadius)
+                stepSize: settings.setMenu_isMetric ?  1 : 5
+                onValueChanged: settings.set_youTurnRadius = utils.m_from_unit(value)
+                to: utils.m_to_unit(100)
                 editable: true
             }
-            SpinBoxTwoDecimal{
+            SpinBoxOneDecimal{
                 objectName: "UturnDistance"
                 from: 0
-                value: settings.set_youTurnDistanceFromBoundary
-                onValueChanged: settings.set_youTurnDistanceFromBoundary = value
-                to:100
+                boundValue: utils.m_to_unit(settings.set_youTurnDistanceFromBoundary)
+                stepSize: settings.setMenu_isMetric ?  1 : 5
+                onValueChanged: settings.set_youTurnDistanceFromBoundary = utils.m_from_unit(value)
+                to: utils.m_to_unit(100)
                 editable: true
             }
-            SpinBoxCustomized{
+            SpinBoxM{
                 objectName: "UturnExtensionLength"
                 from: 3
-                value: settings.set_youTurnExtensionLength
+                boundValue: settings.set_youTurnExtensionLength
                 onValueChanged: settings.set_youTurnExtensionLength = value
                 to:50
                 editable: true
             }
-            SpinBoxCustomized{
+            SpinBoxM{
                 objectName: "UturnSmoothing"
                 from: 8
-                value: settings.setAS_uTurnSmoothing
+                boundValue: settings.setAS_uTurnSmoothing
                 onValueChanged: settings.setAS_uTurnSmoothing = value
                 to:50
                 editable: true
             }
             Text{
-                text: qsTr("ft")
+                text: utils.m_unit()
                 font.bold: true
             }
             Text{
-                text: qsTr("ft")
+                text: utils.m_unit()
                 font.bold: true
             }
             Text{
-                text: qsTr("ft
-Set Extension
+                text: utils.m_unit() + " \n" + qsTr("Set Extension
 Length to 2 or
 3x Radius")
                 font.bold: true
             }
             Text{
-                text: qsTr("ft
-Set Smoothing
+                text: utils.m_unit() + " \n" + qsTr("Set Smoothing
  to 3 or 4x
 Radius")
                 font.bold: true
             }
         }
-        Rectangle{
+        TitleFrame{
             id: uturnStyle
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 10
@@ -121,17 +121,23 @@ Radius")
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 5
                 spacing: 20
+                ButtonGroup {
+                    buttons: [uTurnUBtn, uTurnHBtn]
+                }
+
                 IconButtonColor{
-                    icon.source: "/images/YouTurnNo.png"
-                    //onClick: childUturn.color = "green"
-                    /* background:Rectangle{
-                    id: childUturn
-                    color: "white"
-                    border.color: black
-                }*/
+                    id: uTurnUBtn
+                    icon.source: "/images/YouTurnU.png"
+                    checkable: true
+                    isChecked: settings.set_uTurnStyle === 0
+                    onClicked: settings.set_uTurnStyle = 1
                 }
                 IconButtonColor{
+                    id: uTurnHBtn
+                    checkable: true
                     icon.source: "/images/YouTurnH.png"
+                    isChecked: settings.set_uTurnStyle === 1
+                    onClicked: settings.set_uTurnStyle = 1
                 }
             }
         }

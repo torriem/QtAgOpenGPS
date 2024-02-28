@@ -2,7 +2,6 @@ import QtQuick 2.7
 import QtQuick.Controls 2.5
 import QtGraphicalEffects 1.0
 
-
 Button {
     implicitWidth: 120
     implicitHeight: 65
@@ -14,19 +13,26 @@ Button {
     icon.color: "transparent"
 
     property double iconHeightScaleText: 0.75
-    property int border: 2
 
-    property color color1: "white"
-    property color color2: "#ffffff"
-    property color color3: "#ffffff"
+    property alias border: icon_button_background.border
+    property alias radius: icon_button_background.radius
+
+    property color borderColorEnabled: "black"
+    property color borderColorDisabled: "grey"
+
+    property color color1: color //redneck code
+    property color color2: color
+    property color color3: color
 
     property color colorHover1: "white"
     property color colorHover2: "white"
     property color colorHover3: "white"
 
-    property color colorChecked1: "green"
-    property color colorChecked2: "green"
-    property color colorChecked3: "green"
+    property color colorChecked1: colorChecked
+    property color colorChecked2: colorChecked
+    property color colorChecked3: colorChecked
+    property color color: "white"
+    property color colorChecked: "green"
 
 
     //For compatibility with the old IconButton and friends
@@ -42,8 +48,6 @@ Button {
 
     //This is specific to this base type... must be re-implemented in subtypes
     onCheckedChanged: {
-        isChecked = checked
-
         if (checked && useIconChecked) {
             content_image.source = iconChecked
             //console.warn("icon should be ", content_image.source)
@@ -51,7 +55,6 @@ Button {
             content_image.source = icon.source
             //console.warn("icon should be ", content_image.source)
         }
-
     }
 
     property url iconChecked: ""
@@ -80,17 +83,7 @@ Button {
         id: icon_button_content
         anchors.fill: parent
         color: "transparent"
-
-        Text {
-            id: text1
-            text: icon_button.text
-            anchors.bottom: parent.top
-            anchors.left: parent.left
-            font.bold: true
-            font.pixelSize: parent.height * 0.2
-            z: 1
-            visible: true
-        }
+        z: 1
 
         Image {
             id: content_image
@@ -99,6 +92,7 @@ Button {
             anchors.margins: 10
             fillMode: Image.PreserveAspectFit
             source: icon_button.icon.source
+            z:1
         }
 
         Colorize {
@@ -111,14 +105,27 @@ Button {
             visible: ! icon_button.enabled
         }
 
-
+        Text {
+            id: text1
+            text: icon_button.text
+            anchors.bottom: parent.top
+            anchors.left: parent.left
+            font.bold: true
+            font.pixelSize: 15
+            //font.pixelSize: parent.height * 0.2
+            visible: true
+        }
     }
 
     background: Rectangle {
-        border.width: icon_button.border
+        border.width: 1
         //border.width: icon_button.border
+        border.color: icon_button.enabled ?
+                          icon_button.borderColorEnabled :
+                          icon_button.borderColorDisabled
         radius: 10
         id: icon_button_background
+        z: 0
         gradient: Gradient {
             GradientStop {
                 id: gradientStop1
@@ -145,26 +152,28 @@ Button {
                 name: "pressedUnchecked"
                 PropertyChanges {
                     target: gradientStop1
-                    color: icon_button.color3
+                    //color: icon_button.color3
+                    color: icon_button.colorChecked1
                 }
                 PropertyChanges {
                     target: gradientStop2
-                    color: icon_button.color3
+                    //color: icon_button.color3
+                    color: icon_button.colorChecked2
                 }
                 PropertyChanges {
                     target: gradientStop3
-                    color: icon_button.color1
+                    //color: icon_button.color1
+                    color: icon_button.colorChecked3
                 }
                /* PropertyChanges {
                     target: icon_button_background
                     border.width: 5
                 }*/
-                /*
+
                 PropertyChanges {
                     target: content_image
                     source: icon_button.icon.source
                 }
-                */
 
             },
             State {
@@ -188,7 +197,7 @@ Button {
                 }*/
                 PropertyChanges {
                     target: content_image
-                    source: icon_button.icon.source
+                    source: icon_button.iconChecked != "" ? icon_button.iconChecked : icon_button.icon.source
                 }
             },
             State {
@@ -210,12 +219,12 @@ Button {
                     target: icon_button_background
                     border.width: 0
                 }*/
-                /*
+
                 PropertyChanges {
                     target: content_image
-                    source: (icon_button.iconChecked ? icon_button.iconChecked : icon_button.icon.source)
+                    source: icon_button.iconChecked != "" ? icon_button.iconChecked : icon_button.icon.source
                 }
-                */
+
             },
             State {
                 when: ! icon_button.down && ! icon_button.checked && ! icon_button.hovered
@@ -236,12 +245,10 @@ Button {
                     target: icon_button_background
                     border.width: 0
                 }*/
-                /*
                 PropertyChanges {
                     target: content_image
                     source: icon_button.icon.source
                 }
-                */
            },
             State {
                 when: icon_button.hovered
@@ -262,174 +269,13 @@ Button {
                     target: gradientStop3
                     color: icon_button.colorHover3
                 }
-                /*
                 PropertyChanges {
                     target: content_image
                     source: icon_button.icon.source
                 }
-                */
             }
         ]
 
 
     }
 }
-
-//Rectangle {
-//    id: iconButtonColor
-//    x: 0
-//    y: 0
-//    width: 120
-//    height: 65
-
-//    property color color1: "#ffffff"
-//    property color color2: "#ffffff"
-//    property color color3: "#ffffff"
-//    property url icon: "/images/AutoSteerOn.png"
-//    property int bordersize: 3
-//    property bool checkable: true
-//    property color colorChecked1: "green"
-//    property color colorChecked2: "green"
-//    property color colorChecked3: "green"
-//    property string buttonText: ""
-//    property string leftText: ""
-//    property string rightText: ""
-
-//    property bool isChecked: false
-
-//    onIsCheckedChanged: {
-//        if (isChecked) {
-//            gradientStop1.color = colorChecked1
-//            gradientStop2.color = colorChecked2
-//            gradientStop3.color = colorChecked3
-//            //image.source = iconChecked
-//        } else {
-//            gradientStop1.color = color1
-//            gradientStop2.color = color2
-//            gradientStop3.color = color3
-//            //image.source = icon
-//        }
-//    }
-
-//    states: [
-//        State {
-//            when: mouseArea.pressed && !isChecked
-//            name: "pressedUnchecked"
-//            PropertyChanges {
-//                target: gradientStop1
-//                color: color3
-//            }
-//            PropertyChanges {
-//                target: gradientStop2
-//                color: color3
-//            }
-//            PropertyChanges {
-//                target: gradientStop3
-//                color: color1
-//            }
-//            PropertyChanges {
-//                target: iconButtonColor
-//                bordersize: 1
-//            }
-//        },
-//        State {
-//            when: mouseArea.pressed && isChecked
-//            name: "pressedChecked"
-//            PropertyChanges {
-//                target: gradientStop1
-//                color: colorChecked3
-//            }
-//            PropertyChanges {
-//                target: gradientStop2
-//                color: colorChecked3
-//            }
-//            PropertyChanges {
-//                target: gradientStop3
-//                color: colorChecked1
-//            }
-//            PropertyChanges {
-//                target: iconButtonColor
-//                bordersize: 1
-//            }
-//        },
-
-//        State {
-//            when: mouseArea.containsMouse
-//            name: "hover"
-//            PropertyChanges { target: iconButtonColor; bordersize: 1}
-//        }
-//    ]
-
-//    signal clicked
-//    signal pressAndHold
-
-//    gradient: Gradient {
-//        GradientStop {
-//            id: gradientStop1
-//            position: 0
-//            color: iconButtonColor.color1
-//        }
-
-//        GradientStop {
-//            id: gradientStop2
-//            position: 0.5
-//            color: iconButtonColor.color2
-//        }
-
-//        GradientStop {
-//            id: gradientStop3
-//            position: 1
-//            color: iconButtonColor.color3
-//        }
-//    }
-//    border.width: bordersize
-//    Text {
-//        id: text1
-//        text: parent.buttonText
-//        anchors.bottom: parent.top
-//        anchors.bottomMargin: 5
-//        anchors.left: parent.left
-//        font.bold: true
-//        font.pixelSize: parent.height * 0.15
-//        //z: 1
-//    }
-
-//    Image {
-//        id: image
-//        //x: 50
-//        //y: 13
-//        width: parent.width
-//        //height: parent.height
-//        anchors.fill: parent
-//        anchors.topMargin: parent.height * 0.05
-//        anchors.bottomMargin: parent.height * 0.05
-//        anchors.leftMargin: parent.width * 0.05
-//        anchors.rightMargin: parent.width * 0.05
-//        fillMode: Image.PreserveAspectFit
-//        source: parent.icon
-//    }
-
-//    MouseArea {
-//        id: mouseArea
-//        hoverEnabled: true
-//        anchors.fill: parent
-
-//        onClicked:{
-//            parent.clicked(mouse);
-//        }
-//        onPressAndHold: {
-//            parent.pressAndHold();
-//        }
-//    }
-
-//    Colorize {
-//        id: disableFilter
-//        anchors.fill:image
-//        source: image
-//        hue: 0.0
-//        saturation: 0.0
-//        lightness: 0.2
-//        visible: !parent.enabled
-//    }
-
-//}

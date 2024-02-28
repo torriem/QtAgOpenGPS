@@ -474,7 +474,7 @@
         <file>images/BackSpace.png</file>
         <file>qml/FieldNew.qml</file>
         <file>qml/FieldFromKML.qml</file>
-        <file>qml/BoundaryMenu.qml</file>
+        <file>qml/boundary/BoundaryMenu.qml</file>
         <file>qml/LineDrawer.qml</file>
         <file>qml/TopLine.qml</file>
         <file>images/Images/VehicleOpacity.png</file>
@@ -531,8 +531,68 @@
         <file>qml/LightBar.qml</file>
         <file>qml/OutlineText.qml</file>
         <file>qml/TrackNum.qml</file>
+        <file>qml/DisplayButtons.qml</file>
         <file>qml/ConfigImplementFrontDimensions.qml</file>
         <file>qml/ConfigImplementRearDimensions.qml</file>
         <file>qml/ConfigImplementTBTDimensions.qml</file>
+        <file>qml/StartUp.qml</file>
+        <file>qml/FieldData.qml</file>
+        <file>qml/SimController.qml</file>
+        <file>qml/TextLine.qml</file>
+        <file>qml/GPSData.qml</file>
+        <file>images/FieldStats.png</file>
+        <file>images/TrackOn.png</file>
+        <file>images/GPSQuality.png</file>
+        <file>qml/FieldTable.qml</file>
+        <file>qml/TimedRectangle.qml</file>
+        <file>qml/TrackButtons.qml</file>
+        <file>images/ABSnapNudgeMenu.png</file>
+        <file>images/ABSnapNudgeMenuRef.png</file>
+        <file>images/AutoSteerSnapToPivot.png</file>
+        <file>images/ABTracks.png</file>
+        <file>images/ABDraw.png</file>
+        <file>images/Config/Con_Display.png</file>
+        <file>qml/ConfigDisplay.qml</file>
+        <file>qml/SpinBoxKM.qml</file>
+        <file>qml/interfaces/FieldInterface.qml</file>
+        <file>qml/interfaces/VehicleInterface.qml</file>
+        <file>qml/interfaces/LinesInterface.qml</file>
+        <file>qml/TitleFrame.qml</file>
+        <file>qml/SpinBoxM.qml</file>
+        <file>qml/ConfigImplementOffset.qml</file>
+        <file>qml/ConfigImplementAxle.qml</file>
+        <file>images/Config/ToolOverlap.png</file>
+        <file>images/Config/ToolOffsetPositiveRight.png</file>
+        <file>images/Config/ToolOffsetNegativeLeft.png</file>
+        <file>images/Config/ToolHitchPivotOffsetPos.png</file>
+        <file>images/Config/ToolHitchPivotOffsetNeg.png</file>
+        <file>images/Config/ToolGap.png</file>
+        <file>images/Config/SectionOnLookAhead.gif</file>
+        <file>images/Config/SectionLookAheadOff.gif</file>
+        <file>images/Config/SectionLookAheadDelay.gif</file>
+        <file>images/Config/ConS_ImplementPivot.png</file>
+        <file>images/Config/ConS_ImplementOffset.png</file>
+        <file>qml/interfaces/BoundaryInterface.qml</file>
+        <file>qml/boundary/BoundaryTable.qml</file>
+        <file>qml/FieldToolsMenu.qml</file>
+        <file>qml/boundary/BoundaryRecord.qml</file>
+        <file>qml/boundary/BoundaryType.qml</file>
+        <file>images/YouTurnU.png</file>
+        <file>qml/HeadlandDesigner.qml</file>
+        <file>images/ABTrackAB.png</file>
+        <file>images/ABTrackCurve.png</file>
+        <file>images/APlusMinusA.png</file>
+        <file>images/APlusMinusB.png</file>
+        <file>images/APlusPlusA.png</file>
+        <file>images/APlusPlusB.png</file>
+        <file>images/HeadlandReset.png</file>
+        <file>images/HeadlandBuild.png</file>
+        <file>images/HeadlandSlice.png</file>
+        <file>images/HeadlandSectionOff.png</file>
+        <file>images/ZoomOGL.png</file>
+        <file>images/HeadlandSectionOn.png</file>
+        <file>qml/MoveablePopup.qml</file>
+        <file>qml/HeadAcheDesigner.qml</file>
+        <file>images/TrashApplied.png</file>
     </qresource>
 </RCC>

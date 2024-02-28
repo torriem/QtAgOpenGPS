@@ -389,10 +389,10 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
             glcolors.append(cv);
 
             cv.color = QVector4D(1.270, 1.220, 0.20, 1.0);
-            cv.vertex = QVector3D(bnd.createBndOffset, 0, 0);
+            cv.vertex = QVector3D((double)bnd.createBndOffset, 0, 0);
             glcolors.append(cv);
 
-            cv.vertex = QVector3D(bnd.createBndOffset*0.75, 0.25, 0);
+            cv.vertex = QVector3D((double)bnd.createBndOffset*0.75, 0.25, 0);
             glcolors.append(cv);
 
             glcolors.draw(gl,mvp,GL_LINE_STRIP, 2);
@@ -405,10 +405,10 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
             glcolors.append(cv);
 
             cv.color = QVector4D(1.270, 1.220, 0.20, 1.0);
-            cv.vertex = QVector3D(-bnd.createBndOffset, 0, 0);
+            cv.vertex = QVector3D(-(double)bnd.createBndOffset, 0, 0);
             glcolors.append(cv);
 
-            cv.vertex = QVector3D(-bnd.createBndOffset*0.75, 0.25, 0);
+            cv.vertex = QVector3D(-(double)bnd.createBndOffset*0.75, 0.25, 0);
             glcolors.append(cv);
 
             glcolors.draw(gl,mvp,GL_LINE_STRIP, 2);

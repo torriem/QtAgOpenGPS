@@ -89,8 +89,19 @@ QJsonObject AOGSettings::toJson()
                 if (i < list.length() -1)
                     json_value +=",";
             }
+            blah[key] = json_value;
+        } else if (type == "QPoint") {
+            QByteArray raw_value;
+            QDataStream ds(&raw_value,QIODevice::WriteOnly);
+
+            ds << b;
+
+            json_value = QLatin1String("@Variant(");
+            json_value += QString::fromLatin1(raw_value.constData(), raw_value.size());
+            json_value += ")";
+            blah[key] = json_value;
         } else {
-            json_value = b.toString();
+            blah[key] = QJsonValue::fromVariant(b);
         }
         //qDebug() << key <<", " << type << ", " << json_value;
         /*
@@ -106,7 +117,6 @@ QJsonObject AOGSettings::toJson()
         }
         */
 
-        blah[key] = json_value;
     }
 
 
@@ -155,9 +165,13 @@ bool AOGSettings::loadJson(QString filename)
 
             setValue(key,list);
         } else {
-            v = QVariant(new_value);
+            //if (key == "display/isMetric")
+            //    qDebug() << "isMetric is a problem child.";
+            v = j[key].toVariant();
             QSettings::setValue(key, v);
         }
+
+        qml_settings.updateSetting(key);
     }
 
     return true;

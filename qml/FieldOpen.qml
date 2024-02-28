@@ -1,86 +1,59 @@
-import QtQuick 2.0
-import QtQuick.Controls 2.1
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
-import Qt.labs.folderlistmodel 2.2
+import QtQuick.Controls.Material 2.15
 
-Rectangle{
+Popup {
     id:fieldOpen
-    color: "ghostwhite"
+    //color: "ghostwhite"
     visible: false
-    width: 1024
-    height: 700
-    z:3
+    width: 700
+    height: 500
+    modal: true
+
+    property int sortBy: 1
+
     Rectangle {
         id: topLine
         objectName: "topLine"
         width: parent.width
-        height: screenPixelDensity * 0.3 //.3" tall
-        color: "ghostwhite"
+        height: screenPixelDensity * 0.5 //.3" tall
+        color: "light grey"
         z: 4
+        border.color: "black"
+        border.width: 1
         Text {
-            id: field
-            text: "Field"
-            anchors.left: topLine.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: topLine.verticalCenter
-        }
-        Text {
-            id: distance
-            text: qsTr("Distance")
-            anchors.right: area.left
-            anchors.verticalCenter: topLine.verticalCenter
-            anchors.rightMargin: 100
-        }
-        Text {
-            id: area
-            text: qsTr("Area")
-            anchors.right: parent.right
-            anchors.verticalCenter: topLine.verticalCenter
-            anchors.rightMargin: 30
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            text: "Open Field"
+            font.pointSize: 20
         }
     }
-    ListView {
+    FieldTable {
+        id: fieldTable
         anchors.top: topLine.bottom
         anchors.bottom: grid3.top
         width:parent.width - 10
         anchors.left: parent.left
+        anchors.topMargin: 10
         anchors.leftMargin: 5
-        property Component mycomponent: fileName
-        model :FolderListModel{
-            id: fieldList
-            showDirs: true
-            showFiles: false
-            folder: "file:/home/davidwedel/Documents/QtAgOpenGPS/Fields/"
+        anchors.rightMargin: 15
+        anchors.bottomMargin: 10
+
+        sortBy: fieldOpen.sortBy
+
+        anchors.right: topLine.right
+        ScrollBar.vertical: ScrollBar {
+            id: scrollbar
+            anchors.left: fieldOpen.right
+            anchors.rightMargin: 10
+            width: 10
+            policy: ScrollBar.AlwaysOn
+            active: true
+            contentItem.opacity: 1
         }
 
-        delegate: RadioButton{
-            id: control
-            indicator: Rectangle{
-                border.width: 1
-                border.color: "black"
-                anchors.fill: parent
-                color: "lightgray"
-                Rectangle{
-                    anchors.fill: parent
-                    anchors.margins: 1
-                    color: control.down ? "white" : "blue"
-                    visible: control.checked
-                }
-            }
 
-            width:parent.width
-            height:50
-            Text{
-                anchors.left: parent.left
-                anchors.leftMargin: 2
-                anchors.verticalCenter: parent.verticalCenter
-                text: fileName
-                font.pixelSize: 25
-                font.bold: true
-                color: control.checked ? "white" : "black"
-                z: 2
-            }
-        }
     }
 
     Rectangle{
@@ -91,49 +64,74 @@ Rectangle{
         anchors.left: parent.left
         anchors.leftMargin: 5
         anchors.bottom: parent.bottom
-        color: "white"
-        Grid {
+        //color: "white"
+        color: Material.backgroundColor
+        Row {
             anchors.fill: parent
-            spacing: 60
-            flow: Grid.TopToBottom
-            rows: 1
-            columns: 4
+            spacing: 4
+            //flow: Grid.TopToBottom
+            //rows: 1
             IconButtonText {
                 id: deleteField
                 objectName: "btnDeleteField"
                 icon.source: "/images/skull.png"
                 text: "Delete Field"
-                color3: "white"
+                radius: 0
+                //color3: "white"
                 border: 1
                 height: 75
+                enabled: fieldTable.currentIndex > -1
+                onClicked: {
+                    fieldInterface.field_delete(fieldTable.currentFieldName)
+                    //backend should update the list
+                }
             }
+        }
+        Row {
+            spacing: 5
+            anchors.right: parent.right
             IconButtonText {
                 id: sort
-                objectName: "btnSort"
-                icon.source: "/images/Sort.png"
-                text: "Sort"
-                color3: "white"
-                border: 1
+                //color3: "white"
                 height: 75
+                text: "Toggle Sort"
+                radius: 0
+
+                border: 1
+                onClicked: {
+                    fieldTable.sortBy = (fieldTable.sortBy % 3) + 1
+                }
             }
+
             IconButtonText {
                 id: cancel
                 objectName: "btnCancel"
                 icon.source: "/images/Cancel64.png"
                 text: "Cancel"
-                onClicked: fieldOpen.visible = false
-                color3: "white"
+                //color3: "white"
+                radius: 0
                 border: 1
                 height: 75
+                onClicked: {
+                    fieldTable.clear_selection()
+                    fieldOpen.close()
+                }
             }
             IconButtonText {
                 id: useSelected
                 objectName: "btnUseSelected"
                 icon.source: "/images/FileOpen.png"
                 text: "Use Selected"
-                color3: "white"
+                radius: 0
+                //color3: "white"
                 border: 1
                 height: 75
+                enabled: fieldTable.currentIndex > -1
+                onClicked: {
+                    fieldInterface.field_open(fieldTable.currentFieldName)
+                    fieldTable.clear_selection()
+                    fieldOpen.close()
+                }
             }
         }
     }

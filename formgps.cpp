@@ -21,6 +21,7 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
 
     /* Temporary test data to see if drawing routines are working. */
 
+    /*
     if ((QString)property_setVehicle_vehicleName == "Default Vehicle") {
         //set up a default vehicle
 
@@ -68,13 +69,14 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
         //reload our saved settings
         vehicle_load(property_setVehicle_vehicleName);
     }
-
+    */
     setupGui();
     loadSettings();
 
     //QML does this now
     //LineUpIndividualSectionBtns();
 
+    /*
     //hard wire this on for testing
     isJobStarted = true;
     //fileCreateField();
@@ -141,11 +143,15 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
     }
     //ABLine.isABLineSet = true;
     //ABLine.isBtnABLineOn = true;
+    */
+
+    isJobStarted = false;
 
     StartLoopbackServer();
 
     simConnectSlots();
     if ((bool)property_setMenu_isSimulatorOn == false) {
+        qDebug() << "Stopping simulator because it's off in settings.";
         timerSim.stop();
     }
 }
@@ -162,7 +168,9 @@ FormGPS::~FormGPS()
 //broken out here.  So the lookaheadPixels array has been populated already
 //by the rendering routine.
 void FormGPS::processSectionLookahead() {
+    //qDebug() << "frame time before doing section lookahead " << swFrame.elapsed();
     lock.lockForWrite();
+    //qDebug() << "frame time after getting lock  " << swFrame.elapsed();
 
     if (property_displayShowBack)
         grnPixelsWindow->setPixmap(QPixmap::fromImage(grnPix.mirrored()));
@@ -698,6 +706,7 @@ void FormGPS::processSectionLookahead() {
 
     //stop the timer and calc how long it took to do calcs and draw
     frameTimeRough = swFrame.elapsed();
+    //qDebug() << "frame time after finishing section lookahead " << frameTimeRough ;
 
     if (frameTimeRough > 50) frameTimeRough = 50;
     frameTime = frameTime * 0.90 + frameTimeRough * 0.1;
@@ -713,6 +722,19 @@ void FormGPS::processSectionLookahead() {
 void FormGPS::tmrWatchdog_timeout()
 {
     //TODO: replace all this with individual timers for cleaner
+
+    if (! (bool)property_setMenu_isSimulatorOn && timerSim.isActive()) {
+        qDebug() << "Shutting down simulator.";
+        timerSim.stop();
+    } else if ( (bool)property_setMenu_isSimulatorOn && ! timerSim.isActive() ) {
+        qDebug() << "Starting up simulator.";
+        pn.latitude = sim.latitude;
+        pn.longitude = sim.longitude;
+        pn.headingTrue = 0;
+
+        timerSim.start(100); //fire simulator every 100 ms.
+        gpsHz = 10;
+    }
 
     if (++sentenceCounter > 20)
     {
@@ -1248,7 +1270,7 @@ void FormGPS::JobClose()
 
 }
 
-void FormGPS::jobNew()
+void FormGPS::JobNew()
 {
     isJobStarted = true;
     startCounter = 0;
@@ -1337,7 +1359,6 @@ void FormGPS::jobNew()
     //isPanelABHidden = false;
 
     //FieldMenuButtonEnableDisable(true);
-    FixPanelsAndMenus();
     SetZoom();
     minuteCounter = 25;
 
@@ -1347,6 +1368,13 @@ void FormGPS::jobNew()
 void FormGPS::fileSaveEverythingBeforeClosingField(QQuickCloseEvent *event)
 {
     qDebug() << "shutting down, saving field items.";
+
+    //update our settings to the vehicle as well
+    if((QString)property_setVehicle_vehicleName != "Default Vehicle") {
+        vehicle_saveas(property_setVehicle_vehicleName);
+    }
+
+    if (! isJobStarted) return;
 
     //turn off contour line if on
     if (ct.isContourOn) ct.StopContourLine(contourSaveList);
@@ -1373,7 +1401,8 @@ void FormGPS::fileSaveEverythingBeforeClosingField(QQuickCloseEvent *event)
     //ExportFieldAs_ISOXMLv3()
     //ExportFieldAs_ISOXMLv4()
 
-    property_setF_CurrentDir = currentFieldDirectory;
+    //property_setF_CurrentDir = tr("None");
+    //currentFieldDirectory = (QString)property_setF_CurrentDir;
     displayFieldName = tr("None");
 
     JobClose();

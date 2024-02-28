@@ -108,8 +108,8 @@ void CBoundary::DrawFenceLines(const CVehicle &v, const CModuleComm &mc,
         if (isDrawRightSide)
         {
             gldraw.append(QVector3D(bndBeingMadePts[0].easting, bndBeingMadePts[0].northing, 0));
-            gldraw.append(QVector3D(pivot.easting + (sin(pivot.heading - glm::PIBy2) * -createBndOffset),
-                                     pivot.northing + (cos(pivot.heading - glm::PIBy2) * -createBndOffset), 0));
+            gldraw.append(QVector3D(pivot.easting + (sin(pivot.heading - glm::PIBy2) * -(double)createBndOffset),
+                                     pivot.northing + (cos(pivot.heading - glm::PIBy2) * -(double)createBndOffset), 0));
 
             gldraw.append(QVector3D(bndBeingMadePts[bndBeingMadePts.size() - 1].easting,
                                      bndBeingMadePts[bndBeingMadePts.size() - 1].northing, 0));
@@ -117,8 +117,8 @@ void CBoundary::DrawFenceLines(const CVehicle &v, const CModuleComm &mc,
         else
         {
             gldraw.append(QVector3D(bndBeingMadePts[0].easting, bndBeingMadePts[0].northing, 0));
-            gldraw.append(QVector3D(pivot.easting + (sin(pivot.heading - glm::PIBy2) * createBndOffset),
-                                     pivot.northing + (cos(pivot.heading - glm::PIBy2) * createBndOffset), 0));
+            gldraw.append(QVector3D(pivot.easting + (sin(pivot.heading - glm::PIBy2) * (double)createBndOffset),
+                                     pivot.northing + (cos(pivot.heading - glm::PIBy2) * (double)createBndOffset), 0));
             gldraw.append(QVector3D(bndBeingMadePts[bndBeingMadePts.size() - 1].easting, bndBeingMadePts[bndBeingMadePts.size() - 1].northing, 0));
         }
         gldraw.draw(gl,mvp,QColor::fromRgbF(0.825f, 0.842f, 0.0f),

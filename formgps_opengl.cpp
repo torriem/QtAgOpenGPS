@@ -146,6 +146,8 @@ void FormGPS::oglMain_Paint()
     GLHelperOneColor gldraw1;
 
     //synchronize with the position code in the main thread
+    //if (newframe)
+    //    qDebug() << "start of new frame, waiting for lock at " << swFrame.elapsed();
     if (!lock.tryLockForRead())
         //if there's no new position to draw, just return so we don't
         //waste time redrawing.  Frame rate is at most gpsHz.  And if we
@@ -155,11 +157,14 @@ void FormGPS::oglMain_Paint()
         //will not update, which isn't what we want either.  Some kind of timeout?
      return;
 
+    //if (newframe)
+    //    qDebug() << "start of new frame render at " << swFrame.elapsed();
+
     int width = qmlItem(qml_root, "openglcontrol")->property("width").toReal();
     int height = qmlItem(qml_root, "openglcontrol")->property("height").toReal();
     double shiftX = qmlItem(qml_root,"openglcontrol")->property("shiftX").toDouble();
     double shiftY = qmlItem(qml_root,"openglcontrol")->property("shiftY").toDouble();
-    gl->glViewport(0,0,width,height);
+    //gl->glViewport(0,0,width,height);
     //qDebug() << width << height;
 
     /*
@@ -567,6 +572,8 @@ void FormGPS::oglMain_Paint()
         //if we just had a new position and updated the back buffer then
         //proecss the section lookaheads:
         QTimer::singleShot(0,this, &FormGPS::processSectionLookahead);
+        //qDebug() << "GL thread is different: " << !(QThread::currentThread() == QCoreApplication::instance()->thread());
+        //qDebug() << "end of new frame render at " << swFrame.elapsed();
     }
     newframe = false;
 }
@@ -579,11 +586,11 @@ void FormGPS::openGLControl_Initialized()
     //qmlview->resetOpenGLState();
 
     //Load all the textures
-    qDebug() << "initializing Open GL.";
+    //qDebug() << "initializing Open GL.";
     loadGLTextures();
-    qDebug() << "textures loaded.";
+    //qDebug() << "textures loaded.";
     initializeShaders();
-    qDebug() << "shaders loaded.";
+    //qDebug() << "shaders loaded.";
 
     /*
     //load shaders, memory managed by parent thread, which is in this case,
@@ -617,8 +624,8 @@ void FormGPS::openGLControl_Initialized()
 void FormGPS::openGLControl_Shutdown()
 {
 
-    qDebug() << "OpenGL shutting down... destroying buffers and shaders";
-    qDebug() << QOpenGLContext::currentContext();
+    //qDebug() << "OpenGL shutting down... destroying buffers and shaders";
+    //qDebug() << QOpenGLContext::currentContext();
     //We should have a valid OpenGL context here so we can clean up shaders and buffers
     destroyShaders();
     destroyTextures();
@@ -1398,4 +1405,5 @@ void FormGPS::calculateMinMax()
         fieldCenterY = (maxFieldY + minFieldY) / 2.0;
     }
 
+    headland_form.setFieldInfo(maxFieldDistance,fieldCenterX,fieldCenterY);
 }

@@ -8,168 +8,201 @@ Rectangle{
     anchors.fill: parent
     visible: true
     color: "ghostwhite"
-    Rectangle{
+    TitleFrame {
         id:antennaType
         width: 360
-        height: childrenRect.height+ 10
+        height: sourceRow.height + titleHeight + 10
         anchors.top: parent.top
+        anchors.margins: 5
         anchors.horizontalCenter: parent.horizontalCenter
         color: "ghostwhite"
         border.color: "black"
         visible: true
+        title: qsTr("Antenna Type", "GPS Antenna type, fixed or dual")
+        font.pointSize: 16
 
-        Text {
-            id: text
-            text: qsTr("Antenna Type")
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
         Row{
-            anchors.top: text.bottom
-            anchors.topMargin: 10
+            id: sourceRow
+            anchors.top: parent.top
+            anchors.margins: 10
+            anchors.topMargin: 25
             anchors.horizontalCenter: parent.horizontalCenter
-            height: childrenRect.height
-            width: childrenRect.width
+            height: childrenRect.height  + 25
             spacing: 10
+
+            ButtonGroup {
+                buttons: [ dualBtn, fixBtn ]
+            }
+
             IconButtonColor{
+                id: dualBtn
                 width:150
                 height:100
                 text: "Dual"
-                id: dual
-                isChecked: (settings.setGPS_headingFromWhichSource === "Dual" ? true: false)
-                onClicked: settings.setGPS_headingFromWhichSource = "Dual"
+                checkable: true
                 icon.source: "/images/Config/Con_SourcesGPSDual.png"
-                Connections{
-                    target: settings
-                    function onSetGPS_headingFromWhichSourceChanged(){
-                        if(settings.setGPS_headingFromWhichSource === "Dual"){
-                            dual.checked = true
-                            dual.checkable = false
-                        }else{
-                            dual.checked = false
-                            dual.checkable = true
-                        }
+
+                property string headingSource: settings.setGPS_headingFromWhichSource
+
+                checked: (settings.setGPS_headingFromWhichSource === "Dual" ? true: false)
+
+                onCheckedChanged: {
+                    if (checked)
+                        settings.setGPS_headingFromWhichSource = "Dual"
+                }
+
+                onHeadingSourceChanged: {
+                    if(headingSource === "Dual"){
+                        dualBtn.checked = true
+                    }else{
+                        dualBtn.checked = false
                     }
                 }
+
             }
             IconButtonColor{
+                id: fixBtn
                 width:150
                 height:100
-                id: fix
                 text: "Fix"
-                isChecked: (settings.setGPS_headingFromWhichSource === "Fix" ? true : false)
-                onClicked: settings.setGPS_headingFromWhichSource = "Fix"
+                checkable: true
                 icon.source: "/images/Config/Con_SourcesGPSSingle.png"
-                Connections{
-                    target: settings
-                    function onSetGPS_headingFromWhichSourceChanged(){
-                        if(settings.setGPS_headingFromWhichSource === "Fix"){
-                            fix.checked = true
-                            fix.checkable = false
-                        }else{
-                            fix.checked = false
-                            fix.checkable = true
-                        }
+
+                property string headingSource: settings.setGPS_headingFromWhichSource
+
+                checked: (settings.setGPS_headingFromWhichSource === "Fix" ? true : false)
+
+                onCheckedChanged: {
+                    if(checked)
+                        settings.setGPS_headingFromWhichSource = "Fix"
+                }
+
+                onHeadingSourceChanged: {
+                    if(headingSource === "Fix"){
+                        fixBtn.checked = true
+                    }else{
+                        fixBtn.checked = false
                     }
                 }
             }
         }
     }
 
-    Rectangle{
+    TitleFrame {
         id:rtkAlarm
         width: parent.width /2
-        height: childrenRect.height+ 10
+        height: rtkAlarmRow.height + titleHeight + 10
         anchors.bottom: parent.bottom
         anchors.left: parent.left
+        anchors.margins: 5
         color: "ghostwhite"
         visible: true
+        title: qsTr("RTK Alarm")
+        font.pointSize: 16
 
-        Text {
-            id: textRTK
-            text: qsTr("RTK Alarm")
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
         Row{
-            anchors.top: textRTK.bottom
+            id: rtkAlarmRow
+            anchors.top: parent.top
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 10
+            height: childrenRect.height + 10
+
+            Component.onCompleted: console.debug(height)
+
             IconButtonColor{
                 width:150
                 height:100
                 id: alarm
                 icon.source: "/images/Config/Con_SourcesRTKAlarm.png"
-                checked: settings.setGPS_ageAlarm
-                onCheckedChanged: settings.setGPS_ageAlarm
+                isChecked: settings.setGPS_ageAlarm
+                onClicked: settings.setGPS_ageAlarm = true
             }
-            Text{
-                text: "  ->  "
+            Rectangle {
+                height: 100
+                width: childrenRect.width
+
+                Text{
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "  ->  "
+                }
             }
             IconButtonColor{
                 width:150
                 height:100
+                checkable: true
                 id: killAutoSteer
                 icon.source: "/images/AutoSteerOff.png"
-                checked: settings.setGPS_isRTK_KillAutoSteer
-                onCheckedChanged: settings.setGPS_isRTK_KillAutoSteer
+                isChecked: settings.setGPS_isRTK_KillAutoSteer
+                onClicked: settings.setGPS_isRTK_KillAutoSteer = true
             }
         }
     }
-    Rectangle{
+    TitleFrame{
         id:singleAntennaSettings
         anchors.bottom: parent.bottom
-        border.color: "black"
+        enabled: fixBtn.checked
         anchors.right: parent.right
         anchors.left: rtkAlarm.right
-        anchors.leftMargin: 5
         anchors.top: antennaType.bottom
-        anchors.topMargin: 20
-        color: "ghostwhite"
-        Text{
-            id: singleText
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("Single Antenna Settings")
-        }
+        anchors.margins: 5
 
-        ButtonColor{
+        border.color: enabled ? "black" : "grey"
+
+        color: "ghostwhite"
+
+        title: qsTr("Single Antenna Settings")
+        font.pointSize: 16
+
+        Row {
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.topMargin: 10
+            anchors.leftMargin: 10
+
             id: minGPSStep
-            width: 180
-            height: 50
-            anchors.top: singleText.bottom
-            anchors.right: parent.right
-            anchors.margins: 5
-            color: "blue"
-            colorChecked: "green"
-            onCheckedChanged: {
-                if(checked){
-                    settings.setGPS_minimumStepLimit = 0.1
-                }else{
-                    settings.setGPS_minimumStepLimit = 0.05
+            Label {
+                color: fixBtn.checked ? "black" : "grey"
+                text: qsTr("Minimum GPS Step")
+                width: singleAntennaSettings.width * 0.5
+            }
+            ButtonColor{
+                id: minGPSStepBtn
+                width: 180
+                height: 50
+                checkable: true
+
+                color: "light blue"
+
+                onCheckedChanged: {
+                    if(checked){
+                        settings.setGPS_minimumStepLimit = 0.1
+                        settings.setF_minHeadingStepDistance = 1
+                    }else{
+                        settings.setGPS_minimumStepLimit = 0.05
+                        settings.setF_minHeadingStepDistance = 0.5
+                    }
                 }
+                text: settings.setGPS_minimumStepLimit * 100 + " " + qsTr("cm", "centimeter abbreviation")
             }
-            text: qsTr(settings.setGPS_minimumStepLimit * 100 + "Centimeter")
-            Text{
-                id: cmText
-                anchors.top: minGPSStep.bottom
-                anchors.topMargin: 10
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: qsTr("50 Centimeter")
-                font.bold: true
-            }
-            Text{
-                anchors.top: minGPSStep.bottom
-                anchors.topMargin: 10
-                anchors.right: minGPSStep.left
+        }
+        Row {
+            id: headingDistance
+            anchors.top: minGPSStep.bottom
+            anchors.left: parent.left
+            anchors.topMargin: 10
+            anchors.leftMargin: 10
+
+            Label {
+                color: fixBtn.checked ? "black" : "grey"
                 text: qsTr("Heading Distance")
+                width: singleAntennaSettings.width * 0.5
             }
-            Text{
-                anchors.top: minGPSStep.bottom
-                anchors.topMargin: 10
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: qsTr(settings.setGPS_minimumStepLimit * 1000 + "Centimeter")
+            Label {
+                id: headingDistanceText
+                width: minGPSStepBtn.width
+                color: fixBtn.checked ? "black" : "grey"
+                text: settings.setF_minHeadingStepDistance * 100 + " " + qsTr("cm", "centimeter abbreviation")
             }
         }
 
@@ -179,7 +212,7 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             width: 360
             height: 100
-            border.color: "black"
+            border.color: fixBtn.checked ? "black" : "grey"
             color: "ghostwhite"
             SliderCustomized{
                 leftText: 100 - value
@@ -192,20 +225,30 @@ Rectangle{
                 centerTopText: "Fusion"
                 from: 20
                 to: 40
+
+                property int fusionWeight: settings.setIMU_fusionWeight2
+
+                onFusionWeightChanged: {
+                    value = fusionWeight * 100
+                }
+
                 value: settings.setIMU_fusionWeight2 * 100
                 onValueChanged: {
                     settings.setIMU_fusionWeight2 = value / 100
-                    console.log(settings.setIMU_fusionWeight2)
                 }
                 stepSize: 1
             }
         }
+
         Text{
             anchors.left: fusionRow.left
             anchors.top: fusionRow.bottom
             anchors.topMargin: 15
+            color: fixBtn.checked ? "black" : "grey"
             text: qsTr("Default: 70%")
         }
+
+
         ButtonColor{
             text: qsTr("Reverse Detection")
             anchors.bottom: parent.bottom
@@ -213,11 +256,11 @@ Rectangle{
             anchors.horizontalCenter: parent.horizontalCenter
             color: "white"
             colorChecked: "green"
-            checked: settings.setIMU_isReverseOn
-            onCheckedChanged: settings.setIMU_isReverseOn = checked
+            isChecked: settings.setIMU_isReverseOn
+            onClicked: settings.setIMU_isReverseOn = checked
         }
     }
-    Rectangle{
+    TitleFrame {
         id: dualAntennaSettings
         anchors.top: antennaType.bottom
         anchors.right: singleAntennaSettings.left
@@ -226,13 +269,10 @@ Rectangle{
         anchors.margins: 5
         border.color: "black"
         color: "ghostwhite"
-        Text{
-            id: textdual
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: 5
-            text: qsTr("Dual Antenna Settings")
-        }
+        title: qsTr("Dual Antenna Settings")
+        font.pointSize: 16
+        enabled: dualBtn.checked
+
         Image {
             id: head
             source: "/images/Config/Con_SourcesHead.png"
@@ -249,16 +289,11 @@ Rectangle{
             anchors.bottom: head.bottom
             anchors.leftMargin: 50
             from: -100
-            value: settings.setGPS_dualHeadingOffset
+            boundValue: settings.setGPS_dualHeadingOffset
             onValueChanged: settings.setGPS_dualHeadingOffset = value
             to: 100
             editable: true
-        }
-        Text{
-            anchors.bottom: headingOffSet.top
-            anchors.bottomMargin: 15
-            anchors.horizontalCenter: headingOffSet.horizontalCenter
-            text: qsTr("Heading Offset (Degree)")
+            text: qsTr("Heading Offset (Degrees)")
         }
         ButtonColor{
             id: dualAsIMU
@@ -267,10 +302,11 @@ Rectangle{
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 30
             anchors.horizontalCenter: parent.horizontalCenter
+            checkable: true
             color: "white"
             colorChecked: "green"
-            checked: settings.setIMU_isDualAsIMU
-            onCheckedChanged: settings.setIMU_isDualAsIMU = checked
+            isChecked: settings.setIMU_isDualAsIMU
+            onClicked: settings.setIMU_isDualAsIMU = checked
         }
     }
 }

@@ -9,9 +9,9 @@ Rectangle{
     Image {
         id: antImage
         //3 vehicle types  tractor=0 harvestor=1 4wd=2
-        source: Number(settings.setVehicle_vehicleType === 0) ? "/images/AntennaTractor.png" :
-                Number(settings.setVehicle_vehicleType === 1) ? "/images/AntennaHarvester.png" :
-                Number(settings.setVehicle_vehicleType === 2) ? "/images/Antenna4WD.png" :
+        source: settings.setVehicle_vehicleType === 0 ? "/images/AntennaTractor.png" :
+                settings.setVehicle_vehicleType === 1 ? "/images/AntennaHarvester.png" :
+                settings.setVehicle_vehicleType === 2 ? "/images/Antenna4WD.png" :
                 "/images/Config/ConSt_Mandatory.png"
         width: 350
         height: 350
@@ -23,16 +23,10 @@ Rectangle{
         anchors.left: antImage.left
         anchors.leftMargin: 30
         from: -999
-        value: Number(settings.setVehicle_antennaPivot)
-        onValueModified: settings.setVehicle_antennaPivot = value
-        Connections {
-            target: settings
-            function onSetVehicle_antennaPivotChanged(){
-                antennaPivot.setValue(Number(settings.setVehicle_antennaPivot))
-            }
-        }
-
         to: 999
+        editable: true
+        boundValue: settings.setVehicle_antennaPivot
+        onValueModified: settings.setVehicle_antennaPivot = value
     }
     SpinBoxCM{
         id: antennaHeight
@@ -41,16 +35,10 @@ Rectangle{
         anchors.left: antImage.right
         anchors.leftMargin: -50
         from: 0
-        editable: true
-        value: Number(settings.setVehicle_antennaHeight)
-        onValueModified: settings.setVehicle_antennaHeight = value
-        Connections {
-            target: settings
-            function onSetVehicle_antennaHeightChanged(){
-                antennaHeight.setValue(Number(settings.setVehicle_antennaHeight))
-            }
-        }
         to: 1000
+        editable: true
+        boundValue: settings.setVehicle_antennaHeight
+        onValueModified: settings.setVehicle_antennaHeight = value
     }
     SpinBoxCM{
         id: antennaOffset
@@ -59,14 +47,9 @@ Rectangle{
         anchors.left: antImage.right
         anchors.leftMargin: -25
         from: -500
-        value: Number(settings.setVehicle_antennaOffset)
         to: 500
+        editable: true
+        boundValue: settings.setVehicle_antennaOffset
         onValueModified: settings.setVehicle_antennaOffset = value
-        Connections {
-            target: settings
-            function onSetVehicle_antennaOffsetChanged(){
-                antennaOffset.setValue(Number(settings.setVehicle_antennaOffset))
-            }
-        }
     }
 }

@@ -10,6 +10,7 @@
 #include "cboundarylist.h"
 #include "btnenum.h"
 #include <QObject>
+#include "interfaceproperty.h"
 
 
 class QOpenGLFunctions;
@@ -39,10 +40,11 @@ public:
 
     QVector<Vec3> bndBeingMadePts;
 
-    double createBndOffset;
-    bool isBndBeingMade;
+    InterfaceProperty<BoundaryInterface,double> createBndOffset = InterfaceProperty<BoundaryInterface,double>("createBndOffset");
+    //InterfaceProperty<BoundaryInterface,bool> isBndBeingMade = InterfaceProperty<BoundaryInterface,bool>("isBndBeingMade");
+    bool isBndBeingMade = false;
 
-    bool isDrawRightSide = true;
+    InterfaceProperty<BoundaryInterface,bool> isDrawRightSide = InterfaceProperty<BoundaryInterface,bool>("isDrawRightSide");
     bool isOkToAddPoints = false;
 
     int closestFenceNum;
@@ -59,11 +61,12 @@ public:
     Vec3 closestTurnPt = Vec3(-10000, -10000, 9);
     Vec3 closePt;
 
-    bool isHeadlandOn;
+    InterfaceProperty<BoundaryInterface,bool> isHeadlandOn = InterfaceProperty<BoundaryInterface,bool>("isHeadlandOn");
     bool isToolInHeadland, isToolOuterPointsInHeadland, isSectionControlledByHeadland;
 
 
     CBoundary(QObject *parent = 0);
+    void loadSettings();
 
     //CFence.cs
     bool IsPointInsideFenceArea(Vec3 testPoint) const ;

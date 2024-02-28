@@ -23,10 +23,13 @@ Button {
     property color colorHover2: "#ffffff"
     property color colorHover3: "#888888"
 
-    property color colorChecked1: "green"
-    property color colorChecked2: "green"
-    property color colorChecked3: "green"
+    property color colorChecked1: enabled ? "green" : "pale green"
+    property color colorChecked2: enabled ? "green" : "pale green"
+    property color colorChecked3: enabled ? "green" : "pale green"
 
+    property color textColor: enabled ? "black" : "grey"
+    property color borderColor: enabled ? "black" : "grey"
+    property int radius: 10
 
     //For compatibility with the old IconButton and friends
     property bool isChecked: icon_button_text_beside.checked
@@ -43,8 +46,6 @@ Button {
 
     //This is specific to this base type... must be re-implemented in subtypes
     onCheckedChanged: {
-        isChecked = checked
-
         if (checked && useIconChecked) {
             content_image.source = iconChecked
             //console.warn("icon should be ", content_image.source)
@@ -65,11 +66,6 @@ Button {
         }
     }
 
-    property int radius: 0
-    onRadiusChanged: {
-        icon_button_background.radius = radius
-    }
-
     onWidthChanged: {
         //console.warn(text, "Width is now ", width)
     }
@@ -88,6 +84,7 @@ Button {
             anchors.left: parent.left
             anchors.leftMargin: 5
             anchors.verticalCenter: parent.verticalCenter
+            color: textColor
             font.bold: false
             font.pixelSize: parent.height * 0.3
             z: 1
@@ -121,7 +118,9 @@ Button {
     background: Rectangle {
         border.width: icon_button_text_beside.border
         //border.width: icon_button.border
-        radius: 10
+        radius: icon_button_text_beside.radius
+        border.color: icon_button_text_beside.borderColor
+
         id: icon_button_background
         gradient: Gradient {
             GradientStop {

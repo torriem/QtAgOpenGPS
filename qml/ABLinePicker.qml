@@ -25,7 +25,7 @@ Dialog {
     //signal setA(bool start_cancel); //true to mark an A point, false to cancel new point
 
     Connections {
-        target: aog
+        target: linesInterface
         function onAbLinesListChanged() {
             abLinePickerDialog.reloadModel()
         }
@@ -33,8 +33,8 @@ Dialog {
 
     function reloadModel() {
         ablineModel.clear()
-        for( var i = 0; i < aog.abLinesList.length ; i++ ) {
-            ablineModel.append(aog.abLinesList[i])
+        for( var i = 0; i < linesInterface.abLinesList.length ; i++ ) {
+            ablineModel.append(linesInterface.abLinesList[i])
         }
         if (aog.currentABCurve >-1)
             ablineView.currentIndex = aog.currentABCurve
@@ -45,12 +45,12 @@ Dialog {
         //when we show or hide the dialog, ask the main
         //program to update our lines list in the
         //AOGInterface object
-        aog.abLine_updateLines()
+        linesInterface.abLine_updateLines()
         ablineView.currentIndex = aog.currentABLine
         //preselect first AB line if none was in use before
         //to make it faster for user
         if (ablineView.currentIndex < 0)
-            if (aog.abLinesList.length > 0)
+            if (linesInterface.abLinesList.length > 0)
                 ablineView.currentIndex = 0
     }
 
@@ -76,7 +76,7 @@ Dialog {
                 icon.source: "/images/FileCopy.png"
                 onClicked: {
                     if(ablineView.currentIndex > -1) {
-                        copyLineName.set_name("Copy of " + aog.abLinesList[ablineView.currentIndex].name)
+                        copyLineName.set_name("Copy of " + linesInterface.abLinesList[ablineView.currentIndex].name)
                         copyLineName.visible = true
                     }
                 }
@@ -86,7 +86,7 @@ Dialog {
                 icon.source: "/images/FileEditName.png"
                 onClicked: {
                     if (ablineView.currentIndex > -1) {
-                        editLineName.set_name(aog.abLinesList[ablineView.currentIndex].name)
+                        editLineName.set_name(linesInterface.abLinesList[ablineView.currentIndex].name)
                         editLineName.visible = true
                     }
                 }
@@ -96,7 +96,7 @@ Dialog {
                 icon.source: "/images/ABSwapPoints.png"
                 onClicked: {
                     if(ablineView.currentIndex > -1)
-                        aog.abLine_swapHeading(ablineView.currentIndex);
+                        linesInterface.abLine_swapHeading(ablineView.currentIndex);
                 }
             }
             IconButtonTransparent{
@@ -136,7 +136,7 @@ Dialog {
                         if (ablineView.currentIndex > -1) {
                             if (aog.currentABLine == ablineView.currentIndex)
                                 aog.currentABLine = -1
-                            aog.abLine_deleteLine(ablineView.currentIndex)
+                            linesInterface.abLine_deleteLine(ablineView.currentIndex)
                             ablineView.currentIndex = -1
                         }
                     }
@@ -213,9 +213,9 @@ Dialog {
             onAccepted: {
                 //emit signal to create the line
                 //abLinePickerDialog.addLine(
-                aog.abLine_addLine(newLineName.abLineName,a_easting, a_northing, heading)
-                aog.abLine_updateLines()
-                var count = aog.abLinesList.length
+                linesInterface.abLine_addLine(newLineName.abLineName,a_easting, a_northing, heading)
+                linesInterface.abLine_updateLines()
+                var count = linesInterface.abLinesList.length
                 //ablineView.currentIndex = count -1
                 //aog.currentABLine = count - 1
                 abSetter.close()
@@ -251,7 +251,7 @@ Dialog {
                         abSetter.a_northing = aog.toolNorthing
                         abSetter.heading = aog.toolHeading
                         abSetter.heading_degrees = aog.toolHeading * 180 / Math.PI
-                        aog.abLine_setA(true, abSetter.a_easting, abSetter.a_northing, abSetter.heading)
+                        linesInterface.abLine_setA(true, abSetter.a_easting, abSetter.a_northing, abSetter.heading)
                         a_manual_latitude.set_without_onchange(aog.toolLatitude)
                         a_manual_longitude.set_without_onchange(aog.toolLongitude)
                         b_stuff.visible = true
@@ -289,7 +289,7 @@ Dialog {
                                 abSetter.a_northing = northing
                                 abSetter.heading = aog.toolHeading
                                 abSetter.heading_degrees = aog.toolHeading * 180 / Math.PI
-                                aog.abLine_setA(true, abSetter.a_easting, abSetter.a_northing, abSetter.heading)
+                                linesInterface.abLine_setA(true, abSetter.a_easting, abSetter.a_northing, abSetter.heading)
                             }
                         }
                     }
@@ -310,7 +310,7 @@ Dialog {
                                 const [northing, easting] = aog.convertWGS84ToLocal(Number(a_manual_latitude.text), Number(a_manual_longitude.text))
                                 abSetter.a_easting = easting
                                 abSetter.a_northing = northing
-                                aog.abLine_setA(true, abSetter.a_easting, abSetter.a_northing, abSetter.heading)
+                                linesInterface.abLine_setA(true, abSetter.a_easting, abSetter.a_northing, abSetter.heading)
                             }
                         }
                     }
@@ -363,7 +363,7 @@ Dialog {
                             abSetter.heading = value / 100000 * Math.PI / 180.0
                             abSetter.heading_degrees = value / 100000
 
-                            aog.abLine_setA(true, abSetter.a_easting, abSetter.a_northing, abSetter.heading)
+                            linesInterface.abLine_setA(true, abSetter.a_easting, abSetter.a_northing, abSetter.heading)
 
                             //calculate b latitude and longitude for the display
                             //use 100m
@@ -476,7 +476,7 @@ Dialog {
                 icon.source: "/images/Cancel64.png"
                  onClicked:{
                      //cancel
-                     aog.abLine_setA(false,0,0,0) //turn off line setting
+                     linesInterface.abLine_setA(false,0,0,0) //turn off line setting
                      abSetter.rejected()
                      abSetter.close()
                 }
@@ -520,11 +520,11 @@ Dialog {
             z: 2
             onAccepted: {
                 if(ablineView.currentIndex > -1) {
-                    var heading = aog.abLinesList[ablineView.currentIndex].heading
-                    var easting = aog.abLinesList[ablineView.currentIndex].easting
-                    var northing = aog.abLinesList[ablineView.currentIndex].northing
-                    aog.abLine_addLine(copyLineName.abLineName, easting, northing, heading)
-                    //aog.abLine_updateLines()
+                    var heading = linesInterface.abLinesList[ablineView.currentIndex].heading
+                    var easting = linesInterface.abLinesList[ablineView.currentIndex].easting
+                    var northing = linesInterface.abLinesList[ablineView.currentIndex].northing
+                    linesInterface.abLine_addLine(copyLineName.abLineName, easting, northing, heading)
+                    //linesInterface.abLine_updateLines()
                     ablineView.positionViewAtEnd()
                 }
             }
@@ -540,8 +540,8 @@ Dialog {
             z: 1
             onAccepted: {
                 if(ablineView.currentIndex > -1) {
-                    aog.abLine_changeName(ablineView.currentIndex, editLineName.abLineName)
-                    //aog.abLine_updateLines()
+                    linesInterface.abLine_changeName(ablineView.currentIndex, editLineName.abLineName)
+                    //linesInterface.abLine_updateLines()
                     //ablineView.positionViewAtEnd()
                 }
             }
