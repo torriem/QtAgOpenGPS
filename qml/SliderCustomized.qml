@@ -4,41 +4,61 @@ import QtQuick 2.15
 
 Slider{
     value: 0
+    to: 0
+    from: 0
     id: sliderCustomized
     property double multiplicationValue: 1
-    property string leftText: ""
-    property string rightText: ""
-    property string centerTopText: ""
-    property string leftTopText: ""
-    property string rightTopText: ""
-    property color colorLeftTopText: "black"
-    property color colorRightTopText: "black"
-
+    property alias leftText: leftText.text
+    property alias rightText: rightText.text
+    property alias centerTopText: topText.text
+    property alias leftTopText: leftTopText.text
+    property alias rightTopText: rightTopText.text
+    property alias colorLeftTopText: leftTopText.color
+    property alias colorRightTopText: rightTopText.color
+    /*topInset: topText.height
+    topPadding: topInset
+    leftInset: leftText.width
+    leftPadding: leftInset
+    rightInset: rightText.width
+    rightPadding: rightInset
+    */topInset: topText.textHeight
+    topPadding: topInset
+    leftInset: leftText.text.length * leftText.font.pixelSize
+    leftPadding: leftInset
+    rightInset: rightText.text.length
+    rightPadding: rightInset
+    height: 75
+    width: 200
 
     background: Rectangle {
         id: backgroundRect
         x: parent.leftPadding
         y: parent.topPadding + parent.availableHeight / 2 - height / 2
-        implicitWidth: 250 + 30
-        implicitHeight: 50
-        radius: 2
+    /*    anchors.left: parent.left
+        anchors.leftMargin: leftText.width
+        anchors.top: parent.top
+        anchors.topMargin: topText.height
+        anchors.right: parent.right
+        anchors.rightMargin: rightText.width
+        anchors.bottom: parent.bottom
+     */   radius: 2
         color: "white"
-        z: 5
+
 
     }
 
     handle: Rectangle{
         id: handleRect
-        height: parent.height - 4
+        height: backgroundRect.height - 4
         radius: 2
         width: 20
         visible: true
         color: "lightgray"
         x: parent.leftPadding + parent.visualPosition * (parent.availableWidth - width)
         y: parent.topPadding + parent.availableHeight / 2 - height / 2
-
+        anchors.verticalCenter: parent.verticalCenter
     }
-    Button{
+    /*Button{
         id: rightSliderButton
         anchors.right: sliderCustomized.right
         anchors.left: handleRect.right
@@ -74,40 +94,40 @@ Slider{
                 color: sliderCustomized.enabled ? "black" : "grey"
             }
         }
-    }
-    Text{
+    }*/
+    TextLine{
         id: leftText
-        text: sliderCustomized.leftText
+        text: ""
         color: sliderCustomized.enabled ? "black" : "grey"
-        anchors.right: parent.left
+        anchors.left: parent.left
         anchors.verticalCenter: backgroundRect.verticalCenter
     }
-    Text{
+    TextLine{
         id: rightText
-        text: sliderCustomized.rightText
+        text: ""
         color: sliderCustomized.enabled ? "black" : "grey"
-        anchors.left: parent.right
+        anchors.right: parent.right
         anchors.verticalCenter: backgroundRect.verticalCenter
     }
-    Text{
+    TextLine{
         id: leftTopText
-        text: sliderCustomized.leftTopText
+        text: ""
         anchors.left:  parent.left
         anchors.bottom: parent.top
-        color: parent.colorLeftTopText
+        color: "black"
     }
-    Text{
+    TextLine{
         id: rightTopText
-        text: sliderCustomized.rightTopText
+        text: ""
         anchors.right: parent.right
         anchors.bottom: parent.top
-        color: parent.colorRightTopText
+        color: "black"
     }
-    Text{
-        id: centerTopText
-        text: sliderCustomized.centerTopText
+    TextLine{
+        id: topText
+        property int textHeight: text.length * font.pixelSize
+        text: ""
         color: sliderCustomized.enabled ? "black" : "grey"
-        anchors.bottom: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
     }
 }
