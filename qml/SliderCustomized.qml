@@ -15,13 +15,8 @@ Slider{
     property alias rightTopText: rightTopText.text
     property alias colorLeftTopText: leftTopText.color
     property alias colorRightTopText: rightTopText.color
-    /*topInset: topText.height
-    topPadding: topInset
-    leftInset: leftText.width
-    leftPadding: leftInset
-    rightInset: rightText.width
-    rightPadding: rightInset
-    */topInset: topText.textHeight
+    stepSize: 1
+    topInset: topText.textHeight
     topPadding: topInset
     leftInset: leftText.textWidth
     leftPadding: leftInset
@@ -72,12 +67,12 @@ Slider{
         y: parent.topPadding + parent.availableHeight / 2 - height / 2
         anchors.verticalCenter: backgroundRect.verticalCenter
     }
-    /*Button{
+    Button{
         id: rightSliderButton
-        anchors.right: sliderCustomized.right
+        anchors.right: backgroundRect.right
         anchors.left: handleRect.right
-        anchors.top: sliderCustomized.top
-        anchors.bottom: sliderCustomized.bottom
+        anchors.top: backgroundRect.top
+        anchors.bottom: backgroundRect.bottom
         width: 20
         onClicked: sliderCustomized.value = sliderCustomized.value + sliderCustomized.stepSize * multiplicationValue
         background: Rectangle{
@@ -94,11 +89,11 @@ Slider{
     }
     Button{
         id: leftSliderButton
-        anchors.left: sliderCustomized.left
+        anchors.left: backgroundRect.left
         anchors.right: handleRect.left
-        anchors.top: sliderCustomized.top
+        anchors.top: backgroundRect.top
         onClicked: sliderCustomized.value = sliderCustomized.value - sliderCustomized.stepSize * multiplicationValue
-        anchors.bottom: sliderCustomized.bottom
+        anchors.bottom: backgroundRect.bottom
         width: 20
         background: Rectangle{
             Text{
@@ -108,7 +103,7 @@ Slider{
                 color: sliderCustomized.enabled ? "black" : "grey"
             }
         }
-    }*/
+    }
     TextLine{
         id: leftText
         text: ""
@@ -124,19 +119,22 @@ Slider{
         color: sliderCustomized.enabled ? "black" : "grey"
         anchors.right: parent.right
         anchors.verticalCenter: backgroundRect.verticalCenter
+        anchors.horizontalCenter: undefined
     }
     TextLine{
         id: leftTopText
         text: ""
-        anchors.left:  parent.left
-        anchors.bottom: parent.top
+        anchors.top: parent.top
+        anchors.horizontalCenter: undefined
         color: "black"
+        anchors.left: backgroundRect.left
     }
     TextLine{
         id: rightTopText
         text: ""
-        anchors.right: parent.right
-        anchors.bottom: parent.top
+        anchors.right: backgroundRect.right
+        anchors.horizontalCenter: undefined
+        anchors.top: parent.top
         color: "black"
     }
     TextLine{
@@ -145,5 +143,6 @@ Slider{
         text: ""
         color: sliderCustomized.enabled ? "black" : "grey"
         anchors.top: parent.top
+        anchors.horizontalCenter: backgroundRect.horizontalCenter
     }
 }
