@@ -34,6 +34,7 @@ Rectangle{
             id: steerSlider
             objectName: "simSteer"
             multiplicationValue: 10
+            height: 50
             from: 0
             to: 600
             value: 300
