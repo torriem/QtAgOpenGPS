@@ -43,17 +43,19 @@ void FormHeadache::connect_ui(QObject *headache_designer_instance) {
     connect(headache_designer_instance,SIGNAL(cycleBackward()),this,SLOT(btnCycleBackward_Click()));
     connect(headache_designer_instance,SIGNAL(deleteCurve()),this,SLOT(btnDeleteCurve_Click()));
 
-    connect(headache_designer_instance,SIGNAL(remove_headland()),this,SLOT(btn));
-    connect(headache_designer_instance,SIGNAL(create_headland()),this,SLOT(btnBndLoop_Click()));
-    connect(headache_designer_instance,SIGNAL(deletePoint()),this,SLOT(btn));
-    connect(headache_designer_instance,SIGNAL(deletePoints()),this,SLOT(btnDeletePoints_Click()));
+    connect(headache_designer_instance,SIGNAL(deleteHeadland()), this, SLOT(btnDeleteHeadland_Click()));
+    connect(headache_designer_instance,SIGNAL(createHeadland()),this,SLOT(btnBndLoop_Click()));
+    //connect(headache_designer_instance,SIGNAL(deletePoints()),this,SLOT(btnDeletePoints_Click()));
     connect(headache_designer_instance,SIGNAL(ashrink()),this,SLOT(btnAShrink_Click()));
     connect(headache_designer_instance,SIGNAL(bshrink()),this,SLOT(btnBShrink_Click()));
     connect(headache_designer_instance,SIGNAL(alength()),this,SLOT(btnALength_Click()));
     connect(headache_designer_instance,SIGNAL(blength()),this,SLOT(btnBLength_Click()));
     connect(headache_designer_instance,SIGNAL(headlandOff()),this,SLOT(btnHeadlandOff_Click()));
+    connect(headache_designer_instance,SIGNAL(cancelTouch()),this,SLOT(btnCancelTouch_Click()));
+
+
     connect(headache_designer_instance,SIGNAL(isSectionControlled(bool)),this,SLOT(isSectionControlled(bool)));
-    connect(headache_designer_instance,SIGNAL(save_exit()),this,SLOT(btn_Exit_Click()));
+    connect(headache_designer_instance,SIGNAL(save_exit()),this,SLOT(btnExit_Click()));
 }
 
 void FormHeadache::setFieldInfo(double maxFieldDistance, double fieldCenterX, double fieldCenterY) {
@@ -312,6 +314,24 @@ void FormHeadache::update_headland() {
         }
     }
     headache_designer_instance->setProperty("headlandLine", line);
+}
+
+void FormHeadache::FormHeadLine_FormClosing()
+{
+    //hdl
+    if (hdl->idx == -1)
+    {
+        isBtnAutoSteerOn = false;
+        isYouTurnBtnOn = false;
+    }
+
+    emit saveHeadlines();
+
+    if (hdl->tracksArr.count() > 0)
+    {
+        hdl->idx = 0;
+    }
+    else hdl->idx = -1;
 }
 
 void FormHeadache::btnCycleBackward_Click()
@@ -687,14 +707,8 @@ void FormHeadache::btnDeleteCurve_Click()
 
 }
 
-void FormHeadache::btn_Exit_Click() {
+void FormHeadache::btnExit_Click() {
     emit saveHeadlines();
-    /*if (hdl->idx == -1)
-    {
-        emit turnOffAutoSteerBtn();
-        emit turnOffYouTurnBtn();
-    }
-    */
 }
 
 void FormHeadache::isSectionControlled(bool wellIsIt) {
@@ -834,9 +848,7 @@ void FormHeadache::btnBndLoop_Click() {
             delta = 0;
         }
     }
-
-
-    emit saveHeadlines();
+    emit saveHeadland();
 }
 
 void FormHeadache::btnSlice_Click() {
@@ -964,49 +976,71 @@ void FormHeadache::btnSlice_Click() {
     update_headland();
 }
 
-void FormHeadache::btnDeletePoints_Click() {
+void FormHeadache::btnDeleteHeadland_Click()
+{
     start = 99999; end = 99999;
     isA = true;
     hdl->desList.clear();
-    sliceArr.clear();
-    backupList.clear();
     bnd->bndList[0].hdLine.clear();
-
-    int ptCount = bnd->bndList[0].fenceLine.count();
-
-    for (int i = 0; i < ptCount; i++)
-    {
-        bnd->bndList[0].hdLine.append(bnd->bndList[0].fenceLine[i]);
-    }
+    update_ab();
     update_headland();
 }
 
+/*
+void FormHeadache::btnDeletePoints_Click() {
+    start = 99999; end = 99999;
+    isA = true;
+    update_ab();
+}
+*/
+
 void FormHeadache::btnALength_Click() {
-    if (sliceArr.count() > 0)
+    if (hdl->idx > -1)
     {
         //and the beginning
-        Vec3 start = sliceArr[0];
-
+        Vec3 start = hdl->tracksArr[hdl->idx].trackPts[0];
         for (int i = 1; i < 10; i++)
         {
             Vec3 pt = start;
             pt.easting -= (sin(pt.heading) * i);
             pt.northing -= (cos(pt.heading) * i);
-            sliceArr.insert(0, pt);
+            hdl->tracksArr[hdl->idx].trackPts.insert(0, pt);
         }
     }
 }
 
 void FormHeadache::btnBLength_Click()
 {
+    if (hdl->idx > -1)
+    {
+        int ptCnt = hdl->tracksArr[hdl->idx].trackPts.count() - 1;
+
+        for (int i = 1; i < 10; i++)
+        {
+            Vec3 pt(hdl->tracksArr[hdl->idx].trackPts[ptCnt]);
+            pt.easting += (sin(pt.heading) * i);
+            pt.northing += (cos(pt.heading) * i);
+            hdl->tracksArr[hdl->idx].trackPts.append(pt);
+        }
+    }
 }
 
 void FormHeadache::btnBShrink_Click()
 {
+    if (hdl->idx > -1)
+    {
+        if (hdl->tracksArr[hdl->idx].trackPts.count() > 8)
+            hdl->tracksArr[hdl->idx].trackPts.remove(hdl->tracksArr[hdl->idx].trackPts.count()-5, 5);
+    }
 }
 
 void FormHeadache::btnAShrink_Click()
 {
+    if (hdl->idx > -1)
+    {
+        if (hdl->tracksArr[hdl->idx].trackPts.count() > 8)
+            hdl->tracksArr[hdl->idx].trackPts.remove(0, 5);
+    }
 }
 
 void FormHeadache::btnHeadlandOff_Click()
@@ -1016,4 +1050,16 @@ void FormHeadache::btnHeadlandOff_Click()
     emit saveHeadlines();
     bnd->isHeadlandOn = false;
     vehicle->isHydLiftOn = false;
+    update_ab();
+    update_headland();
+}
+
+void FormHeadache::btnCancelTouch_Click()
+{
+    //update the arrays
+    start = 99999; end = 99999;
+    isA = true;
+    //FixLabelsCurve();
+    //TODO: why is this here?
+    //curve->desList.clear();
 }

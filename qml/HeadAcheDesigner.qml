@@ -21,17 +21,18 @@ Popup{
     property double sY: 0
 
     signal load()
+    signal close()
     signal update_lines()
     signal save_exit()
 
     signal mouseClicked(int x, int y)
-    //signal mouseDragged(int fromX, int fromY, int toX, int toY)
+    signal mouseDragged(int fromX, int fromY, int toX, int toY)
     //signal zoom(bool checked)
-    signal deletePoint()
-    signal deletePoints() //delete all the headache lines
-    signal remove_headland()
-    signal create_headland()
-    signal undo()
+    //signal deletePoint()
+    //signal remove_headland()
+    signal createHeadland()
+    signal deleteHeadland()
+    //signal deletePoints()
     signal ashrink()
     signal alength()
     signal bshrink()
@@ -40,11 +41,19 @@ Popup{
     signal cycleForward()
     signal cycleBackward()
     signal deleteCurve()
+    signal cancelTouch()
 
     signal isSectionControlled(bool wellIsIt)
 
     onWidthChanged: if(aog.isJobStarted) update_lines()
     onHeightChanged: if(aog.isJobStarted) update_lines()
+    onVisibleChanged: {
+        if(visible) {
+            load()
+        } else {
+            close()
+        }
+    }
 
     property var boundaryLines: [
         {
@@ -394,7 +403,7 @@ Popup{
 
                 icon.source: "/images/HeadlandBuild.png"
                 Layout.alignment: Qt.AlignCenter
-                onClicked: create_headland()
+                onClicked: createHeadland()
             }
         }
         GridLayout{
@@ -407,15 +416,17 @@ Popup{
                 //objectName: "btnDeletePoints"
                 icon.source: "/images/HeadlandReset.png"
                 Layout.alignment: Qt.AlignCenter
-                onClicked: deletePoints()
+                onClicked: deleteHeadland()
             }
             IconButtonTransparent{
                 icon.source: "/images/ABLineCycleBk.png"
                 Layout.alignment: Qt.AlignCenter
+                onClicked: cycleBackward()
             }
             IconButtonTransparent{
                 icon.source: "/images/ABLineCycle.png"
                 Layout.alignment: Qt.AlignCenter
+                onClicked: cycleForward()
             }
             IconButtonTransparent{
                 icon.source: "/images/SwitchOff.png"
@@ -428,6 +439,7 @@ Popup{
             IconButtonTransparent{
                 icon.source: "/images/Trash.png"
                 Layout.alignment: Qt.AlignCenter
+                onClicked: deleteCurve()
             }
             IconButtonTransparent{
                 icon.source: "/images/OK64.png"

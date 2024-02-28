@@ -27,6 +27,9 @@ protected:
     InterfaceProperty<HeadacheDesigner,QPoint> apoint = InterfaceProperty<HeadacheDesigner,QPoint>("apoint");
     InterfaceProperty<HeadacheDesigner,QPoint> bpoint = InterfaceProperty<HeadacheDesigner,QPoint>("bpoint");
 
+    InterfaceProperty<AOGInterface,bool> isBtnAutoSteerOn = InterfaceProperty<AOGInterface,bool>("isBtnAutoSteerOn");
+    InterfaceProperty<AOGInterface,bool> isYouTurnBtnOn = InterfaceProperty<AOGInterface,bool>("isYouTurnBtnOn");
+
     int fixX, fixY;
     //InterfaceProperty<HeadacheDesigner,bool> isA = InterfaceProperty<HeadacheDesigner,bool>("isA");
     bool isA = false;
@@ -84,24 +87,25 @@ public slots:
     void btnCycleBackward_Click();
     void btnDeleteCurve_Click();
 
-
-    void btn_Exit_Click();
+    void FormHeadLine_FormClosing();
+    void btnExit_Click();
     void isSectionControlled(bool wellIsIt);
     void btnBndLoop_Click();
     void btnSlice_Click();
-    void btnDeletePoints_Click();
+    //void btnDeletePoints_Click();
     void btnALength_Click();
     void btnBLength_Click();
     void btnBShrink_Click();
     void btnAShrink_Click();
     void btnHeadlandOff_Click();
+    void btnCancelTouch_Click();
+    void btnDeleteHeadland_Click();
 
 signals:
-    void turnOffAutoSteerBtn();
-    void turnOffYouTurnBtn();
     void timedMessageBox(int, QString, QString);
     void saveHeadlines();
     void loadHeadlines();
+    void saveHeadland();
 };
 
 #endif // FORMHEADLAND_H
