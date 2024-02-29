@@ -1,5 +1,5 @@
-#ifndef FORMHEADLAND_H
-#define FORMHEADLAND_H
+#ifndef FORMHEADACHE_H
+#define FORMHEADACHE_H
 
 #include <QObject>
 #include <QVector>
@@ -19,9 +19,14 @@ class FormHeadache : public QObject
 {
     Q_OBJECT
 protected:
-    InterfaceProperty<HeadacheDesigner,double> maxFieldDistance = InterfaceProperty<HeadacheDesigner,double>("maxFieldDistance");
-    InterfaceProperty<HeadacheDesigner,double> fieldCenterX = InterfaceProperty<HeadacheDesigner,double>("fieldCenterX");
-    InterfaceProperty<HeadacheDesigner,double> fieldCenterY = InterfaceProperty<HeadacheDesigner,double>("fieldCenterY");
+    //InterfaceProperty<HeadacheDesigner,double> maxFieldDistance = InterfaceProperty<HeadacheDesigner,double>("maxFieldDistance");
+    //InterfaceProperty<HeadacheDesigner,double> fieldCenterX = InterfaceProperty<HeadacheDesigner,double>("fieldCenterX");
+    //InterfaceProperty<HeadacheDesigner,double> fieldCenterY = InterfaceProperty<HeadacheDesigner,double>("fieldCenterY");
+
+    double maxFieldDistance = 0;
+    double fieldCenterX = 0;
+    double fieldCenterY = 0;
+
     InterfaceProperty<HeadacheDesigner,bool> showa = InterfaceProperty<HeadacheDesigner,bool>("showa");
     InterfaceProperty<HeadacheDesigner,bool> showb = InterfaceProperty<HeadacheDesigner,bool>("showb");
     InterfaceProperty<HeadacheDesigner,QPoint> apoint = InterfaceProperty<HeadacheDesigner,QPoint>("apoint");
@@ -32,7 +37,7 @@ protected:
 
     int fixX, fixY;
     //InterfaceProperty<HeadacheDesigner,bool> isA = InterfaceProperty<HeadacheDesigner,bool>("isA");
-    bool isA = false;
+    bool isA = true;
     bool draw = false;
     int start = 99999, end = 99999;
     int bndSelect = 0, mode;

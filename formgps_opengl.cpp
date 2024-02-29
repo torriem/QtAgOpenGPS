@@ -1406,4 +1406,5 @@ void FormGPS::calculateMinMax()
     }
 
     headland_form.setFieldInfo(maxFieldDistance,fieldCenterX,fieldCenterY);
+    headache_form.setFieldInfo(maxFieldDistance,fieldCenterX,fieldCenterY);
 }

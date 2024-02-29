@@ -171,7 +171,17 @@ void FormGPS::setupGui()
     headland_form.connect_ui(qmlItem(qml_root, "headlandDesigner"));
     connect(&headland_form, SIGNAL(saveHeadland()),this,SLOT(headland_save()));
     connect(&headland_form, SIGNAL(timedMessageBox(int,QString,QString)),this,SLOT(TimedMessageBox(int,QString,QString)));
-    //TODO: connect the other signals in headland_form: turnOffAutoSteerBtn, turnOffYouTubeBtn
+
+    headache_form.bnd = &bnd;
+    headache_form.vehicle = &vehicle;
+    headache_form.hdl = &hdl;
+    headache_form.tool = &tool;
+
+    headache_form.connect_ui(qmlItem(qml_root, "headacheDesigner"));
+    connect(&headache_form, SIGNAL(saveHeadland()),this,SLOT(headland_save()));
+    connect(&headache_form, SIGNAL(timedMessageBox(int,QString,QString)),this,SLOT(TimedMessageBox(int,QString,QString)));
+    connect(&headache_form, SIGNAL(saveHeadlines()), this,SLOT(headlines_save()));
+    connect(&headache_form, SIGNAL(loadHeadlines()), this,SLOT(headlines_load()));
 
     //connect qml button signals to callbacks (it's not automatic with qml)
 
@@ -537,4 +547,14 @@ void FormGPS::headland_save() {
     //TODO make FileHeadland() a slot so we don't have to have this
     //wrapper.
     FileSaveHeadland();
+}
+
+void FormGPS::headlines_load() {
+    //TODO make FileLoadHeadLines a slot, skip this wrapper
+    FileLoadHeadLines();
+}
+
+void FormGPS::headlines_save() {
+    //TODO make FileSaveHeadLines a slot, skip this wrapper
+    FileSaveHeadLines();
 }

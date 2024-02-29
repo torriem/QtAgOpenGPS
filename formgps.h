@@ -45,6 +45,7 @@
 #include "cpgn.h"
 
 #include "formheadland.h"
+#include "formheadache.h"
 
 //forward declare classes referred to below, to break circular
 //references in the code
@@ -328,6 +329,7 @@ public:
     CHeadLine hdl;
 
     FormHeadland headland_form;
+    FormHeadache headache_form;
 
     /*
      * PGNs *
@@ -712,6 +714,8 @@ public slots:
     void boundary_delete_all();
 
     void headland_save();
+    void headlines_save();
+    void headlines_load();
 
     //headland creation
 

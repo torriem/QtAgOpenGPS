@@ -27,6 +27,7 @@ FormHeadache::FormHeadache(QObject *parent)
 {}
 
 void FormHeadache::connect_ui(QObject *headache_designer_instance) {
+    isA = true;  //why is this not initialized?
     this->headache_designer_instance = headache_designer_instance;
 
     InterfaceProperty<HeadacheDesigner,int>::set_qml_root(headache_designer_instance);
@@ -185,17 +186,18 @@ void FormHeadache::update_lines() {
     }
     headache_designer_instance->setProperty("boundaryLines", lines);
 
+    lines.clear();
+
     if (isLinesVisible && hdl->tracksArr.count() > 0)
     {
         //GL.Enable(EnableCap.LineStipple);
         //GL.LineStipple(1, 0x7070);
         //GL.PointSize(3);
 
-        lines.clear();
-        linemap.clear();
 
         for (int i = 0; i < hdl->tracksArr.count(); i++)
         {
+            linemap.clear();
             if (hdl->tracksArr[i].mode == (int)TrackMode::AB)
             {
                 color = QColor::fromRgbF(0.973f, 0.9f, 0.10f);
@@ -250,9 +252,8 @@ void FormHeadache::update_lines() {
             bpoint = QPoint(hdl->tracksArr[hdl->idx].trackPts[cnt].easting, hdl->tracksArr[hdl->idx].trackPts[cnt].northing);
             showb = true;
         }
-
-        headache_designer_instance->setProperty("headacheLines", lines);
     }
+    headache_designer_instance->setProperty("headacheLines", lines);
 
     update_ab();
 
@@ -684,6 +685,7 @@ void FormHeadache::clicked(int mouseX, int mouseY) {
 
         hdl->desList.clear();
     }
+    update_ab();
 }
 
 void FormHeadache::btnDeleteCurve_Click()
@@ -1047,7 +1049,7 @@ void FormHeadache::btnHeadlandOff_Click()
 {
     bnd->bndList[0].hdLine.clear();
     update_headland();
-    emit saveHeadlines();
+    emit saveHeadland();
     bnd->isHeadlandOn = false;
     vehicle->isHydLiftOn = false;
     update_ab();

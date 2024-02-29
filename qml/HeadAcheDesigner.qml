@@ -20,6 +20,11 @@ Popup{
     property double sX: 0
     property double sY: 0
 
+    property point apoint: Qt.point(0,0)
+    property point bpoint: Qt.point(0,0)
+    property bool showa: false
+    property bool showb: false
+
     signal load()
     signal close()
     signal update_lines()
@@ -27,12 +32,8 @@ Popup{
 
     signal mouseClicked(int x, int y)
     signal mouseDragged(int fromX, int fromY, int toX, int toY)
-    //signal zoom(bool checked)
-    //signal deletePoint()
-    //signal remove_headland()
     signal createHeadland()
     signal deleteHeadland()
-    //signal deletePoints()
     signal ashrink()
     signal alength()
     signal bshrink()
@@ -115,6 +116,10 @@ Popup{
         Qt.point(0,0),
         Qt.point(100,20)
     ]
+
+    onHeadlandLineChanged: {
+        headlandShapePath.p = headlandLine
+    }
 
     Rectangle {
         id: leftSide
@@ -218,12 +223,12 @@ Popup{
                     Connections {
                         target: headacheDesigner
                         function onHeadacheLinesChanged() {
-                            headacheShapePath.draw_boundaries()
+                            headlinesShapePath.draw_boundaries()
                         }
                     }
 
                     ShapePath {
-                        id: headacheShapePath
+                        id: headlinesShapePath
                         strokeColor: headacheLines[index].color
                         strokeWidth: headacheLines[index].width
                         fillColor: "transparent"
@@ -236,22 +241,46 @@ Popup{
 
                         PathPolyline {
                             id: headachePs
-                            path: headacheShapePath.p
+                            path: headlinesShapePath.p
                         }
 
-
                         Component.onCompleted: draw_boundaries()
-
 
                         function draw_boundaries()
                         {
                             //console.debug(boundaryLines[index].points)
                             p = headacheLines[index].points
                             if(headacheLines[index].dashed)
-                                headacheShapePath.strokeStyle = ShapePath.DashLine
+                                headlinesShapePath.strokeStyle = ShapePath.DashLine
                             else
-                                headacheShapePath.strokeStyle = ShapePath.SolidLine
+                                headlinesShapePath.strokeStyle = ShapePath.SolidLine
                         }
+                    }
+                }
+            }
+
+            Shape {
+                id: headlandShape
+                visible: headlandLine.length > 0
+                anchors.fill: parent
+                ShapePath {
+                    id: headlandShapePath
+                    strokeColor: "#f1e817"
+                    strokeWidth: 8
+                    fillColor: "transparent"
+                    startX: p[0].x
+                    startY: p[0].y
+                    joinStyle: ShapePath.RoundJoin
+
+                    property var p: [
+                        Qt.point(0,0),
+                        Qt.point(20,100),
+                        Qt.point(200,150)
+                    ]
+
+                    PathPolyline {
+                        id: headlandShapePolyLine
+                        path: headlandShapePath.p
                     }
                 }
             }
@@ -268,8 +297,15 @@ Popup{
                         sX = ((parent.width / 2 - mouseX) / parent.width) * 1.1
                         sY = ((parent.width / 2 - mouseY) / -parent.width) * 1.1
                         zoom = 0.1
+                        headacheDesigner.update_lines()
                     } else {
                         headacheDesigner.mouseClicked(mouseX, mouseY)
+                        if (zoom != 1.0) {
+                            zoom = 1.0
+                            sX = 0
+                            sY = 0
+                            headacheDesigner.update_lines()
+                        }
                     }
                 }
 
@@ -439,7 +475,7 @@ Popup{
             IconButtonTransparent{
                 icon.source: "/images/Trash.png"
                 Layout.alignment: Qt.AlignCenter
-                onClicked: deleteCurve()
+                onClicked: deleteCuHeadland()
             }
             IconButtonTransparent{
                 icon.source: "/images/OK64.png"
