@@ -84,6 +84,7 @@ public slots:
     void load_headline();
     void update_lines(); //update the boundary lines in GUI
     void update_headland(); //update headland line
+    void update_headlines();
     void update_ab(); //update slice and A B points in GUI
 
     void clicked(int mouseX, int mouseY);
@@ -97,7 +98,6 @@ public slots:
     void isSectionControlled(bool wellIsIt);
     void btnBndLoop_Click();
     void btnSlice_Click();
-    //void btnDeletePoints_Click();
     void btnALength_Click();
     void btnBLength_Click();
     void btnBShrink_Click();

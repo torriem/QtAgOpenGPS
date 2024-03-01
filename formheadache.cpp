@@ -118,7 +118,10 @@ void FormHeadache::load_headline() {
     headache_designer_instance->setProperty("showa", false);
     headache_designer_instance->setProperty("showb", false);
 
-    emit saveHeadlines();
+    emit loadHeadlines();
+
+    //clear headline.  Not sure I like that.
+
     update_lines();
     update_headland();
 }
@@ -186,74 +189,7 @@ void FormHeadache::update_lines() {
     }
     headache_designer_instance->setProperty("boundaryLines", lines);
 
-    lines.clear();
-
-    if (isLinesVisible && hdl->tracksArr.count() > 0)
-    {
-        //GL.Enable(EnableCap.LineStipple);
-        //GL.LineStipple(1, 0x7070);
-        //GL.PointSize(3);
-
-
-        for (int i = 0; i < hdl->tracksArr.count(); i++)
-        {
-            linemap.clear();
-            if (hdl->tracksArr[i].mode == (int)TrackMode::AB)
-            {
-                color = QColor::fromRgbF(0.973f, 0.9f, 0.10f);
-            }
-            else
-            {
-                color = QColor::fromRgbF(0.3f, 0.99f, 0.20f);
-            }
-            linemap["color"] = color;
-
-            linepoints.clear();
-            for (Vec3 item: hdl->tracksArr[i].trackPts)
-            {
-                p = QVector3D(item.easting, item.northing, 0);
-                s = p.project(modelview, projection, QRect(0,0,width,height));
-                linepoint = QPoint(s.x(), height - s.y());
-                linepoints.append(linepoint);
-            }
-            linemap["points"] = linepoints;
-            linemap["dashed"] = true;
-            linemap["width"] = 3;
-            linemap["index"] = 0; //unused
-            lines.append(linemap);
-        }
-
-
-        //GL.Disable(EnableCap.LineStipple);
-
-        if (hdl->idx > -1)
-        {
-            linemap.clear();
-            linemap["width"] = 6;
-            //GL.LineWidth(6);
-            linemap["color"] = QColor::fromRgbF(1.0f, 0.0f, 1.0f);
-            linemap["dashed"] = false;
-
-            //GL.Begin(PrimitiveType.LineStrip);
-            for (Vec3 item: hdl->tracksArr[hdl->idx].trackPts)
-            {
-                p = QVector3D(item.easting, item.northing, 0);
-                s = p.project(modelview, projection, QRect(0,0,width,height));
-                linepoint = QPoint(s.x(), height - s.y());
-                linepoints.append(linepoint);
-            }
-            linemap["points"] = linepoints;
-            lines.append(linemap);
-
-            int cnt = hdl->tracksArr[hdl->idx].trackPts.count() - 1;
-
-            apoint = QPoint(hdl->tracksArr[hdl->idx].trackPts[0].easting, hdl->tracksArr[hdl->idx].trackPts[0].northing);
-            showa = true;
-            bpoint = QPoint(hdl->tracksArr[hdl->idx].trackPts[cnt].easting, hdl->tracksArr[hdl->idx].trackPts[cnt].northing);
-            showb = true;
-        }
-    }
-    headache_designer_instance->setProperty("headacheLines", lines);
+    update_headlines();
 
     update_ab();
 
@@ -317,6 +253,100 @@ void FormHeadache::update_headland() {
     headache_designer_instance->setProperty("headlandLine", line);
 }
 
+void FormHeadache::update_headlines()
+{
+    QMatrix4x4 modelview, projection;
+    QVector3D p, s;
+
+    QVariantList lines;
+    QVariantMap linemap;
+    QVariantList linepoints;
+    QPoint linepoint;
+    QColor color;
+
+    setup_matrices(modelview, projection);
+
+    int width = qmlItem(headache_designer_instance, "headacheRenderer")->property("width").toReal();
+    int height = qmlItem(headache_designer_instance, "headacheRenderer")->property("height").toReal();
+
+    lines.clear();
+    showa = false;
+    showb = false;
+
+    if (isLinesVisible && hdl->tracksArr.count() > 0)
+    {
+        //GL.Enable(EnableCap.LineStipple);
+        //GL.LineStipple(1, 0x7070);
+        //GL.PointSize(3);
+
+
+        for (int i = 0; i < hdl->tracksArr.count(); i++)
+        {
+            linemap.clear();
+            if (hdl->tracksArr[i].mode == (int)TrackMode::AB)
+            {
+                color = QColor::fromRgbF(0.973f, 0.9f, 0.10f);
+            }
+            else
+            {
+                color = QColor::fromRgbF(0.3f, 0.99f, 0.20f);
+            }
+            linemap["color"] = color;
+
+            linepoints.clear();
+            for (Vec3 item: hdl->tracksArr[i].trackPts)
+            {
+                p = QVector3D(item.easting, item.northing, 0);
+                s = p.project(modelview, projection, QRect(0,0,width,height));
+                linepoint = QPoint(s.x(), height - s.y());
+                linepoints.append(linepoint);
+            }
+            linemap["points"] = linepoints;
+            linemap["dashed"] = true;
+            linemap["width"] = 3;
+            linemap["index"] = 0; //unused
+            lines.append(linemap);
+        }
+
+        //GL.Disable(EnableCap.LineStipple);
+
+        if (hdl->idx > -1)
+        {
+            linemap.clear();
+            linemap["width"] = 6;
+            //GL.LineWidth(6);
+            linemap["color"] = QColor::fromRgbF(1.0f, 0.0f, 1.0f);
+            linemap["dashed"] = false;
+
+            linepoints.clear();
+
+            //GL.Begin(PrimitiveType.LineStrip);
+            for (Vec3 item: hdl->tracksArr[hdl->idx].trackPts)
+            {
+                p = QVector3D(item.easting, item.northing, 0);
+                s = p.project(modelview, projection, QRect(0,0,width,height));
+                linepoint = QPoint(s.x(), height - s.y());
+                linepoints.append(linepoint);
+            }
+            linemap["points"] = linepoints;
+            lines.append(linemap);
+
+            int cnt = hdl->tracksArr[hdl->idx].trackPts.count() - 1;
+
+            p = QVector3D(hdl->tracksArr[hdl->idx].trackPts[0].easting, hdl->tracksArr[hdl->idx].trackPts[0].northing,0);
+            s = p.project(modelview, projection, QRect(0,0,width,height));
+            apoint = QPoint(s.x(), height - s.y());
+            showa = true;
+
+            p = QVector3D(hdl->tracksArr[hdl->idx].trackPts[cnt].easting, hdl->tracksArr[hdl->idx].trackPts[cnt].northing,0);
+            s = p.project(modelview, projection, QRect(0,0,width,height));
+            bpoint = QPoint(s.x(), height - s.y());
+            showb = true;
+        }
+    }
+    headache_designer_instance->setProperty("headacheLines", lines);
+}
+
 void FormHeadache::FormHeadLine_FormClosing()
 {
     //hdl
@@ -348,6 +378,7 @@ void FormHeadache::btnCycleBackward_Click()
     {
         hdl->idx = -1;
     }
+    update_headlines();
 }
 
 void FormHeadache::btnCycleForward_Click()
@@ -363,14 +394,10 @@ void FormHeadache::btnCycleForward_Click()
     {
         hdl->idx = -1;
     }
+    update_headlines();
 }
 
 void FormHeadache::clicked(int mouseX, int mouseY) {
-    if ((double)lineDistance == 0 && (bool)curveLine) {
-        timedMessageBox(3000, tr("Distance Error"), tr("Distance Set to 0, Nothing to Move"));
-        return;
-    }
-
     QVector3D fieldCoords = mouseClickToField(mouseX, mouseY);
 
     pint.easting = fieldCoords.x();
@@ -402,6 +429,7 @@ void FormHeadache::clicked(int mouseX, int mouseY) {
         }
 
         isA = false;
+        update_ab();
     }
     else
     {
@@ -684,8 +712,8 @@ void FormHeadache::clicked(int mouseX, int mouseY) {
         }
 
         hdl->desList.clear();
+        update_headlines();
     }
-    update_ab();
 }
 
 void FormHeadache::btnDeleteCurve_Click()
@@ -706,6 +734,8 @@ void FormHeadache::btnDeleteCurve_Click()
         }
     }
     else hdl->idx = -1;
+
+    update_headlines();
 
 }
 
@@ -850,6 +880,7 @@ void FormHeadache::btnBndLoop_Click() {
             delta = 0;
         }
     }
+    update_headland();
     emit saveHeadland();
 }
 
@@ -1009,6 +1040,7 @@ void FormHeadache::btnALength_Click() {
             hdl->tracksArr[hdl->idx].trackPts.insert(0, pt);
         }
     }
+    update_headlines();
 }
 
 void FormHeadache::btnBLength_Click()
@@ -1025,6 +1057,7 @@ void FormHeadache::btnBLength_Click()
             hdl->tracksArr[hdl->idx].trackPts.append(pt);
         }
     }
+    update_headlines();
 }
 
 void FormHeadache::btnBShrink_Click()
@@ -1034,6 +1067,7 @@ void FormHeadache::btnBShrink_Click()
         if (hdl->tracksArr[hdl->idx].trackPts.count() > 8)
             hdl->tracksArr[hdl->idx].trackPts.remove(hdl->tracksArr[hdl->idx].trackPts.count()-5, 5);
     }
+    update_headlines();
 }
 
 void FormHeadache::btnAShrink_Click()
@@ -1043,6 +1077,7 @@ void FormHeadache::btnAShrink_Click()
         if (hdl->tracksArr[hdl->idx].trackPts.count() > 8)
             hdl->tracksArr[hdl->idx].trackPts.remove(0, 5);
     }
+    update_headlines();
 }
 
 void FormHeadache::btnHeadlandOff_Click()
@@ -1064,4 +1099,6 @@ void FormHeadache::btnCancelTouch_Click()
     //FixLabelsCurve();
     //TODO: why is this here?
     //curve->desList.clear();
+    update_ab();
+    //update_headlines();
 }

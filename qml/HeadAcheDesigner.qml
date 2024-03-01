@@ -15,15 +15,17 @@ Popup{
     }
 
     property int headacheCount: 0
-    property bool curveLine: false
+    property bool curveLine: true
+    property double lineDistance: 0
+
     property double zoom: 1
     property double sX: 0
     property double sY: 0
 
-    property point apoint: Qt.point(0,0)
-    property point bpoint: Qt.point(0,0)
-    property bool showa: false
-    property bool showb: false
+    property point apoint: Qt.point(300,200)
+    property point bpoint: Qt.point(200,300)
+    property bool showa: true
+    property bool showb: true
 
     signal load()
     signal close()
@@ -144,25 +146,25 @@ Popup{
 
             Rectangle {
                 id: a_rect
-                visible: headlandDesigner.showa
+                visible: headacheDesigner.showa
                 width: 24
                 height: 24
                 radius: 12
                 color: "#ffc059"
-                x: headlandDesigner.apoint.x - 12
-                y: headlandDesigner.apoint.y - 12
+                x: headacheDesigner.apoint.x - 12
+                y: headacheDesigner.apoint.y - 12
                 z: 1
             }
 
             Rectangle {
                 id: b_rect
-                visible: headlandDesigner.showb
+                visible: headacheDesigner.showb
                 width: 24
                 height: 24
                 radius: 12
                 color:  "#80c0ff"
-                x: headlandDesigner.bpoint.x - 12
-                y: headlandDesigner.bpoint.y - 12
+                x: headacheDesigner.bpoint.x - 12
+                y: headacheDesigner.bpoint.y - 12
                 z: 1
             }
 
@@ -382,7 +384,7 @@ Popup{
                 //objectName: "btnAShrink"
                 icon.source: "/images/HeadlandDeletePoints.png"
                 Layout.alignment: Qt.AlignCenter
-                onClicked: headacheDesigner.deletePoint()
+                onClicked: headacheDesigner.cancelTouch()
             }
         }
         GridLayout{
@@ -475,7 +477,7 @@ Popup{
             IconButtonTransparent{
                 icon.source: "/images/Trash.png"
                 Layout.alignment: Qt.AlignCenter
-                onClicked: deleteCuHeadland()
+                onClicked: deleteCurve()
             }
             IconButtonTransparent{
                 icon.source: "/images/OK64.png"

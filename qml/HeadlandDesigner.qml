@@ -23,9 +23,9 @@ Popup{
     property double sX: 0
     property double sY: 0
 
-    property double maxFieldDistance;
-    property double fieldCenterX;
-    property double fieldCenterY;
+    //property double maxFieldDistance;
+    //property double fieldCenterX;
+    //property double fieldCenterY;
     property point apoint: Qt.point(0,0)
     property point bpoint: Qt.point(0,0)
     property bool showa: false
