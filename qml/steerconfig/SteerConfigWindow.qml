@@ -63,12 +63,11 @@ MoveablePopup {
             }
         }
         Item{
-
             id: steerSlidersConfig
+            height: 475
+            width:400
             anchors.left: parent.left
             anchors.top: topLine.bottom
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
             ButtonGroup {
                 buttons: buttonsTop.children
             }
@@ -155,8 +154,8 @@ MoveablePopup {
                                 steerConfigWindow.x = 0
                                 steerConfigWindow.y = 0
                             }else{//hide
-                                steerConfigWindow.height = 600
-                                steerConfigWindow.width=450
+                                steerConfigWindow.height = 465
+                                steerConfigWindow.width=400
                                 pwmWindow.visible = false
                                 steerConfig.visible = false
                                 steerConfigWindow.x = settings.setWindow_steerSettingsLocation.x
@@ -279,13 +278,13 @@ MoveablePopup {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.margins: 10
-            visible: false
             color: "lightgray"
+            visible: false
             ButtonGroup{
                 buttons: settingsBtns.children
             }
 
-            Row{
+            RowLayout{
                 id: settingsBtns
                 spacing: 3
                 width: parent.width
@@ -299,7 +298,7 @@ MoveablePopup {
                     checkable: true
                     checked: true
                     colorChecked: "lightgray"
-                    width: parent.width /3 -4
+                    implicitWidth: parent.width /3 -4
                 }
                 IconButtonTextBeside{
                     id: configBtn
@@ -309,7 +308,7 @@ MoveablePopup {
                     Layout.alignment: Qt.AlignCenter
                     checkable: true
                     colorChecked: "lightgray"
-                    width: parent.width /3 -4
+                    implicitWidth: parent.width /3 -4
                 }
                 IconButtonTextBeside{
                     id: settingsBtn
@@ -318,7 +317,7 @@ MoveablePopup {
                     Layout.alignment: Qt.AlignCenter
                     checkable: true
                     colorChecked: "lightgray"
-                    width: parent.width /3 -4
+                    implicitWidth: parent.width /3 -4
                 }
             }
             Item{
@@ -326,7 +325,7 @@ MoveablePopup {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: settingsBtns.bottom
-                anchors.bottom: parent.bottom
+                anchors.bottom: bottomRightButtons.top
                 anchors.margins: 10
                 SensorsTab{
                     anchors.fill: parent
@@ -339,6 +338,35 @@ MoveablePopup {
                 SettingsTab{
                     anchors.fill: parent
                     visible: settingsBtn.checked
+                }
+            }
+            RowLayout{
+                id: bottomRightButtons
+                anchors.right: parent.right
+                anchors.left: parent.left
+                anchors.bottom: parent.bottom
+                height: 70
+                IconButtonText{
+                    id: wizard
+                    text: qsTr("Wizard")
+                    icon.source: "/images/WizardWand.png"
+                    Layout.alignment: Qt.AlignCenter
+                }
+                IconButtonText{
+                    id: reset
+                    text: qsTr("Reset to Defaults")
+                    icon.source: "/images/Reset_Default.png"
+                    Layout.alignment: Qt.AlignCenter
+                }
+                Text {
+                    text: qsTr("Send + Save")
+                    Layout.alignment: Qt.AlignRight
+                }
+                IconButton{
+                    id: send
+                    Layout.alignment: Qt.AlignLeft
+                    icon.source: "/images/ToolAcceptChange.png"
+                    implicitWidth: 130
                 }
             }
         }
