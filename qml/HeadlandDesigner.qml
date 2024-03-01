@@ -23,9 +23,9 @@ Popup{
     property double sX: 0
     property double sY: 0
 
-    property double maxFieldDistance;
-    property double fieldCenterX;
-    property double fieldCenterY;
+    //property double maxFieldDistance;
+    //property double fieldCenterX;
+    //property double fieldCenterY;
     property point apoint: Qt.point(0,0)
     property point bpoint: Qt.point(0,0)
     property bool showa: false
@@ -42,6 +42,7 @@ Popup{
     signal mouseClicked(int x, int y)
     //signal mouseDragged(int fromX, int fromY, int toX, int toY)
     //signal zoom(bool checked)
+    signal close()
     signal slice()
     signal deletePoints()
     signal create_headland()

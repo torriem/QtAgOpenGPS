@@ -20,14 +20,22 @@ class FormHeadland : public QObject
 {
     Q_OBJECT
 protected:
-    InterfaceProperty<HeadlandDesigner,double> maxFieldDistance = InterfaceProperty<HeadlandDesigner,double>("maxFieldDistance");
-    InterfaceProperty<HeadlandDesigner,double> fieldCenterX = InterfaceProperty<HeadlandDesigner,double>("fieldCenterX");
-    InterfaceProperty<HeadlandDesigner,double> fieldCenterY = InterfaceProperty<HeadlandDesigner,double>("fieldCenterY");
+    //InterfaceProperty<HeadlandDesigner,double> maxFieldDistance = InterfaceProperty<HeadlandDesigner,double>("maxFieldDistance");
+    //InterfaceProperty<HeadlandDesigner,double> fieldCenterX = InterfaceProperty<HeadlandDesigner,double>("fieldCenterX");
+    //InterfaceProperty<HeadlandDesigner,double> fieldCenterY = InterfaceProperty<HeadlandDesigner,double>("fieldCenterY");
+
+    double maxFieldDistance = 0;
+    double fieldCenterX = 0;
+    double fieldCenterY = 0;
+
     InterfaceProperty<HeadlandDesigner,bool> showa = InterfaceProperty<HeadlandDesigner,bool>("showa");
     InterfaceProperty<HeadlandDesigner,bool> showb = InterfaceProperty<HeadlandDesigner,bool>("showb");
     InterfaceProperty<HeadlandDesigner,QPoint> apoint = InterfaceProperty<HeadlandDesigner,QPoint>("apoint");
     InterfaceProperty<HeadlandDesigner,QPoint> bpoint = InterfaceProperty<HeadlandDesigner,QPoint>("bpoint");
     InterfaceProperty<HeadlandDesigner,QPoint> vehiclePoint = InterfaceProperty<HeadlandDesigner,QPoint>("vehiclePoint");
+
+    InterfaceProperty<AOGInterface,bool> isBtnAutoSteerOn = InterfaceProperty<AOGInterface,bool>("isBtnAutoSteerOn");
+    InterfaceProperty<AOGInterface,bool> isYouTurnBtnOn = InterfaceProperty<AOGInterface,bool>("isYouTurnBtnOn");
 
     int fixX, fixY;
     //InterfaceProperty<HeadlandDesigner,bool> isA = InterfaceProperty<HeadlandDesigner,bool>("isA");
@@ -82,7 +90,7 @@ public slots:
     void update_lines(); //update the boundary lines in GUI
     void update_headland(); //update headland line
     void update_slice(); //update slice and A B points in GUI
-
+    void FormHeadLine_FormClosing();
     void clicked(int mouseX, int mouseY);
 
     void btn_Exit_Click();
@@ -100,11 +108,8 @@ public slots:
     void updateVehiclePosition();
 
 signals:
-    void turnOffAutoSteerBtn();
-    void turnOffYouTurnBtn();
     void timedMessageBox(int, QString, QString);
     void saveHeadland();
-    void loadHeadland();
 };
 
 #endif // FORMHEADLAND_H

@@ -47,7 +47,7 @@ Drawer {
                     width: 300
                     onClicked: {
                         fieldToolsMenu.visible = false
-                        headAcheDesigner.show()
+                        headacheDesigner.show()
                     }
                 }
                 IconButtonTextBeside{

@@ -46,10 +46,11 @@ Item {
     property variant sectionButtonState: [ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ]
 
     property bool isAutoSteerBtnOn: false
+    property bool isYouTurnBtnOn: false
 
-    onIsAutoSteerBtnOnChanged: {
-        console.debug("isAutoSteerBtnOn is now " + isAutoSteerBtnOn)
-    }
+    //onIsAutoSteerBtnOnChanged: {
+    //    console.debug("isAutoSteerBtnOn is now " + isAutoSteerBtnOn)
+    //}
 
     //General FormGPS information updated at GPS rate.
     property double latStart: 53
