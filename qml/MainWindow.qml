@@ -405,7 +405,7 @@ Window {
                 buttonText: qsTr("Field Tools")
                 icon.source: "/images/FieldTools.png"
                 onClicked: fieldTools.visible = true
-                disabled: aog.isJobStarted ? false : true
+                enabled: aog.isJobStarted ? true : false
                 Layout.alignment: Qt.AlignCenter
             }
             FieldToolsMenu {
