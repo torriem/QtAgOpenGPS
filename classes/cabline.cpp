@@ -13,17 +13,21 @@
 #include <QColor>
 #include "glutils.h"
 #include "cnmea.h"
+#include "ctrack.h"
+#include "cworldgrid.h"
 
 //??? why does CABLine refer to mf.ABLine? Isn't there only one instance and
 //thus was can just use "this."  If this is wrong, we'll remove this and fix it.
 
 CABLine::CABLine(QObject *parent) : QObject(parent)
 {
-    abLength = property_setAB_lineLength;
+    lineWidth = property_setDisplay_lineWidth;
+    abLength = 2000;
 }
 
 void CABLine::BuildCurrentABLineList(Vec3 pivot,
                                      double secondsSinceStart,
+                                     CTrack &trk,
                                      const CYouTurn &yt,
                                      const CVehicle &vehicle)
 {
@@ -33,20 +37,43 @@ void CABLine::BuildCurrentABLineList(Vec3 pivot,
 
     double dx, dy;
 
+    int idx = trk.idx;
+
+    abHeading = trk.gArr[idx].heading;
+
+    trk.gArr[idx].endPtA.easting = trk.gArr[idx].ptA.easting - (sin(abHeading) * abLength);
+    trk.gArr[idx].endPtA.northing = trk.gArr[idx].ptA.northing - (cos(abHeading) * abLength);
+
+    trk.gArr[idx].endPtB.easting = trk.gArr[idx].ptB.easting + (sin(abHeading) * abLength);
+    trk.gArr[idx].endPtB.northing = trk.gArr[idx].ptB.northing + (cos(abHeading) * abLength);
+
+    refNudgePtA = trk.gArr[idx].endPtA; refNudgePtB = trk.gArr[idx].endPtB;
+
+    if (idx > -1 && trk.gArr[idx].nudgeDistance != 0)
+    {
+        refNudgePtA.easting += (sin(abHeading + glm::PIBy2) * trk.gArr[idx].nudgeDistance);
+        refNudgePtA.northing += (cos(abHeading + glm::PIBy2) * trk.gArr[idx].nudgeDistance);
+
+        refNudgePtB.easting += ( sin(abHeading + glm::PIBy2) * trk.gArr[idx].nudgeDistance);
+        refNudgePtB.northing += (cos(abHeading + glm::PIBy2) * trk.gArr[idx].nudgeDistance);
+    }
+
     lastSecond = secondsSinceStart;
 
     //move the ABLine over based on the overlap amount set in
     widthMinusOverlap = tool_width - tool_overlap;
 
     //x2-x1
-    dx = refABLineP2.easting - refABLineP1.easting;
+    dx = refNudgePtB.easting - refNudgePtA.easting;
     //z2-z1
-    dy = refABLineP2.northing - refABLineP1.northing;
+    dy = refNudgePtB.northing - refNudgePtA.northing;
 
     distanceFromRefLine = ((dy * vehicle.guidanceLookPos.easting) - (dx * vehicle.guidanceLookPos.northing) +
-                           (refABLineP2.easting * refABLineP1.northing) -
-                           (refABLineP2.northing * refABLineP1.easting)) /
+                           (refNudgePtB.easting * refNudgePtA.northing) -
+                           (refNudgePtB.northing * refNudgePtA.easting)) /
                           sqrt((dy * dy) + (dx * dx));
+
+    distanceFromRefLine -= (0.5 * widthMinusOverlap);
 
     isLateralTriggered = false;
 
@@ -56,24 +83,42 @@ void CABLine::BuildCurrentABLineList(Vec3 pivot,
 
     //Which ABLine is the vehicle on, negative is left and positive is right side
     double RefDist = (distanceFromRefLine + (isHeadingSameWay ? tool_offset : -tool_offset)) / widthMinusOverlap;
+
     if (RefDist < 0) howManyPathsAway = (int)(RefDist - 0.5);
     else howManyPathsAway = (int)(RefDist + 0.5);
 
+    double distAway = widthMinusOverlap * howManyPathsAway;
+    distAway += (0.5 * widthMinusOverlap);
+
     shadowOffset = isHeadingSameWay ? tool_offset : -tool_offset;
 
+    //move the curline as well.
+    Vec2 nudgePtA(trk.gArr[idx].ptA);
+    Vec2 nudgePtB(trk.gArr[idx].ptB);
+
+    nudgePtA.easting += (sin(abHeading + glm::PIBy2) * trk.gArr[idx].nudgeDistance);
+    nudgePtA.northing += (cos(abHeading + glm::PIBy2) * trk.gArr[idx].nudgeDistance);
+
+    nudgePtB.easting += (sin(abHeading + glm::PIBy2) * trk.gArr[idx].nudgeDistance);
+    nudgePtB.northing += (cos(abHeading + glm::PIBy2) * trk.gArr[idx].nudgeDistance);
+
     //depending which way you are going, the offset can be either side
-    Vec2 point1((cos(-abHeading) * (widthMinusOverlap * howManyPathsAway + (isHeadingSameWay ? -tool_offset : tool_offset))) + refPoint1.easting,
-                (sin(-abHeading) * ((widthMinusOverlap * howManyPathsAway) + (isHeadingSameWay ? -tool_offset : tool_offset))) + refPoint1.northing);
+    Vec2 point1((cos(-abHeading) * (distAway + (isHeadingSameWay ? -tool_offset : tool_offset))) + nudgePtA.easting,
+                (sin(-abHeading) * (distAway + (isHeadingSameWay ? -tool_offset : tool_offset))) + nudgePtA.northing);
+
+    Vec2 point2((cos(-abHeading) * (distAway + (isHeadingSameWay ? -tool_offset : tool_offset))) + nudgePtB.easting,
+                (sin(-abHeading) * (distAway + (isHeadingSameWay ? -tool_offset : tool_offset))) + nudgePtB.northing);
+
 
     //create the new line extent points for current ABLine based on original heading of AB line
-    currentABLineP1.easting = point1.easting - (sin(abHeading) * abLength);
-    currentABLineP1.northing = point1.northing - (cos(abHeading) * abLength);
+    currentLinePtA.easting = point1.easting - (sin(abHeading) * abLength);
+    currentLinePtA.northing = point1.northing - (cos(abHeading) * abLength);
 
-    currentABLineP2.easting = point1.easting + (sin(abHeading) * abLength);
-    currentABLineP2.northing = point1.northing + (cos(abHeading) * abLength);
+    currentLinePtB.easting = point2.easting + (sin(abHeading) * abLength);
+    currentLinePtB.northing = point2.northing + (cos(abHeading) * abLength);
 
-    currentABLineP1.heading = abHeading;
-    currentABLineP2.heading = abHeading;
+    currentLinePtA.heading = abHeading;
+    currentLinePtB.heading = abHeading;
 
     isABValid = true;
     if (howManyPathsAway > -1) howManyPathsAway += 1;
@@ -84,6 +129,7 @@ void CABLine::GetCurrentABLine(Vec3 pivot, Vec3 steer,
                                double secondsSinceStart,
                                bool isAutoSteerBtnOn,
                                bool steerSwitchHigh,
+                               CTrack &trk,
                                CVehicle &vehicle,
                                CYouTurn &yt,
                                const CAHRS &ahrs,
@@ -98,7 +144,7 @@ void CABLine::GetCurrentABLine(Vec3 pivot, Vec3 steer,
     //build new current ref line if required
     if (!isABValid || ((secondsSinceStart - lastSecond) > 0.66
                        && (!isAutoSteerBtnOn || steerSwitchHigh)))
-        BuildCurrentABLineList(pivot,secondsSinceStart,yt,vehicle);
+        BuildCurrentABLineList(pivot,secondsSinceStart,trk,yt,vehicle);
 
     //Check uturn first
     if (yt.isYouTurnTriggered && yt.DistanceFromYouTurnLine(vehicle,pn))//do the pure pursuit from youTurn
@@ -118,23 +164,24 @@ void CABLine::GetCurrentABLine(Vec3 pivot, Vec3 steer,
 
     //Stanley
     else if (property_setVehicle_isStanleyUsed)
-        gyd.StanleyGuidanceABLine(currentABLineP1, currentABLineP2, pivot, steer, isAutoSteerBtnOn, vehicle,*this, ahrs,yt);
+        gyd.StanleyGuidanceABLine(currentLinePtA, currentLinePtB, pivot, steer, isAutoSteerBtnOn, vehicle,*this, ahrs,yt);
 
     //Pure Pursuit
     else
     {
         //get the distance from currently active AB line
         //x2-x1
-        dx = currentABLineP2.easting - currentABLineP1.easting;
+        dx = currentLinePtB.easting - currentLinePtA.easting;
         //z2-z1
-        dy = currentABLineP2.northing - currentABLineP1.northing;
+        dy = currentLinePtB.northing - currentLinePtA.northing;
 
         //save a copy of dx,dy in youTurn
         yt.dxAB = dx; yt.dyAB = dy;
 
         //how far from current AB Line is fix
-        distanceFromCurrentLinePivot = ((dy * pivot.easting) - (dx * pivot.northing) + (currentABLineP2.easting
-                                                                                        * currentABLineP1.northing) - (currentABLineP2.northing * currentABLineP1.easting))
+        distanceFromCurrentLinePivot = ((dy * pivot.easting) - (dx * pivot.northing) +
+                                        (currentLinePtB.easting * currentLinePtA.northing) -
+                                        (currentLinePtB.northing * currentLinePtA.easting))
                                        / sqrt((dy * dy) + (dx * dx));
 
         //integral slider is set to 0
@@ -188,13 +235,13 @@ void CABLine::GetCurrentABLine(Vec3 pivot, Vec3 steer,
         if (abFixHeadingDelta >= M_PI) abFixHeadingDelta = fabs(abFixHeadingDelta - glm::twoPI);
 
         // ** Pure pursuit ** - calc point on ABLine closest to current position
-        double U = (((pivot.easting - currentABLineP1.easting) * dx)
-                    + ((pivot.northing - currentABLineP1.northing) * dy))
+        double U = (((pivot.easting - currentLinePtA.easting) * dx)
+                    + ((pivot.northing - currentLinePtA.northing) * dy))
                    / ((dx * dx) + (dy * dy));
 
         //point on AB line closest to pivot axle point
-        rEastAB = currentABLineP1.easting + (U * dx);
-        rNorthAB = currentABLineP1.northing + (U * dy);
+        rEastAB = currentLinePtA.easting + (U * dx);
+        rNorthAB = currentLinePtA.northing + (U * dy);
 
         //update base on autosteer settings and distance from line
         double goalPointDistance = vehicle.UpdateGoalPointDistance();
@@ -280,14 +327,28 @@ void CABLine::GetCurrentABLine(Vec3 pivot, Vec3 steer,
         vehicle.guidanceLineSteerAngle = (short)(steerAngleAB * 100);
     }
 
-    //mf.setAngVel = 0.277777 * mf.avgSpeed * (Math.Tan(glm::toRadians(steerAngleAB))) / mf.vehicle.wheelbase;
+    //mf.setAngVel = 0.277777 * mf.avgSpeed * (tan(glm::toRadians(steerAngleAB))) / mf.vehicle.wheelbase;
     //mf.setAngVel = glm::toDegrees(mf.setAngVel);
+}
+
+void CABLine::DrawABLineNew(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, const CCamera &camera)
+{
+    GLHelperOneColor gldraw;
+
+    //ABLine currently being designed
+    gldraw.append(QVector3D(desLineEndA.easting, desLineEndA.northing, 0.0));
+    gldraw.append(QVector3D(desLineEndB.easting, desLineEndB.northing, 0.0));
+    gldraw.draw(gl, mvp, QColor::fromRgbF(0.95f, 0.70f, 0.50f),GL_LINES, lineWidth);
+
+    drawText3D(camera, gl,mvp, desPtA.easting, desPtA.northing, "&A", 1.0, true, QColor::fromRgbF(0.2f, 0.950f, 0.20f));
+    drawText3D(camera, gl,mvp, desPtB.easting, desPtB.northing, "&B", 1.0, true, QColor::fromRgbF(0.2f, 0.950f, 0.20f));
 }
 
 void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                           bool isFontOn,
-                          CBoundary &bnd,
+                          CTrack &trk,
                           CYouTurn &yt,
+                          const CWorldGrid &worldGrid,
                           const CCamera &camera,
                           const CGuidance &gyd)
 {
@@ -307,70 +368,61 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
 
     //Draw AB Points
     cv.color = QVector4D(0.95f, 0.0f, 0.0f, 1.0);
-    cv.vertex = QVector3D(refPoint1.easting, refPoint1.northing, 0.0);
+    cv.vertex = QVector3D(trk.gArr[trk.idx].ptB.easting, trk.gArr[trk.idx].ptB.northing, 0.0);
     gldraw1.append(cv);
     cv.color = QVector4D(0.0f, 0.90f, 0.95f, 1.0);
-    cv.vertex = QVector3D(refPoint2.easting, refPoint2.northing, 0.0);
+    cv.vertex = QVector3D(trk.gArr[trk.idx].ptA.easting, trk.gArr[trk.idx].ptA.northing, 0.0);
     gldraw1.append(cv);
-    cv.color = QVector4D(0.00990f, 0.990f, 0.095f,1.0);
-    cv.vertex = QVector3D(bnd.iE, bnd.iN, 0.0);
-    gldraw1.append(cv);
+    //cv.color = QVector4D(0.00990f, 0.990f, 0.05f,1.0);
+    //cv.vertex = QVector3D(bnd.iE, bnd.iN, 0.0);
+    //gldraw1.append(cv);
     gldraw1.draw(gl,mvp,GL_POINTS,8.0f);
 
-    if (isFontOn && !isABLineBeingSet)
+    if (isFontOn && !isMakingABLine)
     {
         color.setRgbF(0.00990f, 0.990f, 0.095f);
-        drawText3D(camera,gl,mvp, refPoint1.easting, refPoint1.northing, "&A", 1.0, true, color);
-        drawText3D(camera,gl,mvp, refPoint2.easting, refPoint2.northing, "&B", 1.0, true, color);
+        drawText3D(camera,gl,mvp, trk.gArr[trk.idx].ptA.easting, trk.gArr[trk.idx].ptA.northing, "&A", 1.0, true, color);
+        drawText3D(camera,gl,mvp, trk.gArr[trk.idx].ptB.easting, trk.gArr[trk.idx].ptB.northing, "&B", 1.0, true, color);
     }
 
     //Draw reference AB line
     color.setRgbF(0.930f, 0.2f, 0.2f);
-    gldraw.append(QVector3D(refABLineP1.easting, refABLineP1.northing, 0));
-    gldraw.append(QVector3D(refABLineP2.easting, refABLineP2.northing, 0));
-    gldraw.draw(gl,mvp,color,GL_LINES,lineWidth);
+    gldraw.append(QVector3D(trk.gArr[trk.idx].endPtA.easting, trk.gArr[trk.idx].endPtA.northing, 0));
+    gldraw.append(QVector3D(trk.gArr[trk.idx].endPtB.easting, trk.gArr[trk.idx].endPtB.northing, 0));
+    gldraw.draw(gl,mvp,color,GL_LINES,4);
 
-    double sinHR = sin(abHeading + glm::PIBy2) * (widthMinusOverlap * 0.5 + shadowOffset);
-    double cosHR = cos(abHeading + glm::PIBy2) * (widthMinusOverlap * 0.5 + shadowOffset);
-    double sinHL = sin(abHeading + glm::PIBy2) * (widthMinusOverlap * 0.5 - shadowOffset);
-    double cosHL = cos(abHeading + glm::PIBy2) * (widthMinusOverlap * 0.5 - shadowOffset);
 
-    //shadow
-    color.setRgbF(0.5, 0.5, 0.5, 0.3);
+    if (worldGrid.isRateMap)
+    {
+        double sinHR = sin(abHeading + glm::PIBy2) * (widthMinusOverlap * 0.5 + shadowOffset);
+        double cosHR = cos(abHeading + glm::PIBy2) * (widthMinusOverlap * 0.5 + shadowOffset);
+        double sinHL = sin(abHeading + glm::PIBy2) * (widthMinusOverlap * 0.5 - shadowOffset);
+        double cosHL = cos(abHeading + glm::PIBy2) * (widthMinusOverlap * 0.5 - shadowOffset);
 
-    gldraw.clear();
-    gldraw.append(QVector3D(currentABLineP1.easting - sinHL, currentABLineP1.northing - cosHL, 0));
-    gldraw.append(QVector3D(currentABLineP1.easting + sinHR, currentABLineP1.northing + cosHR, 0));
-    gldraw.append(QVector3D(currentABLineP2.easting + sinHR, currentABLineP2.northing + cosHR, 0));
-    gldraw.append(QVector3D(currentABLineP2.easting - sinHL, currentABLineP2.northing - cosHR, 0));
+        //shadow
+        color.setRgbF(0.5, 0.5, 0.5, 0.3);
 
-    gldraw.draw(gl,mvp,color,GL_TRIANGLE_FAN,lineWidth);
+        gldraw.clear();
+        gldraw.append(QVector3D(currentLinePtA.easting - sinHL, currentLinePtA.northing - cosHL, 0));
+        gldraw.append(QVector3D(currentLinePtA.easting + sinHR, currentLinePtA.northing + cosHR, 0));
+        gldraw.append(QVector3D(currentLinePtB.easting + sinHR, currentLinePtB.northing + cosHR, 0));
+        gldraw.append(QVector3D(currentLinePtB.easting - sinHL, currentLinePtB.northing - cosHR, 0));
 
-    //shadow lines
-    color.setRgbF(0.55, 0.55, 0.55, 0.3);
-    //use the same vertices as the shadow
-    gldraw.draw(gl,mvp,color,GL_LINE_LOOP,1.0f);
+        gldraw.draw(gl,mvp,color,GL_TRIANGLE_FAN,lineWidth);
+
+        //shadow lines
+        color.setRgbF(0.55, 0.55, 0.55, 0.3);
+        //use the same vertices as the shadow
+        gldraw.draw(gl,mvp,color,GL_LINE_LOOP,1.0f);
+    }
 
     //draw current AB Line
     gldraw.clear();
     color.setRgbF(0.95f, 0.20f, 0.950f);
 
-    gldraw.append(QVector3D(currentABLineP1.easting, currentABLineP1.northing, 0.0));
-    gldraw.append(QVector3D(currentABLineP2.easting, currentABLineP2.northing, 0.0));
+    gldraw.append(QVector3D(currentLinePtA.easting, currentLinePtA.northing, 0.0));
+    gldraw.append(QVector3D(currentLinePtB.easting, currentLinePtB.northing, 0.0));
     gldraw.draw(gl,mvp,color,GL_LINES,lineWidth);
-
-    //ABLine currently being designed
-    if (isABLineBeingSet)
-    {
-        color.setRgbF(0.95f, 0.20f, 0.950f);
-        gldraw.append(QVector3D(desP1.easting, desP1.northing, 0.0));
-        gldraw.append(QVector3D(desP2.easting, desP2.northing, 0.0));
-        gldraw.draw(gl,mvp,color,GL_LINES,lineWidth);
-
-        color.setRgbF(0.2f, 0.950f, 0.20f);
-        drawText3D(camera,gl,mvp,desPoint1.easting, desPoint1.northing, "&A", 1.0, true, color);
-        drawText3D(camera,gl,mvp,desPoint2.easting, desPoint2.northing, "&B", 1.0, true, color);
-    }
 
     if (isSideGuideLines && camera.camSetDistance > tool_toolWidth * -120)
     {
@@ -393,30 +445,30 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
 
         if (isHeadingSameWay)
         {
-            gldraw.append(QVector3D((cosHeading * (toolWidth + toolOffset)) + currentABLineP1.easting, (sinHeading * (toolWidth + toolOffset)) + currentABLineP1.northing, 0));
-            gldraw.append(QVector3D((cosHeading * (toolWidth + toolOffset)) + currentABLineP2.easting, (sinHeading * (toolWidth + toolOffset)) + currentABLineP2.northing, 0));
-            gldraw.append(QVector3D((cosHeading * (-toolWidth + toolOffset)) + currentABLineP1.easting, (sinHeading * (-toolWidth + toolOffset)) + currentABLineP1.northing, 0));
-            gldraw.append(QVector3D((cosHeading * (-toolWidth + toolOffset)) + currentABLineP2.easting, (sinHeading * (-toolWidth + toolOffset)) + currentABLineP2.northing, 0));
+            gldraw.append(QVector3D((cosHeading * (toolWidth + toolOffset)) + currentLinePtA.easting, (sinHeading * (toolWidth + toolOffset)) + currentLinePtA.northing, 0));
+            gldraw.append(QVector3D((cosHeading * (toolWidth + toolOffset)) + currentLinePtB.easting, (sinHeading * (toolWidth + toolOffset)) + currentLinePtB.northing, 0));
+            gldraw.append(QVector3D((cosHeading * (-toolWidth + toolOffset)) + currentLinePtA.easting, (sinHeading * (-toolWidth + toolOffset)) + currentLinePtA.northing, 0));
+            gldraw.append(QVector3D((cosHeading * (-toolWidth + toolOffset)) + currentLinePtB.easting, (sinHeading * (-toolWidth + toolOffset)) + currentLinePtB.northing, 0));
 
             toolWidth *= 2;
-            gldraw.append(QVector3D((cosHeading * toolWidth) + currentABLineP1.easting, (sinHeading * toolWidth) + currentABLineP1.northing, 0));
-            gldraw.append(QVector3D((cosHeading * toolWidth) + currentABLineP2.easting, (sinHeading * toolWidth) + currentABLineP2.northing, 0));
-            gldraw.append(QVector3D((cosHeading * (-toolWidth)) + currentABLineP1.easting, (sinHeading * (-toolWidth)) + currentABLineP1.northing, 0));
-            gldraw.append(QVector3D((cosHeading * (-toolWidth)) + currentABLineP2.easting, (sinHeading * (-toolWidth)) + currentABLineP2.northing, 0));
+            gldraw.append(QVector3D((cosHeading * toolWidth) + currentLinePtA.easting, (sinHeading * toolWidth) + currentLinePtA.northing, 0));
+            gldraw.append(QVector3D((cosHeading * toolWidth) + currentLinePtB.easting, (sinHeading * toolWidth) + currentLinePtB.northing, 0));
+            gldraw.append(QVector3D((cosHeading * (-toolWidth)) + currentLinePtA.easting, (sinHeading * (-toolWidth)) + currentLinePtA.northing, 0));
+            gldraw.append(QVector3D((cosHeading * (-toolWidth)) + currentLinePtB.easting, (sinHeading * (-toolWidth)) + currentLinePtB.northing, 0));
         }
 
         else
         {
-            gldraw.append(QVector3D((cosHeading * (toolWidth - toolOffset)) + currentABLineP1.easting, (sinHeading * (toolWidth - toolOffset)) + currentABLineP1.northing, 0));
-            gldraw.append(QVector3D((cosHeading * (toolWidth - toolOffset)) + currentABLineP2.easting, (sinHeading * (toolWidth - toolOffset)) + currentABLineP2.northing, 0));
-            gldraw.append(QVector3D((cosHeading * (-toolWidth - toolOffset)) + currentABLineP1.easting, (sinHeading * (-toolWidth - toolOffset)) + currentABLineP1.northing, 0));
-            gldraw.append(QVector3D((cosHeading * (-toolWidth - toolOffset)) + currentABLineP2.easting, (sinHeading * (-toolWidth - toolOffset)) + currentABLineP2.northing, 0));
+            gldraw.append(QVector3D((cosHeading * (toolWidth - toolOffset)) + currentLinePtA.easting, (sinHeading * (toolWidth - toolOffset)) + currentLinePtA.northing, 0));
+            gldraw.append(QVector3D((cosHeading * (toolWidth - toolOffset)) + currentLinePtB.easting, (sinHeading * (toolWidth - toolOffset)) + currentLinePtB.northing, 0));
+            gldraw.append(QVector3D((cosHeading * (-toolWidth - toolOffset)) + currentLinePtA.easting, (sinHeading * (-toolWidth - toolOffset)) + currentLinePtA.northing, 0));
+            gldraw.append(QVector3D((cosHeading * (-toolWidth - toolOffset)) + currentLinePtB.easting, (sinHeading * (-toolWidth - toolOffset)) + currentLinePtB.northing, 0));
 
             toolWidth *= 2;
-            gldraw.append(QVector3D((cosHeading * toolWidth) + currentABLineP1.easting, (sinHeading * toolWidth) + currentABLineP1.northing, 0));
-            gldraw.append(QVector3D((cosHeading * toolWidth) + currentABLineP2.easting, (sinHeading * toolWidth) + currentABLineP2.northing, 0));
-            gldraw.append(QVector3D((cosHeading * (-toolWidth)) + currentABLineP1.easting, (sinHeading * (-toolWidth)) + currentABLineP1.northing, 0));
-            gldraw.append(QVector3D((cosHeading * (-toolWidth)) + currentABLineP2.easting, (sinHeading * (-toolWidth)) + currentABLineP2.northing, 0));
+            gldraw.append(QVector3D((cosHeading * toolWidth) + currentLinePtA.easting, (sinHeading * toolWidth) + currentLinePtA.northing, 0));
+            gldraw.append(QVector3D((cosHeading * toolWidth) + currentLinePtB.easting, (sinHeading * toolWidth) + currentLinePtB.northing, 0));
+            gldraw.append(QVector3D((cosHeading * (-toolWidth)) + currentLinePtA.easting, (sinHeading * (-toolWidth)) + currentLinePtA.northing, 0));
+            gldraw.append(QVector3D((cosHeading * (-toolWidth)) + currentLinePtB.easting, (sinHeading * (-toolWidth)) + currentLinePtB.northing, 0));
         }
 
         gldraw.draw(gl,mvp,color,GL_LINES,lineWidth);
@@ -459,7 +511,7 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
     yt.DrawYouTurn(gl,mvp);
 }
 
-void CABLine::BuildTram(CBoundary &bnd, CTram &tram)
+void CABLine::BuildTram(CTrack &trk, CBoundary &bnd, CTram &tram)
 {
     double tramWidth = property_setTram_tramWidth;
     double tool_halfWidth = ((double)property_setVehicle_toolWidth - (double)property_setVehicle_toolOverlap) / 2.0;
@@ -484,20 +536,24 @@ void CABLine::BuildTram(CBoundary &bnd, CTram &tram)
 
     bool isBndExist = bnd.bndList.count() != 0;
 
+    abHeading = trk.gArr[trk.idx].heading;
+
     double hsin = sin(abHeading);
     double hcos = cos(abHeading);
 
+    double len = glm::Distance(trk.gArr[trk.idx].endPtA, trk.gArr[trk.idx].endPtB);
     //divide up the AB line into segments
     Vec2 P1;
-    for (int i = 0; i < 3200; i += 4)
+    for (int i = 0; i < (int)len; i += 4)
     {
-        P1.easting = (hsin * i) + refABLineP1.easting;
-        P1.northing = (hcos * i) + refABLineP1.northing;
+        P1.easting = (hsin * i) + trk.gArr[trk.idx].endPtA.easting;
+        P1.northing = (hcos * i) + trk.gArr[trk.idx].endPtA.northing;
         tramRef.append(P1);
     }
 
     //create list of list of points of triangle strip of AB Highlight
     double headingCalc = abHeading + glm::PIBy2;
+
     hsin = sin(headingCalc);
     hcos = cos(headingCalc);
 
@@ -515,7 +571,6 @@ void CABLine::BuildTram(CBoundary &bnd, CTram &tram)
     }
 
     double widd = 0;
-
     for (int i = cntr; i < (int)property_setTram_passes; i++)
     {
         tram.tramArr = QSharedPointer<QVector<Vec2>>(new QVector<Vec2>());
@@ -564,81 +619,3 @@ void CABLine::BuildTram(CBoundary &bnd, CTram &tram)
         //return;
     }
 }
-
-
-void CABLine::DeleteAB() {
-    refPoint1 = Vec2(0.0, 0.0);
-    refPoint2 = Vec2(0.0, 1.0);
-
-    refABLineP1 = Vec2(0.0, 0.0);
-    refABLineP2 = Vec2(0.0, 1.0);
-
-    currentABLineP1 = Vec3(0.0, 0.0, 0.0);
-    currentABLineP2 = Vec3(0.0, 1.0, 0.0);
-
-    abHeading = 0.0;
-    howManyPathsAway = 0.0;
-
-    isABLineSet = false;
-    isABLineLoaded = false;
-}
-
-//called from Main form
-void CABLine::SetABLineByBPoint(const CVehicle &vehicle)
-{
-    refPoint2.easting = vehicle.fixEasting;
-    refPoint2.northing = vehicle.fixNorthing;
-
-    //calculate the AB Heading
-    abHeading = atan2(refPoint2.easting - refPoint1.easting, refPoint2.northing - refPoint1.northing);
-    if (abHeading < 0) abHeading += glm::twoPI;
-
-    //sin x cos z for endpoints, opposite for additional lines
-    refABLineP1.easting = refPoint1.easting - (sin(abHeading) * abLength);
-    refABLineP1.northing = refPoint1.northing - (cos(abHeading) * abLength);
-
-    refABLineP2.easting = refPoint1.easting + (sin(abHeading) * abLength);
-    refABLineP2.northing = refPoint1.northing + (cos(abHeading) * abLength);
-
-    isABLineSet = true;
-    isABLineLoaded = true;
-}
-
-void CABLine::SetABLineByHeading()
-{
-    //heading is set in the AB Form
-    refABLineP1.easting = refPoint1.easting - (sin(abHeading) * abLength);
-    refABLineP1.northing = refPoint1.northing - (cos(abHeading) * abLength);
-
-    refABLineP2.easting = refPoint1.easting + (sin(abHeading) * abLength);
-    refABLineP2.northing = refPoint1.northing + (cos(abHeading) * abLength);
-
-    refPoint2.easting = refABLineP2.easting;
-    refPoint2.northing = refABLineP2.northing;
-
-    isABLineSet = true;
-    isABLineLoaded = true;
-}
-
-void CABLine::MoveABLine(double dist)
-{
-    moveDistance += isHeadingSameWay ? dist : -dist;
-
-    //calculate the new points for the reference line and points
-    refPoint1.easting += cos(abHeading) * (isHeadingSameWay ? dist : -dist);
-    refPoint1.northing -= sin(abHeading) * (isHeadingSameWay ? dist : -dist);
-
-    refABLineP1.easting = refPoint1.easting - (sin(abHeading) * abLength);
-    refABLineP1.northing = refPoint1.northing - (cos(abHeading) * abLength);
-
-    refABLineP2.easting = refPoint1.easting + (sin(abHeading) * abLength);
-    refABLineP2.northing = refPoint1.northing + (cos(abHeading) * abLength);
-
-    refPoint2.easting = refABLineP2.easting;
-    refPoint2.northing = refABLineP2.northing;
-
-    isABValid = false;
-}
-
-
-

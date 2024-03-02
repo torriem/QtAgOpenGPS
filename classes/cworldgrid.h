@@ -61,9 +61,21 @@ public:
 
     double eastingMinGeo;
 
-    double GridSize = 4000;
-    double Count = 30;
+    //Y
+    double northingMaxRate;
+
+    double northingMinRate;
+
+    //X
+    double eastingMaxRate;
+
+    double eastingMinRate;
+
+    double GridSize = 6000;
+    double Count = 40;
     bool isGeoMap = false;
+    bool isRateMap = false, isRateTrigger = false;
+    int numRateChannels = 1;
 
     explicit CWorldGrid(QObject *parent = 0);
     ~CWorldGrid();

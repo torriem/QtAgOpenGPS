@@ -22,6 +22,10 @@ CWorldGrid::CWorldGrid(QObject *parent) : QObject(parent)
     northingMinGeo = -300;
     eastingMaxGeo = 300;
     eastingMinGeo = -300;
+    northingMaxRate = 300;
+    northingMinRate = -300;
+    eastingMaxRate = 300;
+    eastingMinRate = -300;
 }
 
 CWorldGrid::~CWorldGrid() {
@@ -36,8 +40,7 @@ void CWorldGrid::DrawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
 {
     //We can save a lot of time by keeping this grid buffer on the GPU unless it needs to
     //be altered.
-    if (isTextureOn) {
-        //adjust bitmap zoom based on cam zoom
+    if (isRateMap) {
         if (camera.zoomValue > 100) Count = 4;
         else if (camera.zoomValue > 80) Count = 8;
         else if (camera.zoomValue > 50) Count = 16;
@@ -53,13 +56,13 @@ void CWorldGrid::DrawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
             QVector<QVector3D> vertices;
 
             SurfaceVertex field[] = {
-                { QVector3D(eastingMin, northingMax, 0.10),
+                { QVector3D(eastingMin, northingMax, -2.10),
                   QVector2D(0,0) },
-                { QVector3D(eastingMax, northingMax, 0.10),
+                { QVector3D(eastingMax, northingMax, -2.10),
                   QVector2D(Count, 0.0) },
-                { QVector3D(eastingMin, northingMin, 0.10),
+                { QVector3D(eastingMin, northingMin, -2.10),
                   QVector2D(0,Count) },
-                { QVector3D(eastingMax, northingMin, 0.10),
+                { QVector3D(eastingMax, northingMin, -2.10),
                   QVector2D(Count, Count) }
             };
 
@@ -83,7 +86,25 @@ void CWorldGrid::DrawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
 
         texture[Textures::FLOOR]->release();
 
-        //TODO If isGeoMap
+        //TODO: Rate map texture
+        /*
+        GL.Color4(1.0f, 1.0f, 1.0f, 0.5f);
+        GL.BindTexture(TextureTarget.Texture2D, mf.texture[(int)FormGPS.textures.RateMap1]);
+        GL.Begin(PrimitiveType.TriangleStrip);
+
+        GL.TexCoord2(0, 0);
+        GL.Vertex3(eastingMinRate, northingMaxRate, -1.05);
+        GL.TexCoord2(1, 0);
+        GL.Vertex3(eastingMaxRate, northingMaxRate, -1.05);
+        GL.TexCoord2(0, 1);
+        GL.Vertex3(eastingMinRate, northingMinRate, -1.05);
+        GL.TexCoord2(1, 1);
+        GL.Vertex3(eastingMaxRate, northingMinRate, -1.05);
+
+        GL.End();
+
+        GL.Disable(EnableCap.Blend);
+        */
 
     }
     else

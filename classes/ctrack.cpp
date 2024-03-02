@@ -3,6 +3,7 @@
 #include "cabcurve.h"
 #include "cabline.h"
 #include "glm.h"
+#include "ctrk.h"
 
 int CTrack::FindClosestRefTrack(Vec3 pivot, const CVehicle &vehicle)
 {

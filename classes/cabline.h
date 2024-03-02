@@ -6,6 +6,7 @@
 #include "vec2.h"
 #include "vec3.h"
 #include <QString>
+#include "ctrk.h"
 
 class QOpenGLFunctions;
 //namespace AgOpenGPS
@@ -19,6 +20,8 @@ class CTram;
 class CCamera;
 class CAHRS;
 class CGuidance;
+class CTrack;
+class CWorldGrid;
 
 class CABLines
 {
@@ -46,8 +49,8 @@ public:
 
 
     //the current AB guidance line
-    Vec3 currentABLineP1 = Vec3(0.0, 0.0, 0.0);
-    Vec3 currentABLineP2 = Vec3(0.0, 1.0, 0.0);
+    Vec3 currentLinePtA = Vec3(0.0, 0.0, 0.0);
+    Vec3 currentLinePtB = Vec3(0.0, 1.0, 0.0);
 
     double distanceFromCurrentLinePivot;
     double distanceFromRefLine = 0.0;
@@ -56,40 +59,34 @@ public:
     Vec2 goalPointAB = Vec2(0, 0);
 
     //List of all available ABLines
-    QVector<CABLines> lineArr;
-    int numABLines, numABLineSelected;
+    CTrk refLine;
 
-    double howManyPathsAway = 0.0, moveDistance;
-    bool isABLineBeingSet;
-    bool isABLineSet, isABLineLoaded;
+    double howManyPathsAway;
+    bool isMakingABLine;
     bool isHeadingSameWay = true;
-    bool isBtnABLineOn;
 
     double ppRadiusAB;
     Vec2 radiusPointAB;
     double rEastAB, rNorthAB;
 
-    //the reference line endpoints
-    Vec2 refABLineP1 = Vec2(0.0, 0.0);
-    Vec2 refABLineP2 = Vec2(0.0, 1.0);
-    double refLineSide = 1.0;
-
-    //the two inital A and B points
-    Vec2 refPoint1 = Vec2(0.2, 0.15);
-    Vec2 refPoint2 = Vec2(0.3, 0.3);
     double snapDistance, lastSecond = 0;
     double steerAngleAB;
     int lineWidth;
 
     //design
-    Vec2 desPoint1 = Vec2(0.2, 0.15);
+    Vec2 desPtA = Vec2(0.2, 0.15);
+    Vec2 desPtB = Vec2(0.3, 0.3);
 
-    Vec2 desPoint2 = Vec2(0.3, 0.3);
+    Vec2 desLineEndA = Vec2(0.0, 0.0);
+    Vec2 desLineEndB = Vec2(999997, 1.0);
+
+    Vec2 refNudgePtA = Vec2(1, 1), refNudgePtB = Vec2(2, 2);
+
     double desHeading = 0;
-    Vec2 desP1 = Vec2(0.0, 0.0);
-    Vec2 desP2 = Vec2(999997, 1.0);
+
     QString desName = "";
 
+    //autosteer errors
     double pivotDistanceError, pivotDistanceErrorLast, pivotDerivative, pivotDerivativeSmoothed;
 
     //derivative counters
@@ -105,28 +102,32 @@ public:
 
     void BuildCurrentABLineList(Vec3 pivot,
                                 double secondsSinceStart,
+                                CTrack &trk,
                                 const CYouTurn &yt,
                                 const CVehicle &vehicle);
+
     void GetCurrentABLine(Vec3 pivot, Vec3 steer,
                           double secondsSinceStart,
                           bool isAutoSteerBtnOn,
                           bool steerSwitchHigh,
+                          CTrack &trk,
                           CVehicle &vehicle,
                           CYouTurn &yt,
                           const CAHRS &ahrs,
                           CGuidance &gyd,
                           CNMEA &pn);
+
     void DrawABLines(QOpenGLFunctions *g, const QMatrix4x4 &mvp,
                      bool isFontOn,
-                     CBoundary &bnd,
+                     CTrack &trk,
                      CYouTurn &yt,
+                     const CWorldGrid &worldGrid,
                      const CCamera &camera,
                      const CGuidance &gyd);
-    void BuildTram(CBoundary &bnd, CTram &tram);
-    void DeleteAB();
-    void SetABLineByBPoint(const CVehicle &vehicle);
-    void SetABLineByHeading(); //do we need to pass in heading somewhere from the main form?
-    void MoveABLine(double dist);
+
+    void DrawABLineNew(QOpenGLFunctions *g, const QMatrix4x4 &mvp, const CCamera &camera);
+
+    void BuildTram(CTrack &trk, CBoundary &bnd, CTram &tram);
 
 signals:
     void stopAutosteer();
