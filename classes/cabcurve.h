@@ -18,6 +18,15 @@ class CAHRS;
 class CGuidance;
 
 
+//TODO: move these to their own module
+//currently defined in formheadland.cpp
+void CalculateHeadings(QVector<Vec3> &xList);
+void MakePointMinimumSpacing(QVector<Vec3> &xList, double minDistance);
+int GetLineIntersection(double p0x, double p0y, double p1x, double p1y,
+                        double p2x, double p2y, double p3x, double p3y,
+                        double &iEast,
+                        double &iNorth);
+
 class CCurveLines
 {
 public:
@@ -26,8 +35,6 @@ public:
     QString Name = "aa";
     bool isVisible = true;
 };
-
-
 
 class CABCurve : public QObject
 {
