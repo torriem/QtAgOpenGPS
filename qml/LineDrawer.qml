@@ -1,8 +1,14 @@
 import QtQuick 2.0
+import QtQuick.Controls 2.5
+import QtQuick.Layouts 1.3
 //import AgOpenGPS 1.0
 
 Item {
     id: lineDrawer
+    function show(){
+        lineDrawer.visible = true
+    }
+
     TopLine{
         id: topLine
         titleText: "Click 2 points on the Boundary to Begin"
@@ -19,6 +25,7 @@ Item {
             id: lineDrawerField
             objectName: "lineDrawerField"
             anchors.fill: parent
+            TextLine{ text: "nothing to see here yet"}
 
             signal clicked(var mouse)
 
@@ -39,74 +46,66 @@ Item {
         anchors.bottom: parent.bottom
         anchors.top: topLine.bottom
         anchors.right: parent.right
-        /*
-          I'll add this later, not sure how it works now.
-        Grid{
-            id: top4Buttons
+
+        //  I'll add this later, not sure how it works now.
+        GridLayout{
+            id: top6Buttons
             anchors.top: parent.top
             anchors.bottom: boundaryCurve.top
             anchors.right: parent.right
             anchors.left: parent.left
             anchors.margins: 5
-            spacing: 5
-            rows: 2
             columns: 2
+            rows: 6
             flow: Grid.TopToBottom
             IconButtonTransparent{
-                objectName: "btnDrawer"
-                icon.source: "/images/.png"
+                icon.source: "/images/APlusPlusB.png"
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonTransparent{
-                objectName: "btnDrawer"
-                icon.source: "/images/.png"
+                icon.source: "/images/APlusPlusA.png"
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonTransparent{
-                objectName: "btnDrawer"
-                icon.source: "/images/.png"
+                icon.source: "/images/TrackVisible.png"
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonTransparent{
-                objectName: "btnDrawer"
-                icon.source: "/images/.png"
+                icon.source: "/images/ZoomOGL.png"
+                Layout.alignment: Qt.AlignCenter
             }
-        }*/
+            IconButtonTransparent{
+                icon.source: "/images/ABTrackCurve.png"
+                Layout.alignment: Qt.AlignCenter
+            }
+            IconButtonTransparent{
+                icon.source: "/images/ABLineCycleBk.png"
+                Layout.alignment: Qt.AlignCenter
+            }
+            IconButtonTransparent{
+                icon.source: "/images/MappingOff.png"
+                Layout.alignment: Qt.AlignCenter
+            }
+            IconButtonTransparent{
+                icon.source: "/images/HeadlandDeletePoints.png"
+                Layout.alignment: Qt.AlignCenter
+            }
 
         IconButtonTransparent{
             id: boundaryCurve
-            objectName: "btnDrawerGenerateBoundaryCurve"
             icon.source: "/images/BoundaryCurveLine.png"
-            anchors.right: parent.right
-            anchors.bottom: curveRow.top
-            anchors.margins: 15
-            Text{
-                anchors.right: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.rightMargin: 10
-                text: "Boundary Curve"
-                font.bold: true
-                font.pixelSize: 15
-            }
+            text: "Boundary Curve"
         }
 
-        Row{
-            id: curveRow
-            anchors.bottom: curveNameInput.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: parent.width -10
-            anchors.margins: 15
-            spacing: 20
             IconButtonTransparent{
-                id: marker
-                objectName: "btnDrawerCreateCurve"
-                icon.source: "/images/CurveOn.png"
+                icon.source: "/images/Trash.png"
             }
             IconButtonTransparent{
-                objectName: "btnDrawerCurveCycle"
-                icon.source: "/images/ABLineCycle.png"
+                icon.source: "/images/ABTrackAB.png"
             }
 
             IconButtonTransparent{
-                objectName: "btnDrawerDeleteLine"
-                icon.source: "/images/HideContour.png"
+                icon.source: "/images/ABLineCycle.png"
             }
         }
         Rectangle{
@@ -114,7 +113,7 @@ Item {
             width: parent.width - 10
             anchors.margins: 15
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: lineRow.top
+            anchors.bottom: curveRow.top
             color: "ghostwhite"
             border.color: "darkgray"
             border.width: 1
@@ -124,68 +123,41 @@ Item {
                 anchors.fill: parent
             }
         }
-        Row{
-            id: lineRow
-            anchors.bottom: lineNameInput.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: parent.width -10
+        RowLayout{
+            id: curveRow
+            anchors.bottom:  bottomRow.top
             anchors.margins: 15
-            spacing: 20
-            IconButtonTransparent{
-                objectName: "btnDrawerCreateLine"
-                icon.source: "/images/ABLineOn.png"
-            }
-            IconButtonTransparent{
-                objectName: "btnDrawerLineCycle"
-                icon.source: "/images/ABLineCycle.png"
-            }
-
-            IconButtonTransparent{
-                objectName: "btnDrawerDeleteLine"
-                icon.source: "/images/ABLineDelete.png"
-            }
-        }
-        Rectangle{
-            id: lineNameInput
             width: parent.width - 10
-            anchors.margins: 15
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: bottomRow.top
-            color: "ghostwhite"
-            border.color: "darkgray"
-            height: 40
-            border.width: 1
-            TextInput{
-                objectName: "drawerLineName"
-                anchors.fill: parent
+            height: children.height
+            Text{
+                text: "1/16"
+                Layout.alignment: Qt.AlignCenter
+            }
+            IconButtonTransparent{
+                icon.source: "/images/Time.png"
+                Layout.alignment: Qt.AlignCenter
             }
         }
 
-        Row{
+        RowLayout{
             id: bottomRow
             anchors.bottom: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width -10
+            height: children.height + anchors.margins
             anchors.margins: 15
-            spacing: 20
             IconButtonTransparent{
-                objectName: "btnDrawerDeletePoints"
-                icon.source: "/images/HeadlandDeletePoints.png"
-            }
-            IconButtonTransparent{
-                objectName: "btnDrawerShowMapping"
-                text: "Mapping"
-                isChecked: false
-                icon.source: "/images/MappingOff.png"
-                iconChecked: "/images/MappingOn.png"
-                width: marker.width
-                height: marker.height
+                icon.source: "/images/Cancel64.png"
+                Layout.alignment: Qt.AlignCenter
+                onClicked: lineDrawer.visible = false
             }
 
             IconButtonTransparent{
                 objectName: "btnDrawerSave"
                 icon.source: "/images/OK64.png"
                 onClicked: lineDrawer.visible = false
+                Layout.alignment: Qt.AlignCenter
             }
         }
     }

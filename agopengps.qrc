@@ -607,5 +607,6 @@
         <file>qml/steerconfig/WheelAngleSensorTab.qml</file>
         <file>qml/steerconfig/PWMSettingsTab.qml</file>
         <file>qml/steerconfig/PurePursuitTab.qml</file>
+        <file>images/TrackVisible.png</file>
     </qresource>
 </RCC>

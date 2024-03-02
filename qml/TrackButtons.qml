@@ -28,6 +28,7 @@ TimedRectangle {
         IconButtonTransparent{
             icon.source: "/images/ABDraw.png"
             Layout.alignment: Qt.AlignCenter
+            onClicked: lineDrawer.show()
         }
         IconButtonTransparent{
             icon.source: "/images/ABTracks.png"
