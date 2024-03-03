@@ -16,6 +16,7 @@ TimedRectangle {
             id: marker
             icon.source: "/images/ABSnapNudgeMenuRef.png"
             Layout.alignment: Qt.AlignCenter
+            onClicked: refNudge.show()
         }
         IconButtonColor{
             icon.source: "/images/AutoSteerSnapToPivot.png"

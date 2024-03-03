@@ -1145,6 +1145,11 @@ Window {
             id: lineNudge
             visible: false
         }
+        RefNudge{
+            id: refNudge
+            visible: false
+        }
+
         TrackNew{
             id: trackNew
             visible: false
