@@ -5,7 +5,7 @@ import QtQuick.Controls 2.5
 TimedRectangle {
     id: trackButtons
     color: "white"
-    width: 110*6
+    width: 110*7
     height: 110
     RowLayout{
         anchors.fill: parent
@@ -26,13 +26,17 @@ TimedRectangle {
             Layout.alignment: Qt.AlignCenter
         }
         IconButtonTransparent{
+            icon.source: "/images/ABTracks.png"
+            Layout.alignment: Qt.AlignCenter
+        }
+        IconButtonTransparent{
+            icon.source: "/images/AddNew.png"
+            Layout.alignment: Qt.AlignCenter
+        }
+        IconButtonTransparent{
             icon.source: "/images/ABDraw.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: lineDrawer.show()
-        }
-        IconButtonTransparent{
-            icon.source: "/images/ABTracks.png"
-            Layout.alignment: Qt.AlignCenter
         }
         IconButtonTransparent{
             icon.source: "/images/ABSnapNudgeMenu.png"
