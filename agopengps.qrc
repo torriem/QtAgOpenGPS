@@ -474,7 +474,6 @@
         <file>qml/FieldNew.qml</file>
         <file>qml/FieldFromKML.qml</file>
         <file>qml/boundary/BoundaryMenu.qml</file>
-        <file>qml/LineDrawer.qml</file>
         <file>qml/TopLine.qml</file>
         <file>images/Images/VehicleOpacity.png</file>
         <file>images/Images/z_4WDFront.png</file>
@@ -544,7 +543,6 @@
         <file>images/GPSQuality.png</file>
         <file>qml/FieldTable.qml</file>
         <file>qml/TimedRectangle.qml</file>
-        <file>qml/TrackButtons.qml</file>
         <file>images/ABSnapNudgeMenu.png</file>
         <file>images/ABSnapNudgeMenuRef.png</file>
         <file>images/AutoSteerSnapToPivot.png</file>
@@ -608,5 +606,8 @@
         <file>qml/steerconfig/PWMSettingsTab.qml</file>
         <file>qml/steerconfig/PurePursuitTab.qml</file>
         <file>images/TrackVisible.png</file>
+        <file>qml/tracks/LineDrawer.qml</file>
+        <file>qml/tracks/TrackButtons.qml</file>
+        <file>qml/tracks/LineNudge.qml</file>
     </qresource>
 </RCC>

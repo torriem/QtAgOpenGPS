@@ -2,6 +2,8 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
 
+import ".."
+
 TimedRectangle {
     id: trackButtons
     color: "white"
@@ -41,6 +43,7 @@ TimedRectangle {
         IconButtonTransparent{
             icon.source: "/images/ABSnapNudgeMenu.png"
             Layout.alignment: Qt.AlignCenter
+            onClicked: lineNudge.show()
         }
     }
 }

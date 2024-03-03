@@ -8,6 +8,7 @@ import AgOpenGPS 1.0
 import "interfaces"
 import "boundary"
 import "steerconfig"
+import "tracks"
 
 Window {
 
@@ -1139,6 +1140,10 @@ Window {
             height: 768
             width:1024
             visible:false
+        }
+        LineNudge{
+            id: lineNudge
+            visible: false
         }
 
         Rectangle{
