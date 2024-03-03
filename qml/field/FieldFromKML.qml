@@ -1,5 +1,7 @@
 import QtQuick 2.0
 
+import ".."
+
 Rectangle{
     id: fieldFromKML
     width: 500

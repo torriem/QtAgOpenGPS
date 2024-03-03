@@ -128,8 +128,6 @@
         <file>images/TurnManualRight.png</file>
         <file>images/textures/LandscapeNight.png</file>
         <file>images/textures/Lift.png</file>
-        <file>qml/FieldMenu.qml</file>
-        <file>qml/FieldOpen.qml</file>
         <file>qml/ToolsWindow.qml</file>
         <file>images/fileMenu.png</file>
         <file>images/SpecialFunctions.png</file>
@@ -460,10 +458,7 @@
         <file>images/ISOXML.png</file>
         <file>qml/TramLinesEditor.qml</file>
         <file>qml/LineEditor.qml</file>
-        <file>qml/FieldFromExisting.qml</file>
         <file>images/BackSpace.png</file>
-        <file>qml/FieldNew.qml</file>
-        <file>qml/FieldFromKML.qml</file>
         <file>qml/boundary/BoundaryMenu.qml</file>
         <file>qml/LineDrawer.qml</file>
         <file>qml/TopLine.qml</file>
@@ -512,14 +507,12 @@
         <file>qml/TrackNum.qml</file>
         <file>qml/DisplayButtons.qml</file>
         <file>qml/StartUp.qml</file>
-        <file>qml/FieldData.qml</file>
         <file>qml/SimController.qml</file>
         <file>qml/TextLine.qml</file>
         <file>qml/GPSData.qml</file>
         <file>images/FieldStats.png</file>
         <file>images/TrackOn.png</file>
         <file>images/GPSQuality.png</file>
-        <file>qml/FieldTable.qml</file>
         <file>qml/TimedRectangle.qml</file>
         <file>qml/TrackButtons.qml</file>
         <file>images/ABSnapNudgeMenu.png</file>
@@ -547,7 +540,6 @@
         <file>images/Config/ConS_ImplementOffset.png</file>
         <file>qml/interfaces/BoundaryInterface.qml</file>
         <file>qml/boundary/BoundaryTable.qml</file>
-        <file>qml/FieldToolsMenu.qml</file>
         <file>qml/boundary/BoundaryRecord.qml</file>
         <file>qml/boundary/BoundaryType.qml</file>
         <file>images/YouTurnU.png</file>
@@ -608,5 +600,13 @@
         <file>qml/config/ConfigTrams.qml</file>
         <file>qml/config/ConfigWhichVehicle.qml</file>
         <file>qml/config/ConfigYouTurn.qml</file>
+        <file>qml/field/FieldData.qml</file>
+        <file>qml/field/FieldFromExisting.qml</file>
+        <file>qml/field/FieldFromKML.qml</file>
+        <file>qml/field/FieldMenu.qml</file>
+        <file>qml/field/FieldNew.qml</file>
+        <file>qml/field/FieldOpen.qml</file>
+        <file>qml/field/FieldTable.qml</file>
+        <file>qml/field/FieldToolsMenu.qml</file>
     </qresource>
 </RCC>

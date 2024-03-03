@@ -4,6 +4,8 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 //import QtQuick.Controls.Styles 1.4
 
+import ".."
+
 Drawer {
     id: fieldMenu
     //modal: false
