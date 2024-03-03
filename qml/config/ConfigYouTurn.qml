@@ -1,6 +1,8 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
+
+import ".."
 /* todo:
   not sure about uTurn Style. setting seems to be an int.
   these don't need the SpinBoxCM thing, because they're already metric.

@@ -1,6 +1,8 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
+import ".."
+
 /*todo:
 //in the application output we get the warning from this page:
 qrc:/qml/ConfigImplementDimensions.qml:26:9: QML SpinBoxCM: Binding loop detected for property "value"

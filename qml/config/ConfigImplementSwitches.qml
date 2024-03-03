@@ -2,6 +2,8 @@ import QtQuick 2.0
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
 
+import ".."
+
 /*todo
   this page definitely isn't done yet. Need to add logic for
   changing one button state when it's opposite is clicked

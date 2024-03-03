@@ -5,6 +5,8 @@ import QtQuick.Extras 1.4
 import QtQuick.Dialogs 1.3
 import Qt.labs.folderlistmodel 2.2
 
+import ".."
+
 Dialog {
     height: 768
     width:1024

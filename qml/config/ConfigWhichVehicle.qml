@@ -3,6 +3,8 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 import QtQuick.Extras 1.4
 
+import ".."
+
 /*todo:
   couldn't find the setting for the polygons
   or logNMEA

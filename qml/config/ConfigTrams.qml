@@ -1,6 +1,8 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
+import ".."
+
 /*todo:
   not sure about this whole file. The IconButtonColor isn't connected to anything
   */

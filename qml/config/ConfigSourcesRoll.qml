@@ -1,6 +1,8 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
+import ".."
+
 /*todo:
   not sure how to handle "remove offset, zero roll, and reset IMU". Will leave for now
   */

@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import ".."
+
 /*todo: sections not populated from .config yet
   also not at all sure about switching these to SpinBoxCM... Don't want to break anything
   */

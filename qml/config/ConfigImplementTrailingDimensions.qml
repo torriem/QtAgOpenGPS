@@ -1,6 +1,8 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
+import ".."
+
 /*todo:
 //in the application output we get the warning from this page:
 qrc:/qml/ConfigImplementDimensions.qml:26:9: QML SpinBoxCM: Binding loop detected for property "value"
@@ -14,7 +16,7 @@ Rectangle{
     visible: false
     Image{
         id: image1
-        source: "/images/ToolHitchPageRear.png"
+        source: "/images/ToolHitchPageTrailing.png"
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
@@ -22,14 +24,14 @@ Rectangle{
         height: parent.height*.75
     }
     SpinBoxCM{
-        id: hitchLength
+        id: toolTrailingHitchLength
         anchors.top: image1.bottom
         anchors.right: parent.right
-        anchors.rightMargin: parent.width * 0.6
+        anchors.rightMargin: 400
         from: 10
         to:3000
-        boundValue: settings.setVehicle_hitchLength < 0 ? -settings.setVehicle_hitchLength : settings.setVehicle_hitchLength
-        onValueModified: settings.setVehicle_hitchLength = -value
+        boundValue: -settings.setTool_toolTrailingHitchLength
+        onValueModified: settings.setTool_toolTrailingHitchLength = -value
         TextLine{
             text: qsTr("Units: ")+ utils.cm_unit_abbrev()
             font.bold: true

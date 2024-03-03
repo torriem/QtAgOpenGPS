@@ -2,6 +2,8 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
 
+import ".."
+
 /*todo:
  can't find setting for "invert relays"
  not sure about the "send button"
