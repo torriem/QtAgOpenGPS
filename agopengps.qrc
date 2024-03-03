@@ -176,7 +176,6 @@
         <file>images/BrightnessDn.png</file>
         <file>images/WindowDayMode.png</file>
         <file>images/WindowNightMode.png</file>
-        <file>qml/Config.qml</file>
         <file>images/Config/4WD/z_4WDFrontAoG.png</file>
         <file>images/Config/4WD/z_4WDFrontCase.png</file>
         <file>images/Config/4WD/z_4WDFrontChallenger.png</file>
@@ -426,16 +425,8 @@
         <file>images/www.png</file>
         <file>images/YouTurnReverse.png</file>
         <file>images/SvennArrow.png</file>
-        <file>qml/ConfigTractor.qml</file>
-        <file>qml/ConfigFeatures.qml</file>
-        <file>qml/ConfigImplement.qml</file>
-        <file>qml/ConfigSources.qml</file>
-        <file>qml/ConfigYouTurn.qml</file>
-        <file>qml/ConfigModules.qml</file>
-        <file>qml/ConfigTrams.qml</file>
         <file>images/YouTurnH.png</file>
         <file>images/Config/ConT_TramOverride.png</file>
-        <file>qml/ConfigWhichVehicle.qml</file>
         <file>images/Steer/Sf_GainTab.png</file>
         <file>images/Steer/Sf_PP.png</file>
         <file>images/Steer/Sf_PPTab.png</file>
@@ -501,17 +492,6 @@
         <file>images/Images/z_TurnCancel.png</file>
         <file>images/Images/z_TurnManual.png</file>
         <file>qml/PinButtons.qml</file>
-        <file>qml/ConfigTractorDimensions.qml</file>
-        <file>qml/ConfigTractorAntenna.qml</file>
-        <file>qml/ConfigTractorSteerSettings.qml</file>
-        <file>qml/ConfigModulesPins.qml</file>
-        <file>qml/ConfigImplementTrailingDimensions.qml</file>
-        <file>qml/ConfigImplementSections.qml</file>
-        <file>qml/ConfigImplementSwitches.qml</file>
-        <file>qml/ConfigImplementTiming.qml</file>
-        <file>qml/ConfigSourcesRoll.qml</file>
-        <file>qml/ConfigImplementSectionsSection.qml</file>
-        <file>qml/ConfigImplementSectionsZones.qml</file>
         <file>images/textures/z_Tool.png</file>
         <file>qml/TimedMessage.qml</file>
         <file>qml/SpinBoxCustomized.qml</file>
@@ -531,9 +511,6 @@
         <file>qml/OutlineText.qml</file>
         <file>qml/TrackNum.qml</file>
         <file>qml/DisplayButtons.qml</file>
-        <file>qml/ConfigImplementFrontDimensions.qml</file>
-        <file>qml/ConfigImplementRearDimensions.qml</file>
-        <file>qml/ConfigImplementTBTDimensions.qml</file>
         <file>qml/StartUp.qml</file>
         <file>qml/FieldData.qml</file>
         <file>qml/SimController.qml</file>
@@ -551,15 +528,12 @@
         <file>images/ABTracks.png</file>
         <file>images/ABDraw.png</file>
         <file>images/Config/Con_Display.png</file>
-        <file>qml/ConfigDisplay.qml</file>
         <file>qml/SpinBoxKM.qml</file>
         <file>qml/interfaces/FieldInterface.qml</file>
         <file>qml/interfaces/VehicleInterface.qml</file>
         <file>qml/interfaces/LinesInterface.qml</file>
         <file>qml/TitleFrame.qml</file>
         <file>qml/SpinBoxM.qml</file>
-        <file>qml/ConfigImplementOffset.qml</file>
-        <file>qml/ConfigImplementAxle.qml</file>
         <file>images/Config/ToolOverlap.png</file>
         <file>images/Config/ToolOffsetPositiveRight.png</file>
         <file>images/Config/ToolOffsetNegativeLeft.png</file>
@@ -608,5 +582,31 @@
         <file>qml/steerconfig/PWMSettingsTab.qml</file>
         <file>qml/steerconfig/PurePursuitTab.qml</file>
         <file>images/TrackVisible.png</file>
+        <file>qml/config/Config.qml</file>
+        <file>qml/config/ConfigDisplay.qml</file>
+        <file>qml/config/ConfigFeatures.qml</file>
+        <file>qml/config/ConfigImplement.qml</file>
+        <file>qml/config/ConfigImplementAxle.qml</file>
+        <file>qml/config/ConfigImplementFrontDimensions.qml</file>
+        <file>qml/config/ConfigImplementOffset.qml</file>
+        <file>qml/config/ConfigImplementRearDimensions.qml</file>
+        <file>qml/config/ConfigImplementSections.qml</file>
+        <file>qml/config/ConfigImplementSectionsSection.qml</file>
+        <file>qml/config/ConfigImplementSectionsZones.qml</file>
+        <file>qml/config/ConfigImplementSwitches.qml</file>
+        <file>qml/config/ConfigImplementTBTDimensions.qml</file>
+        <file>qml/config/ConfigImplementTiming.qml</file>
+        <file>qml/config/ConfigImplementTrailingDimensions.qml</file>
+        <file>qml/config/ConfigModules.qml</file>
+        <file>qml/config/ConfigModulesPins.qml</file>
+        <file>qml/config/ConfigSources.qml</file>
+        <file>qml/config/ConfigSourcesRoll.qml</file>
+        <file>qml/config/ConfigTractor.qml</file>
+        <file>qml/config/ConfigTractorAntenna.qml</file>
+        <file>qml/config/ConfigTractorDimensions.qml</file>
+        <file>qml/config/ConfigTractorSteerSettings.qml</file>
+        <file>qml/config/ConfigTrams.qml</file>
+        <file>qml/config/ConfigWhichVehicle.qml</file>
+        <file>qml/config/ConfigYouTurn.qml</file>
     </qresource>
 </RCC>
