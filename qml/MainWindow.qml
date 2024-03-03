@@ -1145,6 +1145,10 @@ Window {
             id: lineNudge
             visible: false
         }
+        TrackNew{
+            id: trackNew
+            visible: false
+        }
 
         Rectangle{
             id: recordButtons
