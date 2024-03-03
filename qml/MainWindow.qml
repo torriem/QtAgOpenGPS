@@ -694,6 +694,7 @@ Window {
             anchors.right: rightColumn.left
             anchors.rightMargin: 3
             Layout.fillWidth: true
+            visible: aog.isJobStarted ? true : false
             //spacing: parent.rowSpacing
             ComboBox {
                 id: skips

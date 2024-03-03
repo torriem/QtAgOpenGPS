@@ -119,6 +119,7 @@ Item {
             border.width: 1
             height: 40
             TextInput{
+                id: newLine
                 objectName: "drawerCurveName"
                 anchors.fill: parent
             }
@@ -137,6 +138,10 @@ Item {
             IconButtonTransparent{
                 icon.source: "/images/Time.png"
                 Layout.alignment: Qt.AlignCenter
+                onClicked: {
+                    var time = new Date().toLocaleTimeString(Qt.locale())
+                    newLine.text += " " + time
+                }
             }
         }
 
