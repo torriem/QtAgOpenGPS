@@ -1,5 +1,7 @@
 import QtQuick 2.15
 
+import "components"
+
 IconButton {
     id: icon_button_text
 

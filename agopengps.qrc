@@ -103,7 +103,6 @@
         <file>images/ZoomOut48.png</file>
         <file>qml/MainWindow.qml</file>
         <file>qml/IconButtonText.qml</file>
-        <file>qml/IconButton.qml</file>
         <file>qml/SectionButton.qml</file>
         <file>qml/MainWindowTest.qml</file>
         <file>images/textures/floor.png</file>
@@ -608,5 +607,6 @@
         <file>qml/field/FieldOpen.qml</file>
         <file>qml/field/FieldTable.qml</file>
         <file>qml/field/FieldToolsMenu.qml</file>
+        <file>qml/components/IconButton.qml</file>
     </qresource>
 </RCC>

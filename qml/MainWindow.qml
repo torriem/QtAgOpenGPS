@@ -10,6 +10,7 @@ import "boundary"
 import "steerconfig"
 import "config"
 import "field"
+import "components"
 
 Window {
 
