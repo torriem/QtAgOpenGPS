@@ -326,6 +326,10 @@ Window {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.leftMargin: 6
+            onVisibleChanged: if(visible == false)
+                                  width = 0
+                              else
+                                  width = children.width
             Button {
                 id: btnAcres
                 implicitWidth: parent.width
@@ -442,8 +446,7 @@ Window {
             anchors.topMargin: topLine.height + 10
             //anchors.rightMargin: 10
             anchors.margins: 10
-            visible: (settings.setMenu_isSpeedoOn === true ||
-                      settings.setMenu_isSpeedoOn === "true")
+            visible: settings.setMenu_isSpeedoOn
 
             speed: utils.speed_to_unit(aog.speedKph)
         }
@@ -473,6 +476,13 @@ Window {
             anchors.topMargin: topLine.height + 6
             anchors.rightMargin: 6
 
+            visible: aog.isJobStarted
+
+            onVisibleChanged: if(visible == false)
+                                  width = 0
+                              else
+                                  width = children.width
+
             IconButtonText {
                 id: btnContour
                 objectName: "btnContour"
@@ -482,7 +492,6 @@ Window {
                 iconChecked: "/images/ContourOn.png"
                 buttonText: "Contour"
                 //color: "white"
-                visible: aog.isJobStarted ? true : false
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText{
@@ -493,7 +502,6 @@ Window {
                 icon.source: "/images/CurveOff.png"
                 iconChecked: "/images/CurveOn.png"
                 buttonText: "ABCurve"
-                visible: aog.isJobStarted ? true : false
                 Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     abCurvePicker.visible = true
@@ -549,7 +557,6 @@ Window {
                 }
                 checked: aog.currentABLine > -1 ? true : false
                 buttonText: "ABLine"
-                visible: aog.isJobStarted ? true : false
             }
 
             IconButton{
@@ -558,7 +565,6 @@ Window {
                 icon.source: "/images/ABLineCycle.png"
                 width: btnABLine.width
                 height: btnABLine.height
-                visible: aog.isTrackOn
                 Layout.alignment: Qt.AlignCenter
             }
             IconButton{
@@ -567,7 +573,6 @@ Window {
                 icon.source: "/images/ABLineCycleBk.png"
                 width: btnABLine.width
                 height: btnABLine.height
-                visible: aog.isTrackOn
                 Layout.alignment: Qt.AlignCenter
             }
 
@@ -579,7 +584,6 @@ Window {
                 icon.source: "/images/ManualOff.png"
                 iconChecked: "/images/ManualOn.png"
                 buttonText: "Manual"
-                visible: aog.isJobStarted ? true : false
                 Layout.alignment: Qt.AlignCenter
                 onCheckedChanged: {
                     if (checked) {
@@ -599,7 +603,6 @@ Window {
                 icon.source: "/images/SectionMasterOff.png"
                 iconChecked: "/images/SectionMasterOn.png"
                 buttonText: "Auto"
-                visible: aog.isJobStarted ? true : false
                 Layout.alignment: Qt.AlignCenter
                 onCheckedChanged: {
                     if (checked) {
@@ -629,7 +632,6 @@ Window {
                 iconChecked: "/images/AutoSteerOn.png"
                 checkable: true
                 checked: aog.isAutoSteerBtnOn
-                visible: aog.isJobStarted ? true : false
                 //Is remote activation of autosteer enabled?
                 buttonText: (settings.setAS_isAutoSteerAutoOn === true ? "R" : "M")
                 Layout.alignment: Qt.AlignCenter
@@ -694,7 +696,12 @@ Window {
             anchors.right: rightColumn.left
             anchors.rightMargin: 3
             Layout.fillWidth: true
-            visible: aog.isJobStarted ? true : false
+            visible: aog.isJobStarted && leftColumn.visible
+
+            onVisibleChanged: if(visible == false)
+                                  height = 0
+                              else
+                                  height = children.height
             //spacing: parent.rowSpacing
             ComboBox {
                 id: skips
@@ -743,13 +750,11 @@ Window {
                 id: btnSectionMapping
                 objectName: "btnSectionMapping"
                 icon.source: "/images/SectionMapping"
-                visible: aog.isJobStarted ? true : false
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnFieldInfo
                 icon.source: "/images/FieldStats.png"
-                visible: aog.isJobStarted ? true : false
                 Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     fieldData.visible = !fieldData.visible
@@ -819,6 +824,7 @@ Window {
             anchors.right: rightColumn.left
             anchors.bottom: bottomButtons.top
             OutlineText{
+                id: simulatorOnText
                 visible: settings.setMenu_isSimulatorOn
                 anchors.top: parent.top
                 anchors.topMargin: lightbar.height+ 10
@@ -996,17 +1002,33 @@ Window {
 
         SimController{
             id: simBarRect
-            anchors.bottom: parent.bottom
+            anchors.bottom: timeText.top
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottomMargin: 10
+            anchors.bottomMargin: 8
             visible: utils.isTrue(settings.setMenu_isSimulatorOn)
+        }
+
+        OutlineText{
+            id: timeText
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.rightMargin: 50
+            font.pixelSize: 20
+            color: "#cc5200"
+            text: new Date().toLocaleTimeString(Qt.locale())
+            Timer{
+                interval: 100
+                repeat: true
+                running: true
+                onTriggered: timeText.text = new Date().toLocaleTimeString(Qt.locale())
+            }
         }
         SectionButtons {
             id: sectionButtons
             visible: aog.isJobStarted ? true : false
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: simBarRect.top
-            anchors.bottomMargin: 15
+            anchors.bottomMargin: 8
             width: 500 //TODO: make this adjust with the width of the parent window
         }
         DisplayButtons{
@@ -1027,6 +1049,27 @@ Window {
             anchors.margins: 20
             visible: false
             z:1
+        }
+        IconButtonTransparent{
+            id: toggleButtons
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            anchors.margins: 25
+            visible: aog.isJobStarted
+            width: 45
+            height: 25
+            icon.source: "/images/MenuHideShow.png"
+            onClicked: if(leftColumn.visible){
+                           leftColumn.visible = false
+                       }else{
+                           leftColumn.visible = true
+                       }
+        }
+        Compass{
+            id: compass
+            anchors.top: parent.top
+            anchors.right: parent.right
+            heading: -utils.radians_to_deg(aog.heading)
         }
     }
 

@@ -510,9 +510,10 @@ void FormGPS::oglMain_Paint()
             //Manual UTurn buttons are now in QML and are manipulated
 
             //TODO make this a QML widget instead of using OpenGL
-            DrawCompass(gl, modelview, projection, width - 400); //400 accounts for side buttons
+            //should be moved
+            //DrawCompass(gl, modelview, projection, width - 400); //400 accounts for side buttons
 
-            DrawCompassText(gl, projection*modelview, width - 400, height);
+            //DrawCompassText(gl, projection*modelview, width - 400, height);
 
             if (vehicle.isHydLiftOn) DrawLiftIndicator(gl, modelview, projection, width, height);
 
@@ -1075,76 +1076,77 @@ void FormGPS::DrawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int heigh
     }
 }
 
-void FormGPS::DrawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height)
-{
-    QLocale locale;
-    QColor color;
-    /*
-    //torriem TODO: buttons should all be in qml not in opengl  Zoom buttons
-    GLHelperTexture gldrawtex;
+//this is now drawn in qml
+//void FormGPS::DrawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height)
+//{
+//    QLocale locale;
+//    QColor color;
+//    /*
+//    //torriem TODO: buttons should all be in qml not in opengl  Zoom buttons
+//    GLHelperTexture gldrawtex;
 
 
-    color.fromRgbf(0.90f, 0.90f, 0.93f);
+//    color.fromRgbf(0.90f, 0.90f, 0.93f);
 
-    int center = Width / 2 - 60;
+//    int center = Width / 2 - 60;
 
-    gldrawtex.append ( { QVector3D(center, 50, 0),      QVector2D(0,0) } );
-    gldrawtex.append ( { QVector3D(center + 32, 50, 0), QVector2D(1,0) } );
-    gldrawtex.append ( { QVector3D(center + 32, 82, 0), QVector2D(1,1) } );
-    gldrawtex.append ( { QVector3D(center, 82, 0),      QVector2D(0,1) } );
+//    gldrawtex.append ( { QVector3D(center, 50, 0),      QVector2D(0,0) } );
+//    gldrawtex.append ( { QVector3D(center + 32, 50, 0), QVector2D(1,0) } );
+//    gldrawtex.append ( { QVector3D(center + 32, 82, 0), QVector2D(1,1) } );
+//    gldrawtex.append ( { QVector3D(center, 82, 0),      QVector2D(0,1) } );
 
-    gldrawtex.draw(gl,mvp,Texture::
-    */
-    int center = Width / 2 - 10;
-    color.setRgbF( 0.9852f, 0.982f, 0.983f);
-    strHeading = locale.toString(glm::toDegrees(vehicle.fixHeading),'f',1);
-    lenth = 15 * strHeading.length();
-    drawText(gl, mvp, Width / 2 - lenth, 10, strHeading, 0.8);
+//    gldrawtex.draw(gl,mvp,Texture::
+//    */
+//    int center = Width / 2 - 10;
+//    color.setRgbF( 0.9852f, 0.982f, 0.983f);
+//    strHeading = locale.toString(glm::toDegrees(vehicle.fixHeading),'f',1);
+//    lenth = 15 * strHeading.length();
+//    drawText(gl, mvp, Width / 2 - lenth, 10, strHeading, 0.8);
 
-    //GPS Step
-    if(distanceCurrentStepFixDisplay < 0.03*100)
-        color.setRgbF(0.98f, 0.82f, 0.653f);
-    drawText(gl, mvp, center, 10, locale.toString(distanceCurrentStepFixDisplay,'f',1) + tr("cm"),0.8, true, color);
+//    //GPS Step
+//    if(distanceCurrentStepFixDisplay < 0.03*100)
+//        color.setRgbF(0.98f, 0.82f, 0.653f);
+//    drawText(gl, mvp, center, 10, locale.toString(distanceCurrentStepFixDisplay,'f',1) + tr("cm"),0.8, true, color);
 
-    if (isMaxAngularVelocity)
-    {
-        color.setRgbF(0.98f, 0.4f, 0.4f);
-        drawText(gl,mvp,center-10, Height-260, "*", 2, true, color);
-    }
+//    if (isMaxAngularVelocity)
+//    {
+//        color.setRgbF(0.98f, 0.4f, 0.4f);
+//        drawText(gl,mvp,center-10, Height-260, "*", 2, true, color);
+//    }
 
-    color.setRgbF(0.9752f, 0.62f, 0.325f);
-    if (timerSim.isActive()) drawText(gl, mvp, -110, Height - 130, "Simulator On", 1, true, color);
+//    color.setRgbF(0.9752f, 0.62f, 0.325f);
+//    if (timerSim.isActive()) drawText(gl, mvp, -110, Height - 130, "Simulator On", 1, true, color);
 
-    if (ct.isContourBtnOn)
-    {
-        if (isFlashOnOff && ct.isLocked)
-        {
-            color.setRgbF(0.9652f, 0.752f, 0.75f);
-            drawText(gl, mvp, -center - 100, Height / 2.3, "Locked", 1,true, color);
-        }
-    }
+//    if (ct.isContourBtnOn)
+//    {
+//        if (isFlashOnOff && ct.isLocked)
+//        {
+//            color.setRgbF(0.9652f, 0.752f, 0.75f);
+//            drawText(gl, mvp, -center - 100, Height / 2.3, "Locked", 1,true, color);
+//        }
+//    }
 
-}
+//}
 
-void FormGPS::DrawCompass(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width)
-{
-    //Heading text
-    int center = Width / 2 - 55;
-    drawText(gl, projection*modelview, center-8, 40, "^", 0.8);
+//void FormGPS::DrawCompass(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width)
+//{
+//    //Heading text
+//    int center = Width / 2 - 55;
+//    drawText(gl, projection*modelview, center-8, 40, "^", 0.8);
 
-    GLHelperTexture gldraw;
+//    GLHelperTexture gldraw;
 
 
-    modelview.translate(center, 78, 0);
+//    modelview.translate(center, 78, 0);
 
-    modelview.rotate(-camera.camHeading, 0, 0, 1);
-    gldraw.append( { QVector3D(-52, -52, 0), QVector2D(0, 0) }); //bottom left
-    gldraw.append( { QVector3D(52, -52.0, 0), QVector2D(1, 0) }); //bottom right
-    gldraw.append( { QVector3D(-52, 52, 0), QVector2D(0, 1) }); // top left
-    gldraw.append( { QVector3D(52, 52, 0), QVector2D(1, 1) }); // top right
+//    modelview.rotate(-camera.camHeading, 0, 0, 1);
+//    gldraw.append( { QVector3D(-52, -52, 0), QVector2D(0, 0) }); //bottom left
+//    gldraw.append( { QVector3D(52, -52.0, 0), QVector2D(1, 0) }); //bottom right
+//    gldraw.append( { QVector3D(-52, 52, 0), QVector2D(0, 1) }); // top left
+//    gldraw.append( { QVector3D(52, 52, 0), QVector2D(1, 1) }); // top right
 
-    gldraw.draw(gl, projection*modelview, Textures::COMPASS, GL_TRIANGLE_STRIP, true, QColor::fromRgbF(0.952f, 0.870f, 0.73f, 0.8f));
-}
+//    gldraw.draw(gl, projection*modelview, Textures::COMPASS, GL_TRIANGLE_STRIP, true, QColor::fromRgbF(0.952f, 0.870f, 0.73f, 0.8f));
+//}
 
 void FormGPS::DrawReverse(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width, double Height)
 {
