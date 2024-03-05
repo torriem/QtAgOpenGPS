@@ -609,5 +609,14 @@
         <file>qml/steerconfig/PurePursuitTab.qml</file>
         <file>images/TrackVisible.png</file>
         <file>images/MenuHideShow.png</file>
+        <file>sounds/Alarm10.wav</file>
+        <file>sounds/HydDown.wav</file>
+        <file>sounds/HydUp.wav</file>
+        <file>sounds/rtk_lost.wav</file>
+        <file>sounds/SectionOff.wav</file>
+        <file>sounds/SectionOn.wav</file>
+        <file>sounds/SteerOff.wav</file>
+        <file>sounds/SteerOn.wav</file>
+        <file>sounds/TF012.WAV</file>
     </qresource>
 </RCC>

@@ -3,6 +3,7 @@ import QtGraphicalEffects 1.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
+import QtMultimedia 5.9
 import AgOpenGPS 1.0
 
 import "interfaces"
@@ -639,11 +640,16 @@ Window {
                     if (checked && ((aog.currentABCurve > -1) || (aog.currentABLine > -1))) {
                         console.debug("okay to turn on autosteer button.")
                         aog.isAutoSteerBtnOn = true;
+                        engage.play()
                     } else {
                         console.debug("keep autoster button off.")
                         checked = false;
                         aog.isAutoSteerBtnOn = false;
                     }
+                }
+                SoundEffect{
+                    id: engage
+                    source: "/sounds/SteerOn.wav"
                 }
                 Connections {
                     target: aog
