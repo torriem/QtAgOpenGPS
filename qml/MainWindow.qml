@@ -325,8 +325,7 @@ Window {
             anchors.topMargin: topLine.height
             anchors.bottom: parent.bottom
             anchors.left: parent.left
-            width: children.width + 6
-
+            anchors.leftMargin: 6
             Button {
                 id: btnAcres
                 implicitWidth: parent.width
@@ -441,7 +440,8 @@ Window {
             anchors.top: parent.top
             anchors.right: rightColumn.left
             anchors.topMargin: topLine.height + 10
-            anchors.rightMargin: 10
+            //anchors.rightMargin: 10
+            anchors.margins: 10
             visible: (settings.setMenu_isSpeedoOn === true ||
                       settings.setMenu_isSpeedoOn === "true")
 
