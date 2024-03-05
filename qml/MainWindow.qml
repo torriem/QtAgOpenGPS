@@ -834,6 +834,29 @@ Window {
                 text: qsTr("Simulator On")
             }
 
+            OutlineText{
+                property int age: aog.age
+                id: ageAlarm
+                visible: settings.setGPS_isRTK
+                anchors.top: simulatorOnText.bottom
+                anchors.topMargin: 30
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "Lost RTK"
+                font.pixelSize: 65
+                color: "#cc5200"
+                onAgeChanged: {
+                    if (age < 20)
+                        text = ""
+                    else if (age> 20 && age < 60)
+                        text = qsTr("Age: ")+age
+                    else
+                        text = "Lost RTK"
+                }
+                onTextChanged: if (text.length > 0)
+                                   console.log("rtk alarm sound")
+
+            }
+
             Item{
                 id: autoTurn
                 anchors.top:parent.top

@@ -88,7 +88,6 @@ Item {
     property double hdop: 0
     property double	age: 0
     property int fixQuality: 0
-    property int ageAlarm: 0
     property int satellitesTracked: 0
 
     property double imuHeading: 0

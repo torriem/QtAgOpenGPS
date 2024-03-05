@@ -115,8 +115,8 @@ Rectangle{
                 height:100
                 id: alarm
                 icon.source: "/images/Config/Con_SourcesRTKAlarm.png"
-                isChecked: settings.setGPS_ageAlarm
-                onClicked: settings.setGPS_ageAlarm = true
+                isChecked: settings.setGPS_isRTK
+                onClicked: settings.setGPS_isRTK = true
             }
             Rectangle {
                 height: 100

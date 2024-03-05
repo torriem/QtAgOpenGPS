@@ -1151,7 +1151,6 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("hdop", pn.hdop);
     aog->setProperty("age", pn.age);
     aog->setProperty("fixQuality", pn.fixQuality);
-    aog->setProperty("ageAlarm", pn.ageAlarm);
     aog->setProperty("satellitesTracked", pn.satellitesTracked);
     aog->setProperty("imuHeading", ahrs.imuHeading);
     aog->setProperty("angVel", ahrs.angVel);

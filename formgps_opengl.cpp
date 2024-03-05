@@ -520,20 +520,20 @@ void FormGPS::oglMain_Paint()
             if (vehicle.isReverse || isChangingDirection)
                 DrawReverse(gl, modelview, projection,width, height);
 
-            if (isRTK)
-            {
-                if (pn.fixQuality != 4)
-                {
-                    //TODO: move to QML
-                    drawText(gl, projection*modelview, -width / 4, 150, "Lost RTK",
-                             2.0, true, QColor::fromRgbF(0.9752f, 0.52f, 0.0f));
-                } else {
-                    //sounds.isRTKAlarming = false;
-                }
-            }
+//            if (isRTK)
+//            {
+//                if (pn.fixQuality != 4)
+//                {
+//                    //TODO: move to QML
+//                    drawText(gl, projection*modelview, -width / 4, 150, "Lost RTK",
+//                             2.0, true, QColor::fromRgbF(0.9752f, 0.52f, 0.0f));
+//                } else {
+//                    //sounds.isRTKAlarming = false;
+//                }
+//            }
 
             //TODO: move to QML
-            if (pn.age > pn.ageAlarm) DrawAge(gl, projection * modelview, width);
+            //if (pn.age > pn.ageAlarm) DrawAge(gl, projection * modelview, width);
 
             gl->glFlush();
 
