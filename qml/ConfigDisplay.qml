@@ -116,6 +116,22 @@ Item {
                 isChecked: settings.setDisplay_isSvennArrowOn
                 onCheckedChanged: settings.setDisplay_isSvennArrowOn
             }
+            IconButtonColor{
+                id: compass
+                text: qsTr("Compass")
+                icon.source: "/images/Images/z_Compass.png"
+                checkable: true
+                isChecked: settings.setMenu_isCompassOn
+                onCheckedChanged: settings.setMenu_isCompassOn
+            }
+            /*IconButtonColor{ //appears there is no setting for this
+                id: speedo
+                text: qsTr("Speedometer")
+                icon.source: "/images/Images/z_Speedo.png"
+                checkable: true
+                isChecked: settings.setMenu_isSpeedoOn
+                onCheckedChanged: settings.setMenu_isSpeedoOn
+            }*/
         }
         Row{
             id:units
