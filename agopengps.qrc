@@ -593,12 +593,12 @@
         <file>qml/config/ConfigModulesPins.qml</file>
         <file>qml/config/ConfigSources.qml</file>
         <file>qml/config/ConfigSourcesRoll.qml</file>
-        <file>qml/config/ConfigTractor.qml</file>
-        <file>qml/config/ConfigTractorAntenna.qml</file>
-        <file>qml/config/ConfigTractorDimensions.qml</file>
-        <file>qml/config/ConfigTractorSteerSettings.qml</file>
+        <file>qml/config/ConfigVehicleType.qml</file>
+        <file>qml/config/ConfigVehicleAntenna.qml</file>
+        <file>qml/config/ConfigVehicleDimensions.qml</file>
+        <file>qml/config/ConfigVehicleSteerSettings.qml</file>
         <file>qml/config/ConfigTrams.qml</file>
-        <file>qml/config/ConfigWhichVehicle.qml</file>
+        <file>qml/config/ConfigVehiclePicker.qml</file>
         <file>qml/config/ConfigYouTurn.qml</file>
         <file>qml/field/FieldData.qml</file>
         <file>qml/field/FieldFromExisting.qml</file>

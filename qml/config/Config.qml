@@ -399,7 +399,7 @@ Dialog {
             color: "ghostwhite"
             border.color: "lime"
         }
-        ConfigWhichVehicle{
+        ConfigVehiclePicker{
             id: configWhichVehicle
             anchors.fill: mainConfig
             anchors.margins: 1
@@ -415,25 +415,25 @@ Dialog {
                      */
         }
 
-        ConfigTractor{
+        ConfigVehicleType{
             id:configTractor
             anchors.fill: mainConfig
             anchors.margins:1
             visible: tractorMenu.visible && configTrSettings.checked
         }
-        ConfigTractorAntenna{
+        ConfigVehicleAntenna{
             id:configTractorAntenna
             anchors.fill: mainConfig
             anchors.margins:1
             visible: tractorMenu.visible && btnconfigTrAntDim.checked
         }
-        ConfigTractorDimensions{
+        ConfigVehicleDimensions{
             id:configTractorDimensions
             anchors.fill: mainConfig
             anchors.margins:1
             visible: tractorMenu.visible && configTrDim.checked
         }
-        ConfigTractorSteerSettings{
+        ConfigVehicleSteerSettings{
             id:configTractorSteerSettings
             anchors.fill: mainConfig
             anchors.margins:1
