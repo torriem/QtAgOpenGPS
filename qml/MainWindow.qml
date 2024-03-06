@@ -9,6 +9,8 @@ import AgOpenGPS 1.0
 import "interfaces"
 import "boundary"
 import "steerconfig"
+import "config"
+import "field"
 
 Window {
 
