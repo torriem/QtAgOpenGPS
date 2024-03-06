@@ -34,7 +34,6 @@ Rectangle{
 			anchors.margins: 15
 			IconButtonTextBeside{
 				icon.source: "/images/HydraulicLiftOff.png"
-				objectName: "btnWorkSwitch"
                 checkable: true
                 isChecked: settings.setF_isRemoteWorkSystemOn
                 onCheckedChanged: settings.setF_isRemoteWorkSystemOn = checked
@@ -48,7 +47,6 @@ Rectangle{
             IconButtonTextBeside{
                 id: workSwitchMan
 				icon.source: "/images/ManualOff.png"
-				objectName: "btnWorkSwitchManual"
                 checkable: true
                 enabled: settings.setF_isRemoteWorkSystemOn
                 isChecked: settings.setF_isWorkSwitchManualSections
@@ -58,7 +56,6 @@ Rectangle{
 
             IconButtonTextBeside{
                 id: workSwitchAuto
-                objectName: "btnWorkSwitchAuto"
 				icon.source: "/images/SectionMasterOff.png"
                 checkable: true
                 enabled: settings.setF_isRemoteWorkSystemOn
@@ -72,7 +69,6 @@ Rectangle{
 				implicitHeight: 80
 				border: 1
 				id: switchStateButton
-				objectName: "workSwitchstatebutton"
 				icon.source: "/images/SwitchActiveClosed.png"
 				color3: "white"
 				colorChecked1: "green"
@@ -107,7 +103,6 @@ Rectangle{
 			anchors.right: parent.right
 			anchors.margins: 15
 			IconButtonTextBeside{
-				objectName: "btnSteerSwitch"
                 isChecked: settings.setF_isSteerWorkSwitchEnabled
                 onCheckedChanged: settings.setF_isSteerWorkSwitchEnabled = checked
                 checkable: true
@@ -121,7 +116,6 @@ Rectangle{
 
             IconButtonTextBeside{
                 id: steerSwitchMan
-				objectName: "btnSteerSwitchManual"
                 isChecked: settings.setF_isSteerWorkSwitchManualSections
                 onCheckedChanged: settings.setF_isSteerWorkSwitchManualSections = checked
                 enabled: settings.setF_isSteerWorkSwitchEnabled
@@ -131,7 +125,6 @@ Rectangle{
 			}
 			IconButtonTextBeside{
                 id: steerSwitchAuto
-				objectName: "btnSteerSwitchAuto"
                 isChecked: !settings.setF_isSteerWorkSwitchManualSections
                 onCheckedChanged: settings.setF_isSteerWorkSwitchManualSections = !checked
                 enabled: settings.setF_isSteerWorkSwitchEnabled

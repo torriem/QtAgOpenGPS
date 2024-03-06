@@ -43,7 +43,6 @@ Rectangle{
         }
         SpinBoxCustomized{
             id: percentCoverage
-            objectName: "percentConverage"
             from: 0
             to: 100
             boundValue: settings.setVehicle_minCoverage
@@ -52,7 +51,6 @@ Rectangle{
             onValueModified: settings.setVehicle_minCoverage = value
         }
         IconButton{
-            objectName: "boundaryOff"
             icon.source: "/images/SectionOffBoundary.png"
             iconChecked: "/images/SectionOnBoundary.png"
             anchors.bottom: parent.bottom

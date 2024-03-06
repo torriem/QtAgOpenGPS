@@ -21,7 +21,6 @@ Item {
             flow: Grid.TopToBottom
             IconButtonColor{
                 id: fieldTexture
-                objectName: "btnFieldTexture"
                 text: qsTr("Field Texture")
                 icon.source: "/images/Config/ConD_FloorTexture.png"
                 checkable: true
@@ -30,7 +29,6 @@ Item {
             }
             IconButtonColor{
                 id: autoDayNight
-                objectName: "btnAutoDayNight"
                 isChecked: settings.setDisplay_isAutoDayNight
                 onCheckedChanged: settings.setDisplay_isAutoDayNight = !checked
                 checkable: true
@@ -39,7 +37,6 @@ Item {
             }
             IconButtonColor{
                 id:startFullScreen
-                objectName: "btnStartFullScreen"
                 text: qsTr("Start FullScreen")
                 icon.source: "/images/Config/ConD_FullScreenBegin.png"
                 checkable: true
@@ -48,7 +45,6 @@ Item {
             }
             IconButtonColor{
                 id:grid
-                objectName: "btnGrid"
                 text: qsTr("Grid")
                 icon.source: "/images/Config/ConD_Grid.png"
                 checkable: true
@@ -57,7 +53,6 @@ Item {
             }
             IconButtonColor{
                 id:sky
-                objectName: "btnSky"
                 text:qsTr("Sky")
                 icon.source: "/images/Config/ConD_Sky.png"
                 checkable: true
@@ -67,7 +62,6 @@ Item {
             IconButtonColor{
                 id:brightness
                 text:qsTr("Brightness")
-                objectName: "btnBrightness"
                 icon.source: "/images/BrightnessUp.png"
                 checkable: true
                 isChecked: settings.setDisplay_isBrightnessOn
@@ -75,7 +69,6 @@ Item {
             }
             IconButtonColor{
                 id:lightBar
-                objectName: "btnLightBar"
                 text:qsTr("Lightbar")
                 icon.source: "/images/Config/ConD_LightBar.png"
                 checkable: true
@@ -84,23 +77,12 @@ Item {
             }
             IconButtonColor{
                 id:logNMEA
-                objectName: "btnLonNMEA"
                 text: qsTr("Log NMEA")
                 checkable: true
                 icon.source: "/images/Config/ConD_LogNMEA.png"
             }
-            /*
-            IconButtonColor{ //delete this?
-                id:keyboard
-                objectName: "btnKeyboard"
-                text:qsTr("Keyboard")
-                icon.source: "/images/Config/ConD_KeyBoard.png"
-                checkable: true
-                isChecked: false
-            }*/
             IconButtonColor{
                 id: guideLines
-                objectName: "btnGuidelines"
                 text: qsTr("GuideLines")
                 icon.source: "/images/Config/ConD_ExtraGuides.png"
                 checkable: true
@@ -109,7 +91,6 @@ Item {
             }
             IconButtonColor{
                 id:svennArrow
-                objectName: "btnSvennArrow"
                 text: qsTr("Svenn Arrow")
                 icon.source: "/images/SvennArrow.png"
                 checkable: true
@@ -146,7 +127,6 @@ Item {
 
             IconButtonColor{
                 id:metric
-                objectName: "btnMetric"
                 icon.source: "/images/Config/ConD_Metric.png"
                 //text: qsTr("Metric")
                 property bool settingsChecked: settings.setMenu_isMetric
@@ -156,7 +136,6 @@ Item {
             }
             IconButtonColor{
                 id:imperial
-                objectName: "btnImperial"
                 icon.source: "/images/Config/ConD_Imperial.png"
                 text: ""
                 checkable: true

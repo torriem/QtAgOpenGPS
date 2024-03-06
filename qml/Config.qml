@@ -78,7 +78,6 @@ Dialog {
                 }
                 IconButtonTransparent{
                     id:vehicleMenu
-                    objectName: "btnVehicleMenu"
                     icon.source: "/images/Config/Con_VehicleMenu.png"
                     width:100
                     height:75
@@ -137,7 +136,6 @@ Dialog {
                 }
                 IconButtonTransparent{
                     id:implementMenuBtn
-                    objectName: "btnImplementMenu"
                     icon.source: "/images/Config/Con_ImplementMenu.png"
                     width:100
                     height:75
@@ -206,7 +204,6 @@ Dialog {
                 }
                 IconButtonTransparent{
                     id:sourcesMenubtn
-                    objectName: "btnSourcesMenu"
                     icon.source: "/images/Config/Con_SourcesMenu.png"
                     width:100
                     radius: 0
@@ -245,7 +242,6 @@ Dialog {
                 }
                 IconButtonTransparent{
                     id:uTurnMenu
-                    objectName: "btnUTurnMenu"
                     icon.source: "/images/Config/Con_UTurnMenu.png"
                     width:100
                     height:75
@@ -258,7 +254,6 @@ Dialog {
                 }
                 IconButtonTransparent{
                     id:modulesMenubtn
-                    objectName: "btnModulesMenu"
                     icon.source: "/images/Config/Con_ModulesMenu.png"
                     width:100
                     height:75
@@ -297,7 +292,6 @@ Dialog {
                 }
                 IconButtonTransparent{
                     id:tramMenu
-                    objectName: "btnTramMenu"
                     icon.source: "/images/Config/Con_TramMenu.png"
                     checkable: true
                     width:100
@@ -322,7 +316,6 @@ Dialog {
                 }
                 IconButtonTransparent{
                     id:featureMenu
-                    objectName: "btnFeatureMenu"
                     icon.source: "/images/Config/Con_FeatureMenu.png"
                     width:100
                     height:75
