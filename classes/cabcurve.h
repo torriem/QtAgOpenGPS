@@ -5,6 +5,7 @@
 #include <QVector>
 #include "vec2.h"
 #include "vec3.h"
+#include "ctrk.h"
 
 class QOpenGLFunctions;
 class QMatrix4x4;
@@ -16,6 +17,7 @@ class CBoundary;
 class CNMEA;
 class CAHRS;
 class CGuidance;
+class CTrack;
 
 
 //TODO: move these to their own module
@@ -47,7 +49,7 @@ private:
 
 public:
     //flag for starting stop adding points
-    bool isBtnCurveOn, isOkToAddDesPoints, isCurveSet;
+    bool isBtnTrackOn, isMakingCurve;
 
     double distanceFromCurrentLinePivot;
     double distanceFromRefLine;
@@ -57,13 +59,7 @@ public:
     double howManyPathsAway;
 
     Vec2 refPoint1 = Vec2(1, 1), refPoint2 = Vec2(2, 2);
-
-    double refHeading, moveDistance;
-
-    Vec2 boxC = Vec2(1, 1), boxD = Vec2(2, 3);
     int currentLocationIndex;
-
-    double aveLineHeading;
 
     //pure pursuit values
     Vec2 goalPointCu = Vec2(0, 0);
@@ -71,16 +67,11 @@ public:
     Vec2 radiusPointCu = Vec2(0, 0);
     double steerAngleCu, rEastCu, rNorthCu, ppRadiusCu, manualUturnHeading;
 
-    //the list of points of the ref line.
-    QVector<Vec3> refList;
-    //the list of points of curve to drive on
-    QVector<Vec3> curList;
-
-    bool isSmoothWindowOpen;
+    bool isSmoothWindowOpen, isLooping;
     QVector<Vec3> smooList;
 
-    QVector<CCurveLines> curveArr;
-    int numCurveLines, numCurveLineSelected;
+    //the list of points of curve to drive on
+    QVector<Vec3> curList;
 
     bool isCurveValid, isLateralTriggered;
 
@@ -97,6 +88,7 @@ public:
 
     void BuildCurveCurrentList(Vec3 pivot,
                                double secondsSinceStart,
+                               CTrack &trk,
                                const CVehicle &vehicle,
                                const CBoundary &bnd,
                                const CYouTurn &yt);
@@ -105,30 +97,34 @@ public:
                              double secondsSinceStart,
                              bool isAutoSteerBtnOn,
                              bool steerSwitchHigh,
+                             CTrack &trk,
                              CVehicle &vehicle,
-                             const CBoundary &bnd,
                              CYouTurn &yt,
                              const CAHRS &ahrs,
                              CGuidance &gyd,
                              CNMEA &pn);
 
+    void DrawCurveNow(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
 
     void DrawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                    bool isFontOn,
-                   const CVehicle &vehicle,
+                   const CTrack &trk,
                    CYouTurn &yt, const CCamera &camera
                    );
 
     //void drawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
 
-    void BuildTram(CBoundary &bnd, CTram &tram);
-    void SmoothAB(int smPts);
-    void CalculateTurnHeadings();
-    void SaveSmoothAsRefList();
-    void MoveABCurve(double dist);
+    void BuildTram(const CTrack &trk, const CBoundary &bnd, CTram &tram);
+    void SmoothAB(const CTrack &trk, int smPts);
+    void CalculateHeadings(QVector<Vec3> &xList);
+    void MakePointMinimumSpacing(QVector<Vec3> &xList, double minDistance);
+    void SaveSmoothList(CTrack &trk);
     bool PointOnLine(Vec3 pt1, Vec3 pt2, Vec3 pt);
     void AddFirstLastPoints(QVector<Vec3> &xList, const CBoundary &bnd);
-    void ResetCurveLine();
+    void ResetCurveLine(CTrack &trk);
+    void BuildOutGuidanceList(Vec3 pivot, CTrack &trk, CYouTurn &yt,
+                              const CBoundary &bnd
+                              );
 
 
 signals:
