@@ -127,6 +127,8 @@ Item {
     property int current_trackNum: 0
 
     //on-screen buttons
+
+    //DisplayButtons.qml
     signal zoomIn()
     signal zoomOut()
     signal tiltDown()
