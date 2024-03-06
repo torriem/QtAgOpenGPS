@@ -341,5 +341,39 @@ namespace glm {
 
         //vec2 pos = 0.5 * (a + (tt*b) + (tt * tt * c) + (tt * tt * tt * d));
     }
+
+    inline static double CatmullGradient(double t, Vec3 p0, Vec3 p1, Vec3 p2, Vec3 p3)
+    {
+        double tt = t * t;
+
+        double q1 = -3.0f * tt + 4.0f * t - 1;
+        double q2 = 9.0f * tt - 10.0f * t;
+        double q3 = -9.0f * tt + 8.0f * t + 1.0f;
+        double q4 = 3.0f * tt - 2.0f * t;
+
+        double tx = 0.5f * (p0.easting * q1 + p1.easting * q2 + p2.easting * q3 + p3.easting * q4);
+        double ty = 0.5f * (p0.northing * q1 + p1.northing * q2 + p2.northing * q3 + p3.northing * q4);
+
+        return atan2(tx, ty);
+
+        //f(t) = a_3 * t^3 + a_2 * t^2 + a_1 * t + a_0  cubic polynomial
+        //vec3 a = 2.0 * p1;
+        //vec3 b = p2 - p0;
+        //vec3 c = 2.0 * p0 - 5.0 * p1 + 4.0 * p2 - p3;
+        //vec3 d = -1.0 * p0 + 3.0 * p1 - 3.0 * p2 + p3;
+
+        //return (0.5 * (a + (t * b) + (t * t * c) + (t * t * t * d)));
+        //
+    }
+
+    inline static bool InRangeBetweenAB(double start_x, double start_y, double end_x, double end_y,
+                                   double point_x, double point_y)
+    {
+        double dx = end_x - start_x;
+        double dy = end_y - start_y;
+        double innerProduct = (point_x - start_x) * dx + (point_y - start_y) * dy;
+        return (0 <= innerProduct) && (innerProduct <= dx * dx + dy * dy);
+    }
+
 }
 #endif // GLM_H
