@@ -111,6 +111,13 @@ void FormGPS::setupGui()
     //on screen buttons
     connect(aog,SIGNAL(zoomIn()), this, SLOT(onBtnZoomIn_clicked()));
     connect(aog,SIGNAL(zoomOut()), this, SLOT(onBtnZoomOut_clicked()));
+    connect(aog,SIGNAL(tiltDown()), this, SLOT(onBtnTiltDown_clicked()));
+    connect(aog,SIGNAL(tiltUp()), this, SLOT(onBtnTiltUp_clicked()));
+    connect(aog,SIGNAL(btn2D()), this, SLOT(onBtn2D_clicked()));
+    connect(aog,SIGNAL(btn3D()), this, SLOT(onBtn3D_clicked()));
+    connect(aog,SIGNAL(n2D()), this, SLOT(onBtnN2D_clicked()));
+    connect(aog,SIGNAL(n3D()), this, SLOT(onBtnN3D_clicked()));
+
 
     //manual youturn buttons
     connect(aog,SIGNAL(uturn(bool)), this, SLOT(onBtnManUTurn_clicked(bool)));
@@ -206,13 +213,6 @@ void FormGPS::setupGui()
     connect(btnContourPriority,SIGNAL(clicked()),this,
             SLOT(onBtnContourPriority_clicked()));
 
-    btnTiltDown = qmlItem(qml_root,"btnTiltDown");
-    connect(btnTiltDown,SIGNAL(clicked()),this,
-            SLOT(onBtnTiltDown_clicked()));
-
-    btnTiltUp = qmlItem(qml_root,"btnTiltUp");
-    connect(btnTiltUp,SIGNAL(clicked()),this,
-            SLOT(onBtnTiltUp_clicked()));
 
 
     //icon palette
@@ -395,7 +395,26 @@ void FormGPS::onBtnTiltUp_clicked(){
     property_setwin = camera.camPitch;
     openGLControl->update();
 }
-
+void FormGPS::onBtn2D_clicked(){
+    camera.camFollowing = true;
+    camera.camPitch = 0;
+    navPanelCounter = 0;
+}
+void FormGPS::onBtn3D_clicked(){
+    camera.camFollowing = true;
+    camera.camPitch = -65;
+    navPanelCounter = 0;
+}
+void FormGPS::onBtnN2D_clicked(){
+    camera.camFollowing = false;
+    camera.camPitch = 0;
+    navPanelCounter = 0;
+}
+void FormGPS::onBtnN3D_clicked(){
+    camera.camPitch = -65;
+    camera.camFollowing = false;
+    navPanelCounter = 0;
+}
 void FormGPS::onBtnZoomIn_clicked(){
     qDebug() <<"ZoomIn button clicked.";
     if (camera.zoomValue <= 20) {

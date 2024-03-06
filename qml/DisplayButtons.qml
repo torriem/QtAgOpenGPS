@@ -15,27 +15,27 @@ TimedRectangle{
 
         IconButtonTransparent {
             id: btnTiltDown
-            objectName: "btnTiltDown"
             width: 70
             height: 70
             radius: 10
             icon.source: "/images/TiltDown.png"
+            onClicked: aog.tiltDown()
         }
         IconButtonTransparent {
             id: btnCamera2d
-            objectName: "btnCamera2d"
             width: 70
             height: 70
             radius: 10
             icon.source: "/images/Camera2D64.png"
+            onClicked: aog.btn2D()
         }
         IconButtonTransparent {
             id: btnCameraNorth2d
-            objectName: "btnCameraNorth2d"
             width: 70
             height: 70
             radius: 10
             icon.source: "/images/CameraNorth2D.png"
+            onClicked: aog.n2D()
         }
         IconButtonTransparent {
             id: btnZoomOut
@@ -47,7 +47,6 @@ TimedRectangle{
         }
         IconButtonTransparent {
             id: btnWindowDayNight
-            objectName: "btnWindowDayNight"
             width: 70
             height: 70
             radius: 10
@@ -55,7 +54,6 @@ TimedRectangle{
         }
         IconButtonTransparent {
             id: btnBrightnessDown
-            objectName: "btnBrightnessDown"
             width: 70
             height: 70
             radius: 10
@@ -63,27 +61,27 @@ TimedRectangle{
         }
         IconButtonTransparent {
             id: btnTiltUp
-            objectName: "btnTiltUp"
             width: 70
             height: 70
             radius: 10
             icon.source: "/images/TiltUp.png"
+            onClicked: aog.tiltUp()
         }
         IconButtonTransparent {
             id: btnCamera3d
-            objectName: "btnCamera3d"
             width: 70
             height: 70
             radius: 10
             icon.source: "/images/Camera3D64.png"
+            onClicked: aog.btn3D()
         }
         IconButtonTransparent {
             id: btnCameraNorth3d
-            objectName: "btnCameraNorth3d"
             width: 70
             height: 70
             radius: 10
             icon.source: "/images/CameraNorth64.png"
+            onClicked: aog.n3D()
         }
         IconButtonTransparent {
             id: btnZoomIn
@@ -101,7 +99,6 @@ TimedRectangle{
         }
         IconButtonTransparent {
             id: btnBrightnessUp
-            objectName: "btnBrightnessUp"
             width: 70
             height: 70
             radius: 10

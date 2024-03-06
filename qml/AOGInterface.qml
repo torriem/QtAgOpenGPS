@@ -129,6 +129,13 @@ Item {
     //on-screen buttons
     signal zoomIn()
     signal zoomOut()
+    signal tiltDown()
+    signal tiltUp()
+    signal btn2D()
+    signal btn3D()
+    signal n2D()
+    signal n3D()
+
 
     signal uturn(bool turn_right)
     signal lateral(bool go_right)

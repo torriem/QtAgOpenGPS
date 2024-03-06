@@ -745,8 +745,13 @@ public slots:
     void onBtnYouSkip_clicked();
 
 
+    //displaybuttons.qml
     void onBtnTiltDown_clicked();
     void onBtnTiltUp_clicked();
+    void onBtn2D_clicked();
+    void onBtn3D_clicked();
+    void onBtnN2D_clicked();
+    void onBtnN3D_clicked();
 
     void onBtnZoomIn_clicked();
     void onBtnZoomOut_clicked();
