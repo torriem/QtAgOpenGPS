@@ -91,8 +91,6 @@ void FormGPS::setupGui()
     openGLControl->setMirrorVertically(true);
     connect(openGLControl,SIGNAL(clicked(QVariant)),this,SLOT(onGLControl_clicked(QVariant)));
     connect(openGLControl,SIGNAL(dragged(int,int,int,int)),this,SLOT(onGLControl_dragged(int,int,int,int)));
-    connect(openGLControl,SIGNAL(zoomIn()),this,SLOT(onBtnZoomIn_clicked()));
-    connect(openGLControl,SIGNAL(zoomOut()),this,SLOT(onBtnZoomOut_clicked()));
 
     //TODO: save and restore these numbers from settings
     qml_root->setProperty("width",1024);
@@ -110,6 +108,9 @@ void FormGPS::setupGui()
     connect(linesInterface,SIGNAL(abLine_swapHeading(int)), this, SLOT(swap_heading_ABLine(int)));
     connect(linesInterface,SIGNAL(abLine_changeName(int, QString)), this, SLOT(change_name_ABLine(int,QString)));
 
+    //on screen buttons
+    connect(aog,SIGNAL(zoomIn()), this, SLOT(onBtnZoomIn_clicked()));
+    connect(aog,SIGNAL(zoomOut()), this, SLOT(onBtnZoomOut_clicked()));
 
     //manual youturn buttons
     connect(aog,SIGNAL(uturn(bool)), this, SLOT(onBtnManUTurn_clicked(bool)));
@@ -213,13 +214,6 @@ void FormGPS::setupGui()
     connect(btnTiltUp,SIGNAL(clicked()),this,
             SLOT(onBtnTiltUp_clicked()));
 
-    btnZoomIn = qmlItem(qml_root,"btnZoomIn");
-    connect(btnZoomIn,SIGNAL(clicked()),this,
-            SLOT(onBtnZoomIn_clicked()));
-
-    btnZoomOut = qmlItem(qml_root,"btnZoomOut");
-    connect(btnZoomOut,SIGNAL(clicked()),this,
-            SLOT(onBtnZoomOut_clicked()));
 
     //icon palette
 

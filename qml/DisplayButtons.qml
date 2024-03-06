@@ -39,7 +39,7 @@ TimedRectangle{
         }
         IconButtonTransparent {
             id: btnZoomOut
-            objectName: "btnZoomOut"
+            onClicked: aog.zoomOut()
             width: 70
             height: 70
             radius: 10
@@ -87,7 +87,7 @@ TimedRectangle{
         }
         IconButtonTransparent {
             id: btnZoomIn
-            objectName: "btnZoomIn"
+            onClicked: aog.zoomIn()
             width: 70
             height: 70
             radius: 10

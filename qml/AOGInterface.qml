@@ -127,6 +127,8 @@ Item {
     property int current_trackNum: 0
 
     //on-screen buttons
+    signal zoomIn()
+    signal zoomOut()
 
     signal uturn(bool turn_right)
     signal lateral(bool go_right)

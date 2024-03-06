@@ -1097,8 +1097,30 @@ Window {
         Compass{
             id: compass
             anchors.top: parent.top
-            anchors.right: parent.right
+            anchors.right: zoomBtns.left
             heading: -utils.radians_to_deg(aog.heading)
+        }
+        Column{
+            id: zoomBtns
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.margins: 10
+            spacing: 100
+            width: children.width
+            IconButton{
+                implicitWidth: 30
+                implicitHeight: 30
+                radius: 0
+                icon.source: "/images/ZoomIn48.png"
+                onClicked: aog.zoomIn()
+            }
+            IconButton{
+                implicitWidth: 30
+                implicitHeight: 30
+                radius: 0
+                icon.source: "/images/ZoomOut48.png"
+                onClicked: aog.zoomOut()
+            }
         }
     }
 
