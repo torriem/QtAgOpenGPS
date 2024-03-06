@@ -11,6 +11,7 @@ import "boundary"
 import "steerconfig"
 import "config"
 import "field"
+import "tracks"
 
 Window {
 
@@ -1235,6 +1236,19 @@ Window {
             height: 768
             width:1024
             visible:false
+        }
+        LineNudge{
+            id: lineNudge
+            visible: false
+        }
+        RefNudge{
+            id: refNudge
+            visible: false
+        }
+
+        TrackNew{
+            id: trackNew
+            visible: false
         }
 
         Rectangle{
