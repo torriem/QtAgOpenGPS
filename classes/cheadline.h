@@ -38,8 +38,6 @@ public:
     QVector<Vec3> desList;
 
     CHeadLine();
-    void CalculateHeadings(QVector<Vec3> &xList);
-    void AddFirstLastPoints(QVector<Vec3> &xList, const CBoundary &bnd);
 };
 
 #endif // CHEADLINE_H

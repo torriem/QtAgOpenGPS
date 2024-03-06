@@ -12,8 +12,6 @@ CHeadLine::CHeadLine()
 
 }
 
-
-
 void CHeadLine::CalculateHeadings(QVector<Vec3> &xList)
 {
     //to calc heading based on next and previous points to give an average heading.

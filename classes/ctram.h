@@ -30,6 +30,8 @@ public:
 
     bool isOuter;
 
+    bool isLeftManualOn, isRightManualOn;
+
     //tramlines
     QSharedPointer<QVector<Vec2>> tramArr;
     QVector<QSharedPointer<QVector<Vec2>>> tramList;

@@ -30,7 +30,7 @@ public:
     //property_setIMU_rollFilter
 
     //is the auto steer in auto turn on mode or not
-    bool isAutoSteerAuto, isRollInvert, isDualAsIMU, isReverseOn;
+    bool isAutoSteerAuto, isRollInvert, isReverseOn;
     //property_setAS_isAutoSteerAutoOn
     //property_setIMU_invertRoll
     //property_setIMU_isDualAsIMU

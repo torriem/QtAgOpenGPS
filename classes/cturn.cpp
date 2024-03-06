@@ -25,6 +25,7 @@ int CBoundary::IsPointInsideTurnArea(Vec3 pt) const
     return -1; //is outside border turn
 }
 
+/*
 void CBoundary::FindClosestTurnPoint(const CABLine &ABLine, Vec3 fromPt)
 {
     double eP = fromPt.easting;
@@ -100,6 +101,7 @@ void CBoundary::FindClosestTurnPoint(const CABLine &ABLine, Vec3 fromPt)
         if (closestTurnPt.heading < 0) closestTurnPt.heading += glm::twoPI;
     }
 }
+*/
 
 void CBoundary::BuildTurnLines(CFieldData &fd)
 {
@@ -172,9 +174,12 @@ void CBoundary::BuildTurnLines(CFieldData &fd)
             }
         }
 
-        Vec3 end(bndList[j].turnLine[0].easting,
-                 bndList[j].turnLine[0].northing, bndList[j].turnLine[0].heading);
-        bndList[j].turnLine.append(end);
+        if (bndList[j].turnLine.count() > 0)
+        {
+            Vec3 end(bndList[j].turnLine[0].easting,
+                     bndList[j].turnLine[0].northing, bndList[j].turnLine[0].heading);
+            bndList[j].turnLine.append(end);
+        }
     }
 }
 

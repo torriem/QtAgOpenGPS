@@ -25,10 +25,10 @@ namespace glm {
     static const double FLOAT_MAX = std::numeric_limits<float>::max();
     static const double FLOAT_MIN = std::numeric_limits<float>::min();
 
-    static const double BYTE_MAX = std::numeric_limits<uchar>::max();
-    static const double SHORT_MAX = std::numeric_limits<short>::max();
-    static const double USHORT_MAX = std::numeric_limits<ushort>::max();
-
+    static const uchar BYTE_MAX = std::numeric_limits<uchar>::max();
+    static const short SHORT_MAX = std::numeric_limits<short>::max();
+    static const ushort USHORT_MAX = std::numeric_limits<ushort>::max();
+    static const int INT_MAX = std::numeric_limits<int>::max();
 
     //inches to meters
     static const double in2m = 0.0254;
@@ -183,6 +183,36 @@ namespace glm {
 
     static inline double roundMidAwayFromZero(double number) {
         return lround(number);
+    }
+
+    static inline void GetClosestSegmentLooping(Vec2 Point, QVector<Vec3> curList, int &AA, int &BB, double &minDistA, int Start = 0, int End = INT_MAX)
+    {
+        bool isLoop = true;
+        AA = -1; BB = -1;
+        minDistA = DOUBLE_MAX;
+        int A = Start > 0 ? Start - 1 : curList.count() - 1;
+        bool looping = isLoop & Start > End;
+        for (int B = (Start > 0 ? Start : 0); B < End || looping; A = B++)
+        {
+            if (B == curList.count())
+            {
+                if (looping)
+                {
+                    B = -1; looping = false;
+                    continue;
+                }
+                else break;
+            }
+            if (B == 0 && !isLoop) continue;
+            else if (B == 0) A = curList.count() - 1;
+
+            double dist2 = DistanceSquared(curList[A], curList[B]);
+            if (dist2 < minDistA)
+            {
+                minDistA = dist2; AA = A;
+                BB = B;
+            }
+        }
     }
 
     static inline bool IsPointInPolygon(QVector<Vec3> polygon, Vec3 testPoint) {

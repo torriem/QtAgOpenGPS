@@ -37,7 +37,7 @@ void FormGPS::onSimNewPosition(double vtgSpeed,
 
     pn.headingTrue = pn.headingTrueDual = headingTrue;
     //ahrs.imuHeading = pn.headingTrue;
-    //if (ahrs.imuHeading > 360) ahrs.imuHeading -= 360;
+    //if (ahrs.imuHeading >= 360) ahrs.imuHeading -= 360;
     ahrs.imuHeading = 99999;
 
     pn.ConvertWGS84ToLocal(latitude,longitude,pn.fix.northing,pn.fix.easting);

@@ -38,6 +38,8 @@ public:
     //area of boundaries
     QVector<CBoundaryList> bndList;
 
+    //TODO: QVector<RatePolyLine> shpList;
+
     QVector<Vec3> bndBeingMadePts;
 
     InterfaceProperty<BoundaryInterface,double> createBndOffset = InterfaceProperty<BoundaryInterface,double>("createBndOffset");
@@ -53,13 +55,12 @@ public:
     Vec3 closestFencePt = Vec3(-10000,-10000, 9);
 
     // the list of possible bounds points
-    QVector<Vec3> turnClosestList;
     int turnSelected, closestTurnNum;
     double iE = 0, iN = 0;
 
     //point at the farthest turn segment from pivotAxle
-    Vec3 closestTurnPt = Vec3(-10000, -10000, 9);
-    Vec3 closePt;
+    //Vec3 closestTurnPt = Vec3(-10000, -10000, 9);
+    //Vec3 closePt;
 
     InterfaceProperty<BoundaryInterface,bool> isHeadlandOn = InterfaceProperty<BoundaryInterface,bool>("isHeadlandOn");
     bool isToolInHeadland, isToolOuterPointsInHeadland, isSectionControlledByHeadland;
@@ -75,7 +76,7 @@ public:
 
     //CTurn.sh
     int IsPointInsideTurnArea(Vec3 pt) const;
-    void FindClosestTurnPoint(const CABLine &abline, Vec3 fromPt);
+    //void FindClosestTurnPoint(const CABLine &abline, Vec3 fromPt);
     void BuildTurnLines(CFieldData &fd);
 
     //CHead.cs
@@ -83,9 +84,6 @@ public:
     void WhereAreToolCorners(CTool &tool);
     void WhereAreToolLookOnPoints(CVehicle &vehicle, CTool &tool);
     bool IsPointInsideHeadArea(Vec2 pt);
-
-
-
 
     /*
     void findClosestBoundaryPoint(Vec2 fromPt, double headAB);

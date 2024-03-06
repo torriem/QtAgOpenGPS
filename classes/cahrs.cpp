@@ -15,7 +15,6 @@ void CAHRS::loadSettings()
     //is the auto steer in auto turn on mode or not
     isAutoSteerAuto = property_setAS_isAutoSteerAutoOn;
     isRollInvert = property_setIMU_invertRoll;
-    isDualAsIMU = property_setIMU_isDualAsIMU;
     isReverseOn = property_setIMU_isReverseOn;
 
     //the factor for fusion of GPS and IMU

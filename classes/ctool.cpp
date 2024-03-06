@@ -18,6 +18,8 @@ void CTool::loadSettings()
 
     trailingHitchLength = property_setTool_toolTrailingHitchLength;
     tankTrailingHitchLength = property_setVehicle_tankTrailingHitchLength;
+    trailingToolToPivotLength = property_setTool_trailingToolToPivotLength;
+
     hitchLength = property_setVehicle_hitchLength;
 
     isToolRearFixed = property_setTool_isToolRearFixed;
@@ -123,24 +125,39 @@ void CTool::DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 pro
         mv.translate(0.0, trailingTank, 0.0);
         mv.rotate(glm::toDegrees(v.tankPos.heading), 0.0, 0.0, 1.0);
         mv.rotate(glm::toDegrees(-v.toolPos.heading), 0.0, 0.0, 1.0);
+
+        //TODO:
+        /*
+        GL.Enable(EnableCap.Texture2D);
+                    GL.Color4(1, 1, 1, 0.75);
+                    GL.BindTexture(TextureTarget.Texture2D, mf.texture[(int)FormGPS.textures.ToolWheels]);        // Select Our Texture
+                    GL.Begin(PrimitiveType.TriangleStrip);              // Build Quad From A Triangle Strip
+                    GL.TexCoord2(1, 0); GL.Vertex2(1.5, trailingTank + 1); // Top Right
+                    GL.TexCoord2(0, 0); GL.Vertex2(-1.5, trailingTank + 1); // Top Left
+                    GL.TexCoord2(1, 1); GL.Vertex2(1.5, trailingTank - 1); // Bottom Right
+                    GL.TexCoord2(0, 1); GL.Vertex2(-1.5, trailingTank - 1); // Bottom Left
+                    GL.End();                       // Done Building Triangle Strip
+                    GL.Disable(EnableCap.Texture2D);
+
+        */
     }
 
     //no tow between hitch
     else
     {
-        mv.rotate(glm::toDegrees(-v.toolPos.heading), 0.0, 0.0, 1.0);
+        mv.rotate(glm::toDegrees(-v.toolPivotPos.heading), 0.0, 0.0, 1.0);
     }
 
     //draw the hitch if trailing
     if (isToolTrailing)
     {
         gldraw.clear();
-        gldraw.append(QVector3D(-0.4 + offset, trailingTool, 0.0));
+        gldraw.append(QVector3D(-0.65 + offset, trailingTool, 0.0));
         gldraw.append(QVector3D(0,0,0));
-        gldraw.append(QVector3D(0.4 + offset, trailingTool, 0.0));
-        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.0f, 0.0f, 0.0f),GL_LINE_STRIP, 6.0f);
+        gldraw.append(QVector3D(0.65 + offset, trailingTool, 0.0));
+        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.0f, 0.0f, 0.0f),GL_LINE_LOOP, 6.0f);
 
-        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.7f, 0.4f, 0.2f),GL_LINE_STRIP, 1.0f);
+        gldraw.draw(gl,projection*mv,QColor::fromRgbF(0.7f, 0.4f, 0.2f),GL_LINE_LOOP, 1.0f);
 
         GLHelperTexture gldrawtex;
 
@@ -149,6 +166,9 @@ void CTool::DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 pro
         gldrawtex.append( { QVector3D(1.5 + offset, trailingTool - 1, 0), QVector2D(1,1) } ); //Bottom Right
         gldrawtex.append( { QVector3D(-1.5 + offset, trailingTool - 1, 0), QVector2D(0,1) } ); //Bottom LEft
         gldrawtex.draw(gl, projection*mv,Textures::TOOLWHEELS, GL_TRIANGLE_STRIP, true, QColor::fromRgbF(1,1,1,0.75));
+
+
+        //TODO draw wheels
     }
 
     trailingTool -= trailingToolToPivotLength;
@@ -190,9 +210,9 @@ void CTool::DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 pro
     //draw the sections
     //line width 2 now
 
-    double hite = camera.camSetDistance / -150;
-    if (hite > 0.7) hite = 0.7;
-    if (hite < 0.5) hite = 0.5;
+    double hite = camera.camSetDistance / -200;
+    if (hite > 0.5) hite = 0.5;
+    if (hite < 0.3) hite = 0.3;
 
     for (int j = 0; j < numOfSections; j++)
     {
@@ -255,8 +275,8 @@ void CTool::DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 pro
         if (camera.camSetDistance > -300)
         {
             if (camera.camSetDistance > -100)
-                pointSize = 16;
-            else pointSize = 12;
+                pointSize = 12;
+            else pointSize = 8;
 
             if (tram.isOuter)
             {

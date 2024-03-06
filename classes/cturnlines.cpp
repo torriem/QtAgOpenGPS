@@ -29,12 +29,18 @@ void CBoundaryList::CalculateTurnHeadings()
         turnLine.append(pt3);
     }
 
-    //last and first point
-    pt3 = arr[cnt];
-    pt3.heading = atan2(arr[0].easting - arr[cnt - 1].easting,
-                        arr[0].northing - arr[cnt - 1].northing);
-    if (pt3.heading < 0) pt3.heading += glm::twoPI;
-    turnLine.append(pt3);
+    //first point
+    Vec3 pt2 = arr[0];
+    pt2.heading = atan2(arr[1].easting - arr[0].easting, arr[1].northing - arr[0].northing);
+    if (pt2.heading < 0) pt2.heading += glm::twoPI;
+    turnLine.insert(0, pt2);
+
+    //last point
+    pt2 = arr[arr.count() - 1];
+    pt2.heading = atan2(arr[arr.count() - 1].easting - arr[arr.count() - 2].easting,
+                        arr[arr.count() - 1].northing - arr[arr.count() - 2].northing);
+    if (pt2.heading < 0) pt2.heading += glm::twoPI;
+    turnLine.append(pt2);
 }
 
 void CBoundaryList::FixTurnLine(double totalHeadWidth, double spacing)

@@ -63,7 +63,7 @@ void CBoundary::DrawFenceLines(const CVehicle &v, const CModuleComm &mc,
     if (!mc.isOutOfBounds)
     {
         color.setRgbF(0.95f, 0.75f, 0.50f);
-        line_width = property_setDisplay_lineWidth;
+        line_width = 1;
     }
     else
     {
@@ -78,9 +78,9 @@ void CBoundary::DrawFenceLines(const CVehicle &v, const CModuleComm &mc,
 
 
     //closest points  TooDoo
-    gldraw.append(QVector3D(closestTurnPt.easting, closestTurnPt.northing, 0));
-    gldraw.draw(gl,mvp,QColor::fromRgbF(0.70f, 0.95f, 0.95f),
-                GL_POINTS,6.0f);
+    //gldraw.append(QVector3D(closestTurnPt.easting, closestTurnPt.northing, 0));
+    //gldraw.draw(gl,mvp,QColor::fromRgbF(0.70f, 0.95f, 0.95f),
+    //            GL_POINTS,6.0f);
 
     if (bndBeingMadePts.count() > 0)
     {

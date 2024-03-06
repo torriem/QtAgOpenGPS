@@ -330,7 +330,7 @@ void DrawPolygon(QOpenGLFunctions *gl, QMatrix4x4 mvp, QVector<Vec3> &polygon, f
         {
             gldraw.append(QVector3D(polygon[i].easting, polygon[i].northing, 0));
         }
-        gldraw.draw(gl, mvp, color, GL_LINE_LOOP, size);
+        gldraw.draw(gl, mvp, color, GL_LINE_STRIP, size);
     }
 }
 

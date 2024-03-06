@@ -13,6 +13,7 @@ CCamera::CCamera()
 void CCamera::loadSettings()
 {
     camPitch = property_setwin;
+    //TODO camPitch = property_setDisplay_camPitch;
     zoomValue = property_setDisplay_camZoom;
     camSmoothFactor = ((double)(property_setDisplay_camSmooth) * 0.004) + 0.2;
 }
