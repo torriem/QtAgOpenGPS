@@ -17,12 +17,20 @@ Window {
 
     //We draw native opengl to this root object
     id: mainWindow
-    width: 1000
-    height: 700
+    height: utils.string_after_comma(settings.setWindow_Size)
+    width: utils.string_before_comma(settings.setWindow_Size)
+    onVisibleChanged: if(settings.setDisplay_isStartFullScreen){
+                          mainWindow.showMaximized()
+                      }
+
 
     signal save_everything()
 
     onClosing: {
+        if (mainWindow.visibility !== (Window.FullScreen)){
+            settings.setWindow_Size = ((mainWindow.width).toString() + ", "+  (mainWindow.height).toString())
+        }
+
         if (aog.isJobStarted) {
             closeDialog.visible = true
             close.accepted = false
@@ -236,10 +244,12 @@ Window {
                 width: 75
                 onClicked: {
                     console.debug("Visibility is " + mainWindow.visibility)
-                    if (mainWindow.visibility == Window.FullScreen)
+                    if (mainWindow.visibility == Window.FullScreen){
                         mainWindow.showNormal()
-                    else
+                }else{
+                        settings.setWindow_Size = ((mainWindow.width).toString() + ", "+  (mainWindow.height).toString())
                         mainWindow.showFullScreen()
+                    }
                 }
             }
             IconButtonTransparent{

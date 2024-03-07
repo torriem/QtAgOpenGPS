@@ -93,8 +93,8 @@ void FormGPS::setupGui()
     connect(openGLControl,SIGNAL(dragged(int,int,int,int)),this,SLOT(onGLControl_dragged(int,int,int,int)));
 
     //TODO: save and restore these numbers from settings
-    qml_root->setProperty("width",1024);
-    qml_root->setProperty("height",768);
+//    qml_root->setProperty("width",1024);
+//    qml_root->setProperty("height",768);
 
     //AB Line Picker
     //react to UI changing these properties

@@ -363,6 +363,20 @@ Item {
     function percents (){
         aog.percentLeft = ((aog.areaBoundaryOuterLessInner - aog.workedAreaTotal) / aog.areaBoundaryOuterLessInner* 100)
     }
+    function string_before_comma(inputString){
+        var commaIndex = inputString.indexOf(",");
+        if (commaIndex !== -1) {
+            inputString = inputString.substring(0, commaIndex);
+            return inputString
+        }
+    }
+    function string_after_comma(inputString){
+        var commaIndex = inputString.indexOf(",");
+        if (commaIndex !== -1) {
+            inputString = inputString.substring(commaIndex + 1);
+            return inputString
+        }
+    }
 
     Timer{
         id: guiTimer
