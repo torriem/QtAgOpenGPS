@@ -229,14 +229,14 @@ void FormGPS::oglMain_Paint()
         //TODO: replace with QML widget
 
         //draw with NoGPS texture 21
-        color.setRgbF(1.25f, 1.25f, 1.275f, 0.75);
+       /* color.setRgbF(1.25f, 1.25f, 1.275f, 0.75);
         gldrawtex.append( { QVector3D(2.5, 2.5, 0), QVector2D(1,0) } ); //Top Right
         gldrawtex.append( { QVector3D(-2.5, 2.5, 0), QVector2D(0,0) } ); //Top Left
         gldrawtex.append( { QVector3D(2.5, -2.5, 0), QVector2D(1,1) } ); //Bottom Right
         gldrawtex.append( { QVector3D(-2.5, -2.5, 0), QVector2D(0,1) } ); //Bottom Left
 
         gldrawtex.draw(gl, projection * modelview, Textures::NOGPS, GL_TRIANGLE_STRIP, true,color);
-
+*/
 
         // 2D Ortho ---------------------------------------////////-------------------------------------------------
 
@@ -1221,22 +1221,6 @@ void FormGPS::DrawLiftIndicator(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMat
                 GL_TRIANGLE_STRIP, true, color);
 }
 
-void FormGPS::DrawLostRTK(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width)
-{
-    //TODO: move to QML
-    QColor color;
-    color.setRgbF(0.9752f, 0.752f, 0.40f);
-    drawText(gl, mvp, -Width / 6, 125, "LOST RTK", 2.0, true, color);
-}
-
-void FormGPS::DrawAge(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width)
-{
-    //TODO move to QML
-    QColor color;
-    color.setRgbF(0.9752f, 0.52f, 0.0f);
-    drawText(gl, mvp, Width / 4, 60, "Age:" + QString("%1").arg(pn.age,0,'f',1), 1.5, true, color);
-
-}
 
 void FormGPS::CalcFrustum(const QMatrix4x4 &mvp)
 {

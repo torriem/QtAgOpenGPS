@@ -323,6 +323,24 @@ Window {
         }
 
     }
+    Rectangle{
+        id: noGPS
+        anchors.fill: glcontrolrect
+        color: "#0d0d0d"
+        visible: aog.sentenceCounter> 299
+        onVisibleChanged: if(visible){
+                              console.log("no gps now visible")
+                          }
+
+        Image {
+            id: noGPSImage
+            source: "/images/Images/z_NoGPS.png"
+            anchors.centerIn: parent
+            anchors.margins: 200
+            visible: noGPS.visible
+        }
+    }
+
     //----------------------------------------------------------------------------------------left column
     Item {
 
@@ -332,7 +350,7 @@ Window {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-
+        visible: !noGPS.visible
         ColumnLayout {
             id: leftColumn
             anchors.top: parent.top

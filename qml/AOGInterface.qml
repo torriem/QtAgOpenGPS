@@ -106,6 +106,8 @@ Item {
     property double missedSentences: 0
     property double gpsHeading: 0
     property double fusedHeading: 0
+    property double sentenceCounter: 0 //for No GPS screen
+    onSentenceCounterChanged: console.log(sentenceCounter)
 
     property bool isTrackOn: false //checks if a guidance line is set.
     onCurrentABLineChanged: {
