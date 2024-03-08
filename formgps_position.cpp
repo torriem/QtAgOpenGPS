@@ -1156,6 +1156,7 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("angVel", ahrs.angVel);
     aog->setProperty("hydLiftDown", hydLiftDown);
     aog->setProperty("hydLiftisOn", vehicle.isHydLiftOn);
+    aog->setProperty("isYouTurnRight", yt.isYouTurnRight);
 
 
 

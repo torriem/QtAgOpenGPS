@@ -936,20 +936,45 @@ Window {
             Item{
                 id: autoTurn
                 anchors.top:parent.top
-                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 200
                 width: 100
                 height: 100
-                visible: false
+//                Rectangle{
+//                    anchors.fill: parent
+//                    color: "red"
+//                }
+
                 Image {
                     id: autoTurnImage
-                    mirror: false
-                    signal clicked(var mouse)
                     source: "/images/Images/z_Turn.png"
-                    visible: true
+                    visible: false
                     anchors.fill: parent
+                }
+                ColorOverlay{
+                    id: colorAutoUTurn
+                    anchors.fill: parent
+                    source: autoTurnImage
+                    visible: btnAutoYouTurn.isChecked
+                    //mirror: !(aog.isYouTurnRight)
+                    color: "#E5E54B"
+                    transform: Scale{
+                                        origin: colorAutoUTurn.Center
+                                       xScale: if(aog.isYouTurnRight)
+                                                   -1
+                                                else
+                                                   1
+                                   }
+                    //color: "#F7A266"
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked: aog.swapAutoYouTurnDirection()
+                    }
+
                 }
             }
             Item{
+                //this whole item is for the manual uturn buttons, and lateral buttons
                 objectName: "manUTurnButtons"
                 id: manualUturnLateral
                 anchors.top: lightbar.bottom
@@ -965,8 +990,8 @@ Window {
                     source: uturn
 
                     Button{
+                        id: manualUturnLeft
                         background: Rectangle{color: "transparent"}
-                        objectName: "btnManUturnLeft"
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
                         anchors.left: parent.left
@@ -980,8 +1005,8 @@ Window {
                         }
                     }
                     Button{
+                        id: manualUturnRight
                         background: Rectangle{color: "transparent"}
-                        objectName: "btnManUturnRight"
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
                         anchors.right: parent.right
