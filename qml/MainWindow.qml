@@ -555,7 +555,7 @@ Window {
             IconButtonText {
                 id: btnSectionManual
                 objectName: "btnSectionManual"
-                isChecked: false
+                isChecked: aog.manualBtnState == 2
                 checkable: true
                 icon.source: "/images/ManualOff.png"
                 iconChecked: "/images/ManualOn.png"
@@ -565,8 +565,11 @@ Window {
                     if (checked) {
                         btnSectionAuto.checked = false;
                         sectionButtons.setAllSectionsToState(2 /*auto*/);
+                        aog.manualBtnState = 2 //btnStates::on
+
                     } else {
                         sectionButtons.setAllSectionsToState(0 /*off*/);
+                        aog.manualBtnState = 0
                     }
                 }
             }
@@ -574,7 +577,7 @@ Window {
             IconButtonText {
                 id: btnSectionAuto
                 objectName: "btnSectionAuto"
-                isChecked: false
+                isChecked: aog.autoBtnState == 1
                 checkable: true
                 icon.source: "/images/SectionMasterOff.png"
                 iconChecked: "/images/SectionMasterOn.png"
@@ -584,8 +587,10 @@ Window {
                     if (checked) {
                         btnSectionManual.checked = false;
                         sectionButtons.setAllSectionsToState(1 /*auto*/);
+                        aog.autoBtnState = 1 //btnStates::auto
                     } else {
                         sectionButtons.setAllSectionsToState(0 /*off*/);
+                        aog.autoBtnState = 0
                     }
                 }
             }

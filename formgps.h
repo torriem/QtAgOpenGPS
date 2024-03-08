@@ -255,7 +255,7 @@ public:
     //master Manual and Auto, 3 states possible
     //btnStates manualBtnState = btnStates::Off;
     //btnStates autoBtnState = btnStates::Off;
-    InterfaceProperty<AOGInterface,btnStates> manualBtnState = InterfaceProperty<AOGInterface,btnStates>("manualBtnState");
+    InterfaceProperty<AOGInterface,btnStates> manualBtnState = InterfaceProperty<AOGInterface,btnStates>("autoBtnState");
     InterfaceProperty<AOGInterface,btnStates> autoBtnState = InterfaceProperty<AOGInterface,btnStates>("manualBtnState");
 
 private:
