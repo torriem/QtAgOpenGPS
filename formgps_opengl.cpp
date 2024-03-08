@@ -1205,11 +1205,13 @@ void FormGPS::DrawLiftIndicator(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMat
     if (p_239.pgn[p_239.hydLift] == (char)2)
     {
         color = QColor::fromRgbF(0.0f, 0.950f, 0.0f);
+        hydLiftDown = false;
     }
     else
     {
-        modelview.rotate(180, 0, 0, 1);
+        //modelview.rotate(180, 0, 0, 1);
         color = QColor::fromRgbF(0.952f, 0.40f, 0.0f);
+        hydLiftDown = true;
     }
 
     gldraw.append({ QVector3D(-48, -64, 0),  QVector2D(0, 0) });  //
@@ -1219,6 +1221,7 @@ void FormGPS::DrawLiftIndicator(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMat
 
     gldraw.draw(gl, projection * modelview, Textures::HYDLIFT,
                 GL_TRIANGLE_STRIP, true, color);
+
 }
 
 

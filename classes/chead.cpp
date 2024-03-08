@@ -10,8 +10,11 @@
 
 void CBoundary::SetHydPosition(btnStates autoBtnState, CPGN_EF &p_239, CVehicle &vehicle)
 {
+    qDebug()<<autoBtnState<<"backend autoBtnState";
     if (vehicle.isHydLiftOn && vehicle.avgSpeed > 0.2 && autoBtnState == btnStates::Auto)
+    //if (vehicle.isHydLiftOn && vehicle.avgSpeed > 0.2 && curve.isAutoSteerBtnOn)
     {
+        qDebug()<<"Is tool in headland? "<<isToolInHeadland;
         if (isToolInHeadland)
         {
             p_239.pgn[p_239.hydLift] = 2;

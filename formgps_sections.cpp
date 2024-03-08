@@ -117,6 +117,7 @@ void FormGPS::DoRemoteSwitches()
             //if Main = Auto then change section to Auto if Off signal from Arduino stopped
             if (autoBtnState == btnStates::Auto)
             {
+                qDebug()<<"sections says btnstate is auto ";
 
                 for(int s=0; s< 8; s++) {
                     if ((mc.ssP[mc.swOffGr0] & (1 << s)) && (mc.ss[mc.swOffGr0] & (1 << s)) && (tool.sectionButtonState.get(s) == btnStates::Off))

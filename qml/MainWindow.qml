@@ -811,14 +811,19 @@ Window {
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
+                property bool isOn: false
                 id: btnHydLift
                 objectName: "btnHydLift"
-                isChecked: false
+                isChecked: isOn
                 checkable: true
                 icon.source: "/images/HydraulicLiftOff.png"
                 iconChecked: "/images/HydraulicLiftOn.png"
                 buttonText: "HydLift"
                 Layout.alignment: Qt.AlignCenter
+                onClicked: {
+                    isOn = !isOn
+                    aog.isHydLiftOn(isOn)
+                }
             }
             IconButtonText {
                 id: btnHeadland
@@ -865,6 +870,35 @@ Window {
             anchors.topMargin: topLine.height
             anchors.right: rightColumn.left
             anchors.bottom: bottomButtons.top
+            Image{
+                id: hydLiftIndicator
+                property bool isDown: aog.hydLiftDown
+                visible: false
+                source: "/images/Images/z_Lift.png"
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                width: 40
+                height: 100
+                onIsDownChanged: {
+                    console.log("is down"+ hydLiftIndicator.isDown)
+                    if(isDown){
+                        hydLiftIndicator.rotation = 180
+                        hydLiftIndicatorColor.color = "#00F200"
+
+                    }else{
+                        hydLiftIndicator.rotation = 0
+                        hydLiftIndicatorColor.color = "#F26600"
+                    }
+                }
+            }
+            ColorOverlay{
+                id: hydLiftIndicatorColor
+                anchors.fill: hydLiftIndicator
+                //visible: On(bool)
+                color:"#F26600"
+                source: hydLiftIndicator
+            }
+
             OutlineText{
                 id: simulatorOnText
                 visible: settings.setMenu_isSimulatorOn

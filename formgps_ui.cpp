@@ -122,6 +122,7 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(btn3D()), this, SLOT(onBtn3D_clicked()));
     connect(aog,SIGNAL(n2D()), this, SLOT(onBtnN2D_clicked()));
     connect(aog,SIGNAL(n3D()), this, SLOT(onBtnN3D_clicked()));
+    connect(aog, SIGNAL(isHydLiftOn()), this, SLOT(onBtnHydLift_clicked()));
 
 
     //manual youturn buttons
@@ -319,7 +320,25 @@ void FormGPS::onBtnHeadland_clicked(){
     qDebug()<<"Headland";
 }
 void FormGPS::onBtnHydLift_clicked(){
-    qDebug()<<"Hyd";
+    if (bnd.isHeadlandOn)
+    {
+        qDebug()<<"Hyd on button clicked, hydlift on state:";
+        qDebug()<<vehicle.isHydLiftOn;
+        vehicle.isHydLiftOn = !vehicle.isHydLiftOn;
+        qDebug()<<vehicle.isHydLiftOn;
+        if (vehicle.isHydLiftOn)
+        {
+        }
+        else
+        {
+            p_239.pgn[p_239.hydLift] = 0;
+        }
+    }
+    else
+    {
+        p_239.pgn[p_239.hydLift] = 0;
+        vehicle.isHydLiftOn = false;
+    }
 }
 void FormGPS::onBtnTramlines_clicked(){
     qDebug()<<"tramline";

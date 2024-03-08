@@ -106,9 +106,12 @@ Item {
     property double missedSentences: 0
     property double gpsHeading: 0
     property double fusedHeading: 0
+    property int sentenceCounter: 0 //for No GPS screen
+    property bool hydLiftDown: false
+    property bool hydLiftIsOn: false
+    onHydLiftDownChanged: console.log("lift from backend ="+ hydLiftDown)
     onSentenceCounterChanged: console.log(sentenceCounter)
 
-    property int sentenceCounter: 0
 
     property bool isTrackOn: false //checks if a guidance line is set.
     onCurrentABLineChanged: {
@@ -140,6 +143,7 @@ Item {
     signal btn3D()
     signal n2D()
     signal n3D()
+    signal isHydLiftOn()
 
 
     signal uturn(bool turn_right)
