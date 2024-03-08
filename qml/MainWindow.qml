@@ -27,6 +27,11 @@ Window {
     signal save_everything()
 
     onClosing: {
+        if (aog.autoBtnState + aog.manualBtnState  > 0) {
+            timedMessage.addMessage(2000,qsTr("Section Control on. Shut off Section Control."))
+            close.accepted = false
+            return
+        }
         if (mainWindow.visibility !== (Window.FullScreen)){
             settings.setWindow_Size = ((mainWindow.width).toString() + ", "+  (mainWindow.height).toString())
         }
@@ -258,9 +263,6 @@ Window {
                 width: 75
                 icon.source: "/images/WindowClose.png"
                 onClicked: {
-                    if (aog.autoBtnState + aog.manualBtnState  > 0) {
-                        timedMessage.addMessage(2000,qsTr("Section Control on. Shut off Section Control."))
-                    }
                     mainWindow.close()
                 }
 
