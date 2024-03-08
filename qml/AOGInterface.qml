@@ -109,7 +109,6 @@ Item {
     property int sentenceCounter: 0 //for No GPS screen
     property bool hydLiftDown: false
     property bool hydLiftIsOn: false
-    onHydLiftDownChanged: console.log("lift from backend ="+ hydLiftDown)
     onSentenceCounterChanged: console.log(sentenceCounter)
 
 

@@ -322,10 +322,7 @@ void FormGPS::onBtnHeadland_clicked(){
 void FormGPS::onBtnHydLift_clicked(){
     if (bnd.isHeadlandOn)
     {
-        qDebug()<<"Hyd on button clicked, hydlift on state:";
-        qDebug()<<vehicle.isHydLiftOn;
         vehicle.isHydLiftOn = !vehicle.isHydLiftOn;
-        qDebug()<<vehicle.isHydLiftOn;
         if (vehicle.isHydLiftOn)
         {
         }

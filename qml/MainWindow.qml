@@ -877,16 +877,14 @@ Window {
                 source: "/images/Images/z_Lift.png"
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                width: 40
-                height: 100
+                width: 80
+                height: 130
                 onIsDownChanged: {
-                    console.log("is down"+ hydLiftIndicator.isDown)
-                    if(isDown){
-                        hydLiftIndicator.rotation = 180
+                    if(!isDown){
                         hydLiftIndicatorColor.color = "#00F200"
-
+                        hydLiftIndicatorColor.rotation = 0
                     }else{
-                        hydLiftIndicator.rotation = 0
+                        hydLiftIndicatorColor.rotation = 180
                         hydLiftIndicatorColor.color = "#F26600"
                     }
                 }
@@ -894,7 +892,7 @@ Window {
             ColorOverlay{
                 id: hydLiftIndicatorColor
                 anchors.fill: hydLiftIndicator
-                //visible: On(bool)
+                visible: btnHydLift.isOn
                 color:"#F26600"
                 source: hydLiftIndicator
             }

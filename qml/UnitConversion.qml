@@ -387,8 +387,6 @@ Item {
             workRate()
             timeTillFinished()
             percents()
-            console.log(aog.sentenceCounter)
-            console.log(aog.autoBtnState+"autoBtnState")
         }
     }
 
