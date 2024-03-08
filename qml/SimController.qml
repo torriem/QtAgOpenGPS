@@ -22,7 +22,7 @@ Rectangle{
             font.pixelSize: 15
             height: parent.height
             width: parent.height + 15
-            onClicked: aog.btnResetSim()
+            //onClicked: aog.btnResetSim() //uncomment to test
         }
         Button{
             text: "wheelangle"
