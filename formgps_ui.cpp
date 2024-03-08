@@ -124,6 +124,7 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(n3D()), this, SLOT(onBtnN3D_clicked()));
     connect(aog, SIGNAL(isHydLiftOn()), this, SLOT(onBtnHydLift_clicked()));
 
+    connect(aog, SIGNAL(btnResetSim()), this, SLOT(onBtnResetSim_clicked()));
 
     //manual youturn buttons
     connect(aog,SIGNAL(uturn(bool)), this, SLOT(onBtnManUTurn_clicked(bool)));
@@ -639,4 +640,8 @@ void FormGPS::headlines_load() {
 void FormGPS::headlines_save() {
     //TODO make FileSaveHeadLines a slot, skip this wrapper
     FileSaveHeadLines();
+}
+void FormGPS::onBtnResetSim_clicked(){
+    sim.latitude = property_setGPS_SimLatitude;
+    sim.longitude = property_setGPS_SimLongitude;
 }

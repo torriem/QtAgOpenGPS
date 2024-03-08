@@ -142,7 +142,9 @@ Item {
     signal btn3D()
     signal n2D()
     signal n3D()
+
     signal isHydLiftOn()
+    signal btnResetSim()
 
 
     signal uturn(bool turn_right)

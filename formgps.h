@@ -768,6 +768,7 @@ public slots:
 
     void onBtnManUTurn_clicked(bool right); //TODO add the skip number as a parameter
     void onBtnLateral_clicked(bool right); //TODO add the skip number as a parameter
+    void onBtnResetSim_clicked();
 
     /***************************
      * from OpenGL.Designer.cs *
