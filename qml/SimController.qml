@@ -21,7 +21,7 @@ Rectangle{
             text: "Reset"
             height: parent.height
             width: parent.height + 15
-            onClicked: console.log("nothing doing") //TODO: emit AOGInterface signal, connect in backend
+            onClicked: aog.sim_reset()
         }
         Button{
             text: "wheelangle"
