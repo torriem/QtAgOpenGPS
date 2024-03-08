@@ -109,6 +109,8 @@ Item {
     property double sentenceCounter: 0 //for No GPS screen
     onSentenceCounterChanged: console.log(sentenceCounter)
 
+    property int sentenceCounter: 0
+
     property bool isTrackOn: false //checks if a guidance line is set.
     onCurrentABLineChanged: {
         if(currentABLine > -1 && isJobStarted === true){
