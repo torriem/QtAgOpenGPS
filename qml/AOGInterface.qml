@@ -38,6 +38,7 @@ Item {
 
     property int manualBtnState: 0
     property int autoBtnState: 0
+    property bool autoYouturnBtnState: true
 
     //sections 0-15 are used for on-screen buttons if
     //not using zones.  If using zones the rest are used

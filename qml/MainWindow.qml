@@ -655,7 +655,7 @@ Window {
             IconButtonText {
                 id: btnAutoYouTurn
                 objectName: "btnAutoYouTurn"
-                isChecked: false
+                isChecked: aog.isYouTurnBtnOn
                 checkable: true
                 icon.source: "/images/YouTurnNo.png"
                 iconChecked: "/images/YouTurn80.png"
