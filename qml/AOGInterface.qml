@@ -106,7 +106,6 @@ Item {
     property double missedSentences: 0
     property double gpsHeading: 0
     property double fusedHeading: 0
-    property double sentenceCounter: 0 //for No GPS screen
     onSentenceCounterChanged: console.log(sentenceCounter)
 
     property int sentenceCounter: 0

@@ -1154,7 +1154,6 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("satellitesTracked", pn.satellitesTracked);
     aog->setProperty("imuHeading", ahrs.imuHeading);
     aog->setProperty("angVel", ahrs.angVel);
-    aog->setProperty("sentenceCounter", sentenceCounter);
 
 
 
