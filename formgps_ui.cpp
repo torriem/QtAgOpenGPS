@@ -151,7 +151,7 @@ void FormGPS::setupGui()
 
     connect(aog, SIGNAL(sim_bump_speed(bool)), &sim, SLOT(speed_bump(bool)));
     connect(aog, SIGNAL(sim_zero_speed()), &sim, SLOT(speed_zero()));
-    connect(aog, SIGNAL(sim_reset()), &sim, SLOT(reset());
+    connect(aog, SIGNAL(sim_reset()), &sim, SLOT(reset()));
 
     //boundary signals and slots
     connect(&yt, SIGNAL(outOfBounds()),boundaryInterface,SLOT(setIsOutOfBoundsTrue()));
