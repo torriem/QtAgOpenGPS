@@ -32,7 +32,7 @@ Window {
             close.accepted = false
             return
         }
-        if (mainWindow.visibility !== (Window.FullScreen)){
+        if (mainWindow.visibility !== (Window.FullScreen) && mainWindow.visibility !== (Window.Maximized)){
             settings.setWindow_Size = ((mainWindow.width).toString() + ", "+  (mainWindow.height).toString())
         }
 
