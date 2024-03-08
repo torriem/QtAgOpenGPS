@@ -48,6 +48,7 @@ public slots:
     void speed_bump(bool up);
     void speed_zero();
     void reverse();
+    void reset();
     void forward();
 
 };
