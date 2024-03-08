@@ -217,7 +217,7 @@ void FormGPS::oglMain_Paint()
     gl->glDisable(GL_DEPTH_TEST);
     gl->glDisable(GL_TEXTURE_2D);
 
-    if(sentenceCounter > 299)
+    if((uint)sentenceCounter > 299)
     {
         modelview.setToIdentity();
         modelview.translate(0,0.3,-10);

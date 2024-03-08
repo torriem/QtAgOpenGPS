@@ -108,6 +108,8 @@ Item {
     property double gpsHeading: 0
     property double fusedHeading: 0
 
+    property int sentenceCounter: 0
+
     property bool isTrackOn: false //checks if a guidance line is set.
     onCurrentABLineChanged: {
         if(currentABLine > -1 && isJobStarted === true){

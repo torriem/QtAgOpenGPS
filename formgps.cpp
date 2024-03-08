@@ -674,7 +674,7 @@ void FormGPS::processSectionLookahead() {
     BuildMachineByte();
 
     //if a minute has elapsed save the field in case of crash and to be able to resume
-    if (minuteCounter > 30 && sentenceCounter < 20)
+    if (minuteCounter > 30 && (uint)sentenceCounter < 20)
     {
         tmrWatchdog->stop();
 
@@ -752,11 +752,14 @@ void FormGPS::tmrWatchdog_timeout()
         gpsHz = 10;
     }
 
-    if (++sentenceCounter > 20)
+    /*
+    // This is done in QML
+    if (++(uint)sentenceCounter > 20)
     {
         //TODO: ShowNoGPSWarning();
         return;
     }
+    */
 
     if (tenSecondCounter++ >= 40)
     {

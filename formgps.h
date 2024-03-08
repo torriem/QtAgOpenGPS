@@ -250,8 +250,7 @@ public:
     //makes nav panel disappear after 6 seconds
     int navPanelCounter = 0;
 
-    uint sentenceCounter = 0;
-
+    InterfaceProperty<AOGInterface,uint> sentenceCounter = InterfaceProperty<AOGInterface,uint>("sentenceCounter");
 
     //master Manual and Auto, 3 states possible
     //btnStates manualBtnState = btnStates::Off;
