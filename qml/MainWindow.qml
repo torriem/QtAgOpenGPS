@@ -655,12 +655,13 @@ Window {
             IconButtonText {
                 id: btnAutoYouTurn
                 objectName: "btnAutoYouTurn"
-                isChecked: false
+                isChecked: aog.isYouTurnBtnOn
                 checkable: true
                 icon.source: "/images/YouTurnNo.png"
                 iconChecked: "/images/YouTurn80.png"
                 buttonText: "AutoUturn"
                 visible: aog.isTrackOn
+                enabled: aog.isAutoSteerBtnOn
                 onClicked: aog.autoYouTurn()
                 Layout.alignment: Qt.AlignCenter
             }
@@ -671,6 +672,7 @@ Window {
                 iconChecked: "/images/AutoSteerOn.png"
                 checkable: true
                 checked: aog.isAutoSteerBtnOn
+                enabled: aog.isTrackOn
                 //Is remote activation of autosteer enabled?
                 buttonText: (settings.setAS_isAutoSteerAutoOn === true ? "R" : "M")
                 Layout.alignment: Qt.AlignCenter
@@ -935,21 +937,50 @@ Window {
 
             Item{
                 id: autoTurn
-                anchors.top:parent.top
-                anchors.left: parent.left
+                anchors.top:manualUturnLateral.top
+                anchors.right: parent.right
+                anchors.rightMargin: 200
                 width: 100
                 height: 100
-                visible: false
-                Image {
+
+                 Image{
                     id: autoTurnImage
-                    mirror: false
-                    signal clicked(var mouse)
-                    source: "/images/Images/z_Turn.png"
-                    visible: true
+                    source: if(!aog.isYouTurnRight)
+                                "/images/Images/z_TurnRight.png"
+                            else
+                                "/images/Images/z_TurnLeft.png"
+                    visible: false
                     anchors.fill: parent
+                }
+                ColorOverlay{
+                    id: colorAutoUTurn
+                    anchors.fill: parent
+                    source: autoTurnImage
+                    visible: btnAutoYouTurn.isChecked
+                    onVisibleChanged: console.log("visibility:"+visible)
+                    //color: "#E5E54B"
+                    color: if(aog.distancePivotToTurnLine > 0)
+                               "#4CF24C"
+                            else
+                                "#F7A266"
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked: aog.swapAutoYouTurnDirection()
+                    }
+                    Text{
+                        id: distance
+                        anchors.bottom: colorAutoUTurn.bottom
+                        color: colorAutoUTurn.color
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: if(aog.distancePivotToTurnLine > 0)
+                                  utils.m_to_unit_string(aog.distancePivotToTurnLine, 0) + " "+utils.m_unit_abbrev()
+                               else
+                                  "--"
+                    }
                 }
             }
             Item{
+                //this whole item is for the manual uturn buttons, and lateral buttons
                 objectName: "manUTurnButtons"
                 id: manualUturnLateral
                 anchors.top: lightbar.bottom
@@ -965,8 +996,8 @@ Window {
                     source: uturn
 
                     Button{
+                        id: manualUturnLeft
                         background: Rectangle{color: "transparent"}
-                        objectName: "btnManUturnLeft"
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
                         anchors.left: parent.left
@@ -980,8 +1011,8 @@ Window {
                         }
                     }
                     Button{
+                        id: manualUturnRight
                         background: Rectangle{color: "transparent"}
-                        objectName: "btnManUturnRight"
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
                         anchors.right: parent.right
