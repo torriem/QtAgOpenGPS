@@ -18,6 +18,7 @@
 #include "qmlsectionbuttons.h"
 #include "interfaceproperty.h"
 #include "cboundarylist.h"
+#include <cmath>
 
 QString caseInsensitiveFilename(QString directory, QString filename);
 
@@ -123,6 +124,7 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(n2D()), this, SLOT(onBtnN2D_clicked()));
     connect(aog,SIGNAL(n3D()), this, SLOT(onBtnN3D_clicked()));
     connect(aog, SIGNAL(isHydLiftOn()), this, SLOT(onBtnHydLift_clicked()));
+    connect(aog, SIGNAL(btnResetTool()), this, SLOT(onBtnResetTool_clicked()));
 
     connect(aog, SIGNAL(btnResetSim()), this, SLOT(onBtnResetSim_clicked()));
 
@@ -317,6 +319,13 @@ void FormGPS::onBtnToggleABBack_clicked(){
 }
 void FormGPS::onBtnResetTool_clicked(){
     qDebug()<<"REset tool";
+               vehicle.tankPos.heading = vehicle.fixHeading;
+               vehicle.tankPos.easting = vehicle.hitchPos.easting + (sin(vehicle.tankPos.heading) * (tool.tankTrailingHitchLength));
+               vehicle.tankPos.northing = vehicle.hitchPos.northing + (cos(vehicle.tankPos.heading) * (tool.tankTrailingHitchLength));
+
+               vehicle.toolPivotPos.heading = vehicle.tankPos.heading;
+               vehicle.toolPivotPos.easting = vehicle.tankPos.easting + (sin(vehicle.toolPivotPos.heading) * (tool.trailingHitchLength));
+               vehicle.toolPivotPos.northing = vehicle.tankPos.northing + (cos(vehicle.toolPivotPos.heading) * (tool.trailingHitchLength));
 }
 void FormGPS::onBtnHeadland_clicked(){
     qDebug()<<"Headland";

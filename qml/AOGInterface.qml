@@ -146,6 +146,7 @@ Item {
     signal btn3D()
     signal n2D()
     signal n3D()
+    signal btnResetTool()
 
     signal isHydLiftOn()
     signal btnResetSim()

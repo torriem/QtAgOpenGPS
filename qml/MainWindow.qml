@@ -791,6 +791,7 @@ Window {
                 icon.source: "/images/ResetTool.png"
                 buttonText: "Reset Tool"
                 Layout.alignment: Qt.AlignCenter
+                onClicked: aog.btnResetTool()
             }
             IconButtonText {
                 id: btnSectionMapping
