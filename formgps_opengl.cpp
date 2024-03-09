@@ -229,14 +229,14 @@ void FormGPS::oglMain_Paint()
         //TODO: replace with QML widget
 
         //draw with NoGPS texture 21
-        color.setRgbF(1.25f, 1.25f, 1.275f, 0.75);
+       /* color.setRgbF(1.25f, 1.25f, 1.275f, 0.75);
         gldrawtex.append( { QVector3D(2.5, 2.5, 0), QVector2D(1,0) } ); //Top Right
         gldrawtex.append( { QVector3D(-2.5, 2.5, 0), QVector2D(0,0) } ); //Top Left
         gldrawtex.append( { QVector3D(2.5, -2.5, 0), QVector2D(1,1) } ); //Bottom Right
         gldrawtex.append( { QVector3D(-2.5, -2.5, 0), QVector2D(0,1) } ); //Bottom Left
 
         gldrawtex.draw(gl, projection * modelview, Textures::NOGPS, GL_TRIANGLE_STRIP, true,color);
-
+*/
 
         // 2D Ortho ---------------------------------------////////-------------------------------------------------
 
@@ -510,29 +510,30 @@ void FormGPS::oglMain_Paint()
             //Manual UTurn buttons are now in QML and are manipulated
 
             //TODO make this a QML widget instead of using OpenGL
-            DrawCompass(gl, modelview, projection, width - 400); //400 accounts for side buttons
+            //should be moved
+            //DrawCompass(gl, modelview, projection, width - 400); //400 accounts for side buttons
 
-            DrawCompassText(gl, projection*modelview, width - 400, height);
+            //DrawCompassText(gl, projection*modelview, width - 400, height);
 
             if (vehicle.isHydLiftOn) DrawLiftIndicator(gl, modelview, projection, width, height);
 
             if (vehicle.isReverse || isChangingDirection)
                 DrawReverse(gl, modelview, projection,width, height);
 
-            if (isRTK)
-            {
-                if (pn.fixQuality != 4)
-                {
-                    //TODO: move to QML
-                    drawText(gl, projection*modelview, -width / 4, 150, "Lost RTK",
-                             2.0, true, QColor::fromRgbF(0.9752f, 0.52f, 0.0f));
-                } else {
-                    //sounds.isRTKAlarming = false;
-                }
-            }
+//            if (isRTK)
+//            {
+//                if (pn.fixQuality != 4)
+//                {
+//                    //TODO: move to QML
+//                    drawText(gl, projection*modelview, -width / 4, 150, "Lost RTK",
+//                             2.0, true, QColor::fromRgbF(0.9752f, 0.52f, 0.0f));
+//                } else {
+//                    //sounds.isRTKAlarming = false;
+//                }
+//            }
 
             //TODO: move to QML
-            if (pn.age > pn.ageAlarm) DrawAge(gl, projection * modelview, width);
+            //if (pn.age > pn.ageAlarm) DrawAge(gl, projection * modelview, width);
 
             gl->glFlush();
 
@@ -1075,76 +1076,77 @@ void FormGPS::DrawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int heigh
     }
 }
 
-void FormGPS::DrawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height)
-{
-    QLocale locale;
-    QColor color;
-    /*
-    //torriem TODO: buttons should all be in qml not in opengl  Zoom buttons
-    GLHelperTexture gldrawtex;
+//this is now drawn in qml
+//void FormGPS::DrawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height)
+//{
+//    QLocale locale;
+//    QColor color;
+//    /*
+//    //torriem TODO: buttons should all be in qml not in opengl  Zoom buttons
+//    GLHelperTexture gldrawtex;
 
 
-    color.fromRgbf(0.90f, 0.90f, 0.93f);
+//    color.fromRgbf(0.90f, 0.90f, 0.93f);
 
-    int center = Width / 2 - 60;
+//    int center = Width / 2 - 60;
 
-    gldrawtex.append ( { QVector3D(center, 50, 0),      QVector2D(0,0) } );
-    gldrawtex.append ( { QVector3D(center + 32, 50, 0), QVector2D(1,0) } );
-    gldrawtex.append ( { QVector3D(center + 32, 82, 0), QVector2D(1,1) } );
-    gldrawtex.append ( { QVector3D(center, 82, 0),      QVector2D(0,1) } );
+//    gldrawtex.append ( { QVector3D(center, 50, 0),      QVector2D(0,0) } );
+//    gldrawtex.append ( { QVector3D(center + 32, 50, 0), QVector2D(1,0) } );
+//    gldrawtex.append ( { QVector3D(center + 32, 82, 0), QVector2D(1,1) } );
+//    gldrawtex.append ( { QVector3D(center, 82, 0),      QVector2D(0,1) } );
 
-    gldrawtex.draw(gl,mvp,Texture::
-    */
-    int center = Width / 2 - 10;
-    color.setRgbF( 0.9852f, 0.982f, 0.983f);
-    strHeading = locale.toString(glm::toDegrees(vehicle.fixHeading),'f',1);
-    lenth = 15 * strHeading.length();
-    drawText(gl, mvp, Width / 2 - lenth, 10, strHeading, 0.8);
+//    gldrawtex.draw(gl,mvp,Texture::
+//    */
+//    int center = Width / 2 - 10;
+//    color.setRgbF( 0.9852f, 0.982f, 0.983f);
+//    strHeading = locale.toString(glm::toDegrees(vehicle.fixHeading),'f',1);
+//    lenth = 15 * strHeading.length();
+//    drawText(gl, mvp, Width / 2 - lenth, 10, strHeading, 0.8);
 
-    //GPS Step
-    if(distanceCurrentStepFixDisplay < 0.03*100)
-        color.setRgbF(0.98f, 0.82f, 0.653f);
-    drawText(gl, mvp, center, 10, locale.toString(distanceCurrentStepFixDisplay,'f',1) + tr("cm"),0.8, true, color);
+//    //GPS Step
+//    if(distanceCurrentStepFixDisplay < 0.03*100)
+//        color.setRgbF(0.98f, 0.82f, 0.653f);
+//    drawText(gl, mvp, center, 10, locale.toString(distanceCurrentStepFixDisplay,'f',1) + tr("cm"),0.8, true, color);
 
-    if (isMaxAngularVelocity)
-    {
-        color.setRgbF(0.98f, 0.4f, 0.4f);
-        drawText(gl,mvp,center-10, Height-260, "*", 2, true, color);
-    }
+//    if (isMaxAngularVelocity)
+//    {
+//        color.setRgbF(0.98f, 0.4f, 0.4f);
+//        drawText(gl,mvp,center-10, Height-260, "*", 2, true, color);
+//    }
 
-    color.setRgbF(0.9752f, 0.62f, 0.325f);
-    if (timerSim.isActive()) drawText(gl, mvp, -110, Height - 130, "Simulator On", 1, true, color);
+//    color.setRgbF(0.9752f, 0.62f, 0.325f);
+//    if (timerSim.isActive()) drawText(gl, mvp, -110, Height - 130, "Simulator On", 1, true, color);
 
-    if (ct.isContourBtnOn)
-    {
-        if (isFlashOnOff && ct.isLocked)
-        {
-            color.setRgbF(0.9652f, 0.752f, 0.75f);
-            drawText(gl, mvp, -center - 100, Height / 2.3, "Locked", 1,true, color);
-        }
-    }
+//    if (ct.isContourBtnOn)
+//    {
+//        if (isFlashOnOff && ct.isLocked)
+//        {
+//            color.setRgbF(0.9652f, 0.752f, 0.75f);
+//            drawText(gl, mvp, -center - 100, Height / 2.3, "Locked", 1,true, color);
+//        }
+//    }
 
-}
+//}
 
-void FormGPS::DrawCompass(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width)
-{
-    //Heading text
-    int center = Width / 2 - 55;
-    drawText(gl, projection*modelview, center-8, 40, "^", 0.8);
+//void FormGPS::DrawCompass(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width)
+//{
+//    //Heading text
+//    int center = Width / 2 - 55;
+//    drawText(gl, projection*modelview, center-8, 40, "^", 0.8);
 
-    GLHelperTexture gldraw;
+//    GLHelperTexture gldraw;
 
 
-    modelview.translate(center, 78, 0);
+//    modelview.translate(center, 78, 0);
 
-    modelview.rotate(-camera.camHeading, 0, 0, 1);
-    gldraw.append( { QVector3D(-52, -52, 0), QVector2D(0, 0) }); //bottom left
-    gldraw.append( { QVector3D(52, -52.0, 0), QVector2D(1, 0) }); //bottom right
-    gldraw.append( { QVector3D(-52, 52, 0), QVector2D(0, 1) }); // top left
-    gldraw.append( { QVector3D(52, 52, 0), QVector2D(1, 1) }); // top right
+//    modelview.rotate(-camera.camHeading, 0, 0, 1);
+//    gldraw.append( { QVector3D(-52, -52, 0), QVector2D(0, 0) }); //bottom left
+//    gldraw.append( { QVector3D(52, -52.0, 0), QVector2D(1, 0) }); //bottom right
+//    gldraw.append( { QVector3D(-52, 52, 0), QVector2D(0, 1) }); // top left
+//    gldraw.append( { QVector3D(52, 52, 0), QVector2D(1, 1) }); // top right
 
-    gldraw.draw(gl, projection*modelview, Textures::COMPASS, GL_TRIANGLE_STRIP, true, QColor::fromRgbF(0.952f, 0.870f, 0.73f, 0.8f));
-}
+//    gldraw.draw(gl, projection*modelview, Textures::COMPASS, GL_TRIANGLE_STRIP, true, QColor::fromRgbF(0.952f, 0.870f, 0.73f, 0.8f));
+//}
 
 void FormGPS::DrawReverse(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width, double Height)
 {
@@ -1193,48 +1195,19 @@ void FormGPS::DrawReverse(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4
     }
 }
 
+//should this be moved somewhere? hydLiftDown sends to the frontend, so it is necessary
 void FormGPS::DrawLiftIndicator(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, int Width, int Height)
 {
-    modelview.translate(Width / 2 - 35, Height/2, 0);
-    QColor color;
-
-    GLHelperTexture gldraw;
-
     if (p_239.pgn[p_239.hydLift] == (char)2)
     {
-        color = QColor::fromRgbF(0.0f, 0.950f, 0.0f);
+        hydLiftDown = false;
     }
     else
     {
-        modelview.rotate(180, 0, 0, 1);
-        color = QColor::fromRgbF(0.952f, 0.40f, 0.0f);
+        hydLiftDown = true;
     }
-
-    gldraw.append({ QVector3D(-48, -64, 0),  QVector2D(0, 0) });  //
-    gldraw.append({ QVector3D(-48, 64, 0),   QVector2D(0, 1) }); //
-    gldraw.append({ QVector3D(48, -64.0, 0), QVector2D(1, 0) }); //
-    gldraw.append({ QVector3D(48, 64, 0),    QVector2D(1, 1) }); //
-
-    gldraw.draw(gl, projection * modelview, Textures::HYDLIFT,
-                GL_TRIANGLE_STRIP, true, color);
 }
 
-void FormGPS::DrawLostRTK(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width)
-{
-    //TODO: move to QML
-    QColor color;
-    color.setRgbF(0.9752f, 0.752f, 0.40f);
-    drawText(gl, mvp, -Width / 6, 125, "LOST RTK", 2.0, true, color);
-}
-
-void FormGPS::DrawAge(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width)
-{
-    //TODO move to QML
-    QColor color;
-    color.setRgbF(0.9752f, 0.52f, 0.0f);
-    drawText(gl, mvp, Width / 4, 60, "Age:" + QString("%1").arg(pn.age,0,'f',1), 1.5, true, color);
-
-}
 
 void FormGPS::CalcFrustum(const QMatrix4x4 &mvp)
 {

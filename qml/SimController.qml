@@ -19,6 +19,7 @@ Rectangle{
         anchors.centerIn: parent
         Button{
             text: "Reset"
+            font.pixelSize: 15
             height: parent.height
             width: parent.height + 15
             onClicked: aog.sim_reset()
@@ -34,6 +35,7 @@ Rectangle{
             id: steerSlider
             objectName: "simSteer"
             multiplicationValue: 10
+            height: 50
             from: 0
             to: 600
             value: 300

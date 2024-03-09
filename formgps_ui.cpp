@@ -96,12 +96,10 @@ void FormGPS::setupGui()
     openGLControl->setMirrorVertically(true);
     connect(openGLControl,SIGNAL(clicked(QVariant)),this,SLOT(onGLControl_clicked(QVariant)));
     connect(openGLControl,SIGNAL(dragged(int,int,int,int)),this,SLOT(onGLControl_dragged(int,int,int,int)));
-    connect(openGLControl,SIGNAL(zoomIn()),this,SLOT(onBtnZoomIn_clicked()));
-    connect(openGLControl,SIGNAL(zoomOut()),this,SLOT(onBtnZoomOut_clicked()));
 
     //TODO: save and restore these numbers from settings
-    qml_root->setProperty("width",1024);
-    qml_root->setProperty("height",768);
+//    qml_root->setProperty("width",1024);
+//    qml_root->setProperty("height",768);
 
     //AB Line Picker
     //react to UI changing these properties
@@ -115,10 +113,25 @@ void FormGPS::setupGui()
     connect(linesInterface,SIGNAL(abLine_swapHeading(int)), this, SLOT(swap_heading_ABLine(int)));
     connect(linesInterface,SIGNAL(abLine_changeName(int, QString)), this, SLOT(change_name_ABLine(int,QString)));
 
+    //on screen buttons
+    connect(aog,SIGNAL(zoomIn()), this, SLOT(onBtnZoomIn_clicked()));
+    connect(aog,SIGNAL(zoomOut()), this, SLOT(onBtnZoomOut_clicked()));
+    connect(aog,SIGNAL(tiltDown()), this, SLOT(onBtnTiltDown_clicked()));
+    connect(aog,SIGNAL(tiltUp()), this, SLOT(onBtnTiltUp_clicked()));
+    connect(aog,SIGNAL(btn2D()), this, SLOT(onBtn2D_clicked()));
+    connect(aog,SIGNAL(btn3D()), this, SLOT(onBtn3D_clicked()));
+    connect(aog,SIGNAL(n2D()), this, SLOT(onBtnN2D_clicked()));
+    connect(aog,SIGNAL(n3D()), this, SLOT(onBtnN3D_clicked()));
+    connect(aog, SIGNAL(isHydLiftOn()), this, SLOT(onBtnHydLift_clicked()));
+
+    connect(aog, SIGNAL(btnResetSim()), this, SLOT(onBtnResetSim_clicked()));
 
     //manual youturn buttons
     connect(aog,SIGNAL(uturn(bool)), this, SLOT(onBtnManUTurn_clicked(bool)));
     connect(aog,SIGNAL(lateral(bool)), this, SLOT(onBtnLateral_clicked(bool)));
+    connect(aog,SIGNAL(autoYouTurn()), this, SLOT(onBtnAutoYouTurn_clicked()));
+    connect(aog,SIGNAL(swapAutoYouTurnDirection()), this, SLOT(onBtnSwapAutoYouTurnDirection_clicked()));
+
 
     connect(qml_root, SIGNAL(save_everything()), this, SLOT(fileSaveEverythingBeforeClosingField()));
     //connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
@@ -208,21 +221,7 @@ void FormGPS::setupGui()
     connect(btnContourPriority,SIGNAL(clicked()),this,
             SLOT(onBtnContourPriority_clicked()));
 
-    btnTiltDown = qmlItem(qml_root,"btnTiltDown");
-    connect(btnTiltDown,SIGNAL(clicked()),this,
-            SLOT(onBtnTiltDown_clicked()));
 
-    btnTiltUp = qmlItem(qml_root,"btnTiltUp");
-    connect(btnTiltUp,SIGNAL(clicked()),this,
-            SLOT(onBtnTiltUp_clicked()));
-
-    btnZoomIn = qmlItem(qml_root,"btnZoomIn");
-    connect(btnZoomIn,SIGNAL(clicked()),this,
-            SLOT(onBtnZoomIn_clicked()));
-
-    btnZoomOut = qmlItem(qml_root,"btnZoomOut");
-    connect(btnZoomOut,SIGNAL(clicked()),this,
-            SLOT(onBtnZoomOut_clicked()));
 
     //icon palette
 
@@ -316,9 +315,6 @@ void FormGPS::onBtnToggleAB_clicked(){
 void FormGPS::onBtnToggleABBack_clicked(){
     qDebug()<<"toggle AB back";
 }
-void FormGPS::onBtnAutoYouTurn_clicked(){
-    qDebug()<<"activate youturn";
-}
 void FormGPS::onBtnResetTool_clicked(){
     qDebug()<<"REset tool";
 }
@@ -326,7 +322,22 @@ void FormGPS::onBtnHeadland_clicked(){
     qDebug()<<"Headland";
 }
 void FormGPS::onBtnHydLift_clicked(){
-    qDebug()<<"Hyd";
+    if (bnd.isHeadlandOn)
+    {
+        vehicle.isHydLiftOn = !vehicle.isHydLiftOn;
+        if (vehicle.isHydLiftOn)
+        {
+        }
+        else
+        {
+            p_239.pgn[p_239.hydLift] = 0;
+        }
+    }
+    else
+    {
+        p_239.pgn[p_239.hydLift] = 0;
+        vehicle.isHydLiftOn = false;
+    }
 }
 void FormGPS::onBtnTramlines_clicked(){
     qDebug()<<"tramline";
@@ -407,7 +418,26 @@ void FormGPS::onBtnTiltUp_clicked(){
     property_setwin = camera.camPitch;
     openGLControl->update();
 }
-
+void FormGPS::onBtn2D_clicked(){
+    camera.camFollowing = true;
+    camera.camPitch = 0;
+    navPanelCounter = 0;
+}
+void FormGPS::onBtn3D_clicked(){
+    camera.camFollowing = true;
+    camera.camPitch = -65;
+    navPanelCounter = 0;
+}
+void FormGPS::onBtnN2D_clicked(){
+    camera.camFollowing = false;
+    camera.camPitch = 0;
+    navPanelCounter = 0;
+}
+void FormGPS::onBtnN3D_clicked(){
+    camera.camPitch = -65;
+    camera.camFollowing = false;
+    navPanelCounter = 0;
+}
 void FormGPS::onBtnZoomIn_clicked(){
     qDebug() <<"ZoomIn button clicked.";
     if (camera.zoomValue <= 20) {
@@ -479,6 +509,54 @@ void FormGPS::onBtnDeleteAllFlags_clicked()
     flagNumberPicked = 0;
     //TODO: FileSaveFlags
 }
+void FormGPS::onBtnAutoYouTurn_clicked(){
+    qDebug()<<"activate youturn";
+    yt.isTurnCreationTooClose = false;
+
+//     if (bnd.bndArr.Count == 0)    this needs to be moved to qml
+//     {
+//         TimedMessageBox(2000, gStr.gsNoBoundary, gStr.gsCreateABoundaryFirst);
+//         return;
+//     }
+
+     if (!yt.isYouTurnBtnOn)
+     {
+         //new direction so reset where to put turn diagnostic
+         yt.ResetCreatedYouTurn();
+
+         if (!isAutoSteerBtnOn) return;
+         yt.isYouTurnBtnOn = true;
+         yt.isTurnCreationTooClose = false;
+         yt.isTurnCreationNotCrossingError = false;
+         yt.ResetYouTurn();
+         //mc.autoSteerData[mc.sdX] = 0;
+//         mc.machineControlData[mc.cnYouTurn] = 0;
+//         btnAutoYouTurn.Image = Properties.Resources.Youturn80;
+     }
+     else
+     {
+         yt.isYouTurnBtnOn = false;
+//         yt.rowSkipsWidth = Properties.Vehicle.Default.set_youSkipWidth;
+//         btnAutoYouTurn.Image = Properties.Resources.YouTurnNo;
+         yt.ResetYouTurn();
+
+         //new direction so reset where to put turn diagnostic
+         yt.ResetCreatedYouTurn();
+
+         //mc.autoSteerData[mc.sdX] = 0;commented in aog
+//         mc.machineControlData[mc.cnYouTurn] = 0;
+     }
+}
+void FormGPS::onBtnSwapAutoYouTurnDirection_clicked()
+ {
+     if (!yt.isYouTurnTriggered)
+     {
+         yt.isYouTurnRight = !yt.isYouTurnRight;
+         yt.ResetCreatedYouTurn();
+     }
+     //else if (yt.isYouTurnBtnOn)
+         //btnAutoYouTurn.PerformClick();
+ }
 
 void FormGPS::onBtnManUTurn_clicked(bool right)
 {
@@ -563,4 +641,8 @@ void FormGPS::headlines_load() {
 void FormGPS::headlines_save() {
     //TODO make FileSaveHeadLines a slot, skip this wrapper
     FileSaveHeadLines();
+}
+void FormGPS::onBtnResetSim_clicked(){
+    sim.latitude = property_setGPS_SimLatitude;
+    sim.longitude = property_setGPS_SimLongitude;
 }

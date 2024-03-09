@@ -251,6 +251,8 @@ public:
     int navPanelCounter = 0;
 
     InterfaceProperty<AOGInterface,uint> sentenceCounter = InterfaceProperty<AOGInterface,uint>("sentenceCounter");
+    bool hydLiftDown = false;
+
 
     //master Manual and Auto, 3 states possible
     //btnStates manualBtnState = btnStates::Off;
@@ -729,6 +731,7 @@ public slots:
     void onBtnToggleAB_clicked();
     void onBtnToggleABBack_clicked();
     void onBtnAutoYouTurn_clicked();
+    void onBtnSwapAutoYouTurnDirection_clicked();
     void onBtnContourPriority_clicked();
     //bottom row
     void onBtnResetTool_clicked();
@@ -743,8 +746,13 @@ public slots:
     void onBtnYouSkip_clicked();
 
 
+    //displaybuttons.qml
     void onBtnTiltDown_clicked();
     void onBtnTiltUp_clicked();
+    void onBtn2D_clicked();
+    void onBtn3D_clicked();
+    void onBtnN2D_clicked();
+    void onBtnN3D_clicked();
 
     void onBtnZoomIn_clicked();
     void onBtnZoomOut_clicked();
@@ -760,6 +768,7 @@ public slots:
 
     void onBtnManUTurn_clicked(bool right); //TODO add the skip number as a parameter
     void onBtnLateral_clicked(bool right); //TODO add the skip number as a parameter
+    void onBtnResetSim_clicked();
 
     /***************************
      * from OpenGL.Designer.cs *

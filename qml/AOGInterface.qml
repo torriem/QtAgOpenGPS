@@ -88,7 +88,6 @@ Item {
     property double hdop: 0
     property double	age: 0
     property int fixQuality: 0
-    property int ageAlarm: 0
     property int satellitesTracked: 0
 
     property double imuHeading: 0
@@ -107,8 +106,11 @@ Item {
     property double missedSentences: 0
     property double gpsHeading: 0
     property double fusedHeading: 0
+    property int sentenceCounter: 0 //for No GPS screen
+    property bool hydLiftDown: false
+    property bool hydLiftIsOn: false
+    onSentenceCounterChanged: console.log(sentenceCounter)
 
-    property int sentenceCounter: 0
 
     property bool isTrackOn: false //checks if a guidance line is set.
     onCurrentABLineChanged: {
@@ -131,8 +133,24 @@ Item {
 
     //on-screen buttons
 
+    //DisplayButtons.qml
+    signal zoomIn()
+    signal zoomOut()
+    signal tiltDown()
+    signal tiltUp()
+    signal btn2D()
+    signal btn3D()
+    signal n2D()
+    signal n3D()
+
+    signal isHydLiftOn()
+    signal btnResetSim()
+
+
     signal uturn(bool turn_right)
     signal lateral(bool go_right)
+    signal autoYouTurn()
+    signal swapAutoYouTurnDirection()
 
     //general settings
     signal settings_reload() //tell backend classes to reload settings from store

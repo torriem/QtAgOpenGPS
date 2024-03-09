@@ -445,11 +445,11 @@ Popup{
         }
         IconButtonTransparent{
             icon.source: "/images/SwitchOff.png"
+            Layout.alignment: Qt.AlignCenter
             onClicked: {
                 headlandDesigner.headlandOff()
                 headlandDesigner.visible = false
             }
-            Layout.alignment: Qt.AlignCenter
         }
         IconButtonTransparent{
             icon.source: "/images/OK64.png"

@@ -13,13 +13,14 @@ Item {
         boundaryMenuPopup.visible = true
     }
 
-    Popup {
+    MoveablePopup {
         id: boundaryMenuPopup
         width: 500
         height: 400
         modal: true
         visible: boundaryMenu.visible
-
+        x: 40
+        y: 40
         TopLine{
             id: topLine
             titleText: "Start or Delete A Boundary"

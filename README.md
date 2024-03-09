@@ -147,7 +147,7 @@ Look here: https://www.qt.io/offline-installers in the "QT Creator" section.
   - git checkout -b __branchname__
 
 ## Dependencies
-- sudo apt install qtcreator qtbase5-dev qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qt-labs-folderlistmodel qml-module-qtquick-dialogs qml-module-qtquick-extras qml-module-qtquick-dialogs qml-module-qtquick-extras qt5-qmake cmake libqt5serialbus5-dev libqt5serialport5-dev qtdeclarative5-dev qttools5-dev -y
+- sudo apt install qtcreator qtbase5-dev qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qt-labs-folderlistmodel qml-module-qtquick-dialogs qml-module-qtquick-extras qml-module-qtquick-dialogs qml-module-qtquick-extras qt5-qmake cmake libqt5serialbus5-dev libqt5serialport5-dev qtdeclarative5-dev qttools5-dev qml-module-qtquick-shapes -y
 - (ensure you are in the github/QtAgOpenGPS folder)
 - qmake
 - make

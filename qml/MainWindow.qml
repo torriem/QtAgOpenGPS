@@ -3,21 +3,39 @@ import QtGraphicalEffects 1.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
+import QtMultimedia 5.9
 import AgOpenGPS 1.0
 
 import "interfaces"
 import "boundary"
+import "steerconfig"
+import "config"
+import "field"
+import "tracks"
 
 Window {
 
     //We draw native opengl to this root object
     id: mainWindow
-    width: 1000
-    height: 700
+    height: utils.string_after_comma(settings.setWindow_Size)
+    width: utils.string_before_comma(settings.setWindow_Size)
+    onVisibleChanged: if(settings.setDisplay_isStartFullScreen){
+                          mainWindow.showMaximized()
+                      }
+
 
     signal save_everything()
 
     onClosing: {
+        if (aog.autoBtnState + aog.manualBtnState  > 0) {
+            timedMessage.addMessage(2000,qsTr("Section Control on. Shut off Section Control."))
+            close.accepted = false
+            return
+        }
+        if (mainWindow.visibility !== (Window.FullScreen) && mainWindow.visibility !== (Window.Maximized)){
+            settings.setWindow_Size = ((mainWindow.width).toString() + ", "+  (mainWindow.height).toString())
+        }
+
         if (aog.isJobStarted) {
             closeDialog.visible = true
             close.accepted = false
@@ -148,7 +166,11 @@ Window {
             anchors.top:parent.top
             anchors.left: parent.left
             anchors.leftMargin: leftColumn.width+20
-            text: qsTr(""+aog.fixQuality+ ": Age: "+ aog.age)
+            text: qsTr(aog.fixQuality ===1 ? "GPS Single":
+                        aog.fixQuality ===2 ? "DGPS":
+                        aog.fixQuality ===3 ? "RTK Float":
+                        aog.fixQuality ===4 ? "RTK Fix":
+                         "Invalid" + ": Age: "+ Math.round(aog.age, 1))
             font.bold: true
             font.pixelSize: 20
             anchors.bottom: parent.verticalCenter
@@ -227,10 +249,12 @@ Window {
                 width: 75
                 onClicked: {
                     console.debug("Visibility is " + mainWindow.visibility)
-                    if (mainWindow.visibility == Window.FullScreen)
+                    if (mainWindow.visibility == Window.FullScreen){
                         mainWindow.showNormal()
-                    else
+                }else{
+                        settings.setWindow_Size = ((mainWindow.width).toString() + ", "+  (mainWindow.height).toString())
                         mainWindow.showFullScreen()
+                    }
                 }
             }
             IconButtonTransparent{
@@ -239,9 +263,6 @@ Window {
                 width: 75
                 icon.source: "/images/WindowClose.png"
                 onClicked: {
-                    if (aog.autoBtnState + aog.manualBtnState  > 0) {
-                        timedMessage.addMessage(2000,qsTr("Section Control on. Shut off Section Control."))
-                    }
                     mainWindow.close()
                 }
 
@@ -304,6 +325,24 @@ Window {
         }
 
     }
+    Rectangle{
+        id: noGPS
+        anchors.fill: glcontrolrect
+        color: "#0d0d0d"
+        visible: aog.sentenceCounter> 299
+        onVisibleChanged: if(visible){
+                              console.log("no gps now visible")
+                          }
+
+        Image {
+            id: noGPSImage
+            source: "/images/Images/z_NoGPS.png"
+            anchors.centerIn: parent
+            anchors.margins: 200
+            visible: noGPS.visible
+        }
+    }
+
     //----------------------------------------------------------------------------------------left column
     Item {
 
@@ -313,19 +352,23 @@ Window {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-
+        visible: !noGPS.visible
         ColumnLayout {
             id: leftColumn
             anchors.top: parent.top
             anchors.topMargin: topLine.height
             anchors.bottom: parent.bottom
             anchors.left: parent.left
-            width: children.width + 6
-
+            anchors.leftMargin: 6
+            onVisibleChanged: if(visible == false)
+                                  width = 0
+                              else
+                                  width = children.width
             Button {
                 id: btnAcres
                 implicitWidth: parent.width
                 implicitHeight: parent.width / 2
+                Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     aog.distanceUser = "0"
                     aog.workedAreaTotalUser = "0"
@@ -367,6 +410,7 @@ Window {
                 buttonText: qsTr("Display")
                 icon.source: "/images/NavigationSettings.png"
                 onClicked: displayButtons.visible = !displayButtons.visible
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnSettings
@@ -374,7 +418,7 @@ Window {
                 buttonText: qsTr("Settings")
                 icon.source: "/images/Settings48.png"
                 onClicked: config.open()
-
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnTools
@@ -382,6 +426,7 @@ Window {
                 buttonText: qsTr("Tools")
                 icon.source: "/images/SpecialFunctions.png"
                 onClicked: toolsWindow.visible = true
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText{
                 id: btnFieldMenu
@@ -389,6 +434,7 @@ Window {
                 buttonText: qsTr("Field")
                 icon.source: "/images/JobActive.png"
                 onClicked: fieldMenu.visible = true
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText{
                 id: btnFieldTools
@@ -396,13 +442,15 @@ Window {
                 buttonText: qsTr("Field Tools")
                 icon.source: "/images/FieldTools.png"
                 onClicked: fieldTools.visible = true
-                disabled: aog.isJobStarted ? false : true
+                enabled: aog.isJobStarted ? true : false
+                Layout.alignment: Qt.AlignCenter
             }
             FieldToolsMenu {
                 id: fieldTools
                 width: 300
                 visible: false
                 height: mainWindow.height
+                Layout.alignment: Qt.AlignCenter
             }
 
             IconButtonText {
@@ -410,14 +458,17 @@ Window {
                 objectName: "btnAgIO"
                 buttonText: qsTr("AgIO")
                 icon.source: "/images/AgIO.png"
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnautoSteerConf
                 objectName: "btnAutosteerConf"
                 buttonText: qsTr("Steer config")
                 icon.source: "/images/AutoSteerConf.png"
+                Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     steerConfigWindow.visible = true
+                    steerConfigWindow.show()
                 }
             }
         }
@@ -427,9 +478,9 @@ Window {
             anchors.top: parent.top
             anchors.right: rightColumn.left
             anchors.topMargin: topLine.height + 10
-            anchors.rightMargin: 10
-            visible: (settings.setMenu_isSpeedoOn === true ||
-                      settings.setMenu_isSpeedoOn === "true")
+            //anchors.rightMargin: 10
+            anchors.margins: 10
+            visible: settings.setMenu_isSpeedoOn
 
             speed: utils.speed_to_unit(aog.speedKph)
         }
@@ -459,6 +510,13 @@ Window {
             anchors.topMargin: topLine.height + 6
             anchors.rightMargin: 6
 
+            visible: aog.isJobStarted
+
+            onVisibleChanged: if(visible == false)
+                                  width = 0
+                              else
+                                  width = children.width
+
             IconButtonText {
                 id: btnContour
                 objectName: "btnContour"
@@ -468,7 +526,7 @@ Window {
                 iconChecked: "/images/ContourOn.png"
                 buttonText: "Contour"
                 //color: "white"
-                visible: aog.isJobStarted ? true : false
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText{
                 id: btnABCurve
@@ -478,7 +536,7 @@ Window {
                 icon.source: "/images/CurveOff.png"
                 iconChecked: "/images/CurveOn.png"
                 buttonText: "ABCurve"
-                visible: aog.isJobStarted ? true : false
+                Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     abCurvePicker.visible = true
                     if (aog.currentABCurve > -1) {
@@ -511,6 +569,7 @@ Window {
                 //Also the types of lines are all mutually exclusive
                 icon.source: "/images/ABLineOff.png"
                 iconChecked: "/images/ABLineOn.png"
+                Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     abLinePicker.visible = true
                     if (aog.currentABLine > -1)
@@ -532,7 +591,6 @@ Window {
                 }
                 checked: aog.currentABLine > -1 ? true : false
                 buttonText: "ABLine"
-                visible: aog.isJobStarted ? true : false
             }
 
             IconButton{
@@ -541,7 +599,7 @@ Window {
                 icon.source: "/images/ABLineCycle.png"
                 width: btnABLine.width
                 height: btnABLine.height
-                visible: aog.isTrackOn
+                Layout.alignment: Qt.AlignCenter
             }
             IconButton{
                 id: btnABLineCycleBk
@@ -549,7 +607,7 @@ Window {
                 icon.source: "/images/ABLineCycleBk.png"
                 width: btnABLine.width
                 height: btnABLine.height
-                visible: aog.isTrackOn
+                Layout.alignment: Qt.AlignCenter
             }
 
             IconButtonText {
@@ -560,7 +618,7 @@ Window {
                 icon.source: "/images/ManualOff.png"
                 iconChecked: "/images/ManualOn.png"
                 buttonText: "Manual"
-                visible: aog.isJobStarted ? true : false
+                Layout.alignment: Qt.AlignCenter
                 onCheckedChanged: {
                     if (checked) {
                         btnSectionAuto.checked = false;
@@ -582,7 +640,7 @@ Window {
                 icon.source: "/images/SectionMasterOff.png"
                 iconChecked: "/images/SectionMasterOn.png"
                 buttonText: "Auto"
-                visible: aog.isJobStarted ? true : false
+                Layout.alignment: Qt.AlignCenter
                 onCheckedChanged: {
                     if (checked) {
                         btnSectionManual.checked = false;
@@ -603,6 +661,8 @@ Window {
                 iconChecked: "/images/YouTurn80.png"
                 buttonText: "AutoUturn"
                 visible: aog.isTrackOn
+                onClicked: aog.autoYouTurn()
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnAutoSteer
@@ -611,18 +671,23 @@ Window {
                 iconChecked: "/images/AutoSteerOn.png"
                 checkable: true
                 checked: aog.isAutoSteerBtnOn
-                visible: aog.isJobStarted ? true : false
                 //Is remote activation of autosteer enabled?
                 buttonText: (settings.setAS_isAutoSteerAutoOn === true ? "R" : "M")
+                Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     if (checked && ((aog.currentABCurve > -1) || (aog.currentABLine > -1))) {
                         console.debug("okay to turn on autosteer button.")
                         aog.isAutoSteerBtnOn = true;
+                        engage.play()
                     } else {
                         console.debug("keep autoster button off.")
                         checked = false;
                         aog.isAutoSteerBtnOn = false;
                     }
+                }
+                SoundEffect{
+                    id: engage
+                    source: "/sounds/SteerOn.wav"
                 }
                 Connections {
                     target: aog
@@ -675,10 +740,17 @@ Window {
             anchors.right: rightColumn.left
             anchors.rightMargin: 3
             Layout.fillWidth: true
+            visible: aog.isJobStarted && leftColumn.visible
+
+            onVisibleChanged: if(visible == false)
+                                  height = 0
+                              else
+                                  height = children.height
             //spacing: parent.rowSpacing
             ComboBox {
                 id: skips
                 editable: true
+                Layout.alignment: Qt.AlignCenter
                 model: ListModel {
                     id: model
                     ListElement {text: "1"}
@@ -709,23 +781,25 @@ Window {
                 icon.source: "/images/YouSkipOff.png"
                 iconChecked: "/images/YouSkipOn.png"
                 buttonText: "YouSkips"
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnResetTool
                 objectName: "btnResetTool"
                 icon.source: "/images/ResetTool.png"
                 buttonText: "Reset Tool"
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnSectionMapping
                 objectName: "btnSectionMapping"
                 icon.source: "/images/SectionMapping"
-                visible: aog.isJobStarted ? true : false
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnFieldInfo
                 icon.source: "/images/FieldStats.png"
-                visible: aog.isJobStarted ? true : false
+                Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     fieldData.visible = !fieldData.visible
                     gpsData.visible = false
@@ -736,15 +810,22 @@ Window {
                 objectName: "btnTramLines"
                 icon.source: "/images/TramLines.png"
                 buttonText: "Tram Lines"
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
+                property bool isOn: false
                 id: btnHydLift
                 objectName: "btnHydLift"
-                isChecked: false
+                isChecked: isOn
                 checkable: true
                 icon.source: "/images/HydraulicLiftOff.png"
                 iconChecked: "/images/HydraulicLiftOn.png"
                 buttonText: "HydLift"
+                Layout.alignment: Qt.AlignCenter
+                onClicked: {
+                    isOn = !isOn
+                    aog.isHydLiftOn(isOn)
+                }
             }
             IconButtonText {
                 id: btnHeadland
@@ -754,12 +835,14 @@ Window {
                 icon.source: "/images/HeadlandOff.png"
                 iconChecked: "/images/HeadlandOn.png"
                 buttonText: "Headland"
+                Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnFlag
                 objectName: "btnFlag"
                 isChecked: false
                 icon.source: "/images/FlagRed.png"
+                Layout.alignment: Qt.AlignCenter
                 onPressAndHold: {
                     if (contextFlag.visible) {
                         contextFlag.visible = false;
@@ -775,6 +858,7 @@ Window {
                 icon.source: "/images/TrackOn.png"
                 buttonText: "Track"
                 onClicked: trackButtons.visible = !trackButtons.visible
+                Layout.alignment: Qt.AlignCenter
             }
 
         }
@@ -788,7 +872,35 @@ Window {
             anchors.topMargin: topLine.height
             anchors.right: rightColumn.left
             anchors.bottom: bottomButtons.top
+            Image{
+                id: hydLiftIndicator
+                property bool isDown: aog.hydLiftDown
+                visible: false
+                source: "/images/Images/z_Lift.png"
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                width: 80
+                height: 130
+                onIsDownChanged: {
+                    if(!isDown){
+                        hydLiftIndicatorColor.color = "#00F200"
+                        hydLiftIndicatorColor.rotation = 0
+                    }else{
+                        hydLiftIndicatorColor.rotation = 180
+                        hydLiftIndicatorColor.color = "#F26600"
+                    }
+                }
+            }
+            ColorOverlay{
+                id: hydLiftIndicatorColor
+                anchors.fill: hydLiftIndicator
+                visible: btnHydLift.isOn
+                color:"#F26600"
+                source: hydLiftIndicator
+            }
+
             OutlineText{
+                id: simulatorOnText
                 visible: settings.setMenu_isSimulatorOn
                 anchors.top: parent.top
                 anchors.topMargin: lightbar.height+ 10
@@ -796,6 +908,29 @@ Window {
                 font.pixelSize: 30
                 color: "#cc5200"
                 text: qsTr("Simulator On")
+            }
+
+            OutlineText{
+                property int age: aog.age
+                id: ageAlarm
+                visible: settings.setGPS_isRTK
+                anchors.top: simulatorOnText.bottom
+                anchors.topMargin: 30
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "Lost RTK"
+                font.pixelSize: 65
+                color: "#cc5200"
+                onAgeChanged: {
+                    if (age < 20)
+                        text = ""
+                    else if (age> 20 && age < 60)
+                        text = qsTr("Age: ")+age
+                    else
+                        text = "Lost RTK"
+                }
+                onTextChanged: if (text.length > 0)
+                                   console.log("rtk alarm sound")
+
             }
 
             Item{
@@ -966,17 +1101,33 @@ Window {
 
         SimController{
             id: simBarRect
-            anchors.bottom: parent.bottom
+            anchors.bottom: timeText.top
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottomMargin: 10
+            anchors.bottomMargin: 8
             visible: utils.isTrue(settings.setMenu_isSimulatorOn)
+        }
+
+        OutlineText{
+            id: timeText
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.rightMargin: 50
+            font.pixelSize: 20
+            color: "#cc5200"
+            text: new Date().toLocaleTimeString(Qt.locale())
+            Timer{
+                interval: 100
+                repeat: true
+                running: true
+                onTriggered: timeText.text = new Date().toLocaleTimeString(Qt.locale())
+            }
         }
         SectionButtons {
             id: sectionButtons
             visible: aog.isJobStarted ? true : false
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: simBarRect.top
-            anchors.bottomMargin: 15
+            anchors.bottomMargin: 8
             width: 500 //TODO: make this adjust with the width of the parent window
         }
         DisplayButtons{
@@ -997,6 +1148,49 @@ Window {
             anchors.margins: 20
             visible: false
             z:1
+        }
+        IconButtonTransparent{
+            id: toggleButtons
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            anchors.margins: 25
+            visible: aog.isJobStarted
+            width: 45
+            height: 25
+            icon.source: "/images/MenuHideShow.png"
+            onClicked: if(leftColumn.visible){
+                           leftColumn.visible = false
+                       }else{
+                           leftColumn.visible = true
+                       }
+        }
+        Compass{
+            id: compass
+            anchors.top: parent.top
+            anchors.right: zoomBtns.left
+            heading: -utils.radians_to_deg(aog.heading)
+        }
+        Column{
+            id: zoomBtns
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.margins: 10
+            spacing: 100
+            width: children.width
+            IconButton{
+                implicitWidth: 30
+                implicitHeight: 30
+                radius: 0
+                icon.source: "/images/ZoomIn48.png"
+                onClicked: aog.zoomIn()
+            }
+            IconButton{
+                implicitWidth: 30
+                implicitHeight: 30
+                radius: 0
+                icon.source: "/images/ZoomOut48.png"
+                onClicked: aog.zoomOut()
+            }
         }
     }
 
@@ -1069,12 +1263,7 @@ Window {
         }
         SteerConfigWindow {
             id:steerConfigWindow
-            objectName: "steerConfigWindow"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            visible:false
-            height: 600
-            width:450
+            visible: false
         }
         ABCurvePicker{
             id: abCurvePicker
@@ -1104,10 +1293,6 @@ Window {
         }
         BoundaryMenu{
             id: boundaryMenu
-            //anchors.right: parent.right
-            //anchors.top: parent.top
-            //anchors.rightMargin: 150
-            //anchors.topMargin: 50
             visible: false
         }
 
@@ -1118,6 +1303,19 @@ Window {
             height: 768
             width:1024
             visible:false
+        }
+        LineNudge{
+            id: lineNudge
+            visible: false
+        }
+        RefNudge{
+            id: refNudge
+            visible: false
+        }
+
+        TrackNew{
+            id: trackNew
+            visible: false
         }
 
         Rectangle{
