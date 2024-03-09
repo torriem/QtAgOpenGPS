@@ -470,7 +470,7 @@ void FormGPS::oglMain_Paint()
             double steerangle;
             if(timerSim.isActive()) steerangle = sim.steerangleAve;
             else steerangle = mc.actualSteerAngleDegrees;
-            vehicle.DrawVehicle(gl, modelview, projection,steerangle,isFirstHeadingSet,camera,tool,bnd,ct,curve,ABLine);
+            vehicle.DrawVehicle(gl, modelview, projection,steerangle,isFirstHeadingSet,QRect(0,0,width,height),camera,tool,bnd,ct,curve,ABLine);
             modelview = mv; //pop matrix
 
             if (camera.camSetDistance > -150)

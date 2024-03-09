@@ -109,6 +109,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
                            QMatrix4x4 projection,
                            double steerAngle,
                            bool isFirstHeadingSet,
+                           QRect viewport,
                            const CCamera &camera,
                            const CTool &tool,
                            CBoundary &bnd,
@@ -185,6 +186,15 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
     if (
         property_setDisplay_isVehicleImage)
     {
+        QVector3D p1;
+        QVector3D p2;
+        QVector3D p3;
+        QVector3D s;
+
+        s = QVector3D(0,0,0); //should be pivot axle
+        p1 = s.project(modelview, projection, viewport);
+        pivot_axle_xy = QPoint(p1.x(), viewport.height() - p1.y());
+
         if (vehicleType == 0)
         {
             //vehicle body
@@ -212,6 +222,17 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
             gltex.append( { QVector3D(trackWidth, -wheelbase * 0.5, 0.0),  QVector2D(1, 1) } );
             gltex.append( { QVector3D(-trackWidth, -wheelbase * 0.5, 0.0), QVector2D(0, 1) } );
             gltex.draw(gl,mvp,Textures::TRACTOR,GL_TRIANGLE_STRIP,false); //TODO: colorize
+
+            s = QVector3D(-trackWidth, wheelbase * 1.5, 0.0); //front left corner
+            p1 = s.project(modelview,projection, viewport);
+
+            s = QVector3D(-trackWidth, -wheelbase * 0.5, 0.0); //rear left corne
+            p2 = s.project(modelview, projection, viewport);
+
+            s = QVector3D(trackWidth, -wheelbase * 0.5, 0.0); //rear right corner
+            p3 = s.project(modelview, projection, viewport);
+
+            bounding_box = QRect(p2.x(), viewport.height() - p1.y(), p3.x() - p2.x(), p2.y() - p1.y());
 
             //right wheel
             //push modelview... nop because savedModelView already has a copy
@@ -324,6 +345,12 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
 
             gltex.draw(gl,projection*modelview,Textures::TRACTOR_4WD_REAR,GL_TRIANGLE_STRIP,false); //TODO: colorize
 
+            s = QVector3D(-trackWidth, -wheelbase * 0.65, 0.0); //rear left corne
+            p2 = s.project(modelview, projection, viewport);
+
+            s = QVector3D(trackWidth, -wheelbase * 0.65, 0.0); //rear right corner
+            p3 = s.project(modelview, projection, viewport);
+
             modelview = savedModelView; //pop matrix
 
             //tractor front
@@ -339,6 +366,11 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
             modelview.rotate(-modelSteerAngle, 0, 0, 1);
 
             gltex.draw(gl,projection*modelview,Textures::TRACTOR_4WD_FRONT,GL_TRIANGLE_STRIP,false); //TODO: colorize
+
+            s = QVector3D(-trackWidth, wheelbase * 0.65, 0.0); //front left corner
+            p1 = s.project(modelview,projection, viewport);
+
+            bounding_box = QRect(p2.x(), viewport.height() - p1.y(), p3.x() - p2.x(), p2.y() - p1.y());
 
             modelview = savedModelView; //pop matrix
         }
