@@ -821,6 +821,8 @@ Window {
                 objectName: "btnHydLift"
                 isChecked: isOn
                 checkable: true
+                disabled: btnHeadland.checked
+                visible: isTrue(settings.setArdMac_isHydEnabled) && btnHeadland.visible
                 icon.source: "/images/HydraulicLiftOff.png"
                 iconChecked: "/images/HydraulicLiftOn.png"
                 buttonText: "HydLift"
@@ -833,12 +835,13 @@ Window {
             IconButtonText {
                 id: btnHeadland
                 objectName: "btnHeadland"
-                isChecked: false
+                isChecked: aog.isHeadlandOn
                 checkable: true
                 icon.source: "/images/HeadlandOff.png"
                 iconChecked: "/images/HeadlandOn.png"
                 buttonText: "Headland"
                 Layout.alignment: Qt.AlignCenter
+                onClicked: aog.btnHeadland()
             }
             IconButtonText {
                 id: btnFlag

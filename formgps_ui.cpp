@@ -125,6 +125,7 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(n3D()), this, SLOT(onBtnN3D_clicked()));
     connect(aog, SIGNAL(isHydLiftOn()), this, SLOT(onBtnHydLift_clicked()));
     connect(aog, SIGNAL(btnResetTool()), this, SLOT(onBtnResetTool_clicked()));
+    connect(aog, SIGNAL(btnHeadland()), this, SLOT(onBtnHeadland_clicked()));
 
     connect(aog, SIGNAL(btnResetSim()), this, SLOT(onBtnResetSim_clicked()));
 
@@ -329,6 +330,23 @@ void FormGPS::onBtnResetTool_clicked(){
 }
 void FormGPS::onBtnHeadland_clicked(){
     qDebug()<<"Headland";
+    bnd.isHeadlandOn = !bnd.isHeadlandOn;
+               if (bnd.isHeadlandOn)
+               {
+                   //btnHeadlandOnOff.Image = Properties.Resources.HeadlandOn;
+               }
+               else
+               {
+                   //btnHeadlandOnOff.Image = Properties.Resources.HeadlandOff;
+               }
+
+               if (vehicle.isHydLiftOn && !bnd.isHeadlandOn) vehicle.isHydLiftOn = false;
+
+               if (!bnd.isHeadlandOn)
+               {
+                   p_239.pgn[p_239.hydLift] = 0;
+                   //btnHydLift.Image = Properties.Resources.HydraulicLiftOff;
+               }
 }
 void FormGPS::onBtnHydLift_clicked(){
     if (bnd.isHeadlandOn)

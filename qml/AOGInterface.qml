@@ -113,6 +113,7 @@ Item {
     property int sentenceCounter: 0 //for No GPS screen
     property bool hydLiftDown: false
     property bool hydLiftIsOn: false
+    property bool isHeadlandOn: false
     onSentenceCounterChanged: console.log(sentenceCounter)
 
 
@@ -147,6 +148,7 @@ Item {
     signal n2D()
     signal n3D()
     signal btnResetTool()
+    signal btnHeadland()
 
     signal isHydLiftOn()
     signal btnResetSim()
