@@ -661,6 +661,7 @@ Window {
                 iconChecked: "/images/YouTurn80.png"
                 buttonText: "AutoUturn"
                 visible: aog.isTrackOn
+                enabled: aog.isAutoSteerBtnOn
                 onClicked: aog.autoYouTurn()
                 Layout.alignment: Qt.AlignCenter
             }
@@ -671,6 +672,7 @@ Window {
                 iconChecked: "/images/AutoSteerOn.png"
                 checkable: true
                 checked: aog.isAutoSteerBtnOn
+                enabled: aog.isTrackOn
                 //Is remote activation of autosteer enabled?
                 buttonText: (settings.setAS_isAutoSteerAutoOn === true ? "R" : "M")
                 Layout.alignment: Qt.AlignCenter
@@ -935,19 +937,18 @@ Window {
 
             Item{
                 id: autoTurn
-                anchors.top:parent.top
+                anchors.top:manualUturnLateral.top
                 anchors.right: parent.right
-                anchors.margins: 200
+                anchors.rightMargin: 200
                 width: 100
                 height: 100
-//                Rectangle{
-//                    anchors.fill: parent
-//                    color: "red"
-//                }
 
-                Image {
+                 Image{
                     id: autoTurnImage
-                    source: "/images/Images/z_Turn.png"
+                    source: if(!aog.isYouTurnRight)
+                                "/images/Images/z_TurnRight.png"
+                            else
+                                "/images/Images/z_TurnLeft.png"
                     visible: false
                     anchors.fill: parent
                 }
@@ -956,21 +957,26 @@ Window {
                     anchors.fill: parent
                     source: autoTurnImage
                     visible: btnAutoYouTurn.isChecked
-                    //mirror: !(aog.isYouTurnRight)
-                    color: "#E5E54B"
-                    transform: Scale{
-                                        origin: colorAutoUTurn.Center
-                                       xScale: if(aog.isYouTurnRight)
-                                                   -1
-                                                else
-                                                   1
-                                   }
-                    //color: "#F7A266"
+                    onVisibleChanged: console.log("visibility:"+visible)
+                    //color: "#E5E54B"
+                    color: if(aog.distancePivotToTurnLine > 0)
+                               "#4CF24C"
+                            else
+                                "#F7A266"
                     MouseArea{
                         anchors.fill: parent
                         onClicked: aog.swapAutoYouTurnDirection()
                     }
-
+                    Text{
+                        id: distance
+                        anchors.bottom: colorAutoUTurn.bottom
+                        color: colorAutoUTurn.color
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: if(aog.distancePivotToTurnLine > 0)
+                                  utils.m_to_unit_string(aog.distancePivotToTurnLine, 0) + " "+utils.m_unit_abbrev()
+                               else
+                                  "--"
+                    }
                 }
             }
             Item{

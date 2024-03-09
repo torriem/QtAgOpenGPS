@@ -40,6 +40,8 @@ Item {
     property int autoBtnState: 0
     property bool autoYouturnBtnState: true
     property bool isYouTurnRight: true
+    property double distancePivotToTurnLine: -2222
+
 
     //sections 0-15 are used for on-screen buttons if
     //not using zones.  If using zones the rest are used

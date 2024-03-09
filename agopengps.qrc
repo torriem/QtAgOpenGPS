@@ -482,7 +482,6 @@
         <file>images/Images/z_SteerPointer.png</file>
         <file>images/Images/z_Tool.png</file>
         <file>images/Images/z_Tractor.png</file>
-        <file>images/Images/z_Turn.png</file>
         <file>images/Images/z_TurnCancel.png</file>
         <file>images/Images/z_TurnManual.png</file>
         <file>qml/PinButtons.qml</file>
@@ -623,5 +622,7 @@
         <file>qml/tracks/TrackNew.qml</file>
         <file>images/ABTrackA+.png</file>
         <file>qml/tracks/RefNudge.qml</file>
+        <file>images/Images/z_TurnLeft.png</file>
+        <file>images/Images/z_TurnRight.png</file>
     </qresource>
 </RCC>
