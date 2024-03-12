@@ -116,6 +116,11 @@ Item {
     property bool isHeadlandOn: false
     onSentenceCounterChanged: console.log(sentenceCounter)
 
+    property point vehicle_xy: Qt.point(0,0)
+    property rect vehicle_bounding_box: Qt.rect(0,0,0,0)
+
+    //onVehicle_xyChanged: console.log("vehicle xy is", vehicle_xy);
+    //onVehicle_bounding_boxChanged: console.log("vehicle box is", vehicle_bounding_box);
 
     property bool isTrackOn: false //checks if a guidance line is set.
     onCurrentABLineChanged: {

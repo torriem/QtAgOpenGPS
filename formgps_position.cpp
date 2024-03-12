@@ -1159,7 +1159,8 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("isYouTurnRight", yt.isYouTurnRight);
     aog->setProperty("distancePivotToTurnLine", distancePivotToTurnLine);
 
-
+    aog->setProperty("vehicle_xy",vehicle.pivot_axle_xy);
+    aog->setProperty("vehicle_bounding_box",vehicle.bounding_box);
 
     if (ABLine.numABLineSelected > 0) {
         //currentABLine_heading is set in formgps_ui.cpp
