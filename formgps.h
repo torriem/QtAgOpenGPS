@@ -720,6 +720,7 @@ public slots:
 
     //headland creation
 
+    void onBtnResetDirection_clicked();
     //left column
     void onBtnAcres_clicked();
     void onBtnSettings_clicked();

@@ -19,6 +19,7 @@
 #include "interfaceproperty.h"
 #include "cboundarylist.h"
 #include <cmath>
+#include <cstring>
 
 QString caseInsensitiveFilename(QString directory, QString filename);
 
@@ -128,6 +129,7 @@ void FormGPS::setupGui()
     connect(aog, SIGNAL(btnHeadland()), this, SLOT(onBtnHeadland_clicked()));
 
     connect(aog, SIGNAL(btnResetSim()), this, SLOT(onBtnResetSim_clicked()));
+    connect(aog, SIGNAL(reset_direction()), this, SLOT(onBtnResetDirection_clicked()));
 
     //manual youturn buttons
     connect(aog,SIGNAL(uturn(bool)), this, SLOT(onBtnManUTurn_clicked(bool)));
@@ -381,7 +383,14 @@ void FormGPS::onBtnSnapToPivot_clicked(){
 void FormGPS::onBtnYouSkip_clicked(){
     qDebug()<<"you skip";
 }
-
+void FormGPS::onBtnResetDirection_clicked(){
+    qDebug()<<"reset Direction";
+    // c#Array.Clear(stepFixPts, 0, stepFixPts.Length);
+    std::memset(stepFixPts, 0, sizeof(stepFixPts));
+                    isFirstHeadingSet = false;
+                    vehicle.isReverse = false;
+                    TimedMessageBox(2000, "Reset Direction", "Drive Forward > 1.5 kmh");
+}
 void FormGPS::onBtnFlag_clicked() {
 
     //TODO if this button is disabled until field is started, we won't

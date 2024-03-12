@@ -175,6 +175,7 @@ Item {
     signal sim_bump_speed(bool up)
     signal sim_zero_speed()
     signal sim_reset()
+    signal reset_direction()
 
     property double mPerDegreeLat
     property double mPerDegreeLon

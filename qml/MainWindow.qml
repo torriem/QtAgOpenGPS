@@ -322,9 +322,32 @@ Window {
                     parent.zoomOut()
                 }
             }
+    MouseArea{
+        id: resetDirection
+        onClicked: {
+            aog.reset_direction()
+            console.log("reset direction")
+        }
+        propagateComposedEvents: true
+        x: aog.vehicle_bounding_box.x
+        y: aog.vehicle_bounding_box.y
+        width: aog.vehicle_bounding_box.width
+        height: aog.vehicle_bounding_box.height
+        onPressed: (mouse)=>{
+                       aog.reset_direction()
+                       console.log("pressed")
+                       mouse.accepted = false
+
+                   }
+    }
+    Rectangle{
+        color: "blue"
+        anchors.fill: resetDirection
+    }
         }
 
     }
+
     Rectangle{
         id: noGPS
         anchors.fill: glcontrolrect
