@@ -80,6 +80,10 @@ Item {
     property int steerModuleConnectedCounter: 0
     property bool steerSwitchHigh: false
 
+    property bool panMode: false
+    onPanModeChanged: if(panMode == false)
+                          centerOgl()
+
     //david added these
     //formgps_position.cpp line 1144
     property double workedAreaTotal: 0
@@ -176,6 +180,8 @@ Item {
     signal sim_zero_speed()
     signal sim_reset()
     signal reset_direction()
+
+    signal centerOgl()
 
     property double mPerDegreeLat
     property double mPerDegreeLon

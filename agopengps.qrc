@@ -624,5 +624,6 @@
         <file>qml/tracks/RefNudge.qml</file>
         <file>images/Images/z_TurnLeft.png</file>
         <file>images/Images/z_TurnRight.png</file>
+        <file>images/Pan.png</file>
     </qresource>
 </RCC>

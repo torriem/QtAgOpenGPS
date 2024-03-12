@@ -303,17 +303,17 @@ Window {
                 parent.clicked(mouse)
             }
 
-            onPressed: {
-                //save a copy of the coordinates
-                fromX = mouseX
-                fromY = mouseY
-            }
+            onPressed: if(aog.panMode){
+                           //save a copy of the coordinates
+                           fromX = mouseX
+                           fromY = mouseY
+                       }
 
-            onPositionChanged: {
-                parent.dragged(fromX, fromY, mouseX, mouseY)
-                fromX = mouseX
-                fromY = mouseY
-            }
+            onPositionChanged: if(aog.panMode){
+                                   parent.dragged(fromX, fromY, mouseX, mouseY)
+                                   fromX = mouseX
+                                   fromY = mouseY
+                               }
 
             onWheel: {
                 if (wheel.angleDelta.y > 0) {
@@ -322,28 +322,30 @@ Window {
                     parent.zoomOut()
                 }
             }
-    MouseArea{
-        id: resetDirection
-        onClicked: {
-            aog.reset_direction()
-            console.log("reset direction")
-        }
-        propagateComposedEvents: true
-        x: aog.vehicle_bounding_box.x
-        y: aog.vehicle_bounding_box.y
-        width: aog.vehicle_bounding_box.width
-        height: aog.vehicle_bounding_box.height
-        onPressed: (mouse)=>{
-                       aog.reset_direction()
-                       console.log("pressed")
-                       mouse.accepted = false
 
-                   }
-    }
-    Rectangle{
-        color: "blue"
-        anchors.fill: resetDirection
-    }
+            MouseArea{
+                id: resetDirection
+                onClicked: {
+                    aog.reset_direction()
+                    console.log("reset direction")
+                }
+                propagateComposedEvents: true
+                x: aog.vehicle_bounding_box.x
+                y: aog.vehicle_bounding_box.y
+                width: aog.vehicle_bounding_box.width
+                height: aog.vehicle_bounding_box.height
+                onPressed: (mouse)=>{
+                               aog.reset_direction()
+                               console.log("pressed")
+                               mouse.accepted = false
+
+                           }
+            }
+            /*Rectangle{
+              // to test the reset vehicle direction button
+                color: "blue"
+                anchors.fill: resetDirection
+            }*/
         }
 
     }
@@ -901,6 +903,18 @@ Window {
             anchors.topMargin: topLine.height
             anchors.right: rightColumn.left
             anchors.bottom: bottomButtons.top
+            IconButtonTransparent{
+                id: pan
+                implicitWidth: 50
+                implicitHeight: 50
+                checkable: true
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.margins: 30
+                icon.source: "/images/Pan.png"
+                iconChecked: "/images/SwitchOff.png"
+                onClicked: aog.panMode = !aog.panMode
+            }
             Image{
                 id: hydLiftIndicator
                 property bool isDown: aog.hydLiftDown

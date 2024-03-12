@@ -131,6 +131,8 @@ void FormGPS::setupGui()
     connect(aog, SIGNAL(btnResetSim()), this, SLOT(onBtnResetSim_clicked()));
     connect(aog, SIGNAL(reset_direction()), this, SLOT(onBtnResetDirection_clicked()));
 
+    connect(aog, SIGNAL(centerOgl()), this, SLOT(onBtnCenterOgl_clicked()));
+
     //manual youturn buttons
     connect(aog,SIGNAL(uturn(bool)), this, SLOT(onBtnManUTurn_clicked(bool)));
     connect(aog,SIGNAL(lateral(bool)), this, SLOT(onBtnLateral_clicked(bool)));
@@ -279,6 +281,12 @@ void FormGPS::onGLControl_dragged(int pressX, int pressY, int mouseX, int mouseY
 
     camera.panX += offset.x();
     camera.panY += offset.y();
+    openGLControl->update();
+}
+void FormGPS::onBtnCenterOgl_clicked(){
+    qDebug()<<"center ogl";
+    camera.panX = 0;
+    camera.panY = 0;
     openGLControl->update();
 }
 
