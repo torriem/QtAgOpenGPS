@@ -15,6 +15,35 @@
 #include "cabcurve.h"
 #include "ccontour.h"
 
+QRect find_bounding_box(QVector3D p1, QVector3D p2, QVector3D p3, QVector3D p4) {
+    float x_min = glm::FLOAT_MAX;
+    float x_max = glm::FLOAT_MIN;
+    float y_min = glm::FLOAT_MAX;
+    float y_max = glm::FLOAT_MIN;
+
+    if(p1.x() < x_min) x_min = p1.x();
+    if(p1.x() > x_max) x_max = p1.x();
+    if(p1.y() < y_min) y_min = p1.y();
+    if(p1.y() > y_max) y_max = p1.y();
+
+    if(p2.x() < x_min) x_min = p2.x();
+    if(p2.x() > x_max) x_max = p2.x();
+    if(p2.y() < y_min) y_min = p2.y();
+    if(p2.y() > y_max) y_max = p2.y();
+
+    if(p3.x() < x_min) x_min = p3.x();
+    if(p3.x() > x_max) x_max = p3.x();
+    if(p3.y() < y_min) y_min = p3.y();
+    if(p3.y() > y_max) y_max = p3.y();
+
+    if(p4.x() < x_min) x_min = p4.x();
+    if(p4.x() > x_max) x_max = p4.x();
+    if(p4.y() < y_min) y_min = p4.y();
+    if(p4.y() > y_max) y_max = p4.y();
+
+    return QRect(x_min, y_min, x_max-x_min, y_max-y_min);
+}
+
 void CVehicle::loadSettings()
 {
     isPivotBehindAntenna = property_setVehicle_isPivotBehindAntenna;
@@ -241,15 +270,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
             s = QVector3D(trackWidth, -wheelbase * 0.5, 0.0); //rear right corner
             p4 = s.project(modelview, projection, viewport);
 
-
-            //which is farthest left, front or rear corner
-            if(p1.x() < p3.x()) x = p1.x();
-            else x = p3.x();
-            //get the widest point of the bounding box
-            if(p2.x() < p4.x()) w = p4.x() - x;
-            else w = p2.x() - x;
-
-            bounding_box = QRect(x,viewport.height() - p1.y(), w, p1.y() - p3.y());
+            bounding_box = find_bounding_box(p1, p2, p3, p4);
 
             //right wheel
             //push modelview... nop because savedModelView already has a copy
@@ -353,14 +374,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
             s = QVector3D(trackWidth, -wheelbase * 1.5, 0.0); //rear right corner
             p4 = s.project(modelview, projection, viewport);
 
-            //which is farthest left, front or rear corner
-            if(p1.x() < p3.x()) x = p1.x();
-            else x = p3.x();
-            //get the widest point of the bounding box
-            if(p2.x() < p4.x()) w = p4.x() - x;
-            else w = p2.x() - x;
-
-            bounding_box = QRect(x,viewport.height() - p1.y(), w, p1.y() - p3.y());
+            bounding_box = find_bounding_box(p1, p2, p3, p4);
         }
         else if (vehicleType == 2) //4WD tractor, articulated
         {
@@ -409,14 +423,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
             s = QVector3D(-trackWidth, wheelbase * 0.65, 0.0); //front right corner
             p2 = s.project(modelview,projection, viewport);
 
-            //which is farthest left, front or rear corner
-            if(p1.x() < p3.x()) x = p1.x();
-            else x = p3.x();
-            //get the widest point of the bounding box
-            if(p2.x() < p4.x()) w = p4.x() - x;
-            else w = p2.x() - x;
-
-            bounding_box = QRect(x,viewport.height() - p1.y(), w, p1.y() - p3.y());
+            bounding_box = find_bounding_box(p1, p2, p3, p4);
 
             modelview = savedModelView; //pop matrix
         }
@@ -447,14 +454,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
         s = QVector3D(1.0, 0, 0.0); //rear right corner
         p4 = s.project(modelview, projection, viewport);
 
-        //which is farthest left, front center rear corner
-        if(p1.x() < p3.x()) x = p1.x();
-        else x = p3.x();
-        //get the widest point of the bounding box
-        if(p1.x() < p4.x()) w = p4.x() - x;
-        else w = p1.x() - x;
-
-        bounding_box = QRect(x,viewport.height() - p1.y(), w, p1.y() - p3.y());
+        bounding_box = find_bounding_box(p1, p1, p3, p4);
     }
 
     if (camera.camSetDistance > -75 && isFirstHeadingSet)
