@@ -752,14 +752,15 @@ void FormGPS::tmrWatchdog_timeout()
         gpsHz = 10;
     }
 
-    /*
+
     // This is done in QML
-    if (++(uint)sentenceCounter > 20)
-    {
-        //TODO: ShowNoGPSWarning();
-        return;
-    }
-    */
+//    if ((uint)sentenceCounter++ > 20)
+//    {
+//        //TODO: ShowNoGPSWarning();
+//        return;
+//    }
+    sentenceCounter += 1;
+
 
     if (tenSecondCounter++ >= 40)
     {

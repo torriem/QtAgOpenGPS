@@ -350,18 +350,11 @@ Window {
 
                            }
             }
-            Rectangle{
-              // to test the reset vehicle direction button
-                color: "blue"
-                anchors.fill: resetDirection
-            }
-            Rectangle{
-                color: "green"
-                x: aog.vehicle_xy.x
-                y: aog.vehicle_xy.y
-                width: 10
-                height: 10
-            }
+//            Rectangle{
+//              // to test the reset vehicle direction button
+//                color: "blue"
+//                anchors.fill: resetDirection
+//            }
         }
 
     }
@@ -370,7 +363,7 @@ Window {
         id: noGPS
         anchors.fill: glcontrolrect
         color: "#0d0d0d"
-        visible: aog.sentenceCounter> 299
+        visible: aog.sentenceCounter> 29
         onVisibleChanged: if(visible){
                               console.log("no gps now visible")
                           }
@@ -393,7 +386,6 @@ Window {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        visible: !noGPS.visible
         ColumnLayout {
             id: leftColumn
             anchors.top: parent.top
@@ -919,6 +911,7 @@ Window {
             anchors.topMargin: topLine.height
             anchors.right: rightColumn.left
             anchors.bottom: bottomButtons.top
+            visible: !noGPS.visible
             IconButtonTransparent{
                 id: pan
                 implicitWidth: 50
