@@ -374,6 +374,8 @@ Window {
             anchors.centerIn: parent
             anchors.margins: 200
             visible: noGPS.visible
+            height: parent.height /2
+            width: height
         }
     }
 
