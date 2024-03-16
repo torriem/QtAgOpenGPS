@@ -504,35 +504,9 @@ void FormGPS::oglMain_Paint()
 
             if(isSkyOn) DrawSky(gl, projection*modelview, width, height);
 
-            //Moved to QML, set a flag or something.
-            //if (bnd.bndList.size() > 0 && yt.isYouTurnBtnOn) drawUTurnBtn(gl, projection*modelview);
-
-            //Manual UTurn buttons are now in QML and are manipulated
-
-            //TODO make this a QML widget instead of using OpenGL
-            //should be moved
-            //DrawCompass(gl, modelview, projection, width - 400); //400 accounts for side buttons
-
-            //DrawCompassText(gl, projection*modelview, width - 400, height);
 
             if (vehicle.isHydLiftOn) DrawLiftIndicator(gl, modelview, projection, width, height);
 
-            if (vehicle.isReverse || isChangingDirection)
-                DrawReverse(gl, modelview, projection,width, height);
-
-//            if (isRTK)
-//            {
-//                if (pn.fixQuality != 4)
-//                {
-//                    //TODO: move to QML
-//                    drawText(gl, projection*modelview, -width / 4, 150, "Lost RTK",
-//                             2.0, true, QColor::fromRgbF(0.9752f, 0.52f, 0.0f));
-//                } else {
-//                    //sounds.isRTKAlarming = false;
-//                }
-//            }
-
-            //TODO: move to QML
             //if (pn.age > pn.ageAlarm) DrawAge(gl, projection * modelview, width);
 
             gl->glFlush();
@@ -1148,52 +1122,6 @@ void FormGPS::DrawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int heigh
 //    gldraw.draw(gl, projection*modelview, Textures::COMPASS, GL_TRIANGLE_STRIP, true, QColor::fromRgbF(0.952f, 0.870f, 0.73f, 0.8f));
 //}
 
-void FormGPS::DrawReverse(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width, double Height)
-{
-    QColor color;
-    GLHelperTexture gldrawtex;
-
-    if (isReverseWithIMU)
-    {
-        color.setRgbF(0.952f, 0.9520f, 0.0f);
-
-        modelview.translate(-Width / 12, Height / 2 - 20, 0);
-        modelview.rotate(180, 0, 0, 1);
-
-        gldrawtex.append( { QVector3D(-32, -32, 0), QVector2D(0, 0.15) } );
-        gldrawtex.append( { QVector3D(32, -32, 0), QVector2D(1, 0.15) } );
-        gldrawtex.append( { QVector3D(-32, 32, 0), QVector2D(0, 1) } );
-        gldrawtex.append( { QVector3D(-32, 32, 0), QVector2D(0, 1) } );
-        gldrawtex.append( { QVector3D(32, -32, 0), QVector2D(1, 0.15) } );
-        gldrawtex.append( { QVector3D(32, 32, 0), QVector2D(1, 1) } );
-        gldrawtex.draw(gl,projection * modelview,Textures::HYDLIFT,GL_TRIANGLES,true,color);
-    }
-    else
-    {
-        color.setRgbF(0.952f, 0.980f, 0.980f);
-        QString msg(tr("If Wrong Direction Tap Vehicle"));
-        int lenny = (msg.length() * 12) / 2;
-        drawText(gl,projection*modelview,-lenny, 150, msg, 0.8f, true, color);
-
-        if (vehicle.isReverse) color.setRgbF(0.952f, 0.0f, 0.0f);
-        else color.setRgbF(0.952f, 0.0f, 0.0f);
-
-        if (isChangingDirection) color.setRgbF(0.952f, 0.990f, 0.0f);
-
-        modelview.translate(-Width / 12, Height / 2 - 20, 0);
-
-        if (isChangingDirection) modelview.rotate(90, 0, 0, 1);
-        else modelview.rotate(180, 0, 0, 1);
-
-        gldrawtex.append( { QVector3D(-32, -32, 0), QVector2D(0, 0.15) } );
-        gldrawtex.append( { QVector3D(32, -32, 0), QVector2D(1, 0.15) } );
-        gldrawtex.append( { QVector3D(-32, 32, 0), QVector2D(0, 1) } );
-        gldrawtex.append( { QVector3D(-32, 32, 0), QVector2D(0, 1) } );
-        gldrawtex.append( { QVector3D(32, -32, 0), QVector2D(1, 0.15) } );
-        gldrawtex.append( { QVector3D(32, 32, 0), QVector2D(1, 1) } );
-        gldrawtex.draw(gl,projection * modelview,Textures::HYDLIFT,GL_TRIANGLES,true,color);
-    }
-}
 
 //should this be moved somewhere? hydLiftDown sends to the frontend, so it is necessary
 void FormGPS::DrawLiftIndicator(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, int Width, int Height)

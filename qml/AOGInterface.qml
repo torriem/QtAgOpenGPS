@@ -73,6 +73,9 @@ Item {
     property double imuRollDegrees: 0
     signal changeImuRoll(double new_roll) //usually just set to 88888;
 
+    property bool isReverse: false
+    property bool isReverseWithIMU: false
+
     property double speedKph: 0
     property double offlineDistance: 32000
     property double avgPivDistance: 32000

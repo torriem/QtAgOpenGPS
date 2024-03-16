@@ -616,7 +616,6 @@ public:
     void DrawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int height);
     void DrawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height);
     void DrawCompass(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width);
-    void DrawReverse(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width, double Height);
     void DrawLiftIndicator(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, int Width, int Height);
     void DrawLostRTK(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);
     void DrawAge(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);

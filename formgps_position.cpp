@@ -1135,6 +1135,9 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("toolNorthing", vehicle.pivotAxlePos.northing);
     aog->setProperty("toolHeading", vehicle.pivotAxlePos.heading);
 
+    aog->setProperty("isReverse" , vehicle.isReverse);
+    aog->setProperty("isReverseWithIMU", isReverseWithIMU);
+
     double tool_lat, tool_lon;
     pn.ConvertLocalToWGS84(vehicle.pivotAxlePos.northing, vehicle.pivotAxlePos.easting, tool_lat, tool_lon);
     aog->setProperty("toolLatitude", tool_lat);

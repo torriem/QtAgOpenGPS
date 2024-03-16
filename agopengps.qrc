@@ -625,5 +625,6 @@
         <file>images/Images/z_TurnLeft.png</file>
         <file>images/Images/z_TurnRight.png</file>
         <file>images/Pan.png</file>
+        <file>images/Images/z_ReverseArrow.png</file>
     </qresource>
 </RCC>

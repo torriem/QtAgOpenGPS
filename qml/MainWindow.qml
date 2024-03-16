@@ -323,6 +323,15 @@ Window {
                 }
             }
 
+            Image {
+                id: reverseArrow
+                x: aog.vehicle_xy.x - 150
+                y: aog.vehicle_xy.y - height
+                width: 70
+                height: 70
+                source: "/images/Images/z_ReverseArrow.png"
+                visible: aog.isReverse
+            }
             MouseArea{
                 id: resetDirection
                 onClicked: {
@@ -341,11 +350,18 @@ Window {
 
                            }
             }
-            /*Rectangle{
+            Rectangle{
               // to test the reset vehicle direction button
                 color: "blue"
                 anchors.fill: resetDirection
-            }*/
+            }
+            Rectangle{
+                color: "green"
+                x: aog.vehicle_xy.x
+                y: aog.vehicle_xy.y
+                width: 10
+                height: 10
+            }
         }
 
     }
