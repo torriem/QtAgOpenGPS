@@ -487,7 +487,7 @@ bool CYouTurn::BuildABLineDubinsYouTurn(CVehicle &vehicle,
         }
         else
         {
-                //Full emergency stop code goes here, it thinks its auto turn, but its not!
+                //Full emergency stop code goes here, it thinksurn its auto turn, but its not!
                 vehicle.distancePivotToTurnLine = -3333;
         }
 
