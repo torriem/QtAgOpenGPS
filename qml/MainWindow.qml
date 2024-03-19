@@ -11,12 +11,8 @@ import "boundary"
 import "steerconfig"
 import "config"
 import "field"
-<<<<<<< ours
 import "tracks"
-=======
 import "components"
-
->>>>>>> theirs
 
 Window {
 

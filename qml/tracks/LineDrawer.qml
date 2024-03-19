@@ -1,12 +1,9 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
-<<<<<<< ours:qml/tracks/LineDrawer.qml
 
 import ".."
-=======
-import "components"
->>>>>>> theirs:qml/LineDrawer.qml
+import "../components"
 //import AgOpenGPS 1.0
 
 Item {
