@@ -102,9 +102,6 @@
         <file>images/ZoomIn48.png</file>
         <file>images/ZoomOut48.png</file>
         <file>qml/MainWindow.qml</file>
-        <file>qml/IconButtonText.qml</file>
-        <file>qml/IconButton.qml</file>
-        <file>qml/SectionButton.qml</file>
         <file>qml/MainWindowTest.qml</file>
         <file>images/textures/floor.png</file>
         <file>images/textures/Landscape.png</file>
@@ -123,7 +120,6 @@
         <file>images/textures/Turn.png</file>
         <file>images/textures/TurnCancel.png</file>
         <file>images/textures/TurnManual.png</file>
-        <file>qml/IconButtonTransparent.qml</file>
         <file>images/TurnManualLeft.png</file>
         <file>images/TurnManualRight.png</file>
         <file>images/textures/LandscapeNight.png</file>
@@ -445,12 +441,9 @@
         <file>images/textures/z_SteerPointer.png</file>
         <file>images/textures/z_Tractor.png</file>
         <file>images/textures/z_LateralManual.png</file>
-        <file>qml/IconButtonColor.qml</file>
-        <file>qml/SliderCustomized.qml</file>
         <file>qml/ABLinePicker.qml</file>
         <file>qml/ABCurvePicker.qml</file>
         <file>qml/LineName.qml</file>
-        <file>qml/IconButtonTextBeside.qml</file>
         <file>images/FieldTools.png</file>
         <file>images/Headache.png</file>
         <file>images/FileClose.png</file>
@@ -461,6 +454,7 @@
         <file>images/BackSpace.png</file>
         <file>qml/boundary/BoundaryMenu.qml</file>
         <file>qml/TopLine.qml</file>
+        <file>qml/LineDrawer.qml</file>
         <file>images/Images/VehicleOpacity.png</file>
         <file>images/Images/z_4WDFront.png</file>
         <file>images/Images/z_4WDRear.png</file>
@@ -484,46 +478,33 @@
         <file>images/Images/z_Tractor.png</file>
         <file>images/Images/z_TurnCancel.png</file>
         <file>images/Images/z_TurnManual.png</file>
-        <file>qml/PinButtons.qml</file>
         <file>images/textures/z_Tool.png</file>
-        <file>qml/TimedMessage.qml</file>
-        <file>qml/SpinBoxCustomized.qml</file>
-        <file>qml/SpinBoxOneDecimal.qml</file>
-        <file>qml/SpinBoxTwoDecimal.qml</file>
         <file>qml/Compass.qml</file>
         <file>qml/SteerCircle.qml</file>
         <file>qml/Speedometer.qml</file>
         <file>qml/AOGInterface.qml</file>
-        <file>qml/SectionButtons.qml</file>
-        <file>qml/LatLonTextField.qml</file>
         <file>images/SectionOnBoundary.png</file>
-        <file>qml/ButtonColor.qml</file>
         <file>qml/UnitConversion.qml</file>
-        <file>qml/SpinBoxCM.qml</file>
         <file>qml/LightBar.qml</file>
-        <file>qml/OutlineText.qml</file>
         <file>qml/TrackNum.qml</file>
         <file>qml/DisplayButtons.qml</file>
         <file>qml/StartUp.qml</file>
         <file>qml/SimController.qml</file>
-        <file>qml/TextLine.qml</file>
         <file>qml/GPSData.qml</file>
         <file>images/FieldStats.png</file>
         <file>images/TrackOn.png</file>
         <file>images/GPSQuality.png</file>
         <file>qml/TimedRectangle.qml</file>
+        <file>qml/TrackButtons.qml</file>
         <file>images/ABSnapNudgeMenu.png</file>
         <file>images/ABSnapNudgeMenuRef.png</file>
         <file>images/AutoSteerSnapToPivot.png</file>
         <file>images/ABTracks.png</file>
         <file>images/ABDraw.png</file>
         <file>images/Config/Con_Display.png</file>
-        <file>qml/SpinBoxKM.qml</file>
         <file>qml/interfaces/FieldInterface.qml</file>
         <file>qml/interfaces/VehicleInterface.qml</file>
         <file>qml/interfaces/LinesInterface.qml</file>
-        <file>qml/TitleFrame.qml</file>
-        <file>qml/SpinBoxM.qml</file>
         <file>images/Config/ToolOverlap.png</file>
         <file>images/Config/ToolOffsetPositiveRight.png</file>
         <file>images/Config/ToolOffsetNegativeLeft.png</file>
@@ -552,15 +533,12 @@
         <file>images/HeadlandSlice.png</file>
         <file>images/HeadlandSectionOff.png</file>
         <file>images/ZoomOGL.png</file>
-        <file>qml/MoveablePopup.qml</file>
         <file>qml/HeadAcheDesigner.qml</file>
         <file>images/TrashApplied.png</file>
         <file>images/HeadlandSectionOn.png</file>
         <file>images/HeadlandSectionOn.png</file>
-        <file>qml/MoveablePopup.qml</file>
         <file>qml/HeadAcheDesigner.qml</file>
         <file>images/TrashApplied.png</file>
-        <file>qml/ComboBoxCustomized.qml</file>
         <file>qml/steerconfig/SteerConfigWindow.qml</file>
         <file>qml/steerconfig/SensorsTab.qml</file>
         <file>qml/steerconfig/SettingsTab.qml</file>
@@ -626,5 +604,32 @@
         <file>images/Images/z_TurnRight.png</file>
         <file>images/Pan.png</file>
         <file>images/Images/z_ReverseArrow.png</file>
+        <file>qml/components/IconButton.qml</file>
+        <file>qml/components/TopLine.qml</file>
+        <file>qml/components/TitleFrame.qml</file>
+        <file>qml/components/TimedRectangle.qml</file>
+        <file>qml/components/TimedMessage.qml</file>
+        <file>qml/components/TextLine.qml</file>
+        <file>qml/components/TestSectionButtons.qml</file>
+        <file>qml/components/SpinBoxTwoDecimal.qml</file>
+        <file>qml/components/SpinBoxOneDecimal.qml</file>
+        <file>qml/components/SpinBoxM.qml</file>
+        <file>qml/components/SpinBoxKM.qml</file>
+        <file>qml/components/SpinBoxCustomized.qml</file>
+        <file>qml/components/SpinBoxCM.qml</file>
+        <file>qml/components/SliderCustomized.qml</file>
+        <file>qml/components/SectionButtons.qml</file>
+        <file>qml/components/SectionButton.qml</file>
+        <file>qml/components/PinButtons.qml</file>
+        <file>qml/components/OutlineText.qml</file>
+        <file>qml/components/MoveablePopup.qml</file>
+        <file>qml/components/MoveableDialog.qml</file>
+        <file>qml/components/LatLonTextField.qml</file>
+        <file>qml/components/IconButtonTransparent.qml</file>
+        <file>qml/components/IconButtonTextBeside.qml</file>
+        <file>qml/components/IconButtonText.qml</file>
+        <file>qml/components/IconButtonColor.qml</file>
+        <file>qml/components/ComboBoxCustomized.qml</file>
+        <file>qml/components/ButtonColor.qml</file>
     </qresource>
 </RCC>

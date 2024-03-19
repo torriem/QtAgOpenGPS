@@ -4,6 +4,7 @@ import Qt.labs.folderlistmodel 2.2
 import QtQuick.Controls 2.5
 
 import ".."
+import "../components"
 
 Item {
     id: boundaryType

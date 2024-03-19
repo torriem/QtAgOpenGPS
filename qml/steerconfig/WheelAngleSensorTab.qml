@@ -3,6 +3,7 @@ import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
 
 import ".."
+import "../components"
 
 Item{
     id: steerTab

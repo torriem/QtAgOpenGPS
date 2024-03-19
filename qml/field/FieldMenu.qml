@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.15
 //import QtQuick.Controls.Styles 1.4
 
 import ".."
+import "../components"
 
 Drawer {
     id: fieldMenu

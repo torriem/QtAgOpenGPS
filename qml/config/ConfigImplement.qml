@@ -4,6 +4,7 @@ import QtQuick.Controls 2.5
 import QtQuick.Controls.Styles 1.4
 
 import ".."
+import "../components"
 
 /* todo:
   don't know how to make one of 4 options here

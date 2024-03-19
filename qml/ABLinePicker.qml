@@ -4,6 +4,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
 import QtQuick.Dialogs 1.3
 import QtQml.Models 2.3
+import "components"
 
 Dialog {
     //AOGInterface {
