@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
 
 import ".."
+import "../components"
 
 /*todo:
  can't find setting for "invert relays"

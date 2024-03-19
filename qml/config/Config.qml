@@ -6,6 +6,7 @@ import QtQuick.Dialogs 1.3
 import Qt.labs.folderlistmodel 2.2
 
 import ".."
+import "../components"
 
 Dialog {
     height: 768

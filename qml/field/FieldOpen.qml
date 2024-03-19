@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.15
 
 import ".."
+import "../components"
 
 Popup {
     id:fieldOpen
