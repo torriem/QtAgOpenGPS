@@ -26,100 +26,122 @@ Drawer {
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.right: parent.right
+        height: fieldMenu.height
 
         //border.color: "lightblue"
         //border.width: 2
         color: "black"
+        //Item{
+        //   anchors.fill: parent
 
-        ScrollView {
-            anchors.fill: parent
 
+        onHeightChanged: {
+            var totalHeight = 0
+            var spacingColumn = 0
+            var i = 0
+            for (i = 0; i < fieldMenuColumn.children.length; i++){
+                totalHeight = fieldMenuColumn.children[i].height + totalHeight
+                console.log(totalHeight)
+            }
+            if(totalHeight > height){
+                fieldMenuColumn.spacing = 0
+                console.log(fieldMenuColumn.spacing)
+                console.log("scroll")
+
+            }else{
+                fieldMenuColumn.spacing = ((height - totalHeight)/(i-1))
+                console.log(fieldMenuColumn.spacing)
+            }
+        }
+
+        ScrollView{
+            id: fieldMenuScroll
+            anchors.fill: mainFieldMenu
             clip: true
-
-        ColumnLayout{
-            anchors.fill: parent
-
-
-            IconButtonTextBeside{
-                objectName: "btnFieldDriveIn"
-                Layout.fillWidth: true
-                isChecked: false
-                text: "Drive In"
-                icon.source: "/images/AutoManualIsAuto.png"
-
-                onClicked: { fieldMenu.visible = false ; fieldOpen.sortBy = 2 ; fieldOpen.visible = true; }
-            }
-            IconButtonTextBeside{
-                objectName: "btnFieldISOXML"
-                isChecked: false
-                text: "ISO-XML"
-                icon.source: "/images/ISOXML.png"
-            }
-            IconButtonTextBeside{
-                objectName: "btnFieldFromKML"
-                isChecked: false
-                text: "From KML"
-                icon.source: "/images/BoundaryLoadFromGE.png"
-                onClicked: fieldFromKML.visible = true
-            }
-            IconButtonTextBeside{
-                objectName: "btnFieldFromExisting"
-                isChecked: false
-                text: "From Existing"
-                icon.source: "/images/FileExisting.png"
-                onClicked: {
-                    fieldMenu.visible = false
-                    fieldFromExisting.visible = true
+            Column{
+                id: fieldMenuColumn
+                anchors.fill: parent
+                IconButtonTextBeside{
+                    objectName: "btnFieldDriveIn"
+                    Layout.fillWidth: true
+                    isChecked: false
+                    text: "Drive In"
+                    icon.source: "/images/AutoManualIsAuto.png"
+                    onClicked: { fieldMenu.visible = false ; fieldOpen.sortBy = 2 ; fieldOpen.visible = true; }
                 }
-            }
-            IconButtonTextBeside{
-                objectName: "New"
-                isChecked: false
-                text: "New"
-                icon.source: "/images/FileNew.png"
-                onClicked: {
-                    fieldMenu.visible = false
-                    fieldNew.visible = true
+                IconButtonTextBeside{
+                    objectName: "btnFieldISOXML"
+                    isChecked: false
+                    text: "ISO-XML"
+                    icon.source: "/images/ISOXML.png"
                 }
-            }
-            IconButtonTextBeside{
-                objectName: "btnFieldResume"
-                isChecked: false
-                text: "Resume"
-                icon.source: "/images/FilePrevious.png"
-                enabled: settings.setF_CurrentDir != "Default"
+                IconButtonTextBeside{
+                    objectName: "btnFieldFromKML"
+                    isChecked: false
+                    text: "From KML"
+                    icon.source: "/images/BoundaryLoadFromGE.png"
+                    onClicked: fieldFromKML.visible = true
+                }
+                IconButtonTextBeside{
+                    objectName: "btnFieldFromExisting"
+                    isChecked: false
+                    text: "From Existing"
+                    icon.source: "/images/FileExisting.png"
+                    onClicked: {
+                        fieldMenu.visible = false
+                        fieldFromExisting.visible = true
+                    }
+                }
+                IconButtonTextBeside{
+                    objectName: "New"
+                    isChecked: false
+                    text: "New"
+                    icon.source: "/images/FileNew.png"
+                    onClicked: {
+                        fieldMenu.visible = false
+                        fieldNew.visible = true
+                    }
+                }
+                IconButtonTextBeside{
+                    objectName: "btnFieldResume"
+                    isChecked: false
+                    text: "Resume"
+                    icon.source: "/images/FilePrevious.png"
+                    enabled: settings.setF_CurrentDir !== "Default"
 
-                onClicked: {
-                    fieldMenu.visible = false
-                    fieldInterface.field_open(settings.setF_CurrentDir)
+                    onClicked: {
+                        fieldMenu.visible = false
+                        fieldInterface.field_open(settings.setF_CurrentDir)
+                    }
                 }
-            }
-            IconButtonTextBeside{
-                objectName: "btnFieldClose"
-                isChecked: false
-                text: "Close"
-                icon.source: "/images/FileClose.png"
-                enabled: aog.isJobStarted
-                onClicked: {
-                    fieldInterface.field_close()
-                    fieldMenu.visible = false
-                }
+                IconButtonTextBeside{
+                    objectName: "btnFieldClose"
+                    isChecked: false
+                    text: "Close"
+                    icon.source: "/images/FileClose.png"
+                    enabled: aog.isJobStarted
+                    onClicked: {
+                        fieldInterface.field_close()
+                        fieldMenu.visible = false
+                    }
 
-            }
-            IconButtonTextBeside{
-                objectName: "btnFieldOpen"
-                isChecked: false
-                text: "Open"
-                icon.source: "/images/FileOpen"
-                onClicked: {
-                    fieldMenu.visible = false
-                    fieldOpen.visible = true;
+                }
+                IconButtonTextBeside{
+                    objectName: "btnFieldOpen"
+                    isChecked: false
+                    text: "Open"
+                    icon.source: "/images/FileOpen"
+                    onClicked: {
+                        fieldMenu.visible = false
+                        fieldOpen.visible = true;
+                    }
                 }
             }
         }
-        }
+    }
 
-        /*
+
+    /*
         IconButtonTransparent{
             anchors.top: buttons1.bottom
             anchors.left: parent.left
@@ -133,33 +155,32 @@ Drawer {
         }
         */
 
-        FieldFromExisting{
-            id: fieldFromExisting
-            //anchors.top:parent.top
-            //anchors.topMargin: -50
-            //anchors.horizontalCenter: parent.horizontalCenter
-            visible: false
-        }
-        FieldNew{
-            id: fieldNew
-            visible: false
-        }
-        FieldFromKML{
-            id: fieldFromKML
-            anchors.top:parent.top
-            anchors.topMargin: -50
-            anchors.horizontalCenter: parent.horizontalCenter
-            visible: false
-        }
-        FieldOpen{
-            id: fieldOpen
-            //anchors.top:parent.top
-            //anchors.topMargin: -50
-            //anchors.horizontalCenter: parent.horizontalCenter
-            x: 100
-            y: 75
-            visible: false
+    FieldFromExisting{
+        id: fieldFromExisting
+        //anchors.top:parent.top
+        //anchors.topMargin: -50
+        //anchors.horizontalCenter: parent.horizontalCenter
+        visible: false
+    }
+    FieldNew{
+        id: fieldNew
+        visible: false
+    }
+    FieldFromKML{
+        id: fieldFromKML
+        anchors.top:parent.top
+        anchors.topMargin: -50
+        anchors.horizontalCenter: parent.horizontalCenter
+        visible: false
+    }
+    FieldOpen{
+        id: fieldOpen
+        //anchors.top:parent.top
+        //anchors.topMargin: -50
+        //anchors.horizontalCenter: parent.horizontalCenter
+        x: 100
+        y: 75
+        visible: false
 
-        }
     }
 }

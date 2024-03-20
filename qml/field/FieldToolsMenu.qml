@@ -10,6 +10,7 @@ Drawer {
 
     width: 300
     visible: false
+    height: parent.height
     modal: true
 
     contentItem: Rectangle {
@@ -21,7 +22,7 @@ Drawer {
         color: "black"
 
         ScrollView {
-            anchors.fill: parent
+            anchors.fill: fieldToolsMenuRect
             clip: true
 
             ColumnLayout {
