@@ -4,27 +4,37 @@ import bs4 #beautifulSoup
 import sys
 from props import props
 
-add_props = {
-    'displayShowBack' : [ 'display/showBack', 
-                          'AOGProperty property_displayShowBack("display/showBack",false);',
-                          'extern AOGProperty property_displayShowBack;' ]
-                          ,
-    'antiAliasSamples' : [ 'display/antiAliasSamples',
-                           'AOGProperty property_displayAntiAliasSamples("display/antiAliasSamples",0);',
-                           'extern AOGProperty property_displayAntiAliasSamples;'],
+add_props = [
+    { 'ini_path':      'display/showBack',
+      'cpp_name':      'property_displayShowBack',
+      'cpp_type':  'bool',
+      'cpp_default': 'false',
+    },
 
-    'useTrackZero' : [ 'display/useTrackZero',
-                    'AOGProperty property_setDisplay_useTrackZero("display/useTrackZero", false);',
-                    'extern AOGProperty property_setDisplay_useTrackZero;',
-                    'property bool setDisplay_useTrackZero: false',
-                    '    addKey(QString("setDisplay_useTrackZero"),QString("display/useTrackZero"),"bool");' ],
+    { 'ini_path': 'display/antiAliasSamples',
+      'cpp_name': 'property_displayAntiAliasSamples',
+      'cpp_type': 'bool',
+      'cpp_default': '0',
+    },
 
-    'displayTopTrackNum' : [ 'display/topTrackNum',
-                             'AOGProperty property_setDisplay_topTrackNum("display/topTrackNum", false);',
-                             'extern AOGProperty property_setDisplay_topTrackNum;',
-                             'property bool setDisplay_topTrackNum: false',
-                             '    addKey(QString("setDisplay_topTrackNum"),QString("display/topTrackNum"),"bool");' ],
-}
+    { 'ini_path': 'display/useTrackZero',               # this is the path inside the ini file
+      'cpp_name': 'property_setDisplay_useTrackZero',   # cpp global symbol to access setting
+      'cpp_default': 'false',                           # default cpp value of setting; should be valid C++ expression
+      'cpp_type' : 'bool',                              # cpp value type
+      'qml_name': 'setDisplay_useTrackZero',            # qml property name, accessed via the global settings object
+      'qml_type': 'bool',                               # qml javascript type.  bool, color, point, rect, string, etc
+      'qml_default' : 'false',                          # qml property default value; should be valid javascript expression
+    },
+
+    { 'ini_path': 'display/topTrackNum',
+      'cpp_name': 'property_setDisplay_topTrackNum',
+      'cpp_default' : 'false',
+      'cpp_type' : 'bool',
+      'qml_name': 'setDisplay_topTrackNum',
+      'qml_type': 'bool',
+      'qml_default': 'false',
+    },
+]
 
 def parse_settings(file):
     cpp = []
@@ -38,7 +48,7 @@ def parse_settings(file):
         parser = bs4.BeautifulSoup(file.read(),'lxml-xml')
 
         settings = parser.findAll('Setting')
-        for s in settings: 
+        for s in settings:
             s['Name'] = s['Name'][0].lower() + s['Name'][1:]
             t = s['Type']
             n = s['Name']
@@ -202,7 +212,7 @@ if __name__ == '__main__':
             print (line)
 
         for i in add_props:
-            print (add_props[i][2])
+            print ('extern AOGProperty %s;' % i['cpp_name'])
 
         print ()
 
@@ -225,10 +235,12 @@ if __name__ == '__main__':
             print ("    %s"  % line)
         for line in mock_qml1:
             print ("    %s"  % line)
-        for key in add_props:
-            if len(add_props[key]) > 3:
-                print ("    %s"   % add_props[key][3])
-
+        for prop in add_props:
+            if 'qml_name' in prop and 'qml_type' in prop:
+                if 'qml_default' in prop:
+                    print ('    property %s %s: %s' % (prop['qml_type'], prop['qml_name'], prop['qml_default']))
+                else:
+                    print ('    property %s %s' % (prop['qml_type'], prop['qml_name']))
         print ("}")
 
     elif args.qmlcpp:
@@ -239,11 +251,9 @@ if __name__ == '__main__':
             print (line)
         for line in qml_cpp1:
             print (line)
-        for key in add_props:
-            if len(add_props[key]) > 4:
-                print ("%s"   % add_props[key][4])
-
-
+        for prop in add_props:
+            if 'qml_name' in prop and 'cpp_type' in prop:
+                print ('    addKey(QString("%s"),QString("%s"),"%s");' % (prop['qml_name'], prop['ini_path'], prop['cpp_type']))
         print ('}')
 
 
@@ -259,5 +269,5 @@ if __name__ == '__main__':
             print (line)
 
         for i in add_props:
-            print(add_props[i][1])
+            print ('AOGProperty %s("%s",false);' % (i['cpp_name'], i['ini_path']))
 
