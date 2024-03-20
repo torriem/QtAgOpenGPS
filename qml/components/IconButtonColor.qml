@@ -32,7 +32,7 @@ Button {
     property color colorChecked2: colorChecked
     property color colorChecked3: colorChecked
     property color color: "white"
-    property color colorChecked: "green"
+    property color colorChecked: "#99ff99"
 
 
     //For compatibility with the old IconButton and friends

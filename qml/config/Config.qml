@@ -56,7 +56,7 @@ Dialog {
             anchors.top: topLine.bottom
             anchors.left: topLine.left
             width: 110
-            anchors.bottom: configMain.bottom
+            anchors.bottom: bottomLine.top
 
             //ScrollBar.vertical.policy: ScrollBar.AlwaysOn
             clip: true

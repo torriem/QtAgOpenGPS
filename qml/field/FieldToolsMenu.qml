@@ -30,6 +30,7 @@ Drawer {
                     text: "Boundary"
                     icon.source: "/images/MakeBoundary.png"
                     width: 300
+                    visible: settings.setFeature_isBoundaryOn
                     onClicked: {
                         fieldToolsMenu.visible = false
                         boundaryMenu.show()
@@ -39,6 +40,7 @@ Drawer {
                     text: "Headland"
                     icon.source: "/images/HeadlandMenu.png"
                     width: 300
+                    visible: settings.setFeature_isHeadlandOn
                     onClicked: {
                         fieldToolsMenu.visible = false
                         headlandDesigner.show()
@@ -47,6 +49,7 @@ Drawer {
                 IconButtonTextBeside{
                     text: "Headland (Build)"
                     icon.source: "/images/Headache.png"
+                    visible: settings.setFeature_isHeadlandOn
                     width: 300
                     onClicked: {
                         fieldToolsMenu.visible = false
@@ -57,6 +60,7 @@ Drawer {
                     text: "Tram Lines"
                     icon.source: "/images/TramLines.png"
                     width: 300
+                    visible: settings.setFeature_isTramOn
                     onClicked: tramLinesEditor.visible = true
                 }
                 IconButtonTextBeside{
@@ -64,6 +68,7 @@ Drawer {
                     icon.source: "/images/RecPath.png"
                     width: 300
                     onClicked: recordButtons.visible = !recordButtons.visible
+                    visible: settings.setFeature_isHeadlandOn
                 }
             }
         }

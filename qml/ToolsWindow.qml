@@ -1,8 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.1
-
-Item {
-
+Item{
     Rectangle {
 
         id: toolsMenu
@@ -88,6 +86,7 @@ Item {
                 width: 250
                 height: 50
                 text: qsTr("Smooth AB Curve")
+                visible: settings.setFeature_isABSmoothOn
             }
 
             Button {
@@ -95,6 +94,7 @@ Item {
                 width: 250
                 height: 50
                 text: qsTr("Delete Contour Paths")
+                visible:settings.setFeature_isHideContourOn
             }
 
             Button {
@@ -109,12 +109,14 @@ Item {
                 width: 250
                 height: 50
                 text: qsTr("WebCam")
+                visible:settings.setFeature_isWebCamOn
             }
             Button {
                 id: offsetFix
                 width: 250
                 height: 50
                 text: qsTr("Offset Fix")
+                visible: settings.setFeature_isOffsetFixOn
             }
         }
     }

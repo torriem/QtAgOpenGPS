@@ -121,7 +121,6 @@ Item {
     property bool hydLiftDown: false
     property bool hydLiftIsOn: false
     property bool isHeadlandOn: false
-    onSentenceCounterChanged: console.log(sentenceCounter)
 
     property point vehicle_xy: Qt.point(0,0)
     property rect vehicle_bounding_box: Qt.rect(0,0,0,0)

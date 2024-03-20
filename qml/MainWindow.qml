@@ -1042,12 +1042,12 @@ Window {
                 anchors.leftMargin: 150
                 width: childrenRect.width
                 height: childrenRect.height
-                visible: (aog.currentABCurve > -1) || (aog.currentABLine > -1)
+                visible: aog.isAutoSteerBtnOn
                 ColorOverlay{
                     color: "#e6e600"
                     anchors.fill: uturn
                     source: uturn
-
+                    visible: settings.setFeature_isYouTurnOn
                     Button{
                         id: manualUturnLeft
                         background: Rectangle{color: "transparent"}
@@ -1092,8 +1092,7 @@ Window {
                     color: "#80aaff"
                     anchors.fill: lateral
                     source: lateral
-
-
+                    visible: settings.setFeature_isLateralOn
                     Button{
                         background: Rectangle{color: "transparent"}
                         objectName: "btnManLateralLeft"
