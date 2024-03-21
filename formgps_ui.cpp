@@ -446,12 +446,12 @@ void FormGPS::onBtnTiltDown_clicked(){
     if (camera.camPitch < -76) camera.camPitch = -76;
 
     lastHeight = -1; //redraw the sky
-    property_setwin = camera.camPitch;
+    property_setDisplay_camPitch = camera.camPitch;
     openGLControl->update();
 }
 
 void FormGPS::onBtnTiltUp_clicked(){
-    double camPitch = property_setwin;
+    double camPitch = property_setDisplay_camPitch;
 
     qDebug()<<"TiltUp button clicked.";
 
@@ -459,7 +459,7 @@ void FormGPS::onBtnTiltUp_clicked(){
     camera.camPitch -= ((camera.camPitch * 0.012) - 1);
     if (camera.camPitch > -58) camera.camPitch = 0;
 
-    property_setwin = camera.camPitch;
+    property_setDisplay_camPitch = camera.camPitch;
     openGLControl->update();
 }
 void FormGPS::onBtn2D_clicked(){

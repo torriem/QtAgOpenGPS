@@ -139,6 +139,9 @@ def parse_settings(file):
                 props[s['Name']] = ''
                 qs_name = ""
 
+            if not qs_name:
+                sys.stderr.write ("Warning! No ini path found for %s. Generate props.py and fix.\n" % s['Name'])
+
             cpp.append('AOGProperty property_%s("%s",%s);'% (s['Name'], qs_name, default_value))
             qml_cpp.append('    addKey(QString("%s"),QString("%s"),"%s");' % (s['Name'], qs_name, qt));
             h.append('extern AOGProperty property_%s;' % s['Name'])
