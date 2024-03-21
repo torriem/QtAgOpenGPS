@@ -41,16 +41,12 @@ Drawer {
             var i = 0
             for (i = 0; i < fieldMenuColumn.children.length; i++){
                 totalHeight = fieldMenuColumn.children[i].height + totalHeight
-                console.log(totalHeight)
             }
             if(totalHeight > height){
                 fieldMenuColumn.spacing = 0
-                console.log(fieldMenuColumn.spacing)
-                console.log("scroll")
 
             }else{
                 fieldMenuColumn.spacing = ((height - totalHeight)/(i-1))
-                console.log(fieldMenuColumn.spacing)
             }
         }
 

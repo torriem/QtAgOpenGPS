@@ -1,6 +1,5 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
 
 import ".."
 import "../components"
@@ -10,23 +9,29 @@ Drawer {
 
     width: 300
     visible: false
-    height: parent.height
+    height: mainWindow.height
+    onHeightChanged: console.log("drawerheight "+height)
     modal: true
 
     contentItem: Rectangle {
         id: fieldToolsMenuRect
         anchors.bottom: parent.bottom
+        height: parent.height
         anchors.top: parent.top
         anchors.left: parent.left
 
         color: "black"
-
         ScrollView {
+            id: fieldToolsMenuScroll
             anchors.fill: fieldToolsMenuRect
             clip: true
+            onHeightChanged: fieldToolsMenuColumn.adjust(height)
 
-            ColumnLayout {
+            ExpandableColumn {
+                id: fieldToolsMenuColumn
                 anchors.fill: parent
+                height: fieldToolsMenuRect.height
+                spacing: 0
                 IconButtonTextBeside{
                     text: "Boundary"
                     icon.source: "/images/MakeBoundary.png"

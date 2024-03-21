@@ -481,13 +481,6 @@ Window {
                 enabled: aog.isJobStarted ? true : false
                 Layout.alignment: Qt.AlignCenter
             }
-            FieldToolsMenu {
-                id: fieldTools
-                width: 300
-                visible: false
-                height: mainWindow.height
-                Layout.alignment: Qt.AlignCenter
-            }
 
             IconButtonText {
                 id: btnAgIO
@@ -1299,6 +1292,10 @@ Window {
         }
 
 
+            FieldToolsMenu {
+                id: fieldTools
+                visible: false
+            }
         FieldMenu {
             id: fieldMenu
             objectName: "slideoutMenu"
