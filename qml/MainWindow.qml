@@ -461,7 +461,7 @@ Window {
                 objectName: "btnTools"
                 buttonText: qsTr("Tools")
                 icon.source: "/images/SpecialFunctions.png"
-                onClicked: toolsWindow.visible = true
+                onClicked: toolsMenu.visible = true
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText{
@@ -1292,24 +1292,18 @@ Window {
         }
 
 
-            FieldToolsMenu {
-                id: fieldTools
-                visible: false
-            }
+        FieldToolsMenu {
+            id: fieldTools
+            visible: false
+        }
         FieldMenu {
             id: fieldMenu
             objectName: "slideoutMenu"
             visible: false
         }
         ToolsWindow {
-            id: toolsWindow
-            objectName: "slideoutMenu"
-            anchors.top: parent.top
-            anchors.topMargin: 20
-            anchors.left: leftColumn.right
-            anchors.leftMargin: 15
+            id: toolsMenu
             visible: false
-
         }
         Config {
             id:config
