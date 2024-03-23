@@ -709,16 +709,11 @@ Window {
                     if (checked && ((aog.currentABCurve > -1) || (aog.currentABLine > -1))) {
                         console.debug("okay to turn on autosteer button.")
                         aog.isAutoSteerBtnOn = true;
-                        engage.play()
                     } else {
                         console.debug("keep autoster button off.")
                         checked = false;
                         aog.isAutoSteerBtnOn = false;
                     }
-                }
-                SoundEffect{
-                    id: engage
-                    source: "/sounds/SteerOn.wav"
                 }
                 Connections {
                     target: aog

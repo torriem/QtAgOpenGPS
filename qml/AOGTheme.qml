@@ -1,0 +1,42 @@
+import QtQuick 2.8
+import QtQuick.Controls 2.5
+import QtMultimedia 5.9
+
+/* This type contains the sounds, colors, and perhaps screen sizes,
+  *Sounds will track AOGInterface.qml, and react when needed as set
+  by the features page.
+  *Colors will follow the settings files, and change based on day/night
+  mode, so we don't need an if statement in every object.
+  *Screen sizes-We'll see.
+  */
+
+Item {
+    id: aogTheme
+
+
+    property color backgroundColor: "ghostWhite"
+    property color textColor: "black"
+    property color wrapperColor: "gray"
+
+    AOGInterface{
+        id: aog
+        onIsAutoSteerBtnOnChanged: {
+            console.log("theme changed")
+            if(settings.setSound_isAutoSteerOn){
+                if(aog.isAutoSteerBtnOn)
+                    engage.play()
+                else
+                    disEngage.play()
+            }
+        }
+    }
+
+    SoundEffect{
+        id: engage
+        source: "/sounds/SteerOn.wav"
+    }
+    SoundEffect{
+        id: disEngage
+        source: "/sounds/SteerOff.wav"
+    }
+}
