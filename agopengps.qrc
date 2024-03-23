@@ -629,5 +629,6 @@
         <file>qml/components/ButtonColor.qml</file>
         <file>qml/components/ExpandableColumn.qml</file>
         <file>qml/components/ScrollViewExpandableColumn.qml</file>
+        <file>qml/RecPath.qml</file>
     </qresource>
 </RCC>

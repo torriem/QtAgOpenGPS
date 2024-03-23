@@ -1162,6 +1162,8 @@ Window {
             //TODO add contour
         }
 
+        //Components- this is where the windows that get displayed over the
+        //ogl get instantiated.
         FieldData{
             id: fieldData
             anchors.left: parent.left
@@ -1181,6 +1183,10 @@ Window {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottomMargin: 8
             visible: utils.isTrue(settings.setMenu_isSimulatorOn)
+        }
+        RecPath{// recorded path menu
+            id: recPath
+            visible: false
         }
 
         OutlineText{

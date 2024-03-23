@@ -149,6 +149,9 @@ Item {
 
     //on-screen buttons
 
+    //recorded path
+
+
     //DisplayButtons.qml
     signal zoomIn()
     signal zoomOut()

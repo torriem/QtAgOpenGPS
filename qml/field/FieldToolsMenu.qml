@@ -67,8 +67,11 @@ Drawer {
                 text: "Recorded Path"
                 icon.source: "/images/RecPath.png"
                 width: 300
-                onClicked: recordButtons.visible = !recordButtons.visible
                 visible: settings.setFeature_isHeadlandOn
+                onClicked:{
+                    fieldToolsMenu.visible = false
+                    recPath.show()
+                }
             }
         }
     }
