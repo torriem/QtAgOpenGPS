@@ -52,9 +52,9 @@ Item {
     property bool isAutoSteerBtnOn: false
     property bool isYouTurnBtnOn: false
 
-    onIsAutoSteerBtnOnChanged: {
-        console.debug("isAutoSteerBtnOn is now in aog inface " + isAutoSteerBtnOn)
-    }
+//    onIsAutoSteerBtnOnChanged: {
+//        console.debug("isAutoSteerBtnOn is now in aog inface " + isAutoSteerBtnOn)
+//    }
 
     //General FormGPS information updated at GPS rate.
     property double latStart: 53

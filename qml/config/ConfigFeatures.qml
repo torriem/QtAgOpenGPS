@@ -157,6 +157,7 @@ Item {
                 id: autoSteerSound
                 text: qsTr("Auto Steer")
                 icon.source: "/images/Config/ConF_SteerSound.png"
+                checkable: true
                 isChecked: settings.setSound_isAutoSteerOn
                 onCheckedChanged: settings.setSound_isAutoSteerOn = checked
                     Layout.alignment: Qt.AlignCenter

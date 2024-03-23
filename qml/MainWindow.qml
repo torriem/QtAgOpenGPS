@@ -57,6 +57,9 @@ Window {
         id: aog
         objectName: "aog"
     }
+    AOGTheme{
+        id: theme
+    }
 
     LinesInterface {
         objectName: "linesInterface"

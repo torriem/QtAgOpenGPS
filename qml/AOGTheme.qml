@@ -13,16 +13,14 @@ import QtMultimedia 5.9
 Item {
     id: aogTheme
 
-
     property color backgroundColor: "ghostWhite"
     property color textColor: "black"
     property color wrapperColor: "gray"
 
-    AOGInterface{
-        id: aog
-        onIsAutoSteerBtnOnChanged: {
-            console.log("theme changed")
-            if(settings.setSound_isAutoSteerOn){
+    Connections{//sounds functions go here.
+        target: aog
+        function onIsAutoSteerBtnOnChanged() {//will need another function for every sound option
+            if(settings.setSound_isAutoSteerOn){//does the user want the sound on?
                 if(aog.isAutoSteerBtnOn)
                     engage.play()
                 else
@@ -30,7 +28,6 @@ Item {
             }
         }
     }
-
     SoundEffect{
         id: engage
         source: "/sounds/SteerOn.wav"
