@@ -9,7 +9,6 @@ import "components"
 //    visible: false
 //    height: mainWindow.height
     Drawer {
-
         id: toolsMenu
         width: 250
         height: mainWindow.height
@@ -17,17 +16,21 @@ import "components"
 //        onVisibleChanged: if (visible === false){
 //                             toolsWindowItem.visible = false
 //                          }
+
         contentItem: Rectangle{
             id: toolsMenuContent
             anchors.fill: parent
             height: toolsMenu.height
             color: "black"
         }
+
         ScrollViewExpandableColumn {
             id: toolsGrid
             anchors.fill: parent
+
             IconButtonTextBeside {
                 id: wizards
+                icon.source: "/images/WizardWand.png"
                 width: 250
                 height: 50
                 text: qsTr("Wizards")
@@ -37,6 +40,7 @@ import "components"
 
             IconButtonTextBeside {
                 id: charts
+                icon.source: "/images/Chart.png"
                 width: 250
                 height: 50
                 text: qsTr("Charts")
@@ -46,6 +50,7 @@ import "components"
 
             IconButtonTextBeside {
                 id: smABCurve
+                icon.source: "/images/ABSmooth.png"
                 width: 250
                 height: 50
                 text: qsTr("Smooth AB Curve")
@@ -54,6 +59,7 @@ import "components"
 
             IconButtonTextBeside {
                 id: delContourPaths
+                icon.source: "/images/TrashContourRef.png"
                 width: 250
                 height: 50
                 text: qsTr("Delete Contour Paths")
@@ -62,6 +68,7 @@ import "components"
 
             IconButtonTextBeside {
                 id: delAppliedArea
+                icon.source: "/images/TrashApplied.png"
                 width: 250
                 height: 50
                 text: qsTr("Delete Applied Area")
@@ -69,13 +76,16 @@ import "components"
 
             IconButtonTextBeside {
                 id: webcam
+                icon.source: "/images/Webcam.png"
                 width: 250
                 height: 50
                 text: qsTr("WebCam")
                 visible:settings.setFeature_isWebCamOn
             }
+
             IconButtonTextBeside {
                 id: offsetFix
+                icon.source: "/images/YouTurnReverse.png" // this is horrible. This has nothing to do with YouTurnReverse.
                 width: 250
                 height: 50
                 text: qsTr("Offset Fix")
@@ -83,6 +93,7 @@ import "components"
             }
         }
     }
+
 //    Rectangle{ //this all needs to be done sometime
 //        id: wizardMenu
 //        width: childrenRect.width+10
