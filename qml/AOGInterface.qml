@@ -150,7 +150,13 @@ Item {
     //on-screen buttons
 
     //recorded path
-
+    signal recPathFollowStop() //go stop in cs
+    signal recPathRecordStop()//record stop in cs
+    signal recPathResumeStyle()//resume path in cs
+    property int resumeStyleFromCpp: 0
+    signal recPathSwapAB()
+    signal recPathClear()
+    signal recPathLoad()
 
     //DisplayButtons.qml
     signal zoomIn()

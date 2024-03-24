@@ -13,6 +13,10 @@ MoveablePopup{
     function show(){
         recPath.visible = !recPath.visible
     }
+    onVisibleChanged: if(visible)
+                          aog.recPathLoad()
+                      else
+                          aog.recPathClear()
 
     ScrollViewExpandableColumn{
         id: recPathColumn
@@ -22,19 +26,23 @@ MoveablePopup{
         IconButtonTransparent{
             icon.source: "/images/Play.png"
             iconChecked: "/images/boundaryStop.png"
+            onClicked: aog.recPathFollowStop()
         }
         IconButtonTransparent{
             icon.source: "/images/Stop.png"
+            onClicked: aog.recPathResumeStyle()
         }
         IconButtonTransparent{
             icon.source: "/images/BoundaryRecord.png"
             iconChecked: "/images/boundaryStop.png"
+            onClicked: aog.recPathRecordStop()
         }
         IconButtonTransparent{
             icon.source: "/images/FileExplorerWindows.png"
         }
         IconButtonTransparent{
             icon.source: "/images/ABSwapPoints.png"
+            onClicked: aog.recPathSwapAB()
         }
     }
 }
