@@ -49,6 +49,7 @@ Item {
 
     property variant sectionButtonState: [ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ]
 
+    property bool isContourBtnOn: false
     property bool isAutoSteerBtnOn: false
     property bool isYouTurnBtnOn: false
 
@@ -148,15 +149,6 @@ Item {
     property int current_trackNum: 0
 
     //on-screen buttons
-
-    //recorded path
-    signal recPathFollowStop() //go stop in cs
-    signal recPathRecordStop()//record stop in cs
-    signal recPathResumeStyle()//resume path in cs
-    property int resumeStyleFromCpp: 0
-    signal recPathSwapAB()
-    signal recPathClear()
-    signal recPathLoad()
 
     //DisplayButtons.qml
     signal zoomIn()

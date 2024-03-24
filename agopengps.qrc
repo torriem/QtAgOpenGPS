@@ -630,5 +630,6 @@
         <file>qml/components/ExpandableColumn.qml</file>
         <file>qml/components/ScrollViewExpandableColumn.qml</file>
         <file>qml/RecPath.qml</file>
+        <file>qml/interfaces/RecordedPathInterface.qml</file>
     </qresource>
 </RCC>

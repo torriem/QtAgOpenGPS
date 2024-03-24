@@ -68,7 +68,7 @@ void FormGPS::update_current_ABline_from_qml()
         curve.isBtnCurveOn = false;
     }
 
-    if (ABLine.numABLineSelected == 0 && curve.numCurveLineSelected == 0 && ct.isContourBtnOn == false) {
+    if (ABLine.numABLineSelected == 0 && curve.numCurveLineSelected == 0 && (bool)ct.isContourBtnOn == false) {
         isAutoSteerBtnOn = false;
     }
 }
