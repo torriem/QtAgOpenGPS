@@ -1,0 +1,58 @@
+import QtQuick 2.0
+import QtQuick.Controls 2.5
+
+import "components"
+
+MoveablePopup{
+    id: recPath
+    height: parent.height *.5
+    x: 40
+    y: 40
+    width: recPathColumn.width + 20
+    closePolicy: Popup.NoAutoClose
+    function show(){
+        recPath.visible = !recPath.visible
+    }
+    onVisibleChanged: if(visible)
+                          recordedPathInterface.recPathLoad()
+                      else
+                          recordedPathInterface.recPathClear()
+
+    ScrollViewExpandableColumn{
+        id: recPathColumn
+        width: children.width
+        height: parent.height-20
+        anchors.centerIn: parent
+        
+        IconButtonTransparent{  //go stop in cs
+            icon.source: "/images/Play.png"
+            iconChecked: "/images/boundaryStop.png"
+            onClicked: {
+                recordedPathInterface.recPathFollowStop()
+                if(!checked){
+                    aog.isContourBtnOn = false
+                    aog.isAutoSteerBtnOn = false
+                    aog.isYouTurnBtnOn = false
+                    aog.current_trackNum = 0 //is this right?
+                }
+			}               
+		}
+        
+        IconButtonTransparent{ //resume path in cs
+            icon.source: "/images/Stop.png"
+            onClicked: recordedPathInterface.recPathResumeStyle()
+        }
+        IconButtonTransparent{ //record stop in cs
+            icon.source: "/images/BoundaryRecord.png"
+            iconChecked: "/images/boundaryStop.png"
+            onClicked: recordedPathInterface.recPathRecordStop()
+        }
+        IconButtonTransparent{ // open file
+            icon.source: "/images/FileExplorerWindows.png"
+        }
+        IconButtonTransparent{
+            icon.source: "/images/ABSwapPoints.png"
+            onClicked: recordedPathInterface.recPathSwapAB()
+        }
+    }
+}

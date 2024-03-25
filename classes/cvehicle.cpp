@@ -529,7 +529,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
 
     if(!(bool)property_setDisplay_topTrackNum) {
         color.setRgbF(1.269, 1.25, 1.2510, 0.87); //?? why over 1.0?
-        if (curve.isBtnCurveOn && !ct.isContourBtnOn)
+        if (curve.isBtnCurveOn && (bool)ct.isContourBtnOn == false)
         {
             if (curve.howManyPathsAway == 0) {
                 drawTextVehicle(camera, gl, mvp, 2, wheelbase+1, "0", 1,
@@ -544,8 +544,9 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
                                 true, color);
             }
         }
-        else if (ABLine.isBtnABLineOn && !ct.isContourBtnOn)
+        else if (ABLine.isBtnABLineOn && (bool)ct.isContourBtnOn == false)
         {
+            if(ct.isContourBtnOn)
             if (ABLine.howManyPathsAway == 0) {
                 drawTextVehicle(camera, gl, mvp, 2, wheelbase+1, "0", 1,
                                 true, color);

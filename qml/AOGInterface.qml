@@ -49,6 +49,7 @@ Item {
 
     property variant sectionButtonState: [ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ]
 
+    property bool isContourBtnOn: false
     property bool isAutoSteerBtnOn: false
     property bool isYouTurnBtnOn: false
 
