@@ -34,6 +34,34 @@ add_props = [
       'qml_type': 'bool',
       'qml_default': 'false',
     },
+    
+    { 'ini_path': 'display/colorDayBackground',
+      'cpp_name': 'property_setDisplay_colorDayBackground',
+      'cpp_default' : 'QColor::fromRgb(245, 245, 245)',
+      'qml_name' : 'setDisplay_colorDayBackground'
+      'qml_default' : "#f5f5f5"
+    },
+    
+    { 'ini_path': 'display/colorNightBackground',
+      'cpp_name': 'property_setDisplay_colorNightBackground',
+      'cpp_default' : 'QColor::fromRgb(50, 50, 65)',
+      'qml_name' : 'setDisplay_colorNightBackground'
+      'qml_default' : "#323241"
+    },
+    
+    { 'ini_path': 'display/colorDayBorder',
+      'cpp_name': 'property_setDisplay_colorDayBorder',
+      'cpp_default' : 'QColor::fromRgb(215, 228, 242)',
+      'qml_name' : 'setDisplay_colorDayBorder'
+      'qml_default' : "#d7e4f2"
+    },
+    
+    { 'ini_path': 'display/colorNightBorder',
+      'cpp_name': 'property_setDisplay_colorNightBorder',
+      'cpp_default' : 'QColor::fromRgb(210, 210, 230)',
+      'qml_name' : 'setDisplay_colorNightBorder'
+      'qml_default' : "#d2d2e6"
+    },
 ]
 
 def parse_settings(file):
