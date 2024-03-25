@@ -404,7 +404,7 @@ void drawText3D(const CCamera &camera, QOpenGLFunctions *gl,
 
     mvp.translate(x1, y1, 0);
 
-    if ((double)property_setwin < -45)
+    if ((double)property_setDisplay_camPitch < -45)
     {
         mvp.rotate(90, 1, 0, 0);
         if (camera.camFollowing) mvp.rotate(-camera.camHeading, 0, 1, 0);
@@ -479,7 +479,7 @@ void drawTextVehicle(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp
     size = pow(size, 0.8)/800;
 
     //2d
-    if ((double)property_setwin > -58)
+    if ((double)property_setDisplay_camPitch > -58)
     {
         if (!camera.camFollowing)
         {
@@ -504,7 +504,7 @@ void drawTextVehicle(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp
         }
         else
         {
-            mvp.rotate(-(double)property_setwin, 1, 0, 0);
+            mvp.rotate(-(double)property_setDisplay_camPitch, 1, 0, 0);
             y *= 0.3;
         }
     }

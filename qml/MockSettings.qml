@@ -4,7 +4,6 @@ import QtQuick 2.15
 
 Item {
     id: mockSettings
-    property double setwin: -62
     property point setWindow_Location: "30, 30"
     property string setWindow_Size: "1005, 730"
     property bool setWindow_Maximized: false
@@ -112,7 +111,7 @@ Item {
     property string setBrand_TBrand: "AGOpenGPS"
     property bool setHeadland_isSectionControlled: true
     property bool setSound_isAutoSteerOn: true
-    property var setRelay_pinConfig: [ 1,2,3,17,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ]
+    property var setRelay_pinConfig: [ 1,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ]
     property int setDisplay_camSmooth: 50
     property double setGPS_dualHeadingOffset: 0
     property bool setF_isSteerWorkSwitchEnabled: false
@@ -202,9 +201,9 @@ Item {
     property double setArdMac_user4: 4
     property double setVehicle_panicStopSpeed: 0
     property double setAS_ModeMultiplierStanley: 0.6
-    property int setDisplay_brightness: 80
+    property int setDisplay_brightness: 40
     property double set_youTurnRadius: 8.1
-    property int setDisplay_brightnessSystem: 80
+    property int setDisplay_brightnessSystem: 40
     property bool setTool_isSectionsNotZones: true
     property int setTool_numSectionsMulti: 20
     property var setTool_zones: [ 2,10,20,0,0,0,0,0,0 ]
@@ -221,17 +220,28 @@ Item {
     property double setAS_minSteerSpeed: 1
     property string setBrand_HBrand: "AgOpenGPS"
     property string setBrand_WDBrand: "AgOpenGPS"
-    property double setIMU_fusionWeight2: 0.3
-    property bool setDisplay_isSvennArrowOn: true
+    property double setIMU_fusionWeight2: 0.06
+    property bool setDisplay_isSvennArrowOn: false
     property bool setTool_isTramOuterInverted: false
-    property point setJobMenu_location: "100, 100"
-    property string setJobMenu_size: "900, 600"
-    property point setWindow_curveEditLocation: "40, 40"
-    property point setWindow_abLineEditLocation: "40, 40"
+    property point setJobMenu_location: "200, 200"
+    property string setJobMenu_size: "640, 530"
     property point setWindow_steerSettingsLocation: "40, 40"
-    property point setWindow_abCurveCreate: "40, 40"
-    property point setWindow_abLineCreate: "40, 40"
-    property double setTool_trailingToolToPivotLength: 1.5
+    property point setWindow_buildTracksLocation: "40, 40"
+    property double setTool_trailingToolToPivotLength: 0
+    property point setWindow_formNudgeLocation: "200, 200"
+    property string setWindow_formNudgeSize: "200, 400"
+    property double setAS_snapDistanceRef: 5
+    property string setDisplay_buttonOrder: "0,1,2,3,4,5,6,7"
+    property double setDisplay_camPitch: -62
+    property string setWindow_abDrawSize: "1022, 742"
+    property string setWindow_HeadlineSize: "1022, 742"
+    property string setWindow_HeadAcheSize: "1022, 742"
+    property string setWindow_MapBndSize: "1022, 742"
+    property string setWindow_BingMapSize: "965, 700"
+    property int setWindow_BingZoom: 15
+    property string setWindow_RateMapSize: "1022, 742"
+    property int setWindow_RateMapZoom: 15
+    property point setWindow_QuickABLocation: "100, 100"
     property bool setFeature_isHeadlandOn: true
     property bool setFeature_isTramOn: true
     property bool setFeature_isBoundaryOn: true
