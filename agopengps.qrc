@@ -627,5 +627,6 @@
         <file>qml/components/IconButtonColor.qml</file>
         <file>qml/components/ComboBoxCustomized.qml</file>
         <file>qml/components/ButtonColor.qml</file>
+        <file>qml/interfaces/RecordedPathInterface.qml</file>
     </qresource>
 </RCC>

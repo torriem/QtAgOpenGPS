@@ -78,6 +78,11 @@ Window {
         objectName: "boundaryInterface"
     }
 
+    RecordedPathInterface {
+        id: recordedPathInterface
+        objectName: "recordedPathInterface"
+    }
+
     UnitConversion {
         id: utils
     }
