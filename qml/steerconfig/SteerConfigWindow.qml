@@ -20,8 +20,8 @@ MoveablePopup {
 
     Rectangle{
         id: steerConfigFirst
-        color: "#cccccc"
-        border.color: "black"
+        color: aog.backgroundColor
+        border.color: aog.blackDayWhiteNight
         border.width: 1
         visible: true
         anchors.fill: parent

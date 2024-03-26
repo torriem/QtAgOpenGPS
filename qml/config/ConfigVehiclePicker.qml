@@ -22,7 +22,7 @@ Item {
     Rectangle{
         id: configWhichVehicle
         anchors.fill: parent
-        color: "ghostwhite"
+        color: aog.backgroundColor
     Column{
         id: column
         anchors.top: parent.top
@@ -44,7 +44,7 @@ Item {
     }
         Rectangle{
             id: vehicleListRect
-            border.color: "black"
+            border.color: aog.blackDayWhiteNight
             color: "light gray"
             visible: true
             anchors.bottom:configWhichVehicle.bottom
@@ -90,7 +90,7 @@ Item {
                     indicator: Rectangle{
                         anchors.fill: parent
                         anchors.margins: 2
-                        color: control.down ? "white" : "blue"
+                        color: control.down ? aog.backgroundColor : "blue"
                         visible: control.checked
                     }
 
@@ -112,7 +112,7 @@ Item {
                         text: model.name
                         font.pixelSize: 20
                         font.bold: true
-                        color: control.checked ? "white" : "black"
+                        color: control.checked ? aog.backgroundColor : aog.blackDayWhiteNight
                         z: 2
                     }
                 }

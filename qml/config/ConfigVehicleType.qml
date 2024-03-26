@@ -8,7 +8,7 @@ Rectangle{
     id: configTractor
     anchors.fill: parent
     visible: true
-    color: "ghostwhite"
+    color: aog.backgroundColor
     Text {
         id: text
         text: qsTr("<h1>Choose Vehicle Type</h1>")

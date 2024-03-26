@@ -12,7 +12,7 @@ import "../components"
 Rectangle{
 	anchors.fill: parent
 	visible: true
-	color: "ghostwhite"
+    color: aog.backgroundColor
     TextLine{
 		id: text
 		anchors.top: parent.top

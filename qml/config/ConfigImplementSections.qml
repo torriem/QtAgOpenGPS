@@ -8,7 +8,7 @@ import "../components"
 Rectangle{
     id: configImplementSection
     anchors.fill: parent
-    color: "ghostwhite"
+    color: aog.backgroundColor
     visible: false
 
     Row{
@@ -33,8 +33,8 @@ Rectangle{
                 toggleZones()
             }
             background: Rectangle{
-                color: "white"
-                border.color: "black"
+                color: aog.backgroundColor
+                border.color: aog.blackDayWhiteNight
                 border.width: 1
                 Image{
                     id: image

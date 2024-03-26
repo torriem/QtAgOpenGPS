@@ -7,7 +7,7 @@ import "../components"
 Rectangle{
     anchors.fill: parent
     visible: true
-    color: "ghostwhite"
+    color: aog.backgroundColor
 
     IconButtonTransparent{
         icon.source: "/images/SteerZeroSmall.png"

@@ -31,7 +31,7 @@ Button {
     property color colorChecked1: colorChecked
     property color colorChecked2: colorChecked
     property color colorChecked3: colorChecked
-    property color color: "white"
+    property color color: aog.backgroundColor
     property color colorChecked: "#99ff99"
 
 

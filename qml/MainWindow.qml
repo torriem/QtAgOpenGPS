@@ -59,8 +59,8 @@ Window {
     }
     AOGTheme{
         id: theme
+        objectName: "aogTheme"
     }
-
     LinesInterface {
         objectName: "linesInterface"
         id: linesInterface
@@ -122,7 +122,7 @@ Window {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        color: "ghostwhite"
+        color: aog.backgroundColor
         height: 50
         visible: true
 
@@ -132,39 +132,39 @@ Window {
             width: 75
             objectName: "btnfileMenu"
             icon.source: "/images/fileMenu.png"
-            onClicked: fileMenu.popup()
+            onClicked: hamburgerMenu.visible = true
         }
-        Menu{
-            id: fileMenu
-            //anchors.left: buttonsArea.left
-            //anchors.top: buttonsArea.top
-            //anchors. margins: 200
-            MenuItem{ text: "Languages"}
-            MenuItem{ text: "Directories"}
-            MenuItem{ text: "Colors"}
-            MenuItem{ text: "Section Colors"}
-            MenuItem{ text: "Top Field View"}
-            MenuItem{ text: "Enter Sim Coords"}
-            MenuItem{
-                property bool isChecked: settings.setMenu_isSimulatorOn
-                onIsCheckedChanged: {
-                    checked = isChecked
-                }
+//        Menu{
+//            id: fileMenu
+//            //anchors.left: buttonsArea.left
+//            //anchors.top: buttonsArea.top
+//            //anchors. margins: 200
+//            MenuItem{ text: "Languages"}
+//            MenuItem{ text: "Directories"}
+//            MenuItem{ text: "Colors"}
+//            MenuItem{ text: "Section Colors"}
+//            MenuItem{ text: "Top Field View"}
+//            MenuItem{ text: "Enter Sim Coords"}
+//            MenuItem{
+//                property bool isChecked: settings.setMenu_isSimulatorOn
+//                onIsCheckedChanged: {
+//                    checked = isChecked
+//                }
 
-                text: "Simulator On"
-                checkable: true
-                checked: isChecked
-                onCheckedChanged: {
-                    settings.setMenu_isSimulatorOn = checked
-                    console.log("Sim = "+settings.setMenu_isSimulatorOn)
-                }
-            }
-            MenuItem{ text: "Reset All"}
-            MenuItem{ text: "HotKeys"}
-            MenuItem{ text: "About..."}
-            MenuItem{ text: "Help"}
-            closePolicy: Popup.CloseOnPressOutsideParent
-        }
+//                text: "Simulator On"
+//                checkable: true
+//                checked: isChecked
+//                onCheckedChanged: {
+//                    settings.setMenu_isSimulatorOn = checked
+//                    console.log("Sim = "+settings.setMenu_isSimulatorOn)
+//                }
+//            }
+//            MenuItem{ text: "Reset All"}
+//            MenuItem{ text: "HotKeys"}
+//            MenuItem{ text: "About..."}
+//            MenuItem{ text: "Help"}
+//            closePolicy: Popup.CloseOnPressOutsideParent
+//        }
 
         Text{
             anchors.top:parent.top
@@ -415,7 +415,7 @@ Window {
 
                 background: Rectangle{
                     anchors.fill: parent
-                    color: "white"
+                    color: aog.backgroundColor
                     radius: 10
                     Text{
                         anchors.top: parent.top
@@ -1215,6 +1215,7 @@ Window {
             visible: false
             z:1
         }
+
         TrackButtons{
             id: trackButtons
             anchors.right: parent.right
@@ -1303,6 +1304,11 @@ Window {
             id: toolsMenu
             visible: false
         }
+        HamburgerMenu{
+            id: hamburgerMenu
+            visible: false
+        }
+
         Config {
             id:config
             visible:false
@@ -1384,6 +1390,10 @@ Window {
             id: refNudge
             visible: false
         }
+        SetSimCoords{
+            id: setSimCoords
+            anchors.fill: parent
+        }
 
         TrackNew{
             id: trackNew
@@ -1430,8 +1440,8 @@ Window {
             height: 100
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            color: "gray"
-            border.color: "aqua"
+            color: aog.backgroundColor
+            border.color: aog.blackDayWhiteNight
             border.width: 2
             visible: false
             IconButtonText{

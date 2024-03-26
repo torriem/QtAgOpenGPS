@@ -13,7 +13,7 @@ Item {
     anchors.fill: parent
     Rectangle{
         anchors.fill: parent
-        color: "ghostwhite"
+        color: aog.backgroundColor
         GridLayout{
             anchors.top: parent.top
             anchors.left: parent.left

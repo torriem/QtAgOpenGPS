@@ -15,7 +15,26 @@ Item {
 
     property color backgroundColor: "ghostWhite"
     property color textColor: "black"
-    property color wrapperColor: "gray"
+    property color borderColor: "lightblue"
+    property color blackDayWhiteNight: "black"
+
+    Connections{
+        target: settings
+        function onSetDisplay_isDayModeChanged(){
+            if (settings.setDisplay_isDayMode){
+                backgroundColor = "ghostWhite"
+                textColor = "black"
+                borderColor = "lightBlue"
+                blackDayWhiteNight = "black"
+            }
+            else{
+                backgroundColor = "darkgray"
+                textColor = "white"
+                borderColor= "darkBlue"
+                blackDayWhiteNight = "white"
+            }
+        }
+    }
 
     Connections{//sounds functions go here.
         target: aog

@@ -12,7 +12,7 @@ import "../components"
 Rectangle{
 	id: configImplementSwitch
 	anchors.fill: parent
-	color: "ghostwhite"
+    color: aog.backgroundColor
 	visible: false
 	Rectangle{
 		anchors.left: parent.left
@@ -20,8 +20,8 @@ Rectangle{
 		anchors.top: parent.top
 		width: workswitchcolumn.width + 40
 		anchors.margins: 40
-		border.color: "black"
-		color: "ghostwhite"
+        border.color: aog.blackDayWhiteNight
+        color: aog.backgroundColor
 		Text{
 			id: workTitle
 			anchors.top: parent.top
@@ -90,8 +90,8 @@ Rectangle{
 		anchors.top: parent.top
 		width: steerswitchcolumn.width + 40
 		anchors.margins: 40
-		border.color: "black"
-		color: "ghostwhite"
+        border.color: aog.blackDayWhiteNight
+        color: aog.backgroundColor
 		Text{
 			id: steerTitle
 			anchors.top: parent.top

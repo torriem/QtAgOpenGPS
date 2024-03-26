@@ -10,7 +10,7 @@ import "../components"
 Rectangle{
     id: configTractorDimensions
     anchors.fill: parent
-    color: "ghostwhite"
+    color: aog.backgroundColor
 
     visible: false
     Image {

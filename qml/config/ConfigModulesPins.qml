@@ -8,7 +8,7 @@ import "../components"
 Rectangle{
     id: configModulesPins
     anchors.fill: parent
-    color: "ghostwhite"
+    color: aog.backgroundColor
     visible: false
 
     onVisibleChanged: {

@@ -10,7 +10,7 @@ Rectangle{
     id: configSources
     anchors.fill: parent
     visible: true
-    color: "ghostwhite"
+    color: aog.backgroundColor
     TitleFrame {
         id:antennaType
         width: 360
@@ -18,8 +18,8 @@ Rectangle{
         anchors.top: parent.top
         anchors.margins: 5
         anchors.horizontalCenter: parent.horizontalCenter
-        color: "ghostwhite"
-        border.color: "black"
+        color: aog.backgroundColor
+        border.color: aog.blackDayWhiteNight
         visible: true
         title: qsTr("Antenna Type", "GPS Antenna type, fixed or dual")
         font.pointSize: 16
@@ -98,7 +98,7 @@ Rectangle{
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.margins: 5
-        color: "ghostwhite"
+        color: aog.backgroundColor
         visible: true
         title: qsTr("RTK Alarm")
         font.pointSize: 16
@@ -150,9 +150,9 @@ Rectangle{
         anchors.top: antennaType.bottom
         anchors.margins: 5
 
-        border.color: enabled ? "black" : "grey"
+        border.color: enabled ? aog.blackDayWhiteNight : "grey"
 
-        color: "ghostwhite"
+        color: aog.backgroundColor
 
         title: qsTr("Single Antenna Settings")
         font.pointSize: 16
@@ -165,7 +165,7 @@ Rectangle{
 
             id: minGPSStep
             Label {
-                color: fixBtn.checked ? "black" : "grey"
+                color: fixBtn.checked ? aog.blackDayWhiteNight : "grey"
                 text: qsTr("Minimum GPS Step")
                 width: singleAntennaSettings.width * 0.5
             }
@@ -197,14 +197,14 @@ Rectangle{
             anchors.leftMargin: 10
 
             Label {
-                color: fixBtn.checked ? "black" : "grey"
+                color: fixBtn.checked ? aog.blackDayWhiteNight : "grey"
                 text: qsTr("Heading Distance")
                 width: singleAntennaSettings.width * 0.5
             }
             Label {
                 id: headingDistanceText
                 width: minGPSStepBtn.width
-                color: fixBtn.checked ? "black" : "grey"
+                color: fixBtn.checked ? aog.blackDayWhiteNight : "grey"
                 text: settings.setF_minHeadingStepDistance * 100 + " " + qsTr("cm", "centimeter abbreviation")
             }
         }
@@ -215,8 +215,8 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             width: 360
             height: 100
-            border.color: fixBtn.checked ? "black" : "grey"
-            color: "ghostwhite"
+            border.color: fixBtn.checked ? aog.blackDayWhiteNight : "grey"
+            color: aog.backgroundColor
             SliderCustomized{
                 leftText: 100 - value
                 rightText: value
@@ -247,7 +247,7 @@ Rectangle{
             anchors.left: fusionRow.left
             anchors.top: fusionRow.bottom
             anchors.topMargin: 15
-            color: fixBtn.checked ? "black" : "grey"
+            color: fixBtn.checked ? aog.blackDayWhiteNight : "grey"
             text: qsTr("Default: 70%")
         }
 
@@ -257,7 +257,7 @@ Rectangle{
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 30
             anchors.horizontalCenter: parent.horizontalCenter
-            color: "white"
+            color: aog.backgroundColor
             colorChecked: "green"
             isChecked: settings.setIMU_isReverseOn
             onClicked: settings.setIMU_isReverseOn = checked
@@ -270,8 +270,8 @@ Rectangle{
         anchors.left: parent.left
         anchors.bottom: rtkAlarm.top
         anchors.margins: 5
-        border.color: "black"
-        color: "ghostwhite"
+        border.color: aog.blackDayWhiteNight
+        color: aog.backgroundColor
         title: qsTr("Dual Antenna Settings")
         font.pointSize: 16
         enabled: dualBtn.checked
@@ -306,7 +306,7 @@ Rectangle{
             anchors.bottomMargin: 30
             anchors.horizontalCenter: parent.horizontalCenter
             checkable: true
-            color: "white"
+            color: aog.backgroundColor
             colorChecked: "green"
             isChecked: settings.setIMU_isDualAsIMU
             onClicked: settings.setIMU_isDualAsIMU = checked

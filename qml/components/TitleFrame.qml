@@ -9,7 +9,7 @@ Rectangle {
     property alias font: titleLabel.font
 
     property bool enabled: true
-    property color titleColorEnabled: "black"
+    property color titleColorEnabled: aog.backgroundColor
     property color titleColorDisabled: "grey"
 
     property int titleHeight: titleLabel.height

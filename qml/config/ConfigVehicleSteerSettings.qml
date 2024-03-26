@@ -8,7 +8,7 @@ import "../components"
 Rectangle{
     id: configTractorSteerSettings
     anchors.fill: parent
-    color: "ghostwhite"
+    color: aog.backgroundColor
     visible: false
 /*    Rectangle{
         id: lightbarrect

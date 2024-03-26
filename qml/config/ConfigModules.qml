@@ -12,7 +12,7 @@ import "../components"
     Rectangle{
         id: configModules
         anchors.fill: parent
-        color: "ghostwhite"
+        color: aog.backgroundColor
 
         onVisibleChanged: {
             load_settings()
@@ -96,8 +96,8 @@ import "../components"
         Rectangle{
             id: hydConfig
             anchors.left: parent.left
-            color: "ghostwhite"
-            border.color: "black"
+            color: aog.backgroundColor
+            border.color: aog.blackDayWhiteNight
             anchors.top: titleText.bottom
             anchors.topMargin: 20
             anchors.bottom: cboxMachInvertRelays.top

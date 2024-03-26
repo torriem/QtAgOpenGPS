@@ -9,7 +9,7 @@ Item {
     anchors.fill: parent
     Rectangle{
         anchors.fill: parent
-        color: "ghostwhite"
+        color: aog.backgroundColor
         TitleFrame{
             id: fieldMenuText
             anchors.top: parent.top

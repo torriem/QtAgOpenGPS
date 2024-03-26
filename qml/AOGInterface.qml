@@ -20,6 +20,13 @@ import QtQuick.Controls 2.15
 Item {
     id: aogInterfaceType
 
+    AOGTheme{
+        id: aogTheme
+    }
+    property color backgroundColor: theme.backgroundColor
+    property color textColor: theme.textColor
+    property color borderColor: theme.borderColor
+    property color blackDayWhiteNight: "white"
     /*
     Connections {
         target: settings
