@@ -8,6 +8,7 @@ import "../components"
 Button {
     implicitWidth: 70
     implicitHeight: 70
+    property var heightMinusPadding: implicitHeight - topPadding
     id: icon_button
     text: ""
     hoverEnabled: true
@@ -35,6 +36,9 @@ Button {
 
     //For compatibility with the old IconButton and friends
     property bool isChecked: icon_button.checked
+
+    property string buttonText: text
+    property bool noText: false  //if no text-for iconButtonColor
 
     onIsCheckedChanged: {
         checked = isChecked;
@@ -77,13 +81,16 @@ Button {
     }
     contentItem: Rectangle {
         id: icon_button_content
-        anchors.fill: parent
+        anchors.fill: backgroundItem
         visible: !disabled
         color: "transparent"
 
         Text {
             id: text1
-            text: icon_button.text
+            text: if(icon_button.noText)//this way I can reuse iconButton on iconbuttoncolor
+                      ""
+                  else
+                      icon_button.text
             anchors.bottom: parent.bottom
             anchors.bottomMargin: parent.height*0.02
             anchors.horizontalCenter: parent.horizontalCenter
@@ -100,8 +107,8 @@ Button {
             anchors.fill: parent
             anchors.topMargin: parent.height * 0.00
             anchors.bottomMargin: icon_button.text  ?
-                                      parent.height - parent.height * icon_button.iconHeightScaleText + parent.height * 0.00
-                                    : parent.height * 0.02
+                                      heightMinusPadding - heightMinusPadding * icon_button.iconHeightScaleText + heightMinusPadding * 0.00
+                                    : heightMinusPadding * 0.02
             anchors.leftMargin: parent.width * 0.00
             anchors.rightMargin: parent.width * 0.00
             fillMode: Image.PreserveAspectFit
@@ -122,6 +129,7 @@ Button {
     }
 
     background: Item{
+        id: backgroundItem
         Rectangle{
             anchors.fill: parent
             color: "transparent"

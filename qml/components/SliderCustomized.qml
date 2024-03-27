@@ -51,7 +51,8 @@ Slider{
         anchors.rightMargin: rightText.width
         anchors.bottom: parent.bottom
      */   radius: 2
-        color: "white"
+        //color: "white"
+        color: "blue"
 
 
     }
