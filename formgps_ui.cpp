@@ -75,6 +75,12 @@ void FormGPS::setupGui()
     InterfaceProperty<BoundaryInterface, double>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
     InterfaceProperty<BoundaryInterface, btnStates>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
 
+    InterfaceProperty<RecordedPathInterface, int>::set_qml_root(qmlItem(qml_root, "recordedPathInterface"));
+    InterfaceProperty<RecordedPathInterface, uint>::set_qml_root(qmlItem(qml_root, "recordedPathInterface"));
+    InterfaceProperty<RecordedPathInterface, bool>::set_qml_root(qmlItem(qml_root, "recordedPathInterface"));
+    InterfaceProperty<RecordedPathInterface, double>::set_qml_root(qmlItem(qml_root, "recordedPathInterface"));
+    InterfaceProperty<RecordedPathInterface, btnStates>::set_qml_root(qmlItem(qml_root, "recordedPathInterface"));
+
     QMLSectionButtons::set_aog_root(qmlItem(qml_root, "aog"));
 
     //hook up our AOGInterface properties

@@ -1,7 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
-import QtQuick.Dialogs 1.3
+import QtQuick.Dialogs
 import QtQml.Models 2.3
 import "components"
 
@@ -10,7 +10,7 @@ Dialog {
     width: 600
     height: 400
 
-    modality: Qt.WindowModal
+    modal: true
     standardButtons: StandardButton.NoButton
     title: qsTr("AB Curve")
 
@@ -244,7 +244,7 @@ Dialog {
                 id: abcurveView
                 anchors.fill: parent
                 model: abcurveModel
-                property int currentIndex: -1
+                //property int currentIndex: -1
 
                 delegate: RadioButton{
                     id: control

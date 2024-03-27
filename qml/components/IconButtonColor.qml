@@ -1,6 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.5
-import QtGraphicalEffects 1.0
+import Qt5Compat.GraphicalEffects
 
 IconButton {
     implicitWidth: 120

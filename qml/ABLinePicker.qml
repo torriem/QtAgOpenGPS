@@ -1,8 +1,8 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.15
-import QtQuick.Controls.Styles 1.4
+//import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
-import QtQuick.Dialogs 1.3
+import QtQuick.Dialogs
 import QtQml.Models 2.3
 import "components"
 
@@ -15,7 +15,7 @@ Dialog {
     width: 600
     height: 400
 
-    modality: Qt.WindowModal
+    modal: true
     standardButtons: StandardButton.NoButton
     title: qsTr("AB Line")
 
@@ -176,7 +176,7 @@ Dialog {
         Dialog {
             id: abSetter
             width: 300
-            modality: Qt.NonModal
+            modal: true
             //color: "lightgray"
             //border.width: 1
             //border.color: "black"
@@ -571,7 +571,7 @@ Dialog {
                 id: ablineView
                 anchors.fill: parent
                 model: ablineModel
-                property int currentIndex: -1
+                //property int currentIndex: -1
                 clip: true
 
                 delegate: RadioButton{

@@ -1,9 +1,9 @@
 import QtQuick 2.8
-import QtGraphicalEffects 1.15
+import Qt5Compat.GraphicalEffects
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
-import QtMultimedia 5.9
+import QtMultimedia
 import AgOpenGPS 1.0
 
 import "interfaces"
@@ -78,6 +78,11 @@ Window {
         objectName: "boundaryInterface"
     }
     RecordedPathInterface{
+        id: recordedPathInterface
+        objectName: "recordedPathInterface"
+    }
+
+    RecordedPathInterface {
         id: recordedPathInterface
         objectName: "recordedPathInterface"
     }
