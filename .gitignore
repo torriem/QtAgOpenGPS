@@ -1,7 +1,3 @@
 *.pro.user
 Wedel.txt
 *.swp
-compile_commands.json
-.ccls-cache
-.qmake.stash
-Makefile
