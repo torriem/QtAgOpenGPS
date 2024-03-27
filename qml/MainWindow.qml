@@ -1,4 +1,4 @@
-import QtQuick 2.8
+import QtQuick 2.9
 import Qt5Compat.GraphicalEffects
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
@@ -76,10 +76,6 @@ Window {
     BoundaryInterface {
         id: boundaryInterface
         objectName: "boundaryInterface"
-    }
-    RecordedPathInterface{
-        id: recordedPathInterface
-        objectName: "recordedPathInterface"
     }
 
     RecordedPathInterface {

@@ -36,7 +36,7 @@ public:
     //TODO add types as needed
     inline operator bool() const { return prop_root->property(prop_name).toBool(); }
     inline operator bool() { return prop_root->property(prop_name).toBool(); }
-    inline operator bool() const { return prop_root->property(prop_name).toBool(); }
+    //inline operator bool() const { return prop_root->property(prop_name).toBool(); }
     inline operator int() { return prop_root->property(prop_name).toInt(); }
     inline operator uint() { return prop_root->property(prop_name).toUInt(); }
     inline operator double() { return prop_root->property(prop_name).toDouble(); }

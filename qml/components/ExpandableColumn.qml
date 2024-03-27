@@ -1,13 +1,13 @@
-import QtQuick 2.0
+import QtQuick 2.9
 import QtQuick.Controls 2.5
 
 import ".."
 
 Column{
     id: columnRoot
-    signal adjust(var adjustHeight)
-    onVisibleChanged: adjust(adjust.adjustHeight)
-    onAdjust:{
+    property var adjustHeight: height
+    onVisibleChanged: adjust(adjustHeight)
+    function adjust(adjustHeight){
             var totalChildrenHeight = 0
             var numOfChildren = 0
             var numOfVisibleChildren = 0

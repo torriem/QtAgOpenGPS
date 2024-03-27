@@ -627,13 +627,10 @@
         <file>qml/components/IconButtonColor.qml</file>
         <file>qml/components/ComboBoxCustomized.qml</file>
         <file>qml/components/ButtonColor.qml</file>
-<<<<<<< HEAD
         <file>qml/components/ExpandableColumn.qml</file>
         <file>qml/components/ScrollViewExpandableColumn.qml</file>
         <file>images/TrashContourRef.png</file>
         <file>qml/RecPath.qml</file>
-=======
->>>>>>> 76a7b1e590dc8b7e8317f35245389451a719f34f
         <file>qml/interfaces/RecordedPathInterface.qml</file>
     </qresource>
 </RCC>
