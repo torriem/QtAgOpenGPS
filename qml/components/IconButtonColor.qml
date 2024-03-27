@@ -1,6 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.5
-import QtGraphicalEffects 1.0
+import Qt5Compat.GraphicalEffects
 
 Button {
     implicitWidth: 120
@@ -67,7 +67,7 @@ Button {
         }
     }
 
-    property int radius: 10
+    //property int radius: 10
     onRadiusChanged: {
         icon_button_background.radius = radius
     }

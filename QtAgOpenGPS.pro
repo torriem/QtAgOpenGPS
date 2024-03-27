@@ -9,8 +9,8 @@ QT       += core gui opengl quick quickwidgets network
 CONFIG += c++17
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-lessThan(QT_MAJOR_VERSION, 5):error("requires Qt 5.9 or newer")
-equals(QT_MAJOR_VERSION,5):lessThan(QT_MINOR_VERSION,9):error("requires Qt 5.9 or newer")
+lessThan(QT_MAJOR_VERSION, 6):error("requires Qt 6.5 or newer")
+#equals(QT_MAJOR_VERSION,5):lessThan(QT_MINOR_VERSION,9):error("requires Qt 5.9 or newer")
 
 
 TARGET = QtAgOpenGPS

@@ -1,8 +1,8 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
-import QtQuick.Extras 1.4
-import QtQuick.Dialogs 1.3
+//import QtQuick.Extras 1.4
+import QtQuick.Dialogs
 import Qt.labs.folderlistmodel 2.2
 
 import ".."
@@ -11,7 +11,7 @@ import "../components"
 Dialog {
     height: 768
     width:1024
-    modality: Qt.WindowModal
+    modal: true
     standardButtons: StandardButton.NoButton
     title: qsTr("General Settings")
 
