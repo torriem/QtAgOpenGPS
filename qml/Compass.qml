@@ -1,5 +1,5 @@
 import QtQuick
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 Rectangle
 {
@@ -23,8 +23,10 @@ Rectangle
                 angle: compass.heading
         }
     }
-    ColorOverlay{
-        color: "red"
+    MultiEffect {
+        colorization: 1.0
+        colorizationColor: "red"
+        brightness: 0.5
         anchors.fill: needle
         source: needle
     }

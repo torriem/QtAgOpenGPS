@@ -1,5 +1,4 @@
 import QtQuick.Controls
-import Qt5Compat.GraphicalEffects
 import QtQuick
 
 Slider{

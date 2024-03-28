@@ -1,10 +1,10 @@
-import QtQuick
-import QtQuick.Window
-import QtQuick.Controls
-import QtQuick.Layouts
+import QtQuick 2.8
 import QtQuick.Effects
+import QtQuick.Window 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.3
 import QtMultimedia
-import AgOpenGPS 1.0
+//import AgOpenGPS 1.0
 
 import "interfaces"
 import "boundary"
@@ -50,9 +50,9 @@ Window {
 
     //there's a global "settings" property now.  In qmlscene we'll have to fake it somehow.
 
-    //MockSettings {
-    //    id: settings
-    //}
+    MockSettings {
+        id: settings
+    }
 
     AOGInterface {
         id: aog
@@ -467,7 +467,7 @@ Window {
                 objectName: "btnTools"
                 buttonText: qsTr("Tools")
                 icon.source: "/images/SpecialFunctions.png"
-                onClicked: toolsMenu.visible = true
+                onClicked: toolsWindow.visible = true
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText{
@@ -485,6 +485,13 @@ Window {
                 icon.source: "/images/FieldTools.png"
                 onClicked: fieldTools.visible = true
                 enabled: aog.isJobStarted ? true : false
+                Layout.alignment: Qt.AlignCenter
+            }
+            FieldToolsMenu {
+                id: fieldTools
+                width: 300
+                visible: false
+                height: mainWindow.height
                 Layout.alignment: Qt.AlignCenter
             }
 
@@ -1172,8 +1179,6 @@ Window {
             //TODO add contour
         }
 
-        //Components- this is where the windows that get displayed over the
-        //ogl get instantiated.
         FieldData{
             id: fieldData
             anchors.left: parent.left
@@ -1193,10 +1198,6 @@ Window {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottomMargin: 8
             visible: utils.isTrue(settings.setMenu_isSimulatorOn)
-        }
-        RecPath{// recorded path menu
-            id: recPath
-            visible: false
         }
 
         OutlineText{
@@ -1308,18 +1309,20 @@ Window {
         }
 
 
-        FieldToolsMenu {
-            id: fieldTools
-            visible: false
-        }
         FieldMenu {
             id: fieldMenu
             objectName: "slideoutMenu"
             visible: false
         }
         ToolsWindow {
-            id: toolsMenu
+            id: toolsWindow
+            objectName: "slideoutMenu"
+            anchors.top: parent.top
+            anchors.topMargin: 20
+            anchors.left: leftColumn.right
+            anchors.leftMargin: 15
             visible: false
+
         }
         Config {
             id:config
