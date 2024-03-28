@@ -4,7 +4,7 @@ import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 import QtMultimedia
-import AgOpenGPS 1.0
+//import AgOpenGPS 1.0
 
 import "interfaces"
 import "boundary"
@@ -50,9 +50,9 @@ Window {
 
     //there's a global "settings" property now.  In qmlscene we'll have to fake it somehow.
 
-    //MockSettings {
-    //    id: settings
-    //}
+    MockSettings {
+        id: settings
+    }
 
     AOGInterface {
         id: aog

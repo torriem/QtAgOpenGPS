@@ -1,6 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.5
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 Button {
     implicitWidth: 120
@@ -95,13 +95,13 @@ Button {
             z:1
         }
 
-        Colorize {
+        MultiEffect {
             id: disableFilter
             anchors.fill: content_image
             source: content_image
-            hue: 0.0
+            colorization: 0.0
             saturation: 0.0
-            lightness: 0.2
+            brightness: 0.2
             visible: ! icon_button.enabled
         }
 
