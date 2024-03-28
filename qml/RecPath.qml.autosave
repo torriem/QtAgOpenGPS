@@ -1,5 +1,5 @@
-import QtQuick 2.0
-import QtQuick.Controls 2.5
+import QtQuick
+import QtQuick.Controls
 
 import "components"
 
@@ -23,31 +23,21 @@ MoveablePopup{
         width: children.width
         height: parent.height-20
         anchors.centerIn: parent
-        
-        IconButtonTransparent{  //go stop in cs
+        IconButtonTransparent{
             icon.source: "/images/Play.png"
             iconChecked: "/images/boundaryStop.png"
-            onClicked: {
-                recordedPathInterface.recPathFollowStop()
-                if(!checked){
-                    aog.isContourBtnOn = false
-                    aog.isAutoSteerBtnOn = false
-                    aog.isYouTurnBtnOn = false
-                    aog.current_trackNum = 0 //is this right?
-                }
-			}               
-		}
-        
-        IconButtonTransparent{ //resume path in cs
+            onClicked: recordedPathInterface.recPathFollowStop()
+        }
+        IconButtonTransparent{
             icon.source: "/images/Stop.png"
             onClicked: recordedPathInterface.recPathResumeStyle()
         }
-        IconButtonTransparent{ //record stop in cs
+        IconButtonTransparent{
             icon.source: "/images/BoundaryRecord.png"
             iconChecked: "/images/boundaryStop.png"
             onClicked: recordedPathInterface.recPathRecordStop()
         }
-        IconButtonTransparent{ // open file
+        IconButtonTransparent{
             icon.source: "/images/FileExplorerWindows.png"
         }
         IconButtonTransparent{

@@ -1,5 +1,5 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
 /* This type contains properties, signals, and functions to interface
    the C++ backend with the QML gui, while abstracting and limiting

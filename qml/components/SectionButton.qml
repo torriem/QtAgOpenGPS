@@ -1,4 +1,4 @@
-import QtQuick 2.8
+import QtQuick
 /*
 Image {
     id: image

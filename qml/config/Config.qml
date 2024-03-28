@@ -1,9 +1,9 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.3
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 //import QtQuick.Extras 1.4
 import QtQuick.Dialogs
-import Qt.labs.folderlistmodel 2.2
+import Qt.labs.folderlistmodel
 
 import ".."
 import "../components"

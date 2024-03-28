@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick
 
 //This is a spinbox for displaying dimensions that are either
 //cm or inches

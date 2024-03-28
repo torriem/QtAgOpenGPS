@@ -1,8 +1,8 @@
-import QtQuick 2.9
-import QtQuick.Controls 2.5
-import QtQuick.Layouts 1.3
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 import QtQuick.Dialogs
-import QtQml.Models 2.3
+import QtQml.Models
 import "components"
 
 Dialog {

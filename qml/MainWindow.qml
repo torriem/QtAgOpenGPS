@@ -1,8 +1,8 @@
-import QtQuick 2.9
+import QtQuick
 import Qt5Compat.GraphicalEffects
-import QtQuick.Window 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.3
+import QtQuick.Window
+import QtQuick.Controls
+import QtQuick.Layouts
 import QtMultimedia
 import AgOpenGPS 1.0
 
