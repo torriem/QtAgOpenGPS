@@ -215,9 +215,9 @@ Item {
     property int set_uTurnStyle: 0
     property double setGPS_minimumStepLimit: 0.05
     property bool setAS_isSteerInReverse: false
-    property double setAS_functionSpeedLimit: 5
+    property double setAS_functionSpeedLimit: 8
     property double setAS_maxSteerSpeed: 15
-    property double setAS_minSteerSpeed: 1
+    property double setAS_minSteerSpeed: 0
     property string setBrand_HBrand: "AgOpenGPS"
     property string setBrand_WDBrand: "AgOpenGPS"
     property double setIMU_fusionWeight2: 0.06
@@ -242,6 +242,9 @@ Item {
     property string setWindow_RateMapSize: "1022, 742"
     property int setWindow_RateMapZoom: 15
     property point setWindow_QuickABLocation: "100, 100"
+    property bool setDisplay_isLogElevation: false
+    property bool setSound_isSectionsOn: true
+    property double setGPS_dualReverseDetectionDistance: 0.25
     property bool setFeature_isHeadlandOn: true
     property bool setFeature_isTramOn: true
     property bool setFeature_isBoundaryOn: true

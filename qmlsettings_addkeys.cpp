@@ -239,6 +239,9 @@ void QMLSettings::setupKeys() {
     addKey(QString("setWindow_RateMapSize"),QString("dialogs/rateMapSize"),"QString");
     addKey(QString("setWindow_RateMapZoom"),QString("dialogs/rateMapZoom"),"int");
     addKey(QString("setWindow_QuickABLocation"),QString("dialogs/quickABLocation"),"QPoint");
+    addKey(QString("setDisplay_isLogElevation"),QString("display/isLogElevation"),"bool");
+    addKey(QString("setSound_isSectionsOn"),QString("display/soundIsSectionOn"),"bool");
+    addKey(QString("setGPS_dualReverseDetectionDistance"),QString("gps/dualReverseDetectionDistance"),"double");
     addKey(QString("setFeature_isHeadlandOn"),QString("displayFeatures/isHeadlandOn"), "bool");
     addKey(QString("setFeature_isTramOn"),QString("displayFeatures/isTramOn"), "bool");
     addKey(QString("setFeature_isBoundaryOn"),QString("displayFeatures/isBoundaryOn"), "bool");

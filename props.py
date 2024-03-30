@@ -261,4 +261,7 @@ props = {'setwin': 'display/camPitch',
  'setWindow_BingZoom': 'dialogs/bingZoom',
  'setWindow_RateMapSize': 'dialogs/rateMapSize',
  'setWindow_RateMapZoom': 'dialogs/rateMapZoom',
- 'setWindow_QuickABLocation': 'dialogs/quickABLocation'}
+ 'setWindow_QuickABLocation': 'dialogs/quickABLocation',
+ 'setDisplay_isLogElevation': 'display/isLogElevation',
+ 'setSound_isSectionsOn': 'display/soundIsSectionOn',
+ 'setGPS_dualReverseDetectionDistance': 'gps/dualReverseDetectionDistance'}
