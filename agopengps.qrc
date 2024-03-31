@@ -632,5 +632,8 @@
         <file>images/TrashContourRef.png</file>
         <file>qml/RecPath.qml</file>
         <file>qml/interfaces/RecordedPathInterface.qml</file>
+        <file>qml/AOGTheme.qml</file>
+        <file>qml/HamburgerMenu.qml</file>
+        <file>qml/SetSimCoords.qml</file>
     </qresource>
 </RCC>

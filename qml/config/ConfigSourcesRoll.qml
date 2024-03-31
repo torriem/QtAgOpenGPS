@@ -10,7 +10,7 @@ import "../components"
 Rectangle{
     id: configSourcesRoll
     anchors.fill: parent
-    color: "ghostwhite"
+    color: aog.backgroundColor
     visible: false
     IconButtonColor{
         objectName: "btnRemoveOffset"

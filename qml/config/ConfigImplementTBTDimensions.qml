@@ -13,7 +13,7 @@ I'm not sure why, I think I did them the same as everywhere else.
 Rectangle{
     id: configImpDimWin
     anchors.fill: parent
-    color: "ghostwhite"
+    color: aog.backgroundColor
     visible: false
     Image{
         id: image1

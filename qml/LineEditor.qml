@@ -6,9 +6,9 @@ Rectangle {
     id: lineEditor
     width: 300
     height: 375
-    color: "ghostwhite"
+    color: aog.backgroundColor
     border.width: 1
-    border.color: "black"
+    border.color: aog.blackDayWhiteNight
     TopLine{
         id: topLine
         titleText: "Edit AB"

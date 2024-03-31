@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import QtQuick.Dialogs
 import QtQml.Models
 import "components"
+import ".."
 
 Dialog {
     id: abCurvePickerDialog
@@ -52,8 +53,8 @@ Dialog {
     Rectangle{
         anchors.fill: parent
         border.width: 1
-        border.color: "black"
-        color: "lightgray"
+        border.color: aog.blackDayWhiteNight
+        color: aog.borderColor
         TopLine{
             id: topLine
             titleText: "AB Curve"
@@ -148,9 +149,9 @@ Dialog {
             anchors.top: parent.top
             width: 300
             height: 400
-            color: "lightgray"
+            color: aog.backgroundColor
             border.width: 1
-            border.color: "black"
+            border.color: aog.blackDayWhiteNight
             z: 1
             visible: false
             TopLine{
@@ -229,7 +230,7 @@ Dialog {
             anchors.bottom: bottomRow.top
             anchors.bottomMargin: 0
             anchors.margins: 10
-            color: "white"
+            color:aog.borderColor
 
             ListModel {
                 id: abcurveModel
@@ -252,7 +253,7 @@ Dialog {
                     indicator: Rectangle{
                         anchors.fill: parent
                         anchors.margins: 2
-                        color: control.down ? "white" : "blue"
+                        color: control.down ? aog.backgroundColor : "blue"
                         visible: control.checked
                     }
                     onDownChanged: {
@@ -271,7 +272,7 @@ Dialog {
                         text: model.name
                         font.pixelSize: 25
                         font.bold: true
-                        color: control.checked ? "white" : "black"
+                        color: control.checked ? aog.backgroundColor : aog.blackDayWhiteNight
                         z: 2
                     }
                 }

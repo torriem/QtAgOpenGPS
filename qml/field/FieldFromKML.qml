@@ -15,7 +15,7 @@ Rectangle{
         anchors.top:parent.top
         anchors.topMargin: 50
         anchors.horizontalCenter: parent.horizontalCenter
-        color: "ghostwhite"
+        color: aog.backgroundColor
         border.color: "darkgray"
         border.width: 1
         Text {

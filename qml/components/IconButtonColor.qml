@@ -20,14 +20,10 @@ IconButton {
 
     noText: true //no text at the bottom- all at the top
 
-    colorHover1: colorHover
-    colorHover2: colorHover
-    colorHover3: colorHover
-
-    colorChecked1: colorChecked
-    colorChecked2: colorChecked
-    colorChecked3: colorChecked
-    property color color: "white"
+    property color colorChecked1: colorChecked
+    property color colorChecked2: colorChecked
+    property color colorChecked3: colorChecked
+    property color color: aog.backgroundColor
     property color colorChecked: "#99ff99"
     property color colorHover: "white"
 

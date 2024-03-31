@@ -58,8 +58,8 @@ Dialog {
     Rectangle{
         anchors.fill: parent
         border.width: 1
-        border.color: "black"
-        color: "lightgray"
+        border.color: aog.blackDayWhiteNight
+        color: aog.backgroundColor
         TopLine{
             id: topLine
             titleText: "AB Line"
@@ -556,7 +556,7 @@ Dialog {
             anchors.bottom: bottomRow.top
             anchors.bottomMargin: 0
             anchors.margins: 10
-            color: "white"
+            color: aog.backgroundColor
 
             ListModel {
                 id: ablineModel
@@ -580,7 +580,7 @@ Dialog {
                     indicator: Rectangle{
                         anchors.fill: parent
                         anchors.margins: 2
-                        color: (control.down) ? "white" : "blue"
+                        color: (control.down) ? aog.backgroundColor : aog.blackDayWhiteNight
                         visible: control.checked
                     }
 
@@ -599,7 +599,7 @@ Dialog {
                         text: model.name
                         font.pixelSize: 25
                         font.bold: true
-                        color: control.checked ? "white" : "black"
+                        color: control.checked ? aog.backgroundColor : aog.blackDayWhiteNight
                         z: 2
                     }
                 }

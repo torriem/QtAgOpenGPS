@@ -20,6 +20,13 @@ import QtQuick.Controls
 Item {
     id: aogInterfaceType
 
+    AOGTheme{
+        id: aogTheme
+    }
+    property color backgroundColor: theme.backgroundColor
+    property color textColor: theme.textColor
+    property color borderColor: theme.borderColor
+    property color blackDayWhiteNight: "white"
     /*
     Connections {
         target: settings
@@ -53,9 +60,9 @@ Item {
     property bool isAutoSteerBtnOn: false
     property bool isYouTurnBtnOn: false
 
-    //onIsAutoSteerBtnOnChanged: {
-    //    console.debug("isAutoSteerBtnOn is now " + isAutoSteerBtnOn)
-    //}
+//    onIsAutoSteerBtnOnChanged: {
+//        console.debug("isAutoSteerBtnOn is now in aog inface " + isAutoSteerBtnOn)
+//    }
 
     //General FormGPS information updated at GPS rate.
     property double latStart: 53
