@@ -17,7 +17,6 @@ Item{
         anchors.leftMargin: 20
         SliderCustomized {
             id: acqLookAheadSlider
-            objectName: "acqLookAheadSlider"
             implicitHeight: 50
             from: 1
             to: 5
@@ -29,7 +28,6 @@ Item{
         }
         SliderCustomized {
             id: holdLookAheadSlider
-            objectName: "holdLookAheadSlider"
             width: 200
             implicitHeight: 50
             from: 1
@@ -42,7 +40,6 @@ Item{
         }
         SliderCustomized {
             id: lookAheadSpeedGainSlider
-            objectName: "lookAheadSpeedGainSlider"
             width: 200
             implicitHeight: 50
             from: .5
@@ -55,7 +52,6 @@ Item{
         }
         SliderCustomized {
             id: ppIntegralSlider
-            objectName: "ppIntegralSlider"
             width: 200
             from: 0
             implicitHeight: 50

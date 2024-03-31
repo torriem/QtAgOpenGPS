@@ -201,7 +201,6 @@ MoveablePopup {
                 height: 50
                 IconButton{
                     id: pwmSteer
-                    objectName: "pwmYesNo"
                     isChecked: false
                     icon.source: "/images/SteerDriveOff.png"
                     iconChecked: "/images/SteerDriveOn.png"
@@ -211,7 +210,6 @@ MoveablePopup {
                     border: 2
                 }
                 IconButton{
-                    objectName: "pwmLeft"
                     icon.source: "/images/SnapLeft.png"
                     implicitWidth: parent.width/4.5
                     implicitHeight: parent.height
@@ -219,7 +217,6 @@ MoveablePopup {
                     border: 2
                 }
                 IconButton{
-                    objectName: "pwmRight"
                     icon.source: "/images/SnapRight.png"
                     implicitWidth: parent.width/4.5
                     implicitHeight: parent.height
@@ -228,7 +225,6 @@ MoveablePopup {
                 }
                 IconButton{
                     id: pwmZero
-                    objectName: "pwmZero"
                     icon.source: "/images/SteerZeroSmall.png"
                     implicitWidth: parent.width/4.5
                     implicitHeight: parent.height
@@ -252,7 +248,6 @@ MoveablePopup {
                 id: steerRecord
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
-                objectName: "steerRecord"
                 isChecked: false
                 width: 75
                 height: 75
@@ -304,7 +299,6 @@ MoveablePopup {
                 IconButtonTextBeside{
                     id: configBtn
                     icon.source: "/images/Config/ConS_Pins.png"
-                    objectName: "btnCurrentTurnSensor"
                     buttonText: "Config"
                     Layout.alignment: Qt.AlignCenter
                     checkable: true

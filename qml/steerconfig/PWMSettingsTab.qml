@@ -17,7 +17,6 @@ Item{
         anchors.leftMargin: 20
         SliderCustomized {
             id: propGainlider
-            objectName: "progGainSlider"
             leftText: value
             width: 200
             from: 0
@@ -29,7 +28,6 @@ Item{
         }
         SliderCustomized {
             id: maxLimitSlider
-            objectName: "maxLimitSlider"
             centerTopText: "Maximum Limit"
             leftText: value
             width: 200
@@ -41,7 +39,6 @@ Item{
         }
         SliderCustomized {
             id: min2moveSlider
-            objectName: "min2moveSlider"
             width: 200
             from: 0
             to: 100
