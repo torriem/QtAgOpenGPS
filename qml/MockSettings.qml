@@ -178,7 +178,7 @@ Item {
     property double setArdSteer_setting1: 0
     property double setArdSteer_minSpeed: 0
     property double setArdSteer_maxSpeed: 20
-    property double setArdSteer_setting0: 56
+    property double setArdSteer_setting0: 56 //motor driver type
     property double setVehicle_hydraulicLiftLookAhead: 2
     property bool setVehicle_isMachineControlToAutoSteer: false
     property double setArdSteer_maxPulseCounts: 3
