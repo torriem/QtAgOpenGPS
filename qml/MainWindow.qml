@@ -136,7 +136,6 @@ Window {
             id: btnfileMenu
             height: parent.height
             width: 75
-            objectName: "btnfileMenu"
             icon.source: "/images/fileMenu.png"
             onClicked: hamburgerMenu.visible = true
         }
@@ -240,20 +239,17 @@ Window {
                 verticalAlignment: Text.AlignVCenter
             }
             IconButtonTransparent{
-                objectName: "btnHelp"
                 height: parent.height
                 width: 75
                 icon.source: "/images/Help.png"
             }
             IconButtonTransparent{
-                objectName: "btnWindowMinimize"
                 height: parent.height
                 icon.source: "/images/WindowMinimize.png"
                 width: 75
                 onClicked: mainWindow.showMinimized()
             }
             IconButtonTransparent{
-                objectName: "btnWindowMaximize"
                 height: parent.height
                 icon.source: "/images/WindowMaximize.png"
                 width: 75
@@ -268,7 +264,6 @@ Window {
                 }
             }
             IconButtonTransparent{
-                objectName: "btnWindowClose"
                 height: parent.height
                 width: 75
                 icon.source: "/images/WindowClose.png"
@@ -451,7 +446,6 @@ Window {
             }
             IconButtonText {
                 id: btnnavigationSettings
-                objectName: "btnnavigationSettings"
                 buttonText: qsTr("Display")
                 icon.source: "/images/NavigationSettings.png"
                 onClicked: displayButtons.visible = !displayButtons.visible
@@ -459,7 +453,6 @@ Window {
             }
             IconButtonText {
                 id: btnSettings
-                objectName: "btnSettings"
                 buttonText: qsTr("Settings")
                 icon.source: "/images/Settings48.png"
                 onClicked: config.open()
@@ -467,7 +460,6 @@ Window {
             }
             IconButtonText {
                 id: btnTools
-                objectName: "btnTools"
                 buttonText: qsTr("Tools")
                 icon.source: "/images/SpecialFunctions.png"
                 onClicked: toolsMenu.visible = true
@@ -475,7 +467,6 @@ Window {
             }
             IconButtonText{
                 id: btnFieldMenu
-                objectName: "btnFieldMenu"
                 buttonText: qsTr("Field")
                 icon.source: "/images/JobActive.png"
                 onClicked: fieldMenu.visible = true
@@ -483,7 +474,6 @@ Window {
             }
             IconButtonText{
                 id: btnFieldTools
-                objectName: "btnFieldTools"
                 buttonText: qsTr("Field Tools")
                 icon.source: "/images/FieldTools.png"
                 onClicked: fieldTools.visible = true
@@ -493,14 +483,12 @@ Window {
 
             IconButtonText {
                 id: btnAgIO
-                objectName: "btnAgIO"
                 buttonText: qsTr("AgIO")
                 icon.source: "/images/AgIO.png"
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnautoSteerConf
-                objectName: "btnAutosteerConf"
                 buttonText: qsTr("Steer config")
                 icon.source: "/images/AutoSteerConf.png"
                 Layout.alignment: Qt.AlignCenter
@@ -568,7 +556,6 @@ Window {
             }
             IconButtonText{
                 id: btnABCurve
-                objectName: "btnABCurve"
                 isChecked: false
                 checkable: true
                 icon.source: "/images/CurveOff.png"
@@ -601,7 +588,6 @@ Window {
             }
             IconButtonText{
                 id: btnABLine
-                objectName: "btnABLine"
                 checkable: true
                 //TODO: this should be set programmatically
                 //Also the types of lines are all mutually exclusive
@@ -633,7 +619,6 @@ Window {
 
             IconButton{
                 id: btnABLineCycle
-                objectName: "btnABLineCycle"
                 icon.source: "/images/ABLineCycle.png"
                 width: btnABLine.width
                 height: btnABLine.height
@@ -641,7 +626,6 @@ Window {
             }
             IconButton{
                 id: btnABLineCycleBk
-                objectName: "btnABLineCycleBk"
                 icon.source: "/images/ABLineCycleBk.png"
                 width: btnABLine.width
                 height: btnABLine.height
@@ -650,7 +634,6 @@ Window {
 
             IconButtonText {
                 id: btnSectionManual
-                objectName: "btnSectionManual"
                 isChecked: aog.manualBtnState == 2
                 checkable: true
                 icon.source: "/images/ManualOff.png"
@@ -672,7 +655,6 @@ Window {
 
             IconButtonText {
                 id: btnSectionAuto
-                objectName: "btnSectionAuto"
                 isChecked: aog.autoBtnState == 1
                 checkable: true
                 icon.source: "/images/SectionMasterOff.png"
@@ -692,7 +674,6 @@ Window {
             }
             IconButtonText {
                 id: btnAutoYouTurn
-                objectName: "btnAutoYouTurn"
                 isChecked: aog.isYouTurnBtnOn
                 checkable: true
                 icon.source: "/images/YouTurnNo.png"
@@ -705,7 +686,6 @@ Window {
             }
             IconButtonText {
                 id: btnAutoSteer
-                objectName: "btnAutoSteer"
                 icon.source: "/images/AutoSteerOff.png"
                 iconChecked: "/images/AutoSteerOn.png"
                 checkable: true
@@ -810,7 +790,6 @@ Window {
             }
             IconButtonText {
                 id: btnYouSkip
-                objectName: "btnYouSkip"
                 isChecked: false
                 checkable: true
                 icon.source: "/images/YouSkipOff.png"
@@ -820,7 +799,6 @@ Window {
             }
             IconButtonText {
                 id: btnResetTool
-                objectName: "btnResetTool"
                 icon.source: "/images/ResetTool.png"
                 buttonText: "Reset Tool"
                 Layout.alignment: Qt.AlignCenter
@@ -828,7 +806,6 @@ Window {
             }
             IconButtonText {
                 id: btnSectionMapping
-                objectName: "btnSectionMapping"
                 icon.source: "/images/SectionMapping"
                 Layout.alignment: Qt.AlignCenter
             }
@@ -843,7 +820,6 @@ Window {
             }
             IconButtonText {
                 id: btnTramLines
-                objectName: "btnTramLines"
                 icon.source: "/images/TramLines.png"
                 buttonText: "Tram Lines"
                 Layout.alignment: Qt.AlignCenter
@@ -851,7 +827,6 @@ Window {
             IconButtonText {
                 property bool isOn: false
                 id: btnHydLift
-                objectName: "btnHydLift"
                 isChecked: isOn
                 checkable: true
                 disabled: btnHeadland.checked
@@ -867,7 +842,6 @@ Window {
             }
             IconButtonText {
                 id: btnHeadland
-                objectName: "btnHeadland"
                 isChecked: aog.isHeadlandOn
                 checkable: true
                 icon.source: "/images/HeadlandOff.png"
@@ -1033,7 +1007,6 @@ Window {
             }
             Item{
                 //this whole item is for the manual uturn buttons, and lateral buttons
-                objectName: "manUTurnButtons"
                 id: manualUturnLateral
                 anchors.top: lightbar.bottom
                 anchors.left: parent.left
@@ -1096,7 +1069,6 @@ Window {
                     visible: settings.setFeature_isLateralOn
                     Button{
                         background: Rectangle{color: "transparent"}
-                        objectName: "btnManLateralLeft"
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
                         anchors.left: parent.left
@@ -1111,7 +1083,6 @@ Window {
                     }
                     Button{
                         background: Rectangle{color: "transparent"}
-                        objectName: "btnManLateralRight"
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
                         anchors.right: parent.right
@@ -1289,7 +1260,6 @@ Window {
 
         SliderCustomized { //quick dirty hack--the up and down buttons change this value, so the speed changes
             id: speedSlider
-            objectName: "simSpeed"
             //anchors.bottom: bottomButtons.top
 //            anchors.bottomMargin: 3
 //            anchors.left:bottomButtons.left

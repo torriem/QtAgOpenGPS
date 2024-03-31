@@ -69,21 +69,17 @@ Dialog {
             anchors.bottomMargin: 1
             width: childrenRect.width
             IconButtonTransparent{
-                objectName: "btnLineCopy"
                 icon.source: "/images/FileCopy.png"
                 onClicked: copyCurveName.visible = true
             }
             IconButtonTransparent{
-                objectName: "btnLineEdit"
                  onClicked: editCurveName.visible = true
                icon.source: "/images/FileEditName.png"
             }
             IconButtonTransparent{
-                objectName: "btnLineSwapPoints"
                 icon.source: "/images/ABSwapPoints.png"
             }
             IconButtonTransparent{
-                objectName: "btnLineExit"
                 icon.source: "/images/OK64.png"
                 onClicked: {
                     if (abcurveView.currentIndex > -1) {
@@ -112,11 +108,9 @@ Dialog {
 
                 IconButtonTransparent{
                     id: btnLineDelete
-                    objectName: "btnLineDelete"
                     icon.source: "/images/ABLineDelete.png"
                 }
                 IconButtonTransparent{
-                    objectName: "btnLineExit"
                     icon.source: "/images/SwitchOff.png"
                     onClicked: {
                         aog.currentABCurve = -1
@@ -125,12 +119,10 @@ Dialog {
                     }
                 }
                 IconButtonTransparent{
-                    objectName: "btnLineAdd"
                     icon.source: "/images/AddNew.png"
                     onClicked: abSetter.visible = true
                 }
                 IconButtonTransparent{
-                    objectName: "btnLineLoadFromKML"
                     icon.source: "/images/BoundaryLoadFromGE.png"
                 }
             }
@@ -159,7 +151,6 @@ Dialog {
                 titleText: "AB Curve"
             }
             IconButtonTransparent{
-                objectName: "a"
                 id: a
                 anchors.top: settertopLine.bottom
                 anchors.left: parent.left
@@ -168,7 +159,6 @@ Dialog {
                 icon.source: "/images/LetterABlue.png"
             }
             IconButtonTransparent{
-                objectName: "b"
                 anchors.top: settertopLine.bottom
                 anchors.right: parent.right
                 anchors.margins: 5
@@ -177,14 +167,12 @@ Dialog {
                 icon.source: "/images/LetterBBlue.png"
             }
             IconButtonTransparent{
-                objectName: "btnRecord"
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 anchors.margins: 20
                 icon.source: "/images/boundaryPause.png"
             }
             IconButtonTransparent{
-                objectName: "btnCancel"
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
                 anchors.margins: 20
@@ -195,7 +183,6 @@ Dialog {
             }
             LineName{
                 id: newLineName
-                objectName: "newLineName"
                 anchors.top: parent.top
                 anchors.left: parent.left
                 title: "AB Curve"
@@ -205,7 +192,6 @@ Dialog {
 
         LineName{
             id: copyCurveName
-            objectName: "copyCurveName"
             anchors.top:parent.top
             anchors.left: parent.left
             title: "AB Curve"
@@ -214,7 +200,6 @@ Dialog {
         }
         LineName{
             id: editCurveName
-            objectName: "editCurveName"
             anchors.top:parent.top
             anchors.left: parent.left
             title: "AB Curve"
@@ -234,7 +219,6 @@ Dialog {
 
             ListModel {
                 id: abcurveModel
-                objectName: "abcurveModel"
             }
 
             Component.onCompleted: {
