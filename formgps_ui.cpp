@@ -236,13 +236,6 @@ void FormGPS::setupGui()
 
 
 
-    //icon palette
-
-
-    btnSettings = qmlItem(qml_root,"btnSettings");
-    connect(btnSettings,SIGNAL(clicked()),this,
-            SLOT(onBtnSettings_clicked()));
-
     //Any objects we don't need to access later we can just store
     //temporarily
     QObject *temp;
