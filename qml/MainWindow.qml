@@ -1387,40 +1387,6 @@ Window {
         }
 
         Rectangle{
-            id: recordButtons
-            anchors.bottom: bottomButtons.top
-            anchors.bottomMargin: 50
-            anchors.left: leftColumn.right
-            anchors.leftMargin: 50
-            width: childrenRect.width
-            height: children.height
-            visible: false
-            Column{
-                width: children.width
-                height: children.height
-                anchors.left: parent.left
-                anchors.bottom: parent.bottom
-                IconButtonTransparent{
-                    objectName: "recordPlay"
-                    icon.source: "/images/Play.png"
-                    iconChecked: "/images/Stop.png"
-                }
-                IconButtonTransparent{
-                    objectName: "recordStartPoint"
-                    icon.source: "/images/pathResumeClose.png"
-                }
-                IconButtonTransparent{
-                    objectName: "recordRecord"
-                    icon.source: "/images/BoundaryRecord.png"
-                }
-                IconButtonTransparent{
-                    objectName: "recordOpenFile"
-                    icon.source: "/images/FileOpen.png"
-                }
-            }
-        }
-
-        Rectangle{
             id: closeDialog
             width: 500
             height: 100

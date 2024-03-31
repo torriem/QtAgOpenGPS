@@ -16,7 +16,7 @@ Dialog {
     height: 400
 
     modal: true
-    standardButtons: StandardButton.NoButton
+    standardButtons: "NoButton"
     title: qsTr("AB Line")
 
     //signal updateABLines()
@@ -182,8 +182,7 @@ Dialog {
             //border.color: "black"
             //z: 1
 
-            standardButtons: StandardButton.NoButton
-
+            standardButtons: "NoButton"
             property double a_easting
             property double a_northing
             property double a_longitude

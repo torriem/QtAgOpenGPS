@@ -12,7 +12,7 @@ Dialog {
     height: 400
 
     modal: true
-    standardButtons: StandardButton.NoButton
+    standardButtons: "NoButton"
     title: qsTr("AB Curve")
 
     signal updateABCurves()

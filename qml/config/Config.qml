@@ -12,7 +12,7 @@ Dialog {
     height: 768
     width:1024
     modal: true
-    standardButtons: StandardButton.NoButton
+    standardButtons: "NoButton"
     title: qsTr("General Settings")
 
     onVisibleChanged: {
