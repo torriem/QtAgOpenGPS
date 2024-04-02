@@ -337,7 +337,12 @@ Item {
 
         return EARTH_RADIUS * e;
     }
-
+    function readBit(byteVal, position) {
+        return (byteVal >> position) & 1;
+    }
+    function setBit(byteVal, position, value) {
+        return value ? byteVal | (1 << position) : byteVal & ~(1 << position);
+    }
     function timeTillFinished()
     {
         if (aog.speedKph > 2)
