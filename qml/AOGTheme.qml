@@ -46,6 +46,32 @@ Item {
                     disEngage.play()
             }
         }
+        function onIsHydLiftDownChanged(){
+            if(settings.setSound_isHydLiftOn){
+                if(aog.isHydLiftDown)
+                    hydDown.play()
+                else
+                    hydUp.play()
+            }
+        }
+        function onAutoBtnStateChanged(){
+            if(settings.setSound_isSectionsOn)
+                sectionOn.play()
+        }
+        function onManualBtnStateChanged(){
+            if(settings.setSound_isSectionsOn)
+                sectionOff.play()
+        }
+        function onAgeChanged(){
+            if(aog.age > settings.setGPS_ageAlarm)
+                if(settings.setGPS_isRTK)
+                    rtkLost.play()
+        }
+        function onDistancePivotToTurnLineChanged(){
+            if(aog.distancePivotToTurnLine == 20)
+                if(settings.setSound_isUturnOn)
+                    approachingYouTurn.play()
+        }
     }
     SoundEffect{
         id: engage
@@ -54,5 +80,33 @@ Item {
     SoundEffect{
         id: disEngage
         source: "/sounds/SteerOff.wav"
+    }
+    SoundEffect{
+        id: hydDown
+        source: "/sounds/HydDown.wav"
+    }
+    SoundEffect{
+        id: hydUp
+        source: "/sounds/HydUp.wav"
+    }
+    SoundEffect{
+        id: sectionOff
+        source: "/sounds/SectionOff.wav"
+    }
+    SoundEffect{
+        id: sectionOn
+        source: "/sounds/SectionOn.wav"
+    }
+    SoundEffect{
+        id: approachingYouTurn
+        source: "/sounds/Alarm10.wav"
+    }
+    SoundEffect{
+        id: rtkLost
+        source: "/sounds/rtk_lost.wav"
+    }
+    SoundEffect{
+        id: youturnFail
+        source: "/sounds/TF013.wav"
     }
 }

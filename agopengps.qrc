@@ -554,7 +554,6 @@
         <file>sounds/SectionOn.wav</file>
         <file>sounds/SteerOff.wav</file>
         <file>sounds/SteerOn.wav</file>
-        <file>sounds/TF012.WAV</file>
         <file>qml/config/Config.qml</file>
         <file>qml/config/ConfigDisplay.qml</file>
         <file>qml/config/ConfigFeatures.qml</file>
@@ -635,5 +634,6 @@
         <file>qml/AOGTheme.qml</file>
         <file>qml/HamburgerMenu.qml</file>
         <file>qml/SetSimCoords.qml</file>
+        <file>sounds/TF012.wav</file>
     </qresource>
 </RCC>
