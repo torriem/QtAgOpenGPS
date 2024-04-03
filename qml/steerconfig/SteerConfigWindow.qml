@@ -170,17 +170,20 @@ MoveablePopup {
                 Text {
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
-                    text: qsTr("Set: ")
+                    text: qsTr("Set: " + aog.steerAngleSetRounded)
                 }
                 Text {
-                    text: qsTr("Act: ")
+                    text: qsTr("Act: " + aog.steerAngleActualRounded)
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Text {
-                    text: qsTr("Set: ")
+                    id: errorlbl
+                    property double err: aog.steerAngleActualRounded - aog.steerAngleSetRounded
+                    text: qsTr("Err: " + err)
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
+                    onErrChanged: err > 0 ? errorlbl.color = "red" : errorlbl.color = "darkgreen"
                 }
             }
         }

@@ -337,12 +337,14 @@ Item {
 
         return EARTH_RADIUS * e;
     }
-    function readBit(byteVal, position) {
+    function readBit(byteVal, position) {//will not work with the settings bytes
         return (byteVal >> position) & 1;
     }
-    function setBit(byteVal, position, value) {
-        return value ? byteVal | (1 << position) : byteVal & ~(1 << position);
+    function setBit(byteVal, position, isTrue) { //ditto
+        //console.log("byteVal " +toString(byteVal) + " pos = "+ position+ " is: "+isTrue)
+        return isTrue ? byteVal | (1 << position) : byteVal & ~(1 << position);
     }
+
     function timeTillFinished()
     {
         if (aog.speedKph > 2)

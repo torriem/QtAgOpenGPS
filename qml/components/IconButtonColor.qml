@@ -4,7 +4,7 @@ import QtQuick.Effects
 
 IconButton {
     implicitWidth: 120
-    implicitHeight: 65
+    implicitHeight: 80
     id: icon_button
 
     //property alias border: icon_button_background.border
@@ -20,12 +20,13 @@ IconButton {
 
     noText: true //no text at the bottom- all at the top
 
-    property color colorChecked1: colorChecked
-    property color colorChecked2: colorChecked
-    property color colorChecked3: colorChecked
+    colorChecked1: colorChecked
+    colorChecked2: colorChecked
+    colorChecked3: colorChecked
     property color color: aog.backgroundColor
     property color colorChecked: "#99ff99"
     property color colorHover: "white"
+    onButtonTextChanged: text = buttonText
 
     topInset: if(text.length>0)
                   text1.height
