@@ -28,7 +28,7 @@ Window {
 
     signal save_everything()
 
-    onClosing: {
+    function close() {
         if (aog.autoBtnState + aog.manualBtnState  > 0) {
             timedMessage.addMessage(2000,qsTr("Section Control on. Shut off Section Control."))
             close.accepted = false
@@ -268,9 +268,9 @@ Window {
                 width: 75
                 icon.source: "/images/WindowClose.png"
                 onClicked: {
-                    mainWindow.close()
+                    mainWindow.save_everything()
+                    Qt.quit()
                 }
-
             }
         }
     }
@@ -320,11 +320,11 @@ Window {
                                    fromY = mouseY
                                }
 
-            onWheel: {
+            onWheel:(wheel)=>{
                 if (wheel.angleDelta.y > 0) {
-                    parent.zoomIn()
+                    aog.zoomIn()
                 } else if (wheel.angleDelta.y <0 ) {
-                    parent.zoomOut()
+                    aog.zoomOut()
                 }
             }
 
@@ -830,7 +830,7 @@ Window {
                 isChecked: isOn
                 checkable: true
                 disabled: btnHeadland.checked
-                visible: isTrue(settings.setArdMac_isHydEnabled) && btnHeadland.visible
+                visible: utils.isTrue(settings.setArdMac_isHydEnabled) && btnHeadland.visible
                 icon.source: "/images/HydraulicLiftOff.png"
                 iconChecked: "/images/HydraulicLiftOn.png"
                 buttonText: "HydLift"
