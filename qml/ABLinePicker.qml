@@ -177,7 +177,7 @@ Dialog {
             id: abSetter
             width: 300
             modal: true
-            //color: "lightgray"
+            height: 550
             //border.width: 1
             //border.color: "black"
             //z: 1
@@ -194,6 +194,13 @@ Dialog {
             property bool a_set
             property double heading //radians
             property double heading_degrees
+            background: Rectangle{
+                id: backgroundABSetter
+                border.width: 1
+                border.color: aog.blackDayWhiteNight
+                color: aog.backgroundColor
+                anchors.fill: parent
+            }
 
             visible: false
 
@@ -490,6 +497,7 @@ Dialog {
                onClicked: {
                    newLineName.visible = true
                    newLineName.generate_ab_name(abSetter.heading_degrees)
+                   abSetter.visible = false
                }
             }
             LineName{
@@ -502,6 +510,7 @@ Dialog {
                 onRejected: {
                     //go back to A/B dialog
                     //do nothing
+                    abSetter.visible = true
                 }
 
                 onAccepted: {
@@ -579,7 +588,9 @@ Dialog {
                     indicator: Rectangle{
                         anchors.fill: parent
                         anchors.margins: 2
-                        color: (control.down) ? aog.backgroundColor : aog.blackDayWhiteNight
+                        //color: (control.down) ? aog.backgroundColor : aog.blackDayWhiteNight
+                        //color: (control.down) ? aog.blackDayWhiteNight : aog.backgroundColor
+                        color: control.checked ? "blue" : "white"
                         visible: control.checked
                     }
 
@@ -598,7 +609,8 @@ Dialog {
                         text: model.name
                         font.pixelSize: 25
                         font.bold: true
-                        color: control.checked ? aog.backgroundColor : aog.blackDayWhiteNight
+                        //color: control.checked ? aog.backgroundColor : aog.blackDayWhiteNight
+                        color: control.checked ? aog.blackDayWhiteNight : aog.backgroundColor
                         z: 2
                     }
                 }
