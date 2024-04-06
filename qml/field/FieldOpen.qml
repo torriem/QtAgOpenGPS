@@ -13,6 +13,9 @@ Popup {
     width: 700
     height: 500
     modal: true
+    function show(){
+        parent.visible = true
+    }
 
     property int sortBy: 1
 

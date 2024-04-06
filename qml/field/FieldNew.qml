@@ -8,6 +8,10 @@ Popup {
     id: fieldNew
     width: 500
     height: 300
+    visible: false
+    function show(){
+        parent.visible = true
+    }
 
     onVisibleChanged: {
         if (visible)

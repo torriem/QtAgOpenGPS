@@ -1419,6 +1419,28 @@ Window {
                 }
             }
         }
+        Item{
+            id: windowsArea      //container for declaring all the windows
+            anchors.fill: parent //that can be displayed on the main screen
+            FieldFromExisting{
+                id: fieldFromExisting
+                x: 0
+                y: 0
+            }
+            FieldNew{
+                id: fieldNew
+            }
+            FieldFromKML{
+                id: fieldFromKML
+                x: 100
+                y: 75
+            }
+            FieldOpen{
+                id: fieldOpen
+                x: 100
+                y: 75
+            }
+        }
 
 
         Rectangle {

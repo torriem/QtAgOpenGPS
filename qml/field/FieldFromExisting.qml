@@ -9,6 +9,11 @@ Popup {
     id: fieldFromExisting
     height: 700
     width:1024
+    visible: false
+    function show(){
+        parent.visible = true
+    }
+
     Rectangle{
         id: topLine
         anchors.top:parent.top
