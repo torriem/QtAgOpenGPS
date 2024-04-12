@@ -7,3 +7,4 @@ compile_commands.json
 .qmake.stash
 .xcf
 Makefile
+build
