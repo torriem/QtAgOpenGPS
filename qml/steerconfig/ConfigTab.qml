@@ -13,29 +13,25 @@ Item{
         flow: Grid.TopToBottom
         IconButtonColor{
             icon.source: "/images/Config/ConST_Danfoss.png"
-            objectName: "btnDanfoss"
-            isChecked: false
+            isChecked: ((settings.setArdSteer_setting1 & 1) != 0)
             buttonText: "Danfoss"
             Layout.alignment: Qt.AlignCenter
         }
         IconButtonColor{
             icon.source: "/images/Config/ConSt_InvertWAS.png"
-            objectName: "btnInvertWAS"
-            isChecked: false
+            isChecked: ((settings.setArdSteer_setting0 & 1) != 0)
             Layout.alignment: Qt.AlignCenter
             buttonText: "Invert WAS"
         }
         IconButtonColor{
             icon.source: "/images/Config/ConSt_InvertDirection.png"
-            objectName: "btnInvertMotorDirection"
-            isChecked: false
+            isChecked: ((settings.setArdSteer_setting0 & 4) != 0)
             buttonText: "Invert Motor Dir"
             Layout.alignment: Qt.AlignCenter
         }
         IconButtonColor{
             icon.source: "/images/Config/ConSt_InvertRelay.png"
-            objectName: "btnSteerInvertRelays"
-            isChecked: false
+            isChecked: ((settings.setArdSteer_setting0 & 2) != 0)
             buttonText: "Invert Relays"
             Layout.alignment: Qt.AlignCenter
         }
@@ -51,16 +47,18 @@ Item{
         ComboBoxCustomized {
             id: motorDriver
             editable: true
+            Component.onCompleted: currentIndex = ((settings.setArdSteer_setting0 & 16) == 0) ? 1 : 0
             model: ListModel {
                 id: modelmotorDriver
                 ListElement {text: "Cytron"}
                 ListElement {text: "IBT2"}
             }
-            text: qsTr("Motor Driver")
+            text: ("Motor Driver")
         }
         ComboBoxCustomized {
             id: a2Dconverter
             editable: true
+            Component.onCompleted: currentIndex = ((settings.setArdSteer_setting0 & 8) == 0) ? 1 : 0
             model: ListModel {
                 id: a2Dmodel
                 ListElement {text: "Single"}
@@ -71,6 +69,7 @@ Item{
         ComboBoxCustomized {
             id: imuAxis
             editable: true
+            Component.onCompleted: currentIndex = ((settings.setArdSteer_setting1 & 8) == 0) ? 0 : 1
             model: ListModel {
                 id: imuAxismodel
                 ListElement {text: "X"}
@@ -81,8 +80,12 @@ Item{
 
         ComboBoxCustomized {
             id: steerEnable
-
-            //editable: true
+            Component.onCompleted: if((settings.setArdSteer_setting0 & 32) == 32)
+                                       currentIndex = 1
+                                   else if((settings.setArdSteer_setting0 & 64) == 64)
+                                       currentIndex = 2
+                                   else
+                                       currentIndex = 0
             model: ListModel {
                 //   id: steerEnablemodel
                 ListElement {text: "None"}

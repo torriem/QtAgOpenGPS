@@ -4,7 +4,7 @@ import "components"
 
 TimedRectangle{
     id: displayButtons
-    color: "white"
+    color: aog.backgroundColor
     Grid {
         id: tiltButtons
         anchors.leftMargin: 5
@@ -13,7 +13,7 @@ TimedRectangle{
         flow: Grid.TopToBottom
         rows:6
         columns:2
-
+        onChildrenChanged: console.log("childrenChanged")
         IconButtonTransparent {
             id: btnTiltDown
             width: 70
@@ -51,7 +51,11 @@ TimedRectangle{
             width: 70
             height: 70
             radius: 10
-            icon.source: "/images/WindowDayMode.png"
+            icon.source: "/images/WindowNightMode.png"
+            iconChecked: "/images/WindowDayMode.png"
+            checkable: true
+            isChecked: settings.setDisplay_isDayMode
+            onCheckedChanged: settings.setDisplay_isDayMode = checked
         }
         IconButtonTransparent {
             id: btnBrightnessDown

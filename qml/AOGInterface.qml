@@ -20,6 +20,13 @@ import QtQuick.Controls
 Item {
     id: aogInterfaceType
 
+    AOGTheme{
+        id: aogTheme
+    }
+    property color backgroundColor: theme.backgroundColor
+    property color textColor: theme.textColor
+    property color borderColor: theme.borderColor
+    property color blackDayWhiteNight: "white"
     /*
     Connections {
         target: settings
@@ -53,9 +60,9 @@ Item {
     property bool isAutoSteerBtnOn: false
     property bool isYouTurnBtnOn: false
 
-    //onIsAutoSteerBtnOnChanged: {
-    //    console.debug("isAutoSteerBtnOn is now " + isAutoSteerBtnOn)
-    //}
+//    onIsAutoSteerBtnOnChanged: {
+//        console.debug("isAutoSteerBtnOn is now in aog inface " + isAutoSteerBtnOn)
+//    }
 
     //General FormGPS information updated at GPS rate.
     property double latStart: 53
@@ -110,9 +117,10 @@ Item {
     property string workRate: "value"
     property string percentOverlap: "value"
     property string percentLeft: "value"
-    //these not added yet
     property double steerAngleActual: 0
     property double steerAngleSet: 0
+    property double steerAngleSetRounded: 0
+    property double steerAngleActualRounded: 0
     property double rawHZ:0
     property double hz:0
     property double missedSentences: 0
@@ -122,6 +130,9 @@ Item {
     property bool hydLiftDown: false
     property bool hydLiftIsOn: false
     property bool isHeadlandOn: false
+
+    onSteerAngleActualChanged: steerAngleActualRounded = Number(Math.round(steerAngleActual)).toLocaleString(Qt.locale(), 'f', 1)
+    onSteerAngleSetChanged: steerAngleSetRounded = Number(Math.round((steerAngleSet) * .01)).toLocaleString(Qt.locale(), 'f', 1)
 
     property point vehicle_xy: Qt.point(0,0)
     property rect vehicle_bounding_box: Qt.rect(0,0,0,0)

@@ -20,8 +20,8 @@ MoveablePopup {
 
     Rectangle{
         id: steerConfigFirst
-        color: "#cccccc"
-        border.color: "black"
+        color: aog.backgroundColor
+        border.color: aog.blackDayWhiteNight
         border.width: 1
         visible: true
         anchors.fill: parent
@@ -170,17 +170,20 @@ MoveablePopup {
                 Text {
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
-                    text: qsTr("Set: ")
+                    text: qsTr("Set: " + aog.steerAngleSetRounded)
                 }
                 Text {
-                    text: qsTr("Act: ")
+                    text: qsTr("Act: " + aog.steerAngleActualRounded)
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Text {
-                    text: qsTr("Set: ")
+                    id: errorlbl
+                    property double err: aog.steerAngleActualRounded - aog.steerAngleSetRounded
+                    text: qsTr("Err: " + err)
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
+                    onErrChanged: err > 0 ? errorlbl.color = "red" : errorlbl.color = "darkgreen"
                 }
             }
         }
@@ -201,7 +204,6 @@ MoveablePopup {
                 height: 50
                 IconButton{
                     id: pwmSteer
-                    objectName: "pwmYesNo"
                     isChecked: false
                     icon.source: "/images/SteerDriveOff.png"
                     iconChecked: "/images/SteerDriveOn.png"
@@ -211,7 +213,6 @@ MoveablePopup {
                     border: 2
                 }
                 IconButton{
-                    objectName: "pwmLeft"
                     icon.source: "/images/SnapLeft.png"
                     implicitWidth: parent.width/4.5
                     implicitHeight: parent.height
@@ -219,7 +220,6 @@ MoveablePopup {
                     border: 2
                 }
                 IconButton{
-                    objectName: "pwmRight"
                     icon.source: "/images/SnapRight.png"
                     implicitWidth: parent.width/4.5
                     implicitHeight: parent.height
@@ -228,7 +228,6 @@ MoveablePopup {
                 }
                 IconButton{
                     id: pwmZero
-                    objectName: "pwmZero"
                     icon.source: "/images/SteerZeroSmall.png"
                     implicitWidth: parent.width/4.5
                     implicitHeight: parent.height
@@ -252,7 +251,6 @@ MoveablePopup {
                 id: steerRecord
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
-                objectName: "steerRecord"
                 isChecked: false
                 width: 75
                 height: 75
@@ -304,7 +302,6 @@ MoveablePopup {
                 IconButtonTextBeside{
                     id: configBtn
                     icon.source: "/images/Config/ConS_Pins.png"
-                    objectName: "btnCurrentTurnSensor"
                     buttonText: "Config"
                     Layout.alignment: Qt.AlignCenter
                     checkable: true

@@ -9,7 +9,7 @@ Item {
     Rectangle{
         id: configDisplay
         anchors.fill: parent
-        color: "ghostwhite"
+        color: aog.backgroundColor
         GridLayout{
             id:buttonsMain
             anchors.top: parent.top

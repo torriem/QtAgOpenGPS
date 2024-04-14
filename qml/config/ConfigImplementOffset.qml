@@ -11,7 +11,7 @@ import "../components"
 Rectangle{
     anchors.fill: parent
     visible: true
-    color: "ghostwhite"
+    color: aog.backgroundColor
     TitleFrame{
         id: offset
         title: qsTr("Tool Offset Direction")

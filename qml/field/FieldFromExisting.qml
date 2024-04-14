@@ -9,6 +9,11 @@ Popup {
     id: fieldFromExisting
     height: 700
     width:1024
+    visible: false
+    function show(){
+        parent.visible = true
+    }
+
     Rectangle{
         id: topLine
         anchors.top:parent.top
@@ -16,7 +21,7 @@ Popup {
         anchors.right: parent.right
         height: 40
         z: 1
-        color: "ghostwhite"
+        color: aog.backgroundColor
         Text{
             anchors.fill: parent
             anchors.verticalCenter: parent.verticalCenter
@@ -56,7 +61,7 @@ Popup {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        color: "ghostwhite"
+        color: aog.backgroundColor
         Rectangle{
             id: editFieldName
             height: 30

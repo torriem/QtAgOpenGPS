@@ -28,7 +28,7 @@ Window {
 
     signal save_everything()
 
-    onClosing: {
+    function close() {
         if (aog.autoBtnState + aog.manualBtnState  > 0) {
             timedMessage.addMessage(2000,qsTr("Section Control on. Shut off Section Control."))
             close.accepted = false
@@ -58,7 +58,10 @@ Window {
         id: aog
         objectName: "aog"
     }
-
+    AOGTheme{
+        id: theme
+        objectName: "aogTheme"
+    }
     LinesInterface {
         objectName: "linesInterface"
         id: linesInterface
@@ -125,7 +128,7 @@ Window {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        color: "ghostwhite"
+        color: aog.backgroundColor
         height: 50
         visible: true
 
@@ -133,41 +136,40 @@ Window {
             id: btnfileMenu
             height: parent.height
             width: 75
-            objectName: "btnfileMenu"
             icon.source: "/images/fileMenu.png"
-            onClicked: fileMenu.popup()
+            onClicked: hamburgerMenu.visible = true
         }
-        Menu{
-            id: fileMenu
-            //anchors.left: buttonsArea.left
-            //anchors.top: buttonsArea.top
-            //anchors. margins: 200
-            MenuItem{ text: "Languages"}
-            MenuItem{ text: "Directories"}
-            MenuItem{ text: "Colors"}
-            MenuItem{ text: "Section Colors"}
-            MenuItem{ text: "Top Field View"}
-            MenuItem{ text: "Enter Sim Coords"}
-            MenuItem{
-                property bool isChecked: settings.setMenu_isSimulatorOn
-                onIsCheckedChanged: {
-                    checked = isChecked
-                }
+//        Menu{
+//            id: fileMenu
+//            //anchors.left: buttonsArea.left
+//            //anchors.top: buttonsArea.top
+//            //anchors. margins: 200
+//            MenuItem{ text: "Languages"}
+//            MenuItem{ text: "Directories"}
+//            MenuItem{ text: "Colors"}
+//            MenuItem{ text: "Section Colors"}
+//            MenuItem{ text: "Top Field View"}
+//            MenuItem{ text: "Enter Sim Coords"}
+//            MenuItem{
+//                property bool isChecked: settings.setMenu_isSimulatorOn
+//                onIsCheckedChanged: {
+//                    checked = isChecked
+//                }
 
-                text: "Simulator On"
-                checkable: true
-                checked: isChecked
-                onCheckedChanged: {
-                    settings.setMenu_isSimulatorOn = checked
-                    console.log("Sim = "+settings.setMenu_isSimulatorOn)
-                }
-            }
-            MenuItem{ text: "Reset All"}
-            MenuItem{ text: "HotKeys"}
-            MenuItem{ text: "About..."}
-            MenuItem{ text: "Help"}
-            closePolicy: Popup.CloseOnPressOutsideParent
-        }
+//                text: "Simulator On"
+//                checkable: true
+//                checked: isChecked
+//                onCheckedChanged: {
+//                    settings.setMenu_isSimulatorOn = checked
+//                    console.log("Sim = "+settings.setMenu_isSimulatorOn)
+//                }
+//            }
+//            MenuItem{ text: "Reset All"}
+//            MenuItem{ text: "HotKeys"}
+//            MenuItem{ text: "About..."}
+//            MenuItem{ text: "Help"}
+//            closePolicy: Popup.CloseOnPressOutsideParent
+//        }
 
         Text{
             anchors.top:parent.top
@@ -237,20 +239,17 @@ Window {
                 verticalAlignment: Text.AlignVCenter
             }
             IconButtonTransparent{
-                objectName: "btnHelp"
                 height: parent.height
                 width: 75
                 icon.source: "/images/Help.png"
             }
             IconButtonTransparent{
-                objectName: "btnWindowMinimize"
                 height: parent.height
                 icon.source: "/images/WindowMinimize.png"
                 width: 75
                 onClicked: mainWindow.showMinimized()
             }
             IconButtonTransparent{
-                objectName: "btnWindowMaximize"
                 height: parent.height
                 icon.source: "/images/WindowMaximize.png"
                 width: 75
@@ -265,14 +264,13 @@ Window {
                 }
             }
             IconButtonTransparent{
-                objectName: "btnWindowClose"
                 height: parent.height
                 width: 75
                 icon.source: "/images/WindowClose.png"
                 onClicked: {
-                    mainWindow.close()
+                    mainWindow.save_everything()
+                    Qt.quit()
                 }
-
             }
         }
     }
@@ -322,11 +320,11 @@ Window {
                                    fromY = mouseY
                                }
 
-            onWheel: {
+            onWheel:(wheel)=>{
                 if (wheel.angleDelta.y > 0) {
-                    parent.zoomIn()
+                    aog.zoomIn()
                 } else if (wheel.angleDelta.y <0 ) {
-                    parent.zoomOut()
+                    aog.zoomOut()
                 }
             }
 
@@ -418,7 +416,7 @@ Window {
 
                 background: Rectangle{
                     anchors.fill: parent
-                    color: "white"
+                    color: aog.backgroundColor
                     radius: 10
                     Text{
                         anchors.top: parent.top
@@ -448,7 +446,6 @@ Window {
             }
             IconButtonText {
                 id: btnnavigationSettings
-                objectName: "btnnavigationSettings"
                 buttonText: qsTr("Display")
                 icon.source: "/images/NavigationSettings.png"
                 onClicked: displayButtons.visible = !displayButtons.visible
@@ -456,7 +453,6 @@ Window {
             }
             IconButtonText {
                 id: btnSettings
-                objectName: "btnSettings"
                 buttonText: qsTr("Settings")
                 icon.source: "/images/Settings48.png"
                 onClicked: config.open()
@@ -464,7 +460,6 @@ Window {
             }
             IconButtonText {
                 id: btnTools
-                objectName: "btnTools"
                 buttonText: qsTr("Tools")
                 icon.source: "/images/SpecialFunctions.png"
                 onClicked: toolsMenu.visible = true
@@ -472,7 +467,6 @@ Window {
             }
             IconButtonText{
                 id: btnFieldMenu
-                objectName: "btnFieldMenu"
                 buttonText: qsTr("Field")
                 icon.source: "/images/JobActive.png"
                 onClicked: fieldMenu.visible = true
@@ -480,7 +474,6 @@ Window {
             }
             IconButtonText{
                 id: btnFieldTools
-                objectName: "btnFieldTools"
                 buttonText: qsTr("Field Tools")
                 icon.source: "/images/FieldTools.png"
                 onClicked: fieldTools.visible = true
@@ -490,14 +483,12 @@ Window {
 
             IconButtonText {
                 id: btnAgIO
-                objectName: "btnAgIO"
                 buttonText: qsTr("AgIO")
                 icon.source: "/images/AgIO.png"
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnautoSteerConf
-                objectName: "btnAutosteerConf"
                 buttonText: qsTr("Steer config")
                 icon.source: "/images/AutoSteerConf.png"
                 Layout.alignment: Qt.AlignCenter
@@ -565,7 +556,6 @@ Window {
             }
             IconButtonText{
                 id: btnABCurve
-                objectName: "btnABCurve"
                 isChecked: false
                 checkable: true
                 icon.source: "/images/CurveOff.png"
@@ -598,7 +588,6 @@ Window {
             }
             IconButtonText{
                 id: btnABLine
-                objectName: "btnABLine"
                 checkable: true
                 //TODO: this should be set programmatically
                 //Also the types of lines are all mutually exclusive
@@ -630,7 +619,6 @@ Window {
 
             IconButton{
                 id: btnABLineCycle
-                objectName: "btnABLineCycle"
                 icon.source: "/images/ABLineCycle.png"
                 width: btnABLine.width
                 height: btnABLine.height
@@ -638,7 +626,6 @@ Window {
             }
             IconButton{
                 id: btnABLineCycleBk
-                objectName: "btnABLineCycleBk"
                 icon.source: "/images/ABLineCycleBk.png"
                 width: btnABLine.width
                 height: btnABLine.height
@@ -647,7 +634,6 @@ Window {
 
             IconButtonText {
                 id: btnSectionManual
-                objectName: "btnSectionManual"
                 isChecked: aog.manualBtnState == 2
                 checkable: true
                 icon.source: "/images/ManualOff.png"
@@ -669,7 +655,6 @@ Window {
 
             IconButtonText {
                 id: btnSectionAuto
-                objectName: "btnSectionAuto"
                 isChecked: aog.autoBtnState == 1
                 checkable: true
                 icon.source: "/images/SectionMasterOff.png"
@@ -689,7 +674,6 @@ Window {
             }
             IconButtonText {
                 id: btnAutoYouTurn
-                objectName: "btnAutoYouTurn"
                 isChecked: aog.isYouTurnBtnOn
                 checkable: true
                 icon.source: "/images/YouTurnNo.png"
@@ -702,7 +686,6 @@ Window {
             }
             IconButtonText {
                 id: btnAutoSteer
-                objectName: "btnAutoSteer"
                 icon.source: "/images/AutoSteerOff.png"
                 iconChecked: "/images/AutoSteerOn.png"
                 checkable: true
@@ -715,16 +698,11 @@ Window {
                     if (checked && ((aog.currentABCurve > -1) || (aog.currentABLine > -1))) {
                         console.debug("okay to turn on autosteer button.")
                         aog.isAutoSteerBtnOn = true;
-                        engage.play()
                     } else {
                         console.debug("keep autoster button off.")
                         checked = false;
                         aog.isAutoSteerBtnOn = false;
                     }
-                }
-                SoundEffect{
-                    id: engage
-                    source: "/sounds/SteerOn.wav"
                 }
                 Connections {
                     target: aog
@@ -812,7 +790,6 @@ Window {
             }
             IconButtonText {
                 id: btnYouSkip
-                objectName: "btnYouSkip"
                 isChecked: false
                 checkable: true
                 icon.source: "/images/YouSkipOff.png"
@@ -822,7 +799,6 @@ Window {
             }
             IconButtonText {
                 id: btnResetTool
-                objectName: "btnResetTool"
                 icon.source: "/images/ResetTool.png"
                 buttonText: "Reset Tool"
                 Layout.alignment: Qt.AlignCenter
@@ -830,7 +806,6 @@ Window {
             }
             IconButtonText {
                 id: btnSectionMapping
-                objectName: "btnSectionMapping"
                 icon.source: "/images/SectionMapping"
                 Layout.alignment: Qt.AlignCenter
             }
@@ -845,7 +820,6 @@ Window {
             }
             IconButtonText {
                 id: btnTramLines
-                objectName: "btnTramLines"
                 icon.source: "/images/TramLines.png"
                 buttonText: "Tram Lines"
                 Layout.alignment: Qt.AlignCenter
@@ -853,11 +827,10 @@ Window {
             IconButtonText {
                 property bool isOn: false
                 id: btnHydLift
-                objectName: "btnHydLift"
                 isChecked: isOn
                 checkable: true
                 disabled: btnHeadland.checked
-                visible: isTrue(settings.setArdMac_isHydEnabled) && btnHeadland.visible
+                visible: utils.isTrue(settings.setArdMac_isHydEnabled) && btnHeadland.visible
                 icon.source: "/images/HydraulicLiftOff.png"
                 iconChecked: "/images/HydraulicLiftOn.png"
                 buttonText: "HydLift"
@@ -869,7 +842,6 @@ Window {
             }
             IconButtonText {
                 id: btnHeadland
-                objectName: "btnHeadland"
                 isChecked: aog.isHeadlandOn
                 checkable: true
                 icon.source: "/images/HeadlandOff.png"
@@ -1035,7 +1007,6 @@ Window {
             }
             Item{
                 //this whole item is for the manual uturn buttons, and lateral buttons
-                objectName: "manUTurnButtons"
                 id: manualUturnLateral
                 anchors.top: lightbar.bottom
                 anchors.left: parent.left
@@ -1098,7 +1069,6 @@ Window {
                     visible: settings.setFeature_isLateralOn
                     Button{
                         background: Rectangle{color: "transparent"}
-                        objectName: "btnManLateralLeft"
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
                         anchors.left: parent.left
@@ -1113,7 +1083,6 @@ Window {
                     }
                     Button{
                         background: Rectangle{color: "transparent"}
-                        objectName: "btnManLateralRight"
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
                         anchors.right: parent.right
@@ -1233,6 +1202,7 @@ Window {
             visible: false
             z:1
         }
+
         TrackButtons{
             id: trackButtons
             anchors.right: parent.right
@@ -1290,7 +1260,6 @@ Window {
 
         SliderCustomized { //quick dirty hack--the up and down buttons change this value, so the speed changes
             id: speedSlider
-            objectName: "simSpeed"
             //anchors.bottom: bottomButtons.top
 //            anchors.bottomMargin: 3
 //            anchors.left:bottomButtons.left
@@ -1321,6 +1290,11 @@ Window {
             id: toolsMenu
             visible: false
         }
+        HamburgerMenu{
+            id: hamburgerMenu
+            visible: false
+        }
+
         Config {
             id:config
             visible:false
@@ -1402,44 +1376,14 @@ Window {
             id: refNudge
             visible: false
         }
+        SetSimCoords{
+            id: setSimCoords
+            anchors.fill: parent
+        }
 
         TrackNew{
             id: trackNew
             visible: false
-        }
-
-        Rectangle{
-            id: recordButtons
-            anchors.bottom: bottomButtons.top
-            anchors.bottomMargin: 50
-            anchors.left: leftColumn.right
-            anchors.leftMargin: 50
-            width: childrenRect.width
-            height: children.height
-            visible: false
-            Column{
-                width: children.width
-                height: children.height
-                anchors.left: parent.left
-                anchors.bottom: parent.bottom
-                IconButtonTransparent{
-                    objectName: "recordPlay"
-                    icon.source: "/images/Play.png"
-                    iconChecked: "/images/Stop.png"
-                }
-                IconButtonTransparent{
-                    objectName: "recordStartPoint"
-                    icon.source: "/images/pathResumeClose.png"
-                }
-                IconButtonTransparent{
-                    objectName: "recordRecord"
-                    icon.source: "/images/BoundaryRecord.png"
-                }
-                IconButtonTransparent{
-                    objectName: "recordOpenFile"
-                    icon.source: "/images/FileOpen.png"
-                }
-            }
         }
 
         Rectangle{
@@ -1448,8 +1392,8 @@ Window {
             height: 100
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            color: "gray"
-            border.color: "aqua"
+            color: aog.backgroundColor
+            border.color: aog.blackDayWhiteNight
             border.width: 2
             visible: false
             IconButtonText{
@@ -1473,6 +1417,28 @@ Window {
                     mainWindow.save_everything()
                     Qt.quit()
                 }
+            }
+        }
+        Item{
+            id: windowsArea      //container for declaring all the windows
+            anchors.fill: parent //that can be displayed on the main screen
+            FieldFromExisting{
+                id: fieldFromExisting
+                x: 0
+                y: 0
+            }
+            FieldNew{
+                id: fieldNew
+            }
+            FieldFromKML{
+                id: fieldFromKML
+                x: 100
+                y: 75
+            }
+            FieldOpen{
+                id: fieldOpen
+                x: 100
+                y: 75
             }
         }
 

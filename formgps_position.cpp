@@ -1165,6 +1165,9 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("vehicle_xy",vehicle.pivot_axle_xy);
     aog->setProperty("vehicle_bounding_box",vehicle.bounding_box);
 
+    aog->setProperty("steerAngleActual", mc.actualSteerAngleDegrees);
+    aog->setProperty("steerAngleSet", vehicle.guidanceLineSteerAngle);
+
     if (ABLine.numABLineSelected > 0) {
         //currentABLine_heading is set in formgps_ui.cpp
         aog->setProperty("current_trackNum", ABLine.howManyPathsAway);
