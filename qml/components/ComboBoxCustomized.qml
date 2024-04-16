@@ -1,11 +1,12 @@
 import QtQuick
-import QtQuick.Controls 2.5
+import QtQuick.Controls
 
 Item{
     id: itemCombo
     property string text: ""
     property alias model: rootCombo.model
     property alias editable: rootCombo.editable
+    property alias currentIndex: rootCombo.currentIndex
     height: 75
     width: rootCombo.width
     TextLine{

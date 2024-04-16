@@ -126,32 +126,4 @@ Drawer {
         }
         */
 
-    FieldFromExisting{
-        id: fieldFromExisting
-        //anchors.top:parent.top
-        //anchors.topMargin: -50
-        //anchors.horizontalCenter: parent.horizontalCenter
-        visible: false
-    }
-    FieldNew{
-        id: fieldNew
-        visible: false
-    }
-    FieldFromKML{
-        id: fieldFromKML
-        anchors.top:parent.top
-        anchors.topMargin: -50
-        anchors.horizontalCenter: parent.horizontalCenter
-        visible: false
-    }
-    FieldOpen{
-        id: fieldOpen
-        //anchors.top:parent.top
-        //anchors.topMargin: -50
-        //anchors.horizontalCenter: parent.horizontalCenter
-        x: 100
-        y: 75
-        visible: false
-
-    }
 }

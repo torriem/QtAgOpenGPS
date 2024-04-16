@@ -5,4 +5,5 @@ Wedel.txt
 compile_commands.json
 .ccls-cache
 .qmake.stash
+.xcf
 Makefile

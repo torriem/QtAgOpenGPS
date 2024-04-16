@@ -26,7 +26,6 @@ Item{
 
         SliderCustomized {
             id: wasZeroSlider
-            objectName: "wasZeroSlider"
             width: 200
             leftText: value
             from: -30//idk
@@ -38,7 +37,6 @@ Item{
         }
         SliderCustomized {
             id: cpDegSlider
-            objectName: "cpDegSlider"
             width: 200
             centerTopText: "Counts per Degree"
             implicitHeight: 50
@@ -52,7 +50,6 @@ Item{
         }
         SliderCustomized {
             id: ackermannSlider
-            objectName: "ackermannSlider"
             width: 200
             centerTopText: "AckerMann"
             implicitHeight: 50
@@ -66,7 +63,6 @@ Item{
         }
         SliderCustomized {
             id: maxSteerSlider
-            objectName: "maxSteerSlider"
             implicitWidth: 200
             leftText: value
             implicitHeight: 50

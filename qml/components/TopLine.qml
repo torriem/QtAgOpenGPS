@@ -10,7 +10,7 @@ Rectangle{
     anchors.left: parent.left
     anchors.right: parent.right
     height: 30
-    color: "white"
+    color: aog.backgroundColor
     Text {
         text: topLine.titleText
         font.pixelSize: 20

@@ -21,7 +21,7 @@ import "components"
             id: toolsMenuContent
             anchors.fill: parent
             height: toolsMenu.height
-            color: "black"
+            color: aog.blackDayWhiteNight
         }
 
         ScrollViewExpandableColumn {

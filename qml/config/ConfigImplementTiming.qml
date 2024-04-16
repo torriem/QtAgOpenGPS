@@ -7,7 +7,7 @@ import "../components"
 Rectangle{
     id: configImpTimWin
     anchors.fill: parent
-    color: "ghostwhite"
+    color: aog.backgroundColor
     visible: false
     Text{
         font.pixelSize: 25

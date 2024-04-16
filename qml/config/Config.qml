@@ -12,7 +12,7 @@ Dialog {
     height: 768
     width:1024
     modal: true
-    standardButtons: StandardButton.NoButton
+    standardButtons: "NoButton"
     title: qsTr("General Settings")
 
     onVisibleChanged: {
@@ -28,14 +28,14 @@ Dialog {
 
     Rectangle{
         id: configMain
-        color: "light gray"
-        border.color: "black"
+        color: aog.borderColor
+        border.color: aog.blackDayWhiteNight
         border.width: 8
         visible: true
         anchors.fill: parent
         Rectangle{
             id:topLine
-            color:"gray"
+            color: aog.borderColor
             visible: true
             width: parent.width-16
             height: 40
@@ -334,7 +334,7 @@ Dialog {
 
         Rectangle{
             id:bottomLine
-            color:"light gray"
+            color: aog.borderColor
             visible: true
             width: parent.width - 16
             height:80
@@ -390,7 +390,7 @@ Dialog {
             anchors.left: leftColumnView.right
             anchors.bottom: bottomLine.top
             anchors.rightMargin: 8
-            color: "ghostwhite"
+            color: aog.backgroundColor
             border.color: "lime"
         }
         ConfigVehiclePicker{

@@ -16,7 +16,6 @@ Item{
         anchors.leftMargin: 20
         SliderCustomized {
             id: stanleyAggressivenessSlider
-            objectName: "stanleyAgressivenessSlider"
             width: 200
             from: .1
             to: 4
@@ -28,7 +27,6 @@ Item{
         }
         SliderCustomized {
             id: overShootReductionSlider
-            objectName: "overShootReductionSlider"
             width: 200
             from: .1
             to: 1.5
@@ -40,7 +38,6 @@ Item{
         }
         SliderCustomized {
             id: integralStanleySlider
-            objectName: "integralStanleySlider"
             width: 200
             from: 0
             to: 100

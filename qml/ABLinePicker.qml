@@ -16,7 +16,7 @@ Dialog {
     height: 400
 
     modal: true
-    standardButtons: StandardButton.NoButton
+    standardButtons: "NoButton"
     title: qsTr("AB Line")
 
     //signal updateABLines()
@@ -58,8 +58,8 @@ Dialog {
     Rectangle{
         anchors.fill: parent
         border.width: 1
-        border.color: "black"
-        color: "lightgray"
+        border.color: aog.blackDayWhiteNight
+        color: aog.backgroundColor
         TopLine{
             id: topLine
             titleText: "AB Line"
@@ -177,13 +177,12 @@ Dialog {
             id: abSetter
             width: 300
             modal: true
-            //color: "lightgray"
+            height: 550
             //border.width: 1
             //border.color: "black"
             //z: 1
 
-            standardButtons: StandardButton.NoButton
-
+            standardButtons: "NoButton"
             property double a_easting
             property double a_northing
             property double a_longitude
@@ -195,6 +194,13 @@ Dialog {
             property bool a_set
             property double heading //radians
             property double heading_degrees
+            background: Rectangle{
+                id: backgroundABSetter
+                border.width: 1
+                border.color: aog.blackDayWhiteNight
+                color: aog.backgroundColor
+                anchors.fill: parent
+            }
 
             visible: false
 
@@ -491,6 +497,7 @@ Dialog {
                onClicked: {
                    newLineName.visible = true
                    newLineName.generate_ab_name(abSetter.heading_degrees)
+                   abSetter.visible = false
                }
             }
             LineName{
@@ -503,6 +510,7 @@ Dialog {
                 onRejected: {
                     //go back to A/B dialog
                     //do nothing
+                    abSetter.visible = true
                 }
 
                 onAccepted: {
@@ -556,7 +564,7 @@ Dialog {
             anchors.bottom: bottomRow.top
             anchors.bottomMargin: 0
             anchors.margins: 10
-            color: "white"
+            color: aog.backgroundColor
 
             ListModel {
                 id: ablineModel
@@ -580,7 +588,9 @@ Dialog {
                     indicator: Rectangle{
                         anchors.fill: parent
                         anchors.margins: 2
-                        color: (control.down) ? "white" : "blue"
+                        //color: (control.down) ? aog.backgroundColor : aog.blackDayWhiteNight
+                        //color: (control.down) ? aog.blackDayWhiteNight : aog.backgroundColor
+                        color: control.checked ? "blue" : "white"
                         visible: control.checked
                     }
 
@@ -599,7 +609,8 @@ Dialog {
                         text: model.name
                         font.pixelSize: 25
                         font.bold: true
-                        color: control.checked ? "white" : "black"
+                        //color: control.checked ? aog.backgroundColor : aog.blackDayWhiteNight
+                        color: control.checked ? aog.blackDayWhiteNight : aog.backgroundColor
                         z: 2
                     }
                 }

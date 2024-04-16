@@ -25,9 +25,9 @@ Rectangle{
         textInputBox.text = name
     }
 
-    color: "ghostwhite"
+    color: aog.backgroundColor
             border.width: 1
-            border.color: "black"
+            border.color: aog.blackDayWhiteNight
 
             TopLine{
                 id: topLine

@@ -7,7 +7,7 @@ import "../components"
 Rectangle{
     id: configTractorAntenna
     anchors.fill: parent
-    color: "ghostwhite"
+    color: aog.backgroundColor
     visible: false
     Image {
         id: antImage
