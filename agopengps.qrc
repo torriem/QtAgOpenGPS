@@ -612,6 +612,7 @@
         <file>qml/components/SpinBoxKM.qml</file>
         <file>qml/components/SpinBoxCustomized.qml</file>
         <file>qml/components/SpinBoxCM.qml</file>
+		<file>qml/components/SpinBoxFusion.qml</file>
         <file>qml/components/SliderCustomized.qml</file>
         <file>qml/components/SectionButtons.qml</file>
         <file>qml/components/SectionButton.qml</file>
