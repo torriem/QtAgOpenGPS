@@ -17,6 +17,7 @@ Item {
     property color textColor: "black"
     property color borderColor: "lightblue"
     property color blackDayWhiteNight: "black"
+	property color whiteDayBlackNight: "white"
 
     Connections{
         target: settings
@@ -26,12 +27,14 @@ Item {
                 textColor = "black"
                 borderColor = "lightBlue"
                 blackDayWhiteNight = "black"
+				whiteDayBlackNight = "white"
             }
             else{
                 backgroundColor = "darkgray"
                 textColor = "white"
                 borderColor= "darkBlue"
                 blackDayWhiteNight = "white"
+				whiteDayBlackNight = "black"
             }
         }
     }
