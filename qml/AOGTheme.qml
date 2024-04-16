@@ -32,7 +32,7 @@ Item {
             else{
                 backgroundColor = "darkgray"
                 textColor = "white"
-                borderColor= "darkBlue"
+                borderColor= "lightGray"
                 blackDayWhiteNight = "white"
 				whiteDayBlackNight = "black"
             }
