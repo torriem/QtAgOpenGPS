@@ -30,7 +30,7 @@ private:
 
 public:
     //triggered right after youTurnTriggerPoint is set
-    bool isYouTurnTriggered;
+    bool isYouTurnTriggered, isGoingStraightThrough = false;
 
     //turning right or left?
     bool isYouTurnRight;
