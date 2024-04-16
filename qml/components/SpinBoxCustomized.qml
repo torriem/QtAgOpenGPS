@@ -34,7 +34,6 @@ Item {
 
     function setValue(value) {
         spinner.value = value
-		console.log("set value to " + value)
     }
 
     onBoundValueChanged: {
@@ -60,7 +59,6 @@ Item {
 		up.implicitIndicatorHeight + down.implicitIndicatorHeight)
 
 		onValueChanged: {
-			console.log("value changed to " + value / decimalFactor)
 		}
 		padding: 4
 		leftPadding: padding + (spinner.mirrored ? (up.indicator ? up.indicator.width : 0) : 0)
@@ -200,12 +198,12 @@ Item {
 		onValueModified: {
 			//this only fires when the user interactively changes the spinbox.
 
-			if (value == spinBox_Customized.from) {
+			if (value / decimalFactor == spinBox_Customized.from) {
 				spin_message.visible = true
-				spin_message.text = "Must be "+from / decimalFactor+" or greater"
-			} else if(value == spinBox_Customized.to){
+				spin_message.text = "Min:"+from / decimalFactor
+			} else if(value / decimalFactor == spinBox_Customized.to){
 				spin_message.visible = true
-				spin_message.text = "Can't be larger than " + to / decimalFactor
+				spin_message.text = "Max: " + to / decimalFactor
 			}else {
 				spin_message.visible = false
 			}
