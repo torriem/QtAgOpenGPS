@@ -7,7 +7,7 @@ Item{
     id: settingsWindow
     visible: settingsBtn.checked
     anchors.centerIn: parent
-    SpinBoxOneDecimal{
+    SpinBoxDecimal{
         text: "Panic Stop"
         implicitWidth: 100
         implicitHeight: 65

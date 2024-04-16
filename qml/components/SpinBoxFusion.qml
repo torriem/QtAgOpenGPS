@@ -5,7 +5,8 @@ import QtQuick.Controls.impl
 import QtQuick.Controls.Fusion
 import QtQuick.Controls.Fusion.impl
 
-
+/*So-this is a copy of the default spinbox value, but with a binding loop fixed
+ * It has no validation, that is what SpinBoxCustomized is for.*/
 T.SpinBox {
 	id: spinner
 

@@ -43,7 +43,7 @@ Item {
                 height: 150
                 width: 150
             }
-            SpinBoxOneDecimal{
+            SpinBoxDecimal{
                 objectName: "UturnRadius"
                 from: utils.m_to_unit(2)
                 boundValue: utils.m_to_unit(settings.set_youTurnRadius)
@@ -52,7 +52,7 @@ Item {
                 to: utils.m_to_unit(100)
                 editable: true
             }
-            SpinBoxOneDecimal{
+            SpinBoxDecimal{
                 objectName: "UturnDistance"
                 from: 0
                 boundValue: utils.m_to_unit(settings.set_youTurnDistanceFromBoundary)
