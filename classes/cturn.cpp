@@ -33,13 +33,13 @@ void CBoundary::FindClosestTurnPoint(const CABLine &ABLine, Vec3 fromPt)
 
     if (ABLine.isHeadingSameWay)
     {
-        eAB = ABLine.currentABLineP2.easting;
-        nAB = ABLine.currentABLineP2.northing;
+        eAB = ABLine.currentLinePtB.easting;
+        nAB = ABLine.currentLinePtB.northing;
     }
     else
     {
-        eAB = ABLine.currentABLineP1.easting;
-        nAB = ABLine.currentABLineP1.northing;
+        eAB = ABLine.currentLinePtA.easting;
+        nAB = ABLine.currentLinePtA.northing;
     }
 
     turnClosestList.clear();
