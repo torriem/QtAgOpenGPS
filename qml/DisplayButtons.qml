@@ -20,7 +20,10 @@ TimedRectangle{
             height: 70
             radius: 10
             icon.source: "/images/TiltDown.png"
-            onClicked: aog.tiltDown()
+            onClicked: {
+                aog.tiltDown()
+                displayButtons.resetTimer() 
+            }
         }
         IconButtonTransparent {
             id: btnCamera2d
@@ -28,7 +31,10 @@ TimedRectangle{
             height: 70
             radius: 10
             icon.source: "/images/Camera2D64.png"
-            onClicked: aog.btn2D()
+            onClicked: {
+                aog.btn2D()
+                displayButtons.resetTimer() 
+            }
         }
         IconButtonTransparent {
             id: btnCameraNorth2d
@@ -36,15 +42,21 @@ TimedRectangle{
             height: 70
             radius: 10
             icon.source: "/images/CameraNorth2D.png"
-            onClicked: aog.n2D()
+            onClicked: {
+                aog.n2D()
+                displayButtons.resetTimer() 
+            }
         }
         IconButtonTransparent {
             id: btnZoomOut
-            onClicked: aog.zoomOut()
             width: 70
             height: 70
             radius: 10
             icon.source: "/images/ZoomOut48.png"
+            onClicked: {
+                aog.zoomOut()
+                displayButtons.resetTimer() 
+            }
         }
         IconButtonTransparent {
             id: btnWindowDayNight
@@ -52,6 +64,7 @@ TimedRectangle{
             height: 70
             radius: 10
             icon.source: "/images/WindowDayMode.png"
+            onClicked: displayButtons.resetTimer()
         }
         IconButtonTransparent {
             id: btnBrightnessDown
@@ -59,6 +72,7 @@ TimedRectangle{
             height: 70
             radius: 10
             icon.source: "/images/BrightnessDn.png"
+            onClicked: displayButtons.resetTimer()
         }
         IconButtonTransparent {
             id: btnTiltUp
@@ -66,7 +80,10 @@ TimedRectangle{
             height: 70
             radius: 10
             icon.source: "/images/TiltUp.png"
-            onClicked: aog.tiltUp()
+            onClicked: {
+                aog.tiltUp()
+                displayButtons.resetTimer() 
+            }
         }
         IconButtonTransparent {
             id: btnCamera3d
@@ -74,7 +91,10 @@ TimedRectangle{
             height: 70
             radius: 10
             icon.source: "/images/Camera3D64.png"
-            onClicked: aog.btn3D()
+            onClicked: {
+                aog.btn3D()
+                displayButtons.resetTimer() 
+            }
         }
         IconButtonTransparent {
             id: btnCameraNorth3d
@@ -82,15 +102,21 @@ TimedRectangle{
             height: 70
             radius: 10
             icon.source: "/images/CameraNorth64.png"
-            onClicked: aog.n3D()
+            onClicked: {
+                aog.n3D()
+                displayButtons.resetTimer() 
+            }
         }
         IconButtonTransparent {
             id: btnZoomIn
-            onClicked: aog.zoomIn()
             width: 70
             height: 70
             radius: 10
             icon.source: "/images/ZoomIn48.png"
+            onClicked: {
+                aog.zoomIn()
+                displayButtons.resetTimer() 
+            }
         }
         Rectangle {
             id: btnHZ
@@ -104,6 +130,7 @@ TimedRectangle{
             height: 70
             radius: 10
             icon.source: "/images/BrightnessUp.png"
+            onClicked: displayButtons.resetTimer()
         }
     }
 }
