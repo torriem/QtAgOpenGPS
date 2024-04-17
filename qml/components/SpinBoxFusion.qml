@@ -31,7 +31,7 @@ T.SpinBox {
 		z: 2
 		//text: spinner.displayText //this line causes a loop
 		//don't ask why, you would think qt's default would work.
-		text:  spinBox_Customized.value//this seems to fix above error
+		text:  value//this seems to fix above error
 		font: spinner.font
 		color: aog.blackDayWhiteNight
 		selectionColor: spinner.palette.highlight

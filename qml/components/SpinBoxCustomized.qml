@@ -51,6 +51,10 @@ Item {
 		Keys.onReturnPressed: {
 			//console.debug("enter was pressed.  ignore it.")
 		}
+		contentItem: TextInput {
+			id: text_input
+			text: parent.value
+		}
 
 		onValueModified: {
 			//this only fires when the user interactively changes the spinbox.
@@ -64,7 +68,8 @@ Item {
 			}else {
 				spin_message.visible = false
 			}
-			spinBox_Customized.value = value / decimalFactor
+			spinBox_Customized.value = spinner.value/ decimalFactor
+			text_input.text = spinBox_Customized.value
 			spinBox_Customized.valueModified()
 
 		}
