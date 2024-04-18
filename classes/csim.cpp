@@ -66,6 +66,16 @@ void CSim::DoSimTick(double _st)
     double vtgSpeed = fabs(4 * stepDistance * 10);
     //mf.pn.AverageTheSpeed(); TODO: done in signal handler
 
+    temp = fabs(latitude * 100);
+    temp -= ((int)(temp));
+    temp *= 00;
+    double altitude = temp + 200;
+
+    temp = fabs(longitude * 100);
+    temp -= ((int)(temp));
+    temp *= 100;
+    altitude += temp;
+
     //Calculate the next Lat Long based on heading and distance
     CalculateNewPositionFromBearingDistance(glm::toRadians(latitude), glm::toRadians(longitude), headingTrue, stepDistance / 1000.0);
     //qDebug() << qSetRealNumberPrecision(9) << latitude << ", " << longitude << ", " << headingTrue << ", " << stepDistance;
@@ -83,10 +93,10 @@ void CSim::DoSimTick(double _st)
     //mf.pn.longitude = longitude;
 
     //mf.pn.hdop = 0.7;
-    //mf.pn.altitude = 732;
+    //see altitude calculations above
     //mf.pn.satellitesTracked = 12;
 
-    emit newPosition(vtgSpeed, glm::toDegrees(headingTrue), latitude, longitude, 0.7f, 732, 12);
+    emit newPosition(vtgSpeed, glm::toDegrees(headingTrue), latitude, longitude, 0.7f, altitude, 12);
 
     //done in main form slot:
     //mf.sentenceCounter = 0;

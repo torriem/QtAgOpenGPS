@@ -66,6 +66,7 @@ void CTool::loadSettings()
     zones = zoneRanges[0];
     //zoneRanges.removeAt(0); //remove first element since it was a count
 
+    isDisplayTramControl = property_setTool_isDisplayTramControl;
 
 }
 
@@ -250,7 +251,7 @@ void CTool::DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 pro
     float pointSize;
 
     //tram Dots
-    if (tram.displayMode != 0)
+    if (property_setTool_isDisplayTramControl && tram.displayMode != 0)
     {
         if (camera.camSetDistance > -300)
         {

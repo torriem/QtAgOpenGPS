@@ -16,7 +16,7 @@ bool CBoundary::IsPointInsideFenceArea(Vec3 testPoint) const
         for (int i = 1; i < bndList.count(); i++)
         {
             //make sure not inside a non drivethru boundary
-            if (bndList[i].isDriveThru) continue;
+            //if (bndList[i].isDriveThru) continue;
             if (glm::IsPointInPolygon(bndList[i].fenceLineEar,testPoint))
             {
                 return false;
@@ -37,7 +37,7 @@ bool CBoundary::IsPointInsideFenceArea(Vec2 testPoint) const
         for (int i = 1; i < bndList.count(); i++)
         {
             //make sure not inside a non drivethru boundary
-            if (bndList[i].isDriveThru) continue;
+            //if (bndList[i].isDriveThru) continue;
             if (glm::IsPointInPolygon(bndList[i].fenceLineEar,testPoint))
             {
                 return false;

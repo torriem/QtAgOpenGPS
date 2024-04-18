@@ -74,6 +74,8 @@ public:
     QVector<int> zoneRanges;
     ///----
 
+    bool isDisplayTramControl;
+
     //moved the following from the main form to here
     CSection section[MAXSECTIONS+1];
     QMLSectionButtons sectionButtonState;
