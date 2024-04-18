@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 /* This type contains properties, signals, and functions to interface
    the C++ backend with the QML gui, while abstracting and limiting

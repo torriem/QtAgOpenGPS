@@ -1,4 +1,4 @@
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 import QtQuick
 
 Slider{

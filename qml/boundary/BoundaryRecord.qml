@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Qt.labs.folderlistmodel
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 import ".."
 import "../components"
