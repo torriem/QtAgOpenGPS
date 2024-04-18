@@ -244,6 +244,8 @@ extern AOGProperty property_setWindow_QuickABLocation;
 extern AOGProperty property_setDisplay_isLogElevation;
 extern AOGProperty property_setSound_isSectionsOn;
 extern AOGProperty property_setGPS_dualReverseDetectionDistance;
+extern AOGProperty property_setTool_isDisplayTramControl;
+extern AOGProperty property_setAS_uTurnCompensation;
 extern AOGProperty property_setFeature_isHeadlandOn;
 extern AOGProperty property_setFeature_isTramOn;
 extern AOGProperty property_setFeature_isBoundaryOn;
@@ -269,5 +271,9 @@ extern AOGProperty property_displayShowBack;
 extern AOGProperty property_displayAntiAliasSamples;
 extern AOGProperty property_setDisplay_useTrackZero;
 extern AOGProperty property_setDisplay_topTrackNum;
+extern AOGProperty property_setDisplay_colorDayBackground;
+extern AOGProperty property_setDisplay_colorNightBackground;
+extern AOGProperty property_setDisplay_colorDayBorder;
+extern AOGProperty property_setDisplay_colorNightBorder;
 
 #endif // PROPERTIES_H

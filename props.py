@@ -264,4 +264,6 @@ props = {'setwin': 'display/camPitch',
  'setWindow_QuickABLocation': 'dialogs/quickABLocation',
  'setDisplay_isLogElevation': 'display/isLogElevation',
  'setSound_isSectionsOn': 'display/soundIsSectionOn',
- 'setGPS_dualReverseDetectionDistance': 'gps/dualReverseDetectionDistance'}
+ 'setGPS_dualReverseDetectionDistance': 'gps/dualReverseDetectionDistance',
+ 'setTool_isDisplayTramControl': 'display/showTramControl',
+ 'setAS_uTurnCompensation': 'autosteer/uTurnCompensation'}

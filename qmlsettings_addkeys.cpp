@@ -242,6 +242,8 @@ void QMLSettings::setupKeys() {
     addKey(QString("setDisplay_isLogElevation"),QString("display/isLogElevation"),"bool");
     addKey(QString("setSound_isSectionsOn"),QString("display/soundIsSectionOn"),"bool");
     addKey(QString("setGPS_dualReverseDetectionDistance"),QString("gps/dualReverseDetectionDistance"),"double");
+    addKey(QString("setTool_isDisplayTramControl"),QString("display/showTramControl"),"bool");
+    addKey(QString("setAS_uTurnCompensation"),QString("autosteer/uTurnCompensation"),"double");
     addKey(QString("setFeature_isHeadlandOn"),QString("displayFeatures/isHeadlandOn"), "bool");
     addKey(QString("setFeature_isTramOn"),QString("displayFeatures/isTramOn"), "bool");
     addKey(QString("setFeature_isBoundaryOn"),QString("displayFeatures/isBoundaryOn"), "bool");
