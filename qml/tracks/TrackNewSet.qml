@@ -8,6 +8,7 @@ import QtQml.Models
 import "components"
 /*This is where the track is actually created*/
 
+//region SetAB
 Dialog {
 	id: abSetter
 	width: 300

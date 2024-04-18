@@ -4,6 +4,9 @@ import QtQuick.Layouts
 
 import ".."
 import "../components"
+/*This is where the track type is selected. 
+ * This will open the window for the type of track.
+ */
 
 MoveablePopup {
     function show(){
