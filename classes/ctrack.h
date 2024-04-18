@@ -5,6 +5,11 @@
 #include "vec3.h"
 #include "vec2.h"
 
+class CVehicle;
+class CABLine;
+class CABCurve;
+
+
 enum TrackMode {
     None = 0,
     AB = 2,
@@ -28,6 +33,8 @@ public:
     Vec2 endPtB;
     int mode;
     double nudgeDistance;
+
+    CTrk();
 };
 
 class CTrack
@@ -41,13 +48,13 @@ public:
 
     CTrack();
 
-    int FindClosestRefTrack(Vec3 pivot);
-    void NudgeTrack(double dist);
-    void NudgeDistanceReset();
-    void SnapToPivot();
-    void NudgeRefTrack(double dist);
+    int FindClosestRefTrack(Vec3 pivot, const CVehicle &vehicle);
+    void NudgeTrack(double dist, CABLine &ABLine, CABCurve &curve);
+    void NudgeDistanceReset(CABLine &ABLine, CABCurve &curve);
+    void SnapToPivot(CABLine &ABLine, CABCurve &curve);
+    void NudgeRefTrack(double dist, CABLine &ABLine, CABCurve &curve);
     void NudgeRefABLine(double dist);
-    void NudgeRefCurve(double distAway);
+    void NudgeRefCurve(double distAway, CABCurve &curve);
 };
 
 #endif // CTRACK_H
