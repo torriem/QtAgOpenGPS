@@ -23,7 +23,9 @@ Item {
 		buttonSize = Math.min(...btnSizes)
 		console.log("Buttin size is now " + buttonSize)
 	}  
-    Connections{//to change blackDayWhiteNight and vice versa
+	property color whiteDayBlackNight: "white"
+
+    Connections{
         target: settings
         function onSetDisplay_isDayModeChanged(){
             if (settings.setDisplay_isDayMode){
@@ -31,12 +33,14 @@ Item {
                 textColor = "black"
                 borderColor = "lightBlue"
                 blackDayWhiteNight = "black"
+				whiteDayBlackNight = "white"
             }
             else{
                 backgroundColor = "darkgray"
                 textColor = "white"
-                borderColor= "darkBlue"
+                borderColor= "lightGray"
                 blackDayWhiteNight = "white"
+				whiteDayBlackNight = "black"
             }
         }
 	}

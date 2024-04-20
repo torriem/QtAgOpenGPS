@@ -68,7 +68,7 @@ Rectangle{
             isChecked: settings.setTool_isSectionOffWhenOut
             onCheckedChanged: settings.setTool_isSectionOffWhenOut = checked
         }
-        SpinBoxOneDecimal{
+        SpinBoxDecimal{
             //todo: this should be made english/metric
             id: slowSpeedCutoff
             from: utils.speed_to_unit(0)

@@ -1,0 +1,7 @@
+https://doc.qt.io/qt-6/qml-qtqml-component.html //A nice explanation
+
+
+SpinBoxFusion: SpinBox had a binding loop in it, that this fixed. Don't use it.
+SpinBoxDouble: This can handle double values. Use it everywhere, unless you need the metric capabilities of the other variants, or the error warning in SpinBoXCustomized.
+SpinBoxCustomized: Int s only (no decimals). Will warn you if you try to exceed the maximum / minimum value.
+SpinBox M, CM, KM: All convert between imp/metric, no warnings. SpinBoxM can have decimals.

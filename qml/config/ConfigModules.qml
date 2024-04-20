@@ -142,7 +142,7 @@ import "../components"
                     width: 200
                     height: 200
                 }
-                SpinBoxOneDecimal{
+                SpinBoxDecimal{
                     id: nudHydLiftLookAhead
                     from:1
                     //boundValue: settings.setVehicle_hydraulicLiftLookAhead

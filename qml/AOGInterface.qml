@@ -26,7 +26,8 @@ Item {
     property color backgroundColor: theme.backgroundColor
     property color textColor: theme.textColor
     property color borderColor: theme.borderColor
-    property color blackDayWhiteNight: "white"
+	property color blackDayWhiteNight: theme.blackDayWhiteNight
+	property color whiteDayBlackNight: theme.whiteDayBlackNight
     /*
     Connections {
         target: settings
