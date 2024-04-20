@@ -19,9 +19,9 @@ Item {
     property color blackDayWhiteNight: "black"
 	property var btnSizes: [100, 100, 100]//clockwise, right bottom left
 	property int buttonSize: 100
-	onBtnSizesChanged: {
-		buttonSize = Math.min(...btnSizes)
-		console.log("Buttin size is now " + buttonSize)
+	function buttonSizesChanged() {
+		buttonSize = Math.min(...btnSizes) - 2.5
+		console.log("Button size is now " + buttonSize)
 	}  
 	property color whiteDayBlackNight: "white"
 

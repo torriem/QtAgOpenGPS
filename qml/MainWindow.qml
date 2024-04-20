@@ -400,16 +400,19 @@ Window {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.leftMargin: 6
-			onWidthChanged: theme.btnSize[2] = width / (children.length) 
-			Layout.maximumHeight: theme.buttonSize
+			onHeightChanged: {
+				theme.btnSizes[2] = height / (children.length) 
+				theme.buttonSizesChanged()
+			}
+			//Layout.maximumHeight: theme.buttonSize
             onVisibleChanged: if(visible == false)
                                   width = 0
                               else
                                   width = children.width
             Button {
                 id: btnAcres
-                implicitWidth: parent.width
-                implicitHeight: parent.width / 2
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     aog.distanceUser = "0"
@@ -451,6 +454,8 @@ Window {
                 buttonText: qsTr("Display")
                 icon.source: "/images/NavigationSettings.png"
                 onClicked: displayButtons.visible = !displayButtons.visible
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
@@ -458,6 +463,8 @@ Window {
                 buttonText: qsTr("Settings")
                 icon.source: "/images/Settings48.png"
                 onClicked: config.open()
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
@@ -465,6 +472,8 @@ Window {
                 buttonText: qsTr("Tools")
                 icon.source: "/images/SpecialFunctions.png"
                 onClicked: toolsMenu.visible = true
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText{
@@ -472,12 +481,16 @@ Window {
                 buttonText: qsTr("Field")
                 icon.source: "/images/JobActive.png"
                 onClicked: fieldMenu.visible = true
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText{
                 id: btnFieldTools
                 buttonText: qsTr("Field Tools")
                 icon.source: "/images/FieldTools.png"
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 onClicked: fieldTools.visible = true
                 enabled: aog.isJobStarted ? true : false
                 Layout.alignment: Qt.AlignCenter
@@ -487,6 +500,8 @@ Window {
                 id: btnAgIO
                 buttonText: qsTr("AgIO")
                 icon.source: "/images/AgIO.png"
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
@@ -494,6 +509,8 @@ Window {
                 buttonText: qsTr("Steer config")
                 icon.source: "/images/AutoSteerConf.png"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 onClicked: {
                     steerConfigWindow.visible = true
                     steerConfigWindow.show()
@@ -540,8 +557,11 @@ Window {
 
             visible: aog.isJobStarted
 
-			onWidthChanged: theme.btnSize[1] = width / (children.length) 
-			Layout.maximumWidth: theme.buttonSize
+			onHeightChanged: {
+				theme.btnSizes[0] = height / (children.length) 
+				theme.buttonSizesChanged()
+			}
+			//Layout.maximumWidth: theme.buttonSize
             onVisibleChanged: if(visible == false)
                                   width = 0
                               else
@@ -554,6 +574,8 @@ Window {
                 checkable: true
                 icon.source: "/images/ContourOff.png"
                 iconChecked: "/images/ContourOn.png"
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 buttonText: "Contour"
                 //color: "white"
                 Layout.alignment: Qt.AlignCenter
@@ -566,6 +588,8 @@ Window {
                 iconChecked: "/images/CurveOn.png"
                 buttonText: "ABCurve"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 onClicked: {
                     abCurvePicker.visible = true
                     if (aog.currentABCurve > -1) {
@@ -597,6 +621,8 @@ Window {
                 //Also the types of lines are all mutually exclusive
                 icon.source: "/images/ABLineOff.png"
                 iconChecked: "/images/ABLineOn.png"
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     abLinePicker.visible = true
@@ -627,6 +653,8 @@ Window {
                 width: btnABLine.width
                 height: btnABLine.height
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
             }
             IconButton{
                 id: btnABLineCycleBk
@@ -634,6 +662,8 @@ Window {
                 width: btnABLine.width
                 height: btnABLine.height
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
             }
 
             IconButtonText {
@@ -644,6 +674,8 @@ Window {
                 iconChecked: "/images/ManualOn.png"
                 buttonText: "Manual"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 onCheckedChanged: {
                     if (checked) {
                         btnSectionAuto.checked = false;
@@ -665,6 +697,8 @@ Window {
                 iconChecked: "/images/SectionMasterOn.png"
                 buttonText: "Auto"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 onCheckedChanged: {
                     if (checked) {
                         btnSectionManual.checked = false;
@@ -687,6 +721,8 @@ Window {
                 enabled: aog.isAutoSteerBtnOn
                 onClicked: aog.autoYouTurn()
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
             }
             IconButtonText {
                 id: btnAutoSteer
@@ -698,6 +734,8 @@ Window {
                 //Is remote activation of autosteer enabled?
                 buttonText: (settings.setAS_isAutoSteerAutoOn === true ? "R" : "M")
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 onClicked: {
                     if (checked && ((aog.currentABCurve > -1) || (aog.currentABLine > -1))) {
                         console.debug("okay to turn on autosteer button.")
@@ -754,24 +792,27 @@ Window {
         RowLayout{
             id:bottomButtons
             anchors.bottom: parent.bottom
-            anchors.left: leftColumn.right
-            anchors.leftMargin: 3
-            anchors.right: rightColumn.left
-            anchors.rightMargin: 3
-            Layout.fillWidth: true
+            anchors.left: parent.left
+            anchors.leftMargin: theme.buttonSize + 3
+            anchors.right: parent.right
+            anchors.rightMargin: theme.buttonSize + 3
             visible: aog.isJobStarted && leftColumn.visible
 
-            onVisibleChanged: if(visible == false)
+           /* onVisibleChanged: if(visible == false)
                                   height = 0
                               else
-                                  height = children.height
+                                  height = children.height*/
             //spacing: parent.rowSpacing
-			onWidthChanged: theme.btnSize[1] = width / (children.length) 
-			Layout.maximumWidth: theme.buttonSize
+			onWidthChanged: {
+				theme.btnSizes[1] = width / (children.length) 
+				theme.buttonSizesChanged()
+			}
             ComboBox {
                 id: skips
                 editable: true
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 model: ListModel {
                     id: model
                     ListElement {text: "1"}
@@ -791,8 +832,6 @@ Window {
                         curentIndex = skips.find(editText)
                     }
                 }
-                implicitHeight:parent.height
-                implicitWidth: btnYouSkip.width
             }
             IconButtonText {
                 id: btnYouSkip
@@ -802,6 +841,8 @@ Window {
                 iconChecked: "/images/YouSkipOn.png"
                 buttonText: "YouSkips"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
             }
             IconButtonText {
                 id: btnResetTool
@@ -809,16 +850,22 @@ Window {
                 buttonText: "Reset Tool"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: aog.btnResetTool()
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
             }
             IconButtonText {
                 id: btnSectionMapping
                 icon.source: "/images/SectionMapping"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
             }
             IconButtonText {
                 id: btnFieldInfo
                 icon.source: "/images/FieldStats.png"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 onClicked: {
                     fieldData.visible = !fieldData.visible
                     gpsData.visible = false
@@ -829,6 +876,8 @@ Window {
                 icon.source: "/images/TramLines.png"
                 buttonText: "Tram Lines"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
             }
             IconButtonText {
                 property bool isOn: false
@@ -841,6 +890,8 @@ Window {
                 iconChecked: "/images/HydraulicLiftOn.png"
                 buttonText: "HydLift"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 onClicked: {
                     isOn = !isOn
                     aog.isHydLiftOn(isOn)
@@ -855,6 +906,8 @@ Window {
                 buttonText: "Headland"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: aog.btnHeadland()
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
             }
             IconButtonText {
                 id: btnFlag
@@ -862,6 +915,8 @@ Window {
                 isChecked: false
                 icon.source: "/images/FlagRed.png"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 onPressAndHold: {
                     if (contextFlag.visible) {
                         contextFlag.visible = false;
@@ -878,6 +933,8 @@ Window {
                 buttonText: "Track"
                 onClicked: trackButtons.visible = !trackButtons.visible
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
             }
 
         }
