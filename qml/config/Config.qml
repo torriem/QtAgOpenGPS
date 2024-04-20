@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 //import QtQuick.Extras 1.4
 import QtQuick.Dialogs
