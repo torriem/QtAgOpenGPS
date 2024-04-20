@@ -154,3 +154,12 @@ Look here: https://www.qt.io/offline-installers in the "QT Creator" section.
 - (open a beer)
 - (drink beer)
 - ./QtAgOpenGPS &
+
+- mkdir build
+- cd build
+- cmake -G "Unix Maakefiles" ../
+- make
+- (open a beer)
+- (drink beer)
+- ./QtAgOpenGPS &
+
