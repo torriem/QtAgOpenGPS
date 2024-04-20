@@ -60,7 +60,7 @@ Window {
     }
     AOGTheme{
         id: theme
-        objectName: "aogTheme"
+        objectName: "theme"
     }
     LinesInterface {
         objectName: "linesInterface"
@@ -400,6 +400,8 @@ Window {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.leftMargin: 6
+			onWidthChanged: theme.btnSize[2] = width / (children.length) 
+			Layout.maximumHeight: theme.buttonSize
             onVisibleChanged: if(visible == false)
                                   width = 0
                               else
@@ -538,6 +540,8 @@ Window {
 
             visible: aog.isJobStarted
 
+			onWidthChanged: theme.btnSize[1] = width / (children.length) 
+			Layout.maximumWidth: theme.buttonSize
             onVisibleChanged: if(visible == false)
                                   width = 0
                               else
@@ -762,6 +766,8 @@ Window {
                               else
                                   height = children.height
             //spacing: parent.rowSpacing
+			onWidthChanged: theme.btnSize[1] = width / (children.length) 
+			Layout.maximumWidth: theme.buttonSize
             ComboBox {
                 id: skips
                 editable: true

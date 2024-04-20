@@ -17,8 +17,13 @@ Item {
     property color textColor: "black"
     property color borderColor: "lightblue"
     property color blackDayWhiteNight: "black"
-
-    Connections{
+	property var btnSizes: [100, 100, 100]//clockwise, right bottom left
+	property int buttonSize: 100
+	onBtnSizesChanged: {
+		buttonSize = Math.min(...btnSizes)
+		console.log("Buttin size is now " + buttonSize)
+	}  
+    Connections{//to change blackDayWhiteNight and vice versa
         target: settings
         function onSetDisplay_isDayModeChanged(){
             if (settings.setDisplay_isDayMode){
@@ -34,8 +39,27 @@ Item {
                 blackDayWhiteNight = "white"
             }
         }
-    }
+	}
+	Item {//button sizes
+	width: 600
+	enum ScreenSize {
+		Phone, // 6" or less
+		SmallTablet, //6-10"
+		LargeTablet, //10" or larger
+		Large //regular computer screen.
+	}
 
+	property int screenDiag: Math.sqrt(Screen.width * Screen.width + Screen.height * Screen.height) / Screen.pixelDensity
+    property int screenType: screenDiag < 165 ? Sizes.ScreenSize.Phone :
+                             screenDiag < 230 ? Sizes.ScreenSize.SmallTablet :
+                             screenDiag < 355 ? Sizes.ScreenSize.LargeTablet : Sizes.ScreenSize.Large
+
+    property int buttonSquare: screenType == Sizes.ScreenSize.Phone ? 10 * Screen.pixelDensity :
+                               screenType == Sizes.ScreenSize.SmallTablet ? 20 * Screen.pixelDensity :
+                               screenType == Sizes.ScreenSize.LargeTablet ? 25 * Screen.pixelDensity : Screen.height / 12
+	
+
+}
     Connections{//sounds functions go here.
         target: aog
         function onIsAutoSteerBtnOnChanged() {//will need another function for every sound option
@@ -73,6 +97,8 @@ Item {
                     approachingYouTurn.play()
         }
     }
+	//region sounds
+	//as far as I can tell, these are all necessary
     SoundEffect{
         id: engage
         source: "/sounds/SteerOn.wav"
@@ -108,5 +134,5 @@ Item {
     SoundEffect{
         id: youturnFail
         source: "/sounds/TF013.wav"
-    }
+    }//endregion sounds
 }
