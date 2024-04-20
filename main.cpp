@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
     qRegisterMetaTypeStreamOperators<QList<int> >("QList<int>");
     qRegisterMetaTypeStreamOperators<QVector<int> >("QVector<int>");
 #endif
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
     settings = new AOGSettings();
     AOGProperty::init_defaults();
     settings->sync();

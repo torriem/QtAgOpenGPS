@@ -13,6 +13,10 @@ Rectangle {
         }
     }
 
+    function resetTimer() {
+        timeout = timeoutSet
+    }
+
     Timer {
         id: timer
         interval: 100
