@@ -174,6 +174,7 @@ void FormGPS::setupGui()
 
     //React to UI setting hyd life settings
     connect(aog, SIGNAL(modules_send_238()), this, SLOT(modules_send_238()));
+	connect(aog, SIGNAL(modules_send_251()), this, SLOT(modules_send_251()));
 
     connect(aog, SIGNAL(sim_bump_speed(bool)), &sim, SLOT(speed_bump(bool)));
     connect(aog, SIGNAL(sim_zero_speed()), &sim, SLOT(speed_zero()));
@@ -668,6 +669,20 @@ void FormGPS::modules_send_238() {
 
     qDebug() << p_238.pgn;
     SendPgnToLoop(p_238.pgn);
+}
+void FormGPS::modules_send_251() {
+	//qDebug() << "Sending 251 message to AgIO";
+	p_251.pgn[p_251.set0] = (int)property_setArdSteer_setting0;
+	p_251.pgn[p_251.set1] = (int)property_setArdSteer_setting1;
+	p_251.pgn[p_251.maxPulse] = (int)property_setArdSteer_maxPulseCounts;
+	p_251.pgn[p_251.minSpeed] = 5; //0.5 kmh THIS IS CHANGED IN AOG FIXES
+
+	if ((int)property_setAS_isConstantContourOn)
+		p_251.pgn[p_251.angVel] = 1;
+	else p_251.pgn[p_251.angVel] = 0;
+
+	qDebug() << p_251.pgn;
+	SendPgnToLoop(p_251.pgn);
 }
 
 void FormGPS::headland_save() {

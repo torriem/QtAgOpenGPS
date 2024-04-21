@@ -190,6 +190,7 @@ Item {
     signal settings_save() //sync to disk, and also copy to current vehicle file, if active
 
     signal modules_send_238()
+	signal modules_send_251()
 
     signal sim_bump_speed(bool up)
     signal sim_zero_speed()
