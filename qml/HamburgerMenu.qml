@@ -68,7 +68,6 @@ Drawer{
                 checked: isChecked
                 onCheckedChanged: {
                     settings.setMenu_isSimulatorOn = checked
-                    console.log("Sim = "+settings.setMenu_isSimulatorOn)
                 }
                 width: 250
                 height: 50

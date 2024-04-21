@@ -21,7 +21,7 @@ Item {
 	property int buttonSize: 100
 	function buttonSizesChanged() {
 		buttonSize = Math.min(...btnSizes) - 2.5
-		console.log("Button size is now " + buttonSize)
+		//console.log("Button size is now " + buttonSize)
 	}  
 	property color whiteDayBlackNight: "white"
 
@@ -53,14 +53,14 @@ Item {
 		Large //regular computer screen.
 	}
 
-	property int screenDiag: Math.sqrt(Screen.width * Screen.width + Screen.height * Screen.height) / Screen.pixelDensity
+/*	property int screenDiag: Math.sqrt(Screen.width * Screen.width + Screen.height * Screen.height) / Screen.pixelDensity
     property int screenType: screenDiag < 165 ? Sizes.ScreenSize.Phone :
                              screenDiag < 230 ? Sizes.ScreenSize.SmallTablet :
                              screenDiag < 355 ? Sizes.ScreenSize.LargeTablet : Sizes.ScreenSize.Large
 
     property int buttonSquare: screenType == Sizes.ScreenSize.Phone ? 10 * Screen.pixelDensity :
                                screenType == Sizes.ScreenSize.SmallTablet ? 20 * Screen.pixelDensity :
-                               screenType == Sizes.ScreenSize.LargeTablet ? 25 * Screen.pixelDensity : Screen.height / 12
+                               screenType == Sizes.ScreenSize.LargeTablet ? 25 * Screen.pixelDensity : Screen.height / 12*/
 	
 
 }
@@ -74,9 +74,9 @@ Item {
                     disEngage.play()
             }
         }
-        function onIsHydLiftDownChanged(){
+        function onHydLiftDownChanged(){
             if(settings.setSound_isHydLiftOn){
-                if(aog.isHydLiftDown)
+                if(aog.HydLiftDown)
                     hydDown.play()
                 else
                     hydUp.play()
@@ -135,8 +135,8 @@ Item {
         id: rtkLost
         source: "/sounds/rtk_lost.wav"
     }
-    SoundEffect{
+    /*SoundEffect{ this generates:  QSoundEffect(qaudio): Error decoding source qrc:/sounds/TF013.wav
         id: youturnFail
         source: "/sounds/TF013.wav"
-    }//endregion sounds
+	}*///endregion sounds
 }

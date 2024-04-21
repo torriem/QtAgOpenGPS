@@ -1045,7 +1045,6 @@ Window {
                     anchors.fill: parent
                     source: autoTurnImage
                     visible: btnAutoYouTurn.isChecked
-                    onVisibleChanged: console.log("visibility:"+visible)
                     //color: "#E5E54B"
                     colorizationColor: if(aog.distancePivotToTurnLine > 0)
                                "#4CF24C"

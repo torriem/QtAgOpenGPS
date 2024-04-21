@@ -541,9 +541,6 @@ Dialog {
             anchors.fill: mainConfig
             anchors.margins:1
             visible: featureMenu.checked
-            onVisibleChanged: {
-                console.debug("feature menu visibility changed")
-            }
         }
     }
 }
