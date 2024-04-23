@@ -43,6 +43,7 @@ Window {
             close.accepted = false
         }
     }
+
     //objectName: "openGLControl"
     //width:800
     //height:600
@@ -111,19 +112,19 @@ Window {
         anchors.right: parent.right
         anchors.bottom:  parent.bottom
 
-        color: "black"
-        /*
-        Text {
-            id: text2
-            text: qsTr("No GPS")
-            color: "white"
-            font.pointSize: 24
-            anchors.centerIn: parent
-        }
-        */
-    }
+		color: "black"
+			 /*
+			  Text {
+				  id: text2
+				  text: qsTr("No GPS")
+				  color: "white"
+				  font.pointSize: 24
+				  anchors.centerIn: parent
+			  }
+			  */
+		 }
 
-    Rectangle{
+		 Rectangle{
         id: topLine
         anchors.top: parent.top
         anchors.left: parent.left
@@ -250,6 +251,7 @@ Window {
                 onClicked: mainWindow.showMinimized()
             }
             IconButtonTransparent{
+				id: btnMaximize
                 height: parent.height
                 icon.source: "/images/WindowMaximize.png"
                 width: 75
@@ -1562,4 +1564,229 @@ Window {
             }
         }
     }
+			/*Item{ IMPORTANT: This does not yet work. It is the hotKey code. I'm going to commit it tho, or it will get lost.
+			id: keys
+			anchors.fill: parent
+		focus: true
+		onFocusChanged:{
+			console.log("focus changed to "+focus)
+			if(!focus)
+			    focus = true
+		}
+		z: 10
+		Keys.onPressed: (event)=> {
+
+			console.log("key pressed = "+event.key)
+			var hotkeys = settings.setKeys_hotkeys
+			var isSectionsNotZones = settings.setTools_isSectionsNotZones
+
+			if (event.key == hotkeys[0]) //autosteer button on off
+			btnAutoSteer.clicked();
+
+			if (event.key == hotkeys[1]) //open the steer chart
+			btnABLineCycle.clicked();
+
+			if (event.key == hotkeys[2])
+			//FileSaveEverythingBeforeClosingField();
+			console.log("not implemented. go to line 61 in mainwindow.qml to implement")
+
+			if (event.key == hotkeys[3]) // Flag click
+			btnFlag.clicked();
+
+			if (event.key == hotkeys[4]) //auto section on off
+			btnSectionManual.clicked();
+
+			if (event.key == hotkeys[5]) //auto section on off
+			btnSectionAuto.clicked();
+
+			if (event.key == hotkeys[6]) // Snap/Prioritu click
+			lineNudge.SnapToPivot();
+
+			if (event.key == hotkeys[7])//snap left
+			{
+				/*if (trk.idx > -1) //
+				 {
+					 trk.NudgeTrack((double)Properties.Settings.Default.setAS_snapDistance * -0.01);
+				 }
+				 lineNudge.snapLeft()
+			 }
+
+			 if (event.key == hotkeys[8]) //snap rightj
+			 {
+				 lineNudge.snapRight()
+				 console.log("not implemented. go to line 85 in mainwindow.qml to implement")
+				 /* if (trk.idx > -1)
+				  {
+					  trk.NudgeTrack((double)Properties.Settings.Default.setAS_snapDistance * 0.01);
+				  }
+			  }
+
+			  if (event.key == (hotkeys[9])) //open the vehicle Settings
+			  btnautoSteerConf.clicked();
+
+			  if (event.key == (hotkeys[10])) // Wizard
+			  {
+				  console.log("not implemented. go to line 102 in mainwindow.qml to implement")
+				  /*
+				   Form fcs = Application.OpenForms["FormSteer"];
+
+				   if (fcs != null)
+				   {
+					   fcs.Focus();
+					   fcs.Close();
+				   }
+
+				   //check if window already exists
+				   Form fc = Application.OpenForms["FormSteerWiz"];
+
+				   if (fc != null)
+				   {
+					   fc.Focus();
+					   //fc.Close();
+					   return true;
+				   }
+
+				   //
+				   Form form = new FormSteerWiz(this);
+				   form.Show(this);
+				   
+			  }
+
+			  /*if (event.key == (hotkeys[11])) //section or zone button
+			   {
+				   if (isSectionsNotZones) btnSection1Man.clicked();
+				   else btnZone1.clicked();
+			   }
+
+			   if (event.key == (hotkeys[12])) //section or zone button
+			   {
+				   if (isSectionsNotZones) btnSection2Man.clicked();
+				   else btnZone2.clicked();
+			   }
+
+			   if (event.key == (hotkeys[13])) //section or zone button
+			   {
+				   if (isSectionsNotZones) btnSection3Man.clicked();
+				   else btnZone3.clicked();
+			   }
+
+			   if (event.key == (hotkeys[14])) //section or zone button
+			   {
+				   if (isSectionsNotZones) btnSection4Man.clicked();
+				   else btnZone4.clicked();
+			   }
+
+			   if (event.key == (hotkeys[15])) //section or zone button
+			   {
+				   if (isSectionsNotZones) btnSection5Man.clicked();
+				   else btnZone5.clicked();
+			   }
+
+			   if (event.key == (hotkeys[16])) //section or zone button
+			   {
+				   if (isSectionsNotZones) btnSection6Man.clicked();
+				   else btnZone6.clicked();
+			   }
+
+			   if (event.key == (hotkeys[17])) //section or zone button
+			   {
+				   if (isSectionsNotZones) btnSection7Man.clicked();
+				   else btnZone7.clicked();
+			   }
+
+			   if (event.key == (hotkeys[18])) //section or zone button
+			   {
+				   if (isSectionsNotZones) btnSection8Man.clicked();
+				   else btnZone8.clicked();
+			   }
+
+			   //////////////////////////////////////////////
+
+			   if (event.key == (Keys.NumPad1)) //auto section on off
+			   btnSectionAuto.clicked();
+
+			   if (event.key == (Keys.NumPad0)) //auto section on off
+			   btnSectionManual.clicked();
+
+			   if (event.key == (Keys.F11)) // Full Screen click
+			   btnMaximize.clicked();
+
+
+			   //reset Sim
+			   if (event.key == Keys.R)
+			   {
+				   aog.sim.reset()
+			   }
+
+			   //UTurn
+			   if (event.key == Keys.U)
+			   {
+				   /*sim.headingTrue += Math.PI;
+					ABLine.isABValid = false;
+					curve.isCurveValid = false;
+					if (isBtnAutoSteerOn) btnAutoSteer.clicked();
+					
+				   console.log("not implemented. go to line 205 in mainwindow.qml to implement")
+			   }
+
+			   //speed up
+			   if (event.key == Keys.Up)
+			   {
+			   }
+
+			   //slow down
+			   if (event.key == Keys.Down)
+			   {
+			   }
+
+			   //Stop
+			   if (event.key == Keys.OemPeriod)
+			   {
+			   }
+
+			   //turn right
+			   if (event.key == Keys.Right)
+			   {
+			   }
+
+			   //turn left
+			   if (event.key == Keys.Left)
+			   {
+			   }
+
+			   //zero steering
+			   if (event.key == Keys.OemQuestion)
+			   {
+				   simBarRect.zeroSteerAngle()			
+			   }
+
+			   /*if (event.key == Keys.OemOpenBrackets)
+				{
+					sim.stepDistance = 0;
+					sim.isAccelBack = true;
+				}
+
+				if (event.key == Keys.OemCloseBrackets)
+				{
+					sim.stepDistance = 0;
+					sim.isAccelForward = true;
+				}
+
+				if (event.key == Keys.OemQuotes)
+				{
+					sim.stepDistance = 0;
+					return true;
+				}
+
+				if (event.key == (Keys.F6)) // Fast/Normal Sim
+				{
+					/*if (timerSim.Enabled)
+					 {
+						 if (timerSim.Interval < 20) timerSim.Interval = 93;
+						 else timerSim.Interval = 15;
+					 }
+					 console.log("not implemented. go to line 260 in mainwindow.qml to implement")
+				 }
+			 }
+		 }*/
 }
