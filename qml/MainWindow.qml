@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Window
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 import QtQuick.Effects
 import QtMultimedia
@@ -29,9 +29,16 @@ Window {
     signal save_everything()
 
     function close() {
+		console.log("close called")
+		if (areWindowsOpen()) {
+			timedMessage.addMessage(2000,qsTr("Some windows are open. Close them first."))
+			console.log("some windows are open. close them first")
+			return
+		}
         if (aog.autoBtnState + aog.manualBtnState  > 0) {
             timedMessage.addMessage(2000,qsTr("Section Control on. Shut off Section Control."))
             close.accepted = false
+			console.log("Section Control on. Shut off Section Control.")
             return
         }
         if (mainWindow.visibility !== (Window.FullScreen) && mainWindow.visibility !== (Window.Maximized)){
@@ -41,8 +48,66 @@ Window {
         if (aog.isJobStarted) {
             closeDialog.visible = true
             close.accepted = false
+			console.log("job is running. close it first")
+			return
         }
+		Qt.quit()
     }
+	function areWindowsOpen() {
+		if (config.visible == true) {
+			console.log("config visible") 
+			return true
+		}
+		else if (headlandDesigner.visible == true) {
+			console.log("headlandDesigner visible") 
+			return true
+		}
+		else if (headacheDesigner.visible == true) {
+			console.log("headacheDesigner visible") 
+			return true
+		}
+		else if (steerConfigWindow.visible == true) {
+			console.log("steerConfigWindow visible") 
+			return true
+		}
+		else if (abCurvePicker.visible == true) {
+			console.log("abCurvePicker visible") 
+			return true
+		}
+		else if (abLinePicker.visible == true) {
+			console.log("abLinePicker visible") 
+			return true
+		}
+		else if (tramLinesEditor.visible == true) {
+			console.log("tramLinesEditor visible") 
+			return true
+		}
+		else if (lineEditor.visible == true) {
+			console.log("lineEditor visible") 
+			return true
+		}
+		//if (boundaryMenu.visible == true) return false
+		//if (lineDrawer.visible) return false
+        //if (lineNudge.acive) return false
+		//if (refNudge.acive) return false
+		else if (setSimCoords.visible == true) {
+			console.log("setSimCoords visible") 
+			return true
+		}
+		else if (trackNew.visible == true) {
+			console.log("trackNew visible") 
+			return true
+		}
+		else if (fieldNew.visible == true) {
+			console.log("FieldNew visible") 
+			return true
+		}
+		//if (fieldFromKML.visible) return false
+		else if (fieldOpen.visible == true) return true
+		//if (contextFlag.visible == true) return false
+		else return false
+	}
+
     //objectName: "openGLControl"
     //width:800
     //height:600
@@ -60,7 +125,7 @@ Window {
     }
     AOGTheme{
         id: theme
-        objectName: "aogTheme"
+        objectName: "theme"
     }
     LinesInterface {
         objectName: "linesInterface"
@@ -111,19 +176,19 @@ Window {
         anchors.right: parent.right
         anchors.bottom:  parent.bottom
 
-        color: "black"
-        /*
-        Text {
-            id: text2
-            text: qsTr("No GPS")
-            color: "white"
-            font.pointSize: 24
-            anchors.centerIn: parent
-        }
-        */
-    }
+		color: "black"
+			 /*
+			  Text {
+				  id: text2
+				  text: qsTr("No GPS")
+				  color: "white"
+				  font.pointSize: 24
+				  anchors.centerIn: parent
+			  }
+			  */
+		 }
 
-    Rectangle{
+		 Rectangle{
         id: topLine
         anchors.top: parent.top
         anchors.left: parent.left
@@ -250,6 +315,7 @@ Window {
                 onClicked: mainWindow.showMinimized()
             }
             IconButtonTransparent{
+				id: btnMaximize
                 height: parent.height
                 icon.source: "/images/WindowMaximize.png"
                 width: 75
@@ -269,7 +335,7 @@ Window {
                 icon.source: "/images/WindowClose.png"
                 onClicked: {
                     mainWindow.save_everything()
-                    Qt.quit()
+                    mainWindow.close()
                 }
             }
         }
@@ -400,14 +466,19 @@ Window {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.leftMargin: 6
+			onHeightChanged: {
+				theme.btnSizes[2] = height / (children.length) 
+				theme.buttonSizesChanged()
+			}
+			//Layout.maximumHeight: theme.buttonSize
             onVisibleChanged: if(visible == false)
                                   width = 0
                               else
                                   width = children.width
             Button {
                 id: btnAcres
-                implicitWidth: parent.width
-                implicitHeight: parent.width / 2
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     aog.distanceUser = "0"
@@ -449,6 +520,8 @@ Window {
                 buttonText: qsTr("Display")
                 icon.source: "/images/NavigationSettings.png"
                 onClicked: displayButtons.visible = !displayButtons.visible
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
@@ -456,6 +529,8 @@ Window {
                 buttonText: qsTr("Settings")
                 icon.source: "/images/Settings48.png"
                 onClicked: config.open()
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
@@ -463,6 +538,8 @@ Window {
                 buttonText: qsTr("Tools")
                 icon.source: "/images/SpecialFunctions.png"
                 onClicked: toolsMenu.visible = true
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText{
@@ -470,12 +547,16 @@ Window {
                 buttonText: qsTr("Field")
                 icon.source: "/images/JobActive.png"
                 onClicked: fieldMenu.visible = true
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText{
                 id: btnFieldTools
                 buttonText: qsTr("Field Tools")
                 icon.source: "/images/FieldTools.png"
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 onClicked: fieldTools.visible = true
                 enabled: aog.isJobStarted ? true : false
                 Layout.alignment: Qt.AlignCenter
@@ -485,6 +566,8 @@ Window {
                 id: btnAgIO
                 buttonText: qsTr("AgIO")
                 icon.source: "/images/AgIO.png"
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
@@ -492,6 +575,8 @@ Window {
                 buttonText: qsTr("Steer config")
                 icon.source: "/images/AutoSteerConf.png"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 onClicked: {
                     steerConfigWindow.visible = true
                     steerConfigWindow.show()
@@ -538,6 +623,11 @@ Window {
 
             visible: aog.isJobStarted
 
+			onHeightChanged: {
+				theme.btnSizes[0] = height / (children.length) 
+				theme.buttonSizesChanged()
+			}
+			//Layout.maximumWidth: theme.buttonSize
             onVisibleChanged: if(visible == false)
                                   width = 0
                               else
@@ -550,6 +640,8 @@ Window {
                 checkable: true
                 icon.source: "/images/ContourOff.png"
                 iconChecked: "/images/ContourOn.png"
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 buttonText: "Contour"
                 //color: "white"
                 Layout.alignment: Qt.AlignCenter
@@ -562,6 +654,8 @@ Window {
                 iconChecked: "/images/CurveOn.png"
                 buttonText: "ABCurve"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 onClicked: {
                     abCurvePicker.visible = true
                     if (aog.currentABCurve > -1) {
@@ -593,6 +687,8 @@ Window {
                 //Also the types of lines are all mutually exclusive
                 icon.source: "/images/ABLineOff.png"
                 iconChecked: "/images/ABLineOn.png"
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     abLinePicker.visible = true
@@ -623,6 +719,8 @@ Window {
                 width: btnABLine.width
                 height: btnABLine.height
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
             }
             IconButton{
                 id: btnABLineCycleBk
@@ -630,6 +728,8 @@ Window {
                 width: btnABLine.width
                 height: btnABLine.height
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
             }
 
             IconButtonText {
@@ -640,6 +740,8 @@ Window {
                 iconChecked: "/images/ManualOn.png"
                 buttonText: "Manual"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 onCheckedChanged: {
                     if (checked) {
                         btnSectionAuto.checked = false;
@@ -661,6 +763,8 @@ Window {
                 iconChecked: "/images/SectionMasterOn.png"
                 buttonText: "Auto"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 onCheckedChanged: {
                     if (checked) {
                         btnSectionManual.checked = false;
@@ -683,6 +787,8 @@ Window {
                 enabled: aog.isAutoSteerBtnOn
                 onClicked: aog.autoYouTurn()
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
             }
             IconButtonText {
                 id: btnAutoSteer
@@ -694,6 +800,8 @@ Window {
                 //Is remote activation of autosteer enabled?
                 buttonText: (settings.setAS_isAutoSteerAutoOn === true ? "R" : "M")
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 onClicked: {
                     if (checked && ((aog.currentABCurve > -1) || (aog.currentABLine > -1))) {
                         console.debug("okay to turn on autosteer button.")
@@ -750,22 +858,27 @@ Window {
         RowLayout{
             id:bottomButtons
             anchors.bottom: parent.bottom
-            anchors.left: leftColumn.right
-            anchors.leftMargin: 3
-            anchors.right: rightColumn.left
-            anchors.rightMargin: 3
-            Layout.fillWidth: true
+            anchors.left: parent.left
+            anchors.leftMargin: theme.buttonSize + 3
+            anchors.right: parent.right
+            anchors.rightMargin: theme.buttonSize + 3
             visible: aog.isJobStarted && leftColumn.visible
 
-            onVisibleChanged: if(visible == false)
+           /* onVisibleChanged: if(visible == false)
                                   height = 0
                               else
-                                  height = children.height
+                                  height = children.height*/
             //spacing: parent.rowSpacing
+			onWidthChanged: {
+				theme.btnSizes[1] = width / (children.length) 
+				theme.buttonSizesChanged()
+			}
             ComboBox {
                 id: skips
                 editable: true
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 model: ListModel {
                     id: model
                     ListElement {text: "1"}
@@ -785,8 +898,6 @@ Window {
                         curentIndex = skips.find(editText)
                     }
                 }
-                implicitHeight:parent.height
-                implicitWidth: btnYouSkip.width
             }
             IconButtonText {
                 id: btnYouSkip
@@ -796,6 +907,8 @@ Window {
                 iconChecked: "/images/YouSkipOn.png"
                 buttonText: "YouSkips"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
             }
             IconButtonText {
                 id: btnResetTool
@@ -803,16 +916,22 @@ Window {
                 buttonText: "Reset Tool"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: aog.btnResetTool()
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
             }
             IconButtonText {
                 id: btnSectionMapping
                 icon.source: "/images/SectionMapping"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
             }
             IconButtonText {
                 id: btnFieldInfo
                 icon.source: "/images/FieldStats.png"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 onClicked: {
                     fieldData.visible = !fieldData.visible
                     gpsData.visible = false
@@ -823,6 +942,8 @@ Window {
                 icon.source: "/images/TramLines.png"
                 buttonText: "Tram Lines"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
             }
             IconButtonText {
                 property bool isOn: false
@@ -835,6 +956,8 @@ Window {
                 iconChecked: "/images/HydraulicLiftOn.png"
                 buttonText: "HydLift"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 onClicked: {
                     isOn = !isOn
                     aog.isHydLiftOn(isOn)
@@ -849,6 +972,8 @@ Window {
                 buttonText: "Headland"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: aog.btnHeadland()
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
             }
             IconButtonText {
                 id: btnFlag
@@ -856,6 +981,8 @@ Window {
                 isChecked: false
                 icon.source: "/images/FlagRed.png"
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
                 onPressAndHold: {
                     if (contextFlag.visible) {
                         contextFlag.visible = false;
@@ -872,6 +999,8 @@ Window {
                 buttonText: "Track"
                 onClicked: trackButtons.visible = !trackButtons.visible
                 Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
             }
 
         }
@@ -982,7 +1111,6 @@ Window {
                     anchors.fill: parent
                     source: autoTurnImage
                     visible: btnAutoYouTurn.isChecked
-                    onVisibleChanged: console.log("visibility:"+visible)
                     //color: "#E5E54B"
                     colorizationColor: if(aog.distancePivotToTurnLine > 0)
                                "#4CF24C"
@@ -1500,4 +1628,229 @@ Window {
             }
         }
     }
+			/*Item{ IMPORTANT: This does not yet work. It is the hotKey code. I'm going to commit it tho, or it will get lost.
+			id: keys
+			anchors.fill: parent
+		focus: true
+		onFocusChanged:{
+			console.log("focus changed to "+focus)
+			if(!focus)
+			    focus = true
+		}
+		z: 10
+		Keys.onPressed: (event)=> {
+
+			console.log("key pressed = "+event.key)
+			var hotkeys = settings.setKeys_hotkeys
+			var isSectionsNotZones = settings.setTools_isSectionsNotZones
+
+			if (event.key == hotkeys[0]) //autosteer button on off
+			btnAutoSteer.clicked();
+
+			if (event.key == hotkeys[1]) //open the steer chart
+			btnABLineCycle.clicked();
+
+			if (event.key == hotkeys[2])
+			//FileSaveEverythingBeforeClosingField();
+			console.log("not implemented. go to line 61 in mainwindow.qml to implement")
+
+			if (event.key == hotkeys[3]) // Flag click
+			btnFlag.clicked();
+
+			if (event.key == hotkeys[4]) //auto section on off
+			btnSectionManual.clicked();
+
+			if (event.key == hotkeys[5]) //auto section on off
+			btnSectionAuto.clicked();
+
+			if (event.key == hotkeys[6]) // Snap/Prioritu click
+			lineNudge.SnapToPivot();
+
+			if (event.key == hotkeys[7])//snap left
+			{
+				/*if (trk.idx > -1) //
+				 {
+					 trk.NudgeTrack((double)Properties.Settings.Default.setAS_snapDistance * -0.01);
+				 }
+				 lineNudge.snapLeft()
+			 }
+
+			 if (event.key == hotkeys[8]) //snap rightj
+			 {
+				 lineNudge.snapRight()
+				 console.log("not implemented. go to line 85 in mainwindow.qml to implement")
+				 /* if (trk.idx > -1)
+				  {
+					  trk.NudgeTrack((double)Properties.Settings.Default.setAS_snapDistance * 0.01);
+				  }
+			  }
+
+			  if (event.key == (hotkeys[9])) //open the vehicle Settings
+			  btnautoSteerConf.clicked();
+
+			  if (event.key == (hotkeys[10])) // Wizard
+			  {
+				  console.log("not implemented. go to line 102 in mainwindow.qml to implement")
+				  /*
+				   Form fcs = Application.OpenForms["FormSteer"];
+
+				   if (fcs != null)
+				   {
+					   fcs.Focus();
+					   fcs.Close();
+				   }
+
+				   //check if window already exists
+				   Form fc = Application.OpenForms["FormSteerWiz"];
+
+				   if (fc != null)
+				   {
+					   fc.Focus();
+					   //fc.Close();
+					   return true;
+				   }
+
+				   //
+				   Form form = new FormSteerWiz(this);
+				   form.Show(this);
+				   
+			  }
+
+			  /*if (event.key == (hotkeys[11])) //section or zone button
+			   {
+				   if (isSectionsNotZones) btnSection1Man.clicked();
+				   else btnZone1.clicked();
+			   }
+
+			   if (event.key == (hotkeys[12])) //section or zone button
+			   {
+				   if (isSectionsNotZones) btnSection2Man.clicked();
+				   else btnZone2.clicked();
+			   }
+
+			   if (event.key == (hotkeys[13])) //section or zone button
+			   {
+				   if (isSectionsNotZones) btnSection3Man.clicked();
+				   else btnZone3.clicked();
+			   }
+
+			   if (event.key == (hotkeys[14])) //section or zone button
+			   {
+				   if (isSectionsNotZones) btnSection4Man.clicked();
+				   else btnZone4.clicked();
+			   }
+
+			   if (event.key == (hotkeys[15])) //section or zone button
+			   {
+				   if (isSectionsNotZones) btnSection5Man.clicked();
+				   else btnZone5.clicked();
+			   }
+
+			   if (event.key == (hotkeys[16])) //section or zone button
+			   {
+				   if (isSectionsNotZones) btnSection6Man.clicked();
+				   else btnZone6.clicked();
+			   }
+
+			   if (event.key == (hotkeys[17])) //section or zone button
+			   {
+				   if (isSectionsNotZones) btnSection7Man.clicked();
+				   else btnZone7.clicked();
+			   }
+
+			   if (event.key == (hotkeys[18])) //section or zone button
+			   {
+				   if (isSectionsNotZones) btnSection8Man.clicked();
+				   else btnZone8.clicked();
+			   }
+
+			   //////////////////////////////////////////////
+
+			   if (event.key == (Keys.NumPad1)) //auto section on off
+			   btnSectionAuto.clicked();
+
+			   if (event.key == (Keys.NumPad0)) //auto section on off
+			   btnSectionManual.clicked();
+
+			   if (event.key == (Keys.F11)) // Full Screen click
+			   btnMaximize.clicked();
+
+
+			   //reset Sim
+			   if (event.key == Keys.R)
+			   {
+				   aog.sim.reset()
+			   }
+
+			   //UTurn
+			   if (event.key == Keys.U)
+			   {
+				   /*sim.headingTrue += Math.PI;
+					ABLine.isABValid = false;
+					curve.isCurveValid = false;
+					if (isBtnAutoSteerOn) btnAutoSteer.clicked();
+					
+				   console.log("not implemented. go to line 205 in mainwindow.qml to implement")
+			   }
+
+			   //speed up
+			   if (event.key == Keys.Up)
+			   {
+			   }
+
+			   //slow down
+			   if (event.key == Keys.Down)
+			   {
+			   }
+
+			   //Stop
+			   if (event.key == Keys.OemPeriod)
+			   {
+			   }
+
+			   //turn right
+			   if (event.key == Keys.Right)
+			   {
+			   }
+
+			   //turn left
+			   if (event.key == Keys.Left)
+			   {
+			   }
+
+			   //zero steering
+			   if (event.key == Keys.OemQuestion)
+			   {
+				   simBarRect.zeroSteerAngle()			
+			   }
+
+			   /*if (event.key == Keys.OemOpenBrackets)
+				{
+					sim.stepDistance = 0;
+					sim.isAccelBack = true;
+				}
+
+				if (event.key == Keys.OemCloseBrackets)
+				{
+					sim.stepDistance = 0;
+					sim.isAccelForward = true;
+				}
+
+				if (event.key == Keys.OemQuotes)
+				{
+					sim.stepDistance = 0;
+					return true;
+				}
+
+				if (event.key == (Keys.F6)) // Fast/Normal Sim
+				{
+					/*if (timerSim.Enabled)
+					 {
+						 if (timerSim.Interval < 20) timerSim.Interval = 93;
+						 else timerSim.Interval = 15;
+					 }
+					 console.log("not implemented. go to line 260 in mainwindow.qml to implement")
+				 }
+			 }
+		 }*/
 }

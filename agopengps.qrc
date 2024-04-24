@@ -607,12 +607,13 @@
         <file>qml/components/TimedMessage.qml</file>
         <file>qml/components/TextLine.qml</file>
         <file>qml/components/TestSectionButtons.qml</file>
-        <file>qml/components/SpinBoxTwoDecimal.qml</file>
-        <file>qml/components/SpinBoxOneDecimal.qml</file>
+        <file>qml/components/SpinBoxDecimal.qml</file>
         <file>qml/components/SpinBoxM.qml</file>
         <file>qml/components/SpinBoxKM.qml</file>
         <file>qml/components/SpinBoxCustomized.qml</file>
         <file>qml/components/SpinBoxCM.qml</file>
+		<file>qml/components/SpinBoxFusion.qml</file>
+		<file>qml/components/SpinBoxDouble.qml</file>
         <file>qml/components/SliderCustomized.qml</file>
         <file>qml/components/SectionButtons.qml</file>
         <file>qml/components/SectionButton.qml</file>

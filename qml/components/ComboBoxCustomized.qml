@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 Item{
     id: itemCombo
@@ -7,6 +7,8 @@ Item{
     property alias model: rootCombo.model
     property alias editable: rootCombo.editable
     property alias currentIndex: rootCombo.currentIndex
+
+	signal activated()
     height: 75
     width: rootCombo.width
     TextLine{
@@ -22,6 +24,7 @@ Item{
         model: ListModel{
             id: rootComboModel
         }
+		onActivated: itemCombo.activated()
         onAccepted: {
             if (rootCombo.find(currentText) === -1){
                 rootComboModel.append({text: editText})

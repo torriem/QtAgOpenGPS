@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 import ".."
 import "../components"
@@ -233,7 +233,7 @@ Rectangle{
             anchors.top: lineacqLAheadtitletxt.bottom
             anchors.bottom: parent.bottom
             width: parent.width*.5
-            SpinBoxOneDecimal{
+            SpinBoxDecimal{
                 id: lineacqLAheadSetting
                 anchors.top: parent.top
                 anchors.topMargin: 25

@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 /* This type contains properties, signals, and functions to interface
    the C++ backend with the QML gui, while abstracting and limiting
@@ -26,7 +26,8 @@ Item {
     property color backgroundColor: theme.backgroundColor
     property color textColor: theme.textColor
     property color borderColor: theme.borderColor
-    property color blackDayWhiteNight: "white"
+	property color blackDayWhiteNight: theme.blackDayWhiteNight
+	property color whiteDayBlackNight: theme.whiteDayBlackNight
     /*
     Connections {
         target: settings
@@ -189,6 +190,7 @@ Item {
     signal settings_save() //sync to disk, and also copy to current vehicle file, if active
 
     signal modules_send_238()
+	signal modules_send_251()
 
     signal sim_bump_speed(bool up)
     signal sim_zero_speed()

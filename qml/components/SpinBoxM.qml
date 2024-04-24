@@ -13,6 +13,15 @@ Item {
     property int stepSize: 1
     property bool editable: true
     property string text: ""
+	property int decimals: 0
+	property int decimalFactor: 1
+
+	onDecimalsChanged: {
+		if (decimals > 0)
+			decimalFactor = Math.pow(10, decimals)
+		else
+			decimalFactor = 1
+	}
 
     property double boundValue
 
@@ -38,15 +47,16 @@ Item {
         }
     }
 
-    SpinBoxCustomized {
+    SpinBoxDouble {
         id: spinner
+		decimals: spinBoxM.decimals
         from: utils.m_to_unit(spinBoxM.from)
         to: utils.m_to_unit(spinBoxM.to)
         editable: spinBoxM.editable
-        text: spinBoxM.text
         value: utils.m_to_unit(spinBoxM.value) // should be in metres!
         stepSize: spinBoxM.stepSize
         anchors.fill: parent
+
 
         onValueModified: {
             spinBoxM.value = utils.m_from_unit(value)

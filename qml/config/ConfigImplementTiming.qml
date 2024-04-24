@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 import ".."
 import "../components"
@@ -48,7 +48,7 @@ Rectangle{
             source: "/images/Config/SectionLookAheadDelay.gif"
         }
 
-        SpinBoxOneDecimal{
+        SpinBoxDecimal{
             anchors.horizontalCenter: onPic.horizontalCenter
             anchors.top: onPic.bottom
             anchors.topMargin: 10
@@ -58,7 +58,7 @@ Rectangle{
             to: 22
             text: qsTr("On (secs)")
         }
-        SpinBoxOneDecimal{
+        SpinBoxDecimal{
             anchors.horizontalCenter: offPic.horizontalCenter
             anchors.top: offPic.bottom
             anchors.topMargin: 10
@@ -69,7 +69,7 @@ Rectangle{
             editable: true
             text: qsTr("Off (secs)")
         }
-        SpinBoxOneDecimal{
+        SpinBoxDecimal{
             anchors.horizontalCenter: offDelayPic.horizontalCenter
             anchors.top: offDelayPic.bottom
             anchors.topMargin: 10

@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 //import QtQuick.Extras 1.4
 import QtQuick.Dialogs
@@ -541,9 +541,6 @@ Dialog {
             anchors.fill: mainConfig
             anchors.margins:1
             visible: featureMenu.checked
-            onVisibleChanged: {
-                console.debug("feature menu visibility changed")
-            }
         }
     }
 }

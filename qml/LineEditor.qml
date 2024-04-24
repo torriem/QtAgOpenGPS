@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 import "components"
 
 Rectangle {
@@ -25,7 +25,7 @@ Rectangle {
             id: leftNudger
             icon.source: "/images/ArrowLeft.png"
         }
-            SpinBoxOneDecimal{
+            SpinBoxDecimal{
             width: leftNudger.width
             height: 50
             anchors.verticalCenter: parent.verticalCenter

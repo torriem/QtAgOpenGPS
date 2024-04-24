@@ -1,7 +1,7 @@
 import QtQuick 2.8
 import QtQuick.Effects
 import QtQuick.Window 2.15
-import QtQuick.Controls 2.15
+import QtQuick.Controls.Fusion
 import QtQuick.Layouts 1.3
 import QtMultimedia
 //import AgOpenGPS 1.0

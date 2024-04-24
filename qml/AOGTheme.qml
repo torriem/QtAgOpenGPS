@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 import QtMultimedia
 
 /* This type contains the sounds, colors, and perhaps screen sizes,
@@ -17,6 +17,13 @@ Item {
     property color textColor: "black"
     property color borderColor: "lightblue"
     property color blackDayWhiteNight: "black"
+	property var btnSizes: [100, 100, 100]//clockwise, right bottom left
+	property int buttonSize: 100
+	function buttonSizesChanged() {
+		buttonSize = Math.min(...btnSizes) - 2.5
+		//console.log("Button size is now " + buttonSize)
+	}  
+	property color whiteDayBlackNight: "white"
 
     Connections{
         target: settings
@@ -26,16 +33,37 @@ Item {
                 textColor = "black"
                 borderColor = "lightBlue"
                 blackDayWhiteNight = "black"
+				whiteDayBlackNight = "white"
             }
             else{
                 backgroundColor = "darkgray"
                 textColor = "white"
-                borderColor= "darkBlue"
+                borderColor= "lightGray"
                 blackDayWhiteNight = "white"
+				whiteDayBlackNight = "black"
             }
         }
-    }
+	}
+	Item {//button sizes
+	width: 600
+	enum ScreenSize {
+		Phone, // 6" or less
+		SmallTablet, //6-10"
+		LargeTablet, //10" or larger
+		Large //regular computer screen.
+	}
 
+/*	property int screenDiag: Math.sqrt(Screen.width * Screen.width + Screen.height * Screen.height) / Screen.pixelDensity
+    property int screenType: screenDiag < 165 ? Sizes.ScreenSize.Phone :
+                             screenDiag < 230 ? Sizes.ScreenSize.SmallTablet :
+                             screenDiag < 355 ? Sizes.ScreenSize.LargeTablet : Sizes.ScreenSize.Large
+
+    property int buttonSquare: screenType == Sizes.ScreenSize.Phone ? 10 * Screen.pixelDensity :
+                               screenType == Sizes.ScreenSize.SmallTablet ? 20 * Screen.pixelDensity :
+                               screenType == Sizes.ScreenSize.LargeTablet ? 25 * Screen.pixelDensity : Screen.height / 12*/
+	
+
+}
     Connections{//sounds functions go here.
         target: aog
         function onIsAutoSteerBtnOnChanged() {//will need another function for every sound option
@@ -46,9 +74,9 @@ Item {
                     disEngage.play()
             }
         }
-        function onIsHydLiftDownChanged(){
+        function onHydLiftDownChanged(){
             if(settings.setSound_isHydLiftOn){
-                if(aog.isHydLiftDown)
+                if(aog.HydLiftDown)
                     hydDown.play()
                 else
                     hydUp.play()
@@ -73,6 +101,8 @@ Item {
                     approachingYouTurn.play()
         }
     }
+	//region sounds
+	//as far as I can tell, these are all necessary
     SoundEffect{
         id: engage
         source: "/sounds/SteerOn.wav"
@@ -105,8 +135,8 @@ Item {
         id: rtkLost
         source: "/sounds/rtk_lost.wav"
     }
-    SoundEffect{
+    /*SoundEffect{ this generates:  QSoundEffect(qaudio): Error decoding source qrc:/sounds/TF013.wav
         id: youturnFail
         source: "/sounds/TF013.wav"
-    }
+	}*///endregion sounds
 }

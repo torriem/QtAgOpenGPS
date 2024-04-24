@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 import ".."
 import "../components"
@@ -286,7 +286,7 @@ Rectangle{
             anchors.left: parent.left
             anchors.leftMargin: 30
         }
-        SpinBoxOneDecimal{
+        SpinBoxDecimal{
             id: headingOffSet
             anchors.left: head.right
             anchors.bottom: head.bottom
