@@ -29,9 +29,16 @@ Window {
     signal save_everything()
 
     function close() {
+		console.log("close called")
+		if (areWindowsOpen()) {
+			timedMessage.addMessage(2000,qsTr("Some windows are open. Close them first."))
+			console.log("some windows are open. close them first")
+			return
+		}
         if (aog.autoBtnState + aog.manualBtnState  > 0) {
             timedMessage.addMessage(2000,qsTr("Section Control on. Shut off Section Control."))
             close.accepted = false
+			console.log("Section Control on. Shut off Section Control.")
             return
         }
         if (mainWindow.visibility !== (Window.FullScreen) && mainWindow.visibility !== (Window.Maximized)){
@@ -41,8 +48,65 @@ Window {
         if (aog.isJobStarted) {
             closeDialog.visible = true
             close.accepted = false
+			console.log("job is running. close it first")
+			return
         }
+		Qt.quit()
     }
+	function areWindowsOpen() {
+		if (config.visible == true) {
+			console.log("config visible") 
+			return true
+		}
+		else if (headlandDesigner.visible == true) {
+			console.log("headlandDesigner visible") 
+			return true
+		}
+		else if (headacheDesigner.visible == true) {
+			console.log("headacheDesigner visible") 
+			return true
+		}
+		else if (steerConfigWindow.visible == true) {
+			console.log("steerConfigWindow visible") 
+			return true
+		}
+		else if (abCurvePicker.visible == true) {
+			console.log("abCurvePicker visible") 
+			return true
+		}
+		else if (abLinePicker.visible == true) {
+			console.log("abLinePicker visible") 
+			return true
+		}
+		else if (tramLinesEditor.visible == true) {
+			console.log("tramLinesEditor visible") 
+			return true
+		}
+		else if (lineEditor.visible == true) {
+			console.log("lineEditor visible") 
+			return true
+		}
+		//if (boundaryMenu.visible == true) return false
+		//if (lineDrawer.visible) return false
+        //if (lineNudge.acive) return false
+		//if (refNudge.acive) return false
+		else if (setSimCoords.visible == true) {
+			console.log("setSimCoords visible") 
+			return true
+		}
+		else if (trackNew.visible == true) {
+			console.log("trackNew visible") 
+			return true
+		}
+		else if (fieldNew.visible == true) {
+			console.log("FieldNew visible") 
+			return true
+		}
+		//if (fieldFromKML.visible) return false
+		else if (fieldOpen.visible == true) return true
+		//if (contextFlag.visible == true) return false
+		else return false
+	}
 
     //objectName: "openGLControl"
     //width:800
@@ -271,7 +335,7 @@ Window {
                 icon.source: "/images/WindowClose.png"
                 onClicked: {
                     mainWindow.save_everything()
-                    Qt.quit()
+                    mainWindow.close()
                 }
             }
         }
