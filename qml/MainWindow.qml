@@ -994,8 +994,9 @@ Window {
             }
 
             IconButtonText {
-                id: btnTrackOn
-                icon.source: "/images/TrackOn.png"
+                id: btnTrack
+				icon.source: "/images/TrackOff.png"
+                iconChecked: "/images/TrackOn.png"
                 buttonText: "Track"
                 onClicked: trackButtons.visible = !trackButtons.visible
                 Layout.alignment: Qt.AlignCenter
@@ -1513,6 +1514,9 @@ Window {
             id: trackNew
             visible: false
         }
+		TrackList{
+			id: trackList
+		}
 
         Rectangle{
             id: closeDialog

@@ -4,20 +4,20 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Dialogs
 import QtQml.Models
-import "components"
+import "../components"
 
-Dialog {
+import ".."
+
+MoveablePopup {
     //AOGInterface {
     //    id: aog //temporary
     //}
     id: abLinePickerDialog
 
     width: 600
-    height: 400
+    height: 450
 
     modal: true
-    standardButtons: "NoButton"
-    title: qsTr("AB Line")
 
     //signal updateABLines()
     //signal deleteLine(int lineno)
@@ -31,6 +31,9 @@ Dialog {
             abLinePickerDialog.reloadModel()
         }
     }
+	function show() {
+		abLinePickerDialog.visible = true
+	}
 
     function reloadModel() {
         ablineModel.clear()
@@ -62,7 +65,7 @@ Dialog {
         color: aog.backgroundColor
         TopLine{
             id: topLine
-            titleText: "AB Line"
+            titleText: "Tracks"
         }
         ColumnLayout{
             id: leftColumn
@@ -155,8 +158,76 @@ Dialog {
                 }
             }
         }
+        Rectangle{
+            id: listrect
+            anchors.left: leftColumn.right
+            anchors.top:topLine.bottom
+            anchors.right: rightColumn.left
+            anchors.bottom: bottomRow.top
+            anchors.bottomMargin: 0
+            anchors.margins: 10
+            color: aog.backgroundColor
+
+            /*ListModel { //this will be populated by the backend cpp code
+                id: ablineModel
+                objectName: "ablineModel"
+			}*/
+			ListModel { //this is for testing
+			id: ablineModel
+			ListElement {text: "Line 1"}
+			ListElement {text: "Line 2"}
+			ListElement {text: "Line 3"}
+			ListElement {text: "Line 4"}
+		}
+
+            Component.onCompleted: {
+                reloadModel()
+            }
+
+            ListView {
+                id: ablineView
+                anchors.fill: parent
+                model: ablineModel
+                //property int currentIndex: -1
+                clip: true
+
+                delegate: RadioButton{
+                    id: control
+                    checked: ablineView.currentIndex === index ? true : false
+                    indicator: Rectangle{
+                        anchors.fill: parent
+                        anchors.margins: 2
+                        //color: (control.down) ? aog.backgroundColor : aog.blackDayWhiteNight
+                        //color: (control.down) ? aog.blackDayWhiteNight : aog.backgroundColor
+                        color: control.checked ? "blue" : "white"
+                        visible: control.checked
+                    }
+
+                    onDownChanged: {
+                        ablineView.currentIndex = index
+                    }
+
+                    width:listrect.width
+                    height:50
+                    //anchors.fill: parent
+                    //color: "light gray"
+                    Text{
+                        anchors.left: parent.left
+                        anchors.leftMargin: 5
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: model.name
+                        font.pixelSize: 25
+                        font.bold: true
+                        //color: control.checked ? aog.backgroundColor : aog.blackDayWhiteNight
+                        color: control.checked ? aog.blackDayWhiteNight : aog.backgroundColor
+                        z: 2
+                    }
+                }
+            }
+        }
 
         Rectangle{ //for some reason, listview will display on top of its parent, this blocks that
+			id: bottomRow
             anchors.top: topLine.bottom
             height: 10
             color: parent.color

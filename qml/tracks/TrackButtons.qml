@@ -32,6 +32,7 @@ TimedRectangle {
         IconButtonTransparent{
             icon.source: "/images/ABTracks.png"
             Layout.alignment: Qt.AlignCenter
+			onClicked: trackList.show()
         }
         IconButtonTransparent{
             icon.source: "/images/AddNew.png"
