@@ -2,6 +2,7 @@
 #define CTRACK_H
 
 #include <QVector>
+#include <QAbstractListModel>
 #include "vec3.h"
 #include "vec2.h"
 
@@ -37,17 +38,26 @@ public:
     CTrk();
 };
 
-class CTrack
+class CTrack : public QAbstractListModel
 {
+    Q_OBJECT
+
 public:
+    enum RoleNames {
+        NameRole = Qt::UserRole,
+        IsVisibleRole,
+        ModeRole,
+    };
+
     QVector<CTrk> gArr;
 
     int idx, autoTrack3SecTimer;
 
     bool isLine, isAutoTrack = false, isAutoSnapToPivot = false, isAutoSnapped;
 
-    CTrack();
+    explicit CTrack(QObject* parent = nullptr);
 
+    // CTrack interface
     int FindClosestRefTrack(Vec3 pivot, const CVehicle &vehicle);
     void NudgeTrack(double dist, CABLine &ABLine, CABCurve &curve);
     void NudgeDistanceReset(CABLine &ABLine, CABCurve &curve);
@@ -55,6 +65,18 @@ public:
     void NudgeRefTrack(double dist, CABLine &ABLine, CABCurve &curve);
     void NudgeRefABLine(double dist);
     void NudgeRefCurve(double distAway, CABCurve &curve);
+
+    // QML model interface
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    virtual QVariant data(const QModelIndex &index, int role) const override;
+
+protected:
+    // QML model interface
+    virtual QHash<int, QByteArray> roleNames() const override;
+
+private:
+    // Used by QML model interface
+    QHash<int, QByteArray> m_roleNames;
 };
 
 #endif // CTRACK_H

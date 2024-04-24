@@ -9,8 +9,13 @@ CTrk::CTrk()
     heading = 3;
 }
 
-CTrack::CTrack()
+CTrack::CTrack(QObject* parent) : QAbstractListModel(parent)
 {
+    // Initialize role names
+    m_roleNames[NameRole] = "name";
+    m_roleNames[IsVisibleRole] = "isVisible";
+    m_roleNames[ModeRole] = "mode";
+
     idx = -1;
 }
 
@@ -304,4 +309,37 @@ void CTrack::NudgeRefCurve(double distAway, CABCurve &curve)
         //    gArr[idx].curvePts.append(arr[i]);
         //}
     }
+}
+
+int CTrack::rowCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+    return gArr.size();
+}
+
+
+QVariant CTrack::data(const QModelIndex &index, int role) const
+{
+    int row = index.row();
+    if(row < 0 || row >= gArr.size()) {
+        return QVariant();
+    }
+
+    const CTrk &trk = gArr.at(row);
+    qDebug() << row << role << trk.name;
+    switch(role) {
+    case NameRole:
+        return trk.name;
+    case ModeRole:
+        return trk.mode;
+    case IsVisibleRole:
+        return trk.isVisible;
+    }
+
+    return QVariant();
+}
+
+QHash<int, QByteArray> CTrack::roleNames() const
+{
+    return m_roleNames;
 }
