@@ -492,6 +492,8 @@
         <file>images/FieldStats.png</file>
         <file>images/TrackOn.png</file>
 		<file>images/TrackOff.png</file>
+		<file>images/TrackCurve.png</file>
+		<file>images/TrackLine.png</file>
         <file>images/GPSQuality.png</file>
         <file>images/ABSnapNudgeMenu.png</file>
         <file>images/ABSnapNudgeMenuRef.png</file>
