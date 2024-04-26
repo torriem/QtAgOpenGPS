@@ -532,9 +532,6 @@
         <file>qml/HeadAcheDesigner.qml</file>
         <file>images/TrashApplied.png</file>
         <file>images/HeadlandSectionOn.png</file>
-        <file>images/HeadlandSectionOn.png</file>
-        <file>qml/HeadAcheDesigner.qml</file>
-        <file>images/TrashApplied.png</file>
         <file>qml/steerconfig/SteerConfigWindow.qml</file>
         <file>qml/steerconfig/SensorsTab.qml</file>
         <file>qml/steerconfig/SettingsTab.qml</file>
