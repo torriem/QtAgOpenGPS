@@ -23,10 +23,10 @@ Window {
     }
     //We draw native opengl to this root object
     id: mainWindow
-    height: utils.string_after_comma(settings.setWindow_Size)
-    width: utils.string_before_comma(settings.setWindow_Size)
-	//height: theme.defaultHeight
-	//width: theme.defaultWidth
+    //height: utils.string_after_comma(settings.setWindow_Size)
+    //width: utils.string_before_comma(settings.setWindow_Size)
+	height: theme.defaultHeight
+	width: theme.defaultWidth
     onVisibleChanged: if(settings.setDisplay_isStartFullScreen){
                           mainWindow.showMaximized()
                       }

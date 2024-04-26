@@ -47,6 +47,8 @@ Item {
 		property int decimals: spinBox_Customized.decimals
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.verticalCenter: parent.verticalCenter
+		height: 30 * theme.scaleHeight
+		width: 100 * theme.scaleWidth
 
 		Keys.onReturnPressed: {
 			//console.debug("enter was pressed.  ignore it.")
@@ -93,9 +95,15 @@ Item {
 	Text {
 		id: spin_message
 		visible: false
-		text: "message"
+		text: ""
 		color: "red"
 		anchors.top: spinner.bottom
 		anchors.left: spinner.left
+		onVisibleChanged: {
+			if (visible)
+			height = 20 * theme.scaleHeight
+			else
+			height = 0
+		}
 	}
 }

@@ -120,7 +120,10 @@ Rectangle{
             IconButtonColor{
                 anchors.right: parent.right
                 anchors.top:parent.top
-                anchors.margins: 40
+				anchors.topMargin: 20 * theme.scaleHeight
+				anchors.bottomMargin: 20 * theme.scaleHeight
+				anchors.leftMargin: 20 * theme.scaleWidth
+				anchors.rightMargin: 20 * theme.scaleWidth
                 icon.source: "/images/AutoSteerOff.png"
                 iconChecked: "/images/AutoSteerOn.png"
                 checkable: true
@@ -129,8 +132,8 @@ Rectangle{
                 onCheckableChanged: settings.setAS_isAutoSteerAutoOn = checked
                 text: qsTr("Steer Switch Control")
                 font.pixelSize:15
-                implicitWidth: 120
-                implicitHeight: 150
+                implicitWidth: 120 * theme.scaleWidth
+                implicitHeight: 150 * theme.scaleHeight
             }
 
         //}
@@ -139,9 +142,12 @@ Rectangle{
         id: linewidthrect
         anchors.left: parent.left
         anchors.top: nudgedistrect.bottom
-        height: 150
-        width: 250
-        anchors.margins: 20
+        height: 150 * theme.scaleHeight
+        width: 250 * theme.scaleWidth
+		anchors.topMargin: 20 * theme.scaleHeight
+		anchors.bottomMargin: 20 * theme.scaleHeight
+		anchors.leftMargin: 20 * theme.scaleWidth
+		anchors.rightMargin: 20 * theme.scaleWidth
         color: "transparent"
         TextLine{
             id: linewidthtitletxt
@@ -161,9 +167,9 @@ Rectangle{
                 id: linewidthSetting
                 anchors.top: parent.top
                 anchors.topMargin: 25
-                height: 50
+                height: 50 * theme.scaleHeight
                 anchors.left: parent.right
-                anchors.leftMargin: 10
+                anchors.leftMargin: 10 * theme.scaleWidth
                 from: 1
                 to: 8
                 boundValue: settings.setDisplay_lineWidth
@@ -177,9 +183,12 @@ Rectangle{
         id: nudgedistrect
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
-        height: 100
-        width: 350
-        anchors.margins: 20
+        height: 100 * theme.scaleHeight
+        width: 350 * theme.scaleWidth
+		anchors.topMargin: 20 * theme.scaleHeight
+		anchors.bottomMargin: 20 * theme.scaleHeight
+		anchors.leftMargin: 20 * theme.scaleWidth
+		anchors.rightMargin: 20 * theme.scaleWidth
         color: "transparent"
         TextLine{
             id: nudgedisttitletxt
@@ -199,9 +208,9 @@ Rectangle{
                 id: snapDistance
                 anchors.top: parent.top
                 anchors.topMargin: 25
-                height: 50
+                height: 50 * theme.scaleHeight
                 anchors.left: parent.right
-                anchors.leftMargin: 10
+                anchors.leftMargin: 10 * theme.scaleWidth
                 from: 0
                 to: 1000
                 boundValue: settings.setAS_snapDistance
@@ -215,9 +224,12 @@ Rectangle{
         id: lineacqLAheadrect
         anchors.left: linewidthrect.right
         anchors.verticalCenter: linewidthrect.verticalCenter
-        anchors.margins: 50
-        height: 100
-        width: 350
+		anchors.topMargin: 50 * theme.scaleHeight
+		anchors.bottomMargin: 50 * theme.scaleHeight
+		anchors.leftMargin: 50 * theme.scaleWidth
+		anchors.rightMargin: 50 * theme.scaleWidth
+        height: 100 * theme.scaleHeight
+        width: 350 * theme.scaleWidth
         color: "transparent"
         TextLine{
             id: lineacqLAheadtitletxt
@@ -236,10 +248,10 @@ Rectangle{
             SpinBoxDecimal{
                 id: lineacqLAheadSetting
                 anchors.top: parent.top
-                anchors.topMargin: 25
-                height: 50
+                anchors.topMargin: 25 * theme.scaleHeight
+                height: 50 * theme.scaleHeight
                 anchors.left: parent.right
-                anchors.leftMargin: 10
+                anchors.leftMargin: 10 * theme.scaleWidth
                 from: .1
                 to: 10
                 boundValue: settings.setAS_guidanceLookAheadTime
@@ -249,22 +261,33 @@ Rectangle{
             }
         }
     }
-    RowLayout{
+    GridLayout{
         id: safety
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: 100
-        height: 150
-        Column{
+		anchors.top: linewidthrect.bottom
+		anchors.topMargin: 10 * theme.scaleHeight
+		anchors.bottomMargin: 10 * theme.scaleHeight
+		anchors.leftMargin: 70 * theme.scaleWidth
+		anchors.rightMargin: 70 * theme.scaleWidth
+		flow: Grid.TopToBottom
+		rows: 4
+		columns: 4
+        /*Column{
             id: manualTurnsLimit
-            height: 130
-            width: 100
-            TextLine{ text: qsTr("Manual Turns Limit")}
+			height: safety.height
+            width: 100 * theme.scaleWidth
+			spacing: 1 * theme.scaleHeight
+			onSpacingChanged: console.log("onSpacingChanged to " + spacing)
+			Layout.alignment: Qt.AlignTop
+			*/  Text{ text: qsTr("Manual Turns Limit"); Layout.alignment: Qt.AlignCenter}
             Image{
                 source: "/images/Config/con_VehicleFunctionSpeedLimit.png"
                 width: parent.width
-                height: 90
+                height: 90 * theme.scaleHeight
+				Layout.alignment: Qt.AlignCenter
+				fillMode: Image.PreserveAspectFit
             }
             SpinBoxKM{
                 from: 0
@@ -272,19 +295,25 @@ Rectangle{
                 editable: true
                 boundValue: settings.setAS_functionSpeedLimit
                 onValueModified: settings.setAS_functionSpeedLimit = value
+				Layout.alignment: Qt.AlignCenter
             }
-            TextLine{ text: qsTr(utils.speed_unit())}
-        }
+            Text{ text: qsTr(utils.speed_unit()); Layout.alignment: Qt.AlignCenter}
+        //}
 
-        Column{
+       /* Column{
             id: minSpeed
-            width: 100
-            height: 130
-            TextLine{ text: qsTr("Min AutoSteer Speed")}
+            width: 100 * theme.scaleWidth
+			height: safety.height
+			spacing: 1 * theme.scaleHeight
+			Layout.alignment: Qt.AlignTop
+			*/   Text{ text: qsTr("Min AutoSteer Speed"); Layout.alignment: Qt.AlignCenter}
             Image{
+				id: minAutoSteerImage
                 source: "/images/Config/ConV_MinAutoSteer.png"
                 width: parent.width
-                height: 90
+                height: 90 * theme.scaleHeight
+				Layout.alignment: Qt.AlignCenter
+				fillMode: Image.PreserveAspectFit
             }
             SpinBoxKM{
                 from: 0
@@ -292,41 +321,54 @@ Rectangle{
                 editable: true
                 boundValue: settings.setAS_minSteerSpeed
                 onValueModified: settings.setAS_minSteerSpeed = value
+				Layout.alignment: Qt.AlignCenter
             }
-            TextLine{ text: qsTr(utils.speed_unit())}
-        }
+            Text{ text: qsTr(utils.speed_unit()); Layout.alignment: Qt.AlignCenter}
+        /*}
         Column{
             id: maxSpeed
-            width: 100
-            height: 130
-            TextLine{ text: qsTr("Max AutoSteer Speed")}
+            width: 100 * theme.scaleWidth
+			height: safety.height
+			spacing: 1 * theme.scaleHeight
+				Layout.alignment: Qt.AlignTop
+				*/ 
+			Text{ text: qsTr("Max AutoSteer Speed"); Layout.alignment: Qt.AlignCenter}
             Image{
+				id: maxAutoSteerImage
                 source: "/images/Config/ConV_MaxAutoSteer.png"
+                height: 90 * theme.scaleHeight
                 width: parent.width
-                height: 90
+				Layout.alignment: Qt.AlignCenter
+				fillMode: Image.PreserveAspectFit
             }
-            SpinBoxCM{
+            SpinBoxKM{
                 from: 0
                 to: 50
                 editable: true
                 boundValue: settings.setAS_maxSteerSpeed
                 onValueModified: settings.setAS_maxSteerSpeed = value
+				Layout.alignment: Qt.AlignCenter
             }
-            TextLine{ text: qsTr(utils.speed_unit())}
-        }
+            Text{ text: qsTr(utils.speed_unit()); Layout.alignment: Qt.AlignCenter}
+       /* }
         Column{
             id: maxTurnRate
-            width: 100
-            height: 130
-            TextLine{ text: qsTr("Max Turn Rate")}
+            width: 100 * theme.scaleWidth
+			height: safety.height
+			spacing: 1 * theme.scaleHeight
+			Layout.alignment: Qt.AlignTop
+			*/   Text{ text: qsTr("Max Turn Rate"); Layout.alignment: Qt.AlignCenter}
             Image{
                 source: "/images/Config/ConV_MaxAngVel.png"
                 width: parent.width
-                height: 90
+                height: 90 * theme.scaleHeight
+				Layout.alignment: Qt.AlignCenter
+				fillMode: Image.PreserveAspectFit
             }
 
             //The from and to values are deg/sce, but the final value output is in radians always
             SpinBoxCustomized {
+				Layout.alignment: Qt.AlignCenter
                 id: spinner
                 from: 5
                 to: 100
@@ -335,7 +377,7 @@ Rectangle{
                 onValueChanged: settings.setVehicle_maxAngularVelocity = utils.deg_to_radians(value)
                 //stepSize: spinBoxCM.stepSize
             }
-            TextLine{ text: qsTr("Degrees/sec")}
-        }
+            Text{ text: qsTr("Degrees/sec"); Layout.alignment: Qt.AlignCenter}
+      //  }
     }
 }
