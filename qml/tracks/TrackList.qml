@@ -41,7 +41,7 @@ MoveablePopup {
             trackModel.append(linesInterface.abLinesList[i])
         }
         if (aog.currentABCurve >-1)
-            trackView.currentIndex = aog.currentABCurve
+            ablineView.currentIndex = aog.currentABCurve
 
     }
 
@@ -50,12 +50,12 @@ MoveablePopup {
         //program to update our lines list in the
         //AOGInterface object
         linesInterface.abLine_updateLines()
-        trackView.currentIndex = aog.currentTrack
+        ablineView.currentIndex = aog.currentABLine
         //preselect first AB line if none was in use before
         //to make it faster for user
-        if (trackView.currentIndex < 0)
+        if (ablineView.currentIndex < 0)
             if (linesInterface.abLinesList.length > 0)
-                trackView.currentIndex = 0
+                ablineView.currentIndex = 0
     }
 
     Rectangle{
@@ -78,19 +78,19 @@ MoveablePopup {
             IconButtonTransparent{
 				icon.source: "/images/Trash.png"
 				onClicked: {
-					if (trackView.currentIndex > -1) {
-						if (aog.currentTrack == trackView.currentIndex)
+					if (ablineView.currentIndex > -1) {
+						if (aog.currentTrack == ablineView.currentIndex)
 						aog.currentTrack = -1
-						linesInterface.abLine_deleteLine(trackView.currentIndex)
-						trackView.currentIndex = -1
+						linesInterface.abLine_deleteLine(ablineView.currentIndex)
+						ablineView.currentIndex = -1
 					}
 				}
             }
             IconButtonTransparent{
                 icon.source: "/images/FileEditName.png"
                 onClicked: {
-                    if (trackView.currentIndex > -1) {
-                        editLineName.set_name(linesInterface.abLinesList[trackView.currentIndex].name)
+                    if (ablineView.currentIndex > -1) {
+                        editLineName.set_name(linesInterface.abLinesList[ablineView.currentIndex].name)
                         editLineName.visible = true
                     }
                 }
@@ -99,8 +99,8 @@ MoveablePopup {
                 objectName: "btnLineCopy"
                 icon.source: "/images/FileCopy.png"
                 onClicked: {
-                    if(trackView.currentIndex > -1) {
-                        copyLineName.set_name("Copy of " + linesInterface.abLinesList[trackView.currentIndex].name)
+                    if(ablineView.currentIndex > -1) {
+                        copyLineName.set_name("Copy of " + linesInterface.abLinesList[ablineView.currentIndex].name)
                         copyLineName.visible = true
                     }
                 }
@@ -109,15 +109,15 @@ MoveablePopup {
                 objectName: "btnLineSwapPoints"
                 icon.source: "/images/ABSwapPoints.png"
                 onClicked: {
-                    if(trackView.currentIndex > -1)
-                        linesInterface.abLine_swapHeading(trackView.currentIndex);
+                    if(ablineView.currentIndex > -1)
+                        linesInterface.abLine_swapHeading(ablineView.currentIndex);
                 }
             }
             IconButtonTransparent{
 				icon.source: "/images/Cancel64.png"
 				onClicked: {
 					aog.currentTrack = -1
-					trackView.currentIndex = -1
+					ablineView.currentIndex = -1
 					trackPickerDialog.reject()
 				}
 			}
@@ -150,8 +150,8 @@ MoveablePopup {
                 objectName: "btnLineExit" //this is not cancel, rather, save and exit
                 icon.source: "/images/OK64.png"
                 onClicked: {
-                    if (trackView.currentIndex > -1) {
-                        aog.currentTrack = trackView.currentIndex
+                    if (ablineView.currentIndex > -1) {
+                        aog.currentTrack = ablineView.currentIndex
                         trackPickerDialog.accept()
                     } else
                         trackPickerDialog.reject()
@@ -168,9 +168,17 @@ MoveablePopup {
             anchors.margins: 10
             color: "green"
 
-            ListModel { //this will be populated by the backend cpp code
-                id: trackModel
+            //ListModel { //this will be populated by the backend cpp code
+              //  id: trackModel
                 //objectName: "trackModel"
+			//}
+
+			ListModel { //fake for testing
+				id: trackModel
+				ListElement {name: "Track 1"}
+				ListElement {name: "Track 2"}
+				ListElement {name: "Track 3"}
+				ListElement {name: "Track 4"}
 			}
 
             Component.onCompleted: {
@@ -178,42 +186,47 @@ MoveablePopup {
             }
 
             ListView {
-                id: trackView
+                id: ablineView
                 anchors.fill: parent
-                model: trackModel
+                model: ablineModel
                 //property int currentIndex: -1
                 clip: true
 
-				delegate: Rectangle{
-					id: controlRect
-					anchors.fill: parent
-					width:listrect.width
-					height:50
-					Image{
-						id: isLineOrCurve
-						height: parent.height
-						width: height
-						source: "/images/TrackLine.png"
-					}
-
-					RadioButton{
-						id: control
-						checked: trackView.currentIndex === index ? true : false
-						indicator: Rectangle{
-							anchors.fill: parent
-							anchors.margins: 2
-							//color: (control.down) ? aog.backgroundColor : aog.blackDayWhiteNight
-							//color: (control.down) ? aog.blackDayWhiteNight : aog.backgroundColor
-							color: control.checked ? "blue" : "white"
-							visible: control.checked
+                delegate: RadioButton{
+                    id: control
+                    checked: ablineView.currentIndex === index ? true : false
+					indicator: Rectangle{
+						color: aog.backgroundColor
+						anchors.fill: control
+						IconButtonTransparent{
+							id: isLineOrCurve
+							enabled: false
+							icon.source: "/images/TrackLine.png"
+							iconChecked: "/images/TrackCurve.png"
+							height: control.height
+							width: control.height
 						}
+						Rectangle{
+                        anchors.margins: 2
+						anchors.left: isLineOrCurve.right
+						height: control.height
+						anchors.verticalCenter: control.verticalCenter
+						anchors.right: isHidden.left
+                        //color: (control.down) ? aog.backgroundColor : aog.blackDayWhiteNight
+                        //color: (control.down) ? aog.blackDayWhiteNight : aog.backgroundColor
+                        color: control.checked ? "blue" : "white"
+                        visible: control.checked
+						}
+						ButtonColor{
+							id: isHidden
+							color: red
+						}
+                    }
 
 						onDownChanged: {
 							ablineView.currentIndex = index
 						}
 						
-						anchors.left: isLineOrCurve.right
-						height: parent.height
 
 						//anchors.fill: parent
 						//color: "light gray"
@@ -229,7 +242,7 @@ MoveablePopup {
 							z: 2
 						}
 					}
-					ButtonColor{
+				/*	ButtonColor{
 						id: isHidden
 						anchors.right: parent.right
 						height: parent.height * .8
@@ -237,18 +250,18 @@ MoveablePopup {
 						anchors.verticalCenter: parent.verticalCenter
 						color: "green"
 						colorChecked: "red"
+					}*/
 				}
-            }
-        }
+			}
 
-        Rectangle{ //for some reason, listview will display on top of its parent, this blocks that
+			Rectangle{ //for some reason, listview will display on top of its parent, this blocks that
 			id: bottomRow
-            anchors.bottom: parent.bottom
-            height: 10
-            color: parent.color
-            width: trackPickerDialog.width
-            anchors.left: trackPickerDialog.left
-            z: 1
-        }
-    }
+			anchors.bottom: parent.bottom
+			height: 10
+			color: parent.color
+			width: trackPickerDialog.width
+			anchors.left: trackPickerDialog.left
+			z: 1
+		}
+	}
 }

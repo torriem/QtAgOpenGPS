@@ -2,6 +2,7 @@
     <qresource prefix="/">
         <file>images/A2D3D.png</file>
         <file>images/ABLineOff.png</file>
+		<file>images/ABLinesHideShow.png</file>
         <file>images/ABLineOn.png</file>
         <file>images/AcHa.png</file>
         <file>images/AppIcon.ico</file>
