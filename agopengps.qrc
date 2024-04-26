@@ -13,6 +13,8 @@
         <file>images/ArrowRight.png</file>
         <file>images/AutoSteerOff.png</file>
         <file>images/AutoSteerOn.png</file>
+		<file>images/AutoTrack.png</file>
+		<file>images/AutoTrackOff.png</file>
         <file>images/back-button.png</file>
         <file>images/BoundaryDelete.png</file>
         <file>images/BoundaryLeft.png</file>
