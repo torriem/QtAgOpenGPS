@@ -17,10 +17,16 @@ import "components"
 Window {
 
 
+    AOGTheme{
+        id: theme
+        objectName: "theme"
+    }
     //We draw native opengl to this root object
     id: mainWindow
     height: utils.string_after_comma(settings.setWindow_Size)
     width: utils.string_before_comma(settings.setWindow_Size)
+	//height: theme.defaultHeight
+	//width: theme.defaultWidth
     onVisibleChanged: if(settings.setDisplay_isStartFullScreen){
                           mainWindow.showMaximized()
                       }
@@ -123,10 +129,6 @@ Window {
         id: aog
         objectName: "aog"
     }
-    AOGTheme{
-        id: theme
-        objectName: "theme"
-    }
     LinesInterface {
         objectName: "linesInterface"
         id: linesInterface
@@ -194,13 +196,13 @@ Window {
         anchors.left: parent.left
         anchors.right: parent.right
         color: aog.backgroundColor
-        height: 50
+        height: 50 *theme.scaleHeight
         visible: true
 
         IconButtonTransparent {
             id: btnfileMenu
             height: parent.height
-            width: 75
+            width: 75 * theme.scaleWidth
             icon.source: "/images/fileMenu.png"
             onClicked: hamburgerMenu.visible = true
         }
@@ -281,10 +283,11 @@ Window {
             height: parent.height
             anchors.top: parent.top
             anchors.right: parent.right
+			spacing: 5 * theme.scaleWidth
             IconButtonColor{
                 id: rtkStatus
                 icon.source: "/images/GPSQuality.png"
-                implicitWidth: 75
+                implicitWidth: 75 * theme.scaleWidth
                 implicitHeight: parent.height
                 onClicked: {
                     gpsData.visible = !gpsData.visible
@@ -295,7 +298,7 @@ Window {
             Text{
                 id: speed
                 anchors.verticalCenter: parent.verticalCenter
-                width: 75
+                width: 75 * theme.scaleWidth
                 height:parent.height
                 text: utils.speed_to_unit_string(aog.speedKph, 1)
                 font.bold: true
@@ -305,20 +308,20 @@ Window {
             }
             IconButtonTransparent{
                 height: parent.height
-                width: 75
+                width: 75 * theme.scaleWidth
                 icon.source: "/images/Help.png"
             }
             IconButtonTransparent{
                 height: parent.height
                 icon.source: "/images/WindowMinimize.png"
-                width: 75
+                width: 75 * theme.scaleWidth
                 onClicked: mainWindow.showMinimized()
             }
             IconButtonTransparent{
 				id: btnMaximize
                 height: parent.height
                 icon.source: "/images/WindowMaximize.png"
-                width: 75
+                width: 75 * theme.scaleWidth
                 onClicked: {
                     console.debug("Visibility is " + mainWindow.visibility)
                     if (mainWindow.visibility == Window.FullScreen){
@@ -331,7 +334,7 @@ Window {
             }
             IconButtonTransparent{
                 height: parent.height
-                width: 75
+                width: 75 * theme.scaleWidth
                 icon.source: "/images/WindowClose.png"
                 onClicked: {
                     mainWindow.save_everything()
@@ -398,8 +401,8 @@ Window {
                 id: reverseArrow
                 x: aog.vehicle_xy.x - 150
                 y: aog.vehicle_xy.y - height
-                width: 70
-                height: 70
+                width: 70 * theme.scaleWidth
+                height: 70 * theme.scaleHeight
                 source: "/images/Images/z_ReverseArrow.png"
                 visible: aog.isReverse
             }
@@ -873,6 +876,13 @@ Window {
 				theme.btnSizes[1] = width / (children.length) 
 				theme.buttonSizesChanged()
 			}
+			onVisibleChanged: {
+				if (visible == false)
+					height = 0
+				else
+					height = children.height				
+
+			}
             ComboBox {
                 id: skips
                 editable: true
@@ -1018,7 +1028,7 @@ Window {
             IconButtonTransparent{
                 id: pan
                 implicitWidth: 50
-                implicitHeight: 50
+                implicitHeight: 50 * theme.scaleHeight
                 checkable: true
                 anchors.top: parent.top
                 anchors.left: parent.left
@@ -1034,8 +1044,8 @@ Window {
                 source: "/images/Images/z_Lift.png"
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                width: 80
-                height: 130
+                width: 80 * theme.scaleWidth
+                height: 130 * theme.scaleHeight
                 onIsDownChanged: {
                     if(!isDown){
                         hydLiftIndicatorColor.color = "#00F200"
@@ -1094,8 +1104,8 @@ Window {
                 anchors.top:manualUturnLateral.top
                 anchors.right: parent.right
                 anchors.rightMargin: 200
-                width: 100
-                height: 100
+                width: 100 * theme.scaleWidth
+                height: 100 * theme.scaleHeight
 
                  Image{
                     id: autoTurnImage
@@ -1183,9 +1193,9 @@ Window {
                 Image{
                     id: uturn
                     anchors.top: parent.top
-                    height: 60
+                    height: 60 * theme.scaleHeight
                     anchors.left: parent.left
-                    width: 150
+                    width: 150 * theme.scaleWidth
                     source: '/images/Images/z_TurnManual.png'
                     visible: false
                 }
@@ -1229,9 +1239,9 @@ Window {
                     visible: false
                     id: lateral
                     anchors.top: uturn.bottom
-                    height: 60
+                    height: 60 * theme.scaleHeight
                     anchors.left: parent.left
-                    width: 150
+                    width: 150 * theme.scaleWidth
                     source: '/images/Images/z_LateralManual.png'
                 }
             }
@@ -1290,6 +1300,8 @@ Window {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottomMargin: 8
             visible: utils.isTrue(settings.setMenu_isSimulatorOn)
+			height: 60 * theme.scaleHeight
+			onHeightChanged: anchors.bottomMargin = (8 * theme.scaleHeight)
         }
         RecPath{// recorded path menu
             id: recPath
@@ -1300,7 +1312,7 @@ Window {
             id: timeText
             anchors.bottom: parent.bottom
             anchors.right: parent.right
-            anchors.rightMargin: 50
+            anchors.rightMargin: (50 * theme.scaleWidth)
             font.pixelSize: 20
             color: "#cc5200"
             text: new Date().toLocaleTimeString(Qt.locale())
@@ -1315,9 +1327,11 @@ Window {
             id: sectionButtons
             visible: aog.isJobStarted ? true : false
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: simBarRect.top
-            anchors.bottomMargin: 8
-            width: 500 //TODO: make this adjust with the width of the parent window
+			anchors.bottom: simBarRect.top
+			anchors.bottomMargin: 8
+			height: 40 * theme.scaleHeight
+            width: 500  * theme.scaleWidth
+			//onHeightChanged: anchors.bottomMargin = (bottomButtons.height + simBarRect.height + (24 * theme.scaleHeight))
         }
         DisplayButtons{
             id: displayButtons
@@ -1345,8 +1359,8 @@ Window {
             anchors.bottom: parent.bottom
             anchors.margins: 25
             visible: aog.isJobStarted
-            width: 45
-            height: 25
+            width: 45 * theme.scaleWidth
+            height: 25 * theme.scaleHeight
             icon.source: "/images/MenuHideShow.png"
             onClicked: if(leftColumn.visible){
                            leftColumn.visible = false
@@ -1368,15 +1382,15 @@ Window {
             spacing: 100
             width: children.width
             IconButton{
-                implicitWidth: 30
-                implicitHeight: 30
+                implicitWidth: 30 * theme.scaleWidth
+                implicitHeight: 30 * theme.scaleHeight
                 radius: 0
                 icon.source: "/images/ZoomIn48.png"
                 onClicked: aog.zoomIn()
             }
             IconButton{
-                implicitWidth: 30
-                implicitHeight: 30
+                implicitWidth: 30 * theme.scaleWidth
+                implicitHeight: 30 * theme.scaleHeight
                 radius: 0
                 icon.source: "/images/ZoomOut48.png"
                 onClicked: aog.zoomOut()
@@ -1516,8 +1530,8 @@ Window {
 
         Rectangle{
             id: closeDialog
-            width: 500
-            height: 100
+            width: 500 * theme.scaleWidth
+            height: 100 * theme.scaleHeight
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             color: aog.backgroundColor

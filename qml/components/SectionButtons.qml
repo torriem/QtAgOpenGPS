@@ -16,7 +16,7 @@ Rectangle {
     }*/
 
     width: 600
-    height: childrenRect.height
+    height: childrenRect.height * theme.scaleHeight
 
     color: "transparent"
 
