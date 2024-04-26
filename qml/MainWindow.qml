@@ -1439,6 +1439,10 @@ Window {
 
         Config {
             id:config
+			x: 0
+			y: 0
+			width: parent.width
+			height: parent.height
             visible:false
 
             onAccepted: {
