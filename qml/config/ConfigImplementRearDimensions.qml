@@ -22,6 +22,10 @@ Rectangle{
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.margins: 15
+		anchors.topMargin: 7 * theme.scaleHeight
+		anchors.leftMargin: 7 * theme.scaleWidth
+		anchors.rightMargin: 7 * theme.scaleWidth
+		anchors.bottomMargin: 7 * theme.scaleHeight
         height: parent.height*.75
     }
     SpinBoxCM{

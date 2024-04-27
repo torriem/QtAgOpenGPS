@@ -234,9 +234,13 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: middleRow.top
-        anchors.margins: 15
+		anchors.topMargin: 7 * theme.scaleHeight
+		anchors.bottomMargin: 7 * theme.scaleHeight
+		anchors.leftMargin: 7 * theme.scaleWidth
+		anchors.rightMargin: 7 * theme.scaleWidth
         model: section_model
-        cellWidth: 200
+        cellWidth: 200 * theme.scaleWidth
+		cellHeight: 85 * theme.scaleHeight
 
 
         delegate: Rectangle {
@@ -247,7 +251,7 @@ Item {
                 anchors.left: zntext.right
                 anchors.top: parent.top
 
-                implicitWidth: 150
+                implicitWidth: 150 * theme.scaleWidth
                 id: spinner
                 from: model.min_number
                 to: model.max_number
@@ -275,7 +279,10 @@ Item {
         anchors.top: parent.verticalCenter
         anchors.right: parent.right
         anchors.left: parent.left
-        anchors.margins: 30
+		anchors.rightMargin: 15 * theme.scaleWidth
+		anchors.leftMargin: 15 * theme.scaleWidth
+		anchors.topMargin: 15 * theme.scaleHeight
+		anchors.bottomMargin: 15 * theme.scaleHeight
         //width: children.width
         height: children.height
 
@@ -311,8 +318,8 @@ Item {
         SpinBoxCM{
             Layout.fillWidth: true
             id: sectionWidthAllZones
-            implicitWidth: 150
-            implicitHeight: 50
+            implicitWidth: 150 * theme.scaleWidth
+            implicitHeight: 50 * theme.scaleHeight
             from: 10
             boundValue: settings.setTool_sectionWidthMulti
             to: 1000
@@ -323,8 +330,8 @@ Item {
         SpinBoxCustomized{
             Layout.fillWidth: true
             id: sectionsNumber
-            implicitWidth: 150
-            implicitHeight: 50
+            implicitWidth: 150 * theme.scaleWidth
+            implicitHeight: 50 * theme.scaleHeight
             from: numOfZones.value
             boundValue: settings.setTool_numSectionsMulti
             to: 64
@@ -339,7 +346,7 @@ Item {
         }
         Column{
             Layout.fillWidth: true
-            spacing: 8
+            spacing: 8 * theme.scaleHeight
             Text {
                 text: utils.cm_to_unit_string(Number(settings.setTool_numSectionsMulti) * Number(settings.setTool_sectionWidthMulti),0)
             }

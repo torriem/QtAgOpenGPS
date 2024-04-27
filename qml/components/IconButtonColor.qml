@@ -3,8 +3,8 @@ import QtQuick.Controls.Fusion
 import QtQuick.Effects
 
 IconButton {
-    implicitWidth: 120
-    implicitHeight: 80
+    implicitWidth: 120 * theme.scaleWidth
+    implicitHeight: 80 * theme.scaleHeight
     id: icon_button
 
     //property alias border: icon_button_background.border

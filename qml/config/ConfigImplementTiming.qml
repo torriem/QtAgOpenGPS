@@ -14,35 +14,44 @@ Rectangle{
         font.bold: true
         text: qsTr("Look Ahead Time Settings")
         anchors.bottom: offPic.top
-        anchors.bottomMargin: 70
+        anchors.bottomMargin: 70 * theme.scaleHeight
         anchors.horizontalCenter: offPic.horizontalCenter
     }
         AnimatedImage{
             id: onPic
-            width: parent.width /3 -10
-            anchors.margins: 5
+            width: parent.width /3 - (10 * theme.scaleWidth)
+			anchors.topMargin: 3 * theme.scaleHeight
+			anchors.bottomMargin: 3 * theme.scaleHeight
+			anchors.leftMargin: 3 * theme.scaleWidth
+			anchors.rightMargin: 3 * theme.scaleWidth
+            height: parent.height/2 + (50 * theme.scaleHeight)
             anchors.left: parent.left
-            height: parent.height/2 + 50
             anchors.verticalCenter: parent.verticalCenter
             cache: true
             source: "/images/Config/SectionOnLookAhead.gif"
         }
         AnimatedImage{
             id: offPic
-            width: parent.width /3 -10
-            anchors.margins: 5
+            width: parent.width /3 - (10 * theme.scaleWidth)
+			anchors.topMargin: 3 * theme.scaleHeight
+			anchors.bottomMargin: 3 * theme.scaleHeight
+			anchors.leftMargin: 3 * theme.scaleWidth
+			anchors.rightMargin: 3 * theme.scaleWidth
+            height: parent.height/2 + (50 * theme.scaleHeight)
             anchors.horizontalCenter: parent.horizontalCenter
-            height: parent.height/2 + 50
             anchors.verticalCenter: parent.verticalCenter
             cache: true
             source: "/images/Config/SectionLookAheadOff.gif"
         }
         AnimatedImage{
             id: offDelayPic
-            width: parent.width /3 -10
-            anchors.margins: 5
+            width: parent.width /3 - (10 * theme.scaleWidth)
+			anchors.topMargin: 3 * theme.scaleHeight
+			anchors.bottomMargin: 3 * theme.scaleHeight
+			anchors.leftMargin: 3 * theme.scaleWidth
+			anchors.rightMargin: 3 * theme.scaleWidth
+            height: parent.height/2 + (50 * theme.scaleHeight)
             anchors.right: parent.right
-            height: parent.height/2 + 50
             anchors.verticalCenter: parent.verticalCenter
             cache: true
             source: "/images/Config/SectionLookAheadDelay.gif"
