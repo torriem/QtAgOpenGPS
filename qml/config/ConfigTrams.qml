@@ -17,15 +17,21 @@ Item {
             id: imageTram
             anchors.right: parent.horizontalCenter
             anchors.top: parent.top
-            anchors.margins: 10
-            width: 200
-            height: 200
+			anchors.topMargin: 10 * theme.scaleHeight
+			anchors.bottomMargin: 10 * theme.scaleHeight
+			anchors.leftMargin: 10 * theme.scaleWidth
+			anchors.rightMargin: 10 * theme.scaleWidth
+            width: 200 * theme.scaleWidth
+            height: 200 * theme.scaleHeight
         }
         SpinBoxCM{
             id: tramWidth
             anchors.verticalCenter: imageTram.verticalCenter
             anchors.left: parent.horizontalCenter
-            anchors.margins: 3
+			anchors.topMargin: 3 * theme.scaleHeight
+			anchors.bottomMargin: 3 * theme.scaleHeight
+			anchors.leftMargin: 3 * theme.scaleWidth
+			anchors.rightMargin: 3 * theme.scaleWidth
             editable: true
             text: qsTr("Tram Width")
             from: 1
@@ -42,9 +48,9 @@ Item {
         IconButtonColor{
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 100
-            width: 200
-            height: 200
+            anchors.bottomMargin: 100 * theme.scaleHeight
+            width: 200 * theme.scaleWidth
+            height: 200 * theme.scaleHeight
             icon.source: "/images/Config/ConT_TramOverride.png"
         }
     }
