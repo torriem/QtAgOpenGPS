@@ -533,6 +533,7 @@
         <file>images/TrashApplied.png</file>
         <file>images/HeadlandSectionOn.png</file>
         <file>qml/steerconfig/SteerConfigWindow.qml</file>
+		<file>qml/steerconfig/SteerConfigSettings.qml</file>
         <file>images/Config/ConS_Pins.png</file>
         <file>images/TrackVisible.png</file>
         <file>images/MenuHideShow.png</file>

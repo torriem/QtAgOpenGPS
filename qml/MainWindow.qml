@@ -1476,6 +1476,11 @@ Window {
             id:steerConfigWindow
             visible: false
         }
+		SteerConfigSettings{
+			id: steerConfigSettings
+			anchors.fill: parent
+			visible: false
+		}
         ABCurvePicker{
             id: abCurvePicker
             objectName: "abCurvePicker"
