@@ -13,6 +13,11 @@ import QtMultimedia
 Item {
     id: aogTheme
 
+	property int defaultHeight: 768
+	property int defaultWidth: 1024
+	property double scaleHeight: mainWindow.height / defaultHeight
+	property double scaleWidth: mainWindow.width / defaultWidth
+
     property color backgroundColor: "ghostWhite"
     property color textColor: "black"
     property color borderColor: "lightblue"
@@ -25,6 +30,18 @@ Item {
 	}  
 	property color whiteDayBlackNight: "white"
 
+
+   //curr / default
+
+   Connections{
+	   target: mainWindow
+	   function onHeightChanged(){
+		   scaleHeight = mainWindow.height / defaultHeight
+	   }
+	   function onWidthChanged(){
+		   scaleWidth = mainWindow.width / defaultWidth
+	   }
+   }
     Connections{
         target: settings
         function onSetDisplay_isDayModeChanged(){

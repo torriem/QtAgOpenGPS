@@ -6,8 +6,8 @@ import ".."
 import "../components"
 
 Button {
-    implicitWidth: 70
-    implicitHeight: 70
+    implicitWidth: 70 * theme.scaleWidth
+    implicitHeight: 70 * theme.scaleHeight
     property var heightMinusPadding: implicitHeight - topPadding
     id: icon_button
     text: ""

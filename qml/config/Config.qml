@@ -9,8 +9,10 @@ import ".."
 import "../components"
 
 Dialog {
-    height: 768
-    width:1024
+	x: 0
+	y: 0
+	width: parent.width
+	height: parent.height
     modal: true
     standardButtons: "NoButton"
     title: qsTr("General Settings")
@@ -30,7 +32,7 @@ Dialog {
         id: configMain
         color: aog.borderColor
         border.color: aog.blackDayWhiteNight
-        border.width: 8
+        border.width: 8 * theme.scaleWidth
         visible: true
         anchors.fill: parent
         Rectangle{
@@ -38,7 +40,7 @@ Dialog {
             color: aog.borderColor
             visible: true
             width: parent.width-16
-            height: 40
+            height: 40 * theme.scaleHeight
             anchors.top: parent.top
             anchors.topMargin: 8
             anchors.horizontalCenter: parent.horizontalCenter
@@ -55,7 +57,7 @@ Dialog {
             id: leftColumnView
             anchors.top: topLine.bottom
             anchors.left: topLine.left
-            width: 110
+            width: 110 * theme.scaleWidth
             anchors.bottom: bottomLine.top
 
             //ScrollBar.vertical.policy: ScrollBar.AlwaysOn
@@ -82,8 +84,8 @@ Dialog {
                 IconButtonTransparent{
                     id:vehicleMenu
                     icon.source: "/images/Config/Con_VehicleMenu.png"
-                    width:100
-                    height:75
+                    width:100 * theme.scaleWidth
+                    height:75 * theme.scaleHeight
 
                     //colorChecked1: "#aaaaaa"
                     //colorChecked2: "#aaaaaa"
@@ -140,8 +142,8 @@ Dialog {
                 IconButtonTransparent{
                     id:implementMenuBtn
                     icon.source: "/images/Config/Con_ImplementMenu.png"
-                    width:100
-                    height:75
+                    width:100 * theme.scaleWidth
+                    height:75 * theme.scaleHeight
                     radius: 0
                     checkable: true
                     //todo put logic in IconButton
@@ -211,7 +213,7 @@ Dialog {
                     width:100
                     radius: 0
                     checkable: true
-                    height:75
+                    height:75 * theme.scaleHeight
                     //todo put logic in IconButton
                     property bool toggle: false
                     onClicked: if (toggle) { checked = false ; toggle = false }
@@ -246,8 +248,8 @@ Dialog {
                 IconButtonTransparent{
                     id:uTurnMenu
                     icon.source: "/images/Config/Con_UTurnMenu.png"
-                    width:100
-                    height:75
+                    width:100 * theme.scaleWidth
+                    height:75 * theme.scaleHeight
                     radius: 0
                     checkable: true
                     //todo put logic in IconButton
@@ -258,8 +260,8 @@ Dialog {
                 IconButtonTransparent{
                     id:modulesMenubtn
                     icon.source: "/images/Config/Con_ModulesMenu.png"
-                    width:100
-                    height:75
+                    width:100 * theme.scaleWidth
+                    height:75 * theme.scaleHeight
                     radius: 0
                     checkable: true
                     //todo put logic in IconButton
@@ -297,8 +299,8 @@ Dialog {
                     id:tramMenu
                     icon.source: "/images/Config/Con_TramMenu.png"
                     checkable: true
-                    width:100
-                    height:75
+                    width:100 * theme.scaleWidth
+                    height:75 * theme.scaleHeight
                     radius: 0
                     //todo put logic in IconButton
                     property bool toggle: false
@@ -309,8 +311,8 @@ Dialog {
                     id:displayMenu
                     icon.source: "/images/Config/Con_Display.png"
                     checkable: true
-                    width:100
-                    height:75
+                    width:100 * theme.scaleWidth
+                    height:75 * theme.scaleHeight
                     radius: 0
                     //todo put logic in IconButton
                     property bool toggle: false
@@ -320,8 +322,8 @@ Dialog {
                 IconButtonTransparent{
                     id:featureMenu
                     icon.source: "/images/Config/Con_FeatureMenu.png"
-                    width:100
-                    height:75
+                    width:100 * theme.scaleWidth
+                    height:75 * theme.scaleHeight
                     radius: 0
                     checkable: true
                     //todo put logic in IconButton
@@ -337,7 +339,7 @@ Dialog {
             color: aog.borderColor
             visible: true
             width: parent.width - 16
-            height:80
+            height:80 * theme.scaleHeight
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 8
             anchors.horizontalCenter: parent.horizontalCenter

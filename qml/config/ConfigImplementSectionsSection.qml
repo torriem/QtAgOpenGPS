@@ -260,7 +260,8 @@ Item{
         anchors.right: parent.right
         anchors.bottom: middleRow.top
         model: section_model
-        cellWidth: 200
+        cellWidth: 200 * theme.scaleWidth
+		cellHeight: 85 * theme.scaleHeight
 
         clip: true
 
@@ -286,15 +287,18 @@ Item{
         id: middleRow
         anchors.top: parent.verticalCenter
         anchors.right: parent.right
-        anchors.margins: 80
+		anchors.topMargin: 40 * theme.scaleHeight
+		anchors.bottomMargin: 40 * theme.scaleHeight
+		anchors.leftMargin: 40 * theme.scaleWidth
+		anchors.rightMargin: 40 * theme.scaleWidth
         width: children.width
         height: children.height
-        spacing: 120
+        spacing: 120 * theme.scaleWidth
 
         SpinBoxCM{
             id: defaultSectionWidth
-            implicitWidth: 150
-            implicitHeight: 50
+            implicitWidth: 150 * theme.scaleWidth
+            implicitHeight: 50 * theme.scaleHeight
             from: 10
             boundValue: settings.setTool_defaultSectionWidth
             to: 7000
@@ -359,8 +363,8 @@ Item{
                 ListElement{text: qsTr("15")}
                 ListElement{text: qsTr("16")}
             }
-            implicitHeight:60
-            implicitWidth: 90
+            implicitHeight:60 * theme.scaleHeight
+            implicitWidth: 90 * theme.scaleHeight
             Text{
                 anchors.bottom: parent.top
                 text: qsTr("Sections")

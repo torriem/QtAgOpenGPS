@@ -4,8 +4,8 @@ import QtQuick
 IconButton {
     id: icon_button_text
 
-    width: 100
-    height: 100
+    width: 100  * theme.scaleWidth
+    height: 100 * theme.scaleHeight
 
     property double iconHeightScale: 0.75
 

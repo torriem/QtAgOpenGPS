@@ -16,8 +16,8 @@ Rectangle{
                 settings.setVehicle_vehicleType === 1 ? "/images/AntennaHarvester.png" :
                 settings.setVehicle_vehicleType === 2 ? "/images/Antenna4WD.png" :
                 "/images/Config/ConSt_Mandatory.png"
-        width: 350
-        height: 350
+        width: 350 * theme.scaleWidth
+        height: 350 * theme.scaleHeight
         anchors.centerIn: parent
     }
     SpinBoxCM{

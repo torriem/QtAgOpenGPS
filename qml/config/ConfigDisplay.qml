@@ -13,7 +13,7 @@ Item {
         GridLayout{
             id:buttonsMain
             anchors.top: parent.top
-            anchors.topMargin: 10
+            anchors.topMargin: 10 * theme.scaleHeight
             anchors.bottom: units.top
             anchors.left: parent.left
             anchors.right: parent.right

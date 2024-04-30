@@ -23,7 +23,7 @@ Item {
     signal valueModified()
 
     width: spinner.width
-    height: spinner.height + spin_text.height + spin_message.height + 20
+    height: spinner.height + (spin_message.length > 0 ? spin_message.height : 0) + (spin_text.length > 0 ? spin_text.height : 0)
 
     //this method sets the spinner value without firing the
     //valueChanged signal
@@ -47,6 +47,8 @@ Item {
 		property int decimals: spinBox_Customized.decimals
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.verticalCenter: parent.verticalCenter
+		height: 30 * theme.scaleHeight
+		width: 100 * theme.scaleWidth
 
 		Keys.onReturnPressed: {
 			//console.debug("enter was pressed.  ignore it.")
@@ -83,19 +85,35 @@ Item {
 	}
 
 	Text {
+		visible: false
+		onTextChanged: {
+			visible = true
+		}
 		id: spin_text
 		text: spinBox_Customized.text
 		anchors.bottom: spinner.top
 		anchors.left: spinner.left
 		font.pixelSize: spinBox_Customized.fontPixelSize
+		onVisibleChanged: {
+			if (visible)
+			height = text.height 
+			else
+			height = 0
+		}
 	}
 
 	Text {
 		id: spin_message
 		visible: false
-		text: "message"
+		text: ""
 		color: "red"
 		anchors.top: spinner.bottom
 		anchors.left: spinner.left
+		onVisibleChanged: {
+			if (visible)
+			height = text.height 
+			else
+			height = 0
+		}
 	}
 }
