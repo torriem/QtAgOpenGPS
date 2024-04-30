@@ -1415,7 +1415,8 @@ Window {
         StartUp{
             id: startUp
             z:10
-            visible: true
+            //visible: true
+			visible: false  //no reason to look at this until release
         }
 
 
