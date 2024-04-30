@@ -10,8 +10,8 @@ MoveablePopup {
 	closePolicy: Popup.NoAutoClose
 	modal: false
 	visible: false
-	height: 475
-	width:400
+	height: 475 * theme.scaleHeight
+	width:400 * theme.scaleWidth
 	x: settings.setWindow_steerSettingsLocation.x
 	y: settings.setWindow_steerSettingsLocation.y
 	function show (){
@@ -30,7 +30,7 @@ MoveablePopup {
 			color:"white"
 			visible: true
 			width: parent.width
-			height: 25
+			height: 25 * theme.scaleHeight
 			anchors.top: parent.top
 			anchors.horizontalCenter: parent.horizontalCenter
 			Text{
@@ -60,13 +60,13 @@ MoveablePopup {
 				width: parent.height+3
 				height:parent.height
 				anchors.right: close.left
-				anchors.rightMargin: 20
+				anchors.rightMargin: 20 * theme.scaleWidth
 			}
 		}
 		Item{
 			id: steerSlidersConfig
-			height: 475
-			width:400
+			height: 475 * theme.scaleHeight
+			width:400 * theme.scaleWidth
 			anchors.left: parent.left
 			anchors.top: topLine.bottom
 			ButtonGroup {
@@ -80,7 +80,7 @@ MoveablePopup {
 					id: steerBtn
 					icon.source: "/images/Steer/ST_SteerTab.png"
 					implicitWidth: parent.width /4 - 4
-					implicitHeight: 50
+					implicitHeight: 50 * theme.scaleHeight
 					checkable: true
 					checked: true
 					colorChecked: "lightgray"
@@ -89,7 +89,7 @@ MoveablePopup {
 					id: gainBtn
 					icon.source: "/images/Steer/ST_GainTab.png"
 					implicitWidth: parent.width /4 - 4
-					implicitHeight: 50
+					implicitHeight: 50 * theme.scaleHeight
 					checkable: true
 					colorChecked: "lightgray"
 				}
@@ -97,7 +97,7 @@ MoveablePopup {
 					id: stanleyBtn
 					icon.source: "/images/Steer/ST_StanleyTab.png"
 					implicitWidth: parent.width /4 - 4
-					implicitHeight: 50
+					implicitHeight: 50 * theme.scaleHeight
 					checkable: true
 					colorChecked: "lightgray"
 				}
@@ -105,7 +105,7 @@ MoveablePopup {
 					id: ppBtn
 					icon.source: "/images/Steer/Sf_PPTab.png"
 					implicitWidth: parent.width /4 - 4
-					implicitHeight: 50
+					implicitHeight: 50 * theme.scaleHeight
 					checkable: true
 					colorChecked: "lightgray"
 				}
@@ -129,8 +129,10 @@ MoveablePopup {
 						anchors.horizontalCenter: parent.horizontalCenter
 						anchors.top: parent.top
 						width: parent.width *.5
-						anchors.margins: 5
-						anchors.leftMargin: 20
+						anchors.topMargin: 5 * theme.scaleHeight
+						anchors.bottomMargin: 5 * theme.scaleHeight
+						anchors.rightMargin: 20 * theme.scaleWidth
+						anchors.leftMargin: 20 * theme.scaleWidth
 						IconButtonTransparent{
 							width: height*2
 							icon.source: "/images/SteerCenter.png"
@@ -141,20 +143,20 @@ MoveablePopup {
 
 						SliderCustomized {
 							id: wasZeroSlider
-							width: 200
+							width: 200 * theme.scaleWidth
 							leftText: value
 							from: -30//idk
 							to: 30
 							value: 5
 							centerTopText: "WAS Zero"
 							Layout.alignment: Qt.AlignCenter
-							implicitHeight: 50
+							implicitHeight: 50 * theme.scaleHeight
 						}
 						SliderCustomized {
 							id: cpDegSlider
-							width: 200
+							width: 200 * theme.scaleWidth
 							centerTopText: "Counts per Degree"
-							implicitHeight: 50
+							implicitHeight: 50 * theme.scaleHeight
 							from: 1
 							to: 255
 							value: Math.round(settings.setAS_countsPerDegree, 0)
@@ -165,9 +167,9 @@ MoveablePopup {
 						}
 						SliderCustomized {
 							id: ackermannSlider
-							width: 200
+							width: 200 * theme.scaleWidth
 							centerTopText: "AckerMann"
-							implicitHeight: 50
+							implicitHeight: 50 * theme.scaleHeight
 							from: 1
 							to: 200
 							leftText: value
@@ -178,9 +180,9 @@ MoveablePopup {
 						}
 						SliderCustomized {
 							id: maxSteerSlider
-							implicitWidth: 200
+							implicitWidth: 200 * theme.scaleWidth
 							leftText: value
-							implicitHeight: 50
+							implicitHeight: 50 * theme.scaleHeight
 							centerTopText:"Max Steer Angle"
 							from: 10
 							to: 80
@@ -212,13 +214,15 @@ MoveablePopup {
 						anchors.left: parent.left
 						height: childrenRect.height
 						width: childrenRect.width
-						anchors.margins: 5
-						spacing: 45
+						anchors.topMargin: 5 * theme.scaleHeight
+						anchors.bottomMargin: 5 * theme.scaleHeight
+						anchors.rightMargin: 5 * theme.scaleWidth
+						spacing: 45 * theme.scaleHeight
 						anchors.leftMargin: 20
 						SliderCustomized {
 							id: propGainlider
 							leftText: value
-							width: 200
+							width: 200 * theme.scaleWidth
 							from: 0
 							to: 200
 							value: Math.round(settings.setAS_Kp, 0)
@@ -230,7 +234,7 @@ MoveablePopup {
 							id: maxLimitSlider
 							centerTopText: "Maximum Limit"
 							leftText: value
-							width: 200
+							width: 200 * theme.scaleWidth
 							from: 0
 							to: 254
 							value: Math.round(settings.setAS_highSteerPWM, 0)
@@ -239,7 +243,7 @@ MoveablePopup {
 						}
 						SliderCustomized {
 							id: min2moveSlider
-							width: 200
+							width: 200 * theme.scaleWidth
 							from: 0
 							to: 100
 							value: Math.round(settings.setAS_minSteerPWM, 0)
@@ -271,12 +275,14 @@ MoveablePopup {
 						anchors.left: parent.left
 						height: childrenRect.height
 						width: childrenRect.width
-						anchors.margins: 5
-						spacing: 45
-						anchors.leftMargin: 20
+						anchors.topMargin: 5 * theme.scaleHeight
+						anchors.bottomMargin: 5 * theme.scaleHeight
+						anchors.rightMargin: 5 * theme.scaleWidth
+						spacing: 45 * theme.scaleHeight
+						anchors.leftMargin: 20 * theme.scaleWidth
 						SliderCustomized {
 							id: stanleyAggressivenessSlider
-							width: 200
+							width: 200 * theme.scaleWidth
 							from: .1
 							to: 4
 							value: Math.round(settings.stanleyDistanceErrorGain, 0)
@@ -287,7 +293,7 @@ MoveablePopup {
 						}
 						SliderCustomized {
 							id: overShootReductionSlider
-							width: 200
+							width: 200 * theme.scaleWidth
 							from: .1
 							to: 1.5
 							value: Math.round(settings.stanleyHeadingErrorGain, 0)
@@ -298,7 +304,7 @@ MoveablePopup {
 						}
 						SliderCustomized {
 							id: integralStanleySlider
-							width: 200
+							width: 200 * theme.scaleWidth
 							from: 0
 							to: 100
 							value: Math.round(settings.stanleyIntegralGainAB * 100, 0)
@@ -330,12 +336,14 @@ MoveablePopup {
 						anchors.left: parent.left
 						height: childrenRect.height
 						width: childrenRect.width
-						anchors.margins: 5
-						spacing: 45
-						anchors.leftMargin: 20
+						anchors.topMargin: 5 * theme.scaleHeight
+						anchors.bottomMargin: 5 * theme.scaleHeight
+						anchors.rightMargin: 5 * theme.scaleWidth
+						spacing: 45 * theme.scaleHeight
+						anchors.leftMargin: 20 * theme.scaleWidth
 						SliderCustomized {
 							id: acqLookAheadSlider
-							implicitHeight: 50
+							implicitHeight: 50 * theme.scaleHeight
 							from: 1
 							to: 5
 							value: Math.round(settings.setVehicle_goalPointLookAhead, 1)
@@ -347,7 +355,7 @@ MoveablePopup {
 						SliderCustomized {
 							id: holdLookAheadSlider
 							width: 200
-							implicitHeight: 50
+							implicitHeight: 50 * theme.scaleHeight
 							from: 1
 							to: 5
 							value: Math.round(settings.setVehicle_goalPointLookAheadHold, 1)
@@ -358,8 +366,8 @@ MoveablePopup {
 						}
 						SliderCustomized {
 							id: lookAheadSpeedGainSlider
-							width: 200
-							implicitHeight: 50
+							width: 200 * theme.scaleWidth
+							implicitHeight: 50 * theme.scaleHeight
 							from: .5
 							to: 3
 							value: Math.round(settings.setVehicle_goalPointLookAheadMult, 1)
@@ -370,9 +378,9 @@ MoveablePopup {
 						}
 						SliderCustomized {
 							id: ppIntegralSlider
-							width: 200
+							width: 200 * theme.scaleWidth
 							from: 0
-							implicitHeight: 50
+							implicitHeight: 50 * theme.scaleHeight
 							to: 100
 							value: Math.round(settings.purePursuitIntegralGainAB *100, 0)
 							onValueChanged: settings.purePursuitIntegralGainAB = value /100
@@ -397,14 +405,14 @@ MoveablePopup {
 				anchors.bottom: parent.bottom
 				anchors.left: parent.left
 				anchors.right: parent.right
-				height: 50
+				height: 50 * theme.scaleHeight
 				MouseArea{
 					anchors.fill: parent
 					onClicked: {
 						function showHide(){
 							if(pwmWindow.visible == false){//show full menu
-							steerConfigWindow.height = 768
-							steerConfigWindow.width=1024
+							steerConfigWindow.height = mainWindow.height
+							steerConfigWindow.width= mainWindow.width
 							pwmWindow.visible = true
 							steerConfig.visible = true
 							settings.setWindow_steerSettingsLocation.x = steerConfigWindow.x
@@ -412,8 +420,8 @@ MoveablePopup {
 							steerConfigWindow.x = 0
 							steerConfigWindow.y = 0
 						}else{//hide
-						steerConfigWindow.height = 465
-						steerConfigWindow.width=400
+						steerConfigWindow.height = 465 * theme.scaleHeight
+						steerConfigWindow.width=400 * theme.scaleHeight
 						pwmWindow.visible = false
 						steerConfig.visible = false
 						steerConfigWindow.x = settings.setWindow_steerSettingsLocation.x
@@ -451,14 +459,20 @@ Rectangle{
 	anchors.left: steerSlidersConfig.left
 	width: steerSlidersConfig.width
 	anchors.bottom: parent.bottom
-	anchors.margins: 8
+	anchors.topMargin: 8 * theme.scaleHeight
+	anchors.bottomMargin: 8 * theme.scaleHeight
+	anchors.leftMargin: 8 * theme.scaleWidth
+	anchors.rightMargin: 8 * theme.scaleWidth
 	RowLayout{
 		id: pwmRow
 		anchors.top: parent.top
-		anchors.margins: 10
+		anchors.topMargin: 10 * theme.scaleHeight
+		anchors.bottomMargin: 10 * theme.scaleHeight
+		anchors.leftMargin: 10 * theme.scaleWidth
+		anchors.rightMargin: 10 * theme.scaleWidth
 		anchors.left: parent.left
 		width: parent.width
-		height: 50
+		height: 50 * theme.scaleHeight
 		IconButton{
 			id: pwmSteer
 			isChecked: false
@@ -499,7 +513,7 @@ Rectangle{
 	}
 	Text{
 		anchors.right: pwmRow.right
-		anchors.rightMargin: 50
+		anchors.rightMargin: 50 * theme.scaleWidth
 		anchors.top: pwmRow.bottom
 		text: qsTr("0r +5")
 		font.pixelSize: 15
@@ -509,8 +523,8 @@ Rectangle{
 		anchors.left: parent.left
 		anchors.bottom: parent.bottom
 		isChecked: false
-		width: 75
-		height: 75
+		width: 75 * theme.scaleWidth
+		height: 75 * theme.scaleHeight
 		color3: "white"
 		border: 2
 		icon.source: "/images/BoundaryRecord.png"
@@ -533,7 +547,10 @@ Rectangle{
 	anchors.top: topLine.bottom
 	anchors.right: parent.right
 	anchors.bottom: parent.bottom
-	anchors.margins: 10
+	anchors.topMargin: 10 * theme.scaleHeight
+	anchors.bottomMargin: 10 * theme.scaleHeight
+	anchors.leftMargin: 10 * theme.scaleWidth
+	anchors.rightMargin: 10 * theme.scaleWidth
 	color: "lightgray"
 	visible: false
 	ButtonGroup{
@@ -542,7 +559,7 @@ Rectangle{
 
 	RowLayout{
 		id: settingsBtns
-		spacing: 3
+		spacing: 3 * theme.scaleWidth
 		width: parent.width
 		anchors.top: parent.top
 		anchors.horizontalCenter: parent.horizontalCenter
@@ -581,7 +598,10 @@ Rectangle{
 		anchors.right: parent.right
 		anchors.top: settingsBtns.bottom
 		anchors.bottom: bottomRightButtons.top
-		anchors.margins: 10
+		anchors.topMargin: 10 * theme.scaleHeight
+		anchors.bottomMargin: 10 * theme.scaleHeight
+		anchors.leftMargin: 10 * theme.scaleWidth
+		anchors.rightMargin: 10 * theme.scaleWidth
 
 		onVisibleChanged:{
 			console.log("loading settings")
@@ -899,8 +919,10 @@ Rectangle{
 				  ColumnLayout{
 					  id: columnOfDropDown
 					  anchors.top: parent.top
-					  anchors.margins: 10
-					  anchors.bottomMargin: 50
+					  anchors.leftMargin: 10 * theme.scaleWidth
+					  anchors.rightMargin: 10 * theme.scaleWidth
+					  anchors.topMargin: 10 * theme.scaleHeight
+					  anchors.bottomMargin: 50 * theme.scaleHeight
 					  anchors.verticalCenter: parent.verticalCenter
 					  anchors.right: parent.right
 					  height: parent.height /2
@@ -976,8 +998,8 @@ Rectangle{
 				   anchors.centerIn: parent
 				   SpinBoxDecimal{
 					   text: "Panic Stop"
-					   implicitWidth: 100
-					   implicitHeight: 65
+					   implicitWidth: 100 * theme.scaleWidth
+					   implicitHeight: 65 * theme.scaleHeight
 					   from: 0
 					   value: 0
 					   to: 10
@@ -993,7 +1015,7 @@ Rectangle{
 			   anchors.rightMargin: unsaved.width + 20
 			   anchors.left: parent.left
 			   anchors.bottom: parent.bottom
-			   height: 70
+			   height: 70 * theme.scaleHeight
 			   IconButtonText{
 				   id: wizard
 				   text: qsTr("Wizard")
@@ -1020,9 +1042,9 @@ Rectangle{
 		   }
 		   Image {
 			   id: unsaved
-			   width: 100
+			   width: 100 * theme.scaleWidth
 			   anchors.right: parent.right
-			   anchors.rightMargin: 10
+			   anchors.rightMargin: 10 * theme.scaleWidth
 			   anchors.verticalCenter: bottomRightButtons.verticalCenter
 			   visible: false
 			   source: "/images/Config/ConSt_Mandatory.png"
