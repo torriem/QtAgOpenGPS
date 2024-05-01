@@ -1540,7 +1540,7 @@ Window {
             anchors.fill: parent
         }
 
-        TrackNew{
+        TrackNewButtons{
             id: trackNew
             visible: false
         }

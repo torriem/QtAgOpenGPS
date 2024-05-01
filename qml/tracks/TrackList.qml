@@ -142,7 +142,7 @@ MoveablePopup {
 			IconButtonTransparent{
 				icon.source: "/images/AddNew.png"
 				onClicked: {
-					trackNew.show()
+					trackNewButtons.show()
 					trackPickerDialog.close()
 				}
 			}
