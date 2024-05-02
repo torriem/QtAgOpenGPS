@@ -1,15 +1,146 @@
-
 import QtQuick
 import QtQuick.Controls
 //import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts
 import QtQuick.Dialogs
 import QtQml.Models
-import "components"
+import "../components"
+import ".."
 /*This is where the track is actually created*/
 
 //region SetAB
-Dialog {
+//
+Item{
+	id: trackNewSet
+	anchors.fill: parent
+	function showAPlus() {
+		setAPlus.visible = true
+	}
+	function showAB() {
+		setAB.visible = true
+	}
+	//region setA+
+
+	MoveablePopup {
+		id: setAPlus
+		visible: false
+		width: 250 * theme.scaleWidth
+		height: 350 * theme.scaleHeight
+		GridLayout {
+			id: setAPlusLayout
+			anchors.centerIn: parent
+			width: parent.width *.9
+			height: parent.height *.9
+			flow: Grid.leftToRight
+			rows: 3
+			columns: 2
+
+			// pick left or right 
+			IconButtonTransparent { 
+				Layout.alignment: Qt.AlignCenter
+				icon.source: "/images/BoundaryRight.png"
+				onClicked: {
+					if (icon.source == "/images/BoundaryRight.png") {
+						icon.source = "/images/BoundaryLeft.png"
+					} else {
+						icon.source = "/images/BoundaryRight.png"
+					}
+				}
+			}
+			IconButtonTransparent {
+				Layout.alignment: Qt.AlignCenter
+				icon.source: "/images/LetterABlue.png"
+				onClicked: {
+					aPlusHeading.enabled = true
+					aPlusHeading.text = aog.heading
+					btnAPlusOk.enabled = true
+				}
+			}
+			NumberTextField {
+				id: aPlusHeading
+				enabled: false
+				bottomVal: 0
+				topVal: 360
+				decimals: 4
+				text: "0"
+				Layout.columnSpan: 2
+				implicitWidth: 200
+				implicitHeight: 50
+			}	
+			IconButtonTransparent {
+				Layout.alignment: Qt.AlignCenter
+				icon.source: "/images/Cancel64.png"
+				onClicked: setAPlus.visible = false
+			}
+			IconButtonTransparent {
+				id: btnAPlusOk
+				Layout.alignment: Qt.AlignCenter
+				enabled: false
+				icon.source: "/images/OK64.png"
+				onClicked: setAPlus.visible = false
+			}
+		}
+	}
+	//endregion setA+
+	//
+	//region setAB
+	MoveablePopup {
+		id: setAB
+		visible: false
+		width: 250 * theme.scaleWidth
+		height: 350 * theme.scaleHeight
+		GridLayout {
+			id: setABLayout
+			anchors.centerIn: parent
+			width: parent.width *.9
+			height: parent.height *.9
+			flow: Grid.leftToRight
+			rows: 3
+			columns: 2
+
+			// pick left or right 
+			IconButtonTransparent { 
+				Layout.alignment: Qt.AlignCenter
+				Layout.columnSpan: 2
+				icon.source: "/images/BoundaryRight.png"
+				onClicked: {
+					if (icon.source == "/images/BoundaryRight.png") {
+						icon.source = "/images/BoundaryLeft.png"
+					} else {
+						icon.source = "/images/BoundaryRight.png"
+					}
+				}
+			}
+			IconButtonTransparent {
+				Layout.alignment: Qt.AlignCenter
+				icon.source: "/images/LetterABlue.png"
+				onClicked: {
+					btnB.enabled = true
+				}
+			}
+			IconButtonTransparent {
+				id: btnB
+				Layout.alignment: Qt.AlignCenter
+				enabled: false
+				icon.source: "/images/LetterBBlue.png"
+				onClicked: btnABOk.enabled = true
+			}
+			IconButtonTransparent {
+				Layout.alignment: Qt.AlignCenter
+				icon.source: "/images/Cancel64.png"
+				onClicked: setAB.visible = false
+			}
+			IconButtonTransparent {
+				id: btnABOk
+				Layout.alignment: Qt.AlignCenter
+				enabled: false
+				icon.source: "/images/OK64.png"
+				onClicked: setAB.visible = false
+			}
+		}
+	}
+
+/*Dialog {
 	id: abSetter
 	width: 300
 	modal: true
@@ -455,3 +586,5 @@ Dialog {
 			}
 		}
 	}
+	*/
+   }

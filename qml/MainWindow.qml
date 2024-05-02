@@ -1544,6 +1544,10 @@ Window {
             id: trackNew
             visible: false
         }
+		TrackNewSet{
+			id: trackNewSet
+			anchors.fill: parent
+		}
 		TrackList{
 			id: trackList
 		}

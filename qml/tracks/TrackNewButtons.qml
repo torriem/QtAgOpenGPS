@@ -110,7 +110,7 @@ MoveablePopup {
 				text: qsTr("AB Line")
 				onClicked: {
 					trackNew.visible = false
-					trackNewSet.showABLine()
+					trackNewSet.showAB()
 				}
             }
             IconButtonColor{
