@@ -19,6 +19,9 @@ Item{
 	function showAB() {
 		setAB.visible = true
 	}
+	function showABCurve() {
+		setABCurve.visible = true
+	}
 	//region setA+
 
 	MoveablePopup {
@@ -136,6 +139,74 @@ Item{
 				enabled: false
 				icon.source: "/images/OK64.png"
 				onClicked: setAB.visible = false
+			}
+		}
+	}
+	//endregion setAB
+	//
+	//region setABCurve
+	MoveablePopup {
+		id: setABCurve
+		visible: false
+		width: 250 * theme.scaleWidth
+		height: 350 * theme.scaleHeight
+		GridLayout {
+			id: setABCurveLayout
+			anchors.centerIn: parent
+			width: parent.width *.9
+			height: parent.height *.9
+			flow: Grid.leftToRight
+			rows: 4
+			columns: 2
+
+			// pick left or right 
+			IconButtonTransparent { 
+				Layout.alignment: Qt.AlignCenter
+				Layout.columnSpan: 2
+				icon.source: "/images/BoundaryRight.png"
+				onClicked: {
+					if (icon.source == "/images/BoundaryRight.png") {
+						icon.source = "/images/BoundaryLeft.png"
+					} else {
+						icon.source = "/images/BoundaryRight.png"
+					}
+				}
+			}
+			IconButtonTransparent {
+				id: btnACurve
+				Layout.alignment: Qt.AlignCenter
+				icon.source: "/images/LetterABlue.png"
+				onClicked: {
+					btnBCurve.enabled = true
+					btnRecord.enabled = true
+				}
+			}
+			IconButtonTransparent {
+				id: btnBCurve
+				Layout.alignment: Qt.AlignCenter
+				enabled: false
+				icon.source: "/images/LetterBBlue.png"
+				onClicked: setABCurve.visible = false
+			}
+			Text {
+				Layout.alignment: Qt.AlignCenter
+				Layout.columnSpan: 2
+				text: qsTr("Status: Driving")
+				color: theme.textColor
+			}
+			IconButtonTransparent {
+				id: btnRecord
+				Layout.alignment: Qt.AlignCenter
+				enabled: false
+				checkable: true
+				icon.source: "/images/boundaryPause.png"
+				iconChecked: "/images/BoundaryRecord.png"
+				onCheckedChanged: checked ? btnBCurve.enabled = false : btnBCurve.enabled = true
+			}
+			IconButtonTransparent {
+				Layout.alignment: Qt.AlignCenter
+				icon.source: "/images/Cancel64.png"
+				onClicked: setABCurve.visible = false
 			}
 		}
 	}
