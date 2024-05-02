@@ -637,5 +637,6 @@
         <file>qml/HamburgerMenu.qml</file>
         <file>qml/SetSimCoords.qml</file>
         <file>sounds/TF012.wav</file>
+		<file>qml/components/NumberTextField.qml</file>
     </qresource>
 </RCC>
