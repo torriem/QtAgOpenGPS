@@ -66,7 +66,7 @@ MoveablePopup {
 				text: qsTr("Lat/Lon")
 				onClicked: {
 					trackNew.visible = false
-					trackNewSet.showLatLon()
+					trackNewSet.showLatLonLatLon()
 				}
 			}
 			IconButtonColor{

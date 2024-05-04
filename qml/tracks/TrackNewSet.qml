@@ -22,6 +22,9 @@ Item{
 	function showABCurve() {
 		setABCurve.visible = true
 	}
+	function showLatLonLatLon() {
+		latLonLatLon.visible = true
+	}
 	//region setA+
 
 	MoveablePopup {
@@ -55,7 +58,7 @@ Item{
 				icon.source: "/images/LetterABlue.png"
 				onClicked: {
 					aPlusHeading.enabled = true
-					aPlusHeading.text = aog.heading
+					aPlusHeading.text = (Number(utils.radians_to_deg(aog.heading)).toLocaleString(Qt.locale(), 'f', 4))
 					btnAPlusOk.enabled = true
 				}
 			}
@@ -210,6 +213,155 @@ Item{
 			}
 		}
 	}
+	//endregion setABCurve
+	//
+	//region latLonLatLon
+	MoveablePopup {
+		id: latLonLatLon
+		visible: false
+		width: 350 * theme.scaleWidth
+		height: 450 * theme.scaleHeight
+		onVisibleChanged: {
+			if (visible) {
+				latPointA.text = parseFloat((aog.latitude).toFixed(7))
+				lonPointA.text = parseFloat((aog.longitude).toFixed(7)) //aog.longitude
+				latPointB.text = parseFloat((aog.latitude).toFixed(7)) //aog.latitude
+				lonPointB.text = parseFloat((aog.longitude).toFixed(7)) //aog.longitude
+			}
+		}
+		GridLayout {
+			id: latLonLatLonLayout
+			anchors.centerIn: parent
+			width: parent.width *.9
+			height: parent.height *.9
+			flow: Grid.TopToBottom
+			rows: 8
+			columns: 2
+
+			// send current position to point A
+			IconButtonTransparent {
+				icon.source: "/images/Config/ConS_ImplementAntenna.png"
+				Layout.rowSpan: 3
+				Layout.row: 2
+				Layout.column: 0
+				onClicked: {
+					latPointA.text = parseFloat((aog.latitude).toFixed(7)) //aog.latitude
+					lonPointA.text = parseFloat((aog.longitude).toFixed(7)) //aog.longitude
+				}
+			}
+
+			// send current position to point B
+			IconButtonTransparent {
+				icon.source: "/images/Config/ConS_ImplementAntenna.png"
+				Layout.rowSpan: 3
+				Layout.row: 5
+				Layout.column: 0
+				onClicked: {
+					latPointB.text = parseFloat((aog.latitude).toFixed(7)) //aog.latitude 
+					lonPointB.text = parseFloat((aog.longitude).toFixed(7)) //aog.longitude
+				}
+			}
+			/*
+			 * figure out rounding
+			 * we don't want to convert to locale string
+			 */
+			IconButtonTransparent {
+				icon.source: "/images/Cancel64.png"
+				onClicked: latLonLatLon.visible = false
+				Layout.row: 8
+				Layout.column: 0
+			}
+
+			//this starts on the top of the right column
+			NumberTextField {
+				id: latPointA
+				Layout.alignment: Qt.AlignRight
+				Layout.row: 1
+				Layout.column: 1
+				implicitWidth: 200 * theme.scaleWidth
+				bottomVal: -90
+				topVal: 90
+				decimals: 7
+				text: "0"
+				TextLine {
+					text: qsTr("Latitude (+- 90)")
+					anchors.bottom: parent.top
+					anchors.left: parent.left
+				}
+			}
+			Text {
+				Layout.alignment: Qt.AlignRight
+				Layout.column: 1
+				Layout.row: 2
+				text: qsTr("A")
+			}
+			NumberTextField {
+				id: lonPointA
+				Layout.alignment: Qt.AlignRight
+				Layout.row: 3
+				Layout.column: 1
+				implicitWidth: 200 * theme.scaleWidth
+				bottomVal: -90
+				topVal: 90
+				decimals: 7
+				text: "0"
+				TextLine {
+					text: qsTr("Longitude (+- 180)")
+					anchors.bottom: parent.top
+					anchors.left: parent.left
+				}
+			}
+			NumberTextField {
+				id: latPointB
+				Layout.alignment: Qt.AlignRight
+				Layout.row: 5 // skip a row
+				Layout.column: 1
+				implicitWidth: 200 * theme.scaleWidth
+				bottomVal: -90
+				topVal: 90
+				decimals: 7
+				text: "0"
+				TextLine {
+					text: qsTr("Latitude (+- 90)")
+					anchors.bottom: parent.top
+					anchors.left: parent.left
+				}
+			}
+			Text {
+				Layout.alignment: Qt.AlignRight
+				Layout.column: 1
+				Layout.row: 6
+				text: qsTr("B")
+			}
+			NumberTextField {
+				id: lonPointB
+				Layout.alignment: Qt.AlignRight
+				Layout.row: 7
+				Layout.column: 1
+				implicitWidth: 200 * theme.scaleWidth
+				bottomVal: -90
+				topVal: 90
+				decimals: 7
+				text: "0"
+				TextLine {
+					text: qsTr("Longitude (+- 180)")
+					anchors.bottom: parent.top
+					anchors.left: parent.left
+				}
+			}
+			IconButtonTransparent {
+				icon.source: "/images/OK64.png"
+				Layout.row: 8
+				Layout.column: 1
+				Layout.alignment: Qt.AlignRight
+				onClicked: {
+					latLonLatLon.visible = false
+				}
+			}
+		}
+	}
+	//endregion latLonLatLon
+		
 
 /*Dialog {
 	id: abSetter
