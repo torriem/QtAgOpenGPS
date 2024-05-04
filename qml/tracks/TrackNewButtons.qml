@@ -42,7 +42,7 @@ MoveablePopup {
 			text: qsTr("AB + Curve")
 			onClicked: {
 				trackNew.visible = false
-				console.log("you Wish this works--but it doesn't")
+				trackNewSet.showFromKML()
 			}
 		}
 		GridLayout{
@@ -88,7 +88,7 @@ MoveablePopup {
 				text: qsTr("Pivot")
 				onClicked: {
 					trackNew.visible = false
-					trackNewSet.showPivot()
+					trackNewSet.showCircleTrack()
 				}
 			}
             IconButtonColor{

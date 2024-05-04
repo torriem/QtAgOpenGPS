@@ -25,6 +25,15 @@ Item{
 	function showLatLonLatLon() {
 		latLonLatLon.visible = true
 	}
+	function showLatLonHeading() {
+		latLonHeading.visible = true
+	}
+	function showCircleTrack() {
+		circleTrack.visible = true
+	}
+	function showFromKML() {
+		loadFromKML.open()
+	}
 	//region setA+
 
 	MoveablePopup {
@@ -361,8 +370,201 @@ Item{
 		}
 	}
 	//endregion latLonLatLon
-		
+	//
+	//region latLonHeading
+	MoveablePopup {
+		id: latLonHeading
+		visible: false
+		width: 350 * theme.scaleWidth
+		height: 450 * theme.scaleHeight
+		onVisibleChanged: {
+			if (visible) {
+				latPointAA.text = parseFloat((aog.latitude).toFixed(7))
+				lonPointAA.text = parseFloat((aog.longitude).toFixed(7)) //aog.longitude
+				latLonHeadingEntry.text = parseFloat((aog.heading).toFixed(4))	
+			}
+		}
+		GridLayout {
+			id: latLonHeadingLayout
+			anchors.centerIn: parent
+			width: parent.width *.9
+			height: parent.height *.9
+			flow: Grid.TopToBottom
+			rows: 4
+			columns: 2
 
+			// send current position to point A
+			IconButtonTransparent {
+				icon.source: "/images/Config/ConS_ImplementAntenna.png"
+				Layout.rowSpan: 2
+				Layout.column: 0
+				onClicked: {
+					latPointAA.text = parseFloat((aog.latitude).toFixed(7)) //aog.latitude
+					lonPointAA.text = parseFloat((aog.longitude).toFixed(7)) //aog.longitude
+				}
+			}
+
+			IconButtonTransparent {
+				icon.source: "/images/Cancel64.png"
+				onClicked: latLonHeading.visible = false
+				Layout.row: 4
+				Layout.column: 0
+			}
+
+			//this starts on the top of the right column
+			NumberTextField {
+				id: latPointAA
+				Layout.alignment: Qt.AlignRight
+				Layout.row: 1
+				Layout.column: 1
+				implicitWidth: 200 * theme.scaleWidth
+				bottomVal: -90
+				topVal: 90
+				decimals: 7
+				text: "0"
+				TextLine {
+					text: qsTr("Latitude (+- 90)")
+					anchors.bottom: parent.top
+					anchors.left: parent.left
+				}
+			}
+			NumberTextField {
+				id: lonPointAA
+				Layout.alignment: Qt.AlignRight
+				Layout.row: 2
+				Layout.column: 1
+				implicitWidth: 200 * theme.scaleWidth
+				bottomVal: -90
+				topVal: 90
+				decimals: 7
+				text: "0"
+				TextLine {
+					text: qsTr("Longitude (+- 180)")
+					anchors.bottom: parent.top
+					anchors.left: parent.left
+				}
+			}
+			NumberTextField {
+				id: latLonHeadingEntry
+				bottomVal: 0
+				topVal: 360
+				decimals: 4
+				text: "0"
+				Layout.row: 3
+				Layout.column: 1
+				Layout.alignment: Qt.AlignRight
+				implicitWidth: 200
+				implicitHeight: 50
+				TextLine {
+					text: qsTr("Heading")
+					anchors.bottom: parent.top
+					anchors.left: parent.left
+				}
+			}	
+			IconButtonTransparent {
+				icon.source: "/images/OK64.png"
+				Layout.row: 4
+				Layout.column: 1
+				Layout.alignment: Qt.AlignRight
+				onClicked: {
+					latLonHeading.visible = false
+				}
+			}
+		}
+	}
+	//endregion latLonHeading
+	//
+	//region circleTrack
+	MoveablePopup {
+		id: circleTrack
+		visible: false
+		width: 350 * theme.scaleWidth
+		height: 450 * theme.scaleHeight
+		onVisibleChanged: {
+			if (visible) {
+				latPointAAA.text = parseFloat((aog.latitude).toFixed(7))
+				lonPointAAA.text = parseFloat((aog.longitude).toFixed(7)) //aog.longitude
+			}
+		}
+		GridLayout {
+			id: circleTrackLayout
+			anchors.centerIn: parent
+			width: parent.width *.9
+			height: parent.height *.9
+			flow: Grid.TopToBottom
+			rows: 4
+			columns: 2
+
+			// send current position to point A
+			IconButtonTransparent {
+				icon.source: "/images/Config/ConS_ImplementAntenna.png"
+				Layout.rowSpan: 2
+				Layout.column: 0
+				onClicked: {
+					latPointAAA.text = parseFloat((aog.latitude).toFixed(7)) //aog.latitude
+					lonPointAAA.text = parseFloat((aog.longitude).toFixed(7)) //aog.longitude
+				}
+			}
+
+			IconButtonTransparent {
+				icon.source: "/images/Cancel64.png"
+				onClicked: circleTrack.visible = false
+				Layout.row: 3
+				Layout.column: 0
+			}
+
+			//this starts on the top of the right column
+			NumberTextField {
+				id: latPointAAA
+				Layout.alignment: Qt.AlignRight
+				Layout.row: 1
+				Layout.column: 1
+				implicitWidth: 200 * theme.scaleWidth
+				bottomVal: -90
+				topVal: 90
+				decimals: 7
+				text: "0"
+				TextLine {
+					text: qsTr("Latitude (+- 90)")
+					anchors.bottom: parent.top
+					anchors.left: parent.left
+				}
+			}
+			NumberTextField {
+				id: lonPointAAA
+				Layout.alignment: Qt.AlignRight
+				Layout.row: 2
+				Layout.column: 1
+				implicitWidth: 200 * theme.scaleWidth
+				bottomVal: -90
+				topVal: 90
+				decimals: 7
+				text: "0"
+				TextLine {
+					text: qsTr("Longitude (+- 180)")
+					anchors.bottom: parent.top
+					anchors.left: parent.left
+				}
+			}
+			IconButtonTransparent {
+				icon.source: "/images/OK64.png"
+				Layout.row: 3
+				Layout.column: 1
+				Layout.alignment: Qt.AlignRight
+				onClicked: {
+					latLonHeading.visible = false
+				}
+			}
+		}
+	}
+	//endregion circleTrack
+	//
+	//region loadFromKML
+	FileDialog {
+		id: loadFromKML
+		currentFolder: StandardPaths.standardLocations(StandardPaths.DocumentsLocation) + "/QtAgOpenGPS/Fields"
+		nameFilters: ["KML Files (*.kml)"]
+	}
 /*Dialog {
 	id: abSetter
 	width: 300
