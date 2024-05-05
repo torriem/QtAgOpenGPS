@@ -16,6 +16,7 @@ class IORouter : public QObject
 public:
     IORouter() = delete;
     IORouter(QSettings& settings);
+    virtual ~IORouter() = default;
 
 public slots:
     // Handle an incoming message from one of the connections

@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     parser.setApplicationDescription("IO handler for AgOpenGPS and QtAgOpenGPS");
     parser.addHelpOption();
     parser.addVersionOption();
-    QCommandLineOption verbose("verbose", "Set verbosity level, 0-7. 0=silent, 7=noisy, 2=default");
+    QCommandLineOption verbose("verbose", "Set verbosity level, 0-7. 0=silent, 7=noisy, 2=default", "verbose", "2");
     parser.addOption(verbose);
 
     parser.process(app);
