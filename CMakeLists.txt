@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 # Remove _cmake suffix when the .pro is removed.  Added here for clarity
-project(QtAgOpenGPS_cmake
+project(QtAgOpenGPS
     VERSION 0.0
     HOMEPAGE_URL https://github.com/torriem/QtAgOpenGPS
     LANGUAGES CXX
@@ -133,3 +133,5 @@ set_target_properties(QtAgOpenGPS PROPERTIES
 #    TODO.txt \
 #    README.md \
 #    LICENSE
+
+add_subdirectory(QtAgIO)
