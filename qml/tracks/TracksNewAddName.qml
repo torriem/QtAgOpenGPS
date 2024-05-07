@@ -20,7 +20,7 @@ MoveablePopup {
 		anchors.centerIn: parent
 		width: parent.width *.9
 		height: parent.height *.9
-		flow: Grid.leftToRight
+		flow: Grid.LeftToRight
 		rows: 4
 		columns: 2
 		Text {
