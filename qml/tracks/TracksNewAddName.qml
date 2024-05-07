@@ -57,6 +57,7 @@ MoveablePopup {
 			icon.source: "/images/OK64.png"
 			onClicked: {
 				trackAddName.visible = false
+				trackList.show()
 			}
 		}
 	}

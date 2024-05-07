@@ -116,9 +116,9 @@ MoveablePopup {
             IconButtonTransparent{
 				icon.source: "/images/Cancel64.png"
 				onClicked: {
+					trackPickerDialog.visible = false
 					aog.currentTrack = -1
 					ablineView.currentIndex = -1
-					trackPickerDialog.reject()
 				}
 			}
 		}
@@ -143,18 +143,19 @@ MoveablePopup {
 				icon.source: "/images/AddNew.png"
 				onClicked: {
 					trackNewButtons.show()
-					trackPickerDialog.close()
+					trackListDialog.visible = false
 				}
 			}
             IconButtonTransparent{
                 objectName: "btnLineExit" //this is not cancel, rather, save and exit
                 icon.source: "/images/OK64.png"
                 onClicked: {
+						trackPickerDialog.visible = false
                     if (ablineView.currentIndex > -1) {
                         aog.currentTrack = ablineView.currentIndex
-                        trackPickerDialog.accept()
+						trackPickerDialog.visible = false
                     } else
-                        trackPickerDialog.reject()
+						trackPickerDialog.visible = false
                 }
             }
         }
