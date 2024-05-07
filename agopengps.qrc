@@ -594,6 +594,7 @@
         <file>qml/tracks/TrackList.qml</file>
         <file>qml/tracks/TrackNewButtons.qml</file>
 		<file>qml/tracks/TrackNewSet.qml</file> 
+		<file>qml/tracks/TracksNewAddName.qml</file>
         <file>images/ABTrackA+.png</file>
         <file>qml/tracks/RefNudge.qml</file>
         <file>images/Images/z_TurnLeft.png</file>

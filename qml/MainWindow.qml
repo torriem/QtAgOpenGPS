@@ -1551,6 +1551,9 @@ Window {
 		TrackList{
 			id: trackList
 		}
+		TracksNewAddName{
+			id: trackAddName
+		}
 
         Rectangle{
             id: closeDialog

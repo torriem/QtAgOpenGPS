@@ -92,7 +92,10 @@ Item{
 				Layout.alignment: Qt.AlignCenter
 				enabled: false
 				icon.source: "/images/OK64.png"
-				onClicked: setAPlus.visible = false
+				onClicked: {
+					setAPlus.visible = false
+					trackAddName.show("A+ "+aPlusHeading.text+"°")
+				}
 			}
 		}
 	}
@@ -150,7 +153,10 @@ Item{
 				Layout.alignment: Qt.AlignCenter
 				enabled: false
 				icon.source: "/images/OK64.png"
-				onClicked: setAB.visible = false
+				onClicked: {
+					setAB.visible = false
+					trackAddName.show("AB "+"not added"+"°")
+				}
 			}
 		}
 	}
@@ -198,7 +204,10 @@ Item{
 				Layout.alignment: Qt.AlignCenter
 				enabled: false
 				icon.source: "/images/LetterBBlue.png"
-				onClicked: setABCurve.visible = false
+				onClicked: {
+					setABCurve.visible = false
+					trackAddName.show("Cu "+aog.heading+"°")
+				}
 			}
 			Text {
 				Layout.alignment: Qt.AlignCenter
@@ -365,6 +374,7 @@ Item{
 				Layout.alignment: Qt.AlignRight
 				onClicked: {
 					latLonLatLon.visible = false
+					trackAddName.show("AB "+NA+"°")
 				}
 			}
 		}
@@ -468,6 +478,7 @@ Item{
 				Layout.alignment: Qt.AlignRight
 				onClicked: {
 					latLonHeading.visible = false
+					trackAddName.show("A+ "+latLonHeading.text+"°")
 				}
 			}
 		}
@@ -552,7 +563,8 @@ Item{
 				Layout.column: 1
 				Layout.alignment: Qt.AlignRight
 				onClicked: {
-					latLonHeading.visible = false
+					circleTrack.visible = false
+					trackAddName.show("Cir")
 				}
 			}
 		}
