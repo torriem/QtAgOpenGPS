@@ -6,6 +6,13 @@ Rectangle{
     color: boundaryInterface.isOutOfBounds ? "darksalmon" : "gray"
     height: 60 * theme.scaleHeight
     width: 650 * theme.scaleWidth
+	function changedSteerDir(isRight){
+		if(isRight){
+			steerSlider.value = steerSlider.value + 10
+		}else{
+			steerSlider.value = steerSlider.value - 10
+		}
+	}
     Connections{
         target: settings
         function onSetMenu_isSimulatorOnChanged(){

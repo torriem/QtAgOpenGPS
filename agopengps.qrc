@@ -626,6 +626,7 @@
         <file>qml/AOGTheme.qml</file>
         <file>qml/HamburgerMenu.qml</file>
         <file>qml/SetSimCoords.qml</file>
+		<file>qml/components/ShortcutCustomized.qml</file>
         <file>sounds/TF012.wav</file>
     </qresource>
 </RCC>
