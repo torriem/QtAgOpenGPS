@@ -204,6 +204,8 @@ private:
     int oneHalfSecondCounter = 0, oneHalfSecond = 0;
     int oneFifthSecondCounter = 0, oneFifthSecond = 0;
 
+    int makeUTurnCounter = 0;
+
 
      /*******************
      * GUI.Designer.cs *

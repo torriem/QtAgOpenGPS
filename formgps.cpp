@@ -1007,54 +1007,23 @@ void FormGPS::tmrWatchdog_timeout()
 
         isFlashOnOff = !isFlashOnOff;
 
-        //the main formgps window
-        if (isMetric)  //metric or imperial
-        {
-            //status strip values
-            //TODO: qmlItem(qml_root,"btnPerimeter")->setProperty("buttonText", fd.WorkedUserHectares());
-            //TODO: distanceToolBtn.Text = fd.DistanceUserMeters + "\r\n" + fd.WorkedUserHectares;
-
-        }
-        else  //Imperial Measurements
-        {
-            //acres on the master section soft control and sections
-            //status strip values
-            //TODO: qmlItem(qml_root,"btnPerimeter")->setProperty("buttonText", fd.WorkedUserAcres());
-            //TODO: distanceToolBtn.Text = fd.DistanceUserFeet + "\r\n" + fd.WorkedUserAcres;
-        }
+        //the ratemap trigger
+        worldGrid.isRateTrigger = true;
 
         //Make sure it is off when it should
-        if ((!ABLine.isBtnABLineOn && !ct.isContourBtnOn && !curve.isBtnCurveOn && isAutoSteerBtnOn)
+        if ((!ct.isContourBtnOn && trk.idx == -1 && isAutoSteerBtnOn)
             ) onStopAutoSteer();
-
-        //the main formgps window
-        if (isMetric)  //metric or imperial
-        {
-            //TODO: lblSpeed.Text = SpeedKPH;
-            //btnContour.Text = XTE; //cross track error
-
-        }
-        else  //Imperial Measurements
-        {
-            //TODO: lblSpeed.Text = SpeedMPH;
-            //btnContour.Text = InchXTE; //cross track error
-        }
 
     } //end every 1/2 second
 
-    //every fifth second update  ///////////////////////////   FIFTH Fifth ////////////////////////////
-    if (displayUpdateOneFifthCounter != oneFifthSecond)
+    //every fourth second update  ///////////////////////////   Fourth  ////////////////////////////
     {
         //reset the counter
-        displayUpdateOneFifthCounter = oneFifthSecond;
-
-        //TODO: btnAutoSteerConfig.Text = SetSteerAngle + "\r\n" + ActualSteerAngle;
+        oneHalfSecondCounter++;
+        oneSecondCounter++;
+        makeUTurnCounter++;
 
         secondsSinceStart = stopwatch.elapsed() / 1000.0;
-
-        //integralStatusLeftSide.Text = "I: " + gyd.inty.ToString("N3");
-
-        //lblAV.Text = ABLine.angVel
     }
 }
 
