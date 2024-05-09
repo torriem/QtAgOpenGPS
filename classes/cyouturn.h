@@ -21,12 +21,44 @@ class CNMEA;
 
 //class QMatrix4x4;
 
+class CClose {
+public:
+    Vec3 closePt;
+    int turnLineNum;
+    int turnLineIndex;
+    double turnLineHeading;
+    int curveIndex;
+
+    CClose()
+    {
+        closePt = Vec3();
+        turnLineNum = -1;
+        turnLineIndex = -1;
+        turnLineHeading = -1;
+        curveIndex = -1;
+    }
+
+    CClose(const CClose &_clo)
+    {
+        closePt = _clo.closePt;
+        turnLineNum = _clo.turnLineNum;
+        turnLineIndex = _clo.turnLineIndex;
+        turnLineHeading = _clo.turnLineHeading;
+        curveIndex = _clo.curveIndex;
+    }
+};
+
 class CYouTurn: public QObject
 {
     Q_OBJECT
 private:
-    int A, B, C;
+    int A, B;
     bool isHeadingSameWay = true;
+    int semiCircleIndex = -1;
+
+    //how far should the distance between points on the uTurn be
+    double pointSpacing;
+
 
 public:
     //triggered right after youTurnTriggerPoint is set
@@ -37,6 +69,7 @@ public:
 
     // Is the youturn button enabled?
     InterfaceProperty<AOGInterface,bool> isYouTurnBtnOn = InterfaceProperty<AOGInterface,bool>("isYouTurnBtnOn");
+    InterfaceProperty<AOGInterface,bool> isBtnAutoSteerOn = InterfaceProperty<AOGInterface,bool>("isBtnAutoSteerOn");
 
     double boundaryAngleOffPerpendicular, youTurnRadius;
 
@@ -55,10 +88,11 @@ public:
     double steerAngleGu, rEastSteer, rNorthSteer, rEastPivot, rNorthPivot;
     double pivotCurvatureOffset, lastCurveDistance = 10000;
 
-    bool isTurnCreationTooClose = false, isTurnCreationNotCrossingError = false;
+    bool isTurnCreationTooClose = false, isTurnCreationNotCrossingError = false, turnTooCloseTrigger = false;
 
     //pure pursuit values
     Vec3 pivot = Vec3(0,0,0);
+
     Vec2 goalPointYT = Vec2(0,0);
     Vec2 radiusPointYT = Vec2(0,0);
     double steerAngleYT;
@@ -67,6 +101,15 @@ public:
 
     //list of points for scaled and rotated YouTurn line
     QVector<Vec3> ytList;
+    QVector<Vec3> ytList2;
+
+    //next curve or line to build out turn and point over
+    CABCurve nextCurve;
+    CABLine nextLine;
+    Vec3 nextLookPos;
+
+    //if we continue on the same line or change to the next one after the uTurn
+    bool isOutSameCurve;
 
     //for 3Pt turns - second turn
     QVector<Vec3> pt3ListSecondLine;
@@ -74,7 +117,7 @@ public:
     int uTurnStyle = 0;
 
     int pt3Phase = 0;
-    Vec3 pt3TurnNewAB = Vec3(0, 0, 0);
+    Vec3 kStyleNewLookPos = Vec3(0, 0, 0);
     bool isLastFrameForward = true;
 
     //is UTurn pattern in or out of bounds
@@ -83,11 +126,21 @@ public:
     //sequence of operations of finding the next turn 0 to 3
     int youTurnPhase;
 
-    Vec4 crossingCurvePoint;
     double crossingheading = 0;
 
+    // Returns 1 if the lines intersect, otherwis
     double iE = 0, iN = 0;
-    int onA;
+
+    // the list of possible bounds points
+    QVector<CClose> turnClosestList;
+
+    //point at the farthest turn segment from pivotAxle
+    CClose closestTurnPt;
+
+    //where the in and out tangents cross for Albin curve
+    CClose inClosestTurnPt;
+    CClose outClosestTurnPt;
+    CClose startOfTurnPt;
 
     //constructor
     explicit CYouTurn(QObject *parent = 0);
@@ -95,27 +148,69 @@ public:
     void loadSettings();
 
     //Finds the point where an AB Curve crosses the turn line
-    bool findCurveTurnPoints(const CABCurve &curve, const CBoundary &bnd);
-
-    /* moved to glm
-    int getLineIntersection(double p0x, double p0y, double p1x, double p1y,
-                            double p2x, double p2y, double p3x, double p3y,
-                            double &iEast, double &iNorth);
-    */
-
-    void AddSequenceLines(double head, Vec3 pivot);
-
-    bool BuildABLineDubinsYouTurn(CVehicle &vehicle,
-                                  CBoundary &bnd,
-                                  const CABLine &ABLine,
-                                  bool isTurnRight);
-
     bool BuildCurveDubinsYouTurn(CVehicle &vehicle,
                                   const CBoundary &bnd,
                                   const CABCurve &curve,
                                   bool isTurnRight,
                                   Vec3 pivotPos);
 
+    bool BuildABLineDubinsYouTurn(bool isTurnLeft,
+                                  const CBoundary &bnd,
+                                  const CABLine &ABLine,
+                                  );
+
+
+private:
+    bool CreateCurveOmegaTurn(bool isTurnLeft, Vec3 pivotPos,
+                              int makeUTurnCounter,
+                              CVehicle &vehicle,
+                              const CBoundary &bnd,
+                              const CABCurve &curve);
+    bool CreateCurveWideTurn(bool isTurnLeft, Vec3 pivotPos,
+                              int makeUTurnCounter,
+                              CVehicle &vehicle,
+                              const CBoundary &bnd,
+                              const CABCurve &curve);
+
+    bool CreateABOmegaTurn(bool isTurnLeft,                              int makeUTurnCounter,
+                           CVehicle &vehicle,
+                           const CBoundary &bnd,
+                           const CABLine &ABLine);
+    bool CreateABWideTurn(bool isTurnLeft,
+                          int makeUTurnCounter,
+                          CVehicle &vehicle,
+                          const CBoundary &bnd,
+                          const CABLine &ABLine);
+
+    bool KStyleTurnCurve(bool isTurnLeft);
+    bool KStyleTurnAB(bool isTurnLeft);
+
+    QVector<Vec3> &MoveABTurnInsideTurnLine(QVector<Vec3> &uTurList, double head);
+
+public:
+    void FindClosestTurnPoint(Vec3 fromPt);
+    bool FindCurveTurnPoints(const QVector<Vec3> &xList);
+    bool FindCurveOutTurnPoint(CABCurve thisCurve, CABCurve &nextCurve, CClose inPt, bool isTurnLineSameWay);
+    bool FindABOutTurnPoint(CABLine thisCurve, CABLine &nextCurve, CClose inPt, bool isTurnLineSameWay);
+
+private:
+    bool FindInnerTurnPoints(Vec3 fromPt, double inDirection, CClose refClosePt, bool isTurnLineSameWay);
+    bool FindCurveTurnPoint(CABCurve thisCurve);
+    void FindABTurnPoint(Vec3 fromPt);
+
+    bool AddABSequenceLines();
+    bool AddCurveSequenceLines();
+
+public:
+    int GetLineIntersection(double p0x, double p0y, double p1x, double p1y,
+                            double p2x, double p2y, double p3x, double p3y, double &iEast, double &iNorth);
+
+private:
+    QVector<Vec3> MoveTurnInsideTurnLine(QVector<Vec3> uTurnList, double head, bool deleteSecondHalf, bool invertHeading,
+                                         CVehicle &vehicle,
+                                         const CBoundary &bnd);
+
+public:
     void SmoothYouTurn(int smPts);
 
     //called to initiate turn
@@ -124,29 +219,25 @@ public:
     //Normal copmpletion of youturn
     void CompleteYouTurn();
 
-    void SetAlternateSkips();
+    void Set_Alternate_skips();
 
     //something went seriously wrong so reset everything
     void ResetYouTurn();
 
     void ResetCreatedYouTurn();
 
+    void FailCreate();
+
     //build the points and path of youturn to be scaled and transformed
     void BuildManualYouLateral(CVehicle &vehicle,
                                CABLine &ABLine, CABCurve &curve,
-                            bool isTurnRight);
+                            bool isTurnLeft);
     void BuildManualYouTurn(CVehicle &vehicle,
                             CABLine &ABLine, CABCurve &curve,
-                            bool isTurnRight, bool isTurnButtonTriggered);
-
-    //get list of points from txt shape file
-    //void loadYouTurnShapeFromFile(QString filename);
-
+                            bool isTurnLeft, bool isTurnButtonTriggered);
 
     //determine distance from youTurn guidance line
     bool DistanceFromYouTurnLine(CVehicle &v, CNMEA &pn);
-
-    void Check3PtSequence(void);
 
     //Duh.... What does this do....
     void DrawYouTurn(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);

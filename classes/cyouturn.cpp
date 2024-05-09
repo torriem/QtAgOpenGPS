@@ -29,7 +29,7 @@ void CYouTurn::loadSettings()
     youTurnStartOffset = property_set_youTurnExtensionLength;
 
     rowSkipsWidth = property_set_youSkipWidth;
-    SetAlternateSkips();
+    Set_Alternate_skips();
 
     youTurnRadius = property_set_youTurnRadius;
 
@@ -38,6 +38,1438 @@ void CYouTurn::loadSettings()
     uTurnSmoothing = property_setAS_uTurnSmoothing;
 
 }
+
+//Finds the point where an AB Curve crosses the turn line
+bool CYouTurn::BuildCurveDubinsYouTurn(CVehicle &vehicle,
+                                       const CBoundary &bnd,
+                                       const CABCurve &curve,
+                                       bool isTurnRight, Vec3 pivotPos)
+{
+    double minTurningRadius = property_setVehicle_minTurningRadius;
+    double tool_toolWidth = property_setVehicle_toolWidth;
+    double tool_toolOverlap = property_setVehicle_toolOverlap;
+    double tool_toolOffset = property_setVehicle_toolOffset;
+
+    //TODO: is calculated many taimes after the priveous turn is complete
+    //grab the vehicle widths and offsets
+    double turnOffset = (tool_toolWidth - tool_toolOverlap) * rowSkipsWidth + (isYouTurnRight ? -tool_toolOffset * 2.0 : tool_toolOffset * 2.0); //AAA change isYouTurnRight to isTurnLeft
+    pointSpacing = youTurnRadius * 0.1;
+
+    if (uTurnStyle == 0)
+    {
+        //Albin turn
+        if (turnOffset > (youTurnRadius * 2.0))
+        {
+            return CreateCurveWideTurn(isTurnLeft, pivotPos);
+        }
+
+        //Ohmega turn
+        else
+        {
+            return CreateCurveOmegaTurn(isTurnLeft, pivotPos);
+        }
+    }
+    else if (uTurnStyle == 1)
+    {
+        return (KStyleTurnCurve(isTurnLeft));
+    }
+
+    //prgramming error if you got here
+    return false;
+}
+
+bool CYouTurn::BuildABLineDubinsYouTurn(bool isTurnLeft,
+                                        const CVehicle &vehicle,
+                                        const CABLine &ABLine)
+{
+    double tool_toolWidth = property_setVehicle_toolWidth;
+    double tool_toolOverlap = property_setVehicle_toolOverlap;
+    double tool_toolOffset = property_setVehicle_toolOffset;
+
+    if (!(bool)isBtnAutoSteerOn) ABLine.isHeadingSameWay
+            = M_PI - fabs(fabs(vehicle.fixHeading - ABLine.abHeading) - M_PI) < glm::PIBy2;
+
+    double turnOffset = (tool_toolWidth - tool_toolOverlap) * rowSkipsWidth
+                        + (isYouTurnRight ? -tool_toolOffset * 2.0 : tool_toolOffset * 2.0);
+
+    pointSpacing = youTurnRadius * 0.1;
+
+    if (uTurnStyle == 0)
+    {
+
+        //Wide turn
+        if (turnOffset > (youTurnRadius * 2.0))
+        {
+            return (CreateABWideTurn(isTurnLeft));
+        }
+        //Small turn
+        else
+        {
+            return (CreateABOmegaTurn(isTurnLeft));
+        }
+    }
+    else if (uTurnStyle == 1)
+    {
+        return (KStyleTurnAB(isTurnLeft));
+    }
+
+    //prgramming error if you got here
+    return false;
+}
+
+
+bool CYouTurn::CreateCurveOmegaTurn(bool isTurnLeft, Vec3 pivotPos,
+                                    int makeUTurnCounter,
+                                    CVehicle &vehicle,
+                                    const CBoundary &bnd,
+                                    const CABCurve &curve)
+{
+    double tool_toolWidth = property_setVehicle_toolWidth;
+    double tool_toolOverlap = property_setVehicle_toolOverlap;
+    double tool_toolOffset = property_setVehicle_toolOffset;
+
+    //keep from making turns constantly - wait 1.5 seconds
+    if (makeUTurnCounter < 4)
+    {
+        youTurnPhase = 0;
+        return true;
+    }
+
+    //grab the vehicle widths and offsets
+    double turnOffset = (tool_toolWidth - tool_toolOverlap) * rowSkipsWidth + (isYouTurnRight ? -tool_toolOffset * 2.0 : tool_toolOffset * 2.0);
+
+    switch (youTurnPhase)
+    {
+    case 0: //find the crossing points
+        if (!FindCurveTurnPoint(curve))
+        {
+            FailCreate();
+            return false;
+        }
+
+        //save a copy
+        inClosestTurnPt = CClose(closestTurnPt);
+
+        ytList.clear();
+
+        int count = curve.isHeadingSameWay ? -1 : 1;
+        int curveIndex = inClosestTurnPt.curveIndex;
+
+        isOutOfBounds = true;
+        int stopIfWayOut = 0;
+
+        double head = 0; //gives error since isnt updated
+
+        while (isOutOfBounds)
+        {
+            stopIfWayOut++;
+            isOutOfBounds = false;
+
+            //creates half a circle starting at the crossing point
+            ytList.clear();
+
+            curveIndex += count;
+
+            Vec3 currentPos = curve.curList[curveIndex];
+
+            if (!curve.isHeadingSameWay) currentPos.heading += M_PI;
+            if (currentPos.heading >= glm::twoPI) currentPos.heading -= glm::twoPI;
+            head = currentPos.heading;
+
+            CDubins dubYouTurnPath;
+            CDubins.turningRadius = youTurnRadius;
+
+            //now we go the other way to turn round
+            double invertHead = currentPos.heading - M_PI;
+            if (invertHead <= -M_PI) invertHead += glm::twoPI;
+            if (invertHead >= M_PI) invertHead -= glm::twoPI;
+
+            Vec3 goal;
+
+            //neat trick to not have to add pi/2
+            if (isTurnLeft)
+            {
+                goal.easting = curve.curList[curveIndex - count].easting + (cos(-invertHead) * turnOffset);
+                goal.northing = curve.curList[curveIndex - count].northing + (sin(-invertHead) * turnOffset);
+            }
+            else
+            {
+                goal.easting = curve.curList[curveIndex - count].easting - (cos(-invertHead) * turnOffset);
+                goal.northing = curve.curList[curveIndex - count].northing - (sin(-invertHead) * turnOffset);
+            }
+
+            goal.heading = invertHead;
+
+            //generate the turn points
+            ytList = dubYouTurnPath.GenerateDubins(currentPos, goal);
+            if (ytList.count() == 0)
+            {
+                FailCreate();
+                return false;
+            }
+
+            if (stopIfWayOut == 300 || curveIndex < 1 || curveIndex > (curve.curList.count() - 2))
+            {
+                //for some reason it doesn't go inside boundary
+                FailCreate();
+                return false;
+            }
+
+            for (int i = 0; i < ytList.count(); i++)
+            {
+                if (bnd.IsPointInsideTurnArea(ytList[i]) != 0)
+                {
+                    isOutOfBounds = true;
+                    break;
+                }
+            }
+        }
+        inClosestTurnPt.curveIndex = curveIndex;
+
+        //too many points from Dubins - so cut
+        double distance;
+        int cnt = ytList.count();
+        for (int i = 1; i < cnt - 2; i++)
+        {
+            distance = glm::DistanceSquared(ytList[i], ytList[i + 1]);
+            if (distance < pointSpacing)
+            {
+                ytList.removeAt(i + 1);
+                i--;
+                cnt = ytList.count();
+            }
+        }
+
+        //move the turn to exact at the turnline
+        ytList = MoveTurnInsideTurnLine(ytList, head, false, false, vehicle, bnd);
+        if (ytList.count() == 0)
+        {
+            FailCreate();
+            return false;
+        }
+
+        youTurnPhase = 1;
+        break;
+
+    case 1:
+        //build the next line to add sequencelines
+        double headCurve = curve.curList[curve.currentLocationIndex].heading;
+        if (!curve.isHeadingSameWay) headCurve += M_PI;
+        if (headCurve > glm::twoPI) headCurve -= glm::twoPI;
+
+        Vec2 tempguidanceLookPos = Vec2(vehicle.guidanceLookPos.easting, vehicle.guidanceLookPos.northing);
+
+        if (!isTurnLeft)
+        {
+            //creates an imaginary curveline to the right
+            vehicle.guidanceLookPos.easting += (cos(headCurve) * turnOffset);
+            vehicle.guidanceLookPos.northing -= (sin(headCurve) * turnOffset);
+        }
+        else
+        {
+            vehicle.guidanceLookPos.easting -= (cos(headCurve) * turnOffset);
+            vehicle.guidanceLookPos.northing += (sin(headCurve) * turnOffset);
+        }
+
+        //create the next line with this imaginary point
+        nextCurve = CABCurve();
+        nextCurve.BuildCurveCurrentList(vehicle.pivotAxlePos,secondsSinceStart,vehicle,trk,bnd,yt);
+        vehicle.guidanceLookPos = tempguidanceLookPos;
+
+        //get the index of the last yt point
+        double dis = glm::DOUBLE_MAX;
+        for (int i = 0; i < nextCurve.curList.count() - 2; i++)
+        {
+            double newdis = glm::Distance(nextCurve.curList[i], ytList[ytList.count() - 1]);
+            if (newdis > dis)
+            {
+                if (curve.isHeadingSameWay) outClosestTurnPt.curveIndex = i - 2;
+                else outClosestTurnPt.curveIndex = i;
+                break;
+            }
+            else dis = newdis;
+        }
+        outClosestTurnPt.closePt = nextCurve.curList[outClosestTurnPt.curveIndex];
+        inClosestTurnPt.closePt = curve.curList[inClosestTurnPt.curveIndex];
+
+        if (!AddCurveSequenceLines()) return false;
+
+        //fill in the gaps
+        double distanc;
+
+        int cnt4 = ytList.count();
+        for (int i = 1; i < cnt4 - 2; i++)
+        {
+            int j = i + 1;
+            if (j == cnt4 - 1) continue;
+            distanc = glm::DistanceSquared(ytList[i], ytList[j]);
+            if (distanc > 1)
+            {
+                Vec3 pointB = Vec3((ytList[i].easting + ytList[j].easting) / 2.0,
+                                   (ytList[i].northing + ytList[j].northing) / 2.0, ytList[i].heading);
+
+                ytList.insert(j, pointB);
+                cnt4 = ytList.count();
+                i--;
+            }
+        }
+
+        //calculate the new points headings based on fore and aft of point - smoother turns
+        QVector<Vec3> arr = ytList;
+        cnt4 = ytList.count();
+        cnt4 -= 2;
+        ytList.clear();
+
+        for (int i = 2; i < cnt4; i++)
+        {
+            Vec3 pt3 = arr[i];
+            pt3.heading = atan2(arr[i + 1].easting - arr[i - 1].easting,
+                                arr[i + 1].northing - arr[i - 1].northing);
+            if (pt3.heading < 0) pt3.heading += glm::twoPI;
+            ytList.append(pt3);
+        }
+
+        //check to close
+        if (glm::Distance(ytList[0], vehicle.pivotAxlePos) < 3)
+        {
+            FailCreate();
+            return false;
+        }
+
+        isOutOfBounds = false;
+        youTurnPhase = 10;
+        turnTooCloseTrigger = false;
+        isTurnCreationTooClose = false;
+        return true;
+    }
+    return true;
+}
+
+void CYouTurn::CreateCurveWideTurn(bool isTurnLeft, Vec3 pivotPos,
+                                   int makeUTurnCounter,
+                                   CVehicle &vehicle,
+                                   const CBoundary &bnd,
+                                   const CABCurve &curve)
+{
+    double tool_toolWidth = property_setVehicle_toolWidth;
+    double tool_toolOverlap = property_setVehicle_toolOverlap;
+    double tool_toolOffset = property_setVehicle_toolOffset;
+
+    //keep from making turns constantly - wait 1.5 seconds
+    if (makeUTurnCounter < 4)
+    {
+        youTurnPhase = 0;
+        return true;
+    }
+
+    //we are doing a wide turn
+    double head = 0;
+    int count = curve.isHeadingSameWay ? -1 : 1;
+    switch (youTurnPhase)
+    {
+    case 0:
+        //Create first semicircle
+        if (!FindCurveTurnPoint(curve))
+        {
+            //error
+            FailCreate();
+            return false;
+        }
+        inClosestTurnPt = CClose(closestTurnPt);
+        startOfTurnPt = CClose(inClosestTurnPt);
+
+        int stopIfWayOut = 0;
+        isOutOfBounds = true;
+
+        while (isOutOfBounds)
+        {
+            isOutOfBounds = false;
+            stopIfWayOut++;
+
+            Vec3 currentPos = curve.curList[inClosestTurnPt.curveIndex];
+
+            head = currentPos.heading;
+            if (!curve.isHeadingSameWay) head += M_PI;
+            if (head > glm::twoPI) head -= glm::twoPI;
+            currentPos.heading = head;
+
+            // creates half a circle starting at the crossing point
+            ytList.clear();
+            ytList.append(currentPos);
+
+            //Taken from Dubbins
+            while (fabs(head - currentPos.heading) < M_PI)
+            {
+                //Update the position of the car
+                currentPos.easting += pointSpacing * sin(currentPos.heading);
+                currentPos.northing += pointSpacing * cos(currentPos.heading);
+
+                //Which way are we turning?
+                double turnParameter = isTurnLeft ? -1.0 : 1.0;
+
+                //Update the heading
+                currentPos.heading += (pointSpacing / youTurnRadius) * turnParameter;
+
+                //Add the new coordinate to the path
+                ytList.append(currentPos);
+            }
+
+            int cnt4 = ytList.count();
+            if (cnt4 == 0)
+            {
+                FailCreate();
+                return false;
+            }
+
+            //Are we out of bounds?
+            for (int j = 0; j < cnt4; j += 2)
+            {
+                if (bnd.IsPointInsideTurnArea(ytList[j]) != 0)
+                {
+                    isOutOfBounds = true;
+                    break;
+                }
+            }
+
+            //first check if not out of bounds, add a bit more to clear turn line, set to phase 2
+            if (!isOutOfBounds)
+            {
+                ytList = MoveTurnInsideTurnLine(ytList, head, true, false, vehicle, bnd);
+                if (ytList.count() == 0)
+                {
+                    FailCreate();
+                    return false;
+                }
+                youTurnPhase = 1;
+                return true;
+            }
+
+            if (stopIfWayOut == 300 || inClosestTurnPt.curveIndex < 1 || inClosestTurnPt.curveIndex > (curve.curList.count() - 2))
+            {
+                //for some reason it doesn't go inside boundary
+                FailCreate();
+                return false;
+            }
+
+            //keep moving infield till pattern is all inside
+            inClosestTurnPt.curveIndex = inClosestTurnPt.curveIndex + count;
+            inClosestTurnPt.closePt = curve.curList[inClosestTurnPt.curveIndex];
+
+
+            //set the flag to Critical stop machine
+            if (glm::Distance(ytList[0], vehicle.pivotAxlePos) < 3)
+            {
+                FailCreate();
+                return false;
+            }
+        }
+
+        return false;
+
+    case 1:
+        //Takes the heading of the curve to create an imaginary point on the next line
+        double headCurve = curve.curList[curve.currentLocationIndex].heading;
+        if (!curve.isHeadingSameWay) headCurve += M_PI;
+        if (headCurve > glm::twoPI) headCurve -= glm::twoPI;
+
+        double turnOffset = (tool_toolWidth - tool_toolOverlap) * rowSkipsWidth + (isYouTurnRight ? -tool_toolOffset * 2.0 : tool_toolOffset * 2.0); //change isYouTurnRight?
+        Vec2 tempguidanceLookPos = Vec2(vehicle.guidanceLookPos.easting, vehicle.guidanceLookPos.northing);
+
+        if (!isTurnLeft)
+        {
+            //creates an imaginary curveline to the right
+            vehicle.guidanceLookPos.easting += (cos(headCurve) * turnOffset);
+            vehicle.guidanceLookPos.northing -= (sin(headCurve) * turnOffset);
+        }
+        else
+        {
+            vehicle.guidanceLookPos.easting -= (cos(headCurve) * turnOffset);
+            vehicle.guidanceLookPos.northing += (sin(headCurve) * turnOffset);
+        }
+
+        //create the next line with this imaginary point
+        nextCurve = CABCurve();
+        nextCurve.BuildCurveCurrentList(vehicle.pivotAxlePos,secondsSinceStart,vehicle,trk,bnd,yt);
+        vehicle.guidanceLookPos = tempguidanceLookPos;
+
+
+        //going with or against boundary?
+        bool isTurnLineSameWay = true;
+        double headingDifference = fabs(inClosestTurnPt.turnLineHeading - ytList[ytList.count() - 1].heading);
+        if (headingDifference > glm::PIBy2 && headingDifference < 3 * glm::PIBy2) isTurnLineSameWay = false;
+
+        if (!FindCurveOutTurnPoint(curve, nextCurve, startOfTurnPt, isTurnLineSameWay))
+        {
+            //error
+            FailCreate();
+            return false;
+        }
+        outClosestTurnPt = CClose(closestTurnPt);
+
+        //move the turn inside of turnline with help from the crossingCurvePoints
+        isOutOfBounds = true;
+        while (isOutOfBounds)
+        {
+            isOutOfBounds = false;
+            Vec3 currentPos = nextCurve.curList[outClosestTurnPt.curveIndex];
+
+            head = currentPos.heading;
+            if ((!curve.isHeadingSameWay && !isOutSameCurve) || (curve.isHeadingSameWay && isOutSameCurve)) head += M_PI;
+            if (head > glm::twoPI) head -= glm::twoPI;
+            currentPos.heading = head;
+
+            // creates half a circle starting at the crossing point
+            ytList2.clear();
+            ytList2.append(currentPos);
+
+            //Taken from Dubbins
+            while (fabs(head - currentPos.heading) < M_PI)
+            {
+                //Update the position of the car
+                currentPos.easting += pointSpacing * sin(currentPos.heading);
+                currentPos.northing += pointSpacing * cos(currentPos.heading);
+
+                //Which way are we turning?
+                double turnParameter = isTurnLeft ? 1.0 : -1.0;
+
+                //Update the heading
+                currentPos.heading += (pointSpacing / youTurnRadius) * turnParameter;
+
+                //Add the new coordinate to the path
+                ytList2.append(currentPos);
+            }
+
+            int cnt3 = ytList2.count();
+            if (cnt3 == 0)
+            {
+                FailCreate();
+                return false;
+            }
+
+            //Are we out of bounds?
+            for (int j = 0; j < cnt3; j += 2)
+            {
+                if (bnd.IsPointInsideTurnArea(ytList2[j]) != 0)
+                {
+                    isOutOfBounds = true;
+                    break;
+                }
+            }
+
+            //first check if not out of bounds, add a bit more to clear turn line, set to phase 2
+            if (!isOutOfBounds)
+            {
+                ytList2 = MoveTurnInsideTurnLine(ytList2, head, true, true, vehicle, bnd);
+                if (ytList2.count() == 0)
+                {
+                    FailCreate();
+                    return false;
+                }
+                youTurnPhase = 2;
+                return true;
+            }
+
+            if (outClosestTurnPt.curveIndex < 1 || outClosestTurnPt.curveIndex > (nextCurve.curList.count() - 2))
+            {
+                //for some reason it doesn't go inside boundary
+                FailCreate();
+                return false;
+            }
+
+            //keep moving infield till pattern is all inside
+            if (!isOutSameCurve) outClosestTurnPt.curveIndex = outClosestTurnPt.curveIndex + count;
+            else outClosestTurnPt.curveIndex = outClosestTurnPt.curveIndex - count;
+            outClosestTurnPt.closePt = nextCurve.curList[outClosestTurnPt.curveIndex];
+
+        }
+        return false;
+
+    case 2:
+        //Bind the two turns together
+        int cnt1 = ytList.count();
+        int cnt2 = ytList2.count();
+
+        //Find if the turn goes same way as turnline heading
+        bool isFirstTurnLineSameWay = true;
+        double firstHeadingDifference = fabs(inClosestTurnPt.turnLineHeading - ytList[ytList.count() - 1].heading);
+        if (firstHeadingDifference > glm::PIBy2 && firstHeadingDifference < 3 * glm::PIBy2) isFirstTurnLineSameWay = false;
+
+        //finds out start and goal point along the tunline
+        FindInnerTurnPoints(ytList[cnt1 - 1], ytList[0].heading, inClosestTurnPt, isFirstTurnLineSameWay);
+        CClose startClosestTurnPt = CClose(closestTurnPt);
+
+        FindInnerTurnPoints(ytList2[cnt2 - 1], ytList2[0].heading + M_PI, outClosestTurnPt, !isFirstTurnLineSameWay);
+        CClose goalClosestTurnPt = CClose(closestTurnPt);
+
+        //we have 2 different turnLine crossings
+        if (startClosestTurnPt.turnLineNum != goalClosestTurnPt.turnLineNum)
+        {
+            FailCreate();
+            return false;
+        }
+
+        //segment index is the "A" of the segment. segmentIndex+1 would be the "B"
+        //is in and out on same segment? so only 1 segment
+        if (startClosestTurnPt.turnLineIndex == goalClosestTurnPt.turnLineIndex)
+        {
+            for (int a = 0; a < cnt2; cnt2--)
+            {
+                ytList.append(new vec3(ytList2[cnt2 - 1]));
+            }
+        }
+        else
+        {
+            //mulitple segments
+            Vec3 tPoint;
+            int turnCount = bnd.bndList[startClosestTurnPt.turnLineNum].turnLine.count();
+
+            //how many points from turnline do we add
+            int loops = fabs(startClosestTurnPt.turnLineIndex - goalClosestTurnPt.turnLineIndex);
+
+            //are we crossing a border?
+            if (loops > (bnd.bndList[startClosestTurnPt.turnLineNum].turnLine.count() / 2))
+            {
+                if (startClosestTurnPt.turnLineIndex < goalClosestTurnPt.turnLineIndex)
+                {
+                    loops = (turnCount - goalClosestTurnPt.turnLineIndex) + startClosestTurnPt.turnLineIndex;
+                }
+                else
+                {
+                    loops = (turnCount - startClosestTurnPt.turnLineIndex) + goalClosestTurnPt.turnLineIndex;
+                }
+            }
+
+            //count up - start with B which is next A
+            if (isFirstTurnLineSameWay)
+            {
+                for (int i = 0; i < loops; i++)
+                {
+                    if ((startClosestTurnPt.turnLineIndex + 1) >= turnCount) startClosestTurnPt.turnLineIndex = -1;
+
+                    tPoint = bnd.bndList[startClosestTurnPt.turnLineNum].turnLine[startClosestTurnPt.turnLineIndex + 1];
+                    startClosestTurnPt.turnLineIndex++;
+                    if (startClosestTurnPt.turnLineIndex >= turnCount)
+                        startClosestTurnPt.turnLineIndex = 0;
+                    ytList.append(tPoint);
+                }
+            }
+            else //count down = start with A
+            {
+                for (int i = 0; i < loops; i++)
+                {
+                    tPoint = bnd.bndList[startClosestTurnPt.turnLineNum].turnLine[startClosestTurnPt.turnLineIndex];
+                    startClosestTurnPt.turnLineIndex--;
+                    if (startClosestTurnPt.turnLineIndex == -1)
+                        startClosestTurnPt.turnLineIndex = turnCount - 1;
+                    ytList.append(tPoint);
+                }
+            }
+
+            //add the out from ytList2
+            for (int a = 0; a < cnt2; cnt2--)
+            {
+                ytList.append(ytList2[cnt2 - 1]);
+            }
+        }
+
+        if (!AddCurveSequenceLines()) return false;
+
+        //fill in the gaps
+        double distance;
+
+        int cnt = ytList.count();
+        for (int i = 1; i < cnt - 2; i++)
+        {
+            int j = i + 1;
+            if (j == cnt - 1) continue;
+            distance = glm::DistanceSquared(ytList[i], ytList[j]);
+            if (distance > 1)
+            {
+                Vec3 pointB = Vec3((ytList[i].easting + ytList[j].easting) / 2.0,
+                                   (ytList[i].northing + ytList[j].northing) / 2.0, ytList[i].heading);
+
+                ytList.insert(j, pointB);
+                cnt = ytList.count();
+                i--;
+            }
+        }
+
+        //calculate the new points headings based on fore and aft of point - smoother turns
+        cnt = ytList.count();
+        QVector<Vec3> arr = ytList;
+        cnt -= 2;
+        ytList.clear();
+
+        for (int i = 2; i < cnt; i++)
+        {
+            Vec3 pt3 = arr[i];
+            pt3.heading = atan2(arr[i + 1].easting - arr[i - 1].easting,
+                                arr[i + 1].northing - arr[i - 1].northing);
+            if (pt3.heading < 0) pt3.heading += glm::twoPI;
+            ytList.append(pt3);
+        }
+
+        //check to close
+        if (glm::Distance(ytList[0], vehicle.pivotAxlePos) < 3)
+        {
+            FailCreate();
+            return false;
+        }
+
+        //are we continuing the same way?
+        isGoingStraightThrough = M_PI - fabs(fabs(ytList[ytList.count() - 2].heading - ytList[1].heading) - M_PI) < glm::PIBy2;
+        ytList2.clear();
+        isOutOfBounds = false;
+        youTurnPhase = 10;
+        turnTooCloseTrigger = false;
+        isTurnCreationTooClose = false;
+        return true;
+    }
+
+    // just in case
+    return false;
+}
+
+bool CYouTurn::CreateABOmegaTurn(bool isTurnLeft,
+                                 int makeUTurnCounter,
+                                 CVehicle &vehicle,
+                                 const CBoundary &bnd,
+                                 const CABLine &ABLine)
+{
+    double tool_toolWidth = property_setVehicle_toolWidth;
+    double tool_toolOverlap = property_setVehicle_toolOverlap;
+    double tool_toolOffset = property_setVehicle_toolOffset;
+
+    //keep from making turns constantly - wait 1.5 seconds
+    if (makeUTurnCounter < 4)
+    {
+        youTurnPhase = 0;
+        return true;
+    }
+
+    double head = ABLine.abHeading;
+    if (!ABLine.isHeadingSameWay) head += M_PI;
+    if (head >= glm::twoPI) head -= glm::twoPI;
+
+    //we are doing an omega turn
+    switch (youTurnPhase)
+    {
+    case 0:
+        //how far are we from any turn boundary
+        FindABTurnPoint(Vec3(ABLine.rEastAB, ABLine.rNorthAB, head));
+
+        //or did we lose the turnLine - we are on the highway cuz we left the outer/inner turn boundary
+        if (closestTurnPt.turnLineIndex != -1)
+        {
+            //calculate the distance to the turnline
+            vehicle.distancePivotToTurnLine = glm::Distance(pivotAxlePos, closestTurnPt.closePt);
+        }
+        else
+        {
+            //Full emergency stop code goes here, it thinks its auto turn, but its not!
+            FailCreate();
+            return false;
+        }
+        inClosestTurnPt = CClose(closestTurnPt);
+
+        CDubins dubYouTurnPath = CDubins();
+        CDubins.turningRadius = youTurnRadius;
+
+        //grab the vehicle widths and offsets
+        double turnOffset = (tool_toolWidth - tool_toolOverlap) * rowSkipsWidth + (isYouTurnRight ? -tool_toolOffset * 2.0 : tool_toolOffset * 2.0);
+
+        Vec3 start = inClosestTurnPt.closePt;
+        start.heading = head;
+
+        Vec3 goal = start;
+
+        //now we go the other way to turn round
+        double invertedHead = head - M_PI;
+        if (invertedHead < 0) invertedHead += glm::twoPI;
+        if (invertedHead > glm::twoPI) invertedHead -= glm::twoPI;
+
+        if (isTurnLeft)
+        {
+            goal.easting = goal.easting + (cos(-invertedHead) * turnOffset);
+            goal.northing = goal.northing + (sin(-invertedHead) * turnOffset);
+        }
+        else
+        {
+            goal.easting = goal.easting - (cos(-invertedHead) * turnOffset);
+            goal.northing = goal.northing - (sin(-invertedHead) * turnOffset);
+        }
+
+        goal.heading = invertedHead;
+
+        //generate the turn points
+        ytList = dubYouTurnPath.GenerateDubins(start, goal);
+        isOutOfBounds = true;
+
+        if (ytList.count() == 0)
+        {
+            FailCreate();
+            return false;
+        }
+
+        youTurnPhase = 1;
+
+        double distance;
+
+        int cnt = ytList.count();
+        for (int i = 1; i < cnt - 2; i++)
+        {
+            distance = glm::DistanceSquared(ytList[i], ytList[i + 1]);
+            if (distance < pointSpacing)
+            {
+                ytList.removeAt(i + 1);
+                i--;
+                cnt = ytList.count();
+            }
+        }
+
+        return true;
+
+    case 1:
+        //move out
+        ytList = MoveTurnInsideTurnLine(ytList, head, false, false, vehicle, bnd);
+
+        if (ytList.count() == 0)
+        {
+            FailCreate();
+            return false;
+        }
+
+        isOutOfBounds = false;
+        youTurnPhase = 10;
+        turnTooCloseTrigger = false;
+        isTurnCreationTooClose = false;
+
+        if (!AddABSequenceLines()) return false;
+
+        return true;
+    }
+
+    return true;
+}
+
+bool CYouTurn::CreateABWideTurn(bool isTurnLeft,
+                                int makeUTurnCounter,
+                                CVehicle &vehicle,
+                                const CBoundary &bnd,
+                                const CABLine &ABLine)
+{
+    //keep from making turns constantly - wait 1.5 seconds
+    if (makeUTurnCounter < 4)
+    {
+        youTurnPhase = 0;
+        return true;
+    }
+
+    if (!mf.isBtnAutoSteerOn) mf.ABLine.isHeadingSameWay
+            = M_PI - fabs(fabs(mf.fixHeading - mf.ABLine.abHeading) - M_PI) < glm::PIBy2;
+
+    double head = mf.ABLine.abHeading;
+    if (!mf.ABLine.isHeadingSameWay) head += M_PI;
+    if (head >= glm::twoPI) head -= glm::twoPI;
+
+
+    //step 1 turn in to the turnline
+    switch (youTurnPhase)
+    {
+    case 0:
+        //grab the pure pursuit point right on ABLine
+        vec3 onPurePoint = new vec3(mf.ABLine.rEastAB, mf.ABLine.rNorthAB, 0);
+
+        //how far are we from any turn boundary
+        FindABTurnPoint(onPurePoint);
+
+        //save a copy for first point
+        inClosestTurnPt = new CClose(closestTurnPt);
+        startOfTurnPt = new CClose(closestTurnPt);
+
+        //already no turnline
+        if (inClosestTurnPt.turnLineIndex == -1)
+        {
+            FailCreate();
+            return false;
+        }
+
+        //creates half a circle starting at the crossing point
+        ytList.clear();
+        vec3 currentPos = new vec3(inClosestTurnPt.closePt.easting, inClosestTurnPt.closePt.northing, head);
+        ytList.append(currentPos);
+
+        //Taken from Dubbins
+        while (fabs(head - currentPos.heading) < M_PI)
+        {
+            //Update the position of the car
+            currentPos.easting += pointSpacing * Math.Sin(currentPos.heading);
+            currentPos.northing += pointSpacing * Math.Cos(currentPos.heading);
+
+            //Which way are we turning?
+            double turnParameter = isTurnLeft ? -1.0 : 1.0;
+
+            //Update the heading
+            currentPos.heading += (pointSpacing / youTurnRadius) * turnParameter;
+
+            //Add the new coordinate to the path
+            ytList.append(currentPos);
+        }
+
+        //move the half circle to tangent the turnline
+        isOutOfBounds = true;
+        ytList = MoveTurnInsideTurnLine(ytList, head, true, false);
+
+        //if it couldn't be done this will trigger
+        if (ytList.count() == 0)
+        {
+            FailCreate();
+            return false;
+        }
+
+        mf.distancePivotToTurnLine = glm::Distance(ytList[0], mf.pivotAxlePos);
+
+        youTurnPhase = 1;
+        return true;
+
+    case 1:
+        //we move the turnline crossing point perpenicualar out from the ABline
+        double turnOffset = (mf.tool.width - mf.tool.overlap) * rowSkipsWidth + (isYouTurnRight ? -mf.tool.offset * 2.0 : mf.tool.offset * 2.0);
+        vec2 tempguidanceLookPos = new vec2(mf.guidanceLookPos.easting, mf.guidanceLookPos.northing);
+
+        if (!isTurnLeft)
+        {
+            //creates an imaginary curveline
+            mf.guidanceLookPos.easting += (Math.Cos(head) * turnOffset);
+            mf.guidanceLookPos.northing -= (Math.Sin(head) * turnOffset);
+        }
+        else
+        {
+            mf.guidanceLookPos.easting -= (Math.Cos(head) * turnOffset);
+            mf.guidanceLookPos.northing += (Math.Sin(head) * turnOffset);
+        }
+
+        nextLine = new CABLine(mf);
+        nextLine.BuildCurrentABLineList(mf.pivotAxlePos);
+        mf.guidanceLookPos = tempguidanceLookPos;
+
+        //going with or against boundary?
+        bool isTurnLineSameWay = true;
+        double headingDifference = fabs(startOfTurnPt.closePt.heading - ytList[ytList.count() - 1].heading);
+        if (headingDifference > glm::PIBy2 && headingDifference < 3 * glm::PIBy2) isTurnLineSameWay = false;
+
+        if (!FindABOutTurnPoint(mf.ABLine, ref nextLine, inClosestTurnPt, isTurnLineSameWay))
+        {
+            //error
+            FailCreate();
+            return false;
+        }
+        outClosestTurnPt = new CClose(closestTurnPt);
+
+        vec3 pointPos = new vec3(outClosestTurnPt.closePt.easting, outClosestTurnPt.closePt.northing, 0);
+        double headie;
+        if (!isOutSameCurve)
+        {
+            headie = head;
+        }
+        else
+        {
+            headie = head + M_PI;
+            if (headie >= glm::twoPI) headie -= glm::twoPI;
+        }
+        pointPos.heading = headie;
+
+        //step 3 create half cirkle in new list
+        ytList2.clear();
+        ytList2.append(pointPos);
+
+        //Taken from Dubbins
+        while (fabs(headie - pointPos.heading) < M_PI)
+        {
+            //Update the position of the car
+            pointPos.easting += pointSpacing * Math.Sin(pointPos.heading);
+            pointPos.northing += pointSpacing * Math.Cos(pointPos.heading);
+
+            //Which way are we turning?
+            double turnParameter = isTurnLeft ? 1.0 : -1.0;
+
+            //Update the heading
+            pointPos.heading += (pointSpacing / youTurnRadius) * turnParameter;
+
+            //Add the new coordinate to the path
+            ytList2.append(pointPos);
+        }
+
+        //move the half circle to tangent the turnline
+        isOutOfBounds = true;
+        ytList2 = MoveTurnInsideTurnLine(ytList2, headie, true, true);
+
+        if (ytList2.count() == 0)
+        {
+            FailCreate();
+            return false;
+        }
+
+        youTurnPhase = 2;
+        return true;
+
+    case 2:
+        int cnt1 = ytList.count();
+        int cnt2 = ytList2.count();
+
+        //Find if the turn goes same way as turnline heading
+        bool isFirstTurnLineSameWay = true;
+        double firstHeadingDifference = fabs(inClosestTurnPt.turnLineHeading - ytList[ytList.count() - 1].heading);
+
+        if (firstHeadingDifference > glm::PIBy2 && firstHeadingDifference < 3 * glm::PIBy2) isFirstTurnLineSameWay = false;
+
+        //finds out start and goal point along the tunline
+        FindInnerTurnPoints(ytList[cnt1 - 1], ytList[0].heading, inClosestTurnPt, isFirstTurnLineSameWay);
+        CClose startClosestTurnPt = new CClose(closestTurnPt);
+
+        FindInnerTurnPoints(ytList2[cnt2 - 1], ytList2[0].heading + M_PI, outClosestTurnPt, !isFirstTurnLineSameWay);
+        CClose goalClosestTurnPt = new CClose(closestTurnPt);
+
+        //we have 2 different turnLine crossings
+        if (startClosestTurnPt.turnLineNum != goalClosestTurnPt.turnLineNum)
+        {
+            FailCreate();
+            return false;
+        }
+
+        //segment index is the "A" of the segment. segmentIndex+1 would be the "B"
+        //is in and out on same segment? so only 1 segment
+        if (startClosestTurnPt.turnLineIndex == goalClosestTurnPt.turnLineIndex)
+        {
+            for (int a = 0; a < cnt2; cnt2--)
+            {
+                ytList.append(new vec3(ytList2[cnt2 - 1]));
+            }
+
+        }
+        else
+        {
+            //multiple segments
+            vec3 tPoint = new vec3();
+            int turnCount = mf.bnd.bndList[startClosestTurnPt.turnLineNum].turnLine.count();
+
+            //how many points from turnline do we add
+            int loops = fabs(startClosestTurnPt.turnLineIndex - goalClosestTurnPt.turnLineIndex);
+
+            //TODO: Generates error if trying to go around more than half of something...... Do we ever?
+            //are we crossing a border?
+            if (loops > (mf.bnd.bndList[startClosestTurnPt.turnLineNum].turnLine.count() / 2))
+            {
+                if (startClosestTurnPt.turnLineIndex < goalClosestTurnPt.turnLineIndex)
+                {
+                    loops = (turnCount - goalClosestTurnPt.turnLineIndex) + startClosestTurnPt.turnLineIndex;
+                }
+                else
+                {
+                    loops = (turnCount - startClosestTurnPt.turnLineIndex) + goalClosestTurnPt.turnLineIndex;
+                }
+            }
+
+            //count up - start with B which is next A
+            if (isFirstTurnLineSameWay)
+            {
+                for (int i = 0; i < loops; i++)
+                {
+                    if ((startClosestTurnPt.turnLineIndex + 1) >= turnCount) startClosestTurnPt.turnLineIndex = -1;
+
+                    tPoint = mf.bnd.bndList[startClosestTurnPt.turnLineNum].turnLine[startClosestTurnPt.turnLineIndex + 1];
+                    startClosestTurnPt.turnLineIndex++;
+                    if (startClosestTurnPt.turnLineIndex >= turnCount)
+                        startClosestTurnPt.turnLineIndex = 0;
+                    ytList.append(tPoint);
+                }
+            }
+            else //count down = start with A
+            {
+                for (int i = 0; i < loops; i++)
+                {
+                    tPoint = mf.bnd.bndList[startClosestTurnPt.turnLineNum].turnLine[startClosestTurnPt.turnLineIndex];
+                    startClosestTurnPt.turnLineIndex--;
+                    if (startClosestTurnPt.turnLineIndex == -1)
+                        startClosestTurnPt.turnLineIndex = turnCount - 1;
+                    ytList.append(tPoint);
+                }
+            }
+
+            //add the out from ytList2
+            for (int a = 0; a < cnt2; cnt2--)
+            {
+                ytList.append(new vec3(ytList2[cnt2 - 1]));
+            }
+        }
+
+        //fill in the gaps
+        double distance;
+
+        int cnt = ytList.count();
+        for (int i = 1; i < cnt - 2; i++)
+        {
+            int j = i + 1;
+            if (j == cnt - 1) continue;
+            distance = glm::DistanceSquared(ytList[i], ytList[j]);
+            if (distance > 1)
+            {
+                vec3 pointB = new vec3((ytList[i].easting + ytList[j].easting) / 2.0,
+                                       (ytList[i].northing + ytList[j].northing) / 2.0, ytList[i].heading);
+
+                ytList.insert(j, pointB);
+                cnt = ytList.count();
+                i--;
+            }
+        }
+
+        //calculate the new points headings based on fore and aft of point - smoother turns
+        cnt = ytList.count();
+        vec3[] arr = new vec3[cnt];
+        cnt -= 2;
+        ytList.CopyTo(arr);
+        ytList.Clear();
+
+        for (int i = 2; i < cnt; i++)
+        {
+            vec3 pt3 = new vec3(arr[i]);
+            pt3.heading = Math.Atan2(arr[i + 1].easting - arr[i - 1].easting,
+                                     arr[i + 1].northing - arr[i - 1].northing);
+            if (pt3.heading < 0) pt3.heading += glm::twoPI;
+            ytList.append(pt3);
+        }
+
+        //AddABSequenceLines
+        //check to close
+        if (glm::Distance(ytList[0], mf.pivotAxlePos) < 3)
+        {
+            FailCreate();
+            return false;
+        }
+
+        //are we continuing the same way?
+        isGoingStraightThrough = M_PI - fabs(fabs(ytList[ytList.count() - 2].heading - ytList[1].heading) - M_PI) < glm::PIBy2;
+
+        isOutOfBounds = false;
+        youTurnPhase = 10;
+        turnTooCloseTrigger = false;
+        isTurnCreationTooClose = false;
+        ytList2.clear();
+
+        if (!AddABSequenceLines()) return false;
+
+        return true;
+    }
+
+    //just in case
+    return false;
+
+}
+
+QVector<Vec3> &CYouTurn::MoveTurnInsideTurnLine(QVector<Vec3> uTurnList, double head, bool deleteSecondHalf, bool invertHeading,
+                                      CVehicle &vehicle,
+                                      const CBoundary &bnd)
+{
+    //step 1 make array out of the list so that we can modify the position
+    double cosHead = Math.Cos(head);
+    double sinHead = Math.Sin(head);
+
+    QVector<Vec3> arr2 = uTurnList;
+
+    uTurnList.clear();
+
+    semiCircleIndex = -1;
+    //step 2 move the turn inside with steps of 1 meter
+    bool pointOutOfBnd = isOutOfBounds;
+    int j = 0;
+    int stopIfWayOut = 0;
+    while (pointOutOfBnd)
+    {
+        stopIfWayOut++;
+        pointOutOfBnd = false;
+        vehicle.distancePivotToTurnLine = glm::Distance(arr2[0], vehicle.pivotAxlePos);
+
+        for (int i = 0; i < cnt; i++)
+        {
+            arr2[i].easting -= (sinHead);
+            arr2[i].northing -= (cosHead);
+        }
+
+        for (; j < cnt; j += 1)
+        {
+            if (bnd.IsPointInsideTurnArea(arr2[j]) != 0)
+            {
+                pointOutOfBnd = true;
+                if (j > 0) j--;
+                break;
+            }
+        }
+
+        if (stopIfWayOut == 1000 || (vehicle.distancePivotToTurnLine < 3))
+        {
+            //for some reason it doesn't go inside boundary, return empty list
+            return uTurnList;
+        }
+    }
+
+    //step 3, we ar now inside turnline, move the turn forward until it hits the turnfence in steps of 0.1 meters
+    while (!pointOutOfBnd)
+    {
+        for (int i = 0; i < cnt; i++)
+        {
+            arr2[i].easting += (sinHead * 0.1);
+            arr2[i].northing += (cosHead * 0.1);
+        }
+
+        for (int a = 0; a < cnt; a++)
+        {
+            if (bnd.IsPointInsideTurnArea(arr2[a]) != 0)
+            {
+                semiCircleIndex = a;
+                pointOutOfBnd = true;
+                break;
+
+            }
+        }
+    }
+
+    //step 4, Should we delete the points after the one that is outside? and where the points made in the wrong direction?
+    for (int i = 0; i < cnt; i++)
+    {
+        if (i == semiCircleIndex && deleteSecondHalf)
+            break;
+        if (invertHeading) arr2[i].heading += M_PI;
+        if (arr2[i].heading >= glm::twoPI) arr2[i].heading -= glm::twoPI;
+        else if (arr2[i].heading < 0) arr2[i].heading += glm::twoPI;
+        uTurnList.append(arr2[i]);
+    }
+
+    //we have succesfully moved the turn inside
+    isOutOfBounds = false;
+
+    //if empty - no creation.
+    return uTurnList;
+}
+
+/////////////////////////////////
+void deleteme(){
+    if (youTurnPhase > 0)
+    {
+        isHeadingSameWay = curve.isHeadingSameWay;
+
+        double head = crossingCurvePoint.heading;
+        if (!isHeadingSameWay) head += M_PI;
+
+        //delta between AB heading and boundary closest point heading
+        boundaryAngleOffPerpendicular = M_PI - fabs(fabs(crossingheading - head) - M_PI);
+        boundaryAngleOffPerpendicular -= glm::PIBy2;
+        boundaryAngleOffPerpendicular *= -1;
+        if (boundaryAngleOffPerpendicular > 1.25) boundaryAngleOffPerpendicular = 1.25;
+        if (boundaryAngleOffPerpendicular < -1.25) boundaryAngleOffPerpendicular = -1.25;
+
+        //for calculating innner circles of turn
+        double tangencyAngle = (glm::PIBy2 - fabs(boundaryAngleOffPerpendicular)) * 0.5;
+
+        double distanceTurnBeforeLine;
+        //distance from crossPoint to turn line
+        if (youTurnRadius * 2 < (tool_toolWidth * rowSkipsWidth))
+        {
+            if (boundaryAngleOffPerpendicular < 0)
+            {
+                //which is actually left
+                if (isYouTurnRight)
+                    distanceTurnBeforeLine = (youTurnRadius * tan(tangencyAngle));//short
+                else
+                    distanceTurnBeforeLine = (youTurnRadius / tan(tangencyAngle)); //long
+            }
+            else
+            {
+                //which is actually left
+                if (isYouTurnRight)
+                    distanceTurnBeforeLine = (youTurnRadius / tan(tangencyAngle)); //long
+                else
+                    distanceTurnBeforeLine = (youTurnRadius * tan(tangencyAngle)); //short
+            }
+        }
+
+        //turn Radius is wider then equipment width so ohmega turn
+        else
+        {
+            distanceTurnBeforeLine = (2 * minTurningRadius);
+        }
+
+        CDubins dubYouTurnPath;
+        CDubinsTurningRadius = youTurnRadius;
+
+        //grab the vehicle widths and offsets
+        double turnOffset = (tool_toolWidth - tool_toolOverlap) * rowSkipsWidth + (isYouTurnRight ? -tool_toolOffset * 2.0 : tool_toolOffset * 2.0);
+
+        //diagonally across
+        double turnRadius = turnOffset / cos(boundaryAngleOffPerpendicular);
+
+        //start point of Dubins
+        Vec3 start(crossingCurvePoint.easting, crossingCurvePoint.northing, head);
+        Vec3 goal;
+        //move the cross line calc to not include first turn
+        goal.easting = crossingCurvePoint.easting + (sin(head) * distanceTurnBeforeLine);
+        goal.northing = crossingCurvePoint.northing + (cos(head) * distanceTurnBeforeLine);
+
+        //headland angle relative to vehicle heading to head along the boundary left or right
+        double bndAngle = head - boundaryAngleOffPerpendicular + glm::PIBy2;
+
+        //now we go the other way to turn round
+        head -= M_PI;
+        if (head < -M_PI) head += glm::twoPI;
+        if (head > M_PI) head -= glm::twoPI;
+
+        if ((minTurningRadius * 2.0) < turnOffset)
+        {
+            //are we right of boundary
+            if (boundaryAngleOffPerpendicular > 0)
+            {
+                if (!isYouTurnRight) //which is actually right now
+                {
+                    goal.easting += (sin(bndAngle) * turnRadius);
+                    goal.northing += (cos(bndAngle) * turnRadius);
+
+                    double dis = (minTurningRadius / tan(tangencyAngle)); //long
+                    goal.easting += (sin(head) * dis);
+                    goal.northing += (cos(head) * dis);
+                }
+                else //going left
+                {
+                    goal.easting -= (sin(bndAngle) * turnRadius);
+                    goal.northing -= (cos(bndAngle) * turnRadius);
+
+                    double dis = (minTurningRadius * tan(tangencyAngle)); //short
+                    goal.easting += (sin(head) * dis);
+                    goal.northing += (cos(head) * dis);
+                }
+            }
+            else // going left of boundary
+            {
+                if (!isYouTurnRight) //pointing to right
+                {
+                    goal.easting += (sin(bndAngle) * turnRadius);
+                    goal.northing += (cos(bndAngle) * turnRadius);
+
+                    double dis = (minTurningRadius * tan(tangencyAngle)); //short
+                    goal.easting += (sin(head) * dis);
+                    goal.northing += (cos(head) * dis);
+                }
+                else
+                {
+                    goal.easting -= (sin(bndAngle) * turnRadius);
+                    goal.northing -= (cos(bndAngle) * turnRadius);
+
+                    double dis = (minTurningRadius / tan(tangencyAngle)); //long
+                    goal.easting += (sin(head) * dis);
+                    goal.northing += (cos(head) * dis);
+                }
+            }
+        }
+        else
+        {
+            if (!isTurnRight)
+            {
+                goal.easting = crossingCurvePoint.easting - (cos(-head) * turnOffset);
+                goal.northing = crossingCurvePoint.northing - (sin(-head) * turnOffset);
+            }
+            else
+            {
+                goal.easting = crossingCurvePoint.easting + (cos(-head) * turnOffset);
+                goal.northing = crossingCurvePoint.northing + (sin(-head) * turnOffset);
+            }
+        }
+
+        goal.heading = head;
+
+        //generate the turn points
+        ytList = dubYouTurnPath.GenerateDubins(start, goal);
+        int count = ytList.size();
+        if (count == 0) return false;
+
+        //these are the lead in lead out lines that add to the turn
+        AddSequenceLines(head, vehicle.pivotAxlePos);
+    }
+
+    int count;
+    double tooClose;
+
+    switch (youTurnPhase)
+    {
+        case 0: //find the crossing points
+            if (findCurveTurnPoints(curve,bnd)) youTurnPhase = 1;
+            ytList.clear();
+            break;
+
+        case 1:
+            //now check to make sure we are not in an inner turn boundary - drive thru is ok
+            count = ytList.size();
+            if (count == 0) return false;
+
+            //Are we out of bounds?
+            isOutOfBounds = false;
+            for (int j = 0; j < count; j += 2)
+            {
+                if (bnd.IsPointInsideTurnArea(ytList[j]) != 0)
+                {
+                    isOutOfBounds = true;
+                    break;
+                }
+            }
+
+            //first check if not out of bounds, add a bit more to clear turn line, set to phase 2
+            if (!isOutOfBounds)
+            {
+                youTurnPhase = 2;
+                //if (curve.isABSameAsVehicleHeading)
+                //{
+                //    crossingCurvePoint.index -= 2;
+                //    if (crossingCurvePoint.index < 0) crossingCurvePoint.index = 0;
+                //}
+                //else
+                //{
+                //    crossingCurvePoint.index += 2;
+                //    if (crossingCurvePoint.index >= curListCount)
+                //        crossingCurvePoint.index = curListCount - 1;
+                //}
+                //crossingCurvePoint.easting = curve.curList[crossingCurvePoint.index].easting;
+                //crossingCurvePoint.northing = curve.curList[crossingCurvePoint.index].northing;
+                //crossingCurvePoint.heading = curve.curList[crossingCurvePoint.index].heading;
+                return true;
+            }
+
+            //keep moving infield till pattern is all inside
+            if (curve.isHeadingSameWay)
+            {
+                crossingCurvePoint.index--;
+                if (crossingCurvePoint.index < 0) crossingCurvePoint.index = 0;
+            }
+            else
+            {
+                crossingCurvePoint.index++;
+                if (crossingCurvePoint.index >= curve.curList.count())
+                    crossingCurvePoint.index = curve.curList.count() - 1;
+            }
+            crossingCurvePoint.easting = curve.curList[crossingCurvePoint.index].easting;
+            crossingCurvePoint.northing = curve.curList[crossingCurvePoint.index].northing;
+            crossingCurvePoint.heading = curve.curList[crossingCurvePoint.index].heading;
+
+            tooClose = glm::Distance(ytList[0], pivotPos);
+            isTurnCreationTooClose = tooClose < 3;
+
+            //set the flag to Critical stop machine
+            if (isTurnCreationTooClose) emit outOfBounds(); //mf.mc.isOutOfBounds = true;
+            break;
+
+        case 2:
+            youTurnPhase = 3;
+            break;
+    }
+    return true;
+}
+
 
 //needs CABCurve, CBoundary, called from CYouTurn::buildCurvePatternYouTurn
 bool CYouTurn::findCurveTurnPoints(const CABCurve &curve,
@@ -726,233 +2158,6 @@ bool CYouTurn::BuildABLineDubinsYouTurn(CVehicle &vehicle,
     }
 }
 
-bool CYouTurn::BuildCurveDubinsYouTurn(CVehicle &vehicle,
-                                       const CBoundary &bnd,
-                                       const CABCurve &curve,
-                                       bool isTurnRight, Vec3 pivotPos)
-{
-    double minTurningRadius = property_setVehicle_minTurningRadius;
-    double tool_toolWidth = property_setVehicle_toolWidth;
-    double tool_toolOverlap = property_setVehicle_toolOverlap;
-    double tool_toolOffset = property_setVehicle_toolOffset;
-
-    if (youTurnPhase > 0)
-    {
-        isHeadingSameWay = curve.isHeadingSameWay;
-
-        double head = crossingCurvePoint.heading;
-        if (!isHeadingSameWay) head += M_PI;
-
-        //delta between AB heading and boundary closest point heading
-        boundaryAngleOffPerpendicular = M_PI - fabs(fabs(crossingheading - head) - M_PI);
-        boundaryAngleOffPerpendicular -= glm::PIBy2;
-        boundaryAngleOffPerpendicular *= -1;
-        if (boundaryAngleOffPerpendicular > 1.25) boundaryAngleOffPerpendicular = 1.25;
-        if (boundaryAngleOffPerpendicular < -1.25) boundaryAngleOffPerpendicular = -1.25;
-
-        //for calculating innner circles of turn
-        double tangencyAngle = (glm::PIBy2 - fabs(boundaryAngleOffPerpendicular)) * 0.5;
-
-        double distanceTurnBeforeLine;
-        //distance from crossPoint to turn line
-        if (youTurnRadius * 2 < (tool_toolWidth * rowSkipsWidth))
-        {
-            if (boundaryAngleOffPerpendicular < 0)
-            {
-                //which is actually left
-                if (isYouTurnRight)
-                    distanceTurnBeforeLine = (youTurnRadius * tan(tangencyAngle));//short
-                else
-                    distanceTurnBeforeLine = (youTurnRadius / tan(tangencyAngle)); //long
-            }
-            else
-            {
-                //which is actually left
-                if (isYouTurnRight)
-                    distanceTurnBeforeLine = (youTurnRadius / tan(tangencyAngle)); //long
-                else
-                    distanceTurnBeforeLine = (youTurnRadius * tan(tangencyAngle)); //short
-            }
-        }
-
-        //turn Radius is wider then equipment width so ohmega turn
-        else
-        {
-            distanceTurnBeforeLine = (2 * minTurningRadius);
-        }
-
-        CDubins dubYouTurnPath;
-        CDubinsTurningRadius = youTurnRadius;
-
-        //grab the vehicle widths and offsets
-        double turnOffset = (tool_toolWidth - tool_toolOverlap) * rowSkipsWidth + (isYouTurnRight ? -tool_toolOffset * 2.0 : tool_toolOffset * 2.0);
-
-        //diagonally across
-        double turnRadius = turnOffset / cos(boundaryAngleOffPerpendicular);
-
-        //start point of Dubins
-        Vec3 start(crossingCurvePoint.easting, crossingCurvePoint.northing, head);
-        Vec3 goal;
-        //move the cross line calc to not include first turn
-        goal.easting = crossingCurvePoint.easting + (sin(head) * distanceTurnBeforeLine);
-        goal.northing = crossingCurvePoint.northing + (cos(head) * distanceTurnBeforeLine);
-
-        //headland angle relative to vehicle heading to head along the boundary left or right
-        double bndAngle = head - boundaryAngleOffPerpendicular + glm::PIBy2;
-
-        //now we go the other way to turn round
-        head -= M_PI;
-        if (head < -M_PI) head += glm::twoPI;
-        if (head > M_PI) head -= glm::twoPI;
-
-        if ((minTurningRadius * 2.0) < turnOffset)
-        {
-            //are we right of boundary
-            if (boundaryAngleOffPerpendicular > 0)
-            {
-                if (!isYouTurnRight) //which is actually right now
-                {
-                    goal.easting += (sin(bndAngle) * turnRadius);
-                    goal.northing += (cos(bndAngle) * turnRadius);
-
-                    double dis = (minTurningRadius / tan(tangencyAngle)); //long
-                    goal.easting += (sin(head) * dis);
-                    goal.northing += (cos(head) * dis);
-                }
-                else //going left
-                {
-                    goal.easting -= (sin(bndAngle) * turnRadius);
-                    goal.northing -= (cos(bndAngle) * turnRadius);
-
-                    double dis = (minTurningRadius * tan(tangencyAngle)); //short
-                    goal.easting += (sin(head) * dis);
-                    goal.northing += (cos(head) * dis);
-                }
-            }
-            else // going left of boundary
-            {
-                if (!isYouTurnRight) //pointing to right
-                {
-                    goal.easting += (sin(bndAngle) * turnRadius);
-                    goal.northing += (cos(bndAngle) * turnRadius);
-
-                    double dis = (minTurningRadius * tan(tangencyAngle)); //short
-                    goal.easting += (sin(head) * dis);
-                    goal.northing += (cos(head) * dis);
-                }
-                else
-                {
-                    goal.easting -= (sin(bndAngle) * turnRadius);
-                    goal.northing -= (cos(bndAngle) * turnRadius);
-
-                    double dis = (minTurningRadius / tan(tangencyAngle)); //long
-                    goal.easting += (sin(head) * dis);
-                    goal.northing += (cos(head) * dis);
-                }
-            }
-        }
-        else
-        {
-            if (!isTurnRight)
-            {
-                goal.easting = crossingCurvePoint.easting - (cos(-head) * turnOffset);
-                goal.northing = crossingCurvePoint.northing - (sin(-head) * turnOffset);
-            }
-            else
-            {
-                goal.easting = crossingCurvePoint.easting + (cos(-head) * turnOffset);
-                goal.northing = crossingCurvePoint.northing + (sin(-head) * turnOffset);
-            }
-        }
-
-        goal.heading = head;
-
-        //generate the turn points
-        ytList = dubYouTurnPath.GenerateDubins(start, goal);
-        int count = ytList.size();
-        if (count == 0) return false;
-
-        //these are the lead in lead out lines that add to the turn
-        AddSequenceLines(head, vehicle.pivotAxlePos);
-    }
-
-    int count;
-    double tooClose;
-
-    switch (youTurnPhase)
-    {
-        case 0: //find the crossing points
-            if (findCurveTurnPoints(curve,bnd)) youTurnPhase = 1;
-            ytList.clear();
-            break;
-
-        case 1:
-            //now check to make sure we are not in an inner turn boundary - drive thru is ok
-            count = ytList.size();
-            if (count == 0) return false;
-
-            //Are we out of bounds?
-            isOutOfBounds = false;
-            for (int j = 0; j < count; j += 2)
-            {
-                if (bnd.IsPointInsideTurnArea(ytList[j]) != 0)
-                {
-                    isOutOfBounds = true;
-                    break;
-                }
-            }
-
-            //first check if not out of bounds, add a bit more to clear turn line, set to phase 2
-            if (!isOutOfBounds)
-            {
-                youTurnPhase = 2;
-                //if (curve.isABSameAsVehicleHeading)
-                //{
-                //    crossingCurvePoint.index -= 2;
-                //    if (crossingCurvePoint.index < 0) crossingCurvePoint.index = 0;
-                //}
-                //else
-                //{
-                //    crossingCurvePoint.index += 2;
-                //    if (crossingCurvePoint.index >= curListCount)
-                //        crossingCurvePoint.index = curListCount - 1;
-                //}
-                //crossingCurvePoint.easting = curve.curList[crossingCurvePoint.index].easting;
-                //crossingCurvePoint.northing = curve.curList[crossingCurvePoint.index].northing;
-                //crossingCurvePoint.heading = curve.curList[crossingCurvePoint.index].heading;
-                return true;
-            }
-
-            //keep moving infield till pattern is all inside
-            if (curve.isHeadingSameWay)
-            {
-                crossingCurvePoint.index--;
-                if (crossingCurvePoint.index < 0) crossingCurvePoint.index = 0;
-            }
-            else
-            {
-                crossingCurvePoint.index++;
-                if (crossingCurvePoint.index >= curve.curList.count())
-                    crossingCurvePoint.index = curve.curList.count() - 1;
-            }
-            crossingCurvePoint.easting = curve.curList[crossingCurvePoint.index].easting;
-            crossingCurvePoint.northing = curve.curList[crossingCurvePoint.index].northing;
-            crossingCurvePoint.heading = curve.curList[crossingCurvePoint.index].heading;
-
-            tooClose = glm::Distance(ytList[0], pivotPos);
-            isTurnCreationTooClose = tooClose < 3;
-
-            //set the flag to Critical stop machine
-            if (isTurnCreationTooClose) emit outOfBounds(); //mf.mc.isOutOfBounds = true;
-            break;
-
-        case 2:
-            youTurnPhase = 3;
-            break;
-    }
-    return true;
-}
-
 void CYouTurn::SmoothYouTurn(int smPts)
 {
     //count the reference list of original curve
@@ -1059,7 +2264,7 @@ void CYouTurn::CompleteYouTurn()
     emit turnOffBoundAlarm();
 }
 
-void CYouTurn::SetAlternateSkips()
+void CYouTurn::Set_Alternate_skips()
 {
     rowSkipsWidth2 = rowSkipsWidth;
     turnSkips = rowSkipsWidth2 * 2 - 1;
