@@ -35,12 +35,37 @@ void FormGPS::setupGui()
     rootContext()->setContextProperty("mainForm", this);
     rootContext()->setContextProperty("settings", &qml_settings);
 
+#ifdef LOCAL_QML
+    //QStringList search_path;
+    //search_path.append(QDir::currentPath());
+    //search_path.append(QDir::currentPath() + "/../QtAgOpenGPS");
+    //search_path.append("/home/torriem/projects/QtAgOpenGPS");
+
+    //QDir::setSearchPaths("local", search_path);
+    QDir::addSearchPath("local",QDir::currentPath() + "/../QtAgOpenGPS");
+    QObject::connect(this, &QQmlApplicationEngine::warnings, [=] (const QList<QQmlError> &warnings) {
+        foreach (const QQmlError &error, warnings) {
+            qWarning() << "warning: " << error.toString();
+        }
+    });
+
+    rootContext()->setContextProperty("prefix","local:");
+    load("local:/qml/MainWindow.qml");
+#else
+    rootContext()->setContextProperty("prefix",":");
     load(QUrl("qrc:/qml/MainWindow.qml"));
-    //setColor(Qt::transparent);
+#endif
 
     //get pointer to root QML object, which is the OpenGLControl,
     //store in a member variable for future use.
-    qml_root = rootObjects().first();
+    QList<QObject*> root_context = rootObjects();
+
+    if (root_context.length() == 0) {
+        qWarning() << "MainWindow.qml did not load.  Aborting.";
+        assert(root_context.length() > 0);
+    }
+
+    qml_root = root_context.first();
 
     qml_root->setProperty("visible",true);
 

@@ -75,38 +75,38 @@ Item {
     }
     SoundEffect{
         id: engage
-        source: "/sounds/SteerOn.wav"
+        source: prefix + "/sounds/SteerOn.wav"
     }
     SoundEffect{
         id: disEngage
-        source: "/sounds/SteerOff.wav"
+        source: prefix + "/sounds/SteerOff.wav"
     }
     SoundEffect{
         id: hydDown
-        source: "/sounds/HydDown.wav"
+        source: prefix + "/sounds/HydDown.wav"
     }
     SoundEffect{
         id: hydUp
-        source: "/sounds/HydUp.wav"
+        source: prefix + "/sounds/HydUp.wav"
     }
     SoundEffect{
         id: sectionOff
-        source: "/sounds/SectionOff.wav"
+        source: prefix + "/sounds/SectionOff.wav"
     }
     SoundEffect{
         id: sectionOn
-        source: "/sounds/SectionOn.wav"
+        source: prefix + "/sounds/SectionOn.wav"
     }
     SoundEffect{
         id: approachingYouTurn
-        source: "/sounds/Alarm10.wav"
+        source: prefix + "/sounds/Alarm10.wav"
     }
     SoundEffect{
         id: rtkLost
-        source: "/sounds/rtk_lost.wav"
+        source: prefix + "/sounds/rtk_lost.wav"
     }
     SoundEffect{
         id: youturnFail
-        source: "/sounds/TF013.wav"
+        source: prefix + "/sounds/TF013.wav"
     }
 }
