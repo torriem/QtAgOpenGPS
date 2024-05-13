@@ -77,6 +77,7 @@ TimedRectangle{
             radius: 10
             icon.source: "/images/BrightnessDn.png"
             onClicked: displayButtons.resetTimer()
+			visible: false //todo
         }
         IconButtonTransparent {
             id: btnTiltUp
@@ -130,6 +131,7 @@ TimedRectangle{
         }
         IconButtonTransparent {
             id: btnBrightnessUp
+			visible: false //todo
             width: 70
             height: 70
             radius: 10
