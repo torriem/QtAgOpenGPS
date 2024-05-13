@@ -36,13 +36,23 @@ void FormGPS::setupGui()
     rootContext()->setContextProperty("settings", &qml_settings);
 
 #ifdef LOCAL_QML
-    //QStringList search_path;
-    //search_path.append(QDir::currentPath());
-    //search_path.append(QDir::currentPath() + "/../QtAgOpenGPS");
-    //search_path.append("/home/torriem/projects/QtAgOpenGPS");
+    // Look for QML files relative to our current directory
+    QStringList search_pathes = { "..",
+                                 "../qtaog",
+                                 "../QtAgOpenGPS",
+                                 "."
+    };
 
-    //QDir::setSearchPaths("local", search_path);
-    QDir::addSearchPath("local",QDir::currentPath() + "/../QtAgOpenGPS");
+    qWarning() << "Looking for QML.";
+    for(QString search_path : search_pathes) {
+        QDir d = QDir(QDir::currentPath() + "/" + search_path + "/qml/");
+        if (d.exists("AOGInterface.qml")) {
+            QDir::addSearchPath("local",QDir::currentPath() + "/" + search_path);
+            qWarning() << "QML path is " << search_path;
+            break;
+        }
+    }
+
     QObject::connect(this, &QQmlApplicationEngine::warnings, [=] (const QList<QQmlError> &warnings) {
         foreach (const QQmlError &error, warnings) {
             qWarning() << "warning: " << error.toString();
