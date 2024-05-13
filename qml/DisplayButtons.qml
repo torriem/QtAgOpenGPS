@@ -11,7 +11,8 @@ TimedRectangle{
         anchors.topMargin: 5
         spacing: 6
         flow: Grid.TopToBottom
-        rows:6
+        //rows:6
+		rows: 5
         columns:2
         onChildrenChanged: console.log("childrenChanged")
         IconButtonTransparent {
