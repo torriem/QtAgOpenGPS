@@ -1134,7 +1134,8 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("toolEasting", vehicle.pivotAxlePos.easting);
     aog->setProperty("toolNorthing", vehicle.pivotAxlePos.northing);
     aog->setProperty("toolHeading", vehicle.pivotAxlePos.heading);
-
+    aog->setProperty("rawHz", nowHz);
+	aog->setProperty("hz", gpsHz);
     aog->setProperty("isReverse" , vehicle.isReverse);
     aog->setProperty("isReverseWithIMU", isReverseWithIMU);
 

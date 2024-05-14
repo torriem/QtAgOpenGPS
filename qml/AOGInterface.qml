@@ -122,7 +122,7 @@ Item {
     property double steerAngleSet: 0
     property double steerAngleSetRounded: 0
     property double steerAngleActualRounded: 0
-    property double rawHZ:0
+    property double rawHz:0
     property double hz:0
     property double missedSentences: 0
     property double gpsHeading: 0
