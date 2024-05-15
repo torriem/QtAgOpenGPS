@@ -37,6 +37,7 @@ IconButton {
               else
                   0
     MouseArea{
+		visible: text.length>0
         id: textLabel
         width: icon_button.width
         height: text1.height
