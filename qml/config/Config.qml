@@ -111,7 +111,7 @@ Dialog {
                     }
 
                     ButtonGroup {
-                        buttons: [configTrSettings, configTrDim, btnconfigTrAntDim, btnconfigTrSteerSett ]
+                        buttons: [configTrSettings, configTrDim, btnconfigTrAntDim, ]
                     }
 
                     IconButtonTransparent{
@@ -129,12 +129,6 @@ Dialog {
                     IconButtonTransparent{
                         id: btnconfigTrAntDim
                         icon.source: "/images/Config/ConS_ImplementAntenna.png"
-                        checkable: true
-                        radius: 0
-                    }
-                    IconButtonTransparent{
-                        id: btnconfigTrSteerSett
-                        icon.source: "/images/Config/ConS_ModulesSteer.png"
                         checkable: true
                         radius: 0
                     }
@@ -428,12 +422,6 @@ Dialog {
             anchors.fill: mainConfig
             anchors.margins:1
             visible: tractorMenu.visible && configTrDim.checked
-        }
-        ConfigVehicleSteerSettings{
-            id:configTractorSteerSettings
-            anchors.fill: mainConfig
-            anchors.margins:1
-            visible: tractorMenu.visible && btnconfigTrSteerSett.checked
         }
         ConfigImplement{
             id:configImplement
