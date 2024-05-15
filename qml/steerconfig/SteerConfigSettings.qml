@@ -346,7 +346,6 @@ Rectangle{
 						  checkable: true
 						  buttonText: "Turn Sensor"
 						  Layout.alignment: Qt.AlignCenter
-						  colorChecked: steerConfig.color
 						  onClicked: unsaved.visible = true
 					  }
 					  IconButtonColor{
@@ -355,7 +354,6 @@ Rectangle{
 						  checkable: true
 						  buttonText: "Pressure Turn Sensor"
 						  Layout.alignment: Qt.AlignCenter
-						  colorChecked: steerConfig.color
 						  onClicked: unsaved.visible = true
 					  }
 					  IconButtonColor{
@@ -364,7 +362,6 @@ Rectangle{
 						  checkable: true
 						  buttonText: "Current Turn Sensor"
 						  Layout.alignment: Qt.AlignCenter
-						  colorChecked: steerConfig.color
 						  onClicked: unsaved.visible = true
 					  }
 				  }
