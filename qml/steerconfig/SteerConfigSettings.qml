@@ -21,7 +21,7 @@ Rectangle{
 		color:"white"
 		visible: true
 		width: parent.width
-		height: 25 * theme.scaleHeight
+		height: 50 * theme.scaleHeight
 		anchors.top: parent.top
 		anchors.horizontalCenter: parent.horizontalCenter
 		Text{
@@ -30,9 +30,9 @@ Rectangle{
 			text: qsTr("Auto Steer Config")
 		}
 
-		Button {
+		IconButtonTransparent {
 			id: close
-			text: qsTr("×")
+			icon.source: "/images/WindowClose.png"
 			font.pixelSize: parent.height
 			width: parent.height+3
 			height:parent.height
@@ -49,6 +49,7 @@ Rectangle{
 			height:parent.height
 			anchors.right: close.left
 			anchors.rightMargin: 20 * theme.scaleWidth
+			visible: false //TODO help
 		}
 	}
 	ButtonGroup{
