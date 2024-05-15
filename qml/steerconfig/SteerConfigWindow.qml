@@ -407,6 +407,7 @@ MoveablePopup {
 				anchors.right: parent.right
 				height: 50 * theme.scaleHeight
 				MouseArea{
+					id: angleInfoMouse
 					anchors.fill: parent
 					onClicked: {
 						steerConfigSettings.show()
@@ -414,24 +415,33 @@ MoveablePopup {
 					}
 
 				}
+				RowLayout{
+					id: angleInfoRow
+					anchors.fill: parent
+					spacing: 10 * theme.scaleWidth
 
-				Text {
-					anchors.left: parent.left
-					anchors.verticalCenter: parent.verticalCenter
-					text: qsTr("Set: " + aog.steerAngleSetRounded)
-				}
-				Text {
-					text: qsTr("Act: " + aog.steerAngleActualRounded)
-					anchors.horizontalCenter: parent.horizontalCenter
-					anchors.verticalCenter: parent.verticalCenter
-				}
-				Text {
-					id: errorlbl
-					property double err: aog.steerAngleActualRounded - aog.steerAngleSetRounded
-					text: qsTr("Err: " + err)
-					anchors.right: parent.right
-					anchors.verticalCenter: parent.verticalCenter
-					onErrChanged: err > 0 ? errorlbl.color = "red" : errorlbl.color = "darkgreen"
+					Text {
+						text: qsTr("Set: " + aog.steerAngleSetRounded)
+						Layout.alignment: Qt.AlignCenter
+					}
+					Text {
+						text: qsTr("Act: " + aog.steerAngleActualRounded)
+						Layout.alignment: Qt.AlignCenter
+					}
+					Text {
+						id: errorlbl
+						property double err: aog.steerAngleActualRounded - aog.steerAngleSetRounded
+						text: qsTr("Err: " + err)
+						onErrChanged: err > 0 ? errorlbl.color = "red" : errorlbl.color = "darkgreen"
+						Layout.alignment: Qt.AlignCenter
+					}
+					IconButtonTransparent{
+						icon.source: "/images/ArrowRight.png"
+						implicitWidth: parent.width/4
+						implicitHeight: parent.height
+						onClicked: angleInfoMouse.clicked(true)
+						Layout.alignment: Qt.AlignRight
+					}
 				}
 			}
 		}
@@ -461,21 +471,21 @@ MoveablePopup {
 					isChecked: false
 					icon.source: "/images/SteerDriveOff.png"
 					iconChecked: "/images/SteerDriveOn.png"
-					implicitWidth: parent.width/4.5
+					implicitWidth: parent.width/4
 					implicitHeight: parent.height
 					color3: "white"
 					border: 2
 				}
 				IconButton{
 					icon.source: "/images/SnapLeft.png"
-					implicitWidth: parent.width/4.5
+					implicitWidth: parent.width/4
 					implicitHeight: parent.height
 					color3: "white"
 					border: 2
 				}
 				IconButton{
 					icon.source: "/images/SnapRight.png"
-					implicitWidth: parent.width/4.5
+					implicitWidth: parent.width/4
 					implicitHeight: parent.height
 					color3: "white"
 					border: 2
@@ -483,7 +493,7 @@ MoveablePopup {
 				IconButton{
 					id: pwmZero
 					icon.source: "/images/SteerZeroSmall.png"
-					implicitWidth: parent.width/4.5
+					implicitWidth: parent.width/4
 					implicitHeight: parent.height
 					color3: "white"
 					border: 2
