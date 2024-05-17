@@ -54,6 +54,20 @@ Rectangle{
             onClicked: settings.setVehicle_vehicleType = 2
         }
     }
+	IconButtonColor{//triangle, no vehicle image
+		anchors.top: typesButtons.bottom
+		anchors.horizontalCenter: typesButtons.horizontalCenter
+		anchors.topMargin: 20
+		width:150 * theme.scaleWidth
+		height:100 * theme.scaleHeight
+		icon.source: "/images/Config/Brand/TriangleVehicle.png"
+		checkable: true
+		isChecked: !settings.setDisplay_isVehicleImage
+		onCheckedChanged: {
+			settings.setDisplay_isVehicleImage = !checked
+			console.log(settings.setDisplay_isVehicleImage)
+		}
+	}
     /*
     Text {
         anchors.bottom: parent.bottom
