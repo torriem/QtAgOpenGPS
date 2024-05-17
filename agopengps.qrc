@@ -533,7 +533,7 @@
         <file>images/TrashApplied.png</file>
         <file>images/HeadlandSectionOn.png</file>
         <file>qml/steerconfig/SteerConfigWindow.qml</file>
-		<file>qml/steerconfig/SteerConfigSettings.qml</file>
+        <file>qml/steerconfig/SteerConfigSettings.qml</file>
         <file>images/Config/ConS_Pins.png</file>
         <file>images/TrackVisible.png</file>
         <file>images/MenuHideShow.png</file>
@@ -602,8 +602,8 @@
         <file>qml/components/SpinBoxKM.qml</file>
         <file>qml/components/SpinBoxCustomized.qml</file>
         <file>qml/components/SpinBoxCM.qml</file>
-		<file>qml/components/SpinBoxFusion.qml</file>
-		<file>qml/components/SpinBoxDouble.qml</file>
+        <file>qml/components/SpinBoxFusion.qml</file>
+        <file>qml/components/SpinBoxDouble.qml</file>
         <file>qml/components/SliderCustomized.qml</file>
         <file>qml/components/SectionButtons.qml</file>
         <file>qml/components/SectionButton.qml</file>
@@ -626,7 +626,18 @@
         <file>qml/AOGTheme.qml</file>
         <file>qml/HamburgerMenu.qml</file>
         <file>qml/SetSimCoords.qml</file>
-		<file>qml/components/ShortcutCustomized.qml</file>
+        <file>qml/components/ShortcutCustomized.qml</file>
         <file>sounds/TF012.wav</file>
+        <file>images/qtSpecific/Antenna4WD.png</file>
+        <file>images/qtSpecific/AntennaHarvester.png</file>
+        <file>images/qtSpecific/AntennaTractor.png</file>
+        <file>images/qtSpecific/LeftAntenna.png</file>
+        <file>images/qtSpecific/LeftAntenna4WD.png</file>
+        <file>images/qtSpecific/LeftAntennaHarvester.png</file>
+        <file>images/qtSpecific/RightAntenna.png</file>
+        <file>images/qtSpecific/RightAntenna4WD.png</file>
+        <file>images/qtSpecific/RightAntennaHarvester.png</file>
+        <file>images/qtSpecific/z_LateralManual.png</file>
+        <file>images/qtSpecific/z_TurnManual.png</file>
     </qresource>
 </RCC>
