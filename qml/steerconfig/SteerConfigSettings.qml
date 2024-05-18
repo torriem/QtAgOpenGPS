@@ -92,7 +92,7 @@ Rectangle{
 		}
 		IconButtonTextBeside{
 			id: steerSettingsBtn
-			icon.source: "/images/Config/ConS_SteerConfig.png"
+			icon.source: "/images/Config/ConS_ImplementConfig.png"
 			buttonText: "Steer Settings"
 			Layout.alignment: Qt.AlignCenter
 			checkable: true
