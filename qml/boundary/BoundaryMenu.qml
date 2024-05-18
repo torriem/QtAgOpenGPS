@@ -45,8 +45,7 @@ Item {
                 anchors.topMargin: 50
                 ScrollBar.vertical: ScrollBar {
                     id: scrollbar
-                    anchors.left: boundaryMain.right
-                    anchors.rightMargin: 10
+					anchors.right: parent.right
                     width: 10
                     policy: ScrollBar.AlwaysOn
                     active: true
