@@ -152,8 +152,8 @@ Item {
         id: rtkLost
         source: prefix + "/sounds/rtk_lost.wav"
     }
-    /*SoundEffect{ this generates:  QSoundEffect(qaudio): Error decoding source qrc:/sounds/TF013.wav
+    SoundEffect{ 
         id: youturnFail
-        source: prefix + "/sounds/TF013.wav"
-	}*///endregion sounds
+        source: prefix + "/sounds/TF012.wav"
+	}//endregion sounds
 }
