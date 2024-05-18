@@ -45,9 +45,18 @@ void FormGPS::setupGui()
 
     qWarning() << "Looking for QML.";
     for(QString search_path : search_pathes) {
+        //look relative to current working directory
         QDir d = QDir(QDir::currentPath() + "/" + search_path + "/qml/");
         if (d.exists("AOGInterface.qml")) {
             QDir::addSearchPath("local",QDir::currentPath() + "/" + search_path);
+            qWarning() << "QML path is " << search_path;
+            break;
+        }
+
+        //look relative to the executable's directory
+        d = QDir(QCoreApplication::applicationDirPath() + "/" + search_path + "/qml/");
+        if (d.exists("AOGInterface.qml")) {
+            QDir::addSearchPath("local",QCoreApplication::applicationDirPath() + "/" + search_path);
             qWarning() << "QML path is " << search_path;
             break;
         }
