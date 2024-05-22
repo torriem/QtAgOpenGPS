@@ -11,7 +11,8 @@
 
 #define UDP_NMEA_PORT 9999
 
-const QHostAddress epAgIO = QHostAddress("127.255.255.255");
+//const QHostAddress epAgIO = QHostAddress("127.0.0.1"); // TODO for everything good
+const QHostAddress epAgIO = QHostAddress("127.255.255.255"); //TODO for windows
 const int epAgIO_port = 17777;
 
 void FormGPS::ReceiveFromAgIO()
@@ -56,20 +57,19 @@ void FormGPS::ReceiveFromAgIO()
         {
             return;
         }
-
         switch ((uchar)data[3])
         {
         case 0xD6:
             if (udpWatch.elapsed() < udpWatchLimit)
             {
-                udpWatchCounts++;
+				udpWatchCounts++;
                 //TODO implement nmea logging
                 /*
                 if (isLogNMEA) pn.logNMEASentence.Append("*** "
                                +  DateTime.UtcNow.ToString("ss.ff -> ", CultureInfo.InvariantCulture)
                                + udpWatch.ElapsedMilliseconds + "\r\n");
                 */
-                return;
+               return;
             }
             udpWatch.restart();
 
@@ -305,6 +305,8 @@ void FormGPS::StartLoopbackServer()
     //TODO: change to localhost
 
     connect(udpSocket,SIGNAL(readyRead()),this,SLOT(ReceiveFromAgIO()));
+
+	udpWatch.restart();
 }
 
 void FormGPS::stopUDPServer()
