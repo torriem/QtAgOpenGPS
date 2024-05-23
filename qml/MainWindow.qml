@@ -440,7 +440,11 @@ Window {
         id: noGPS
         anchors.fill: glcontrolrect
         color: "#0d0d0d"
-		visible: aog.sentenceCounter > 29;
+        visible: aog.sentenceCounter> 29
+        onVisibleChanged: if(visible){
+                              console.log("no gps now visible")
+                          }
+
         Image {
             id: noGPSImage
             source: "/images/Images/z_NoGPS.png"
@@ -1017,7 +1021,6 @@ Window {
         Item{
             //plan to move everything on top of the aogRenderer that isn't
             //in one of the buttons columns
-			//NOTE: Hidden when no gps
             id: inner
             anchors.left: leftColumn.right
             anchors.top: parent.top
@@ -1278,9 +1281,50 @@ Window {
                        (aog.currentABCurve > -1)))
             //TODO add contour
         }
+
+        //Components- this is where the windows that get displayed over the
+        //ogl get instantiated.
+        FieldData{
+            id: fieldData
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            visible: false
+        }
+        GPSData{
+            id: gpsData
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            visible: false
+        }
+
+        SimController{
+            id: simBarRect
+            anchors.bottom: timeText.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottomMargin: 8
+            visible: utils.isTrue(settings.setMenu_isSimulatorOn)
+			height: 60 * theme.scaleHeight
+			onHeightChanged: anchors.bottomMargin = (8 * theme.scaleHeight)
+        }
         RecPath{// recorded path menu
             id: recPath
             visible: false
+        }
+
+        OutlineText{
+            id: timeText
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.rightMargin: (50 * theme.scaleWidth)
+            font.pixelSize: 20
+            color: "#cc5200"
+            text: new Date().toLocaleTimeString(Qt.locale())
+            Timer{
+                interval: 100
+                repeat: true
+                running: true
+                onTriggered: timeText.text = new Date().toLocaleTimeString(Qt.locale())
+            }
         }
         SectionButtons {
             id: sectionButtons
@@ -1291,6 +1335,26 @@ Window {
 			height: 40 * theme.scaleHeight
             width: 500  * theme.scaleWidth
 			//onHeightChanged: anchors.bottomMargin = (bottomButtons.height + simBarRect.height + (24 * theme.scaleHeight))
+        }
+        DisplayButtons{
+            id: displayButtons
+            width: childrenRect.width + 10
+            height: childrenRect.height + 10
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            anchors.top: parent.top
+            anchors.topMargin: 20
+            visible: false
+            z:1
+        }
+
+        TrackButtons{
+            id: trackButtons
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.margins: 20
+            visible: false
+            z:1
         }
         IconButtonTransparent{
             id: toggleButtons
@@ -1334,79 +1398,6 @@ Window {
                 icon.source: "/images/ZoomOut48.png"
                 onClicked: aog.zoomOut()
             }
-		}
-
-	}
-        //----------------inside windows-----------------------
-        Item{
-            //plan to move everything on top of the aogRenderer that isn't
-            //in one of the buttons columns
-			//NOTE: These are not hidden when no gps.
-            id: innerWindows
-            anchors.left: leftColumn.right
-            anchors.top: parent.top
-            anchors.topMargin: topLine.height
-            anchors.right: rightColumn.left
-            anchors.bottom: bottomButtons.top
-        //Components- this is where the windows that get displayed over the
-        //ogl get instantiated.
-        FieldData{
-            id: fieldData
-            anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
-            visible: false
-        }
-        GPSData{
-            id: gpsData
-            anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
-            visible: false
-        }
-
-        SimController{
-            id: simBarRect
-            anchors.bottom: timeText.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottomMargin: 8
-            visible: utils.isTrue(settings.setMenu_isSimulatorOn)
-			height: 60 * theme.scaleHeight
-			onHeightChanged: anchors.bottomMargin = (8 * theme.scaleHeight)
-        }
-
-        OutlineText{
-            id: timeText
-            anchors.bottom: parent.bottom
-            anchors.right: parent.right
-            anchors.rightMargin: (50 * theme.scaleWidth)
-            font.pixelSize: 20
-            color: "#cc5200"
-            text: new Date().toLocaleTimeString(Qt.locale())
-            Timer{
-                interval: 100
-                repeat: true
-                running: true
-                onTriggered: timeText.text = new Date().toLocaleTimeString(Qt.locale())
-            }
-        }
-        DisplayButtons{
-            id: displayButtons
-            width: childrenRect.width + 10
-            height: childrenRect.height + 10
-            anchors.left: parent.left
-            anchors.leftMargin: 20
-            anchors.top: parent.top
-            anchors.topMargin: 20
-            visible: false
-            z:1
-        }
-
-        TrackButtons{
-            id: trackButtons
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.margins: 20
-            visible: false
-            z:1
         }
     }
 
