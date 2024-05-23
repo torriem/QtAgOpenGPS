@@ -1146,108 +1146,71 @@ Window {
                     }
                 }
             }
-            Item{
-                //this whole item is for the manual uturn buttons, and lateral buttons
-                id: manualUturnLateral
-                anchors.top: lightbar.bottom
-                anchors.left: parent.left
-                anchors.topMargin: 30
-                anchors.leftMargin: 150
-                width: childrenRect.width
-                height: childrenRect.height
-                visible: aog.isAutoSteerBtnOn
-                MultiEffect{
-                    colorizationColor: "#e6e600"
-                    colorization: 1.0
-                    anchors.fill: uturn
-                    source: uturn
-                    visible: settings.setFeature_isYouTurnOn
-                    Button{
-                        id: manualUturnLeft
-                        background: Rectangle{color: "transparent"}
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        anchors.left: parent.left
-                        anchors.right: parent.horizontalCenter
-                        onClicked: {
-                            if (settings.setAS_functionSpeedLimit > aog.speedKph)
-                                aog.uturn(false)
-                            else
-                                timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                        utils.speed_to_unit_string(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
-                        }
-                    }
-                    Button{
-                        id: manualUturnRight
-                        background: Rectangle{color: "transparent"}
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        anchors.right: parent.right
-                        anchors.left: parent.horizontalCenter
-                        onClicked: {
-                            if (settings.setAS_functionSpeedLimit > aog.speedKph)
-                                aog.uturn(true)
-                            else
-                                timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                        utils.speed_to_unit_string(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
-                        }
-                    }
-                }
-                Image{
-                    id: uturn
-                    anchors.top: parent.top
-                    height: 60 * theme.scaleHeight
-                    anchors.left: parent.left
-                    width: 150 * theme.scaleWidth
-                    source: '/images/Images/z_TurnManual.png'
-                    visible: false
-                }
-                MultiEffect{
-                    colorizationColor: "#80aaff"
-                    colorization: 1.0
-                    anchors.fill: lateral
-                    source: lateral
-                    visible: settings.setFeature_isLateralOn
-                    Button{
-                        background: Rectangle{color: "transparent"}
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        anchors.left: parent.left
-                        anchors.right: parent.horizontalCenter
-                        onClicked: {
-                            if (settings.setAS_functionSpeedLimit > aog.speedKph)
-                                aog.lateral(false)
-                            else
-                                timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                        aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
-                        }
-                    }
-                    Button{
-                        background: Rectangle{color: "transparent"}
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        anchors.right: parent.right
-                        anchors.left: parent.horizontalCenter
-                        onClicked: {
-                            if (settings.setAS_functionSpeedLimit > aog.speedKph)
-                                aog.lateral(true)
-                            else
-                                timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
-                                                        aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
-                        }
-                    }
-                }
+			Grid{
+				spacing: 10
+				rows: 2
+				columns: 2
+				flow: Grid.LeftToRight
+				anchors.top: lightbar.bottom
+				anchors.left: parent.left
+				anchors.topMargin: 30
+				anchors.leftMargin: 150
+				visible: aog.isAutoSteerBtnOn
+				IconButtonTransparent{
+					implicitHeight: 65 * theme.scaleHeight
+					implicitWidth: 85 * theme.scaleWidth
+					imageFillMode: Image.Stretch
+					icon.source: "/images/qtSpecific/z_TurnManualL.png"
+					onClicked: {
+						if (settings.setAS_functionSpeedLimit > aog.speedKph)
+						aog.uturn(false)
+						else
+						timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+						utils.speed_to_unit_string(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
+					}
 
-                Image{
-                    visible: false
-                    id: lateral
-                    anchors.top: uturn.bottom
-                    height: 60 * theme.scaleHeight
-                    anchors.left: parent.left
-                    width: 150 * theme.scaleWidth
-                    source: '/images/Images/z_LateralManual.png'
-                }
-            }
+				}
+
+				IconButtonTransparent{
+					implicitHeight: 65 * theme.scaleHeight
+					implicitWidth: 85 * theme.scaleWidth
+					imageFillMode: Image.Stretch
+					icon.source: "/images/qtSpecific/z_TurnManualR.png"
+					onClicked: {
+						if (settings.setAS_functionSpeedLimit > aog.speedKph)
+						aog.uturn(true)
+						else
+						timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+						utils.speed_to_unit_string(settings.setAS_functionSpeedLimit,1) + " " + utils.speed_unit())
+					}
+				}
+				IconButtonTransparent{
+					implicitHeight: 65 * theme.scaleHeight
+					implicitWidth: 85 * theme.scaleWidth
+					imageFillMode: Image.Stretch
+					icon.source: "/images/qtSpecific/z_LateralManualL.png"
+					onClicked: {
+						if (settings.setAS_functionSpeedLimit > aog.speedKph)
+						aog.lateral(false)
+						else
+						timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+						aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
+					}
+				}
+				IconButtonTransparent{
+					implicitHeight: 65 * theme.scaleHeight
+					implicitWidth: 85 * theme.scaleWidth
+					imageFillMode: Image.Stretch
+					icon.source: "/images/qtSpecific/z_LateralManualR.png"
+					onClicked: {
+						if (settings.setAS_functionSpeedLimit > aog.speedKph)
+						aog.lateral(true)
+						else
+						timedMessage.addMessage(2000,qsTr("Too Fast"), qsTr("Slow down below") + " " +
+						aog.convert_speed_text(settings.setAS_functionSpeedLimit,1) + " " + aog.speed_unit())
+					}
+				}
+			}
         LightBar {
             id: lightbar
             anchors.top: parent.top

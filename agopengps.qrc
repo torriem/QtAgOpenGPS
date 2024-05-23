@@ -567,7 +567,6 @@
         <file>qml/config/ConfigVehicleType.qml</file>
         <file>qml/config/ConfigVehicleAntenna.qml</file>
         <file>qml/config/ConfigVehicleDimensions.qml</file>
-        <file>qml/config/ConfigVehicleSteerSettings.qml</file>
         <file>qml/config/ConfigTrams.qml</file>
         <file>qml/config/ConfigVehiclePicker.qml</file>
         <file>qml/config/ConfigYouTurn.qml</file>
