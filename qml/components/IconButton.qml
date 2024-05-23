@@ -15,6 +15,7 @@ Button {
     //checkable: true
     icon.source: ""
     icon.color: "transparent"
+	property alias imageFillMode: content_image.fillMode
 
     property double iconHeightScaleText: 0.75
     property int border: 0
