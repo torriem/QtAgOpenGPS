@@ -55,9 +55,12 @@ Rectangle{
                 checked: (settings.setGPS_headingFromWhichSource === "Dual" ? true: false)
 
                 onCheckedChanged: {
-                    if (checked)
-                        settings.setGPS_headingFromWhichSource = "Dual"
-                }
+					if (checked){
+						settings.setGPS_headingFromWhichSource = "Dual"
+						if(settings.setVehicle_antennaOffset < 0)
+						    timedMessage.addMessage(7000, qsTr("Antenna Offset error!"), qsTr('You have antenna offset set to "left". Dual requires it set to "right". Change it or you will have offset errors')) 
+					}
+				}
 
                 onHeadingSourceChanged: {
                     if(headingSource === "Dual"){

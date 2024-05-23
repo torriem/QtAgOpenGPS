@@ -12,13 +12,15 @@ Rectangle{
     Image {
         id: antImage
         //3 vehicle types  tractor=0 harvestor=1 4wd=2
-        source: settings.setVehicle_vehicleType === 0 ? "/images/AntennaTractor.png" :
-                settings.setVehicle_vehicleType === 1 ? "/images/AntennaHarvester.png" :
-                settings.setVehicle_vehicleType === 2 ? "/images/Antenna4WD.png" :
+        source: settings.setVehicle_vehicleType === 0 ? "/images/qtSpecific/AntennaTractor.png" :
+                settings.setVehicle_vehicleType === 1 ? "/images/qtSpecific/AntennaHarvester.png" :
+                settings.setVehicle_vehicleType === 2 ? "/images/qtSpecific/Antenna4WD.png" :
                 "/images/Config/ConSt_Mandatory.png"
         width: 350 * theme.scaleWidth
-        height: 350 * theme.scaleHeight
-        anchors.centerIn: parent
+        height: 175 * theme.scaleHeight
+		anchors.horizontalCenter: parent.horizontalCenter
+		anchors.top: parent.top
+		anchors.topMargin: (30+antennaPivot.height) * theme.scaleHeight
     }
     SpinBoxCM{
         id: antennaPivot
@@ -43,16 +45,76 @@ Rectangle{
         boundValue: settings.setVehicle_antennaHeight
         onValueModified: settings.setVehicle_antennaHeight = value
     }
-    SpinBoxCM{
-        id: antennaOffset
-        anchors.bottom: antImage.bottom
-        anchors.bottomMargin: 70
-        anchors.left: antImage.right
-        anchors.leftMargin: -25
-        from: -500
-        to: 500
-        editable: true
-        boundValue: settings.setVehicle_antennaOffset
-        onValueModified: settings.setVehicle_antennaOffset = value
-    }
+	TitleFrame{
+		anchors.top: antImage.bottom
+		anchors.topMargin: 20 * theme.scaleHeight
+		title: qsTr("Antenna Offset")
+		anchors.horizontalCenter: parent.horizontalCenter
+		width: parent.width * 0.65
+		anchors.bottom: parent.bottom
+		anchors.bottomMargin: 20 * theme.scaleHeight
+		border.width: 2
+        Item{
+            ButtonGroup {
+                buttons: [ offsetLeft, offsetRight ]
+            }
+        }
+
+        IconButtonColor{
+            id: offsetLeft
+            implicitWidth: 170 * theme.scaleWidth
+            implicitHeight: 250 * theme.scaleHeight
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+			anchors.leftMargin: 7 * theme.scaleWidth
+			iconHeightScaleText: 1
+            checkable: settings.setGPS_headingFromWhichSource === "Single"
+            isChecked: (settings.setVehicle_antennaOffset < 0)
+			icon.source: settings.setVehicle_vehicleType === 0 ? "/images/qtSpecific/LeftAntenna.png"
+			: settings.setVehicle_vehicleType === 1 ? "/images/qtSpecific/LeftAntennaHarvester.png"
+			: settings.setVehicle_vehicleType === 2 ? "/images/qtSpecific/LeftAntenna4WD.png"
+			: "/images/Config/ConSt_Mandatory.png"
+			onClicked: {
+				if (settings.setGPS_headingFromWhichSource === "Dual") 
+				    timedMessage.addMessage(5000, qsTr("Not Allowed"), qsTr("Dual heading MUST be right only"))
+				else
+					settings.setVehicle_antennaOffset = -Math.abs(settings.setVehicle_antennaOffset)
+			}
+
+        }
+
+        IconButtonColor{
+            id: offsetRight
+            implicitWidth: 170 * theme.scaleWidth
+            implicitHeight: 250 * theme.scaleHeight
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+			anchors.rightMargin: 7 * theme.scaleWidth
+            isChecked: (settings.setVehicle_antennaOffset >= 0)
+            checkable: true
+            onClicked: settings.setVehicle_antennaOffset = Math.abs(settings.setVehicle_antennaOffset)
+            icon.source: settings.setVehicle_vehicleType === 0 ? "/images/qtSpecific/RightAntenna.png"
+					: settings.setVehicle_vehicleType === 1 ? "/images/qtSpecific/RightAntennaHarvester.png"
+					: settings.setVehicle_vehicleType === 2 ? "/images/qtSpecific/RightAntenna4WD.png"
+					: "/images/Config/ConSt_Mandatory.png"
+        }
+		SpinBoxCM{
+			id: antennaOffset
+			anchors.horizontalCenter: parent.horizontalCenter
+			anchors.bottom: parent.verticalCenter
+			anchors.bottomMargin: 10 * theme.scaleHeight
+			from: 0
+			to: 500
+			editable: true
+			boundValue: Math.abs(settings.setVehicle_antennaOffset)
+			onValueChanged:{
+				if (offsetLeft.checked){
+					settings.setVehicle_antennaOffset = -value
+				} else {
+				settings.setVehicle_antennaOffset = value
+				}
+				console.log(settings.setVehicle_antennaOffset)
+			}
+		}
+	}
 }
