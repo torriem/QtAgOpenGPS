@@ -636,7 +636,9 @@
         <file>images/qtSpecific/RightAntenna.png</file>
         <file>images/qtSpecific/RightAntenna4WD.png</file>
         <file>images/qtSpecific/RightAntennaHarvester.png</file>
-        <file>images/qtSpecific/z_LateralManual.png</file>
-        <file>images/qtSpecific/z_TurnManual.png</file>
+        <file>images/qtSpecific/z_LateralManualL.png</file>
+		<file>images/qtSpecific/z_LateralManualR.png</file>
+		<file>images/qtSpecific/z_TurnManualL.png</file>
+		<file>images/qtSpecific/z_TurnManualR.png</file>
     </qresource>
 </RCC>
