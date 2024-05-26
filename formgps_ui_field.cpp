@@ -40,13 +40,13 @@ void FormGPS::field_update_list() {
 
 void FormGPS::field_close() {
     lock.lockForWrite();
-    fileSaveEverythingBeforeClosingField(NULL);
+    fileSaveEverythingBeforeClosingField();
     lock.unlock();
 }
 
 void FormGPS::field_open(QString field_name) {
     lock.lockForWrite();
-    fileSaveEverythingBeforeClosingField(NULL);
+    fileSaveEverythingBeforeClosingField();
     if (! FileOpenField(field_name)) {
         TimedMessageBox(8000, tr("Saved field does not exist."), QString(tr("Cannot find the requested saved field.")) + " " +
                                                                 field_name);
@@ -80,7 +80,7 @@ void FormGPS::field_new(QString field_name) {
 
 void FormGPS::field_new_from(QString existing, QString field_name, int flags) {
     lock.lockForWrite();
-    fileSaveEverythingBeforeClosingField(NULL);
+    fileSaveEverythingBeforeClosingField();
     if (! FileOpenField(existing,flags)) { //load whatever is requested from existing field
         TimedMessageBox(8000, tr("Existing field cannot be found"), QString(tr("Cannot find the existing saved field.")) + " " +
                                                                 existing);

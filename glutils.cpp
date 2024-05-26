@@ -23,6 +23,12 @@ static int CharXSpacing = 14;
 int textureWidth;
 int textureHeight;
 
+#ifdef LOCAL_QML
+#define PREFIX "local:"
+#else
+#define PREFIX ":"
+#endif
+
 
 bool isFontOn = true;
 
@@ -35,20 +41,20 @@ void initializeShaders() {
     //All shader memory will be managed by the current QThread
     if (!simpleColorShader) {
         simpleColorShader = new QOpenGLShaderProgram(QThread::currentThread()); //memory managed by Qt
-        assert(simpleColorShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/color_vshader.vsh"));
-        assert(simpleColorShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/color_fshader.fsh"));
+        assert(simpleColorShader->addShaderFromSourceFile(QOpenGLShader::Vertex, PREFIX "/shaders/color_vshader.vsh"));
+        assert(simpleColorShader->addShaderFromSourceFile(QOpenGLShader::Fragment, PREFIX "/shaders/color_fshader.fsh"));
         assert(simpleColorShader->link());
     }
     if (!texShader) {
         texShader = new QOpenGLShaderProgram(QThread::currentThread()); //memory managed by Qt
-        assert(texShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/colortex_vshader.vsh"));
-        assert(texShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/colortex_fshader.fsh"));
+        assert(texShader->addShaderFromSourceFile(QOpenGLShader::Vertex, PREFIX "/shaders/colortex_vshader.vsh"));
+        assert(texShader->addShaderFromSourceFile(QOpenGLShader::Fragment, PREFIX "/shaders/colortex_fshader.fsh"));
         assert(texShader->link());
     }
     if (!interpColorShader) {
         interpColorShader = new QOpenGLShaderProgram(QThread::currentThread()); //memory managed by Qt
-        assert(interpColorShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/colors_vshader.vsh"));
-        assert(interpColorShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/colors_fshader.fsh"));
+        assert(interpColorShader->addShaderFromSourceFile(QOpenGLShader::Vertex, PREFIX "/shaders/colors_vshader.vsh"));
+        assert(interpColorShader->addShaderFromSourceFile(QOpenGLShader::Fragment, PREFIX "/shaders/colors_fshader.fsh"));
         assert(interpColorShader->link());
     }
 }
@@ -57,85 +63,85 @@ void initializeTextures() {
     QOpenGLTexture *t;
 
     //  Background
-    t = new QOpenGLTexture(QImage(":/images/textures/Landscape.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/Landscape.png"));
     texture.append(t); //position 0 SKY?
 
-    t = new QOpenGLTexture(QImage(":/images/textures/floor.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/floor.png"));
     t->setMinMagFilters(QOpenGLTexture::Linear, QOpenGLTexture::Linear);
     texture.append(t); //position 1 FLOOR
 
-    t = new QOpenGLTexture(QImage(":/images/textures/Font.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/Font.png"));
     textureWidth = t->width();
     textureHeight= t->height();
     texture.append(t); //position 2 FONT
 
-    t = new QOpenGLTexture(QImage(":/images/textures/Turn.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/Turn.png"));
     texture.append(t); //position 3 TURN
 
-    t = new QOpenGLTexture(QImage(":/images/textures/TurnCancel.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/TurnCancel.png"));
     texture.append(t); //position 4 TURNCANCEL
 
-    t = new QOpenGLTexture(QImage(":/images/textures/TurnManual.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/TurnManual.png"));
     texture.append(t); //position 5 TURNMANUAL
 
-    t = new QOpenGLTexture(QImage(":/images/textures/Compass.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/Compass.png"));
     texture.append(t); //position 6 COMPASS
 
-    t = new QOpenGLTexture(QImage(":/images/textures/speedo.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/speedo.png"));
     texture.append(t); //position 7 SPEEDO
 
-    t = new QOpenGLTexture(QImage(":/images/textures/SpeedoNedle.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/SpeedoNedle.png"));
     texture.append(t); //position 8 SPEEDONEEDLE
 
-    t = new QOpenGLTexture(QImage(":/images/textures/Lift.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/Lift.png"));
     texture.append(t); //position 9 HYDIFT
 
-    t = new QOpenGLTexture(QImage(":/images/textures/LandscapeNight.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/LandscapeNight.png"));
     texture.append(t); //position 10 SKYNIGHT
 
-    t = new QOpenGLTexture(QImage(":/images/textures/z_SteerPointer.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/z_SteerPointer.png"));
     texture.append(t); //position 11 STEER_POINTER
 
-    t = new QOpenGLTexture(QImage(":/images/textures/z_SteerDot.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/z_SteerDot.png"));
     texture.append(t); //position 12 STEER_DOT
 
-    t = new QOpenGLTexture(QImage(":/images/textures/z_Tractor.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/z_Tractor.png"));
     texture.append(t); //position 13 TRACTOR
 
-    t = new QOpenGLTexture(QImage(":/images/textures/z_QuestionMark.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/z_QuestionMark.png"));
     texture.append(t); //position 14 QUESTION_MARK
 
-    t = new QOpenGLTexture(QImage(":/images/textures/FrontWheels.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/FrontWheels.png"));
     texture.append(t); //position 15 FRONT_WHEELS
 
-    t = new QOpenGLTexture(QImage(":/images/textures/Tractor4WDFront.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/Tractor4WDFront.png"));
     texture.append(t); //position 16 TRACTOR_4WD_FRONT
 
-    t = new QOpenGLTexture(QImage(":/images/textures/Tractor4WDRear.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/Tractor4WDRear.png"));
     texture.append(t); //position 17 TRACTOR_4WD_REAR
 
-    t = new QOpenGLTexture(QImage(":/images/textures/Harvester.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/Harvester.png"));
     texture.append(t); //position 18 HARVESTER
 
-    t = new QOpenGLTexture(QImage(":/images/textures/z_LateralManual.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/z_LateralManual.png"));
     texture.append(t); //position 19 LATERAL_MANUAL
 
-    t = new QOpenGLTexture(QImage(":/images/textures/bingMap.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/bingMap.png"));
     texture.append(t); //position 20 BING_MAP
 
-    t = new QOpenGLTexture(QImage(":/images/textures/z_NoGPS.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/z_NoGPS.png"));
     texture.append(t); //position 21 NOGPS
 
-    t = new QOpenGLTexture(QImage(":/images/textures/bingMap.png")); //unused I think
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/bingMap.png")); //unused I think
     texture.append(t); //position 22 ZOOM_IN
 
-    t = new QOpenGLTexture(QImage(":/images/textures/bingMap.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/bingMap.png"));
     texture.append(t); //position 23 ZOOM_OUT
 
-    t = new QOpenGLTexture(QImage(":/images/textures/bingMap.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/bingMap.png"));
     texture.append(t); //position 24 PAN
 
-    t = new QOpenGLTexture(QImage(":/images/textures/z_Tool.png"));
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/z_Tool.png"));
     texture.append(t); //position 25 TOOLWHEELS
 }
 
@@ -404,7 +410,7 @@ void drawText3D(const CCamera &camera, QOpenGLFunctions *gl,
 
     mvp.translate(x1, y1, 0);
 
-    if ((double)property_setwin < -45)
+    if ((double)property_setDisplay_camPitch < -45)
     {
         mvp.rotate(90, 1, 0, 0);
         if (camera.camFollowing) mvp.rotate(-camera.camHeading, 0, 1, 0);
@@ -479,7 +485,7 @@ void drawTextVehicle(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp
     size = pow(size, 0.8)/800;
 
     //2d
-    if ((double)property_setwin > -58)
+    if ((double)property_setDisplay_camPitch > -58)
     {
         if (!camera.camFollowing)
         {
@@ -504,7 +510,7 @@ void drawTextVehicle(const CCamera &camera, QOpenGLFunctions *gl, QMatrix4x4 mvp
         }
         else
         {
-            mvp.rotate(-(double)property_setwin, 1, 0, 0);
+            mvp.rotate(-(double)property_setDisplay_camPitch, 1, 0, 0);
             y *= 0.3;
         }
     }

@@ -668,14 +668,14 @@ bool FormGPS::FileOpenField(QString fieldDir, int flags)
         pn.latStart = offs[0].toDouble();
         pn.lonStart = offs[1].toDouble();
 
-        //if (timerSim.isActive())
-        //{
+        if (timerSim.isActive())
+        {
             pn.latitude = pn.latStart;
             pn.longitude = pn.lonStart;
 
-            sim.latitude = pn.latStart;
-            sim.longitude = pn.lonStart;
-        //}
+            sim.latitude = property_setGPS_SimLatitude = pn.latStart;
+            sim.longitude = property_setGPS_SimLongitude = pn.lonStart;
+        }
         pn.SetLocalMetersPerDegree();
     }
 

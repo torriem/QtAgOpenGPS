@@ -108,7 +108,8 @@ public:
     //from Position.Designer.cs
     bool isReverse;
 
-
+    QRect bounding_box;
+    QPoint pivot_axle_xy;
 
     void loadSettings();
 
@@ -117,6 +118,7 @@ public:
     void DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection,
                      double steerAngle,
                      bool isFirstHeadingSet,
+                     QRect viewport,
                      const CCamera &camera,
                      const CTool &tool,
                      CBoundary &bnd,

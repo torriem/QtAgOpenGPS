@@ -18,6 +18,8 @@
 #include "qmlsectionbuttons.h"
 #include "interfaceproperty.h"
 #include "cboundarylist.h"
+#include <cmath>
+#include <cstring>
 
 QString caseInsensitiveFilename(QString directory, QString filename);
 
@@ -33,40 +35,95 @@ void FormGPS::setupGui()
     rootContext()->setContextProperty("mainForm", this);
     rootContext()->setContextProperty("settings", &qml_settings);
 
+#ifdef LOCAL_QML
+    // Look for QML files relative to our current directory
+    QStringList search_pathes = { "..",
+                                 "../qtaog",
+                                 "../QtAgOpenGPS",
+                                 "."
+    };
+
+    qWarning() << "Looking for QML.";
+    for(QString search_path : search_pathes) {
+        //look relative to current working directory
+        QDir d = QDir(QDir::currentPath() + "/" + search_path + "/qml/");
+        if (d.exists("AOGInterface.qml")) {
+            QDir::addSearchPath("local",QDir::currentPath() + "/" + search_path);
+            qWarning() << "QML path is " << search_path;
+            break;
+        }
+
+        //look relative to the executable's directory
+        d = QDir(QCoreApplication::applicationDirPath() + "/" + search_path + "/qml/");
+        if (d.exists("AOGInterface.qml")) {
+            QDir::addSearchPath("local",QCoreApplication::applicationDirPath() + "/" + search_path);
+            qWarning() << "QML path is " << search_path;
+            break;
+        }
+    }
+
+    QObject::connect(this, &QQmlApplicationEngine::warnings, [=] (const QList<QQmlError> &warnings) {
+        foreach (const QQmlError &error, warnings) {
+            qWarning() << "warning: " << error.toString();
+        }
+    });
+
+    rootContext()->setContextProperty("prefix","local:");
+    load("local:/qml/MainWindow.qml");
+#else
+    rootContext()->setContextProperty("prefix",":");
     load(QUrl("qrc:/qml/MainWindow.qml"));
-    //setColor(Qt::transparent);
+#endif
 
     //get pointer to root QML object, which is the OpenGLControl,
     //store in a member variable for future use.
-    qml_root = rootObjects().first();
+    QList<QObject*> root_context = rootObjects();
+
+    if (root_context.length() == 0) {
+        qWarning() << "MainWindow.qml did not load.  Aborting.";
+        assert(root_context.length() > 0);
+    }
+
+    qml_root = root_context.first();
 
     qml_root->setProperty("visible",true);
 
     //have to do this for each Interface and supported data type.
     InterfaceProperty<AOGInterface, int>::set_qml_root(qmlItem(qml_root, "aog"));
+    InterfaceProperty<AOGInterface, uint>::set_qml_root(qmlItem(qml_root, "aog"));
     InterfaceProperty<AOGInterface, bool>::set_qml_root(qmlItem(qml_root, "aog"));
     InterfaceProperty<AOGInterface, double>::set_qml_root(qmlItem(qml_root, "aog"));
     InterfaceProperty<AOGInterface, btnStates>::set_qml_root(qmlItem(qml_root, "aog"));
 
     InterfaceProperty<LinesInterface, int>::set_qml_root(qmlItem(qml_root, "linesInterface"));
+    InterfaceProperty<LinesInterface, uint>::set_qml_root(qmlItem(qml_root, "linesInterface"));
     InterfaceProperty<LinesInterface, bool>::set_qml_root(qmlItem(qml_root, "linesInterface"));
     InterfaceProperty<LinesInterface, double>::set_qml_root(qmlItem(qml_root, "linesInterface"));
     InterfaceProperty<LinesInterface, btnStates>::set_qml_root(qmlItem(qml_root, "linesInterface"));
 
     InterfaceProperty<FieldInterface, int>::set_qml_root(qmlItem(qml_root, "fieldInterface"));
+    InterfaceProperty<FieldInterface, uint>::set_qml_root(qmlItem(qml_root, "fieldInterface"));
     InterfaceProperty<FieldInterface, bool>::set_qml_root(qmlItem(qml_root, "fieldInterface"));
     InterfaceProperty<FieldInterface, double>::set_qml_root(qmlItem(qml_root, "fieldInterface"));
     InterfaceProperty<FieldInterface, btnStates>::set_qml_root(qmlItem(qml_root, "fieldInterface"));
 
     InterfaceProperty<VehicleInterface, int>::set_qml_root(qmlItem(qml_root, "vehicleInterface"));
+    InterfaceProperty<VehicleInterface, uint>::set_qml_root(qmlItem(qml_root, "vehicleInterface"));
     InterfaceProperty<VehicleInterface, bool>::set_qml_root(qmlItem(qml_root, "vehicleInterface"));
     InterfaceProperty<VehicleInterface, double>::set_qml_root(qmlItem(qml_root, "vehicleInterface"));
     InterfaceProperty<VehicleInterface, btnStates>::set_qml_root(qmlItem(qml_root, "vehicleInterface"));
 
     InterfaceProperty<BoundaryInterface, int>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
+    InterfaceProperty<BoundaryInterface, uint>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
     InterfaceProperty<BoundaryInterface, bool>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
     InterfaceProperty<BoundaryInterface, double>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
     InterfaceProperty<BoundaryInterface, btnStates>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
+
+    InterfaceProperty<RecordedPathInterface, int>::set_qml_root(qmlItem(qml_root, "recordedPathInterface"));
+    InterfaceProperty<RecordedPathInterface, uint>::set_qml_root(qmlItem(qml_root, "recordedPathInterface"));
+    InterfaceProperty<RecordedPathInterface, bool>::set_qml_root(qmlItem(qml_root, "recordedPathInterface"));
+    InterfaceProperty<RecordedPathInterface, double>::set_qml_root(qmlItem(qml_root, "recordedPathInterface"));
+    InterfaceProperty<RecordedPathInterface, btnStates>::set_qml_root(qmlItem(qml_root, "recordedPathInterface"));
 
     QMLSectionButtons::set_aog_root(qmlItem(qml_root, "aog"));
 
@@ -91,12 +148,10 @@ void FormGPS::setupGui()
     openGLControl->setMirrorVertically(true);
     connect(openGLControl,SIGNAL(clicked(QVariant)),this,SLOT(onGLControl_clicked(QVariant)));
     connect(openGLControl,SIGNAL(dragged(int,int,int,int)),this,SLOT(onGLControl_dragged(int,int,int,int)));
-    connect(openGLControl,SIGNAL(zoomIn()),this,SLOT(onBtnZoomIn_clicked()));
-    connect(openGLControl,SIGNAL(zoomOut()),this,SLOT(onBtnZoomOut_clicked()));
 
     //TODO: save and restore these numbers from settings
-    qml_root->setProperty("width",1024);
-    qml_root->setProperty("height",768);
+//    qml_root->setProperty("width",1024);
+//    qml_root->setProperty("height",768);
 
     //AB Line Picker
     //react to UI changing these properties
@@ -110,13 +165,33 @@ void FormGPS::setupGui()
     connect(linesInterface,SIGNAL(abLine_swapHeading(int)), this, SLOT(swap_heading_ABLine(int)));
     connect(linesInterface,SIGNAL(abLine_changeName(int, QString)), this, SLOT(change_name_ABLine(int,QString)));
 
+    //on screen buttons
+    connect(aog,SIGNAL(zoomIn()), this, SLOT(onBtnZoomIn_clicked()));
+    connect(aog,SIGNAL(zoomOut()), this, SLOT(onBtnZoomOut_clicked()));
+    connect(aog,SIGNAL(tiltDown()), this, SLOT(onBtnTiltDown_clicked()));
+    connect(aog,SIGNAL(tiltUp()), this, SLOT(onBtnTiltUp_clicked()));
+    connect(aog,SIGNAL(btn2D()), this, SLOT(onBtn2D_clicked()));
+    connect(aog,SIGNAL(btn3D()), this, SLOT(onBtn3D_clicked()));
+    connect(aog,SIGNAL(n2D()), this, SLOT(onBtnN2D_clicked()));
+    connect(aog,SIGNAL(n3D()), this, SLOT(onBtnN3D_clicked()));
+    connect(aog, SIGNAL(isHydLiftOn()), this, SLOT(onBtnHydLift_clicked()));
+    connect(aog, SIGNAL(btnResetTool()), this, SLOT(onBtnResetTool_clicked()));
+    connect(aog, SIGNAL(btnHeadland()), this, SLOT(onBtnHeadland_clicked()));
+
+    connect(aog, SIGNAL(btnResetSim()), this, SLOT(onBtnResetSim_clicked()));
+    connect(aog, SIGNAL(reset_direction()), this, SLOT(onBtnResetDirection_clicked()));
+
+    connect(aog, SIGNAL(centerOgl()), this, SLOT(onBtnCenterOgl_clicked()));
 
     //manual youturn buttons
     connect(aog,SIGNAL(uturn(bool)), this, SLOT(onBtnManUTurn_clicked(bool)));
     connect(aog,SIGNAL(lateral(bool)), this, SLOT(onBtnLateral_clicked(bool)));
+    connect(aog,SIGNAL(autoYouTurn()), this, SLOT(onBtnAutoYouTurn_clicked()));
+    connect(aog,SIGNAL(swapAutoYouTurnDirection()), this, SLOT(onBtnSwapAutoYouTurnDirection_clicked()));
 
-    //TODO interface with UI's are you sure close dialog
-    connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
+
+    connect(qml_root, SIGNAL(save_everything()), this, SLOT(fileSaveEverythingBeforeClosingField()));
+    //connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
 
 
     //connect settings dialog box
@@ -143,9 +218,11 @@ void FormGPS::setupGui()
 
     //React to UI setting hyd life settings
     connect(aog, SIGNAL(modules_send_238()), this, SLOT(modules_send_238()));
+	connect(aog, SIGNAL(modules_send_251()), this, SLOT(modules_send_251()));
 
     connect(aog, SIGNAL(sim_bump_speed(bool)), &sim, SLOT(speed_bump(bool)));
     connect(aog, SIGNAL(sim_zero_speed()), &sim, SLOT(speed_zero()));
+    connect(aog, SIGNAL(sim_reset()), &sim, SLOT(reset()));
 
     //boundary signals and slots
     connect(&yt, SIGNAL(outOfBounds()),boundaryInterface,SLOT(setIsOutOfBoundsTrue()));
@@ -171,7 +248,17 @@ void FormGPS::setupGui()
     headland_form.connect_ui(qmlItem(qml_root, "headlandDesigner"));
     connect(&headland_form, SIGNAL(saveHeadland()),this,SLOT(headland_save()));
     connect(&headland_form, SIGNAL(timedMessageBox(int,QString,QString)),this,SLOT(TimedMessageBox(int,QString,QString)));
-    //TODO: connect the other signals in headland_form: turnOffAutoSteerBtn, turnOffYouTubeBtn
+
+    headache_form.bnd = &bnd;
+    headache_form.vehicle = &vehicle;
+    headache_form.hdl = &hdl;
+    headache_form.tool = &tool;
+
+    headache_form.connect_ui(qmlItem(qml_root, "headacheDesigner"));
+    connect(&headache_form, SIGNAL(saveHeadland()),this,SLOT(headland_save()));
+    connect(&headache_form, SIGNAL(timedMessageBox(int,QString,QString)),this,SLOT(TimedMessageBox(int,QString,QString)));
+    connect(&headache_form, SIGNAL(saveHeadlines()), this,SLOT(headlines_save()));
+    connect(&headache_form, SIGNAL(loadHeadlines()), this,SLOT(headlines_load()));
 
     //connect qml button signals to callbacks (it's not automatic with qml)
 
@@ -192,28 +279,7 @@ void FormGPS::setupGui()
     connect(btnContourPriority,SIGNAL(clicked()),this,
             SLOT(onBtnContourPriority_clicked()));
 
-    btnTiltDown = qmlItem(qml_root,"btnTiltDown");
-    connect(btnTiltDown,SIGNAL(clicked()),this,
-            SLOT(onBtnTiltDown_clicked()));
 
-    btnTiltUp = qmlItem(qml_root,"btnTiltUp");
-    connect(btnTiltUp,SIGNAL(clicked()),this,
-            SLOT(onBtnTiltUp_clicked()));
-
-    btnZoomIn = qmlItem(qml_root,"btnZoomIn");
-    connect(btnZoomIn,SIGNAL(clicked()),this,
-            SLOT(onBtnZoomIn_clicked()));
-
-    btnZoomOut = qmlItem(qml_root,"btnZoomOut");
-    connect(btnZoomOut,SIGNAL(clicked()),this,
-            SLOT(onBtnZoomOut_clicked()));
-
-    //icon palette
-
-
-    btnSettings = qmlItem(qml_root,"btnSettings");
-    connect(btnSettings,SIGNAL(clicked()),this,
-            SLOT(onBtnSettings_clicked()));
 
     //Any objects we don't need to access later we can just store
     //temporarily
@@ -261,6 +327,12 @@ void FormGPS::onGLControl_dragged(int pressX, int pressY, int mouseX, int mouseY
     camera.panY += offset.y();
     openGLControl->update();
 }
+void FormGPS::onBtnCenterOgl_clicked(){
+    qDebug()<<"center ogl";
+    camera.panX = 0;
+    camera.panY = 0;
+    openGLControl->update();
+}
 
 void FormGPS::onGLControl_clicked(const QVariant &event)
 {
@@ -300,17 +372,53 @@ void FormGPS::onBtnToggleAB_clicked(){
 void FormGPS::onBtnToggleABBack_clicked(){
     qDebug()<<"toggle AB back";
 }
-void FormGPS::onBtnAutoYouTurn_clicked(){
-    qDebug()<<"activate youturn";
-}
 void FormGPS::onBtnResetTool_clicked(){
     qDebug()<<"REset tool";
+               vehicle.tankPos.heading = vehicle.fixHeading;
+               vehicle.tankPos.easting = vehicle.hitchPos.easting + (sin(vehicle.tankPos.heading) * (tool.tankTrailingHitchLength));
+               vehicle.tankPos.northing = vehicle.hitchPos.northing + (cos(vehicle.tankPos.heading) * (tool.tankTrailingHitchLength));
+
+               vehicle.toolPivotPos.heading = vehicle.tankPos.heading;
+               vehicle.toolPivotPos.easting = vehicle.tankPos.easting + (sin(vehicle.toolPivotPos.heading) * (tool.trailingHitchLength));
+               vehicle.toolPivotPos.northing = vehicle.tankPos.northing + (cos(vehicle.toolPivotPos.heading) * (tool.trailingHitchLength));
 }
 void FormGPS::onBtnHeadland_clicked(){
     qDebug()<<"Headland";
+    bnd.isHeadlandOn = !bnd.isHeadlandOn;
+               if (bnd.isHeadlandOn)
+               {
+                   //btnHeadlandOnOff.Image = Properties.Resources.HeadlandOn;
+               }
+               else
+               {
+                   //btnHeadlandOnOff.Image = Properties.Resources.HeadlandOff;
+               }
+
+               if (vehicle.isHydLiftOn && !bnd.isHeadlandOn) vehicle.isHydLiftOn = false;
+
+               if (!bnd.isHeadlandOn)
+               {
+                   p_239.pgn[p_239.hydLift] = 0;
+                   //btnHydLift.Image = Properties.Resources.HydraulicLiftOff;
+               }
 }
 void FormGPS::onBtnHydLift_clicked(){
-    qDebug()<<"Hyd";
+    if (bnd.isHeadlandOn)
+    {
+        vehicle.isHydLiftOn = !vehicle.isHydLiftOn;
+        if (vehicle.isHydLiftOn)
+        {
+        }
+        else
+        {
+            p_239.pgn[p_239.hydLift] = 0;
+        }
+    }
+    else
+    {
+        p_239.pgn[p_239.hydLift] = 0;
+        vehicle.isHydLiftOn = false;
+    }
 }
 void FormGPS::onBtnTramlines_clicked(){
     qDebug()<<"tramline";
@@ -327,7 +435,14 @@ void FormGPS::onBtnSnapToPivot_clicked(){
 void FormGPS::onBtnYouSkip_clicked(){
     qDebug()<<"you skip";
 }
-
+void FormGPS::onBtnResetDirection_clicked(){
+    qDebug()<<"reset Direction";
+    // c#Array.Clear(stepFixPts, 0, stepFixPts.Length);
+    std::memset(stepFixPts, 0, sizeof(stepFixPts));
+                    isFirstHeadingSet = false;
+                    vehicle.isReverse = false;
+                    TimedMessageBox(2000, "Reset Direction", "Drive Forward > 1.5 kmh");
+}
 void FormGPS::onBtnFlag_clicked() {
 
     //TODO if this button is disabled until field is started, we won't
@@ -375,12 +490,12 @@ void FormGPS::onBtnTiltDown_clicked(){
     if (camera.camPitch < -76) camera.camPitch = -76;
 
     lastHeight = -1; //redraw the sky
-    property_setwin = camera.camPitch;
+    property_setDisplay_camPitch = camera.camPitch;
     openGLControl->update();
 }
 
 void FormGPS::onBtnTiltUp_clicked(){
-    double camPitch = property_setwin;
+    double camPitch = property_setDisplay_camPitch;
 
     qDebug()<<"TiltUp button clicked.";
 
@@ -388,10 +503,29 @@ void FormGPS::onBtnTiltUp_clicked(){
     camera.camPitch -= ((camera.camPitch * 0.012) - 1);
     if (camera.camPitch > -58) camera.camPitch = 0;
 
-    property_setwin = camera.camPitch;
+    property_setDisplay_camPitch = camera.camPitch;
     openGLControl->update();
 }
-
+void FormGPS::onBtn2D_clicked(){
+    camera.camFollowing = true;
+    camera.camPitch = 0;
+    navPanelCounter = 0;
+}
+void FormGPS::onBtn3D_clicked(){
+    camera.camFollowing = true;
+    camera.camPitch = -65;
+    navPanelCounter = 0;
+}
+void FormGPS::onBtnN2D_clicked(){
+    camera.camFollowing = false;
+    camera.camPitch = 0;
+    navPanelCounter = 0;
+}
+void FormGPS::onBtnN3D_clicked(){
+    camera.camPitch = -65;
+    camera.camFollowing = false;
+    navPanelCounter = 0;
+}
 void FormGPS::onBtnZoomIn_clicked(){
     qDebug() <<"ZoomIn button clicked.";
     if (camera.zoomValue <= 20) {
@@ -463,6 +597,54 @@ void FormGPS::onBtnDeleteAllFlags_clicked()
     flagNumberPicked = 0;
     //TODO: FileSaveFlags
 }
+void FormGPS::onBtnAutoYouTurn_clicked(){
+    qDebug()<<"activate youturn";
+    yt.isTurnCreationTooClose = false;
+
+//     if (bnd.bndArr.Count == 0)    this needs to be moved to qml
+//     {
+//         TimedMessageBox(2000, gStr.gsNoBoundary, gStr.gsCreateABoundaryFirst);
+//         return;
+//     }
+
+     if (!yt.isYouTurnBtnOn)
+     {
+         //new direction so reset where to put turn diagnostic
+         yt.ResetCreatedYouTurn();
+
+         if (!isAutoSteerBtnOn) return;
+         yt.isYouTurnBtnOn = true;
+         yt.isTurnCreationTooClose = false;
+         yt.isTurnCreationNotCrossingError = false;
+         yt.ResetYouTurn();
+         //mc.autoSteerData[mc.sdX] = 0;
+//         mc.machineControlData[mc.cnYouTurn] = 0;
+//         btnAutoYouTurn.Image = Properties.Resources.Youturn80;
+     }
+     else
+     {
+         yt.isYouTurnBtnOn = false;
+//         yt.rowSkipsWidth = Properties.Vehicle.Default.set_youSkipWidth;
+//         btnAutoYouTurn.Image = Properties.Resources.YouTurnNo;
+         yt.ResetYouTurn();
+
+         //new direction so reset where to put turn diagnostic
+         yt.ResetCreatedYouTurn();
+
+         //mc.autoSteerData[mc.sdX] = 0;commented in aog
+//         mc.machineControlData[mc.cnYouTurn] = 0;
+     }
+}
+void FormGPS::onBtnSwapAutoYouTurnDirection_clicked()
+ {
+     if (!yt.isYouTurnTriggered)
+     {
+         yt.isYouTurnRight = !yt.isYouTurnRight;
+         yt.ResetCreatedYouTurn();
+     }
+     //else if (yt.isYouTurnBtnOn)
+         //btnAutoYouTurn.PerformClick();
+ }
 
 void FormGPS::onBtnManUTurn_clicked(bool right)
 {
@@ -532,9 +714,37 @@ void FormGPS::modules_send_238() {
     qDebug() << p_238.pgn;
     SendPgnToLoop(p_238.pgn);
 }
+void FormGPS::modules_send_251() {
+	//qDebug() << "Sending 251 message to AgIO";
+	p_251.pgn[p_251.set0] = (int)property_setArdSteer_setting0;
+	p_251.pgn[p_251.set1] = (int)property_setArdSteer_setting1;
+	p_251.pgn[p_251.maxPulse] = (int)property_setArdSteer_maxPulseCounts;
+	p_251.pgn[p_251.minSpeed] = 5; //0.5 kmh THIS IS CHANGED IN AOG FIXES
+
+	if ((int)property_setAS_isConstantContourOn)
+		p_251.pgn[p_251.angVel] = 1;
+	else p_251.pgn[p_251.angVel] = 0;
+
+	qDebug() << p_251.pgn;
+	SendPgnToLoop(p_251.pgn);
+}
 
 void FormGPS::headland_save() {
     //TODO make FileHeadland() a slot so we don't have to have this
     //wrapper.
     FileSaveHeadland();
+}
+
+void FormGPS::headlines_load() {
+    //TODO make FileLoadHeadLines a slot, skip this wrapper
+    FileLoadHeadLines();
+}
+
+void FormGPS::headlines_save() {
+    //TODO make FileSaveHeadLines a slot, skip this wrapper
+    FileSaveHeadLines();
+}
+void FormGPS::onBtnResetSim_clicked(){
+    sim.latitude = property_setGPS_SimLatitude;
+    sim.longitude = property_setGPS_SimLongitude;
 }

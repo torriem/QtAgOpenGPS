@@ -45,6 +45,7 @@
 #include "cpgn.h"
 
 #include "formheadland.h"
+#include "formheadache.h"
 
 //forward declare classes referred to below, to break circular
 //references in the code
@@ -249,14 +250,15 @@ public:
     //makes nav panel disappear after 6 seconds
     int navPanelCounter = 0;
 
-    uint sentenceCounter = 0;
+    InterfaceProperty<AOGInterface,uint> sentenceCounter = InterfaceProperty<AOGInterface,uint>("sentenceCounter");
+    bool hydLiftDown = false;
 
 
     //master Manual and Auto, 3 states possible
     //btnStates manualBtnState = btnStates::Off;
     //btnStates autoBtnState = btnStates::Off;
     InterfaceProperty<AOGInterface,btnStates> manualBtnState = InterfaceProperty<AOGInterface,btnStates>("manualBtnState");
-    InterfaceProperty<AOGInterface,btnStates> autoBtnState = InterfaceProperty<AOGInterface,btnStates>("manualBtnState");
+    InterfaceProperty<AOGInterface,btnStates> autoBtnState = InterfaceProperty<AOGInterface,btnStates>("autoBtnState");
 
 private:
 public:
@@ -328,6 +330,7 @@ public:
     CHeadLine hdl;
 
     FormHeadland headland_form;
+    FormHeadache headache_form;
 
     /*
      * PGNs *
@@ -613,7 +616,6 @@ public:
     void DrawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int height);
     void DrawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height);
     void DrawCompass(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width);
-    void DrawReverse(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width, double Height);
     void DrawLiftIndicator(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, int Width, int Height);
     void DrawLostRTK(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);
     void DrawAge(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);
@@ -696,6 +698,7 @@ public slots:
 
     //modules ui callback
     void modules_send_238();
+	void modules_send_251();
 
     //boundary UI for recording new boundary
     void boundary_calculate_area();
@@ -712,9 +715,12 @@ public slots:
     void boundary_delete_all();
 
     void headland_save();
+    void headlines_save();
+    void headlines_load();
 
     //headland creation
 
+    void onBtnResetDirection_clicked();
     //left column
     void onBtnAcres_clicked();
     void onBtnSettings_clicked();
@@ -726,6 +732,7 @@ public slots:
     void onBtnToggleAB_clicked();
     void onBtnToggleABBack_clicked();
     void onBtnAutoYouTurn_clicked();
+    void onBtnSwapAutoYouTurnDirection_clicked();
     void onBtnContourPriority_clicked();
     //bottom row
     void onBtnResetTool_clicked();
@@ -740,8 +747,13 @@ public slots:
     void onBtnYouSkip_clicked();
 
 
+    //displaybuttons.qml
     void onBtnTiltDown_clicked();
     void onBtnTiltUp_clicked();
+    void onBtn2D_clicked();
+    void onBtn3D_clicked();
+    void onBtnN2D_clicked();
+    void onBtnN3D_clicked();
 
     void onBtnZoomIn_clicked();
     void onBtnZoomOut_clicked();
@@ -757,6 +769,9 @@ public slots:
 
     void onBtnManUTurn_clicked(bool right); //TODO add the skip number as a parameter
     void onBtnLateral_clicked(bool right); //TODO add the skip number as a parameter
+    void onBtnResetSim_clicked();
+
+    void onBtnCenterOgl_clicked();
 
     /***************************
      * from OpenGL.Designer.cs *
@@ -795,7 +810,7 @@ public slots:
     /*
      * misc
      */
-    void fileSaveEverythingBeforeClosingField(QQuickCloseEvent *event);
+    void fileSaveEverythingBeforeClosingField();
 
     /* formgps_classcallbacks.cpp */
     void onStopAutoSteer(); //cancel autosteer and ensure button state

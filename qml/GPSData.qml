@@ -1,5 +1,6 @@
-import QtQuick 2.0
-import QtQuick.Controls 2.5
+import QtQuick
+import QtQuick.Controls.Fusion
+import "components"
 
 Rectangle{
     id: gpsData
@@ -17,8 +18,8 @@ Rectangle{
         TextLine{ color: "white"; text: qsTr("# Sats ", "abbreviation for # Satellites")+ aog.satellitesTracked}
         TextLine{ color: "white"; text: qsTr("HDOP ", "acronym for Horizontal Degree Of Position") + (Number(aog.hdop).toLocaleString(Qt.locale(), 'f', 3))}
         TextLine{ color: "white"; text: qsTr("Frame ")+ (Number(aog.frameTime).toLocaleString(Qt.locale(), 'f', 1))}
-        TextLine{ color: "white"; text: qsTr("Raw Hz ", "abbreviation for Raw Hertz")+ aog.rawHZ}
-        TextLine{ color: "white"; text: qsTr("Hz ", "abbreviation for Hertz")+ aog.hz}
+        TextLine{ color: "white"; text: qsTr("Raw Hz ", "abbreviation for Raw Hertz")+ (Number(aog.rawHz).toLocaleString(Qt.locale(), 'f', 1))}
+        TextLine{ color: "white"; text: qsTr("Hz ", "abbreviation for Hertz")+ (Number(aog.hz).toLocaleString(Qt.locale(), 'f', 1))}
         TextLine{ color: "white"; text: qsTr("Missed ")+ aog.missedSentences}
         TextLine{ color: "white"; text: qsTr("Fix2Fix ")+ (Number(aog.heading * 180 / Math.PI).toLocaleString(Qt.locale(), 'f', 1))}
         TextLine{ color: "white"; text: qsTr("IMU ")+ (Number(aog.imuHeading * 180 / Math.PI).toLocaleString(Qt.locale(), 'f', 1))}

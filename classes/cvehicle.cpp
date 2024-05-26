@@ -15,6 +15,35 @@
 #include "cabcurve.h"
 #include "ccontour.h"
 
+QRect find_bounding_box(int viewport_height, QVector3D p1, QVector3D p2, QVector3D p3, QVector3D p4) {
+    float x_min = glm::FLOAT_MAX;
+    float x_max = glm::FLOAT_MIN;
+    float y_min = glm::FLOAT_MAX;
+    float y_max = glm::FLOAT_MIN;
+
+    if(p1.x() < x_min) x_min = p1.x();
+    if(p1.x() > x_max) x_max = p1.x();
+    if(p1.y() < y_min) y_min = p1.y();
+    if(p1.y() > y_max) y_max = p1.y();
+
+    if(p2.x() < x_min) x_min = p2.x();
+    if(p2.x() > x_max) x_max = p2.x();
+    if(p2.y() < y_min) y_min = p2.y();
+    if(p2.y() > y_max) y_max = p2.y();
+
+    if(p3.x() < x_min) x_min = p3.x();
+    if(p3.x() > x_max) x_max = p3.x();
+    if(p3.y() < y_min) y_min = p3.y();
+    if(p3.y() > y_max) y_max = p3.y();
+
+    if(p4.x() < x_min) x_min = p4.x();
+    if(p4.x() > x_max) x_max = p4.x();
+    if(p4.y() < y_min) y_min = p4.y();
+    if(p4.y() > y_max) y_max = p4.y();
+
+    return QRect(x_min, viewport_height - y_max, x_max-x_min, y_max-y_min);
+}
+
 void CVehicle::loadSettings()
 {
     isPivotBehindAntenna = property_setVehicle_isPivotBehindAntenna;
@@ -109,6 +138,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
                            QMatrix4x4 projection,
                            double steerAngle,
                            bool isFirstHeadingSet,
+                           QRect viewport,
                            const CCamera &camera,
                            const CTool &tool,
                            CBoundary &bnd,
@@ -131,6 +161,17 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
     QMatrix4x4 mvp = projection*modelview;
 
     float vehicleOpacity = 1.0f; //TODO: mf.vehicleOpacity
+
+    QVector3D p1;
+    QVector3D p2;
+    QVector3D p3;
+    QVector3D p4;
+    QVector3D s;
+    int x,w;
+
+    s = QVector3D(0,0,0);
+    p1 = s.project(modelview, projection, viewport);
+    pivot_axle_xy = QPoint(p1.x(), p1.y());
 
     if (isFirstHeadingSet && !tool.isToolFrontFixed)
     {
@@ -185,6 +226,10 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
     if (
         property_setDisplay_isVehicleImage)
     {
+        s = QVector3D(0,0,0); //should be pivot axle
+        p1 = s.project(modelview, projection, viewport);
+        pivot_axle_xy = QPoint(p1.x(), viewport.height() - p1.y());
+
         if (vehicleType == 0)
         {
             //vehicle body
@@ -212,6 +257,20 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
             gltex.append( { QVector3D(trackWidth, -wheelbase * 0.5, 0.0),  QVector2D(1, 1) } );
             gltex.append( { QVector3D(-trackWidth, -wheelbase * 0.5, 0.0), QVector2D(0, 1) } );
             gltex.draw(gl,mvp,Textures::TRACTOR,GL_TRIANGLE_STRIP,false); //TODO: colorize
+
+            s = QVector3D(-trackWidth, wheelbase * 1.5, 0.0); //front left corner
+            p1 = s.project(modelview,projection, viewport);
+
+            s = QVector3D(trackWidth, wheelbase * 1.5, 0.0); //front right corner
+            p2 = s.project(modelview, projection, viewport);
+
+            s = QVector3D(-trackWidth, -wheelbase * 0.5, 0.0); //rear left corne
+            p3 = s.project(modelview, projection, viewport);
+
+            s = QVector3D(trackWidth, -wheelbase * 0.5, 0.0); //rear right corner
+            p4 = s.project(modelview, projection, viewport);
+
+            bounding_box = find_bounding_box(viewport.height(),p1, p2, p3, p4);
 
             //right wheel
             //push modelview... nop because savedModelView already has a copy
@@ -303,6 +362,19 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
             gltex.append( { QVector3D(-trackWidth, -wheelbase * 1.5, 0.0), QVector2D(0, 1) } );
             gltex.draw(gl,mvp,Textures::HARVESTER,GL_TRIANGLE_STRIP,false); //TODO: colorize
 
+            s = QVector3D(-trackWidth, wheelbase * 1.5, 0.0); //front left corner
+            p1 = s.project(modelview,projection, viewport);
+
+            s = QVector3D(trackWidth, wheelbase * 1.5, 0.0); //front right corner
+            p2 = s.project(modelview, projection, viewport);
+
+            s = QVector3D(-trackWidth, -wheelbase * 1.5, 0.0); //rear left corne
+            p3 = s.project(modelview, projection, viewport);
+
+            s = QVector3D(trackWidth, -wheelbase * 1.5, 0.0); //rear right corner
+            p4 = s.project(modelview, projection, viewport);
+
+            bounding_box = find_bounding_box(viewport.height(),p1, p2, p3, p4);
         }
         else if (vehicleType == 2) //4WD tractor, articulated
         {
@@ -324,6 +396,12 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
 
             gltex.draw(gl,projection*modelview,Textures::TRACTOR_4WD_REAR,GL_TRIANGLE_STRIP,false); //TODO: colorize
 
+            s = QVector3D(-trackWidth, -wheelbase * 0.65, 0.0); //rear left corner
+            p3 = s.project(modelview, projection, viewport);
+
+            s = QVector3D(trackWidth, -wheelbase * 0.65, 0.0); //rear right corner
+            p4 = s.project(modelview, projection, viewport);
+
             modelview = savedModelView; //pop matrix
 
             //tractor front
@@ -339,6 +417,13 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
             modelview.rotate(-modelSteerAngle, 0, 0, 1);
 
             gltex.draw(gl,projection*modelview,Textures::TRACTOR_4WD_FRONT,GL_TRIANGLE_STRIP,false); //TODO: colorize
+
+            s = QVector3D(-trackWidth, wheelbase * 0.65, 0.0); //front left corner
+            p1 = s.project(modelview,projection, viewport);
+            s = QVector3D(-trackWidth, wheelbase * 0.65, 0.0); //front right corner
+            p2 = s.project(modelview,projection, viewport);
+
+            bounding_box = find_bounding_box(viewport.height(),p1, p2, p3, p4);
 
             modelview = savedModelView; //pop matrix
         }
@@ -360,6 +445,16 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
         gldraw.append(QVector3D(0, wheelbase, 0));
         gldraw.draw(gl,mvp,color,GL_LINE_LOOP, 3.0f);
 
+        s = QVector3D(0, wheelbase, 0); //front point
+        p1 = s.project(modelview,projection, viewport);
+
+        s = QVector3D(-1.0, 0, 0.0); //rear left corne
+        p3 = s.project(modelview, projection, viewport);
+
+        s = QVector3D(1.0, 0, 0.0); //rear right corner
+        p4 = s.project(modelview, projection, viewport);
+
+        bounding_box = find_bounding_box(viewport.height(), p1, p1, p3, p4);
     }
 
     if (camera.camSetDistance > -75 && isFirstHeadingSet)
@@ -434,7 +529,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
 
     if(!(bool)property_setDisplay_topTrackNum) {
         color.setRgbF(1.269, 1.25, 1.2510, 0.87); //?? why over 1.0?
-        if (curve.isBtnCurveOn && !ct.isContourBtnOn)
+        if (curve.isBtnCurveOn && (bool)ct.isContourBtnOn == false)
         {
             if (curve.howManyPathsAway == 0) {
                 drawTextVehicle(camera, gl, mvp, 2, wheelbase+1, "0", 1,
@@ -449,8 +544,9 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
                                 true, color);
             }
         }
-        else if (ABLine.isBtnABLineOn && !ct.isContourBtnOn)
+        else if (ABLine.isBtnABLineOn && (bool)ct.isContourBtnOn == false)
         {
+            if(ct.isContourBtnOn)
             if (ABLine.howManyPathsAway == 0) {
                 drawTextVehicle(camera, gl, mvp, 2, wheelbase+1, "0", 1,
                                 true, color);

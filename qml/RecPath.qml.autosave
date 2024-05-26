@@ -1,0 +1,48 @@
+import QtQuick
+import QtQuick.Controls
+
+import "components"
+
+MoveablePopup{
+    id: recPath
+    height: parent.height *.5
+    x: 40
+    y: 40
+    width: recPathColumn.width + 20
+    closePolicy: Popup.NoAutoClose
+    function show(){
+        recPath.visible = !recPath.visible
+    }
+    onVisibleChanged: if(visible)
+                          recordedPathInterface.recPathLoad()
+                      else
+                          recordedPathInterface.recPathClear()
+
+    ScrollViewExpandableColumn{
+        id: recPathColumn
+        width: children.width
+        height: parent.height-20
+        anchors.centerIn: parent
+        IconButtonTransparent{
+            icon.source: "/images/Play.png"
+            iconChecked: "/images/boundaryStop.png"
+            onClicked: recordedPathInterface.recPathFollowStop()
+        }
+        IconButtonTransparent{
+            icon.source: "/images/Stop.png"
+            onClicked: recordedPathInterface.recPathResumeStyle()
+        }
+        IconButtonTransparent{
+            icon.source: "/images/BoundaryRecord.png"
+            iconChecked: "/images/boundaryStop.png"
+            onClicked: recordedPathInterface.recPathRecordStop()
+        }
+        IconButtonTransparent{
+            icon.source: "/images/FileExplorerWindows.png"
+        }
+        IconButtonTransparent{
+            icon.source: "/images/ABSwapPoints.png"
+            onClicked: recordedPathInterface.recPathSwapAB()
+        }
+    }
+}

@@ -1,4 +1,5 @@
-import QtQuick 2.0
+import QtQuick
+import QtQuick.Effects
 
 Rectangle
 {
@@ -9,6 +10,7 @@ Rectangle
     property double heading: 0
 
     Image {
+        id: rootImage
         anchors.fill: parent
         source: "/images/textures/Compass.png"
 
@@ -21,5 +23,20 @@ Rectangle
                 angle: compass.heading
         }
     }
-
+    MultiEffect {
+        colorization: 1.0
+        colorizationColor: "red"
+        brightness: 0.5
+        anchors.fill: needle
+        source: needle
+    }
+    Image {
+        id: needle
+        source: "/images/UpArrow64.png"
+        width: 35
+        height: 35
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.verticalCenter
+        visible: false
+    }
 }

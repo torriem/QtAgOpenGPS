@@ -1,204 +1,179 @@
 import QtQuick 2.0
-import QtQuick.Controls 2.1
+import QtQuick.Controls.Fusion
 
-Item {
+import ".."
+import "components"
 
-    Rectangle {
-
+//Item{
+//    id: toolsWindowItem
+//    visible: false
+//    height: mainWindow.height
+    Drawer {
         id: toolsMenu
-        width: childrenRect.width+10
-        height: childrenRect.height+10
-        color: "black"
-        visible: true
-        border.color: "lime"
+        width: 250
+        height: mainWindow.height
+        modal: true
+//        onVisibleChanged: if (visible === false){
+//                             toolsWindowItem.visible = false
+//                          }
 
-        Grid {
+        contentItem: Rectangle{
+            id: toolsMenuContent
+            anchors.fill: parent
+            height: toolsMenu.height
+            color: aog.blackDayWhiteNight
+        }
+
+        ScrollViewExpandableColumn {
             id: toolsGrid
-            width: childrenRect.width
-            height: childrenRect.height
-            anchors.left: parent.left
-            anchors.leftMargin: 5
-            anchors.top: parent.top
-            anchors.topMargin: 5
-            spacing: 10
-            flow: Grid.TopToBottom
-            rows: 7
-            columns: 1
+            anchors.fill: parent
 
-
-            Button {
+            IconButtonTextBeside {
                 id: wizards
+                icon.source: "/images/WizardWand.png"
                 width: 250
                 height: 50
                 text: qsTr("Wizards")
-                property bool hideSteerWiz: true
-
-                onHideSteerWizChanged: {
-                    if (hideSteerWiz == true) {
-                        wizardMenu.visible = false
-                    } else {
-                        wizardMenu.visible = true
-                    }
-                }
-
-                function toggle_steerwiz() {
-                    if (hideSteerWiz == true) {
-                        hideSteerWiz = false
-                    } else {
-                        hideSteerWiz = true
-                    }
-                }
-
-                onClicked: {
-                    toggle_steerwiz();
-                }
+                onClicked: wizardMenu.visible = !wizardMenu.visible
+                visible: false //todo later
             }
 
-            Button {
+            IconButtonTextBeside {
                 id: charts
+                icon.source: "/images/Chart.png"
                 width: 250
                 height: 50
                 text: qsTr("Charts")
-                property bool hideCharts: true
-
-                onHideChartsChanged: {
-                    if (hideCharts == true) {
-                        chartMenu.visible = false
-                    } else {
-                        chartMenu.visible = true
-                    }
-                }
-
-                function toggle_chart() {
-                    if (hideCharts == true) {
-                        hideCharts = false
-                    } else {
-                        hideCharts = true
-                    }
-                }
-
-                onClicked: {
-                    toggle_chart();
-                }
-
+                onClicked: chartMenu.visible = !chartMenu.visible
+                visible: false //todo later
             }
 
-            Button {
+            IconButtonTextBeside {
                 id: smABCurve
+                icon.source: "/images/ABSmooth.png"
                 width: 250
                 height: 50
                 text: qsTr("Smooth AB Curve")
+                visible: settings.setFeature_isABSmoothOn
             }
 
-            Button {
+            IconButtonTextBeside {
                 id: delContourPaths
+                icon.source: "/images/TrashContourRef.png"
                 width: 250
                 height: 50
                 text: qsTr("Delete Contour Paths")
+                visible:settings.setFeature_isHideContourOn
             }
 
-            Button {
+            IconButtonTextBeside {
                 id: delAppliedArea
+                icon.source: "/images/TrashApplied.png"
                 width: 250
                 height: 50
                 text: qsTr("Delete Applied Area")
             }
 
-            Button {
+            IconButtonTextBeside {
                 id: webcam
+                icon.source: "/images/Webcam.png"
                 width: 250
                 height: 50
                 text: qsTr("WebCam")
+                visible:settings.setFeature_isWebCamOn
             }
-            Button {
+
+            IconButtonTextBeside {
                 id: offsetFix
+                icon.source: "/images/YouTurnReverse.png" // this is horrible. This has nothing to do with YouTurnReverse.
                 width: 250
                 height: 50
                 text: qsTr("Offset Fix")
+                visible: settings.setFeature_isOffsetFixOn
             }
         }
     }
-    Rectangle{
-        id: wizardMenu
-        width: childrenRect.width+10
-        height: childrenRect.height+10
-        visible: false
-        color: "black"
-        border.color: "lime"
-        anchors.left: toolsMenu.right
+
+//    Rectangle{ //this all needs to be done sometime
+//        id: wizardMenu
+//        width: childrenRect.width+10
+//        height: childrenRect.height+10
+//        visible: false
+//        color: "black"
+//        border.color: "lime"
+//        anchors.left: toolsMenu.right
 
 
 
-        Grid {
-            id: grid2
-            height: childrenRect.height
-            width: childrenRect.width
-            anchors.left: parent.left
-            anchors.leftMargin: 5
-            anchors.top: parent.top
-            anchors.topMargin: 5
-            spacing: 10
-            flow: Grid.TopToBottom
-            rows: 1
-            columns: 1
+//        Grid {
+//            id: grid2
+//            height: childrenRect.height
+//            width: childrenRect.width
+//            anchors.left: parent.left
+//            anchors.leftMargin: 5
+//            anchors.top: parent.top
+//            anchors.topMargin: 5
+//            spacing: 10
+//            flow: Grid.TopToBottom
+//            rows: 1
+//            columns: 1
 
-            Button{
-                id: steerWiz
-                width: 250
-                height: 50
-                text: qsTr("Steer Wizard")
-            }
-        }
-    }
-    Rectangle{
-        id: chartMenu
-        width: childrenRect.width+10
-        height: childrenRect.height+10
-        visible: false
-        color: "black"
-        border.color: "lime"
-        anchors.left: toolsMenu.right
+//            IconButtonTextBeside{
+//                id: steerWiz
+//                width: 250
+//                height: 50
+//                text: qsTr("Steer Wizard")
+//            }
+//        }
+//    }
+//    Rectangle{
+//        id: chartMenu
+//        width: childrenRect.width+10
+//        height: childrenRect.height+10
+//        visible: false
+//        color: "black"
+//        border.color: "lime"
+//        anchors.left: toolsMenu.right
 
 
 
-        Grid {
-            id: grid3
-            height: childrenRect.height
-            width: childrenRect.width
-            anchors.left: parent.left
-            anchors.leftMargin: 5
-            anchors.top: parent.top
-            anchors.topMargin: 5
-            spacing: 10
-            flow: Grid.TopToBottom
-            rows: 4
-            columns: 1
+//        Grid {
+//            id: grid3
+//            height: childrenRect.height
+//            width: childrenRect.width
+//            anchors.left: parent.left
+//            anchors.leftMargin: 5
+//            anchors.top: parent.top
+//            anchors.topMargin: 5
+//            spacing: 10
+//            flow: Grid.TopToBottom
+//            rows: 4
+//            columns: 1
 
-            Button{
-                id: steerChart
-                width: 250
-                height: 50
-                text: qsTr("Steer Chart")
-            }
-            Button{
-                id: headingChart
-                width: 250
-                height: 50
-                text: qsTr("Heading Chart")
-            }
-            Button{
-                id: xteChart
-                width: 250
-                height: 50
-                text: qsTr("XTE Chart")
-            }
-            Button{
-                id: rollChart
-                width: 250
-                height: 50
-                text: qsTr("Roll Chart")
-            }
-
-        }
-    }
-}
+//            IconButtonTextBeside{
+//                id: steerChart
+//                width: 250
+//                height: 50
+//                text: qsTr("Steer Chart")
+//            }
+//            IconButtonTextBeside{
+//                id: headingChart
+//                width: 250
+//                height: 50
+//                text: qsTr("Heading Chart")
+//            }
+//            IconButtonTextBeside{
+//                id: xteChart
+//                width: 250
+//                height: 50
+//                text: qsTr("XTE Chart")
+//            }
+//            IconButtonTextBeside{
+//                id: rollChart
+//                width: 250
+//                height: 50
+//                text: qsTr("Roll Chart")
+//            }
+//        }
+//    }
+//}

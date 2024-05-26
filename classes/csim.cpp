@@ -163,3 +163,8 @@ void CSim::forward() {
     stepDistance = 0;
     isAccelForward = true;
 }
+
+void CSim::reset() {
+    latitude = property_setGPS_SimLatitude;
+    longitude = property_setGPS_SimLongitude;
+}

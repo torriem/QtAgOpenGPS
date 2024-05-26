@@ -1134,6 +1134,10 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("toolEasting", vehicle.pivotAxlePos.easting);
     aog->setProperty("toolNorthing", vehicle.pivotAxlePos.northing);
     aog->setProperty("toolHeading", vehicle.pivotAxlePos.heading);
+    aog->setProperty("rawHz", nowHz);
+	aog->setProperty("hz", gpsHz);
+    aog->setProperty("isReverse" , vehicle.isReverse);
+    aog->setProperty("isReverseWithIMU", isReverseWithIMU);
 
     double tool_lat, tool_lon;
     pn.ConvertLocalToWGS84(vehicle.pivotAxlePos.northing, vehicle.pivotAxlePos.easting, tool_lat, tool_lon);
@@ -1151,12 +1155,19 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("hdop", pn.hdop);
     aog->setProperty("age", pn.age);
     aog->setProperty("fixQuality", pn.fixQuality);
-    aog->setProperty("ageAlarm", pn.ageAlarm);
     aog->setProperty("satellitesTracked", pn.satellitesTracked);
     aog->setProperty("imuHeading", ahrs.imuHeading);
     aog->setProperty("angVel", ahrs.angVel);
+    aog->setProperty("hydLiftDown", hydLiftDown);
+    aog->setProperty("hydLiftisOn", vehicle.isHydLiftOn);
+    aog->setProperty("isYouTurnRight", yt.isYouTurnRight);
+    aog->setProperty("distancePivotToTurnLine", distancePivotToTurnLine);
 
+    aog->setProperty("vehicle_xy",vehicle.pivot_axle_xy);
+    aog->setProperty("vehicle_bounding_box",vehicle.bounding_box);
 
+    aog->setProperty("steerAngleActual", mc.actualSteerAngleDegrees);
+    aog->setProperty("steerAngleSet", vehicle.guidanceLineSteerAngle);
 
     if (ABLine.numABLineSelected > 0) {
         //currentABLine_heading is set in formgps_ui.cpp

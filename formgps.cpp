@@ -674,7 +674,7 @@ void FormGPS::processSectionLookahead() {
     BuildMachineByte();
 
     //if a minute has elapsed save the field in case of crash and to be able to resume
-    if (minuteCounter > 30 && sentenceCounter < 20)
+    if (minuteCounter > 30 && (uint)sentenceCounter < 20)
     {
         tmrWatchdog->stop();
 
@@ -714,6 +714,22 @@ void FormGPS::processSectionLookahead() {
     QObject *aog = qmlItem(qml_root, "aog");
     aog->setProperty("frameTime", frameTime);
 
+    //TODO 5 hz sections
+    //if (bbCounter++ > 0)
+    //    bbCounter = 0;
+
+    //draw the section control window off screen buffer
+    //if (bbCounter == 0)
+    //{
+        p_239.pgn[p_239.geoStop] = mc.isOutOfBounds ? 1 : 0;
+
+        SendPgnToLoop(p_239.pgn);
+
+        if (!tool.isSectionsNotZones)
+            SendPgnToLoop(p_229.pgn);
+    //}
+
+
     lock.unlock();
 
     //this is the end of the "frame". Now we wait for next NMEA sentence with a valid fix.
@@ -736,11 +752,15 @@ void FormGPS::tmrWatchdog_timeout()
         gpsHz = 10;
     }
 
-    if (++sentenceCounter > 20)
-    {
-        //TODO: ShowNoGPSWarning();
-        return;
-    }
+
+    // This is done in QML
+//    if ((uint)sentenceCounter++ > 20)
+//    {
+//        //TODO: ShowNoGPSWarning();
+//        return;
+//    }
+    sentenceCounter += 1;
+
 
     if (tenSecondCounter++ >= 40)
     {
@@ -1365,7 +1385,7 @@ void FormGPS::JobNew()
 
 }
 
-void FormGPS::fileSaveEverythingBeforeClosingField(QQuickCloseEvent *event)
+void FormGPS::fileSaveEverythingBeforeClosingField()
 {
     qDebug() << "shutting down, saving field items.";
 

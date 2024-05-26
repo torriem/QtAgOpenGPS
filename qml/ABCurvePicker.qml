@@ -1,16 +1,18 @@
-import QtQuick 2.9
-import QtQuick.Controls 2.5
-import QtQuick.Layouts 1.3
-import QtQuick.Dialogs 1.3
-import QtQml.Models 2.3
+import QtQuick
+import QtQuick.Controls.Fusion
+import QtQuick.Layouts
+import QtQuick.Dialogs
+import QtQml.Models
+import "components"
+import ".."
 
 Dialog {
     id: abCurvePickerDialog
     width: 600
     height: 400
 
-    modality: Qt.WindowModal
-    standardButtons: StandardButton.NoButton
+    modal: true
+    standardButtons: "NoButton"
     title: qsTr("AB Curve")
 
     signal updateABCurves()
@@ -51,8 +53,8 @@ Dialog {
     Rectangle{
         anchors.fill: parent
         border.width: 1
-        border.color: "black"
-        color: "lightgray"
+        border.color: aog.blackDayWhiteNight
+        color: aog.borderColor
         TopLine{
             id: topLine
             titleText: "AB Curve"
@@ -67,21 +69,17 @@ Dialog {
             anchors.bottomMargin: 1
             width: childrenRect.width
             IconButtonTransparent{
-                objectName: "btnLineCopy"
                 icon.source: "/images/FileCopy.png"
                 onClicked: copyCurveName.visible = true
             }
             IconButtonTransparent{
-                objectName: "btnLineEdit"
                  onClicked: editCurveName.visible = true
                icon.source: "/images/FileEditName.png"
             }
             IconButtonTransparent{
-                objectName: "btnLineSwapPoints"
                 icon.source: "/images/ABSwapPoints.png"
             }
             IconButtonTransparent{
-                objectName: "btnLineExit"
                 icon.source: "/images/OK64.png"
                 onClicked: {
                     if (abcurveView.currentIndex > -1) {
@@ -110,11 +108,9 @@ Dialog {
 
                 IconButtonTransparent{
                     id: btnLineDelete
-                    objectName: "btnLineDelete"
                     icon.source: "/images/ABLineDelete.png"
                 }
                 IconButtonTransparent{
-                    objectName: "btnLineExit"
                     icon.source: "/images/SwitchOff.png"
                     onClicked: {
                         aog.currentABCurve = -1
@@ -123,12 +119,10 @@ Dialog {
                     }
                 }
                 IconButtonTransparent{
-                    objectName: "btnLineAdd"
                     icon.source: "/images/AddNew.png"
                     onClicked: abSetter.visible = true
                 }
                 IconButtonTransparent{
-                    objectName: "btnLineLoadFromKML"
                     icon.source: "/images/BoundaryLoadFromGE.png"
                 }
             }
@@ -147,9 +141,9 @@ Dialog {
             anchors.top: parent.top
             width: 300
             height: 400
-            color: "lightgray"
+            color: aog.backgroundColor
             border.width: 1
-            border.color: "black"
+            border.color: aog.blackDayWhiteNight
             z: 1
             visible: false
             TopLine{
@@ -157,7 +151,6 @@ Dialog {
                 titleText: "AB Curve"
             }
             IconButtonTransparent{
-                objectName: "a"
                 id: a
                 anchors.top: settertopLine.bottom
                 anchors.left: parent.left
@@ -166,7 +159,6 @@ Dialog {
                 icon.source: "/images/LetterABlue.png"
             }
             IconButtonTransparent{
-                objectName: "b"
                 anchors.top: settertopLine.bottom
                 anchors.right: parent.right
                 anchors.margins: 5
@@ -175,14 +167,12 @@ Dialog {
                 icon.source: "/images/LetterBBlue.png"
             }
             IconButtonTransparent{
-                objectName: "btnRecord"
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 anchors.margins: 20
                 icon.source: "/images/boundaryPause.png"
             }
             IconButtonTransparent{
-                objectName: "btnCancel"
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
                 anchors.margins: 20
@@ -193,7 +183,6 @@ Dialog {
             }
             LineName{
                 id: newLineName
-                objectName: "newLineName"
                 anchors.top: parent.top
                 anchors.left: parent.left
                 title: "AB Curve"
@@ -203,7 +192,6 @@ Dialog {
 
         LineName{
             id: copyCurveName
-            objectName: "copyCurveName"
             anchors.top:parent.top
             anchors.left: parent.left
             title: "AB Curve"
@@ -212,7 +200,6 @@ Dialog {
         }
         LineName{
             id: editCurveName
-            objectName: "editCurveName"
             anchors.top:parent.top
             anchors.left: parent.left
             title: "AB Curve"
@@ -228,11 +215,10 @@ Dialog {
             anchors.bottom: bottomRow.top
             anchors.bottomMargin: 0
             anchors.margins: 10
-            color: "white"
+            color:aog.borderColor
 
             ListModel {
                 id: abcurveModel
-                objectName: "abcurveModel"
             }
 
             Component.onCompleted: {
@@ -243,7 +229,7 @@ Dialog {
                 id: abcurveView
                 anchors.fill: parent
                 model: abcurveModel
-                property int currentIndex: -1
+                //property int currentIndex: -1
 
                 delegate: RadioButton{
                     id: control
@@ -251,7 +237,7 @@ Dialog {
                     indicator: Rectangle{
                         anchors.fill: parent
                         anchors.margins: 2
-                        color: control.down ? "white" : "blue"
+                        color: control.down ? aog.backgroundColor : "blue"
                         visible: control.checked
                     }
                     onDownChanged: {
@@ -270,7 +256,7 @@ Dialog {
                         text: model.name
                         font.pixelSize: 25
                         font.bold: true
-                        color: control.checked ? "white" : "black"
+                        color: control.checked ? aog.backgroundColor : aog.blackDayWhiteNight
                         z: 2
                     }
                 }

@@ -1,13 +1,14 @@
-import QtQuick 2.0
-import QtQuick.Controls 2.5
+import QtQuick
+import QtQuick.Controls.Fusion
+import "components"
 
 Rectangle {
     id: lineEditor
     width: 300
     height: 375
-    color: "ghostwhite"
+    color: aog.backgroundColor
     border.width: 1
-    border.color: "black"
+    border.color: aog.blackDayWhiteNight
     TopLine{
         id: topLine
         titleText: "Edit AB"
@@ -22,14 +23,12 @@ Rectangle {
         height: children.height
         IconButtonTransparent{
             id: leftNudger
-            objectName: "btnLineNudgeLeft"
             icon.source: "/images/ArrowLeft.png"
         }
-            SpinBoxOneDecimal{
+            SpinBoxDecimal{
             width: leftNudger.width
             height: 50
             anchors.verticalCenter: parent.verticalCenter
-                objectName: "lineNudgeDistance"
                 text: qsTr("cm")
                 from: 0
                 value: 7.5
@@ -37,7 +36,6 @@ Rectangle {
             }
 
         IconButtonTransparent{
-            objectName: "btnLineNudgeRight"
             icon.source: "/images/ArrowRight.png"
         }
     }
@@ -50,11 +48,9 @@ Rectangle {
         spacing: 35
         height: children.height
         IconButtonTransparent{
-            objectName: "btnLineSwapAB"
             icon.source: "/images/ABSwapPoints.png"
         }
         IconButtonTransparent{
-            objectName: "btnLineSnap2Pivot"
             icon.source: "/images/SnapToPivot.png"
         }
 
@@ -78,7 +74,6 @@ Rectangle {
             height: 75
         }
         IconButtonText{
-            objectName: "btnLineSaveforNow"
             icon.source: "/images/FileDontSave.png"
             color1: "transparent"
             color2: "transparent"
@@ -89,7 +84,6 @@ Rectangle {
             onClicked: lineEditor.visible = false
         }
         IconButtonText{
-            objectName: "btnLineSave"
             icon.source: "/images/FileSave.png"
             color1: "transparent"
             color2: "transparent"

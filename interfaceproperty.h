@@ -10,35 +10,35 @@ class FieldInterface;
 class VehicleInterface;
 class LinesInterface;
 class BoundaryInterface;
+class RecordedPathInterface;
 
 template <typename WhichInterface, class T>
 class InterfaceProperty {
 protected:
-    char prop_name[128];
+    QByteArray prop_name_bytes;
+    const char *prop_name;
 public:
     static inline QObject *prop_root = NULL;
+    static inline void set_qml_root(QObject *aogiface_root) {prop_root = aogiface_root; }
 
     InterfaceProperty(const char *qml_prop_name)
     {
-        strncpy(prop_name, qml_prop_name, 127); //dirty. can we use qstring?
+        prop_name_bytes = QString(qml_prop_name).toUtf8();
+        prop_name = prop_name_bytes.constData();
     }
 
-    InterfaceProperty() : prop_name(NULL) {}
+    InterfaceProperty() {}
 
     ~InterfaceProperty() {
-        //let it leak
-
-        //if(prop_name != NULL) {
-        //    free(prop_name);
-        //    prop_name = NULL;
-        //}
     }
 
-    //inline operator QString() { return prop_root->property(prop_name).toString(); }
+
     //TODO add types as needed
-    static inline void set_qml_root(QObject *aogiface_root) {prop_root = aogiface_root; }
+    inline operator bool() const { return prop_root->property(prop_name).toBool(); }
     inline operator bool() { return prop_root->property(prop_name).toBool(); }
+    //inline operator bool() const { return prop_root->property(prop_name).toBool(); }
     inline operator int() { return prop_root->property(prop_name).toInt(); }
+    inline operator uint() { return prop_root->property(prop_name).toUInt(); }
     inline operator double() { return prop_root->property(prop_name).toDouble(); }
     inline operator btnStates() { return static_cast<btnStates>(prop_root->property(prop_name).toInt()); }
 

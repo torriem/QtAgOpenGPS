@@ -1,5 +1,6 @@
 import QtQuick 2.0
-import QtQuick.Controls 2.5
+import QtQuick.Controls.Fusion
+import "components"
 
 Rectangle{
     id: line_Name
@@ -24,9 +25,9 @@ Rectangle{
         textInputBox.text = name
     }
 
-    color: "ghostwhite"
+    color: aog.backgroundColor
             border.width: 1
-            border.color: "black"
+            border.color: aog.blackDayWhiteNight
 
             TopLine{
                 id: topLine

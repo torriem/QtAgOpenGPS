@@ -1,5 +1,6 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls.Fusion
+import 'components'
 
 Rectangle {
     id: lightbar

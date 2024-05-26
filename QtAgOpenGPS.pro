@@ -9,8 +9,8 @@ QT       += core gui opengl quick quickwidgets network
 CONFIG += c++17
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-lessThan(QT_MAJOR_VERSION, 5):error("requires Qt 5.9 or newer")
-equals(QT_MAJOR_VERSION,5):lessThan(QT_MINOR_VERSION,9):error("requires Qt 5.9 or newer")
+lessThan(QT_MAJOR_VERSION, 6):error("requires Qt 6.5 or newer")
+equals(QT_MAJOR_VERSION,5):lessThan(QT_MINOR_VERSION,9):error("requires Qt 6.5 or newer")
 
 
 TARGET = QtAgOpenGPS
@@ -31,6 +31,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += DEBUG_VEC
 #DEFINES += TESTING
 #DEFINES += TEST_NMEA
+#DEFINES += LOCAL_QML
 
 INCLUDEPATH += $$PWD/classes
 
@@ -63,6 +64,7 @@ SOURCES += main.cpp\
     formgps_ui_field.cpp \
     formgps_ui_tracks.cpp \
     formgps_ui_vehicle.cpp \
+    formheadache.cpp \
     formheadland.cpp \
     qmlsectionbuttons.cpp \
     qmlsettings.cpp \
@@ -117,6 +119,7 @@ HEADERS  += formgps.h \
     classes/cboundary.h \
     btnenum.h \
     classes/vecfix2fix.h \
+    formheadache.h \
     formheadland.h \
     interfaceproperty.h \
     properties.h \
@@ -137,8 +140,10 @@ HEADERS  += formgps.h \
     classes/crecordedpath.h \
     classes/cdubins.h
 
+! contains(DEFINES,LOCAL_QML) {
 RESOURCES += \
     agopengps.qrc
+}
 
 DISTFILES += \
     TODO.txt \

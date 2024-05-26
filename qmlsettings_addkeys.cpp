@@ -1,7 +1,6 @@
 #include "qmlsettings.h"
 
 void QMLSettings::setupKeys() {
-    addKey(QString("setwin"),QString("display/camPitch"),"double");
     addKey(QString("setWindow_Location"),QString("display/windowLocation"),"QPoint");
     addKey(QString("setWindow_Size"),QString("display/windowSize"),"QString");
     addKey(QString("setWindow_Maximized"),QString("display/maximized"),"bool");
@@ -223,12 +222,26 @@ void QMLSettings::setupKeys() {
     addKey(QString("setTool_isTramOuterInverted"),QString("tool/isTramOuterInverted"),"bool");
     addKey(QString("setJobMenu_location"),QString("display/jobMenuLocation"),"QPoint");
     addKey(QString("setJobMenu_size"),QString("display/jobMenuSize"),"QString");
-    addKey(QString("setWindow_curveEditLocation"),QString("display/curveEditLocation"),"QPoint");
-    addKey(QString("setWindow_abLineEditLocation"),QString("display/abLineEditLocation"),"QPoint");
     addKey(QString("setWindow_steerSettingsLocation"),QString("display/steerSettingsLocation"),"QPoint");
-    addKey(QString("setWindow_abCurveCreate"),QString("display/ABCurveCreate"),"QPoint");
-    addKey(QString("setWindow_abLineCreate"),QString("display/ABLineCreate"),"QPoint");
+    addKey(QString("setWindow_buildTracksLocation"),QString("dialogs/tracksLocation"),"QPoint");
     addKey(QString("setTool_trailingToolToPivotLength"),QString("tool/trailingToPivotLength"),"double");
+    addKey(QString("setWindow_formNudgeLocation"),QString("dialogs/nudgeLocation"),"QPoint");
+    addKey(QString("setWindow_formNudgeSize"),QString("autosteer/nudgeSize"),"QString");
+    addKey(QString("setAS_snapDistanceRef"),QString("autosteer/snapDistanceRef"),"double");
+    addKey(QString("setDisplay_buttonOrder"),QString("display/buttonOrder"),"QString");
+    addKey(QString("setDisplay_camPitch"),QString("display/camPitch"),"double");
+    addKey(QString("setWindow_abDrawSize"),QString("dialogs/abDrawSize"),"QString");
+    addKey(QString("setWindow_HeadlineSize"),QString("dialogs/headlineSize"),"QString");
+    addKey(QString("setWindow_HeadAcheSize"),QString("dialogs/headAcheSize"),"QString");
+    addKey(QString("setWindow_MapBndSize"),QString("dialogs/mapBndSize"),"QString");
+    addKey(QString("setWindow_BingMapSize"),QString("dialogs/bingMapSize"),"QString");
+    addKey(QString("setWindow_BingZoom"),QString("dialogs/bingZoom"),"int");
+    addKey(QString("setWindow_RateMapSize"),QString("dialogs/rateMapSize"),"QString");
+    addKey(QString("setWindow_RateMapZoom"),QString("dialogs/rateMapZoom"),"int");
+    addKey(QString("setWindow_QuickABLocation"),QString("dialogs/quickABLocation"),"QPoint");
+    addKey(QString("setDisplay_isLogElevation"),QString("display/isLogElevation"),"bool");
+    addKey(QString("setSound_isSectionsOn"),QString("display/soundIsSectionOn"),"bool");
+    addKey(QString("setGPS_dualReverseDetectionDistance"),QString("gps/dualReverseDetectionDistance"),"double");
     addKey(QString("setFeature_isHeadlandOn"),QString("displayFeatures/isHeadlandOn"), "bool");
     addKey(QString("setFeature_isTramOn"),QString("displayFeatures/isTramOn"), "bool");
     addKey(QString("setFeature_isBoundaryOn"),QString("displayFeatures/isBoundaryOn"), "bool");

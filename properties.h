@@ -3,7 +3,6 @@
 
 #include "aogsettings.h"
 
-extern AOGProperty property_setwin;
 extern AOGProperty property_setWindow_Location;
 extern AOGProperty property_setWindow_Size;
 extern AOGProperty property_setWindow_Maximized;
@@ -225,12 +224,26 @@ extern AOGProperty property_setDisplay_isSvennArrowOn;
 extern AOGProperty property_setTool_isTramOuterInverted;
 extern AOGProperty property_setJobMenu_location;
 extern AOGProperty property_setJobMenu_size;
-extern AOGProperty property_setWindow_curveEditLocation;
-extern AOGProperty property_setWindow_abLineEditLocation;
 extern AOGProperty property_setWindow_steerSettingsLocation;
-extern AOGProperty property_setWindow_abCurveCreate;
-extern AOGProperty property_setWindow_abLineCreate;
+extern AOGProperty property_setWindow_buildTracksLocation;
 extern AOGProperty property_setTool_trailingToolToPivotLength;
+extern AOGProperty property_setWindow_formNudgeLocation;
+extern AOGProperty property_setWindow_formNudgeSize;
+extern AOGProperty property_setAS_snapDistanceRef;
+extern AOGProperty property_setDisplay_buttonOrder;
+extern AOGProperty property_setDisplay_camPitch;
+extern AOGProperty property_setWindow_abDrawSize;
+extern AOGProperty property_setWindow_HeadlineSize;
+extern AOGProperty property_setWindow_HeadAcheSize;
+extern AOGProperty property_setWindow_MapBndSize;
+extern AOGProperty property_setWindow_BingMapSize;
+extern AOGProperty property_setWindow_BingZoom;
+extern AOGProperty property_setWindow_RateMapSize;
+extern AOGProperty property_setWindow_RateMapZoom;
+extern AOGProperty property_setWindow_QuickABLocation;
+extern AOGProperty property_setDisplay_isLogElevation;
+extern AOGProperty property_setSound_isSectionsOn;
+extern AOGProperty property_setGPS_dualReverseDetectionDistance;
 extern AOGProperty property_setFeature_isHeadlandOn;
 extern AOGProperty property_setFeature_isTramOn;
 extern AOGProperty property_setFeature_isBoundaryOn;

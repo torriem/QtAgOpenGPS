@@ -13,6 +13,8 @@
 
 extern QMLSettings qml_settings;
 
+QVariant unset("UNSET"); //sentinal used to identify missing values in settings
+
 AOGSettings::AOGSettings(QObject *parent) : QSettings(parent)
 {
 
@@ -21,8 +23,9 @@ AOGSettings::AOGSettings(QObject *parent) : QSettings(parent)
 QVariant AOGSettings::value(const QString &key, const QVariant &defaultvalue)
 {
     QVariant val;
-    val = QSettings::value(key,QVariant::Invalid);
-    if (val == QVariant::Invalid) {
+    val = QSettings::value(key,unset);
+    if (val == unset && defaultvalue != unset) {
+        qDebug() << "type for " << key.toUtf8() << "is " <<  val.typeId();
         QSettings::setValue(key,defaultvalue);
         return defaultvalue;
     }
@@ -33,8 +36,8 @@ QVariant AOGSettings::value(const QString &key, const QVariant &defaultvalue)
 QVector<int> AOGSettings::value(const QString &key, const QVector<int> &defaultvalue)
 {
     QVariant val;
-    val = QSettings::value(key,QVariant::Invalid);
-    if (val == QVariant::Invalid) {
+    val = QSettings::value(key,unset);
+    if (val == unset) {
         QSettings::setValue(key,toVariant(defaultvalue));
         return defaultvalue;
     }
@@ -75,7 +78,9 @@ QJsonObject AOGSettings::toJson()
     for (const auto &key : keys)
     {
 
-        b = value(key,QVariant::Invalid);
+        b = value(key,unset);
+
+        if (b == unset) continue;
         type = b.typeName();
 
         if (type == "QStringList" ||

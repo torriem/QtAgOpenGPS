@@ -24,6 +24,10 @@ public:
     double moveDistance = 0;
     int mode = 0;
     int a_point = 0;
+
+    bool operator< (const CHeadPath &rhs) const {
+        return a_point < rhs.a_point;
+    }
 };
 
 class CHeadLine

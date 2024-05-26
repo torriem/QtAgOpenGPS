@@ -6,6 +6,7 @@
 #include <climits>
 #include "vec2.h"
 #include "vec3.h"
+#include "interfaceproperty.h"
 
 class QOpenGLFunctions;
 class QMatrix4x4;
@@ -27,7 +28,9 @@ private:
     int pt = 0;
 
 public:
-    bool isContourOn=false, isContourBtnOn=false, isRightPriority = true;
+    bool isContourOn=false;
+    InterfaceProperty<AOGInterface,bool> isContourBtnOn = InterfaceProperty<AOGInterface,bool>("isContourBtnOn");
+    bool isRightPriority = true;
     // for closest line point to current fix
     double minDistance = 99999.0, refX, refZ;
 

@@ -1,11 +1,19 @@
-import QtQuick 2.0
-import QtQuick.Controls 2.5
-import QtQuick.Layouts 1.3
+import QtQuick
+import QtQuick.Controls.Fusion
+import QtQuick.Layouts
+import "components"
 
 Rectangle{
     id: startUp
     anchors.fill: parent
     color: "#ccccff"
+	focus: true
+	Keys.onEnterPressed: {
+		ok.clicked()
+	}
+	Keys.onReturnPressed: {
+		ok.clicked()
+	}
     MouseArea{
         anchors.fill: parent
     }
@@ -122,6 +130,7 @@ Rectangle{
             }
         }
         IconButtonTransparent{
+			id: ok
             icon.source: "/images/OK64.png"
             onClicked: startUp.visible = false
             Text{

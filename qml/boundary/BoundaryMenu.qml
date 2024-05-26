@@ -1,9 +1,10 @@
-import QtQuick 2.0
-import QtQuick.Layouts 1.3
-import Qt.labs.folderlistmodel 2.2
-import QtQuick.Controls 2.5
+import QtQuick
+import QtQuick.Layouts
+import Qt.labs.folderlistmodel
+import QtQuick.Controls.Fusion
 
 import ".."
+import "../components"
 
 Item {
     id: boundaryMenu
@@ -13,13 +14,14 @@ Item {
         boundaryMenuPopup.visible = true
     }
 
-    Popup {
+    MoveablePopup {
         id: boundaryMenuPopup
         width: 500
         height: 400
         modal: true
         visible: boundaryMenu.visible
-
+        x: 40
+        y: 40
         TopLine{
             id: topLine
             titleText: "Start or Delete A Boundary"
@@ -43,8 +45,7 @@ Item {
                 anchors.topMargin: 50
                 ScrollBar.vertical: ScrollBar {
                     id: scrollbar
-                    anchors.left: boundaryMain.right
-                    anchors.rightMargin: 10
+					anchors.right: parent.right
                     width: 10
                     policy: ScrollBar.AlwaysOn
                     active: true

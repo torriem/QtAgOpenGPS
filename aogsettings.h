@@ -10,6 +10,8 @@
 //Q_DECLARE_METATYPE(QList<int>)
 Q_DECLARE_METATYPE(QVector<int>)
 
+extern QVariant unset;
+
 class QJsonObject;
 
 class AOGSettings : public QSettings
@@ -18,7 +20,7 @@ class AOGSettings : public QSettings
 public:
     AOGSettings(QObject *parent = 0);
 
-    QVariant value(const QString &key, const QVariant &defaultvalue = QVariant::Invalid);
+    QVariant value(const QString &key, const QVariant &defaultvalue = unset);
     QVector<int> value(const QString &key, const QVector<int> &defaultvalue = QVector<int> {});
     void setValue(const QString &key, const QVector<int> &value_list);
     void setValue(const QString &key, const QVariant &value);

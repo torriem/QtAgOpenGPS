@@ -104,7 +104,11 @@ int GetLineIntersection(double p0x, double p0y, double p1x, double p1y,
 
 FormHeadland::FormHeadland(QObject *parent)
     : QObject{parent}
-{}
+{
+    connect(&updateVehiclePositionTimer, &QTimer::timeout,
+            this, &FormHeadland::updateVehiclePosition);
+
+}
 
 void FormHeadland::connect_ui(QObject *headland_designer_instance) {
     this->headland_designer_instance = headland_designer_instance;
@@ -117,6 +121,7 @@ void FormHeadland::connect_ui(QObject *headland_designer_instance) {
 
     //connect UI signals
     connect(headland_designer_instance,SIGNAL(load()),this,SLOT(load_headline()));
+    connect(headland_designer_instance,SIGNAL(close()),this,SLOT(FormHeadLine_FormClosing()));
     connect(headland_designer_instance,SIGNAL(update_lines()),this,SLOT(update_lines()));
     connect(headland_designer_instance,SIGNAL(mouseClicked(int, int)),this,SLOT(clicked(int,int)));
     connect(headland_designer_instance,SIGNAL(slice()),this,SLOT(btnSlice_Click()));
@@ -273,6 +278,8 @@ void FormHeadland::load_headline() {
     sliceCount = sliceArr.count();
     backupCount = backupList.count();
     update_lines();
+
+    updateVehiclePositionTimer.start(1000);
 }
 
 void FormHeadland::setup_matrices(QMatrix4x4 &modelview, QMatrix4x4 &projection) {
@@ -290,6 +297,28 @@ void FormHeadland::setup_matrices(QMatrix4x4 &modelview, QMatrix4x4 &projection)
     modelview.translate(-(double)fieldCenterX + (double)sX * (double)maxFieldDistance,
                         -(double)fieldCenterY + (double)sY * (double)maxFieldDistance,
                         0);
+}
+
+void FormHeadland::updateVehiclePosition() {
+    if (vehicle == NULL) return;
+
+    QMatrix4x4 modelview;
+    QMatrix4x4 projection;
+
+    QVector3D s;
+    QVector3D p;
+
+    setup_matrices(modelview, projection);
+
+    int width = qmlItem(headland_designer_instance, "headlandRenderer")->property("width").toReal();
+    int height = qmlItem(headland_designer_instance, "headlandRenderer")->property("height").toReal();
+
+    p = QVector3D(vehicle->pivotAxlePos.easting,
+                  vehicle->pivotAxlePos.northing,
+                  0);
+    s = p.project(modelview, projection, QRect(0,0,width,height));
+
+    vehiclePoint = QPoint(s.x(), height-s.y());
 }
 
 
@@ -385,7 +414,6 @@ void FormHeadland::update_slice() {
         showb = true;
 
     }
-
 }
 
 void FormHeadland::update_headland() {
@@ -416,6 +444,22 @@ void FormHeadland::update_headland() {
         }
     }
     headland_designer_instance->setProperty("headlandLine", line);
+}
+
+void FormHeadland::FormHeadLine_FormClosing()
+{
+    //hdl
+    if (hdl->idx == -1)
+    {
+        isBtnAutoSteerOn = false;
+        isYouTurnBtnOn = false;
+    }
+
+    if (sliceArr.count() > 0)
+    {
+        hdl->idx = 0;
+    }
+    else hdl->idx = -1;
 }
 
 void FormHeadland::clicked(int mouseX, int mouseY) {
@@ -661,83 +705,6 @@ void FormHeadland::clicked(int mouseX, int mouseY) {
     update_slice();
 }
 
-void FormHeadland::DrawBuiltLines(QOpenGLFunctions *gl, QMatrix4x4 mvp) {
-    //GL.LineWidth(8);
-    //GL.Color3(0.03f, 0.0f, 0.150f);
-    //GL.Begin(PrimitiveType.LineLoop);
-
-    //for (int i = 0; i < mf.bnd.bndList[0].hdLine.Count; i++)
-    //{
-    //    GL.Vertex3(mf.bnd.bndList[0].hdLine[i].easting, mf.bnd.bndList[0].hdLine[i].northing, 0);
-    //}
-    //GL.End();
-
-    GLHelperOneColor gldraw;
-    QColor color;
-
-    color = QColor::fromRgbF(0.943f, 0.9083f, 0.09150f);
-
-    for (int i = 0; i < bnd->bndList[0].hdLine.count(); i++)
-    {
-        gldraw.append( QVector3D (bnd->bndList[0].hdLine[i].easting, bnd->bndList[0].hdLine[i].northing, 0 ));
-    }
-
-    gldraw.draw(gl, mvp, color, GL_LINE_LOOP, 8.0f);
-
-    if (sliceArr.count() > 0)
-    {
-        //GL.Enable(EnableCap.LineStipple);
-        //GL.LineStipple(1, 0x7070);
-
-        if (mode == (int)TrackMode::AB)
-        {
-            color = QColor::fromRgbF(0.95f, 0.09f, 0.0f);
-        }
-        else
-        {
-            color = QColor::fromRgbF(0.13f, 0.95f, 0.020f);
-        }
-
-        gldraw.clear();
-        for (Vec3 item: sliceArr)
-        {
-            gldraw.append( QVector3D (item.easting, item.northing, 0) );
-        }
-        gldraw.draw(gl,mvp, color, GL_LINE_STRIP, 8.0f);
-
-        int cnt = sliceArr.count() - 1;
-        gldraw.clear();
-        color = QColor::fromRgbF(1.0f, 0.6f, 0.3f);
-        gldraw.append( QVector3D( sliceArr[0].easting, sliceArr[0].northing, 0) );
-        gldraw.draw(gl, mvp, color, GL_POINTS, 24.0f);
-
-        gldraw.clear();
-        color = QColor::fromRgbF(0.5f, 0.73f, 0.99f);
-        gldraw.append ( QVector3D( sliceArr[cnt].easting, sliceArr[cnt].northing, 0) );
-        gldraw.draw(gl, mvp, color, GL_POINTS, 24.0f);
-    }
-}
-
-void FormHeadland::DrawABTouchLine(QOpenGLFunctions *gl, QMatrix4x4 mvp) {
-    GLHelperOneColor gldraw;
-    QColor color;
-
-    color = QColor::fromRgbF(0, 0, 0);
-    if (start != 99999) gldraw.append( QVector3D (bnd->bndList[bndSelect].fenceLine[start].easting, bnd->bndList[bndSelect].fenceLine[start].northing, 0) );
-    if (end != 99999) gldraw.append( QVector3D (bnd->bndList[bndSelect].fenceLine[end].easting, bnd->bndList[bndSelect].fenceLine[end].northing, 0) );
-    gldraw.draw(gl, mvp, color, GL_POINTS, 24.0f);
-
-    gldraw.clear();
-    color = QColor::fromRgbF(1.0f, 0.75f, 0.350f);
-    if (start != 99999) gldraw.append( QVector3D ( bnd->bndList[bndSelect].fenceLine[start].easting, bnd->bndList[bndSelect].fenceLine[start].northing, 0) );
-    gldraw.draw(gl,mvp, color, GL_POINTS, 18.0f);
-
-    gldraw.clear();
-    color = QColor::fromRgbF(0.5f, 0.75f, 1.0f);
-    if (end != 99999) gldraw.append( QVector3D ( bnd->bndList[bndSelect].fenceLine[end].easting, bnd->bndList[bndSelect].fenceLine[end].northing, 0) );
-    gldraw.draw(gl, mvp, color, GL_POINTS, 18.0f);
-}
-
 void FormHeadland::btn_Exit_Click() {
     QVector<Vec3> hdArr;
 
@@ -781,6 +748,7 @@ void FormHeadland::btn_Exit_Click() {
         bnd->bndList[0].hdLine.append(ptEnd);
     }
 
+    updateVehiclePositionTimer.stop();
     emit saveHeadland();
 }
 
@@ -880,6 +848,7 @@ void FormHeadland::btnBndLoop_Click() {
     }
 
     update_headland();
+    updateVehiclePositionTimer.stop();
     emit saveHeadland();
 }
 
@@ -1104,4 +1073,5 @@ void FormHeadland::btnHeadlandOff_Click()
     emit saveHeadland();
     bnd->isHeadlandOn = false;
     vehicle->isHydLiftOn = false;
+    updateVehiclePositionTimer.stop();
 }

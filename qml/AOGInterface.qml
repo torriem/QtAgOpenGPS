@@ -1,5 +1,5 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls.Fusion
 
 /* This type contains properties, signals, and functions to interface
    the C++ backend with the QML gui, while abstracting and limiting
@@ -20,6 +20,14 @@ import QtQuick.Controls 2.15
 Item {
     id: aogInterfaceType
 
+    AOGTheme{
+        id: aogTheme
+    }
+    property color backgroundColor: theme.backgroundColor
+    property color textColor: theme.textColor
+    property color borderColor: theme.borderColor
+	property color blackDayWhiteNight: theme.blackDayWhiteNight
+	property color whiteDayBlackNight: theme.whiteDayBlackNight
     /*
     Connections {
         target: settings
@@ -38,6 +46,10 @@ Item {
 
     property int manualBtnState: 0
     property int autoBtnState: 0
+    property bool autoYouturnBtnState: true
+    property bool isYouTurnRight: true
+    property double distancePivotToTurnLine: -2222
+
 
     //sections 0-15 are used for on-screen buttons if
     //not using zones.  If using zones the rest are used
@@ -45,11 +57,13 @@ Item {
 
     property variant sectionButtonState: [ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ]
 
+    property bool isContourBtnOn: false
     property bool isAutoSteerBtnOn: false
+    property bool isYouTurnBtnOn: false
 
-    onIsAutoSteerBtnOnChanged: {
-        console.debug("isAutoSteerBtnOn is now " + isAutoSteerBtnOn)
-    }
+//    onIsAutoSteerBtnOnChanged: {
+//        console.debug("isAutoSteerBtnOn is now in aog inface " + isAutoSteerBtnOn)
+//    }
 
     //General FormGPS information updated at GPS rate.
     property double latStart: 53
@@ -68,12 +82,19 @@ Item {
     property double imuRollDegrees: 0
     signal changeImuRoll(double new_roll) //usually just set to 88888;
 
+    property bool isReverse: false
+    property bool isReverseWithIMU: false
+
     property double speedKph: 0
     property double offlineDistance: 32000
     property double avgPivDistance: 32000
 
     property int steerModuleConnectedCounter: 0
     property bool steerSwitchHigh: false
+
+    property bool panMode: false
+    onPanModeChanged: if(panMode == false)
+                          centerOgl()
 
     //david added these
     //formgps_position.cpp line 1144
@@ -87,7 +108,6 @@ Item {
     property double hdop: 0
     property double	age: 0
     property int fixQuality: 0
-    property int ageAlarm: 0
     property int satellitesTracked: 0
 
     property double imuHeading: 0
@@ -98,14 +118,28 @@ Item {
     property string workRate: "value"
     property string percentOverlap: "value"
     property string percentLeft: "value"
-    //these not added yet
     property double steerAngleActual: 0
     property double steerAngleSet: 0
-    property double rawHZ:0
+    property double steerAngleSetRounded: 0
+    property double steerAngleActualRounded: 0
+    property double rawHz:0
     property double hz:0
     property double missedSentences: 0
     property double gpsHeading: 0
     property double fusedHeading: 0
+    property int sentenceCounter: 0 //for No GPS screen
+    property bool hydLiftDown: false
+    property bool hydLiftIsOn: false
+    property bool isHeadlandOn: false
+
+    onSteerAngleActualChanged: steerAngleActualRounded = Number(Math.round(steerAngleActual)).toLocaleString(Qt.locale(), 'f', 1)
+    onSteerAngleSetChanged: steerAngleSetRounded = Number(Math.round((steerAngleSet) * .01)).toLocaleString(Qt.locale(), 'f', 1)
+
+    property point vehicle_xy: Qt.point(0,0)
+    property rect vehicle_bounding_box: Qt.rect(0,0,0,0)
+
+    //onVehicle_xyChanged: console.log("vehicle xy is", vehicle_xy);
+    //onVehicle_bounding_boxChanged: console.log("vehicle box is", vehicle_bounding_box);
 
     property bool isTrackOn: false //checks if a guidance line is set.
     onCurrentABLineChanged: {
@@ -128,8 +162,26 @@ Item {
 
     //on-screen buttons
 
+    //DisplayButtons.qml
+    signal zoomIn()
+    signal zoomOut()
+    signal tiltDown()
+    signal tiltUp()
+    signal btn2D()
+    signal btn3D()
+    signal n2D()
+    signal n3D()
+    signal btnResetTool()
+    signal btnHeadland()
+
+    signal isHydLiftOn()
+    signal btnResetSim()
+
+
     signal uturn(bool turn_right)
     signal lateral(bool go_right)
+    signal autoYouTurn()
+    signal swapAutoYouTurnDirection()
 
     //general settings
     signal settings_reload() //tell backend classes to reload settings from store
@@ -138,9 +190,14 @@ Item {
     signal settings_save() //sync to disk, and also copy to current vehicle file, if active
 
     signal modules_send_238()
+	signal modules_send_251()
 
     signal sim_bump_speed(bool up)
     signal sim_zero_speed()
+    signal sim_reset()
+    signal reset_direction()
+
+    signal centerOgl()
 
     property double mPerDegreeLat
     property double mPerDegreeLon
