@@ -532,18 +532,9 @@
         <file>qml/HeadAcheDesigner.qml</file>
         <file>images/TrashApplied.png</file>
         <file>images/HeadlandSectionOn.png</file>
-        <file>images/HeadlandSectionOn.png</file>
-        <file>qml/HeadAcheDesigner.qml</file>
-        <file>images/TrashApplied.png</file>
         <file>qml/steerconfig/SteerConfigWindow.qml</file>
-        <file>qml/steerconfig/SensorsTab.qml</file>
-        <file>qml/steerconfig/SettingsTab.qml</file>
-        <file>qml/steerconfig/ConfigTab.qml</file>
+        <file>qml/steerconfig/SteerConfigSettings.qml</file>
         <file>images/Config/ConS_Pins.png</file>
-        <file>qml/steerconfig/StanleyTab.qml</file>
-        <file>qml/steerconfig/WheelAngleSensorTab.qml</file>
-        <file>qml/steerconfig/PWMSettingsTab.qml</file>
-        <file>qml/steerconfig/PurePursuitTab.qml</file>
         <file>images/TrackVisible.png</file>
         <file>images/MenuHideShow.png</file>
         <file>sounds/Alarm10.wav</file>
@@ -576,7 +567,6 @@
         <file>qml/config/ConfigVehicleType.qml</file>
         <file>qml/config/ConfigVehicleAntenna.qml</file>
         <file>qml/config/ConfigVehicleDimensions.qml</file>
-        <file>qml/config/ConfigVehicleSteerSettings.qml</file>
         <file>qml/config/ConfigTrams.qml</file>
         <file>qml/config/ConfigVehiclePicker.qml</file>
         <file>qml/config/ConfigYouTurn.qml</file>
@@ -606,12 +596,13 @@
         <file>qml/components/TimedMessage.qml</file>
         <file>qml/components/TextLine.qml</file>
         <file>qml/components/TestSectionButtons.qml</file>
-        <file>qml/components/SpinBoxTwoDecimal.qml</file>
-        <file>qml/components/SpinBoxOneDecimal.qml</file>
+        <file>qml/components/SpinBoxDecimal.qml</file>
         <file>qml/components/SpinBoxM.qml</file>
         <file>qml/components/SpinBoxKM.qml</file>
         <file>qml/components/SpinBoxCustomized.qml</file>
         <file>qml/components/SpinBoxCM.qml</file>
+        <file>qml/components/SpinBoxFusion.qml</file>
+        <file>qml/components/SpinBoxDouble.qml</file>
         <file>qml/components/SliderCustomized.qml</file>
         <file>qml/components/SectionButtons.qml</file>
         <file>qml/components/SectionButton.qml</file>
@@ -634,6 +625,20 @@
         <file>qml/AOGTheme.qml</file>
         <file>qml/HamburgerMenu.qml</file>
         <file>qml/SetSimCoords.qml</file>
+        <file>qml/components/ShortcutCustomized.qml</file>
         <file>sounds/TF012.wav</file>
+        <file>images/qtSpecific/Antenna4WD.png</file>
+        <file>images/qtSpecific/AntennaHarvester.png</file>
+        <file>images/qtSpecific/AntennaTractor.png</file>
+        <file>images/qtSpecific/LeftAntenna.png</file>
+        <file>images/qtSpecific/LeftAntenna4WD.png</file>
+        <file>images/qtSpecific/LeftAntennaHarvester.png</file>
+        <file>images/qtSpecific/RightAntenna.png</file>
+        <file>images/qtSpecific/RightAntenna4WD.png</file>
+        <file>images/qtSpecific/RightAntennaHarvester.png</file>
+        <file>images/qtSpecific/z_LateralManualR.png</file>
+		<file>images/qtSpecific/z_LateralManualL.png</file>
+        <file>images/qtSpecific/z_TurnManualL.png</file>
+		<file>images/qtSpecific/z_TurnManualR.png</file>
     </qresource>
 </RCC>

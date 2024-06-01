@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 import ".."
 import "../components"
@@ -21,7 +21,10 @@ Rectangle{
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: 15
+		anchors.leftMargin: 7  * theme.scaleWidth
+		anchors.rightMargin: 7 * theme.scaleWidth
+		anchors.topMargin: 7 * theme.scaleHeight
+		anchors.bottomMargin: 7 * theme.scaleHeight
         height: parent.height*.75
     }
     SpinBoxCM{

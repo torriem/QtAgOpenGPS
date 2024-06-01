@@ -1,10 +1,10 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 import QtQuick.Effects
 
 Button {
-    implicitWidth: 270
-    implicitHeight: 80
+    implicitWidth: 270 * theme.scaleWidth
+    implicitHeight: 80 * theme.scaleHeight
     id: icon_button_text_beside
     text: ""
     hoverEnabled: true

@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 //This is a the row of on-screen section-control buttonw
 
@@ -16,7 +16,7 @@ Rectangle {
     }*/
 
     width: 600
-    height: childrenRect.height
+    height: childrenRect.height * theme.scaleHeight
 
     color: "transparent"
 

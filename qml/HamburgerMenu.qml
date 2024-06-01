@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import QtQuick.Controls 2.5
+import QtQuick.Controls.Fusion
 
 import "components"
 
@@ -68,7 +68,6 @@ Drawer{
                 checked: isChecked
                 onCheckedChanged: {
                     settings.setMenu_isSimulatorOn = checked
-                    console.log("Sim = "+settings.setMenu_isSimulatorOn)
                 }
                 width: 250
                 height: 50

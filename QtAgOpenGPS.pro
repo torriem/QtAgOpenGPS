@@ -10,7 +10,7 @@ CONFIG += c++17
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 lessThan(QT_MAJOR_VERSION, 6):error("requires Qt 6.5 or newer")
-#equals(QT_MAJOR_VERSION,5):lessThan(QT_MINOR_VERSION,9):error("requires Qt 5.9 or newer")
+equals(QT_MAJOR_VERSION,5):lessThan(QT_MINOR_VERSION,9):error("requires Qt 6.5 or newer")
 
 
 TARGET = QtAgOpenGPS
@@ -31,6 +31,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += DEBUG_VEC
 #DEFINES += TESTING
 #DEFINES += TEST_NMEA
+#DEFINES += LOCAL_QML
 
 INCLUDEPATH += $$PWD/classes
 
@@ -139,8 +140,10 @@ HEADERS  += formgps.h \
     classes/crecordedpath.h \
     classes/cdubins.h
 
+! contains(DEFINES,LOCAL_QML) {
 RESOURCES += \
     agopengps.qrc
+}
 
 DISTFILES += \
     TODO.txt \

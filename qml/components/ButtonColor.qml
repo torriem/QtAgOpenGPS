@@ -1,9 +1,9 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 Button {
-    implicitWidth: 120
-    implicitHeight: 65
+    implicitWidth: 120 * theme.scaleWidth
+    implicitHeight: 65 * theme.scaleHeight
     id: icon_button
     text: ""
     hoverEnabled: true

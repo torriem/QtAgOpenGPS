@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 //the top line on most of the little windows. Basically
 //a title, help button, and close button
 

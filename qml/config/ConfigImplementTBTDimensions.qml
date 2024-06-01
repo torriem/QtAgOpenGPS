@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 import ".."
 import "../components"
@@ -21,13 +21,16 @@ Rectangle{
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: 15
+		anchors.topMargin: 7 * theme.scaleHeight
+		anchors.bottomMargin: 7 * theme.scaleHeight
+		anchors.leftMargin: 7 * theme.scaleWidth
+		anchors.rightMargin: 7 * theme.scaleWidth
         height: parent.height*.75
         SpinBoxCM{
             id: toolTrailingHitchLength
             anchors.top: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.rightMargin: 80
+            anchors.rightMargin: 80 * theme.scaleWidth
             from: 10
             to:3000
             boundValue: -settings.setTool_toolTrailingHitchLength
@@ -37,7 +40,7 @@ Rectangle{
             id: toolTBTHitchLength
             anchors.top: parent.bottom
             anchors.right: parent.right
-            anchors.rightMargin: 130
+            anchors.rightMargin: 130 * theme.scaleWidth
             from: 10
             to:3000
             boundValue: -settings.setVehicle_tankTrailingHitchLength
@@ -48,6 +51,6 @@ Rectangle{
             text: qsTr("Units: ")+ utils.cm_unit_abbrev()
             font.bold: true
             anchors.top: image1.bottom
-            anchors.topMargin: toolTrailingHitchLength.height + 15
+            anchors.topMargin: toolTrailingHitchLength.height + (15 * theme.scaleHeight)
         }
 }

@@ -35,12 +35,56 @@ void FormGPS::setupGui()
     rootContext()->setContextProperty("mainForm", this);
     rootContext()->setContextProperty("settings", &qml_settings);
 
+#ifdef LOCAL_QML
+    // Look for QML files relative to our current directory
+    QStringList search_pathes = { "..",
+                                 "../qtaog",
+                                 "../QtAgOpenGPS",
+                                 "."
+    };
+
+    qWarning() << "Looking for QML.";
+    for(QString search_path : search_pathes) {
+        //look relative to current working directory
+        QDir d = QDir(QDir::currentPath() + "/" + search_path + "/qml/");
+        if (d.exists("AOGInterface.qml")) {
+            QDir::addSearchPath("local",QDir::currentPath() + "/" + search_path);
+            qWarning() << "QML path is " << search_path;
+            break;
+        }
+
+        //look relative to the executable's directory
+        d = QDir(QCoreApplication::applicationDirPath() + "/" + search_path + "/qml/");
+        if (d.exists("AOGInterface.qml")) {
+            QDir::addSearchPath("local",QCoreApplication::applicationDirPath() + "/" + search_path);
+            qWarning() << "QML path is " << search_path;
+            break;
+        }
+    }
+
+    QObject::connect(this, &QQmlApplicationEngine::warnings, [=] (const QList<QQmlError> &warnings) {
+        foreach (const QQmlError &error, warnings) {
+            qWarning() << "warning: " << error.toString();
+        }
+    });
+
+    rootContext()->setContextProperty("prefix","local:");
+    load("local:/qml/MainWindow.qml");
+#else
+    rootContext()->setContextProperty("prefix",":");
     load(QUrl("qrc:/qml/MainWindow.qml"));
-    //setColor(Qt::transparent);
+#endif
 
     //get pointer to root QML object, which is the OpenGLControl,
     //store in a member variable for future use.
-    qml_root = rootObjects().first();
+    QList<QObject*> root_context = rootObjects();
+
+    if (root_context.length() == 0) {
+        qWarning() << "MainWindow.qml did not load.  Aborting.";
+        assert(root_context.length() > 0);
+    }
+
+    qml_root = root_context.first();
 
     qml_root->setProperty("visible",true);
 
@@ -174,6 +218,7 @@ void FormGPS::setupGui()
 
     //React to UI setting hyd life settings
     connect(aog, SIGNAL(modules_send_238()), this, SLOT(modules_send_238()));
+	connect(aog, SIGNAL(modules_send_251()), this, SLOT(modules_send_251()));
 
     connect(aog, SIGNAL(sim_bump_speed(bool)), &sim, SLOT(speed_bump(bool)));
     connect(aog, SIGNAL(sim_zero_speed()), &sim, SLOT(speed_zero()));
@@ -668,6 +713,20 @@ void FormGPS::modules_send_238() {
 
     qDebug() << p_238.pgn;
     SendPgnToLoop(p_238.pgn);
+}
+void FormGPS::modules_send_251() {
+	//qDebug() << "Sending 251 message to AgIO";
+	p_251.pgn[p_251.set0] = (int)property_setArdSteer_setting0;
+	p_251.pgn[p_251.set1] = (int)property_setArdSteer_setting1;
+	p_251.pgn[p_251.maxPulse] = (int)property_setArdSteer_maxPulseCounts;
+	p_251.pgn[p_251.minSpeed] = 5; //0.5 kmh THIS IS CHANGED IN AOG FIXES
+
+	if ((int)property_setAS_isConstantContourOn)
+		p_251.pgn[p_251.angVel] = 1;
+	else p_251.pgn[p_251.angVel] = 0;
+
+	qDebug() << p_251.pgn;
+	SendPgnToLoop(p_251.pgn);
 }
 
 void FormGPS::headland_save() {

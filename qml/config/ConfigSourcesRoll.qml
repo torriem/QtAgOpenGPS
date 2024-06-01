@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 import ".."
 import "../components"
@@ -15,9 +15,9 @@ Rectangle{
     IconButtonColor{
         objectName: "btnRemoveOffset"
         anchors.top: parent.top
-        anchors.topMargin: 20
+        anchors.topMargin: 20 * theme.scaleHeight
         anchors.left: parent.left
-        anchors.leftMargin: 20
+        anchors.leftMargin: 20 * theme.scaleWidth
         text: qsTr("Remove Offset")
         icon.source: "/images/Config/ConDa_RemoveOffset.png"
         onClicked: {
@@ -29,7 +29,7 @@ Rectangle{
         text: qsTr("Zero Roll")
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
-        anchors.leftMargin: 20
+        anchors.leftMargin: 20 * theme.scaleWidth
         icon.source: "/images/Config/ConDa_RollSetZero.png"
         isChecked: false
         onClicked: {
@@ -45,7 +45,7 @@ Rectangle{
         id: rollZeroDisplay
         anchors.left: zeroRollBtn.right
         anchors.verticalCenter: zeroRollBtn.verticalCenter
-        anchors.leftMargin: 20
+        anchors.leftMargin: 20 * theme.scaleWidth
         text: Number(settings.setIMU_rollZero).toLocaleString(Qt.locale(), 'f', 2);
     }
 
@@ -53,7 +53,7 @@ Rectangle{
         id: rollOffsetUpBtn
         anchors.left: rollZeroDisplay.right
         anchors.verticalCenter: zeroRollBtn.verticalCenter
-        anchors.leftMargin: 20
+        anchors.leftMargin: 20 * theme.scaleWidth
 
         icon.source: "/images/UpArrow64.png"
         onClicked: settings.setIMU_rollZero += 0.1
@@ -63,7 +63,7 @@ Rectangle{
         id: rollOffsetDownBtn
         anchors.left: rollOffsetUpBtn.right
         anchors.verticalCenter: zeroRollBtn.verticalCenter
-        anchors.leftMargin: 5
+        anchors.leftMargin: 5 * theme.scaleWidth
 
         icon.source: "/images/DnArrow64.png"
         onClicked: settings.setIMU_rollZero -= 0.1
@@ -73,7 +73,7 @@ Rectangle{
         objectName: "btnResetIMU"
         anchors.left: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: 20
+        anchors.topMargin: 20 * theme.scaleHeight
         icon.source: "/images/Config/ConDa_ResetIMU.png"
         isChecked: false
         onClicked: {
@@ -86,7 +86,7 @@ Rectangle{
         objectName: "btnInvertRoll"
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.horizontalCenter
-        anchors.topMargin: 20
+        anchors.topMargin: 20 * theme.scaleHeight
         text: qsTr("Invert Roll")
         icon.source: "/images/Config/ConDa_InvertRoll.png"
         checked: settings.setIMU_invertRoll
@@ -96,10 +96,10 @@ Rectangle{
         id: rollFilterSlider
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.bottomMargin: 50
-        anchors.leftMargin: 50
-        width: 270
-        height: 50
+        anchors.bottomMargin: 50 * theme.scaleHeight
+        anchors.leftMargin: 50 * theme.scaleWidth
+        width: 270 * theme.scaleWidth
+        height: 50 * theme.scaleHeight
         //color: "lightgray"
         SliderCustomized{
             objectName: "rollFilterSlider"
@@ -117,9 +117,9 @@ Rectangle{
     Image {
         source: "/images/Config/ConD_RollHelper"
         anchors.right: parent.right
-        anchors.rightMargin: 50
-        width: 150
-        height: 200
+        anchors.rightMargin: 50 * theme.scaleWidth
+        width: 150 * theme.scaleWidth
+        height: 200 * theme.scaleHeight
         anchors.verticalCenter: parent.verticalCenter
     }
 }

@@ -1,4 +1,4 @@
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 import QtQuick
 
 Slider{
@@ -59,7 +59,7 @@ Slider{
         id: handleRect
         height: backgroundRect.height - 4
         radius: 2
-        width: 8
+        width: 12
         visible: true
         color: "lightgray"
         x: parent.leftPadding + parent.visualPosition * (parent.availableWidth - width)

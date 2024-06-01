@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 import ".."
 import "../components"
@@ -14,7 +14,7 @@ Rectangle{
         onClicked: {offsetSpin.value = 0; offsetSpin.boundValue = 0}
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: forwardBackSpin.bottom
-        anchors.topMargin:30
+        anchors.topMargin:30 * theme.scaleHeight
     }
     SpinBoxCM{
         id: forwardBackSpin
@@ -41,11 +41,11 @@ Rectangle{
 
     IconButtonColor{
         id: forwardBtn
-        implicitWidth: 250
-        implicitHeight: 400
+        implicitWidth: 250 * theme.scaleWidth
+        implicitHeight: 400 * theme.scaleHeight
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
-        anchors.leftMargin: 50
+        anchors.leftMargin: 50 * theme.scaleWidth
         checkable: true
         isChecked: (settings.setTool_trailingToolToPivotLength > 0)
         icon.source: "/images/Config/ToolHitchPivotOffsetNeg.png"
@@ -54,11 +54,11 @@ Rectangle{
 
     IconButtonColor{
         id: backBtn
-        implicitWidth: 250
-        implicitHeight: 400
+        implicitWidth: 250 * theme.scaleWidth
+        implicitHeight: 400 * theme.scaleHeight
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.rightMargin: 50
+        anchors.rightMargin: 50 * theme.scaleWidth
         isChecked: (settings.setTool_trailingToolToPivotLength <= 0)
         checkable: true
         onClicked: settings.setTool_trailingToolToPivotLength = -Math.abs(settings.setTool_trailingToolToPivotLength)

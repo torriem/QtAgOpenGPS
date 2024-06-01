@@ -1,10 +1,10 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 import QtQuick.Effects
 
 IconButton {
-    implicitWidth: 120
-    implicitHeight: 80
+    implicitWidth: 120 * theme.scaleWidth
+    implicitHeight: 80 * theme.scaleHeight
     id: icon_button
 
     //property alias border: icon_button_background.border
@@ -37,6 +37,7 @@ IconButton {
               else
                   0
     MouseArea{
+		visible: text.length>0
         id: textLabel
         width: icon_button.width
         height: text1.height

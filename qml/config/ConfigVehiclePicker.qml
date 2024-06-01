@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 //import QtQuick.Extras 1.4
 
@@ -29,9 +29,9 @@ Item {
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         anchors.right: vehicleList.left
-        anchors.margins: 10
-        anchors.topMargin: 130
-        spacing: 15
+        anchors.margins: 10 * theme.scaleWidth
+        anchors.topMargin: 130 * theme.scaleHeight
+        spacing: 15 * theme.scaleHeight
         TextLine{ text: qsTr("Units: ")+ (utils.isMetric() ? "Metric" : "Imperial")}
         TextLine{ text: qsTr("Width: ")+ utils.m_to_ft_string(settings.setVehicle_toolWidth)}
         TextLine{ text: qsTr("Sections: ")+ settings.setVehicle_numSections}
@@ -51,7 +51,7 @@ Item {
             width:configWhichVehicle.width /2
             anchors.top:entryBox.bottom
             anchors.right: load.left
-            anchors.rightMargin: 30
+            anchors.rightMargin: 30 * theme.scaleWidth
 
             function refresh_model() {
                 vehicleList.clear()
@@ -102,7 +102,7 @@ Item {
                     }
 
                     width: vehicleListView.width
-                    height: 50
+                    height: 50 * theme.scaleHeight
                     //anchors.fill: parent
                     //color: "light gray"
                     Text{
@@ -123,13 +123,13 @@ Item {
             text: qsTr("Current vehicle is") + "<h2>" + settings.setVehicle_vehicleName + "</h2>"
             anchors.top: configWhichVehicle.top
             anchors.horizontalCenter: entryBox.horizontalCenter
-            anchors.margins: 15
+            anchors.margins: 15 * theme.scaleWidth
         }
         Rectangle{
             id: entryBox
             anchors.top: currentVehicle.bottom
             anchors.right: configWhichVehicle.right
-            height: 75
+            height: 75 * theme.scaleHeight
             width: vehicleListRect.width
             color: parent.color
             IconButtonTransparent{
@@ -137,8 +137,8 @@ Item {
                 anchors.right: parent.right
                 anchors.rightMargin: 30
                 anchors.verticalCenter: parent.verticalCenter
-                width: 75
-                height: 75
+                width: 75 * theme.scaleWidth
+                height: 75 * theme.scaleHeight
                 icon.source: "/images/VehFileSaveAs"
                 onClicked: {
                     if (saveAsVehicle.text != "") {
@@ -165,7 +165,7 @@ Item {
                 anchors.right: vehFileSaveAs.left
 
                 id: saveAsVehicle
-                anchors.margins: 5
+                anchors.margins: 5 * theme.scaleWidth
                 placeholderText: "vehicle and implement"
                 selectByMouse: true
             }
@@ -190,7 +190,7 @@ Item {
         IconButtonText{
             id: deletefolder
             anchors.top:load.bottom
-            anchors.margins: 30
+            anchors.margins: 30 * theme.scaleWidth
             anchors.horizontalCenter: load.horizontalCenter
             icon.source: "/images/VehFileDelete.png"
             text: qsTr("Delete")
