@@ -652,7 +652,7 @@ Window {
                 //color: "white"
                 Layout.alignment: Qt.AlignCenter
             }
-            IconButtonText{
+            /*IconButtonText{
                 id: btnABCurve
                 isChecked: false
                 checkable: true
@@ -717,13 +717,11 @@ Window {
                 }
                 checked: aog.currentABLine > -1 ? true : false
                 buttonText: "ABLine"
-            }
+			}*/
 
             IconButton{
                 id: btnABLineCycle
                 icon.source: "/images/ABLineCycle.png"
-                width: btnABLine.width
-                height: btnABLine.height
                 Layout.alignment: Qt.AlignCenter
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
@@ -731,13 +729,21 @@ Window {
             IconButton{
                 id: btnABLineCycleBk
                 icon.source: "/images/ABLineCycleBk.png"
-                width: btnABLine.width
-                height: btnABLine.height
                 Layout.alignment: Qt.AlignCenter
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
             }
-
+			IconButton{
+				id: btnAutoTrack
+				checkable: true
+				isChecked: aog.autoTrackBtnState
+				icon.source: "/images/AutoTrackOff.png"
+				iconChecked: "/images/AutoTrack.png"
+				Layout.alignment: Qt.AlignCenter
+				implicitWidth: theme.buttonSize
+				implicitHeight: theme.buttonSize
+				onCheckedChanged: checked ? aog.autoTrackBtnState = 1 : aog.autoTrackBtnState = 0
+			}
             IconButtonText {
                 id: btnSectionManual
                 isChecked: aog.manualBtnState == 2
@@ -1007,8 +1013,9 @@ Window {
             }
 
             IconButtonText {
-                id: btnTrackOn
-                icon.source: "/images/TrackOn.png"
+                id: btnTrack
+				icon.source: "/images/TrackOff.png"
+                iconChecked: "/images/TrackOn.png"
                 buttonText: "Track"
                 onClicked: trackButtons.visible = !trackButtons.visible
                 Layout.alignment: Qt.AlignCenter
@@ -1499,10 +1506,20 @@ Window {
             anchors.fill: parent
         }
 
-        TrackNew{
+        TrackNewButtons{
             id: trackNew
             visible: false
         }
+		TrackNewSet{
+			id: trackNewSet
+			anchors.fill: parent
+		}
+		TrackList{
+			id: trackList
+		}
+		TracksNewAddName{
+			id: trackAddName
+		}
 
         Rectangle{
             id: closeDialog

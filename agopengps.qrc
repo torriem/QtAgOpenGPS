@@ -2,7 +2,11 @@
     <qresource prefix="/">
         <file>images/A2D3D.png</file>
         <file>images/ABLineOff.png</file>
+		<file>images/ABLinesHideShow.png</file>
         <file>images/ABLineOn.png</file>
+		<file>images/ABPivot.png</file>
+		<file>images/ABLatLonHeading.png</file>
+		<file>images/ABLatLonLatLon.png</file>
         <file>images/AcHa.png</file>
         <file>images/AppIcon.ico</file>
         <file>images/AppIcon64.ico</file>
@@ -12,6 +16,8 @@
         <file>images/ArrowRight.png</file>
         <file>images/AutoSteerOff.png</file>
         <file>images/AutoSteerOn.png</file>
+		<file>images/AutoTrack.png</file>
+		<file>images/AutoTrackOff.png</file>
         <file>images/back-button.png</file>
         <file>images/BoundaryDelete.png</file>
         <file>images/BoundaryLeft.png</file>
@@ -491,6 +497,9 @@
         <file>qml/GPSData.qml</file>
         <file>images/FieldStats.png</file>
         <file>images/TrackOn.png</file>
+		<file>images/TrackOff.png</file>
+		<file>images/TrackCurve.png</file>
+		<file>images/TrackLine.png</file>
         <file>images/GPSQuality.png</file>
         <file>images/ABSnapNudgeMenu.png</file>
         <file>images/ABSnapNudgeMenuRef.png</file>
@@ -582,7 +591,9 @@
         <file>qml/tracks/TrackButtons.qml</file>
         <file>qml/tracks/LineNudge.qml</file>
         <file>qml/tracks/TrackList.qml</file>
-        <file>qml/tracks/TrackNew.qml</file>
+        <file>qml/tracks/TrackNewButtons.qml</file>
+		<file>qml/tracks/TrackNewSet.qml</file> 
+		<file>qml/tracks/TracksNewAddName.qml</file>
         <file>images/ABTrackA+.png</file>
         <file>qml/tracks/RefNudge.qml</file>
         <file>images/Images/z_TurnLeft.png</file>
@@ -640,5 +651,6 @@
 		<file>images/qtSpecific/z_LateralManualL.png</file>
         <file>images/qtSpecific/z_TurnManualL.png</file>
 		<file>images/qtSpecific/z_TurnManualR.png</file>
+		<file>qml/components/NumberTextField.qml</file>
     </qresource>
 </RCC>
