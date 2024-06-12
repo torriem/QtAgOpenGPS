@@ -6,6 +6,8 @@
 #include <QStandardPaths>
 
 #include "IORouter.h"
+#include "UdpListener.h"
+#include "PacketHandler.h"
 
 // Helper to generate default settings
 void generateDefaultSettings(QSettings& settings)
@@ -16,6 +18,9 @@ void generateDefaultSettings(QSettings& settings)
 
     settings.setValue("AogUdpPort", 17777);
     settings.setValue("NumConnections", 2);
+	settings.setValue("IP1", 192);
+	settings.setValue("IP2", 168);
+	settings.setValue("IP3", 5);
 
     settings.beginGroup("Connection0");
     settings.setValue("type", "UDP");
@@ -30,6 +35,17 @@ void generateDefaultSettings(QSettings& settings)
     settings.setValue("port", "/dev/ttyACM0");
     settings.setValue("baud", 9600);
     settings.endGroup();
+
+	settings.beginGroup("Connection2");
+	settings.setValue("type", "RTK");
+	settings.setValue("name", "NTRIP");
+	settings.setValue("url", "rtk2go.com");
+	settings.setValue("mount", "OverlandRTK");
+	settings.setValue("username", "johndoe@gmail.com");
+	settings.setValue("password", "password");
+	settings.setValue("port", 2101);
+	settings.endGroup();
+
 
     settings.sync();
 }
@@ -69,8 +85,20 @@ int main(int argc, char *argv[])
         generateDefaultSettings(settings);
     }
 
+	qDebug() << "Starting IORouter";
     IORouter router(settings);
 
-    return app.exec();
+	
+	qDebug() << "Started IORouter";
+	
+	qDebug() << "Attempting to connect to modules...";
+
+	UdpListener listener;
+	PacketHandler handler;
+
+	QObject::connect(&listener, &UdpListener::packetReceived, &handler, &PacketHandler::processPacket);
+
+
+	return app.exec();
 }
 

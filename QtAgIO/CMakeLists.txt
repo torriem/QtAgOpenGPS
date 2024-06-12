@@ -6,6 +6,8 @@ add_library(qtagio
     inc/Connection.h src/Connection.cpp
     inc/SerialConnection.h src/SerialConnection.cpp
     inc/UdpConnection.h src/UdpConnection.cpp
+	inc/UdpListener.h src/UdpListener.cpp
+	inc/PacketHandler.h src/PacketHandler.cpp
 )
 
 target_include_directories(qtagio
