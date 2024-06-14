@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 
 import ".."
@@ -9,16 +9,16 @@ Item {
     Rectangle{
         id: configDisplay
         anchors.fill: parent
-        color: "ghostwhite"
+        color: aog.backgroundColor
         GridLayout{
             id:buttonsMain
             anchors.top: parent.top
-            anchors.topMargin: 10
+            anchors.topMargin: 10 * theme.scaleHeight
             anchors.bottom: units.top
             anchors.left: parent.left
             anchors.right: parent.right
-            rows: 6
-            columns:2
+            columns:3
+			rows: 5
             rowSpacing: 10
             flow: Grid.TopToBottom
             IconButtonColor{
@@ -116,9 +116,15 @@ Item {
                 onCheckedChanged: settings.setMenu_isSpeedoOn
             }*/
         }
+		TextLine{
+			id: unitsTitle
+			text: qsTr("Units")
+			anchors.bottom: units.top
+			anchors.horizontalCenter: units.horizontalCenter
+		}
         Row{
             id:units
-            anchors.left: parent.left
+            anchors.right: parent.right
             anchors.bottom: parent.bottom
             width: childrenRect.width
             height: childrenRect.height

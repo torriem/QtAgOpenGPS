@@ -1,13 +1,13 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 import QtQuick.Effects
 
 import ".."
 import "../components"
 
 Button {
-    implicitWidth: 70
-    implicitHeight: 70
+    implicitWidth: 70 * theme.scaleWidth
+    implicitHeight: 70 * theme.scaleHeight
     property var heightMinusPadding: implicitHeight - topPadding
     id: icon_button
     text: ""
@@ -15,6 +15,7 @@ Button {
     //checkable: true
     icon.source: ""
     icon.color: "transparent"
+	property alias imageFillMode: content_image.fillMode
 
     property double iconHeightScaleText: 0.75
     property int border: 0

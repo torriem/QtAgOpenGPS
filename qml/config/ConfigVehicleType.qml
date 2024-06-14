@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 import ".."
 import "../components"
@@ -8,7 +8,7 @@ Rectangle{
     id: configTractor
     anchors.fill: parent
     visible: true
-    color: "ghostwhite"
+    color: aog.backgroundColor
     Text {
         id: text
         text: qsTr("<h1>Choose Vehicle Type</h1>")
@@ -28,16 +28,16 @@ Rectangle{
 
         IconButtonColor{
             id: harvester
-            width:150
-            height:100
+            width:150  * theme.scaleWidth
+            height:100 * theme.scaleHeight
             checkable: true
             icon.source: "/images/vehiclePageHarvester.png"
             isChecked: settings.setVehicle_vehicleType === 1
             onClicked: settings.setVehicle_vehicleType = 1
         }
         IconButtonColor{
-            width:150
-            height:100
+            width:150 * theme.scaleWidth
+            height:100 * theme.scaleHeight
             id: tractor
             icon.source: "/images/vehiclePageTractor.png"
             checkable: true
@@ -45,8 +45,8 @@ Rectangle{
             onClicked: settings.setVehicle_vehicleType = 0
         }
         IconButtonColor{
-            width:150
-            height:100
+            width:150 * theme.scaleWidth
+            height:100 * theme.scaleHeight
             id: tr4wd
             icon.source: "/images/vehiclePage4WD.png"
             checkable: true
@@ -54,6 +54,20 @@ Rectangle{
             onClicked: settings.setVehicle_vehicleType = 2
         }
     }
+	IconButtonColor{//triangle, no vehicle image
+		anchors.top: typesButtons.bottom
+		anchors.horizontalCenter: typesButtons.horizontalCenter
+		anchors.topMargin: 20
+		width:150 * theme.scaleWidth
+		height:100 * theme.scaleHeight
+		icon.source: "/images/Config/Brand/TriangleVehicle.png"
+		checkable: true
+		isChecked: !settings.setDisplay_isVehicleImage
+		onCheckedChanged: {
+			settings.setDisplay_isVehicleImage = !checked
+			console.log(settings.setDisplay_isVehicleImage)
+		}
+	}
     /*
     Text {
         anchors.bottom: parent.bottom

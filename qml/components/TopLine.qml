@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 //the top line on most of the little windows. Basically
 //a title, help button, and close button
 
@@ -10,7 +10,7 @@ Rectangle{
     anchors.left: parent.left
     anchors.right: parent.right
     height: 30
-    color: "white"
+    color: aog.backgroundColor
     Text {
         text: topLine.titleText
         font.pixelSize: 20

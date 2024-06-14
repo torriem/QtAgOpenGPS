@@ -1,18 +1,15 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 //import QtQuick.Controls.Styles 1.4
 
 import ".."
 import "../components"
 
-/* todo:
-  don't know how to make one of 4 options here
-  */
 Rectangle{
 	anchors.fill: parent
 	visible: true
-	color: "ghostwhite"
+    color: aog.backgroundColor
     TextLine{
 		id: text
 		anchors.top: parent.top
@@ -22,8 +19,8 @@ Rectangle{
 	GridLayout{
 		anchors.top: text.bottom
 		anchors.horizontalCenter: parent.horizontalCenter
-        width: 650
-        height: 450
+        width: 650 * theme.scaleWidth
+        height: 450 * theme.scaleHeight
 		rows:2
 		columns: 2
         flow:Grid.TopToBottom
@@ -33,8 +30,8 @@ Rectangle{
         }
 
 		IconButtonColor{
-            implicitWidth:300
-            implicitHeight:200
+            implicitWidth:300 * theme.scaleWidth
+            implicitHeight:200 * theme.scaleHeight
 			id: i3pt
             icon.source: "/images/ToolChkRear.png"
             checkable: true
@@ -48,8 +45,8 @@ Rectangle{
 		}
 
 		IconButtonColor{
-            implicitWidth:300
-            implicitHeight:200
+            implicitWidth:300 * theme.scaleWidth
+            implicitHeight:200 * theme.scaleHeight
 			id: i3ptfront
             icon.source: "/images/ToolChkFront.png"
             checkable: true
@@ -63,8 +60,8 @@ Rectangle{
         }
 
 		IconButtonColor{
-            implicitWidth:300
-            implicitHeight:200
+            implicitWidth:300 * theme.scaleWidth
+            implicitHeight:200 * theme.scaleHeight
 			id: itrailed
             icon.source: "/images/ToolChkTrailing.png"
             checkable: true
@@ -77,8 +74,8 @@ Rectangle{
             }
         }
 		IconButtonColor{
-            implicitWidth:300
-            implicitHeight:200
+            implicitWidth:300 * theme.scaleWidth
+            implicitHeight:200 * theme.scaleHeight
 			id: iTBT
             icon.source: "/images/ToolChkTBT.png"
             checkable: true

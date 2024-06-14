@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 import ".."
 import "../components"
@@ -8,15 +8,18 @@ import "../components"
 Rectangle{
     id: configImplementSection
     anchors.fill: parent
-    color: "ghostwhite"
+    color: aog.backgroundColor
     visible: false
 
     Row{
         id: bottomRow
         anchors.left: parent.left
         anchors.bottom: parent.bottom
-        anchors.margins: 10
-        spacing: 90
+		anchors.topMargin: 5 * theme.scaleHeight
+		anchors.rightMargin: 5 * theme.scaleWidth
+		anchors.leftMargin: 5 * theme.scaleWidth
+		anchors.bottomMargin: 5 * theme.scaleHeight
+        spacing: 90 * theme.scaleWidth
         Button{
             function toggleZones(){
                 if( utils.isTrue(settings.setTool_isSectionsNotZones)){
@@ -25,16 +28,16 @@ Rectangle{
                     settings.setTool_isSectionsNotZones = true
                 }
             }
-            width: 180
-            height: 130
+            width: 180 * theme.scaleWidth
+            height: 130 * theme.scaleHeight
             id: chooseZones
             objectName: "zonesOrSections"
             onClicked: {
                 toggleZones()
             }
             background: Rectangle{
-                color: "white"
-                border.color: "black"
+                color: aog.backgroundColor
+                border.color: aog.blackDayWhiteNight
                 border.width: 1
                 Image{
                     id: image
@@ -57,8 +60,8 @@ Rectangle{
             icon.source: "/images/SectionOffBoundary.png"
             iconChecked: "/images/SectionOnBoundary.png"
             anchors.bottom: parent.bottom
-            implicitWidth: 100
-            implicitHeight: 100
+            implicitWidth: 100 * theme.scaleWidth
+            implicitHeight: 100 * theme.scaleHeight
             border: 1
             radius: 0
             color3: "white"
@@ -68,7 +71,7 @@ Rectangle{
             isChecked: settings.setTool_isSectionOffWhenOut
             onCheckedChanged: settings.setTool_isSectionOffWhenOut = checked
         }
-        SpinBoxOneDecimal{
+        SpinBoxDecimal{
             //todo: this should be made english/metric
             id: slowSpeedCutoff
             from: utils.speed_to_unit(0)
@@ -88,23 +91,25 @@ Rectangle{
     ConfigImplementSectionsSection{
         id: configImplementSectionsSection
         anchors.top: parent.top
-        anchors.topMargin: 80
+        anchors.topMargin: 80 * theme.scaleHeight
         anchors.right: parent.right
+		anchors.rightMargin: 7 * theme.scaleWidth
         anchors.left: parent.left
+		anchors.leftMargin: 7 * theme.scaleWidth
         anchors.bottom: bottomRow.top
-        anchors.bottomMargin: 30
-        anchors.margins: 15
+        anchors.bottomMargin: 30 * theme.scaleHeight
         visible: utils.isTrue(settings.setTool_isSectionsNotZones)
     }
     ConfigImplementSectionsZones{
         id: configImplementSectionsZones
         anchors.top: parent.top
-        anchors.topMargin: 80
+        anchors.topMargin: 80 * theme.scaleHeight
         anchors.right: parent.right
+		anchors.rightMargin: 7 * theme.scaleWidth
         anchors.left: parent.left
+		anchors.leftMargin: 7 * theme.scaleWidth
         anchors.bottom: bottomRow.top
-        anchors.bottomMargin: 30
-        anchors.margins: 15
+        anchors.bottomMargin: 30 * theme.scaleHeight
         visible: !utils.isTrue(settings.setTool_isSectionsNotZones)
 
     }

@@ -37,7 +37,7 @@ Image {
 Rectangle {
     id: rect
     width: 75
-    height: 40
+    height: 40 * theme.scaleHeight
 
     border.width: 1
     border.color: "black" //textColor?

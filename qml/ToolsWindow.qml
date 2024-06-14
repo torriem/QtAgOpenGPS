@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import QtQuick.Controls 2.1
+import QtQuick.Controls.Fusion
 
 import ".."
 import "components"
@@ -21,7 +21,7 @@ import "components"
             id: toolsMenuContent
             anchors.fill: parent
             height: toolsMenu.height
-            color: "black"
+            color: aog.blackDayWhiteNight
         }
 
         ScrollViewExpandableColumn {

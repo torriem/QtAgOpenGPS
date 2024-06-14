@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 import ".."
 import "../components"
@@ -8,6 +8,10 @@ Popup {
     id: fieldNew
     width: 500
     height: 300
+    visible: false
+    function show(){
+        parent.visible = true
+    }
 
     onVisibleChanged: {
         if (visible)
@@ -23,7 +27,7 @@ Popup {
         anchors.top:parent.top
         anchors.topMargin: 50
         anchors.horizontalCenter: parent.horizontalCenter
-        color: "ghostwhite"
+        color: aog.backgroundColor
         border.color: "darkgray"
         border.width: 1
         Text {

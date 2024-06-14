@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import QtQuick.Controls 2.5
+import QtQuick.Controls.Fusion
 import "components"
 
 Item {
@@ -24,7 +24,6 @@ Item {
             spacing: 35
             height: children.height
             IconButtonTransparent{
-                objectName: "tramHalfNudgeLeft"
                 icon.source: "/images/SnapLeftHalf.png"
             }
             Text{
@@ -35,7 +34,6 @@ Item {
             }
 
             IconButtonTransparent{
-                objectName: "tramHalfNudgeRight"
                 icon.source: "/images/SnapRightHalf.png"
             }
         }
@@ -48,7 +46,6 @@ Item {
             spacing: 25
             height: children.height
             IconButtonTransparent{
-                objectName: "tramSmallNudgeLeft"
                 icon.source: "/images/ArrowLeft.png"
             }
             Text{
@@ -59,13 +56,11 @@ Item {
             }
 
             IconButtonTransparent{
-                objectName: "tramSmallNudgeRight"
                 icon.source: "/images/ArrowRight.png"
             }
         }
         IconButtonTransparent{
             id: tramSwapAB
-            objectName: "btnTramSwapAB"
             anchors.top: tramSmallNudge.bottom
             anchors.topMargin: 20
             anchors.left: parent.left
@@ -74,7 +69,6 @@ Item {
         }
         IconButtonTransparent{
             id: tramSwapMode
-            objectName: "btnTramSwapMode"
             anchors.top: tramSmallNudge.bottom
             anchors.topMargin: 10
             anchors.left: tramSwapAB.right
@@ -97,21 +91,18 @@ Item {
             spacing: 25
             IconButtonTransparent{
                 id: tramPassesDown
-                objectName: "btnTramPassesDown"
                 icon.source: "/images/DnArrow64.png"
             }
             SpinBoxCustomized{
                 id: passesRow
                 width: tramPassesDown.width
                 height: tramPassesDown.height
-                    objectName: "tramPasses"
                     text: qsTr("Passes")
                     from: 1
                     value: 1
                     to: 999
             }
             IconButtonTransparent{
-                objectName: "btnTramPassesUp"
                 icon.source: "/images/UpArrow64.png"
             }
         }
@@ -129,7 +120,6 @@ Item {
             anchors.rightMargin: 10
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 10
-            objectName: "btnTramSave"
             icon.source: "/images/VehFileSave.png"
         }
         Column{

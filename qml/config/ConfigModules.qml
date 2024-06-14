@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 import ".."
 import "../components"
@@ -12,7 +12,7 @@ import "../components"
     Rectangle{
         id: configModules
         anchors.fill: parent
-        color: "ghostwhite"
+        color: aog.backgroundColor
 
         onVisibleChanged: {
             load_settings()
@@ -91,35 +91,38 @@ import "../components"
             font.bold: true
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top:parent.top
-            anchors.margins: 10
+			anchors.topMargin: 10 * theme.scaleHeight
+			anchors.bottomMargin: 10 * theme.scaleHeight
+			anchors.leftMargin: 10 * theme.scaleWidth
+			anchors.rightMargin: 10 * theme.scaleWidth
         }
         Rectangle{
             id: hydConfig
             anchors.left: parent.left
-            color: "ghostwhite"
-            border.color: "black"
+            color: aog.backgroundColor
+            border.color: aog.blackDayWhiteNight
             anchors.top: titleText.bottom
-            anchors.topMargin: 20
+            anchors.topMargin: 20 * theme.scaleHeight
             anchors.bottom: cboxMachInvertRelays.top
-            anchors.leftMargin: 10
+            anchors.leftMargin: 10 * theme.scaleWidth
             width: parent.width * .66
             Text {
                 id: hydText
                 anchors.top: parent.top
-                anchors.topMargin: 10
+                anchors.topMargin: 10 * theme.scaleHeight
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTr("Hydraulic Lift Config")
             }
             GridLayout{
                 anchors.fill: parent
                 flow: Grid.LeftToRight
-                anchors.leftMargin: 10
+                anchors.leftMargin: 10 * theme.scaleHeight
                 rows: 2
                 columns: 3
                 IconButtonColor{
                     id: cboxIsHydOn
-                    height: 130
-                    width: 170
+                    height: 130 * theme.scaleHeight
+                    width: 170 * theme.scaleWidth
                     icon.source: "/images/SwitchOff.png"
                     iconChecked: "/images/SwitchOn.png"
 
@@ -139,10 +142,11 @@ import "../components"
                 }
                 Image{
                     source: "/images/Config/ConMa_LiftRaiseTime"
-                    width: 200
-                    height: 200
+                    width: 200 * theme.scaleWidth
+                    height: 200 * theme.scaleHeight
+					fillMode: Image.Stretch
                 }
-                SpinBoxOneDecimal{
+                SpinBoxDecimal{
                     id: nudHydLiftLookAhead
                     from:1
                     //boundValue: settings.setVehicle_hydraulicLiftLookAhead
@@ -166,8 +170,9 @@ import "../components"
                 }
                 Image{
                     source: "/images/Config/ConMa_LiftLowerTime"
-                    width: 200
-                    height: 200
+                    width: 200 * theme.scaleWidth
+                    height: 200 * theme.scaleHeight
+					fillMode: Image.Stretch
                 }
             }
         }
@@ -176,7 +181,10 @@ import "../components"
             anchors.horizontalCenter: hydConfig.horizontalCenter
             anchors.bottom: parent.bottom
             text: qsTr("Invert Relays")
-            anchors.margins: 10
+			anchors.topMargin: 10 * theme.scaleHeight
+			anchors.bottomMargin: 10 * theme.scaleHeight
+			anchors.leftMargin: 10 * theme.scaleWidth
+			anchors.rightMargin: 10 * theme.scaleWidth
             icon.source: "/images/Config/ConSt_InvertRelay.png"
             checkable: true
             enabled: cboxIsHydOn.checked
@@ -188,12 +196,15 @@ import "../components"
             anchors.left: hydConfig.right
             anchors.right: parent.right
             anchors.top: titleText.bottom
-            anchors.margins: 5
+			anchors.topMargin: 5 * theme.scaleHeight
+			anchors.bottomMargin: 5 * theme.scaleHeight
+			anchors.leftMargin: 5 * theme.scaleWidth
+			anchors.rightMargin: 5 * theme.scaleWidth
             ColumnLayout{
                 anchors.top: parent.top
                 width: parent.width
                 anchors.bottom: modulesSave.top
-                anchors.bottomMargin: 20
+                anchors.bottomMargin: 20 * theme.scaleHeight
                 anchors.horizontalCenter: parent.horizontalCenter
                 SpinBoxCustomized{
                     id: nudUser1
@@ -240,7 +251,10 @@ import "../components"
                 id: modulesSave
                 objectName: "btnModulesSave"
                 anchors.right: parent.right
-                anchors.margins: 20
+				anchors.topMargin: 20 * theme.scaleHeight
+				anchors.leftMargin: 20 * theme.scaleWidth
+				anchors.bottomMargin: 20 * theme.scaleHeight
+				anchors.rightMargin: 20 * theme.scaleWidth
                 anchors.bottom: parent.bottom
                 icon.source: "/images/ToolAcceptChange.png"
                 onClicked: { save_settings() ; unsaved.visible = false }
@@ -249,18 +263,20 @@ import "../components"
                     id: modulesSaveLabel
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.left
-                    anchors.rightMargin: 5
+                    anchors.rightMargin: 5 * theme.scaleWidth
                     text: qsTr("Send + Save")
                 }
             }
             Image {
                 id: unsaved
-                width: 100
+                width: 100 * theme.scaleWidth
+				height: 100 * theme.scaleHeight
                 anchors.right: modulesSave.left
                 anchors.rightMargin: modulesSaveLabel.width + 5
                 anchors.verticalCenter: modulesSave.verticalCenter
                 visible: false
                 source: "/images/Config/ConSt_Mandatory.png"
+					fillMode: Image.Stretch
             }
         }
     }

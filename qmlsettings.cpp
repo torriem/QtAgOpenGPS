@@ -26,7 +26,9 @@ void QMLSettings::loadSettings() {
 
     for (QString key: qml_to_settings_map.keys()) {
         settings_key = qml_to_settings_map[key];
-        settings_value = settings->value(settings_key, QVariant::Invalid);
+        settings_value = settings->value(settings_key, unset);
+
+        if (settings_value == unset) continue;
 
         //fix QVariant type
         if (settings_type_map[settings_key] != "leavealone") {
@@ -59,7 +61,9 @@ void QMLSettings::loadSettings() {
 void QMLSettings::updateSetting(const QString &settings_key) {
     //a QSetting key/value pair was updated, so update QML's view
     QString qml_key = settings_to_qml_map[settings_key];
-    QVariant settings_value = settings->value(settings_key,QVariant::Invalid);
+    QVariant settings_value = settings->value(settings_key,unset);
+
+    if (settings_value == unset) return;
 
     //fix QVariant to have the right type
     if (settings_type_map[settings_key] != "leavealone") {

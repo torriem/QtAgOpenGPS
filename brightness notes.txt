@@ -1,0 +1,74 @@
+AI ramblings on possible way of doing brightness control:
+
+Android:
+
+Declare the WRITE_SETTINGS permission in your AndroidManifest.xml file
+
+Brightness from 0 to 255
+
+#include <jni.h>
+#include <android/log.h>
+#include <android/native_window.h>
+#include <android/native_window_jni.h>
+#include <android/provider/Settings.h>
+
+// Function to set brightness
+void setBrightness(JNIEnv* env, jobject context, int brightness) {
+    // Constrain the value of brightness
+    if (brightness < 0) brightness = 0;
+    else if (brightness > 255) brightness = 255;
+
+    jclass activityClass = env->GetObjectClass(context);
+    jmethodID getContentResolver = env->GetMethodID(activityClass, "getContentResolver", "()Landroid/content/ContentResolver;");
+    jobject cResolver = env->CallObjectMethod(context, getContentResolver);
+
+    jclass settingsClass = env->FindClass("android/provider/Settings$System");
+    jfieldID screenBrightness = env->GetStaticFieldID(settingsClass, "SCREEN_BRIGHTNESS", "Ljava/lang/String;");
+    jstring brightnessSetting = static_cast<jstring>(env->GetStaticObjectField(settingsClass, screenBrightness));
+
+    jmethodID putInt = env->GetStaticMethodID(settingsClass, "putInt", "(Landroid/content/ContentResolver;Ljava/lang/String;I)Z");
+    env->CallStaticBooleanMethod(settingsClass, putInt, cResolver, brightnessSetting, brightness);
+}
+
+// Function to get current brightness
+int getCurrentBrightness(JNIEnv* env, jobject context) {
+    ContentResolver cResolver = context->getContentResolver();
+    return Settings.System.getInt(cResolver, Settings.System.SCREEN_BRIGHTNESS, 0);
+}
+
+
+Windows:
+Get:
+#include <highlevelmonitorconfigurationapi.h>
+
+// Get the monitor handle (e.g., using GetPhysicalMonitorsFromHMONITOR)
+HANDLE hMonitor = ...;
+
+DWORD minBrightness, currentBrightness, maxBrightness;
+GetMonitorBrightness(hMonitor, &minBrightness, &currentBrightness, &maxBrightness);
+
+
+Set:
+#include <windows.h>
+
+typedef struct _DISPLAY_BRIGHTNESS {
+    UCHAR ucDisplayPolicy;
+    UCHAR ucACBrightness;
+    UCHAR ucDCBrightness;
+} DISPLAY_BRIGHTNESS;
+
+DISPLAY_BRIGHTNESS brightness;
+brightness.ucDisplayPolicy = 0;
+brightness.ucACBrightness = 0; // For testing purposes
+brightness.ucDCBrightness = 0;
+
+HANDLE h = CreateFile(L"\\\\.\\LCD", GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+if (h != INVALID_HANDLE_VALUE) {
+    DWORD ret;
+    if (DeviceIoControl(h, IOCTL_VIDEO_SET_DISPLAY_BRIGHTNESS, &brightness, sizeof(brightness), NULL, 0, &ret, NULL)) {
+        // Successfully set brightness
+    }
+    CloseHandle(h);
+}
+
+

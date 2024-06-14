@@ -40,6 +40,8 @@ Item {
 
     SpinBoxCustomized {
         id: spinner
+		height: 30 * theme.scaleHeight
+		width: 150 * theme.scaleWidth
         from: utils.cm_to_unit(spinBoxCM.from / 100.0)
         to: utils.cm_to_unit(spinBoxCM.to / 100.0)
         editable: spinBoxCM.editable

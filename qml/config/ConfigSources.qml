@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 import ".."
 import "../components"
@@ -10,28 +10,33 @@ Rectangle{
     id: configSources
     anchors.fill: parent
     visible: true
-    color: "ghostwhite"
+    color: aog.backgroundColor
     TitleFrame {
         id:antennaType
-        width: 360
-        height: sourceRow.height + titleHeight + 10
+        width: 360 * theme.scaleWidth
         anchors.top: parent.top
-        anchors.margins: 5
-        anchors.horizontalCenter: parent.horizontalCenter
-        color: "ghostwhite"
-        border.color: "black"
+		anchors.left: parent.left
+		anchors.bottom: parent.verticalCenter
+		anchors.topMargin: 5 * theme.scaleHeight
+		anchors.leftMargin: 5 * theme.scaleWidth
+		anchors.rightMargin: 5 * theme.scaleWidth
+		anchors.bottomMargin: 5 * theme.scaleHeight
+        color: aog.backgroundColor
+        border.color: aog.blackDayWhiteNight
         visible: true
         title: qsTr("Antenna Type", "GPS Antenna type, fixed or dual")
-        font.pointSize: 16
+        font.pointSize: 16 
 
         Row{
             id: sourceRow
             anchors.top: parent.top
-            anchors.margins: 10
-            anchors.topMargin: 25
+            anchors.topMargin: 10 * theme.scaleHeight
+			anchors.leftMargin: 10 * theme.scaleWidth
+			anchors.rightMargin: 10 * theme.scaleWidth
+			anchors.bottomMargin: 10 * theme.scaleHeight
             anchors.horizontalCenter: parent.horizontalCenter
-            height: childrenRect.height  + 25
-            spacing: 10
+            height: childrenRect.height  + 25 * (theme.scaleHeight)
+            spacing: 10 * theme.scaleWidth
 
             ButtonGroup {
                 buttons: [ dualBtn, fixBtn ]
@@ -39,8 +44,8 @@ Rectangle{
 
             IconButtonColor{
                 id: dualBtn
-                width:150
-                height:100
+                width:150 * theme.scaleWidth
+                height:100 * theme.scaleHeight
                 text: "Dual"
                 checkable: true
                 icon.source: "/images/Config/Con_SourcesGPSDual.png"
@@ -50,9 +55,12 @@ Rectangle{
                 checked: (settings.setGPS_headingFromWhichSource === "Dual" ? true: false)
 
                 onCheckedChanged: {
-                    if (checked)
-                        settings.setGPS_headingFromWhichSource = "Dual"
-                }
+					if (checked){
+						settings.setGPS_headingFromWhichSource = "Dual"
+						if(settings.setVehicle_antennaOffset < 0)
+						    timedMessage.addMessage(7000, qsTr("Antenna Offset error!"), qsTr('You have antenna offset set to "left". Dual requires it set to "right". Change it or you will have offset errors')) 
+					}
+				}
 
                 onHeadingSourceChanged: {
                     if(headingSource === "Dual"){
@@ -65,8 +73,8 @@ Rectangle{
             }
             IconButtonColor{
                 id: fixBtn
-                width:150
-                height:100
+                width:150 * theme.scaleWidth
+                height:100 * theme.scaleHeight
                 text: "Fix"
                 checkable: true
                 icon.source: "/images/Config/Con_SourcesGPSSingle.png"
@@ -94,11 +102,14 @@ Rectangle{
     TitleFrame {
         id:rtkAlarm
         width: parent.width /2
-        height: rtkAlarmRow.height + titleHeight + 10
+        height: rtkAlarmRow.height + titleHeight + (10 * theme.scaleHeight)
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.margins: 5
-        color: "ghostwhite"
+		anchors.topMargin: 5 * theme.scaleHeight
+		anchors.leftMargin: 5 * theme.scaleWidth
+		anchors.rightMargin: 5 * theme.scaleWidth
+		anchors.bottomMargin: 5 * theme.scaleHeight
+        color: aog.backgroundColor
         visible: true
         title: qsTr("RTK Alarm")
         font.pointSize: 16
@@ -106,23 +117,23 @@ Rectangle{
         Row{
             id: rtkAlarmRow
             anchors.top: parent.top
-            anchors.topMargin: 10
+            anchors.topMargin: 10 * theme.scaleHeight
             anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 10
-            height: childrenRect.height + 10
+            spacing: 10 * theme.scaleWidth
+            height: childrenRect.height + (10 * theme.scaleHeight)
 
             Component.onCompleted: console.debug(height)
 
             IconButtonColor{
-                width:150
-                height:100
+                width:150 * theme.scaleWidth
+                height:100 * theme.scaleHeight
                 id: alarm
                 icon.source: "/images/Config/Con_SourcesRTKAlarm.png"
                 isChecked: settings.setGPS_isRTK
                 onClicked: settings.setGPS_isRTK = true
             }
             Rectangle {
-                height: 100
+                height: 100 * theme.scaleHeight
                 width: childrenRect.width
 
                 Text{
@@ -131,8 +142,8 @@ Rectangle{
                 }
             }
             IconButtonColor{
-                width:150
-                height:100
+                width:150 * theme.scaleWidth
+                height:100 * theme.scaleHeight
                 checkable: true
                 id: killAutoSteer
                 icon.source: "/images/AutoSteerOff.png"
@@ -143,16 +154,21 @@ Rectangle{
     }
     TitleFrame{
         id:singleAntennaSettings
-        anchors.bottom: parent.bottom
         enabled: fixBtn.checked
+        anchors.bottom: parent.bottom
         anchors.right: parent.right
-        anchors.left: rtkAlarm.right
-        anchors.top: antennaType.bottom
-        anchors.margins: 5
+        anchors.left: parent.horizontalCenter
+        anchors.top: parent.top
+		anchors.topMargin: 5 * theme.scaleHeight
+		anchors.leftMargin: 5 * theme.scaleWidth
+		anchors.rightMargin: 5 * theme.scaleWidth
+		anchors.bottomMargin: 5 * theme.scaleHeight
+		onEnabledChanged: visible = enabled
+		visible: singleBtn.checked
 
-        border.color: enabled ? "black" : "grey"
+        border.color: enabled ? aog.blackDayWhiteNight : "grey"
 
-        color: "ghostwhite"
+        color: aog.backgroundColor
 
         title: qsTr("Single Antenna Settings")
         font.pointSize: 16
@@ -160,19 +176,19 @@ Rectangle{
         Row {
             anchors.top: parent.top
             anchors.left: parent.left
-            anchors.topMargin: 10
-            anchors.leftMargin: 10
+            anchors.topMargin: 10 * theme.scaleHeight
+            anchors.leftMargin: 10 * theme.scaleWidth
 
             id: minGPSStep
             Label {
-                color: fixBtn.checked ? "black" : "grey"
+                color: fixBtn.checked ? aog.blackDayWhiteNight : "grey"
                 text: qsTr("Minimum GPS Step")
                 width: singleAntennaSettings.width * 0.5
             }
             ButtonColor{
                 id: minGPSStepBtn
-                width: 180
-                height: 50
+                width: 180 * theme.scaleWidth
+                height: 50 * theme.scaleHeight
                 checkable: true
 
                 color: "light blue"
@@ -193,18 +209,18 @@ Rectangle{
             id: headingDistance
             anchors.top: minGPSStep.bottom
             anchors.left: parent.left
-            anchors.topMargin: 10
-            anchors.leftMargin: 10
+            anchors.topMargin: 10 * theme.scaleHeight
+            anchors.leftMargin: 10 * theme.scaleWidth
 
             Label {
-                color: fixBtn.checked ? "black" : "grey"
+                color: fixBtn.checked ? aog.blackDayWhiteNight : "grey"
                 text: qsTr("Heading Distance")
                 width: singleAntennaSettings.width * 0.5
             }
             Label {
                 id: headingDistanceText
                 width: minGPSStepBtn.width
-                color: fixBtn.checked ? "black" : "grey"
+                color: fixBtn.checked ? aog.blackDayWhiteNight : "grey"
                 text: settings.setF_minHeadingStepDistance * 100 + " " + qsTr("cm", "centimeter abbreviation")
             }
         }
@@ -213,10 +229,10 @@ Rectangle{
             id: fusionRow
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            width: 360
-            height: 100
-            border.color: fixBtn.checked ? "black" : "grey"
-            color: "ghostwhite"
+            width: 360 * theme.scaleWidth
+            height: 100 * theme.scaleHeight
+            border.color: fixBtn.checked ? aog.blackDayWhiteNight : "grey"
+            color: aog.backgroundColor
             SliderCustomized{
                 leftText: 100 - value
                 rightText: value
@@ -246,8 +262,8 @@ Rectangle{
         Text{
             anchors.left: fusionRow.left
             anchors.top: fusionRow.bottom
-            anchors.topMargin: 15
-            color: fixBtn.checked ? "black" : "grey"
+            anchors.topMargin: 15 * theme.scaleHeight
+            color: fixBtn.checked ? aog.blackDayWhiteNight : "grey"
             text: qsTr("Default: 70%")
         }
 
@@ -255,9 +271,9 @@ Rectangle{
         ButtonColor{
             text: qsTr("Reverse Detection")
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
+            anchors.bottomMargin: 30 * theme.scaleHeight
             anchors.horizontalCenter: parent.horizontalCenter
-            color: "white"
+            color: aog.backgroundColor
             colorChecked: "green"
             isChecked: settings.setIMU_isReverseOn
             onClicked: settings.setIMU_isReverseOn = checked
@@ -265,13 +281,18 @@ Rectangle{
     }
     TitleFrame {
         id: dualAntennaSettings
-        anchors.top: antennaType.bottom
-        anchors.right: singleAntennaSettings.left
-        anchors.left: parent.left
-        anchors.bottom: rtkAlarm.top
-        anchors.margins: 5
-        border.color: "black"
-        color: "ghostwhite"
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.left: parent.horizontalCenter
+        anchors.top: parent.top
+		anchors.topMargin: 5 * theme.scaleHeight
+		anchors.leftMargin: 5 * theme.scaleWidth
+		anchors.rightMargin: 5 * theme.scaleWidth
+		anchors.bottomMargin: 5 * theme.scaleHeight
+        border.color: aog.blackDayWhiteNight
+		visible: dualBtn.checked
+		onEnabledChanged: visible = enabled
+        color: aog.backgroundColor
         title: qsTr("Dual Antenna Settings")
         font.pointSize: 16
         enabled: dualBtn.checked
@@ -279,18 +300,18 @@ Rectangle{
         Image {
             id: head
             source: "/images/Config/Con_SourcesHead.png"
-            height: 100
-            width: 100
+            width: 100 * theme.scaleWidth
+			height: 100 * theme.scaleHeight
             anchors.top: parent.top
-            anchors.topMargin: 30
+            anchors.topMargin: 40 * theme.scaleHeight
             anchors.left: parent.left
-            anchors.leftMargin: 30
+            anchors.leftMargin: 30 * theme.scaleWidth
         }
-        SpinBoxOneDecimal{
+        SpinBoxDecimal{
             id: headingOffSet
             anchors.left: head.right
-            anchors.bottom: head.bottom
-            anchors.leftMargin: 50
+			anchors.verticalCenter: head.verticalCenter
+            anchors.leftMargin: 10 * theme.scaleWidth
             from: -100
             boundValue: settings.setGPS_dualHeadingOffset
             onValueChanged: settings.setGPS_dualHeadingOffset = value
@@ -303,10 +324,10 @@ Rectangle{
             objectName: "dualAsIMU"
             text: qsTr("Dual As IMU")
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
+            anchors.bottomMargin: 30 * theme.scaleHeight
             anchors.horizontalCenter: parent.horizontalCenter
             checkable: true
-            color: "white"
+            color: aog.backgroundColor
             colorChecked: "green"
             isChecked: settings.setIMU_isDualAsIMU
             onClicked: settings.setIMU_isDualAsIMU = checked

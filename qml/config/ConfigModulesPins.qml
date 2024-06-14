@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 
 import ".."
@@ -8,7 +8,7 @@ import "../components"
 Rectangle{
     id: configModulesPins
     anchors.fill: parent
-    color: "ghostwhite"
+    color: aog.backgroundColor
     visible: false
 
     onVisibleChanged: {
@@ -92,7 +92,10 @@ Rectangle{
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: 10
+		anchors.topMargin: 10 * theme.scaleHeight
+		anchors.bottomMargin: 10 * theme.scaleHeight
+		anchors.leftMargin: 10 * theme.scaleWidth
+		anchors.rightMargin: 10 * theme.scaleWidth
         PinButtons{
             id: pin1
             pinNumber: "Pin 1"
@@ -250,14 +253,20 @@ Rectangle{
     IconButtonTransparent{
         anchors.bottom: parent.bottom
         anchors.left: back.right
-        anchors.margins: 20
+		anchors.topMargin: 20 * theme.scaleHeight
+		anchors.bottomMargin: 20 * theme.scaleHeight
+		anchors.rightMargin: 20 * theme.scaleHeight
+		anchors.leftMargin: 20 * theme.scaleHeight
         icon.source: "/images/UpArrow64.png"
         onClicked: load_settings()
     }
     IconButtonTransparent{
         id: btnPinsSave
         anchors.right: mandatory.left
-        anchors.margins: 20
+		anchors.topMargin: 20 * theme.scaleHeight
+		anchors.bottomMargin: 20 * theme.scaleHeight
+		anchors.rightMargin: 20 * theme.scaleHeight
+		anchors.leftMargin: 20 * theme.scaleHeight
         anchors.bottom: parent.bottom
         icon.source: "/images/ToolAcceptChange.png"
         Text{
@@ -273,7 +282,7 @@ Rectangle{
         id: mandatory
         anchors.right: parent.right
         anchors.verticalCenter: btnPinsSave.verticalCenter
-        anchors.rightMargin: 20
+        anchors.rightMargin: 20 * theme.scaleWidth
         visible: false
         source: "/images/Config/ConSt_Mandatory.png"
         height: back.width

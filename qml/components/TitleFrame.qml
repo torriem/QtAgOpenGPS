@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 
 Rectangle {
@@ -9,7 +9,7 @@ Rectangle {
     property alias font: titleLabel.font
 
     property bool enabled: true
-    property color titleColorEnabled: "black"
+    property color titleColorEnabled: aog.textColor
     property color titleColorDisabled: "grey"
 
     property int titleHeight: titleLabel.height

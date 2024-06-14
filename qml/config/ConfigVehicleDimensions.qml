@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 import ".."
 import "../components"
@@ -10,7 +10,7 @@ import "../components"
 Rectangle{
     id: configTractorDimensions
     anchors.fill: parent
-    color: "ghostwhite"
+    color: aog.backgroundColor
 
     visible: false
     Image {

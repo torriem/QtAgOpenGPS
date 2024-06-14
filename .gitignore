@@ -5,5 +5,7 @@ Wedel.txt
 compile_commands.json
 .ccls-cache
 .qmake.stash
+.xcf
 Makefile
-build/
+build
+branchnotes.txt

@@ -176,9 +176,29 @@ Item {
     property int setVehicle_vehicleType: 0
     property int set_youSkipWidth: 1
     property double setArdSteer_setting1: 0
+    /*Bit settings for setting1
+      0: is Danfoss
+      1: is pressure
+      2: is Current Sensor
+      3: x/y axis
+      */
     property double setArdSteer_minSpeed: 0
     property double setArdSteer_maxSpeed: 20
-    property double setArdSteer_setting0: 56
+    property double setArdSteer_setting0: 56 //motor driver type
+    /*Bit settings for setting0
+      FormSteer.cs line 135
+      1: invert was
+      2: invert relays
+      4: invert steer
+      8: #cs:   if ((sett & 8) == 0) cboxConv.Text = "Differential";
+                else cboxConv.Text = "Single";
+      16:#cs:   if ((sett & 16) == 0) cboxMotorDrive.Text = "IBT2";
+                else cboxMotorDrive.Text = "Cytron";
+      32&64:cs: if ((sett & 32) == 32) cboxSteerEnable.Text = "Switch";
+                else if ((sett & 64) == 64) cboxSteerEnable.Text = "Button";
+                else cboxSteerEnable.Text = "None";
+      128: is Encoder
+      */
     property double setVehicle_hydraulicLiftLookAhead: 2
     property bool setVehicle_isMachineControlToAutoSteer: false
     property double setArdSteer_maxPulseCounts: 3

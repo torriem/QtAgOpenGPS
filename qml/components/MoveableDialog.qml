@@ -1,6 +1,8 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 import QtQuick.Dialogs
+
+import ".."
 
 Rectangle {
     width: 1024
@@ -8,7 +10,7 @@ Rectangle {
 
     id: fakeScreen
 
-    color: "black"
+    color: aog.backgroundColor
 
     Dialog {
         id: testDialog

@@ -1,13 +1,24 @@
 import QtQuick
+import QtQuick.Controls.Fusion
 
 import ".."
 import "../components"
 
-Rectangle{
+Popup{
     id: fieldFromKML
     width: 500
     height: 450
-    color: "lightgray"
+    visible: false
+    function show(){
+        parent.visible = true
+    }
+    TopLine{
+        id: topLine
+        width: parent.width
+        height: screenPixelDensity *.5
+        titleText: "Load From KML"
+    }
+
     Rectangle{
         id: textEntry
         width: 450
@@ -15,7 +26,7 @@ Rectangle{
         anchors.top:parent.top
         anchors.topMargin: 50
         anchors.horizontalCenter: parent.horizontalCenter
-        color: "ghostwhite"
+        color: aog.backgroundColor
         border.color: "darkgray"
         border.width: 1
         Text {

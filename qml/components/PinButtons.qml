@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 ComboBox {
     property string pinNumber: ""
     id: pinButtons
@@ -35,8 +35,8 @@ ComboBox {
             curentIndex = a2Dconverter.find(editText)
         }
     }*/
-    implicitHeight:30
-    implicitWidth: 150
+    implicitHeight:30 * theme.scaleHeight
+    implicitWidth: 150 * theme.scaleWidth
     Text{
         anchors.bottom: parent.top
         anchors.left: parent.left

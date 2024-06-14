@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 import ".."
 import "../components"
@@ -13,7 +13,7 @@ I'm not sure why, I think I did them the same as everywhere else.
 Rectangle{
     id: configImpDimWin
     anchors.fill: parent
-    color: "ghostwhite"
+    color: aog.backgroundColor
     visible: false
     Image{
         id: image1
@@ -21,14 +21,17 @@ Rectangle{
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: 15
+		anchors.topMargin: 15 * theme.scaleHeight
+		anchors.bottomMargin: 15 * theme.scaleHeight
+		anchors.leftMargin: 15 * theme.scaleWidth
+		anchors.rightMargin: 15 * theme.scaleWidth
         height: parent.height*.75
     }
     SpinBoxCM{
         id: toolTrailingHitchLength
         anchors.top: image1.bottom
         anchors.right: parent.right
-        anchors.rightMargin: 400
+        anchors.rightMargin: 400 * theme.scaleWidth
         from: 10
         to:3000
         boundValue: -settings.setTool_toolTrailingHitchLength

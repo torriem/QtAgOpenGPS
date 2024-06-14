@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 
 import ".."
@@ -13,7 +13,7 @@ Item {
     anchors.fill: parent
     Rectangle{
         anchors.fill: parent
-        color: "ghostwhite"
+        color: aog.backgroundColor
         GridLayout{
             anchors.top: parent.top
             anchors.left: parent.left
@@ -43,23 +43,24 @@ Item {
                 height: 150
                 width: 150
             }
-            SpinBoxOneDecimal{
+            SpinBoxM{
                 objectName: "UturnRadius"
-                from: utils.m_to_unit(2)
-                boundValue: utils.m_to_unit(settings.set_youTurnRadius)
+                from: 2
+                boundValue: settings.set_youTurnRadius
                 stepSize: settings.setMenu_isMetric ?  1 : 5
-                onValueChanged: settings.set_youTurnRadius = utils.m_from_unit(value)
-                to: utils.m_to_unit(100)
+                onValueChanged: settings.set_youTurnRadius = value
+                to: 100
                 editable: true
+				decimals: 1
             }
-            SpinBoxOneDecimal{
+            SpinBoxM{
                 objectName: "UturnDistance"
                 from: 0
-                boundValue: utils.m_to_unit(settings.set_youTurnDistanceFromBoundary)
-                stepSize: settings.setMenu_isMetric ?  1 : 5
-                onValueChanged: settings.set_youTurnDistanceFromBoundary = utils.m_from_unit(value)
-                to: utils.m_to_unit(100)
+                boundValue: settings.set_youTurnDistanceFromBoundary
+                onValueChanged: settings.set_youTurnDistanceFromBoundary = value
+                to: 100
                 editable: true
+				decimals: 1
             }
             SpinBoxM{
                 objectName: "UturnExtensionLength"

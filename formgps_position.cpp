@@ -1134,7 +1134,8 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("toolEasting", vehicle.pivotAxlePos.easting);
     aog->setProperty("toolNorthing", vehicle.pivotAxlePos.northing);
     aog->setProperty("toolHeading", vehicle.pivotAxlePos.heading);
-
+    aog->setProperty("rawHz", nowHz);
+	aog->setProperty("hz", gpsHz);
     aog->setProperty("isReverse" , vehicle.isReverse);
     aog->setProperty("isReverseWithIMU", isReverseWithIMU);
 
@@ -1164,6 +1165,9 @@ void FormGPS::UpdateFixPosition()
 
     aog->setProperty("vehicle_xy",vehicle.pivot_axle_xy);
     aog->setProperty("vehicle_bounding_box",vehicle.bounding_box);
+
+    aog->setProperty("steerAngleActual", mc.actualSteerAngleDegrees);
+    aog->setProperty("steerAngleSet", vehicle.guidanceLineSteerAngle);
 
     if (ABLine.numABLineSelected > 0) {
         //currentABLine_heading is set in formgps_ui.cpp
