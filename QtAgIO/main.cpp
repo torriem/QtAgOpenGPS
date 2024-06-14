@@ -7,6 +7,7 @@
 
 #include "IORouter.h"
 #include "UdpListener.h"
+#include "UdpSender.h"
 #include "PacketHandler.h"
 
 // Helper to generate default settings
@@ -95,8 +96,11 @@ int main(int argc, char *argv[])
 
 	UdpListener listener;
 	PacketHandler handler;
+	UDPSender sendToLoopbackAOG("127.0.0.1", 17777);
 
 	QObject::connect(&listener, &UdpListener::packetReceived, &handler, &PacketHandler::processPacket);
+
+	    QObject::connect(&handler, &PacketHandler::sendToAOG, &sendToLoopbackAOG, &UDPSender::sendToAOG);
 
 
 	return app.exec();

@@ -11,12 +11,13 @@
 
 #define UDP_NMEA_PORT 9999
 
-//const QHostAddress epAgIO = QHostAddress("127.0.0.1"); // TODO for everything good
-const QHostAddress epAgIO = QHostAddress("127.255.255.255"); //TODO for windows
-const int epAgIO_port = 17777;
+const QHostAddress epAgIO = QHostAddress("127.0.0.1"); // TODO for everything good
+//const QHostAddress epAgIO = QHostAddress("127.255.255.255"); //TODO for windows
+const int epAgIO_port = 60068;
 
 void FormGPS::ReceiveFromAgIO()
 {
+	qDebug() << "Receiving from AgIO";
     double head253, rollK, Lat, Lon;
 
     /* this runs in the main GUI thread, it won't ever run at the

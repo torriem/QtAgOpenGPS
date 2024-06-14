@@ -7,6 +7,7 @@ add_library(qtagio
     inc/SerialConnection.h src/SerialConnection.cpp
     inc/UdpConnection.h src/UdpConnection.cpp
 	inc/UdpListener.h src/UdpListener.cpp
+	inc/UdpSender.h src/UdpSender.cpp
 	inc/PacketHandler.h src/PacketHandler.cpp
 )
 
