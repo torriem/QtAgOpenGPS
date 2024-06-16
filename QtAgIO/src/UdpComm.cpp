@@ -1,368 +1,346 @@
 #include "UDP.h"
+#include <QHostInfo>
+#include <QNetworkInterface>
 
-void UDP::LoadUDPNetwork
+
+UDP::UDP()
 {
 
-	helloFromAgIO[5] = 56;
+}
 
-	//	lblIP.Text = "";
-	try //udp network
+UDP::CTraffic()
+{
+	//these are simply storage classes, right?
+}
+
+UDP::CScanReply(){
+
+}
+
+UDP::FormLoop(){
+
+	void UDP::LoadUDPNetwork
 	{
-		foreach (IPAddress IPA in Dns.GetHostAddresses(Dns.GetHostName()))
+
+		helloFromAgIO[5] = 56;
+
+		try //udp network
 		{
-			if (IPA.AddressFamily == AddressFamily.InterNetwork)
-			{
-				string  data = IPA.ToString();
-				lblIP.Text += IPA.ToString().Trim() + "\r\n";
-			}
+
+			//get the hostname	
+			QString hostName = QHostInfo::localHostName();
+
+			// Get all IP addresses associated with the host name
+			QList<QHostAddress> addresses = QNetworkInterface::allAddresses();
+			//Is the above code all right? I don't know what I"m doing. David
+			foreach (const QHostAddress &address, addresses) {
+				{
+					qDebug() << "Found IP Address:" << address.toString();
+					if (IPA.AddressFamily == AddressFamily.InterNetwork)
+					{
+						char  data = IPA.ToString();
+					}
+				}
+
+			// Initialise the socket
+			udpSocket = new QUdpSocket(this);
+			udpSocket->bind(new IPEndPoint(IPAddress.Any, 9999));
+			udpSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointUDP,
+					new AsyncCallback(ReceiveDataUDPAsync), null);
+
+			//I need somethign like this, right?
+			//connect(udpSocket,SIGNAL(readyRead()),this,SLOT(ReceiveFromAgIO()));
+			//that is 308 in udpcomm.cpp
+
+			isUDPNetworkConnected = true;
+			qDebug() << "UDP Network connected";
+
 		}
-
-		// Initialise the socket
-		UDPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-		UDPSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
-		UDPSocket.Bind(new IPEndPoint(IPAddress.Any, 9999));
-		UDPSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointUDP,
-				new AsyncCallback(ReceiveDataUDPAsync), null);
-
-		isUDPNetworkConnected = true;
-		btnUDP.BackColor = Color.LimeGreen;
-
-		//if (!isFound)
-		//{
-		//    MessageBox.Show("Network Address of Modules -> " + Properties.Settings.Default.setIP_localAOG+"[2 - 254] May not exist. \r\n"
-		//    + "Are you sure ethernet is connected?\r\n" + "Go to UDP Settings to fix.\r\n\r\n", "Network Connection Error",
-		//    MessageBoxButtons.OK, MessageBoxIcon.Error);
-		//    //btnUDP.BackColor = Color.Red;
-		//    lblIP.Text = "Not Connected";
-		//}
-	}
-	catch (Exception e)
-	{
-		//WriteErrorLog("UDP Server" + e);
-		MessageBox.Show(e.Message, "Serious Network Connection Error",
-				MessageBoxButtons.OK, MessageBoxIcon.Error);
-		btnUDP.BackColor = Color.Red;
-		lblIP.Text = "Error";
-	}
-}
-
-void UDP::LoadLoopback()
-{
-
-	try //loopback
-	{
-		loopBackSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-		loopBackSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
-		loopBackSocket.Bind(new IPEndPoint(IPAddress.Loopback, 17777));
-		loopBackSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointLoopBack, 
-				new AsyncCallback(ReceiveDataLoopAsync), null);
-	}
-	catch (Exception ex)
-	{
-		//lblStatus.Text = "Error";
-		MessageBox.Show("Load Error: " + ex.Message, "Loopback Server", MessageBoxButtons.OK, MessageBoxIcon.Error);
-	}
-}
-
-void SendToLoopBackMessageAOG(QByteArray byteData)
-{
-	SendDataToLoopBack(byteData, epAgOpen);
-}
-
-void SendDataToLoopBack(QByteArray byteData, IPEndPoint endPoint)
-{
-
-	try
-	{
-		if (byteData.Length != 0)
+		catch (Exception e)
 		{
-			// Send packet to AgVR
-			loopBackSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, endPoint,
-					new AsyncCallback(SendDataLoopAsync), null);
+			//WriteErrorLog("UDP Server" + e);
+			qDebug() << "Serious Network Connection Error";
 		}
 	}
-	catch (Exception ex)
+
+	void UDP::LoadLoopback()
 	{
-		MessageBox.Show("Send Error: " + ex.Message, "UDP Client", MessageBoxButtons.OK, MessageBoxIcon.Error);
-	}
-}
 
-void ReceiveFromLoopBack(QByteArray data)
-{
-
-	SendUDPMessage(data, epModule);
-
-	if (data[0] == 0x80 && data[1] == 0x81)
-	{
-		switch (data[3])
+		try //loopback
 		{
-			case 0xFE: //254 AutoSteer Data
-				{
-					//serList.AddRange(data);
-					SendSteerModulePort(data, data.Length);
-					SendMachineModulePort(data, data.Length);
-					break;
-				}
-			case 0xEF: //239 machine pgn
-				{
-					SendMachineModulePort(data, data.Length);
-					SendSteerModulePort(data, data.Length);
-					break;
-				}
-			case 0xE5: //229 Symmetric Sections - Zones
-				{
-					SendMachineModulePort(data, data.Length);
-					//SendSteerModulePort(data, data.Length);
-					break;
-				}
-			case 0xFC: //252 steer settings
-				{
-					SendSteerModulePort(data, data.Length);
-					break;
-				}
-			case 0xFB: //251 steer config
-				{
-					SendSteerModulePort(data, data.Length);
-					break;                        }
+			loopBackSocket = new QUdpSocket(this);
+			loopBackSocket->bind(new IPEndPoint(IPAddress.Loopback, 17777));
+			loopBackSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointLoopBack, 
+					new AsyncCallback(ReceiveDataLoopAsync), null);
 
-			case 0xEE: //238 machine config
-				{
-					SendMachineModulePort(data, data.Length);
-					SendSteerModulePort(data, data.Length);
-					break;                        }
-
-			case 0xEC: //236 machine config
-				{
-					SendMachineModulePort(data, data.Length);
-					SendSteerModulePort(data, data.Length);
-					break;
-				}
+			//connect(udpSocket,SIGNAL(readyRead()),this,SLOT(ReceiveFromAgIO()));
 		}
-	}                            
-}
-void ReceiveDataLoopAsync(IAsyncResult asyncResult)
-{
-	try
-	{
-		// Receive all data
-		int msgLen = loopBackSocket.EndReceiveFrom(asyncResult, ref endPointLoopBack);
-
-		byte[] localMsg = new byte[msgLen];
-		Array.Copy(buffer, localMsg, msgLen);
-
-		// Listen for more connections again...
-		loopBackSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointLoopBack, 
-				new AsyncCallback(ReceiveDataLoopAsync), null);
-
-		BeginInvoke((MethodInvoker)(() => ReceiveFromLoopBack(localMsg)));
-	}
-	catch (Exception)
-	{
-		//MessageBox.Show("ReceiveData Error: " + ex.Message, "UDP Server", MessageBoxButtons.OK,
-		//MessageBoxIcon.Error);
-	}
-}
-
-void SendUDPMessage( QByteArray byteData, IPEndPoint endPoint)
-{
-
-	if (isUDPNetworkConnected)
-	{
-		if (isUDPMonitorOn)
+		catch (Exception ex)
 		{
-			if (epNtrip != null && endPoint.Port == epNtrip.Port)
-			{
-				if (isNTRIPLogOn)
-					logUDPSentence.Append(DateTime.Now.ToString("ss.fff\t") + endPoint.ToString() + "\t" + " > NTRIP\r\n");
-			}
-			else
-			{
-				logUDPSentence.Append(DateTime.Now.ToString("ss.fff\t") + endPoint.ToString() + "\t" + " > " + byteData[3].ToString() + "\r\n");
-			}
+			qDebug() << "Serious Loopback Connection Error";
 		}
+	}
+
+	void UDP::SendToLoopBackMessageAOG(QByteArray byteData)
+	{
+		SendDataToLoopBack(byteData, epAgOpen);
+	}
+
+	void UDP::SendDataToLoopBack(QByteArray byteData, IPEndPoint endPoint)
+	{
 
 		try
 		{
-			// Send packet to the zero
 			if (byteData.Length != 0)
 			{
-				UDPSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None,
-						endPoint, new AsyncCallback(SendDataUDPAsync), null);
+				// Send packet to AgVR
+				loopBackSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, endPoint,
+						new AsyncCallback(SendDataLoopAsync), null);
 			}
+		}
+		catch (Exception ex)
+		{
+			qDebug() << "Failed to send to AgVr.";
+		}
+	}
+
+	void UDP::ReceiveFromLoopBack(QByteArray data)
+	{
+
+		SendUDPMessage(data, epModule);
+		/*
+		 * This is a part of the whole serial nightmare...
+		 * Do we actually want to deal with this?? UDP is soo easy. 
+		 * Just forward everything on.
+		 * And much more reliable.
+		 * David 6/6/24
+
+		 if (data[0] == 0x80 && data[1] == 0x81)
+		 {
+		 switch (data[3])
+		 {
+		 case 0xFE: //254 AutoSteer Data
+		 {
+		//serList.AddRange(data);
+		SendSteerModulePort(data, data.Length);
+		SendMachineModulePort(data, data.Length);
+		break;
+		}
+		case 0xEF: //239 machine pgn
+		{
+		SendMachineModulePort(data, data.Length);
+		SendSteerModulePort(data, data.Length);
+		break;
+		}
+		case 0xE5: //229 Symmetric Sections - Zones
+		{
+		SendMachineModulePort(data, data.Length);
+		//SendSteerModulePort(data, data.Length);
+		break;
+		}
+		case 0xFC: //252 steer settings
+		{
+		SendSteerModulePort(data, data.Length);
+		break;
+		}
+		case 0xFB: //251 steer config
+		{
+		SendSteerModulePort(data, data.Length);
+		break;                        }
+
+		case 0xEE: //238 machine config
+		{
+		SendMachineModulePort(data, data.Length);
+		SendSteerModulePort(data, data.Length);
+		break;                        }
+
+		case 0xEC: //236 machine config
+		{
+		SendMachineModulePort(data, data.Length);
+		SendSteerModulePort(data, data.Length);
+		break;
+		}
+		}
+		}                            
+
+*/
+	}
+	void ReceiveDataLoopAsync(IAsyncResult asyncResult)
+	{
+		try
+		{
+			// Receive all data
+			int msgLen = loopBackSocket.EndReceiveFrom(asyncResult, ref endPointLoopBack);
+
+			byte[] localMsg = new byte[msgLen];
+			Array.Copy(buffer, localMsg, msgLen);
+
+			// Listen for more connections again...
+			loopBackSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointLoopBack, 
+					new AsyncCallback(ReceiveDataLoopAsync), null);
+
+			BeginInvoke((MethodInvoker)(() => ReceiveFromLoopBack(localMsg)));
 		}
 		catch (Exception)
 		{
-			//WriteErrorLog("Sending UDP Message" + e.ToString());
-			//MessageBox.Show("Send Error: " + e.Message, "UDP Client", MessageBoxButtons.OK,
-			//MessageBoxIcon.Error);
 		}
 	}
-}
-void SendDataUDPAsync(IAsyncResult asyncResult)
-{
-	try
+
+	void UDP::SendUDPMessage( QByteArray byteData, IPEndPoint endPoint)
 	{
-		UDPSocket.EndSend(asyncResult);
-	}
-	catch (Exception)
-	{
-		//WriteErrorLog(" UDP Send Data" + e.ToString());
-		//MessageBox.Show("SendData Error: " + e.Message, "UDP Server", MessageBoxButtons.OK,
-		//MessageBoxIcon.Error);
-	}
-}
 
-void ReceiveDataUDPAsync(IAsyncResult asyncResult)
-{
-
-	try
-	{
-		// Receive all data
-		int msgLen = UDPSocket.EndReceiveFrom(asyncResult, ref endPointUDP);
-
-		byte[] localMsg = new byte[msgLen];
-		Array.Copy(buffer, localMsg, msgLen);
-
-		// Listen for more connections again...
-		UDPSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointUDP, 
-				new AsyncCallback(ReceiveDataUDPAsync), null);
-
-		BeginInvoke((MethodInvoker)(() => ReceiveFromUDP(localMsg)));
-
-	}
-	catch (Exception)
-	{
-		//WriteErrorLog("UDP Recv data " + e.ToString());
-		//MessageBox.Show("ReceiveData Error: " + e.Message, "UDP Server", MessageBoxButtons.OK,
-		//MessageBoxIcon.Error);
-	}
-}
-void ReceiveFromUDP(QByteArray data)
-{
-
-	try
-	{
-		if (data[0] == 0x80 && data[1] == 0x81)
+		if (isUDPNetworkConnected)
 		{
-			//module return via udp sent to AOG
-			SendToLoopBackMessageAOG(data);
 
-			//check for Scan and Hello
-			if (data[3] == 126 && data.Length == 11)
+			try
 			{
-
-				traffic.helloFromAutoSteer = 0;
-				if (isViewAdvanced)
+				// Send packet to the zero
+				if (byteData.Length != 0)
 				{
-					lblPing.Text = (((DateTime.Now - Process.GetCurrentProcess().StartTime).TotalSeconds - pingSecondsStart) * 1000).ToString("N0");
-					double actualSteerAngle = (Int16)((data[6] << 8) + data[5]);
-					lblSteerAngle.Text = (actualSteerAngle * 0.01).ToString("N1");
-					lblWASCounts.Text = ((Int16)((data[8] << 8) + data[7])).ToString();
-
-					lblSwitchStatus.Text = ((data[9] & 2) == 2).ToString();
-					lblWorkSwitchStatus.Text = ((data[9] & 1) == 1).ToString();
+					UDPSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None,
+							endPoint, new AsyncCallback(SendDataUDPAsync), null);
 				}
 			}
-
-			else if (data[3] == 123 && data.Length == 11)
+			catch (Exception)
 			{
-
-				traffic.helloFromMachine = 0;
-
-				if (isViewAdvanced)
-				{
-					lblPingMachine.Text = (((DateTime.Now - Process.GetCurrentProcess().StartTime).TotalSeconds - pingSecondsStart) * 1000).ToString("N0");
-					lbl1To8.Text = Convert.ToString(data[5], 2).PadLeft(8, '0');
-					lbl9To16.Text = Convert.ToString(data[6], 2).PadLeft(8, '0');
-				}
-			}
-
-			else if (data[3] == 121 && data.Length == 11)
-				traffic.helloFromIMU = 0;
-
-			//scan Reply
-			else if (data[3] == 203 && data.Length == 13) //
-			{
-				if (data[2] == 126)  //steer module
-				{
-					scanReply.steerIP = data[5].ToString() + "." + data[6].ToString() + "." + data[7].ToString() + "." + data[8].ToString();
-
-					scanReply.subnet[0] = data[09];
-					scanReply.subnet[1] = data[10];
-					scanReply.subnet[2] = data[11];
-
-					scanReply.subnetStr = data[9].ToString() + "." + data[10].ToString() + "." + data[11].ToString();
-
-					scanReply.isNewData = true;
-					scanReply.isNewSteer = true;
-				}
-				//
-				else if (data[2] == 123)   //machine module
-				{
-					scanReply.machineIP = data[5].ToString() + "." + data[6].ToString() + "." + data[7].ToString() + "." + data[8].ToString();
-
-					scanReply.subnet[0] = data[09];
-					scanReply.subnet[1] = data[10];
-					scanReply.subnet[2] = data[11];
-
-					scanReply.subnetStr = data[9].ToString() + "." + data[10].ToString() + "." + data[11].ToString();
-
-					scanReply.isNewData = true;
-					scanReply.isNewMachine = true;
-
-				}
-				else if (data[2] == 121)   //IMU Module
-				{
-					scanReply.IMU_IP = data[5].ToString() + "." + data[6].ToString() + "." + data[7].ToString() + "." + data[8].ToString();
-
-					scanReply.subnet[0] = data[09];
-					scanReply.subnet[1] = data[10];
-					scanReply.subnet[2] = data[11];
-
-					scanReply.subnetStr = data[9].ToString() + "." + data[10].ToString() + "." + data[11].ToString();
-
-					scanReply.isNewData = true;
-					scanReply.isNewIMU = true;
-				}
-
-				else if (data[2] == 120)    //GPS module
-				{
-					scanReply.GPS_IP = data[5].ToString() + "." + data[6].ToString() + "." + data[7].ToString() + "." + data[8].ToString();
-
-					scanReply.subnet[0] = data[09];
-					scanReply.subnet[1] = data[10];
-					scanReply.subnet[2] = data[11];
-
-					scanReply.subnetStr = data[9].ToString() + "." + data[10].ToString() + "." + data[11].ToString();
-
-					scanReply.isNewData = true;
-					scanReply.isNewGPS = true;
-				}
-			}
-
-			if (isUDPMonitorOn)
-			{
-				logUDPSentence.Append(DateTime.Now.ToString("ss.fff\t") + endPointUDP.ToString() + "\t" + " < " + data[3].ToString() + "\r\n");
-			}
-
-		} // end of pgns
-
-		else if (data[0] == 36 && (data[1] == 71 || data[1] == 80 || data[1] == 75))
-		{
-			traffic.cntrGPSOut += data.Length;
-			rawBuffer += Encoding.ASCII.GetString(data);
-			ParseNMEA(ref rawBuffer);
-
-			if (isUDPMonitorOn && isGPSLogOn)
-			{
-				logUDPSentence.Append(DateTime.Now.ToString("ss.fff\t") + System.Text.Encoding.ASCII.GetString(data));
 			}
 		}
 	}
-	catch
+	void UDP::SendDataUDPAsync(IAsyncResult asyncResult)
+	{
+		try
+		{
+			UDPSocket.EndSend(asyncResult);
+		}
+		catch (Exception)
+		{
+		}
+	}
+
+	void UDP::ReceiveDataUDPAsync(IAsyncResult asyncResult)
 	{
 
+		try
+		{
+			// Receive all data
+			int msgLen = UDPSocket.EndReceiveFrom(asyncResult, ref endPointUDP);
+
+			byte[] localMsg = new byte[msgLen];
+			Array.Copy(buffer, localMsg, msgLen);
+
+			// Listen for more connections again...
+			udpSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointUDP, 
+					new AsyncCallback(ReceiveDataUDPAsync), null);
+
+			BeginInvoke((MethodInvoker)(() => ReceiveFromUDP(localMsg)));
+
+		}
+		catch (Exception)
+		{
+		}
 	}
-}
+	void UDP::ReceiveFromUDP(QByteArray data)
+	{
+
+		try
+		{
+			if (data[0] == 0x80 && data[1] == 0x81)
+			{
+				//module return via udp sent to AOG
+				SendToLoopBackMessageAOG(data);
+
+				//check for Scan and Hello
+				if (data[3] == 126 && data.Length == 11)
+				{
+
+					traffic.helloFromAutoSteer = 0;
+				}
+
+				else if (data[3] == 123 && data.Length == 11)
+				{
+
+					traffic.helloFromMachine = 0;
+
+				}
+
+				else if (data[3] == 121 && data.Length == 11)
+					traffic.helloFromIMU = 0;
+
+				//scan Reply
+				else if (data[3] == 203 && data.Length == 13) //
+				{
+					if (data[2] == 126)  //steer module
+					{
+						scanReply.steerIP = data[5].ToString() + "." + data[6].ToString() + "." + data[7].ToString() + "." + data[8].ToString();
+
+						scanReply.subnet[0] = data[09];
+						scanReply.subnet[1] = data[10];
+						scanReply.subnet[2] = data[11];
+
+						scanReply.subnetStr = data[9].ToString() + "." + data[10].ToString() + "." + data[11].ToString();
+
+						scanReply.isNewData = true;
+						scanReply.isNewSteer = true;
+					}
+					//
+					else if (data[2] == 123)   //machine module
+					{
+						scanReply.machineIP = data[5].ToString() + "." + data[6].ToString() + "." + data[7].ToString() + "." + data[8].ToString();
+
+						scanReply.subnet[0] = data[09];
+						scanReply.subnet[1] = data[10];
+						scanReply.subnet[2] = data[11];
+
+						scanReply.subnetStr = data[9].ToString() + "." + data[10].ToString() + "." + data[11].ToString();
+
+						scanReply.isNewData = true;
+						scanReply.isNewMachine = true;
+
+					}
+					else if (data[2] == 121)   //IMU Module
+					{
+						scanReply.IMU_IP = data[5].ToString() + "." + data[6].ToString() + "." + data[7].ToString() + "." + data[8].ToString();
+
+						scanReply.subnet[0] = data[9];
+						scanReply.subnet[1] = data[10];
+						scanReply.subnet[2] = data[11];
+
+						scanReply.subnetStr = data[9].ToString() + "." + data[10].ToString() + "." + data[11].ToString();
+
+						scanReply.isNewData = true;
+						scanReply.isNewIMU = true;
+					}
+
+					else if (data[2] == 120)    //GPS module
+					{
+						scanReply.GPS_IP = data[5].ToString() + "." + data[6].ToString() + "." + data[7].ToString() + "." + data[8].ToString();
+
+						scanReply.subnet[0] = data[09];
+						scanReply.subnet[1] = data[10];
+						scanReply.subnet[2] = data[11];
+
+						scanReply.subnetStr = data[9].ToString() + "." + data[10].ToString() + "." + data[11].ToString();
+
+						scanReply.isNewData = true;
+						scanReply.isNewGPS = true;
+					}
+				}
+
+
+			} // end of pgns
+
+			else if (data[0] == 36 && (data[1] == 71 || data[1] == 80 || data[1] == 75))
+			{
+				traffic.cntrGPSOut += data.Length;
+				rawBuffer += Encoding.ASCII.GetString(data);
+				ParseNMEA(ref rawBuffer);
+
+			}
+		}
+		catch
+		{
+
+		}
+	}
 }
 

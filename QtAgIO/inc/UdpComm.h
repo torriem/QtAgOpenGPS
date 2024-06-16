@@ -2,7 +2,34 @@
 #include <QHostAddress>
 #include <QNetworkDatagram>
 
+class  CTraffic : public QObject
+{
+	public: 
+        int cntrGPSIn = 0;
+        int cntrGPSInBytes = 0;
+        int cntrGPSOut = 0;
 
+        unsigned int helloFromMachine = 99, helloFromAutoSteer = 99, helloFromIMU = 99;
+};
+
+class CScanReply : public QObject
+{
+	public:
+        char steerIP =   "";
+        char machineIP = "";
+        char GPS_IP =    "";
+        char IMU_IP =    "";
+        char subnetStr = "";
+
+        QByteArray subnet = { 0, 0, 0 };
+
+        bool isNewSteer, isNewMachine, isNewGPS, isNewIMU;
+
+        bool isNewData = false;
+};
+
+class UDP : public QObject
+{
 public: 
 	bool isUDPNetworkConnected;
 
@@ -30,4 +57,5 @@ private:
 	void SendDataUDPAsync(IAsyncResult* asyncResult);
 	void ReceiveDataUdpAsync(IAsyncResult* asyncResult);
 	void ReceiveFromUDP(QByteArray data);
+};
 
