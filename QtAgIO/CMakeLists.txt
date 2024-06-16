@@ -9,6 +9,7 @@ add_library(qtagio
 	inc/UdpListener.h src/UdpListener.cpp
 	inc/UdpSender.h src/UdpSender.cpp
 	inc/PacketHandler.h src/PacketHandler.cpp
+	inc/UdpComm.h src/UdpComm.cpp
 )
 
 target_include_directories(qtagio
