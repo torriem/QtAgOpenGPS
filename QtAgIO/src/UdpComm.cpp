@@ -1,4 +1,4 @@
-#include "UDP.h"
+#include "UdpComm.h"
 #include <QHostInfo>
 #include <QNetworkInterface>
 
@@ -19,7 +19,7 @@ UDP::CScanReply(){
 
 UDP::FormLoop(){
 
-	void UDP::LoadUDPNetwork
+	void UDP::LoadUDPNetwork()
 	{
 
 		helloFromAgIO[5] = 56;
@@ -44,9 +44,13 @@ UDP::FormLoop(){
 
 			// Initialise the socket
 			udpSocket = new QUdpSocket(this);
-			udpSocket->bind(new IPEndPoint(IPAddress.Any, 9999));
-			udpSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointUDP,
+			udpSocket->bind(QHostAddress::Any, 9999));
+
+			/*udpSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointUDP,
 					new AsyncCallback(ReceiveDataUDPAsync), null);
+					*AOG stuff
+					*/
+			connect(udpSocket, SIGNAL(readyRead()), this, SLOT(ReceiveFromUDP()));
 
 			//I need somethign like this, right?
 			//connect(udpSocket,SIGNAL(readyRead()),this,SLOT(ReceiveFromAgIO()));
@@ -63,10 +67,10 @@ UDP::FormLoop(){
 		}
 	}
 
-	void UDP::LoadLoopback()
+	void UDP::LoadLoopback() //this should be done. David 6/18/24
 	{
 
-		try //loopback
+		/*try //loopback
 		{
 			loopBackSocket = new QUdpSocket(this);
 			loopBackSocket->bind(new IPEndPoint(IPAddress.Loopback, 17777));
@@ -78,18 +82,27 @@ UDP::FormLoop(){
 		catch (Exception ex)
 		{
 			qDebug() << "Serious Loopback Connection Error";
-		}
+		}*/
+		//Loopback David 6/18/24
+		loopBackSocket = new QUdpSocket(this);
+		loopBackSocket->bind(QHostAddress::LocalHost, 17777);
+		
+		connect(loopBackSocket, SIGNAL(readyRead()), this, SLOT(ReceiveFromLoopBack()));
+
 	}
 
-	void UDP::SendToLoopBackMessageAOG(QByteArray byteData)
+	/*void UDP::SendToLoopBackMessageAOG(QByteArray byteData)
 	{
 		SendDataToLoopBack(byteData, epAgOpen);
 	}
+	*I don't think this is necessary
+	*/
 
-	void UDP::SendDataToLoopBack(QByteArray byteData, IPEndPoint endPoint)
+	void UDP::SendDataToLoopBack(QByteArray byteData)//this also should work David 6/18/24
 	{
+        loopBackSocket->writeDatagram(byteData, 17777);
 
-		try
+		/*try
 		{
 			if (byteData.Length != 0)
 			{
@@ -102,6 +115,8 @@ UDP::FormLoop(){
 		{
 			qDebug() << "Failed to send to AgVr.";
 		}
+		*Right now we don't send anything to agvr
+		*/
 	}
 
 	void UDP::ReceiveFromLoopBack(QByteArray data)
@@ -114,6 +129,11 @@ UDP::FormLoop(){
 		 * Just forward everything on.
 		 * And much more reliable.
 		 * David 6/6/24
+		 *
+		 * Upon calmer reflection... Maybe best is serial for GPS only. So the lightbar guys
+		 * can test and don't need a switch for ligtbar only.
+		 * However, UDP takes priority for right now.
+
 
 		 if (data[0] == 0x80 && data[1] == 0x81)
 		 {
@@ -206,7 +226,7 @@ UDP::FormLoop(){
 			}
 		}
 	}
-	void UDP::SendDataUDPAsync(IAsyncResult asyncResult)
+	/*void UDP::SendDataUDPAsync(IAsyncResult asyncResult) //not necessary with qt
 	{
 		try
 		{
@@ -238,8 +258,8 @@ UDP::FormLoop(){
 		catch (Exception)
 		{
 		}
-	}
-	void UDP::ReceiveFromUDP(QByteArray data)
+	}*/
+	void UDP::ReceiveFromUDP(QByteArray data) //this should work. David 6/18/24
 	{
 
 		try
@@ -247,8 +267,7 @@ UDP::FormLoop(){
 			if (data[0] == 0x80 && data[1] == 0x81)
 			{
 				//module return via udp sent to AOG
-				SendToLoopBackMessageAOG(data);
-
+                connect(udpSocket, SIGNAL(readyRead()), this, SLOT(SendDataToLoopback()));
 				//check for Scan and Hello
 				if (data[3] == 126 && data.Length == 11)
 				{
@@ -331,9 +350,11 @@ UDP::FormLoop(){
 
 			else if (data[0] == 36 && (data[1] == 71 || data[1] == 80 || data[1] == 75))
 			{
-				traffic.cntrGPSOut += data.Length;
+				/*traffic.cntrGPSOut += data.Length;
 				rawBuffer += Encoding.ASCII.GetString(data);
 				ParseNMEA(ref rawBuffer);
+				*forget about gpsOut for the moment*
+				*/
 
 			}
 		}
