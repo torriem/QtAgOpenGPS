@@ -14,7 +14,6 @@
 //const QHostAddress epAgIO = QHostAddress("127.0.0.1"); // TODO for everything good
 const QHostAddress epAgIO = QHostAddress("127.255.255.255"); //TODO for windows
 const int epAgIO_port = 17777;
->>>>>>> dev
 void FormGPS::ReceiveFromAgIO()
 {
 	qDebug() << "Receiving from AgIO";
