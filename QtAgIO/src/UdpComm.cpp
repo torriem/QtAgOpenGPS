@@ -9,13 +9,35 @@ UDP::UDP()
 }
 
 UDP::CTraffic()
+	: cntrGPSIn(0),
+	  cntrGPSInBytes(0),
+	  cntrGPSOut(0),
+	  helloFromMachine(99),
+	  helloFromAutoSteer(99),
+	  helloFromIMU(99)
 {
 	//these are simply storage classes, right?
 }
-
-UDP::CScanReply(){
-
+//chatgpt
+CScanReply::CScanReply()
+    : steerIP(""),
+      machineIP(""),
+      GPS_IP(""),
+      IMU_IP(""),
+      subnetStr(""),
+      subnet(3, 0), // Initialize with three bytes set to 0
+      isNewSteer(false),
+      isNewMachine(false),
+      isNewGPS(false),
+      isNewIMU(false),
+      isNewData(false)
+{
+    // Optional: other initialization code
 }
+
+/*UDP::CScanReply(){
+
+}*/
 
 UDP::FormLoop(){
 
@@ -53,7 +75,7 @@ UDP::FormLoop(){
 			connect(udpSocket, SIGNAL(readyRead()), this, SLOT(ReceiveFromUDP()));
 
 			//I need somethign like this, right?
-			//connect(udpSocket,SIGNAL(readyRead()),this,SLOT(ReceiveFromAgIO()));
+			//connect(->udpSocket,SIGNAL(readyRead()),this,SLOT(ReceiveFromAgIO()));
 			//that is 308 in udpcomm.cpp
 
 			isUDPNetworkConnected = true;
@@ -122,7 +144,8 @@ UDP::FormLoop(){
 	void UDP::ReceiveFromLoopBack(QByteArray data)
 	{
 
-		SendUDPMessage(data, epModule);
+		//SendUDPMessage(data);
+		connect(loopBackSocket, SIGNAL(readyRead()), this, SLOT(SendUDPMessage()));
 		/*
 		 * This is a part of the whole serial nightmare...
 		 * Do we actually want to deal with this?? UDP is soo easy. 
@@ -185,11 +208,15 @@ UDP::FormLoop(){
 
 */
 	}
-	void ReceiveDataLoopAsync(IAsyncResult asyncResult)
+	/*void ReceiveDataLoopAsync(IAsyncResult asyncResult)
 	{
 		try
 		{
-			// Receive all data
+			/* Receive all data
+			
+			* How much of this do we need? How much is for cs stuff, and how much is required for networking?
+			* David 6/18/24
+			*
 			int msgLen = loopBackSocket.EndReceiveFrom(asyncResult, ref endPointLoopBack);
 
 			byte[] localMsg = new byte[msgLen];
@@ -204,9 +231,9 @@ UDP::FormLoop(){
 		catch (Exception)
 		{
 		}
-	}
+	}*/
 
-	void UDP::SendUDPMessage( QByteArray byteData, IPEndPoint endPoint)
+	void UDP::SendUDPMessage( QByteArray byteData)
 	{
 
 		if (isUDPNetworkConnected)
@@ -215,10 +242,9 @@ UDP::FormLoop(){
 			try
 			{
 				// Send packet to the zero
-				if (byteData.Length != 0)
+				if (byteData.size() != 0)
 				{
-					UDPSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None,
-							endPoint, new AsyncCallback(SendDataUDPAsync), null);
+					udpSocket->writeDatagram(byteData, 8888);
 				}
 			}
 			catch (Exception)
@@ -292,7 +318,7 @@ UDP::FormLoop(){
 					{
 						scanReply.steerIP = data[5].ToString() + "." + data[6].ToString() + "." + data[7].ToString() + "." + data[8].ToString();
 
-						scanReply.subnet[0] = data[09];
+						scanReply.subnet[0] = data[9];
 						scanReply.subnet[1] = data[10];
 						scanReply.subnet[2] = data[11];
 
@@ -306,7 +332,7 @@ UDP::FormLoop(){
 					{
 						scanReply.machineIP = data[5].ToString() + "." + data[6].ToString() + "." + data[7].ToString() + "." + data[8].ToString();
 
-						scanReply.subnet[0] = data[09];
+						scanReply.subnet[0] = data[9];
 						scanReply.subnet[1] = data[10];
 						scanReply.subnet[2] = data[11];
 
@@ -334,7 +360,7 @@ UDP::FormLoop(){
 					{
 						scanReply.GPS_IP = data[5].ToString() + "." + data[6].ToString() + "." + data[7].ToString() + "." + data[8].ToString();
 
-						scanReply.subnet[0] = data[09];
+						scanReply.subnet[0] = data[9];
 						scanReply.subnet[1] = data[10];
 						scanReply.subnet[2] = data[11];
 
