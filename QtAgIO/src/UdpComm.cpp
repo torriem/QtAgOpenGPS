@@ -354,10 +354,5 @@ void UDP::ReceiveFromUDP(QByteArray data) //this should work. David 6/18/24
 			 */
 
 		}
-	}
-	catch (...)
-	{
-
-	}
 }
 
