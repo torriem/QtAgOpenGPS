@@ -1,4 +1,4 @@
-*.pro.user
+*.user
 Wedel.txt
 *.swp
 *.autosave
@@ -7,5 +7,5 @@ compile_commands.json
 .qmake.stash
 .xcf
 Makefile
-build
+build*
 branchnotes.txt
