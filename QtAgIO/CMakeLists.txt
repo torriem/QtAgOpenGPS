@@ -10,6 +10,8 @@ add_library(qtagio
 	inc/UdpSender.h src/UdpSender.cpp
 	inc/PacketHandler.h src/PacketHandler.cpp
 	inc/UdpComm.h src/UdpComm.cpp
+	inc/CTraffic.h src/CTraffic.cpp
+	inc/CScanReply.h src/CScanReply.cpp
 )
 
 target_include_directories(qtagio
