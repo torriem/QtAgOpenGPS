@@ -17,8 +17,6 @@ void UDP::LoadUDPNetwork()
 
 	helloFromAgIO[5] = 56;
 
-	try //udp network
-	{
 
 		//get the hostname	
 		QString hostName = QHostInfo::localHostName();
@@ -54,12 +52,6 @@ void UDP::LoadUDPNetwork()
 		isUDPNetworkConnected = true;
 		qDebug() << "UDP Network connected";
 
-	}
-	catch (...)
-	{
-		//WriteErrorLog("UDP Server" + e);
-		qDebug() << "Serious Network Connection Error";
-	}
 }
 
 void UDP::LoadLoopback() //this should be done. David 6/18/24
@@ -212,17 +204,11 @@ void UDP::SendUDPMessage(QByteArray byteData)
 	if (isUDPNetworkConnected)
 	{
 
-		try
-		{
 			// Send packet to the zero
 			if (byteData.size() != 0)
 			{
 				udpSocket->writeDatagram(byteData);
 			}
-		}
-		catch (...)
-		{
-		}
 	}
 }
 /*void UDP::SendDataUDPAsync(IAsyncResult asyncResult) //not necessary with qt
@@ -261,8 +247,6 @@ catch (Exception)
 void UDP::ReceiveFromUDP(QByteArray data) //this should work. David 6/18/24
 {
 
-	try
-	{
 		if (data[0] == 0x80 && data[1] == 0x81)
 		{
 			//module return via udp sent to AOG
