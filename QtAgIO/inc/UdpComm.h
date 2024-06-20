@@ -27,7 +27,7 @@ public:
     void LoadUDPNetwork();
 	//void SendDataLoopAsync(IAsyncResult* asyncResult);
 	//void SendUDPMessageAOG(QByteArray byteData, IPEndPoint endPoint);
-	void SendUDPMessageAOG(QByteArray byteData);
+	void SendUDPMessage(QByteArray byteData);
 
 	void LoadLoopback();
 	/*void ReceiveFromLoopBack(QByteArray data);
@@ -35,6 +35,8 @@ public:
 	void ReceiveFromUDP(QByteArray data);*/
 	QUdpSocket *udpSocket;
 	QUdpSocket *loopBackSocket;
+	CTraffic traffic;
+	CScanReply scanReply;
 
 private:
 
@@ -55,7 +57,7 @@ public slots:
 	void SendDataToLoopback();
 	void ReceiveFromUDP();*/
 	void ReceiveFromLoopBack(QByteArray data);
-	void SendDataToLoopback(QByteArray byteData);
+	void SendDataToLoopBack(QByteArray byteData);
 	void ReceiveFromUDP(QByteArray data);
 
 };
