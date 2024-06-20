@@ -6,9 +6,6 @@
 #include <QStandardPaths>
 
 #include "IORouter.h"
-#include "UdpListener.h"
-#include "UdpSender.h"
-#include "PacketHandler.h"
 
 // Helper to generate default settings
 void generateDefaultSettings(QSettings& settings)
@@ -90,19 +87,6 @@ int main(int argc, char *argv[])
     IORouter router(settings);
 
 	
-	qDebug() << "Started IORouter";
-	
-	qDebug() << "Attempting to connect to modules...";
-
-	UdpListener listener;
-	PacketHandler handler;
-	UDPSender sendToLoopbackAOG("127.0.0.1", 17777);
-
-	QObject::connect(&listener, &UdpListener::packetReceived, &handler, &PacketHandler::processPacket);
-
-	    QObject::connect(&handler, &PacketHandler::sendToAOG, &sendToLoopbackAOG, &UDPSender::sendToAOG);
-
-
 	return app.exec();
 }
 
