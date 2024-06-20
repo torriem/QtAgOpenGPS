@@ -3,75 +3,49 @@
 #include <QNetworkInterface>
 
 
-UDP::UDP()
+UDP::UDP(QObject *parent)
+	: QObject(parent)
+	  
 {
+    buffer.resize(1024);
+
 
 }
 
-UDP::CTraffic()
-	: cntrGPSIn(0),
-	  cntrGPSInBytes(0),
-	  cntrGPSOut(0),
-	  helloFromMachine(99),
-	  helloFromAutoSteer(99),
-	  helloFromIMU(99)
+
+void UDP::LoadUDPNetwork()
 {
-	//these are simply storage classes, right?
-}
-//chatgpt
-CScanReply::CScanReply()
-    : steerIP(""),
-      machineIP(""),
-      GPS_IP(""),
-      IMU_IP(""),
-      subnetStr(""),
-      subnet(3, 0), // Initialize with three bytes set to 0
-      isNewSteer(false),
-      isNewMachine(false),
-      isNewGPS(false),
-      isNewIMU(false),
-      isNewData(false)
-{
-    // Optional: other initialization code
-}
 
-/*UDP::CScanReply(){
+	helloFromAgIO[5] = 56;
 
-}*/
-
-UDP::FormLoop(){
-
-	void UDP::LoadUDPNetwork()
+	try //udp network
 	{
 
-		helloFromAgIO[5] = 56;
+		//get the hostname	
+		QString hostName = QHostInfo::localHostName();
 
-		try //udp network
-		{
-
-			//get the hostname	
-			QString hostName = QHostInfo::localHostName();
-
-			// Get all IP addresses associated with the host name
-			QList<QHostAddress> addresses = QNetworkInterface::allAddresses();
-			//Is the above code all right? I don't know what I"m doing. David
-			foreach (const QHostAddress &address, addresses) {
+		// Get all IP addresses associated with the host name
+		QList<QHostAddress> addresses = QNetworkInterface::allAddresses();
+		//Is the above code all right? I don't know what I"m doing. David
+		/* Oh forget this for now. I'll work on it later
+		 * foreach (const QHostAddress &address, addresses) {
+			{
+				qDebug() << "Found IP Address:" << address.toString();
+				if (IPA.AddressFamily == AddressFamily.InterNetwork)
 				{
-					qDebug() << "Found IP Address:" << address.toString();
-					if (IPA.AddressFamily == AddressFamily.InterNetwork)
-					{
-						char  data = IPA.ToString();
-					}
+					char  data = IPA.ToString();
 				}
+			}*/
 
 			// Initialise the socket
 			udpSocket = new QUdpSocket(this);
-			udpSocket->bind(QHostAddress::Any, 9999));
+			//udpSocket->bind(QHostAddress::Any, 9999));
+			udpSocket->bind(QHostAddress("10.0.0.255"), 9999);
 
 			/*udpSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointUDP,
-					new AsyncCallback(ReceiveDataUDPAsync), null);
-					*AOG stuff
-					*/
+			  new AsyncCallback(ReceiveDataUDPAsync), null);
+			 *AOG stuff
+			 */
 			connect(udpSocket, SIGNAL(readyRead()), this, SLOT(ReceiveFromUDP()));
 
 			//I need somethign like this, right?
@@ -82,7 +56,7 @@ UDP::FormLoop(){
 			qDebug() << "UDP Network connected";
 
 		}
-		catch (Exception e)
+		catch (...)
 		{
 			//WriteErrorLog("UDP Server" + e);
 			qDebug() << "Serious Network Connection Error";
@@ -93,55 +67,55 @@ UDP::FormLoop(){
 	{
 
 		/*try //loopback
-		{
-			loopBackSocket = new QUdpSocket(this);
-			loopBackSocket->bind(new IPEndPoint(IPAddress.Loopback, 17777));
-			loopBackSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointLoopBack, 
-					new AsyncCallback(ReceiveDataLoopAsync), null);
+		  {
+		  loopBackSocket = new QUdpSocket(this);
+		  loopBackSocket->bind(new IPEndPoint(IPAddress.Loopback, 17777));
+		  loopBackSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointLoopBack, 
+		  new AsyncCallback(ReceiveDataLoopAsync), null);
 
-			//connect(udpSocket,SIGNAL(readyRead()),this,SLOT(ReceiveFromAgIO()));
+		//connect(udpSocket,SIGNAL(readyRead()),this,SLOT(ReceiveFromAgIO()));
 		}
 		catch (Exception ex)
 		{
-			qDebug() << "Serious Loopback Connection Error";
+		qDebug() << "Serious Loopback Connection Error";
 		}*/
 		//Loopback David 6/18/24
 		loopBackSocket = new QUdpSocket(this);
 		loopBackSocket->bind(QHostAddress::LocalHost, 17777);
-		
+
 		connect(loopBackSocket, SIGNAL(readyRead()), this, SLOT(ReceiveFromLoopBack()));
 
 	}
 
 	/*void UDP::SendToLoopBackMessageAOG(QByteArray byteData)
-	{
-		SendDataToLoopBack(byteData, epAgOpen);
-	}
-	*I don't think this is necessary
-	*/
+	  {
+	  SendDataToLoopBack(byteData, epAgOpen);
+	  }
+	 *I don't think this is necessary
+	 */
 
 	void UDP::SendDataToLoopBack(QByteArray byteData)//this also should work David 6/18/24
 	{
-        loopBackSocket->writeDatagram(byteData, 17777);
+		loopBackSocket->writeDatagram(byteData, 17777);
 
 		/*try
-		{
-			if (byteData.Length != 0)
-			{
-				// Send packet to AgVR
-				loopBackSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, endPoint,
-						new AsyncCallback(SendDataLoopAsync), null);
-			}
+		  {
+		  if (byteData.Length != 0)
+		  {
+		// Send packet to AgVR
+		loopBackSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, endPoint,
+		new AsyncCallback(SendDataLoopAsync), null);
+		}
 		}
 		catch (Exception ex)
 		{
-			qDebug() << "Failed to send to AgVr.";
+		qDebug() << "Failed to send to AgVr.";
 		}
-		*Right now we don't send anything to agvr
-		*/
+		 *Right now we don't send anything to agvr
+		 */
 	}
 
-	void UDP::ReceiveFromLoopBack(QByteArray data)
+	void UDP::ReceiveFromLoopBack(data)
 	{
 
 		//SendUDPMessage(data);
@@ -209,31 +183,31 @@ UDP::FormLoop(){
 */
 	}
 	/*void ReceiveDataLoopAsync(IAsyncResult asyncResult)
+	  {
+	  try
+	  {
+	/* Receive all data
+
+	 * How much of this do we need? How much is for cs stuff, and how much is required for networking?
+	 * David 6/18/24
+	 *
+	 int msgLen = loopBackSocket.EndReceiveFrom(asyncResult, ref endPointLoopBack);
+
+	 byte[] localMsg = new byte[msgLen];
+	 Array.Copy(buffer, localMsg, msgLen);
+
+	// Listen for more connections again...
+	loopBackSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointLoopBack, 
+	new AsyncCallback(ReceiveDataLoopAsync), null);
+
+	BeginInvoke((MethodInvoker)(() => ReceiveFromLoopBack(localMsg)));
+	}
+	catch (Exception)
 	{
-		try
-		{
-			/* Receive all data
-			
-			* How much of this do we need? How much is for cs stuff, and how much is required for networking?
-			* David 6/18/24
-			*
-			int msgLen = loopBackSocket.EndReceiveFrom(asyncResult, ref endPointLoopBack);
-
-			byte[] localMsg = new byte[msgLen];
-			Array.Copy(buffer, localMsg, msgLen);
-
-			// Listen for more connections again...
-			loopBackSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointLoopBack, 
-					new AsyncCallback(ReceiveDataLoopAsync), null);
-
-			BeginInvoke((MethodInvoker)(() => ReceiveFromLoopBack(localMsg)));
-		}
-		catch (Exception)
-		{
-		}
+	}
 	}*/
 
-	void UDP::SendUDPMessage( QByteArray byteData)
+	void UDP::SendUDPMessage(byteData)
 	{
 
 		if (isUDPNetworkConnected)
@@ -253,39 +227,39 @@ UDP::FormLoop(){
 		}
 	}
 	/*void UDP::SendDataUDPAsync(IAsyncResult asyncResult) //not necessary with qt
-	{
-		try
-		{
-			UDPSocket.EndSend(asyncResult);
-		}
-		catch (Exception)
-		{
-		}
+	  {
+	  try
+	  {
+	  UDPSocket.EndSend(asyncResult);
+	  }
+	  catch (Exception)
+	  {
+	  }
+	  }
+
+	  void UDP::ReceiveDataUDPAsync(IAsyncResult asyncResult)
+	  {
+
+	  try
+	  {
+	// Receive all data
+	int msgLen = UDPSocket.EndReceiveFrom(asyncResult, ref endPointUDP);
+
+	byte[] localMsg = new byte[msgLen];
+	Array.Copy(buffer, localMsg, msgLen);
+
+	// Listen for more connections again...
+	udpSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointUDP, 
+	new AsyncCallback(ReceiveDataUDPAsync), null);
+
+	BeginInvoke((MethodInvoker)(() => ReceiveFromUDP(localMsg)));
+
 	}
-
-	void UDP::ReceiveDataUDPAsync(IAsyncResult asyncResult)
+	catch (Exception)
 	{
-
-		try
-		{
-			// Receive all data
-			int msgLen = UDPSocket.EndReceiveFrom(asyncResult, ref endPointUDP);
-
-			byte[] localMsg = new byte[msgLen];
-			Array.Copy(buffer, localMsg, msgLen);
-
-			// Listen for more connections again...
-			udpSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointUDP, 
-					new AsyncCallback(ReceiveDataUDPAsync), null);
-
-			BeginInvoke((MethodInvoker)(() => ReceiveFromUDP(localMsg)));
-
-		}
-		catch (Exception)
-		{
-		}
+	}
 	}*/
-	void UDP::ReceiveFromUDP(QByteArray data) //this should work. David 6/18/24
+	void UDP::ReceiveFromUDP(data) //this should work. David 6/18/24
 	{
 
 		try
@@ -293,7 +267,7 @@ UDP::FormLoop(){
 			if (data[0] == 0x80 && data[1] == 0x81)
 			{
 				//module return via udp sent to AOG
-                connect(udpSocket, SIGNAL(readyRead()), this, SLOT(SendDataToLoopback()));
+				connect(udpSocket, SIGNAL(readyRead()), this, SLOT(SendDataToLoopback()));
 				//check for Scan and Hello
 				if (data[3] == 126 && data.Length == 11)
 				{
@@ -377,10 +351,10 @@ UDP::FormLoop(){
 			else if (data[0] == 36 && (data[1] == 71 || data[1] == 80 || data[1] == 75))
 			{
 				/*traffic.cntrGPSOut += data.Length;
-				rawBuffer += Encoding.ASCII.GetString(data);
-				ParseNMEA(ref rawBuffer);
-				*forget about gpsOut for the moment*
-				*/
+				  rawBuffer += Encoding.ASCII.GetString(data);
+				  ParseNMEA(ref rawBuffer);
+				 *forget about gpsOut for the moment*
+				 */
 
 			}
 		}
@@ -389,5 +363,4 @@ UDP::FormLoop(){
 
 		}
 	}
-}
 
