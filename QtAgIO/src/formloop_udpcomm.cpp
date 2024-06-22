@@ -2,18 +2,7 @@
 #include <QHostInfo>
 #include <QNetworkInterface>
 
-
-
-UDP::UDP(QObject *parent)
-    : QObject(parent)
-
-{
-    buffer.resize(1024);
-
-}
-
-
-void UDP::LoadUDPNetwork()
+void FormLoop::LoadUDPNetwork()
 {
     qDebug() << "Loading UDP Network";
     //helloFromAgIO[5] = 56;
@@ -50,13 +39,13 @@ void UDP::LoadUDPNetwork()
     }
 
     //trigger ReceiveFromUDP() when a packet is present
-    connect(udpSocket, &QUdpSocket::readyRead, this, &UDP::ReceiveFromUDP);
+    connect(udpSocket, &QUdpSocket::readyRead, this, &FormLoop::ReceiveFromUDP);
 
     isUDPNetworkConnected = true;
 
 }
 
-void UDP::LoadLoopback() //this should be done. David 6/18/24
+void FormLoop::LoadLoopback() //this should be done. David 6/18/24
 {
 
     /*try //loopback
@@ -83,11 +72,11 @@ void UDP::LoadLoopback() //this should be done. David 6/18/24
         qDebug() << "loopBackSocket bound";
     }
 
-    connect(loopBackSocket, &QUdpSocket::readyRead, this, &UDP::ReceiveFromLoopBack);
+    connect(loopBackSocket, &QUdpSocket::readyRead, this, &FormLoop::ReceiveFromLoopBack);
 
 }
 
-void UDP::SendDataToLoopBack(QByteArray byteData)//this also should work David 6/18/24
+void FormLoop::SendDataToLoopBack(QByteArray byteData)//this also should work David 6/18/24
 {
     loopBackSocket->writeDatagram(byteData, QHostAddress::LocalHost, 15555);
     //qDebug() << "Sent size: " << byteData.size();
@@ -109,7 +98,7 @@ void UDP::SendDataToLoopBack(QByteArray byteData)//this also should work David 6
      */
 }
 
-void UDP::ReceiveFromLoopBack()
+void FormLoop::ReceiveFromLoopBack()
 {
 
     while (loopBackSocket->hasPendingDatagrams()){
@@ -206,7 +195,7 @@ catch (Exception)
 }
 }*/
 
-void UDP::SendUDPMessage(QByteArray byteData)
+void FormLoop::SendUDPMessage(QByteArray byteData)
 {
 
     if (isUDPNetworkConnected)
@@ -250,7 +239,7 @@ catch (Exception)
 {
 }
 }*/
-void UDP::ReceiveFromUDP() //this should work. David 6/18/24
+void FormLoop::ReceiveFromUDP() //this should work. David 6/18/24
 {
 
     //read the data
