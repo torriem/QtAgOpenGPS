@@ -1,5 +1,5 @@
-#ifndef UDP_H
-#define UDP_H
+#ifndef FormLoop_H
+#define FormLoop_H
 
 #include <QHostAddress>
 #include <QNetworkDatagram>
@@ -10,13 +10,13 @@
 #include <QUdpSocket>
 
 
-class UDP : public QObject
+class FormLoop : public QObject
 {
 
 	Q_OBJECT
 
 public: 
-	explicit UDP(QObject *parent = nullptr);
+	explicit FormLoop(QObject *parent = nullptr);
 
 	bool isUDPNetworkConnected;
 	

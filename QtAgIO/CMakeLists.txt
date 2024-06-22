@@ -6,9 +6,10 @@ add_library(qtagio
     inc/Connection.h src/Connection.cpp
     inc/SerialConnection.h src/SerialConnection.cpp
     inc/UdpConnection.h src/UdpConnection.cpp
-	inc/UdpComm.h src/UdpComm.cpp
 	inc/CTraffic.h src/CTraffic.cpp
 	inc/CScanReply.h src/CScanReply.cpp
+	inc/formloop.h src/formloop.cpp
+	src/formloop_udpcomm.cpp
 )
 
 target_include_directories(qtagio
