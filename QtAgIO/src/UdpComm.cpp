@@ -3,28 +3,29 @@
 #include <QNetworkInterface>
 
 
+
 UDP::UDP(QObject *parent)
-	: QObject(parent)
+    : QObject(parent)
 
 {
-	buffer.resize(1024);
+    buffer.resize(1024);
 
 }
 
 
 void UDP::LoadUDPNetwork()
 {
+    qDebug() << "Loading UDP Network";
+    //helloFromAgIO[5] = 56;
 
-	helloFromAgIO[5] = 56;
 
+    //get the hostname
+    QString hostName = QHostInfo::localHostName();
 
-		//get the hostname	
-		QString hostName = QHostInfo::localHostName();
-
-		// Get all IP addresses associated with the host name
-		QList<QHostAddress> addresses = QNetworkInterface::allAddresses();
-		//Is the above code all right? I don't know what I"m doing. David
-		/* Oh forget this for now. I'll work on it later
+    // Get all IP addresses associated with the host name
+    QList<QHostAddress> addresses = QNetworkInterface::allAddresses();
+    //Is the above code all right? I don't know what I"m doing. David
+    /* Oh forget this for now. I'll work on it later
 		 * foreach (const QHostAddress &address, addresses) {
 		 {
 		 qDebug() << "Found IP Address:" << address.toString();
@@ -34,34 +35,35 @@ void UDP::LoadUDPNetwork()
 		 }
 		 }*/
 
-		// Initialise the socket
-		udpSocket = new QUdpSocket(this);
-		//udpSocket->bind(QHostAddress::Any, 9999));
-		udpSocket->bind(QHostAddress("10.0.0.255"), 9999);
+    // Initialise the socket
+    udpSocket = new QUdpSocket(this);
 
-		/*udpSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointUDP,
-		  new AsyncCallback(ReceiveDataUDPAsync), null);
-		 *AOG stuff
-		 */
-		connect(udpSocket, SIGNAL(readyRead()), this, SLOT(ReceiveFromUDP()));
+    //set up the connection
+    //this is the part that listens
+    if(!udpSocket->bind(QHostAddress("10.0.0.255"), 9999))
+    {
+        qDebug() << "Failed to bind udpSocket" << udpSocket->errorString();
+        qDebug() << "Exiting program due to fatal error";
+        std::exit;
+    }else {
+        qDebug() << "udpSocket bound";
+    }
 
-		//I need somethign like this, right?
-		//connect(->udpSocket,SIGNAL(readyRead()),this,SLOT(ReceiveFromAgIO()));
-		//that is 308 in udpcomm.cpp
+    //trigger ReceiveFromUDP() when a packet is present
+    connect(udpSocket, &QUdpSocket::readyRead, this, &UDP::ReceiveFromUDP);
 
-		isUDPNetworkConnected = true;
-		qDebug() << "UDP Network connected";
+    isUDPNetworkConnected = true;
 
 }
 
 void UDP::LoadLoopback() //this should be done. David 6/18/24
 {
 
-	/*try //loopback
+    /*try //loopback
 	  {
 	  loopBackSocket = new QUdpSocket(this);
 	  loopBackSocket->bind(new IPEndPoint(IPAddress.Loopback, 17777));
-	  loopBackSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointLoopBack, 
+      loopBackSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointLoopBack,
 	  new AsyncCallback(ReceiveDataLoopAsync), null);
 
 	//connect(udpSocket,SIGNAL(readyRead()),this,SLOT(ReceiveFromAgIO()));
@@ -70,26 +72,27 @@ void UDP::LoadLoopback() //this should be done. David 6/18/24
 	{
 	qDebug() << "Serious Loopback Connection Error";
 	}*/
-	//Loopback David 6/18/24
-	loopBackSocket = new QUdpSocket(this);
-	loopBackSocket->bind(QHostAddress::LocalHost, 17777);
+    //Loopback David 6/18/24
+    loopBackSocket = new QUdpSocket(this);
+    if(!loopBackSocket->bind(QHostAddress::LocalHost, 17770))
+    {
+        qDebug() <<"Failed to bind loopBackSocket" << loopBackSocket->errorString();
+        qDebug() << "Exiting program due to fatal error";
+        std::exit;
+    } else {
+        qDebug() << "loopBackSocket bound";
+    }
 
-	connect(loopBackSocket, SIGNAL(readyRead()), this, SLOT(ReceiveFromLoopBack()));
+    connect(loopBackSocket, &QUdpSocket::readyRead, this, &UDP::ReceiveFromLoopBack);
 
 }
 
-/*void UDP::SendToLoopBackMessageAOG(QByteArray byteData)
-  {
-  SendDataToLoopBack(byteData, epAgOpen);
-  }
- *I don't think this is necessary
- */
-
 void UDP::SendDataToLoopBack(QByteArray byteData)//this also should work David 6/18/24
 {
-	loopBackSocket->writeDatagram(byteData);
+    loopBackSocket->writeDatagram(byteData, QHostAddress::LocalHost, 15555);
+    //qDebug() << "Sent size: " << byteData.size();
 
-	/*try
+    /*try
 	  {
 	  if (byteData.Length != 0)
 	  {
@@ -103,17 +106,21 @@ void UDP::SendDataToLoopBack(QByteArray byteData)//this also should work David 6
 	qDebug() << "Failed to send to AgVr.";
 	}
 	 *Right now we don't send anything to agvr
-	 */
+     */
 }
 
-void UDP::ReceiveFromLoopBack(QByteArray data)
+void UDP::ReceiveFromLoopBack()
 {
 
-	//SendUDPMessage(data);
-	connect(loopBackSocket, SIGNAL(readyRead()), this, SLOT(SendUDPMessage()));
-	/*
+    while (loopBackSocket->hasPendingDatagrams()){
+        QByteArray byteData;
+        byteData.resize(loopBackSocket->pendingDatagramSize());
+        loopBackSocket->readDatagram(byteData.data(), byteData.size());
+        //SendUDPMessage(QByteArray byteData);
+
+        /*
 	 * This is a part of the whole serial nightmare...
-	 * Do we actually want to deal with this?? UDP is soo easy. 
+     * Do we actually want to deal with this?? UDP is soo easy.
 	 * Just forward everything on.
 	 * And much more reliable.
 	 * David 6/6/24
@@ -169,9 +176,10 @@ void UDP::ReceiveFromLoopBack(QByteArray data)
 	break;
 	}
 	}
-	}                            
+    }
 
 */
+    }
 }
 /*void ReceiveDataLoopAsync(IAsyncResult asyncResult)
   {
@@ -188,7 +196,7 @@ void UDP::ReceiveFromLoopBack(QByteArray data)
  Array.Copy(buffer, localMsg, msgLen);
 
 // Listen for more connections again...
-loopBackSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointLoopBack, 
+loopBackSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointLoopBack,
 new AsyncCallback(ReceiveDataLoopAsync), null);
 
 BeginInvoke((MethodInvoker)(() => ReceiveFromLoopBack(localMsg)));
@@ -201,15 +209,13 @@ catch (Exception)
 void UDP::SendUDPMessage(QByteArray byteData)
 {
 
-	if (isUDPNetworkConnected)
-	{
+    if (isUDPNetworkConnected)
+    {
 
-			// Send packet to the zero
-			if (byteData.size() != 0)
-			{
-				udpSocket->writeDatagram(byteData);
-			}
-	}
+        // Send packet to the zero
+        if (byteData.size() != 0)
+            udpSocket->writeDatagram(byteData, QHostAddress("10.0.0.255"), 8888);
+    }
 }
 /*void UDP::SendDataUDPAsync(IAsyncResult asyncResult) //not necessary with qt
   {
@@ -234,7 +240,7 @@ byte[] localMsg = new byte[msgLen];
 Array.Copy(buffer, localMsg, msgLen);
 
 // Listen for more connections again...
-udpSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointUDP, 
+udpSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointUDP,
 new AsyncCallback(ReceiveDataUDPAsync), null);
 
 BeginInvoke((MethodInvoker)(() => ReceiveFromUDP(localMsg)));
@@ -244,115 +250,116 @@ catch (Exception)
 {
 }
 }*/
-void UDP::ReceiveFromUDP(QByteArray data) //this should work. David 6/18/24
+void UDP::ReceiveFromUDP() //this should work. David 6/18/24
 {
 
-		if (data[0] == 0x80 && data[1] == 0x81)
-		{
-			//module return via udp sent to AOG
-			connect(udpSocket, SIGNAL(readyRead()), this, SLOT(SendDataToLoopback()));
-			//check for Scan and Hello
-			if (data[3] == 126 && data.size() == 11)
-			{
+    //read the data
+    while (udpSocket->hasPendingDatagrams()){
+        QByteArray data;
+        data.resize(udpSocket->pendingDatagramSize());
+        udpSocket->readDatagram(data.data(), data.size());
+        qDebug() << data[0] << data[1] << data[2], data[3];
 
-				traffic.helloFromAutoSteer = 0;
-			}
+            //SendDataToLoopBack(data);
+        //if (data[0] == 0x80 && data[1] == 0x81)
+            if (data.length() > 4 && data[0] == (char)0x80 && data[1] == (char)0x81)
+        {
+            //module return via udp sent to AOG
+        //qDebug() << "RECD size: " << data.size();
+            SendDataToLoopBack(data);
+            //check for Scan and Hello
+            if (data[3] == 126 && data.size() == 11)
+                traffic.helloFromAutoSteer = 0;
 
-			else if (data[3] == 123 && data.size() == 11)
-			{
+            else if (data[3] == 123 && data.size() == 11)
+                traffic.helloFromMachine = 0;
 
-				traffic.helloFromMachine = 0;
+            else if (data[3] == 121 && data.size() == 11)
+                traffic.helloFromIMU = 0;
 
-			}
+            //scan Reply
+            else if (data[3] == 203 && data.size() == 13) //
+            {
+                if (data[2] == 126)  //steer module
+                {
+                    //scanReply.steerIP = data[5].ToString() + "." + data[6].ToString() + "." + data[7].ToString() + "." + data[8].ToString();
+                    //this should do the same as the above line did in cs
+                    scanReply.steerIP = QString::fromLatin1(data.mid(5, 4)).replace(" ", ".");
 
-			else if (data[3] == 121 && data.size() == 11)
-				traffic.helloFromIMU = 0;
+                    scanReply.subnet[0] = data[9];
+                    scanReply.subnet[1] = data[10];
+                    scanReply.subnet[2] = data[11];
 
-			//scan Reply
-			else if (data[3] == 203 && data.size() == 13) //
-			{
-				if (data[2] == 126)  //steer module
-				{
-					//scanReply.steerIP = data[5].ToString() + "." + data[6].ToString() + "." + data[7].ToString() + "." + data[8].ToString();
-					//this should do the same as the above line did in cs
-					scanReply.steerIP = QString::fromLatin1(data.mid(5, 4)).replace(" ", ".");
+                    //scanReply.subnetStr = data[9].ToString() + "." + data[10].ToString() + "." + data[11].ToString();
+                    scanReply.subnetStr = QString::fromLatin1(data.mid(9, 3)).replace(" ", ".");
 
-					scanReply.subnet[0] = data[9];
-					scanReply.subnet[1] = data[10];
-					scanReply.subnet[2] = data[11];
+                    scanReply.isNewData = true;
+                    scanReply.isNewSteer = true;
+                }
+                //
+                else if (data[2] == 123)   //machine module
+                {
+                    //scanReply.machineIP = data[5].ToString() + "." + data[6].ToString() + "." + data[7].ToString() + "." + data[8].ToString();
 
-					//scanReply.subnetStr = data[9].ToString() + "." + data[10].ToString() + "." + data[11].ToString();
-					scanReply.subnetStr = QString::fromLatin1(data.mid(9, 3)).replace(" ", ".");
+                    scanReply.machineIP = QString::fromLatin1(data.mid(5, 4)).replace(" ", ".");
 
-					scanReply.isNewData = true;
-					scanReply.isNewSteer = true;
-				}
-				//
-				else if (data[2] == 123)   //machine module
-				{
-					//scanReply.machineIP = data[5].ToString() + "." + data[6].ToString() + "." + data[7].ToString() + "." + data[8].ToString();
+                    scanReply.subnet[0] = data[9];
+                    scanReply.subnet[1] = data[10];
+                    scanReply.subnet[2] = data[11];
 
-					scanReply.machineIP = QString::fromLatin1(data.mid(5, 4)).replace(" ", ".");
+                    //scanReply.subnetStr = data[9].ToString() + "." + data[10].ToString() + "." + data[11].ToString();
 
-					scanReply.subnet[0] = data[9];
-					scanReply.subnet[1] = data[10];
-					scanReply.subnet[2] = data[11];
+                    scanReply.subnetStr = QString::fromLatin1(data.mid(9, 3)).replace(" ", ".");
 
-					//scanReply.subnetStr = data[9].ToString() + "." + data[10].ToString() + "." + data[11].ToString();
+                    scanReply.isNewData = true;
+                    scanReply.isNewMachine = true;
 
-					scanReply.subnetStr = QString::fromLatin1(data.mid(9, 3)).replace(" ", ".");
+                }
+                else if (data[2] == 121)   //IMU Module
+                {
+                    //scanReply.IMU_IP = data[5].ToString() + "." + data[6].ToString() + "." + data[7].ToString() + "." + data[8].ToString();
 
-					scanReply.isNewData = true;
-					scanReply.isNewMachine = true;
+                    scanReply.IMU_IP = QString::fromLatin1(data.mid(5, 4)).replace(" ", ".");
 
-				}
-				else if (data[2] == 121)   //IMU Module
-				{
-					//scanReply.IMU_IP = data[5].ToString() + "." + data[6].ToString() + "." + data[7].ToString() + "." + data[8].ToString();
+                    scanReply.subnet[0] = data[9];
+                    scanReply.subnet[1] = data[10];
+                    scanReply.subnet[2] = data[11];
 
-					scanReply.IMU_IP = QString::fromLatin1(data.mid(5, 4)).replace(" ", ".");
+                    //scanReply.subnetStr = data[9].ToString() + "." + data[10].ToString() + "." + data[11].ToString();
+                    scanReply.subnetStr = QString::fromLatin1(data.mid(9, 3)).replace(" ", ".");
 
-					scanReply.subnet[0] = data[9];
-					scanReply.subnet[1] = data[10];
-					scanReply.subnet[2] = data[11];
+                    scanReply.isNewData = true;
+                    scanReply.isNewIMU = true;
+                }
 
-					//scanReply.subnetStr = data[9].ToString() + "." + data[10].ToString() + "." + data[11].ToString();
-					scanReply.subnetStr = QString::fromLatin1(data.mid(9, 3)).replace(" ", ".");
+                else if (data[2] == 120)    //GPS module
+                {
+                    //scanReply.GPS_IP = data[5].ToString() + "." + data[6].ToString() + "." + data[7].ToString() + "." + data[8].ToString();
 
-					scanReply.isNewData = true;
-					scanReply.isNewIMU = true;
-				}
+                    scanReply.GPS_IP = QString::fromLatin1(data.mid(5, 4)).replace(" ", ".");
 
-				else if (data[2] == 120)    //GPS module
-				{
-					//scanReply.GPS_IP = data[5].ToString() + "." + data[6].ToString() + "." + data[7].ToString() + "." + data[8].ToString();
+                    scanReply.subnet[0] = data[9];
+                    scanReply.subnet[1] = data[10];
+                    scanReply.subnet[2] = data[11];
 
-					scanReply.GPS_IP = QString::fromLatin1(data.mid(5, 4)).replace(" ", ".");
+                    //scanReply.subnetStr = data[9].ToString() + "." + data[10].ToString() + "." + data[11].ToString();
 
-					scanReply.subnet[0] = data[9];
-					scanReply.subnet[1] = data[10];
-					scanReply.subnet[2] = data[11];
+                    scanReply.subnetStr = QString::fromLatin1(data.mid(9, 3)).replace(" ", ".");
 
-					//scanReply.subnetStr = data[9].ToString() + "." + data[10].ToString() + "." + data[11].ToString();
+                    scanReply.isNewData = true;
+                    scanReply.isNewGPS = true;
+                }
+            }
+        } // end of pgns
 
-					scanReply.subnetStr = QString::fromLatin1(data.mid(9, 3)).replace(" ", ".");
-
-					scanReply.isNewData = true;
-					scanReply.isNewGPS = true;
-				}
-			}
-
-
-		} // end of pgns
-
-		else if (data[0] == 36 && (data[1] == 71 || data[1] == 80 || data[1] == 75))
-		{
-			/*traffic.cntrGPSOut += data.Length;
+        else if (data[0] == 36 && (data[1] == 71 || data[1] == 80 || data[1] == 75))
+        {
+            /*traffic.cntrGPSOut += data.Length;
 			  rawBuffer += Encoding.ASCII.GetString(data);
 			  ParseNMEA(ref rawBuffer);
 			 *forget about gpsOut for the moment*
 			 */
 
-		}
+        }
+    }
 }
-
