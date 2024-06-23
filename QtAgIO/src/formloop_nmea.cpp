@@ -1,33 +1,33 @@
 #include "formloop.h"
 
-unsigned char FormLoop::fixQuality(){
-    switch (fixQualityData) {
-		case 0:
-			return "Invalid: ";
-		case 1:
-			return "GPS 1: ";
-		case 2:
-			return "DGPS: ";
-		case 3:
-			return "PPS: ";
-		case 4:
-			return "RTK fix: ";
-		case 5:
-			return "Float: ";
-		case 6:
-			return "Estimate: ";
-		case 7:
-			return "Man IP: ";
-		case 8:
-			return "Sim: ";
-		default:
-			return "Unknown: ";
-	}
+QString FormLoop::FixQuality(){
+        switch(fixQualityData) {
+        case 0:
+            return "Invalid: ";
+        case 1:
+            return "GPS 1: ";
+        case 2:
+            return "DGPS : ";
+        case 3:
+            return "PPS : ";
+        case 4:
+            return "RTK fix: ";
+        case 5:
+            return "Float: ";
+        case 6:
+            return "Estimate: ";
+        case 7:
+            return "Man IP: ";
+        case 8:
+            return "Sim: ";
+        default:
+            return "Unknown: ";
+    }
 }
 
-unsigned char FormLoop::Parse(unsigned char buffer)
+QString FormLoop::Parse(QString buffer)
 {
-    unsigned char sentence;
+    QString sentence;
 	do
 	{
 		//double check for valid sentence
@@ -60,10 +60,10 @@ unsigned char FormLoop::Parse(unsigned char buffer)
 }
 
 
-void FormLoop::ParseNMEA(unsigned char buffer)
+void FormLoop::ParseNMEA(QString buffer)
 {
 
-    if (rawBuffer == NULL) return;
+    if (rawBuffer.isEmpty()) return;
 
 	//find end of a sentence
 	int cr = rawBuffer.indexOf('\r');
@@ -107,10 +107,10 @@ void FormLoop::ParseNMEA(unsigned char buffer)
 	while (true)
 	{
 		//extract the next NMEA single sentence
-        nextNMEASentence = Parse(unsigned char buffer); //is this right? David 6/22/24
-        if (nextNMEASentence == NULL) break;
+        nextNMEASentence = Parse(buffer); //is this right? David 6/22/24
+        if (nextNMEASentence.isEmpty()) break;
 
-        unsigned char words = nextNMEASentence.split(',');
+        words = nextNMEASentence.split(',');
 
 		//if (isLogNMEA)
 		//{
@@ -124,7 +124,8 @@ void FormLoop::ParseNMEA(unsigned char buffer)
 		if ((words[0] == "$GPGGA" || words[0] == "$GNGGA") && words.length() > 13)
 		{
 			ParseGGA();
-			if (isGPSSentencesOn) ggaSentence = nextNMEASentence;
+            if (isGPSSentencesOn) ggaSentence = nextNMEASentence;
+            //this is for the GPS Data Window
 		}
 
 		else if ((words[0] == "$GPVTG" || words[0] == "$GNVTG") && words.length() > 7)
@@ -190,7 +191,7 @@ void FormLoop::ParseNMEA(unsigned char buffer)
 	{
 		isNMEAToSend = false;
 
-		byte[] nmeaPGN = new byte[57]; //is this right? David 6/22/24
+        QByteArray nmeaPGN(57, 0); //is this right? David 6/22/24
 
 		nmeaPGN[0] = 0x80;
 		nmeaPGN[1] = 0x81;
@@ -200,73 +201,73 @@ void FormLoop::ParseNMEA(unsigned char buffer)
 
 		//longitude
 		//Buffer.BlockCopy(BitConverter.GetBytes(longitudeSend), 0, nmeaPGN, 5, 8);
-		memcpy(nmeaPGN + 5, &longitudeSend, 8);
+		std::memcpy(nmeaPGN.data() + 5, &longitudeSend, 8);
 		longitudeSend = glm::DOUBLE_MAX;
 
 		//latitude
 		//Buffer.BlockCopy(BitConverter.GetBytes(latitudeSend), 0, nmeaPGN, 13, 8);
-		memcpy(nmeaPGN + 13, &latitudeSend, 8);
+		std::memcpy(nmeaPGN.data() + 13, &latitudeSend, 8);
 		latitudeSend = glm::DOUBLE_MAX;
 
 		//the different dual antenna headings
 		//Buffer.BlockCopy(BitConverter.GetBytes(headingTrueDual), 0, nmeaPGN, 21, 4);
-		memcpy(nmeaPGN + 21, &headingTrueDual, 4);
+		std::memcpy(nmeaPGN.data() + 21, &headingTrueDual, 4);
 		headingTrueDual = glm::FLOAT_MAX;
 
 		//single antenna heading in degrees
 		//Buffer.BlockCopy(BitConverter.GetBytes(headingTrue), 0, nmeaPGN, 25, 4);
-		memcpy(nmeaPGN + 25, &headingTrue, 4);
+		std::memcpy(nmeaPGN.data() + 25, &headingTrue, 4);
 		headingTrue = glm::FLOAT_MAX;
 
 		//speed converted to kmh from knots
 		//Buffer.BlockCopy(BitConverter.GetBytes(speed), 0, nmeaPGN, 29, 4);
-		memcpy(nmeaPGN + 29, &speed, 4);
+		std::memcpy(nmeaPGN.data() + 29, &speed, 4);
 		speed = glm::FLOAT_MAX;
 
 		//roll value in degrees
 		//Buffer.BlockCopy(BitConverter.GetBytes(roll), 0, nmeaPGN, 33, 4);
-		memcpy(nmeaPGN + 33, &roll, 4);
+		std::memcpy(nmeaPGN.data() + 33, &roll, 4);
 		this->roll = glm::FLOAT_MAX;
 
 		//altitude in meters
 		//Buffer.BlockCopy(BitConverter.GetBytes(altitude), 0, nmeaPGN, 37, 4);
-		memcpy(nmeaPGN + 37, &altitude, 4);
+		std::memcpy(nmeaPGN.data() + 37, &altitude, 4);
 		this->altitude = glm::FLOAT_MAX;
 
 		//Buffer.BlockCopy(BitConverter.GetBytes(satellitesTracked), 0, nmeaPGN, 41, 2);
-		memcpy(nmeaPGN + 41, &satellitesTracked, 2);
+		std::memcpy(nmeaPGN.data() + 41, &satellitesTracked, 2);
 		satellitesTracked = glm::USHORT_MAX;
 
-		nmeaPGN[43] = (byte)fixQuality;
+        nmeaPGN[43] = fixQuality;
 		fixQuality = glm::BYTE_MAX;
 
 		//Buffer.BlockCopy(BitConverter.GetBytes(hdopX100), 0, nmeaPGN, 44, 2);
-		memcpy(nmeaPGN + 44, &hdopX100, 2);
+		std::memcpy(nmeaPGN.data() + 44, &hdopX100, 2);
 		hdopX100 = glm::USHORT_MAX;
 
 		//Buffer.BlockCopy(BitConverter.GetBytes(ageX100), 0, nmeaPGN, 46, 2);
-		memcpy(nmeaPGN + 46, &ageX100, 2);
+		std::memcpy(nmeaPGN.data() + 46, &ageX100, 2);
 		ageX100 = glm::USHORT_MAX;
 
 		//Buffer.BlockCopy(BitConverter.GetBytes(imuHeading), 0, nmeaPGN, 48, 2);
-		memcpy(nmeaPGN + 48, &imuHeading, 2);
+		std::memcpy(nmeaPGN.data() + 48, &imuHeading, 2);
 		imuHeading = glm::USHORT_MAX;
 
 		//Buffer.BlockCopy(BitConverter.GetBytes(imuRoll), 0, nmeaPGN, 50, 2);
-		memcpy(nmeaPGN + 50, &imuRoll, 2);
+		std::memcpy(nmeaPGN.data() + 50, &imuRoll, 2);
 		imuRoll = glm::USHORT_MAX;
 
 		//Buffer.BlockCopy(BitConverter.GetBytes(imuPitch), 0, nmeaPGN, 52, 2);
-		memcpy(nmeaPGN + 52, &imuPitch, 2);
+		std::memcpy(nmeaPGN.data() + 52, &imuPitch, 2);
 		imuPitch = glm::USHORT_MAX;
 
 		//Buffer.BlockCopy(BitConverter.GetBytes(imuYawRate), 0, nmeaPGN, 54, 2);
-		memcpy(nmeaPGN + 54, &imuYawRate, 2);
+        std::memcpy(nmeaPGN.data() + 54, &imuYawRate, 2);//note warning
 		imuYawRate = glm::USHORT_MAX;
 
 
 		int CK_A = 0;
-		for (int j = 2; j < nmeaPGN.Length; j++)
+        for (int j = 2; j < nmeaPGN.length(); j++)
 		{
 			CK_A += nmeaPGN[j];
 		}
@@ -275,10 +276,10 @@ void FormLoop::ParseNMEA(unsigned char buffer)
 		nmeaPGN[56] = (byte)CK_A;
 
 		//Send nmea to AgOpenGPS
-		SendToLoopBackMessageAOG(nmeaPGN);
+        SendDataToLoopBack(nmeaPGN);
 
 		//Send nmea to autosteer module 8888
-		if (isSendNMEAToUDP) SendUDPMessage(nmeaPGN, epModule); //is this right? David 6/22/24
+        if (isSendNMEAToUDP) SendUDPMessage(nmeaPGN); //is this right? David 6/22/24
 	}
 }
 void FormLoop::ParseKSXT()
@@ -304,7 +305,7 @@ void FormLoop::ParseKSXT()
 		//float.TryParse(words[4], NumberStyles.Float, CultureInfo.InvariantCulture, out altitude);
 		float altitude = words[4].toFloat(&ok);
 		if (ok){
-			altitudeSend = altitude;
+            altitudeData = altitude;
 		}
 
 		//float.TryParse(words[5], NumberStyles.Float, CultureInfo.InvariantCulture, out headingTrueDual);
@@ -331,16 +332,16 @@ void FormLoop::ParseKSXT()
 		if (ok) {
 			switch (fixQuality) {
 				case 0:
-					fixQualityData = 0;
+                fixQualityData = 0;
 					break;
 				case 1:
-					fixQualityData = 1;
+                    fixQualityData = 1;
 					break;
 				case 2:
-					fixQualityData = 5;
+                    fixQualityData = 5;
 					break;
 				case 3:
-					fixQualityData = 4;
+                    fixQualityData = 4;
 					break;
 				default:
 					break;
@@ -369,7 +370,7 @@ void FormLoop::ParseKSXT()
 			roll = rollK;
 			rollData = rollK;
 		} else {
-			roll = FLOAT_MIN; // Assuming FLOAT_MIN is defined appropriately
+            roll = glm::FLOAT_MIN; // Assuming FLOAT_MIN is defined appropriately
 			rollData = 0;
 		}
 
@@ -392,7 +393,6 @@ void FormLoop::ParseKSXT()
 void FormLoop::ParseGGA()
 {
 
-	{
 		//$GPGGA,123519,4807.038,N,01131.000,E,1,08,0.9,545.4,M,46.9,M ,  ,*47
 
 		//GGA          Global Positioning System Fix Data
@@ -426,10 +426,11 @@ void FormLoop::ParseGGA()
 			//{
 
 			//FixQuality
-			byte.TryParse(words[6], NumberStyles.Float, CultureInfo.InvariantCulture, out fixQuality);
-			//I don't know about this
-
+            //byte.TryParse(words[6], NumberStyles.Float, CultureInfo.InvariantCulture, out fixQuality);
+            quint8 fixQuality = words[6].toUShort(&ok);
+                                if(ok){
 			fixQualityData = fixQuality;
+            }
 
 			//satellites tracked
 			//unsigned short.TryParse(words[7], NumberStyles.Float, CultureInfo.InvariantCulture, out satellitesTracked);
@@ -516,10 +517,10 @@ void FormLoop::ParseGGA()
 			//*48          Checksum
 
 
-			if (!words[7].isEmpty())
+            bool ok;
+            if (!words[7].isEmpty())
 			{
 				//kph for speed
-				bool ok;
 
 				//float.TryParse(words[7], NumberStyles.Float, CultureInfo.InvariantCulture, out speed);
 				float speed = words[7].toFloat(&ok);
@@ -569,14 +570,10 @@ void FormLoop::ParseGGA()
 
 			if (!words[1].isEmpty())
 			{
-				float.TryParse(words[8] == "Roll" ? words[7] : words[5], NumberStyles.Float, CultureInfo.InvariantCulture, out rollK);
-				/*float rollK;
+                //float.TryParse(words[8] == "Roll" ? words[7] : words[5], NumberStyles.Float, CultureInfo.InvariantCulture, out rollK);
 				  QString wordToParse = (words[8] == "Roll") ? words[7] : words[5];
-				  rollK = wordToParse.toFloat(&ok);
-				  if (!ok) {
-				// Handle parsing failure, if needed
-				}*/ //chatgpt says this shoud work
-
+                  float rollK = wordToParse.toFloat();
+                  //is this right? Makes sense to me. David 6/22
 
 				//Kalman filter
 				Pc = P + varProcess;
@@ -593,6 +590,7 @@ void FormLoop::ParseGGA()
 
 		void FormLoop::ParseHPD()
 		{
+            bool ok;
 			if (!words[1].isEmpty())
 			{
 				//Dual heading
@@ -618,7 +616,7 @@ void FormLoop::ParseGGA()
 				}
 				else
 				{
-					roll = FLOAT_MIN;
+                    roll = glm::FLOAT_MIN;
 					rollData = 0;
 				}
 			}
@@ -670,9 +668,10 @@ void FormLoop::ParseGGA()
 
 				bool ok;
 				//FixQuality
-				byte.TryParse(words[6], NumberStyles.Float, CultureInfo.InvariantCulture, out fixQuality);
-				//not sure
-				fixQualityData = fixQuality;
+            quint8 fixQuality = words[6].toUShort(&ok);
+                                if(ok){
+            fixQualityData = fixQuality;
+            }
 
 				//satellites tracked
 				//unsigned short.TryParse(words[7], NumberStyles.Float, CultureInfo.InvariantCulture, out satellitesTracked);
@@ -768,7 +767,7 @@ void FormLoop::ParseGGA()
 				isNMEAToSend = true;
 			}
 			}
-			void FormLoop::ParsePanda()
+            void FormLoop::ParsePANDA()
 			{
 				/*
 				   $PANDA
@@ -856,8 +855,10 @@ void FormLoop::ParseGGA()
 							longitudeSend = longitude;
 
 							//FixQuality
-							byte.TryParse(words[6], NumberStyles.Float, CultureInfo.InvariantCulture, out fixQuality);
-							fixQualityData = fixQuality;
+            quint8 fixQuality = words[6].toUShort(&ok);
+                                if(ok){
+            fixQualityData = fixQuality;
+            }
 
 							//satellites tracked
 							//unsigned short.TryParse(words[7], NumberStyles.Float, CultureInfo.InvariantCulture, out satellitesTracked);
@@ -1115,7 +1116,7 @@ void FormLoop::ParseGGA()
 			int sum = 0;
 			try
 			{
-				char[] sentenceChars = Sentence.ToCharArray();
+				QString[] sentenceChars = Sentence.ToCharArray();
 				// All character xor:ed results in the trailing hex checksum
 				// The checksum calc starts after '$' and ends before '*'
 
