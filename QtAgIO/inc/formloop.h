@@ -8,7 +8,7 @@
 #include "CTraffic.h"
 #include "CScanReply.h"
 #include <QUdpSocket>
-#include <limits>
+#include "glm.h"
 
 
 class FormLoop : public QObject
@@ -20,14 +20,6 @@ class FormLoop : public QObject
 		explicit FormLoop(QObject *parent = nullptr);
 		~FormLoop();
 
-		static const double DOUBLE_MAX = std::numeric_limits<double>::max();
-		static const double DOUBLE_MIN = std::numeric_limits<double>::min();
-		static const double FLOAT_MAX = std::numeric_limits<float>::max();
-		static const double FLOAT_MIN = std::numeric_limits<float>::min();
-
-		static const double BYTE_MAX = std::numeric_limits<uchar>::max();
-		static const double SHORT_MAX = std::numeric_limits<short>::max();
-		static const double USHORT_MAX = std::numeric_limits<unsigned short>::max();
 
 		/* formloop_udpcomm.cpp
 		 * formerly UDP.designer.cs */
@@ -69,34 +61,34 @@ class FormLoop : public QObject
 		/* formloop_parseNMEA.cpp
 		 * formerly NMEA.designer.cs */
 	private:
-		QString rawBuffer = "";
+        unsigned char rawBuffer = 0;
 
-		QString words;
-		QString nextNMEASentence = "";
+        unsigned char words;
+        unsigned char nextNMEASentence = 0;
 
 		bool isNMEAToSend = false;
 
 	public:
-		QString ggaSentence, vtgSentence, hdtSentence, avrSentence, paogiSentence, 
+        unsigned char ggaSentence, vtgSentence, hdtSentence, avrSentence, paogiSentence,
 				hpdSentence, rmcSentence, pandaSentence, ksxtSentence;
 
-		float hdopData, altitude = FLOAT_MAX, headingTrue = FLOAT_MAX,
-			  headingTrueDual = FLOAT_MAX, speed = FLOAT_MAX, roll = FLOAT_MAX;
+		float hdopData, altitude = glm::FLOAT_MAX, headingTrue = glm::FLOAT_MAX,
+			  headingTrueDual = glm::FLOAT_MAX, speed = glm::FLOAT_MAX, roll = glm::FLOAT_MAX;
 		float altitudeData, speedData, rollData, headingTrueData, headingTrueDualData, ageData;
 
-		double latitudeSend = DOUBLE_MAX, longitudeSend = DOUBLE_MAX, latitude, longitude;
+		double latitudeSend = glm::DOUBLE_MAX, longitudeSend = glm::DOUBLE_MAX, latitude, longitude;
 
 
-		unsigned short satellitesData, satellitesTracked = USHORT_MAX, hdopX100 = USHORT_MAX, 
-					   ageX100 = USHORT_MAX;
+		unsigned short satellitesData, satellitesTracked = glm::USHORT_MAX, hdopX100 = glm::USHORT_MAX, 
+					   ageX100 = glm::USHORT_MAX;
 
 
 		//imu data
-		unsigned short imuHeadingData, imuHeading = USHORT_MAX;
-		short imuRollData, imuRoll = SHORT_MAX, imuPitchData, imuPitch = SHORT_MAX, 
-			  imuYawRateData, imuYawRate = SHORT_MAX;
+		unsigned short imuHeadingData, imuHeading = glm::USHORT_MAX;
+		short imuRollData, imuRoll = glm::SHORT_MAX, imuPitchData, imuPitch = glm::SHORT_MAX, 
+			  imuYawRateData, imuYawRate = glm::SHORT_MAX;
 
-		QByteArray fixQualityData, fixQuality; // = byte.MaxValue;HOY! byte max value needs to be set in the ctor
+        unsigned char fixQuality, fixQualityData; // = byte.MaxValue;HOY! byte max value needs to be set in the ctor
 
 
 		float rollK, Pc, G, Xp, Zp, XeRoll, P = 1.0f;
@@ -104,10 +96,10 @@ class FormLoop : public QObject
 
 		double LastUpdateUTC = 0;
 
-		QString fixQuality() const;
-		QString Parse(QString buffer);
+        unsigned char FixQuality();
+        unsigned char Parse(unsigned char buffer);
 
-		void ParseNMEA(QString buffer);
+        void ParseNMEA(unsigned char buffer);
 		void ParseKSXT();
 		void ParseGGA();
 		void ParseVTG();
@@ -120,7 +112,7 @@ class FormLoop : public QObject
 		void ParseSTI032();
 		void ParseTRANS();
 
-		bool ValidateChecksum(QString Sentence);
+        bool ValidateChecksum(unsigned char Sentence);
 
 		/* end of formloop_parseNMEA.cpp */
 };

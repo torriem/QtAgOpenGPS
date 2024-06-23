@@ -3,7 +3,7 @@
 FormLoop::FormLoop(QObject *parent) 
 	: QObject(parent)
 {
-	loadSettings();
+    //loadSettings();
 
 	LoadLoopback();
 	LoadUDPNetwork();

@@ -1,7 +1,7 @@
 #include "formloop.h"
 
-QString FormLoop::fixQuality()const{
-	switch (fixQualityData) {
+unsigned char FormLoop::fixQuality(){
+    switch (fixQualityData) {
 		case 0:
 			return "Invalid: ";
 		case 1:
@@ -25,20 +25,20 @@ QString FormLoop::fixQuality()const{
 	}
 }
 
-QString FormLoop::Parse(QString buffer)
+unsigned char FormLoop::Parse(unsigned char buffer)
 {
-	QString sentence;
+    unsigned char sentence;
 	do
 	{
 		//double check for valid sentence
 		// Find start of next sentence
 		int start = buffer.indexOf('$');
-		if (start == -1) return null;
+        if (start == -1) return NULL;
 		buffer = buffer.mid(start);
 
 		// Find end of sentence
-		int end = buffer.IndexOf("\r", StringComparison.Ordinal);
-		if (end == -1) return null;
+		int end = buffer.indexOf('\r');
+        if (end == -1) return NULL;
 
 		//the NMEA sentence to be parsed
 		//sentence = buffer.Substring(0, end + 1);
@@ -60,10 +60,10 @@ QString FormLoop::Parse(QString buffer)
 }
 
 
-void FormLoop::ParseNMEA(QString buffer)
+void FormLoop::ParseNMEA(unsigned char buffer)
 {
 
-	if (rawBuffer == null) return;
+    if (rawBuffer == NULL) return;
 
 	//find end of a sentence
 	int cr = rawBuffer.indexOf('\r');
@@ -107,10 +107,10 @@ void FormLoop::ParseNMEA(QString buffer)
 	while (true)
 	{
 		//extract the next NMEA single sentence
-		nextNMEASentence = Parse(ref buffer); //is this right? David 6/22/24
-		if (nextNMEASentence == null) break;
+        nextNMEASentence = Parse(unsigned char buffer); //is this right? David 6/22/24
+        if (nextNMEASentence == NULL) break;
 
-		words = nextNMEASentence.split(',');
+        unsigned char words = nextNMEASentence.split(',');
 
 		//if (isLogNMEA)
 		//{
@@ -201,68 +201,68 @@ void FormLoop::ParseNMEA(QString buffer)
 		//longitude
 		//Buffer.BlockCopy(BitConverter.GetBytes(longitudeSend), 0, nmeaPGN, 5, 8);
 		memcpy(nmeaPGN + 5, &longitudeSend, 8);
-		longitudeSend = DOUBLE_MAX;
+		longitudeSend = glm::DOUBLE_MAX;
 
 		//latitude
 		//Buffer.BlockCopy(BitConverter.GetBytes(latitudeSend), 0, nmeaPGN, 13, 8);
 		memcpy(nmeaPGN + 13, &latitudeSend, 8);
-		latitudeSend = DOUBLE_MAX;
+		latitudeSend = glm::DOUBLE_MAX;
 
 		//the different dual antenna headings
 		//Buffer.BlockCopy(BitConverter.GetBytes(headingTrueDual), 0, nmeaPGN, 21, 4);
 		memcpy(nmeaPGN + 21, &headingTrueDual, 4);
-		headingTrueDual = FLOAT_MAX;
+		headingTrueDual = glm::FLOAT_MAX;
 
 		//single antenna heading in degrees
 		//Buffer.BlockCopy(BitConverter.GetBytes(headingTrue), 0, nmeaPGN, 25, 4);
 		memcpy(nmeaPGN + 25, &headingTrue, 4);
-		headingTrue = FLOAT_MAX;
+		headingTrue = glm::FLOAT_MAX;
 
 		//speed converted to kmh from knots
 		//Buffer.BlockCopy(BitConverter.GetBytes(speed), 0, nmeaPGN, 29, 4);
 		memcpy(nmeaPGN + 29, &speed, 4);
-		speed = FLOAT_MAX;
+		speed = glm::FLOAT_MAX;
 
 		//roll value in degrees
 		//Buffer.BlockCopy(BitConverter.GetBytes(roll), 0, nmeaPGN, 33, 4);
 		memcpy(nmeaPGN + 33, &roll, 4);
-		this->roll = FLOAT_MAX;
+		this->roll = glm::FLOAT_MAX;
 
 		//altitude in meters
 		//Buffer.BlockCopy(BitConverter.GetBytes(altitude), 0, nmeaPGN, 37, 4);
 		memcpy(nmeaPGN + 37, &altitude, 4);
-		this->altitude = FLOAT_MAX;
+		this->altitude = glm::FLOAT_MAX;
 
 		//Buffer.BlockCopy(BitConverter.GetBytes(satellitesTracked), 0, nmeaPGN, 41, 2);
 		memcpy(nmeaPGN + 41, &satellitesTracked, 2);
-		satellitesTracked = USHORT_MAX;
+		satellitesTracked = glm::USHORT_MAX;
 
 		nmeaPGN[43] = (byte)fixQuality;
-		fixQuality = BYTE_MAX;
+		fixQuality = glm::BYTE_MAX;
 
 		//Buffer.BlockCopy(BitConverter.GetBytes(hdopX100), 0, nmeaPGN, 44, 2);
 		memcpy(nmeaPGN + 44, &hdopX100, 2);
-		hdopX100 = USHORT_MAX;
+		hdopX100 = glm::USHORT_MAX;
 
 		//Buffer.BlockCopy(BitConverter.GetBytes(ageX100), 0, nmeaPGN, 46, 2);
 		memcpy(nmeaPGN + 46, &ageX100, 2);
-		ageX100 = USHORT_MAX;
+		ageX100 = glm::USHORT_MAX;
 
 		//Buffer.BlockCopy(BitConverter.GetBytes(imuHeading), 0, nmeaPGN, 48, 2);
 		memcpy(nmeaPGN + 48, &imuHeading, 2);
-		imuHeading = USHORT_MAX;
+		imuHeading = glm::USHORT_MAX;
 
 		//Buffer.BlockCopy(BitConverter.GetBytes(imuRoll), 0, nmeaPGN, 50, 2);
 		memcpy(nmeaPGN + 50, &imuRoll, 2);
-		imuRoll = SHORT_MAX;
+		imuRoll = glm::USHORT_MAX;
 
 		//Buffer.BlockCopy(BitConverter.GetBytes(imuPitch), 0, nmeaPGN, 52, 2);
 		memcpy(nmeaPGN + 52, &imuPitch, 2);
-		imuPitch = SHORT_MAX;
+		imuPitch = glm::USHORT_MAX;
 
 		//Buffer.BlockCopy(BitConverter.GetBytes(imuYawRate), 0, nmeaPGN, 54, 2);
 		memcpy(nmeaPGN + 54, &imuYawRate, 2);
-		imuYawRate = SHORT_MAX;
+		imuYawRate = glm::USHORT_MAX;
 
 
 		int CK_A = 0;
