@@ -10,6 +10,7 @@ add_library(qtagio
 	inc/CScanReply.h src/CScanReply.cpp
 	inc/formloop.h src/formloop.cpp
 	src/formloop_udpcomm.cpp
+        src/formloop_nmea.cpp
 )
 
 target_include_directories(qtagio
