@@ -78,7 +78,7 @@ void FormLoop::LoadLoopback() //this should be done. David 6/18/24
 
 void FormLoop::SendDataToLoopBack(QByteArray byteData)//this also should work David 6/18/24
 {
-    loopBackSocket->writeDatagram(byteData, QHostAddress::LocalHost, 15555);
+    loopBackSocket->writeDatagram(byteData, QHostAddress::LocalHost, 15550);
     //qDebug() << "Sent size: " << byteData.size();
 
     /*try
@@ -247,7 +247,7 @@ void FormLoop::ReceiveFromUDP() //this should work. David 6/18/24
         QByteArray data;
         data.resize(udpSocket->pendingDatagramSize());
         udpSocket->readDatagram(data.data(), data.size());
-        qDebug() << data[0] << data[1] << data[2], data[3];
+        //qDebug() << data[0] << data[1] << data[2], data[3];
 
             //SendDataToLoopBack(data);
         //if (data[0] == 0x80 && data[1] == 0x81)
@@ -343,10 +343,15 @@ void FormLoop::ReceiveFromUDP() //this should work. David 6/18/24
 
         else if (data[0] == 36 && (data[1] == 71 || data[1] == 80 || data[1] == 75))
         {
-            /*traffic.cntrGPSOut += data.Length;
-			  rawBuffer += Encoding.ASCII.GetString(data);
-			  ParseNMEA(ref rawBuffer);
-			 *forget about gpsOut for the moment*
+            //traffic.cntrGPSOut += data.Length;
+              //rawBuffer += Encoding.ASCII.GetString(data);
+            rawBuffer += QString::fromLatin1(data); //is this right? David
+              ParseNMEA(rawBuffer);
+            if(!haveWeSentToParser) {
+                  qDebug() << "sent to parser";
+                    haveWeSentToParser = true;
+            }
+             /*forget about gpsOut for the moment*
 			 */
 
         }

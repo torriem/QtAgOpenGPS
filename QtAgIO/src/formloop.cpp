@@ -7,7 +7,7 @@ FormLoop::FormLoop(QObject *parent)
 
 	LoadLoopback();
 	LoadUDPNetwork();
-	buffer.resize(1024);
+    //buffer.resize(1024);
 }
 
 FormLoop::~FormLoop()

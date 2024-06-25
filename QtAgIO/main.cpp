@@ -6,7 +6,7 @@
 #include <QStandardPaths>
 
 #include "IORouter.h"
-#include "UdpComm.h"
+#include "formloop.h"
 
 // Helper to generate default settings
 void generateDefaultSettings(QSettings& settings)
@@ -87,10 +87,7 @@ int main(int argc, char *argv[])
 	qDebug() << "Starting IORouter";
     IORouter router(settings);
     
-	UDP udp;
-	udp.LoadUDPNetwork();
-    udp.LoadLoopback();
-
+    FormLoop formloop;
 
 	
 

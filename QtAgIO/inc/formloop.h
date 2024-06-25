@@ -9,6 +9,7 @@
 #include "CScanReply.h"
 #include <QUdpSocket>
 #include "glm.h"
+#include <cmath>
 
 
 class FormLoop : public QObject
@@ -19,6 +20,13 @@ class FormLoop : public QObject
 	public: 
 		explicit FormLoop(QObject *parent = nullptr);
 		~FormLoop();
+
+
+        //debug vars
+        bool haveWeSentToParser = false;
+        bool haveWeRecGGA = false;
+        bool haveWeRecNDA = false;
+        bool haveWeRecVTG = false;
 
 		/*formloop.cpp
 		 * formerly Formloop.cs */
@@ -104,7 +112,7 @@ class FormLoop : public QObject
         QString FixQuality();
         QString Parse(QString buffer);
 
-        void ParseNMEA(QString buffer);
+        void ParseNMEA(QString rawBuffer);
 		void ParseKSXT();
 		void ParseGGA();
 		void ParseVTG();

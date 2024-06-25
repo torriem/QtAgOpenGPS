@@ -303,7 +303,7 @@ void FormGPS::DisableSim()
 void FormGPS::StartLoopbackServer()
 {
     AOGSettings s;
-    int port = 15555; //property?
+    int port = 15550; //property?
 	qDebug() << "StartLoopbackServer" << port;
 
     if(udpSocket) stopUDPServer();

@@ -60,14 +60,15 @@ QString FormLoop::Parse(QString buffer)
 }
 
 
-void FormLoop::ParseNMEA(QString buffer)
+void FormLoop::ParseNMEA(QString rawBuffer)
 {
 
     if (rawBuffer.isEmpty()) return;
+    qDebug()<< "parseNMEA";
 
 	//find end of a sentence
-	int cr = rawBuffer.indexOf('\r');
-	if (cr == -1) return; // No end found, wait for more data
+    int cr = rawBuffer.indexOf('\r');
+    if (cr == -1) return; // No end found, wait for more data
 
 	// Find start of next sentence
 	int dollar = rawBuffer.indexOf('$');
@@ -84,10 +85,9 @@ void FormLoop::ParseNMEA(QString buffer)
 	//if the $ isn't first, get rid of the tail of corrupt sentence
 	if (dollar >= cr) rawBuffer = rawBuffer.mid(dollar);
 
-	cr = rawBuffer.indexOf('\r');
+    cr = rawBuffer.indexOf('\r');
 	dollar = rawBuffer.indexOf('$');
 	if (cr == -1 || dollar == -1) return;
-
 	if (rawBuffer.length() > 301)
 	{
 		//if (isLogNMEA)
@@ -97,7 +97,8 @@ void FormLoop::ParseNMEA(QString buffer)
 		//        + "\r\n" + rawBuffer + "\r\n");
 		//}
 
-		rawBuffer = "";
+        qDebug() << rawBuffer.length();
+        rawBuffer = 0;
 		return;
 	}
 
@@ -107,8 +108,10 @@ void FormLoop::ParseNMEA(QString buffer)
 	while (true)
 	{
 		//extract the next NMEA single sentence
+        qDebug() << "sending to parse";
         nextNMEASentence = Parse(buffer); //is this right? David 6/22/24
         if (nextNMEASentence.isEmpty()) break;
+        qDebug() << "made through parse";
 
         words = nextNMEASentence.split(',');
 
@@ -125,6 +128,10 @@ void FormLoop::ParseNMEA(QString buffer)
 		{
 			ParseGGA();
             if (isGPSSentencesOn) ggaSentence = nextNMEASentence;
+            if(!haveWeRecGGA){
+                haveWeRecGGA = true;
+                qDebug()<< "received gga";
+            }
             //this is for the GPS Data Window
 		}
 
@@ -132,6 +139,10 @@ void FormLoop::ParseNMEA(QString buffer)
 		{
 			ParseVTG();
 			if (isGPSSentencesOn) vtgSentence = nextNMEASentence;
+            if(!haveWeRecVTG) {
+                haveWeRecVTG = true;
+                qDebug() << "received vtg";
+            }
 		}
 
 		//else if (words[0] == "$GPRMC" || words[0] == "$GNRMC")
@@ -162,6 +173,10 @@ void FormLoop::ParseNMEA(QString buffer)
 		{
 			ParsePANDA();
 			if (isGPSSentencesOn) pandaSentence = nextNMEASentence;
+            if (!haveWeRecNDA) {
+                haveWeRecNDA = true;
+                qDebug() << "recd panda";
+            }
 		}
 
 		else if (words[0] == "$GPHDT" || words[0] == "$GNHDT")
@@ -273,7 +288,7 @@ void FormLoop::ParseNMEA(QString buffer)
 		}
 
 		//checksum
-		nmeaPGN[56] = (byte)CK_A;
+        nmeaPGN[56] = (quint8)CK_A;
 
 		//Send nmea to AgOpenGPS
         SendDataToLoopBack(nmeaPGN);
@@ -804,8 +819,8 @@ void FormLoop::ParseGGA()
 				 */
 
 				bool ok;
-				if (!words[1].isEmpty() && !words[2].isEmpty() && !words[3].isEmpty()
-						&& !words[3].isEmpty()) && !words[0].isEmpty())
+                if (!words[1].isEmpty() && !words[2].isEmpty() && !words[3].isEmpty()
+                    && !words[3].isEmpty() && !words[0].isEmpty())
 						{
 
 							//get latitude and convert to decimal degrees
@@ -988,7 +1003,9 @@ void FormLoop::ParseGGA()
 				double upProjection = words[8].toDouble(&ok); //difference in hight of both antennas (rover - kinematic base)
 															  //double.TryParse(words[9], NumberStyles.Float, CultureInfo.InvariantCulture, out double baselineLength); //distance between kinematic base and rover
 				double baselineLength = words[9].toDouble(&ok); //distance between kinematic base and rover
-				rollK = (float)glm.toDegrees(Math.Atan(upProjection / baselineLength)); //roll to the right is positiv (rover left, kinematic base right!)
+                //rollK = (float)glm.toDegrees(math.Atan(upProjection / baselineLength)); //roll to the right is positiv (rover left, kinematic base right!)
+                rollK = static_cast<float>(atan(upProjection / baselineLength) * (180.0 / M_PI)); // roll to the right is positive (rover left, kinematic base right!) //is this Right? David
+
 																						//that won't work.
 																						//Kalman filter
 				Pc = P + varProcess;
@@ -1006,7 +1023,7 @@ void FormLoop::ParseGGA()
 		void FormLoop::ParseTRA()
 		{
 			bool ok;
-			if (!words[1]isEmpty()
+            if (!words[1].isEmpty())
 					{
 					//float.TryParse(words[2], NumberStyles.Float, CultureInfo.InvariantCulture, out headingTrueDual);
 					float headingTrueDual = words[2].toFloat(&ok);
@@ -1044,7 +1061,7 @@ void FormLoop::ParseGGA()
 
 			bool ok;
 
-			if (!words[1].isEmpty() && !words[3].isEmpty()) && !words[4].isEmpty()
+            if (!words[1].isEmpty() && !words[3].isEmpty() && !words[4].isEmpty()
 				&& !words[5].isEmpty() && !words[6].isEmpty())
 				{
 					//Convert from knots to kph for speed
@@ -1067,11 +1084,11 @@ void FormLoop::ParseGGA()
 						LastUpdateUTC = UTC;
 
 						//get latitude and convert to decimal degrees
-						int decim = words[3].IndexOf(".", StringComparison.Ordinal);
+                        int decim = words[3].indexOf(".");
 						if (decim == -1)
 						{
 							words[3] += ".00";
-							decim = words[3].IndexOf(".", StringComparison.Ordinal);
+                            decim = words[3].indexOf(".");
 						}
 
 						decim -= 2;
@@ -1111,24 +1128,24 @@ void FormLoop::ParseGGA()
 				}
 		}
 
-		bool ValidateChecksum(QString Sentence)
+        bool FormLoop::ValidateChecksum(QString Sentence)
 		{
 			int sum = 0;
 			try
 			{
-				QString[] sentenceChars = Sentence.ToCharArray();
+                QByteArray sentenceChars = Sentence.toUtf8();
 				// All character xor:ed results in the trailing hex checksum
 				// The checksum calc starts after '$' and ends before '*'
 
-				int inx = Sentence.IndexOf("*", StringComparison.Ordinal);
+                int inx = Sentence.indexOf("*");
 
-				if (sentenceChars.Length - inx == 4)
+                if (sentenceChars.length() - inx == 4)
 				{
 					for (inx = 1; ; inx++)
 					{
 						if (inx >= sentenceChars.length()) // No checksum found
 							return false;
-						var tmp = sentenceChars[inx];
+                        auto tmp = sentenceChars[inx]; //is this right? David
 						// Indicates end of data and start of checksum
 						if (tmp == '*') break;
 						sum ^= tmp;    // Build checksum
@@ -1140,7 +1157,7 @@ void FormLoop::ParseGGA()
 
 					// Compare to checksum in sentence
 					//return sumStr.Equals(Sentence.Substring(inx + 1, 2));
-					return sumStr == Sentence.mid(inx + 1, 2));
+                    return sumStr == Sentence.mid(inx + 1, 2);
 				}
 				else
 				{
