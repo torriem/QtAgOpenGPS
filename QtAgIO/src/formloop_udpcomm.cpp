@@ -345,6 +345,7 @@ void FormLoop::ReceiveFromUDP() //this should work. David 6/18/24
         {
             //traffic.cntrGPSOut += data.Length;
               //rawBuffer += Encoding.ASCII.GetString(data);
+            qDebug() << "data: " << data.size();
             rawBuffer += QString::fromLatin1(data); //is this right? David
               ParseNMEA(rawBuffer);
             if(!haveWeSentToParser) {

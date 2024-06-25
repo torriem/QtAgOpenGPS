@@ -60,11 +60,11 @@ QString FormLoop::Parse(QString buffer)
 }
 
 
-void FormLoop::ParseNMEA(QString rawBuffer)
+void FormLoop::ParseNMEA(QString& rawBuffer)
 {
 
     if (rawBuffer.isEmpty()) return;
-    qDebug()<< "parseNMEA";
+    qDebug()<< rawBuffer;
 
 	//find end of a sentence
     int cr = rawBuffer.indexOf('\r');
@@ -87,8 +87,9 @@ void FormLoop::ParseNMEA(QString rawBuffer)
 
     cr = rawBuffer.indexOf('\r');
 	dollar = rawBuffer.indexOf('$');
-	if (cr == -1 || dollar == -1) return;
-	if (rawBuffer.length() > 301)
+    if (cr == -1 || dollar == -1) return;
+        qDebug() << rawBuffer.length();
+    if (rawBuffer.length() > 301)
 	{
 		//if (isLogNMEA)
 		//{
@@ -97,8 +98,7 @@ void FormLoop::ParseNMEA(QString rawBuffer)
 		//        + "\r\n" + rawBuffer + "\r\n");
 		//}
 
-        qDebug() << rawBuffer.length();
-        rawBuffer = 0;
+        rawBuffer.clear();
 		return;
 	}
 

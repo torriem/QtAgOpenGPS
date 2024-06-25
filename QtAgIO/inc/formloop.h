@@ -112,7 +112,7 @@ class FormLoop : public QObject
         QString FixQuality();
         QString Parse(QString buffer);
 
-        void ParseNMEA(QString rawBuffer);
+        void ParseNMEA(QString& rawBuffer);
 		void ParseKSXT();
 		void ParseGGA();
 		void ParseVTG();
