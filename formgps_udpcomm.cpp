@@ -38,7 +38,6 @@ void FormGPS::ReceiveFromAgIO()
 
     if (datagram_data.length() > 4 && data[0] == (char)0x80 && data[1] == (char)0x81)
     {
-		qDebug() << "got a message" << (uchar)data[3];
         int Length = max((data[4]) + 5, 5);
         if (datagram_data.length() > Length)
         {
@@ -57,11 +56,9 @@ void FormGPS::ReceiveFromAgIO()
         {
             return;
         }
-		qDebug() << "made through checksum";
         switch ((uchar)data[3])
         {
         case 0xD6:
-			qDebug() << "gps message";
             if (udpWatch.elapsed() < udpWatchLimit)
             {
 				udpWatchCounts++;
@@ -183,7 +180,6 @@ void FormGPS::ReceiveFromAgIO()
             break;
 
         case 0xD3: //external IMU
-				   qDebug() << "got an IMU message";
             if (datagram_data.length() != 14)
                 break;
             if (ahrs.imuRoll > 25 || ahrs.imuRoll < -25) ahrs.imuRoll = 0;
@@ -205,7 +201,6 @@ void FormGPS::ReceiveFromAgIO()
 
             break;
         case 0xD4: //imu disconnect pgn
-			qDebug() << "got an IMU disconnect message";
             if (data[5] == (char)1)
             {
                 ahrs.imuHeading = 99999;
@@ -216,7 +211,6 @@ void FormGPS::ReceiveFromAgIO()
             }
             break;
         case 253: //return from autosteer module
-			qDebug() << "got an autosteer message";
             //Steer angle actual
             if (datagram_data.length() != 14)
                 break;
@@ -262,14 +256,12 @@ void FormGPS::ReceiveFromAgIO()
             break;
 
         case 250:
-			qDebug() << "machine";
             if (datagram_data.length() != 14)
                 break;
             mc.sensorData = data[5];
             break;
 
         case 234://MTZ8302 Feb 2020
-				 qDebug() << "switches";
             //Steer angle actual
             if (datagram_data.length() != 14)
                 break;
