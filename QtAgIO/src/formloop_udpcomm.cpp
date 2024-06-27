@@ -247,14 +247,11 @@ void FormLoop::ReceiveFromUDP() //this should work. David 6/18/24
         QByteArray data;
         data.resize(udpSocket->pendingDatagramSize());
         udpSocket->readDatagram(data.data(), data.size());
-        //qDebug() << data[0] << data[1] << data[2], data[3];
 
-            //SendDataToLoopBack(data);
-        //if (data[0] == 0x80 && data[1] == 0x81)
-            if (data.length() > 4 && data[0] == (char)0x80 && data[1] == (char)0x81)
+        buffer = data;
+        if (data.length() > 4 && data[0] == (char)0x80 && data[1] == (char)0x81)
         {
             //module return via udp sent to AOG
-        //qDebug() << "RECD size: " << data.size();
             SendDataToLoopBack(data);
             //check for Scan and Hello
             if (data[3] == 126 && data.size() == 11)
@@ -345,7 +342,6 @@ void FormLoop::ReceiveFromUDP() //this should work. David 6/18/24
         {
             //traffic.cntrGPSOut += data.Length;
               //rawBuffer += Encoding.ASCII.GetString(data);
-            qDebug() << "data: " << data.size();
             rawBuffer += QString::fromLatin1(data); //is this right? David
               ParseNMEA(rawBuffer);
             if(!haveWeSentToParser) {

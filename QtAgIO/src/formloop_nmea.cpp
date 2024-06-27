@@ -25,7 +25,7 @@ QString FormLoop::FixQuality(){
     }
 }
 
-QString FormLoop::Parse(QString buffer)
+QString FormLoop::Parse(QString &buffer)
 {
     QString sentence;
 	do
@@ -60,11 +60,10 @@ QString FormLoop::Parse(QString buffer)
 }
 
 
-void FormLoop::ParseNMEA(QString& rawBuffer)
+void FormLoop::ParseNMEA(QString buffer)
 {
 
     if (rawBuffer.isEmpty()) return;
-    qDebug()<< rawBuffer;
 
 	//find end of a sentence
     int cr = rawBuffer.indexOf('\r');
@@ -88,7 +87,6 @@ void FormLoop::ParseNMEA(QString& rawBuffer)
     cr = rawBuffer.indexOf('\r');
 	dollar = rawBuffer.indexOf('$');
     if (cr == -1 || dollar == -1) return;
-        qDebug() << rawBuffer.length();
     if (rawBuffer.length() > 301)
 	{
 		//if (isLogNMEA)
@@ -108,10 +106,8 @@ void FormLoop::ParseNMEA(QString& rawBuffer)
 	while (true)
 	{
 		//extract the next NMEA single sentence
-        qDebug() << "sending to parse";
         nextNMEASentence = Parse(buffer); //is this right? David 6/22/24
         if (nextNMEASentence.isEmpty()) break;
-        qDebug() << "made through parse";
 
         words = nextNMEASentence.split(',');
 
