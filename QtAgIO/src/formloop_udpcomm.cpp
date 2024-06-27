@@ -29,7 +29,7 @@ void FormLoop::LoadUDPNetwork()
 
     //set up the connection
     //this is the part that listens
-    if(!udpSocket->bind(QHostAddress("10.0.0.255"), 9999))
+    if(!udpSocket->bind(QHostAddress("10.0.0.255"), 9999)) //TODO settings
     {
         qDebug() << "Failed to bind udpSocket" << udpSocket->errorString();
         qDebug() << "Exiting program due to fatal error";
@@ -63,7 +63,7 @@ void FormLoop::LoadLoopback() //this should be done. David 6/18/24
 	}*/
     //Loopback David 6/18/24
     loopBackSocket = new QUdpSocket(this);
-    if(!loopBackSocket->bind(QHostAddress::LocalHost, 17770))
+    if(!loopBackSocket->bind(QHostAddress::LocalHost, 17770))//TODO settings
     {
         qDebug() <<"Failed to bind loopBackSocket" << loopBackSocket->errorString();
         qDebug() << "Exiting program due to fatal error";
@@ -78,7 +78,7 @@ void FormLoop::LoadLoopback() //this should be done. David 6/18/24
 
 void FormLoop::SendDataToLoopBack(QByteArray byteData)//this also should work David 6/18/24
 {
-    loopBackSocket->writeDatagram(byteData, QHostAddress::LocalHost, 15550);
+    loopBackSocket->writeDatagram(byteData, QHostAddress::LocalHost, 15550); //TODO setting
     //qDebug() << "Sent size: " << byteData.size();
 
     /*try
@@ -203,7 +203,7 @@ void FormLoop::SendUDPMessage(QByteArray byteData)
 
         // Send packet to the zero
         if (byteData.size() != 0)
-            udpSocket->writeDatagram(byteData, QHostAddress("10.0.0.255"), 8888);
+            udpSocket->writeDatagram(byteData, QHostAddress("10.0.0.255"), 8888); //TODO settings
     }
 }
 /*void UDP::SendDataUDPAsync(IAsyncResult asyncResult) //not necessary with qt
