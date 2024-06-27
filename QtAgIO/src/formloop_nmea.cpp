@@ -397,8 +397,10 @@ void FormLoop::ParseKSXT()
 		if (ok){
 			ageX100 = (unsigned short)(ageData * 100.0);
 		}
-
-		isNMEAToSend = true;
+        // the ByNav sends 0 for lat/lon if invalid signal.
+        //see AOG-Intl for discussion
+        //https://t.me/agopengpsinternational/126430
+        if(longitude != 0) isNMEAToSend = true;
 	}
 }
 void FormLoop::ParseGGA()

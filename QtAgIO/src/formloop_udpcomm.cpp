@@ -45,23 +45,8 @@ void FormLoop::LoadUDPNetwork()
 
 }
 
-void FormLoop::LoadLoopback() //this should be done. David 6/18/24
+void FormLoop::LoadLoopback() //set up the connection that listens to loopback
 {
-
-    /*try //loopback
-	  {
-	  loopBackSocket = new QUdpSocket(this);
-	  loopBackSocket->bind(new IPEndPoint(IPAddress.Loopback, 17777));
-      loopBackSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointLoopBack,
-	  new AsyncCallback(ReceiveDataLoopAsync), null);
-
-	//connect(udpSocket,SIGNAL(readyRead()),this,SLOT(ReceiveFromAgIO()));
-	}
-	catch (Exception ex)
-	{
-	qDebug() << "Serious Loopback Connection Error";
-	}*/
-    //Loopback David 6/18/24
     loopBackSocket = new QUdpSocket(this);
     if(!loopBackSocket->bind(QHostAddress::LocalHost, 17770))//TODO settings
     {
@@ -76,11 +61,9 @@ void FormLoop::LoadLoopback() //this should be done. David 6/18/24
 
 }
 
-void FormLoop::SendDataToLoopBack(QByteArray byteData)//this also should work David 6/18/24
+void FormLoop::SendDataToLoopBack(QByteArray byteData)
 {
     loopBackSocket->writeDatagram(byteData, QHostAddress::LocalHost, 15550); //TODO setting
-    //qDebug() << "Sent size: " << byteData.size();
-
     /*try
 	  {
 	  if (byteData.Length != 0)
@@ -105,7 +88,6 @@ void FormLoop::ReceiveFromLoopBack()
         QByteArray byteData;
         byteData.resize(loopBackSocket->pendingDatagramSize());
         loopBackSocket->readDatagram(byteData.data(), byteData.size());
-        //SendUDPMessage(QByteArray byteData);
 
         /*
 	 * This is a part of the whole serial nightmare...
@@ -170,30 +152,6 @@ void FormLoop::ReceiveFromLoopBack()
 */
     }
 }
-/*void ReceiveDataLoopAsync(IAsyncResult asyncResult)
-  {
-  try
-  {
-/* Receive all data
-
- * How much of this do we need? How much is for cs stuff, and how much is required for networking?
- * David 6/18/24
- *
- int msgLen = loopBackSocket.EndReceiveFrom(asyncResult, ref endPointLoopBack);
-
- byte[] localMsg = new byte[msgLen];
- Array.Copy(buffer, localMsg, msgLen);
-
-// Listen for more connections again...
-loopBackSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointLoopBack,
-new AsyncCallback(ReceiveDataLoopAsync), null);
-
-BeginInvoke((MethodInvoker)(() => ReceiveFromLoopBack(localMsg)));
-}
-catch (Exception)
-{
-}
-}*/
 
 void FormLoop::SendUDPMessage(QByteArray byteData)
 {
@@ -206,40 +164,7 @@ void FormLoop::SendUDPMessage(QByteArray byteData)
             udpSocket->writeDatagram(byteData, QHostAddress("10.0.0.255"), 8888); //TODO settings
     }
 }
-/*void UDP::SendDataUDPAsync(IAsyncResult asyncResult) //not necessary with qt
-  {
-  try
-  {
-  UDPSocket.EndSend(asyncResult);
-  }
-  catch (Exception)
-  {
-  }
-  }
-
-  void UDP::ReceiveDataUDPAsync(IAsyncResult asyncResult)
-  {
-
-  try
-  {
-// Receive all data
-int msgLen = UDPSocket.EndReceiveFrom(asyncResult, ref endPointUDP);
-
-byte[] localMsg = new byte[msgLen];
-Array.Copy(buffer, localMsg, msgLen);
-
-// Listen for more connections again...
-udpSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endPointUDP,
-new AsyncCallback(ReceiveDataUDPAsync), null);
-
-BeginInvoke((MethodInvoker)(() => ReceiveFromUDP(localMsg)));
-
-}
-catch (Exception)
-{
-}
-}*/
-void FormLoop::ReceiveFromUDP() //this should work. David 6/18/24
+void FormLoop::ReceiveFromUDP()
 {
 
     //read the data
@@ -340,17 +265,13 @@ void FormLoop::ReceiveFromUDP() //this should work. David 6/18/24
 
         else if (data[0] == 36 && (data[1] == 71 || data[1] == 80 || data[1] == 75))
         {
-            //traffic.cntrGPSOut += data.Length;
-              //rawBuffer += Encoding.ASCII.GetString(data);
+            //traffic.cntrGPSOut += data.Length; // don't worry about gpsOut right now
             rawBuffer += QString::fromLatin1(data); //is this right? David
               ParseNMEA(rawBuffer);
             if(!haveWeSentToParser) {
                   qDebug() << "sent to parser";
                     haveWeSentToParser = true;
             }
-             /*forget about gpsOut for the moment*
-			 */
-
         }
     }
 }
