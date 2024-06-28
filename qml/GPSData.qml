@@ -20,8 +20,8 @@ Rectangle{
         TextLine{ color: "white"; text: qsTr("Frame ")+ (Number(aog.frameTime).toLocaleString(Qt.locale(), 'f', 1))}
         TextLine{ color: "white"; text: qsTr("Raw Hz ", "abbreviation for Raw Hertz")+ (Number(aog.rawHz).toLocaleString(Qt.locale(), 'f', 1))}
         TextLine{ color: "white"; text: qsTr("Hz ", "abbreviation for Hertz")+ (Number(aog.hz).toLocaleString(Qt.locale(), 'f', 1))}
-        TextLine{ color: "white"; text: qsTr("Missed ")+ aog.missedSentences}
-        TextLine{ color: "white"; text: qsTr("Fix2Fix ")+ (Number(aog.heading * 180 / Math.PI).toLocaleString(Qt.locale(), 'f', 1))}
+        TextLine{ color: "white"; text: qsTr("Dropped ")+ aog.droppedSentences}
+        TextLine{ color: "white"; text: qsTr("Fix2Fix ")+ (Number(aog.heading * 180 / Math.PI).toLocaleString(Qt.locale(), 'f', 1))}//convert from radians
         TextLine{ color: "white"; text: qsTr("IMU ")+ (Number(aog.imuHeading * 180 / Math.PI).toLocaleString(Qt.locale(), 'f', 1))}
         TextLine{ color: "white"; text: qsTr("Heading ")+ (Number(aog.fusedHeading * 180 / Math.PI).toLocaleString(Qt.locale(), 'f', 1))}
         Item{

@@ -124,7 +124,7 @@ Item {
     property double steerAngleActualRounded: 0
     property double rawHz:0
     property double hz:0
-    property double missedSentences: 0
+    property double droppedSentences: 0
     property double gpsHeading: 0
     property double fusedHeading: 0
     property int sentenceCounter: 0 //for No GPS screen

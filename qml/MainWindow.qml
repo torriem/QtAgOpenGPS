@@ -249,7 +249,7 @@ Window {
                         aog.fixQuality ===2 ? "DGPS":
                         aog.fixQuality ===3 ? "RTK Float":
                         aog.fixQuality ===4 ? "RTK Fix":
-                         "Invalid" + ": Age: "+ Math.round(aog.age, 1))
+                         "Invalid" + ": Age: "+ Math.round(aog.age * 10)/ 10)
             font.bold: true
             font.pixelSize: 20
             anchors.bottom: parent.verticalCenter

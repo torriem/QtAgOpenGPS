@@ -59,8 +59,8 @@ void FormGPS::ReceiveFromAgIO()
         switch ((uchar)data[3])
         {
         case 0xD6:
-            if (udpWatch.elapsed() < udpWatchLimit)
-            {
+            if (udpWatch.elapsed() < udpWatchLimit) //simple filter to remove any sentences if we
+            {                                        //just received one, like with wifi, or some network delay.
 				udpWatchCounts++;
                 //TODO implement nmea logging
                 /*

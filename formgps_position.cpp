@@ -1130,7 +1130,8 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("longitude",pn.longitude);
     aog->setProperty("easting",pn.fix.easting);
     aog->setProperty("northing",pn.fix.northing);
-    aog->setProperty("heading", vehicle.fixHeading);
+    aog->setProperty("heading", gpsHeading);
+    aog->setProperty("fusedHeading", vehicle.fixHeading);
     aog->setProperty("toolEasting", vehicle.pivotAxlePos.easting);
     aog->setProperty("toolNorthing", vehicle.pivotAxlePos.northing);
     aog->setProperty("toolHeading", vehicle.pivotAxlePos.heading);
@@ -1149,6 +1150,10 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("avgPivDistance", avgPivDistance); //mm!
     aog->setProperty("offlineDistance", vehicle.guidanceLineDistanceOff);
     aog->setProperty("speedKph", vehicle.avgSpeed);
+/*            lblIMUHeading.Text = mf.GyroInDegrees;
+            lblFix2FixHeading.Text = mf.GPSHeading;
+            lblFuzeHeading.Text = (mf.fixHeading * 57.2957795).ToString("N1");
+*/
 
     // added by Wedel
     aog->setProperty("altitude", pn.altitude);
@@ -1168,6 +1173,7 @@ void FormGPS::UpdateFixPosition()
 
     aog->setProperty("steerAngleActual", mc.actualSteerAngleDegrees);
     aog->setProperty("steerAngleSet", vehicle.guidanceLineSteerAngle);
+    aog->setProperty("droppedSentences", udpWatchCounts);
 
     if (ABLine.numABLineSelected > 0) {
         //currentABLine_heading is set in formgps_ui.cpp
