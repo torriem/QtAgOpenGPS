@@ -1,3 +1,4 @@
+#include <QCoreApplication>
 #include "formloop.h"
 #include <QHostInfo>
 #include <QNetworkInterface>
@@ -31,9 +32,9 @@ void FormLoop::LoadUDPNetwork()
     //this is the part that listens
     if(!udpSocket->bind(QHostAddress("10.0.0.255"), 9999)) //TODO settings
     {
-        qDebug() << "Failed to bind udpSocket" << udpSocket->errorString();
+        qDebug() << "Failed to bind udpSocket: " << udpSocket->errorString();
         qDebug() << "Exiting program due to fatal error";
-        std::exit;
+        QCoreApplication::exit(0);
     }else {
         qDebug() << "udpSocket bound";
     }
@@ -50,9 +51,9 @@ void FormLoop::LoadLoopback() //set up the connection that listens to loopback
     loopBackSocket = new QUdpSocket(this);
     if(!loopBackSocket->bind(QHostAddress::LocalHost, 17770))//TODO settings
     {
-        qDebug() <<"Failed to bind loopBackSocket" << loopBackSocket->errorString();
+        qDebug() <<"Failed to bind loopBackSocket: : " << loopBackSocket->errorString();
         qDebug() << "Exiting program due to fatal error";
-        std::exit;
+        QCoreApplication::exit(0);
     } else {
         qDebug() << "loopBackSocket bound";
     }
