@@ -142,6 +142,10 @@ Item {
     //onVehicle_bounding_boxChanged: console.log("vehicle box is", vehicle_bounding_box);
 
     property bool isTrackOn: false //checks if a guidance line is set.
+
+    property string dispImuHeading: "#N/A"
+    onImuHeadingChanged: imuHeading > 360 ? dispImuHeading = "#INV" :
+         dispImuHeading = Number(aog.imuHeading.toLocaleString(Qt.locale(), 'f', 1));
     onCurrentABLineChanged: {
         if(currentABLine > -1 && isJobStarted === true){
             isTrackOn = true

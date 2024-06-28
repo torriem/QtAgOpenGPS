@@ -22,7 +22,7 @@ Rectangle{
         TextLine{ color: "white"; text: qsTr("Hz ", "abbreviation for Hertz")+ (Number(aog.hz).toLocaleString(Qt.locale(), 'f', 1))}
         TextLine{ color: "white"; text: qsTr("Dropped ")+ aog.droppedSentences}
         TextLine{ color: "white"; text: qsTr("Fix2Fix ")+ (Number(aog.heading * 180 / Math.PI).toLocaleString(Qt.locale(), 'f', 1))}//convert from radians
-        TextLine{ color: "white"; text: qsTr("IMU ")+ (Number(aog.imuHeading * 180 / Math.PI).toLocaleString(Qt.locale(), 'f', 1))}
+        TextLine{ color: "white"; text: qsTr("IMU ")+ aog.dispImuHeading;} //rounding taken care of in AOGInterface.qml
         TextLine{ color: "white"; text: qsTr("Heading ")+ (Number(aog.fusedHeading * 180 / Math.PI).toLocaleString(Qt.locale(), 'f', 1))}
         Item{
             visible: false //should reference a setting if rtk is turned on
