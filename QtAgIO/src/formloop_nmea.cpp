@@ -339,7 +339,7 @@ void FormLoop::ParseKSXT()
 			else if (fixQuality == 1) fixQualityData = 1;
 			else if (fixQuality == 2) fixQualityData = 5;
 			else if (fixQuality == 3) fixQualityData = 4;*/
-		int fixQuality = words[10].toInt(&ok);
+        fixQuality = words[10].toInt(&ok);
 		if (ok) {
 			switch (fixQuality) {
 				case 0:
