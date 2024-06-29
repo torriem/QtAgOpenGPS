@@ -10,6 +10,8 @@
 #include <QUdpSocket>
 #include "glm.h"
 #include <cmath>
+#include <QSettings>
+#include "agiosettings.h"
 
 
 class FormLoop : public QObject
@@ -17,8 +19,8 @@ class FormLoop : public QObject
 
 	Q_OBJECT
 
-	public: 
-		explicit FormLoop(QObject *parent = nullptr);
+    public:
+        explicit FormLoop(QObject *parent = nullptr);
 		~FormLoop();
 
 

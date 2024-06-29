@@ -2,12 +2,13 @@ cmake_minimum_required(VERSION 3.22)
 
 # Create the agio library
 add_library(qtagio
-    inc/IORouter.h src/IORouter.cpp
+    #inc/IORouter.h src/IORouter.cpp
     inc/Connection.h src/Connection.cpp
     inc/SerialConnection.h src/SerialConnection.cpp
     inc/UdpConnection.h src/UdpConnection.cpp
 	inc/CTraffic.h src/CTraffic.cpp
 	inc/CScanReply.h src/CScanReply.cpp
+        inc/agiosettings.h src/agiosettings.cpp
 	inc/formloop.h src/formloop.cpp
 	src/formloop_udpcomm.cpp
         src/formloop_nmea.cpp

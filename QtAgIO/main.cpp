@@ -7,6 +7,7 @@
 
 #include "IORouter.h"
 #include "formloop.h"
+#include "agiosettings.h"
 
 // Helper to generate default settings
 void generateDefaultSettings(QSettings& settings)
@@ -76,7 +77,8 @@ int main(int argc, char *argv[])
     // Does that do anything or is verbosity only useful for diy streams?
     qDebug().setVerbosity(parser.value(verbose).toInt());
 
-    QSettings settings;
+    //QSettings settings;
+    //settings = new QSettings;
 
     // Check for settings and generate defaults if none present
     if(!settings.contains("AogUdpPort"))
@@ -85,7 +87,7 @@ int main(int argc, char *argv[])
     }
 
 	qDebug() << "Starting IORouter";
-    IORouter router(settings);
+    //IORouter router(settings);
     
     FormLoop formloop;
 

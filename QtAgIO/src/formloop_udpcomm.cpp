@@ -27,10 +27,12 @@ void FormLoop::LoadUDPNetwork()
 
     // Initialise the socket
     udpSocket = new QUdpSocket(this);
+    qDebug() << settings.value("NumConnections");
+
 
     //set up the connection
     //this is the part that listens
-    if(!udpSocket->bind(QHostAddress("10.0.0.255"), 9999)) //TODO settings
+    if(!udpSocket->bind(QHostAddress("192.168.5.255"), 9999)) //TODO settings
     {
         qDebug() << "Failed to bind udpSocket: " << udpSocket->errorString();
         qDebug() << "Exiting program due to fatal error";
@@ -157,7 +159,8 @@ void FormLoop::ReceiveFromLoopBack()
 void FormLoop::SendUDPMessage(QByteArray byteData)
 {
 
-    if (isUDPNetworkConnected)
+    //if (isUDPNetworkConnected)
+    if(false)
     {
 
         // Send packet to the zero
