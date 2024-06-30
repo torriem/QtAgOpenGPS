@@ -25,14 +25,22 @@ void FormLoop::LoadUDPNetwork()
 		 }
 		 }*/
 
+    uint ip1 = settings.value("UDPComm/IP1").toUInt();
+    uint ip2 = settings.value("UDPComm/IP2").toUInt();
+    uint ip3 = settings.value("UDPComm/IP3").toUInt();
+    uint ip4 = 255; //broadcast
+
+    quint32 ipAddress = (ip1 << 24) | (ip2 << 16) | (ip3 << 8) | ip4;
+
+    udpIpAddress.setAddress(ipAddress);
+        qDebug() << "The UDPComm ip address is:" << udpIpAddress.toString();
     // Initialise the socket
     udpSocket = new QUdpSocket(this);
-    qDebug() << settings.value("NumConnections");
 
 
     //set up the connection
     //this is the part that listens
-    if(!udpSocket->bind(QHostAddress("192.168.5.255"), 9999)) //TODO settings
+    if(!udpSocket->bind(udpIpAddress, settings.value("UDPComm/UdpListenPort").toInt())) //TODO settings
     {
         qDebug() << "Failed to bind udpSocket: " << udpSocket->errorString();
         qDebug() << "Exiting program due to fatal error";
@@ -51,7 +59,7 @@ void FormLoop::LoadUDPNetwork()
 void FormLoop::LoadLoopback() //set up the connection that listens to loopback
 {
     loopBackSocket = new QUdpSocket(this);
-    if(!loopBackSocket->bind(QHostAddress::LocalHost, 17770))//TODO settings
+    if(!loopBackSocket->bind(QHostAddress::LocalHost, settings.value("LoopbackComm/ListenToAOGPort").toInt()))
     {
         qDebug() <<"Failed to bind loopBackSocket: : " << loopBackSocket->errorString();
         qDebug() << "Exiting program due to fatal error";
@@ -66,7 +74,7 @@ void FormLoop::LoadLoopback() //set up the connection that listens to loopback
 
 void FormLoop::SendDataToLoopBack(QByteArray byteData)
 {
-    loopBackSocket->writeDatagram(byteData, QHostAddress::LocalHost, 15550); //TODO setting
+    loopBackSocket->writeDatagram(byteData, QHostAddress::LocalHost, settings.value("LoopbackComm/SendToAOGPort").toInt());
     /*try
 	  {
 	  if (byteData.Length != 0)
@@ -160,12 +168,14 @@ void FormLoop::SendUDPMessage(QByteArray byteData)
 {
 
     //if (isUDPNetworkConnected)
-    if(false)
+    if(!settings.value("UDPComm/ListenOnly").toBool())
     {
 
         // Send packet to the zero
         if (byteData.size() != 0)
-            udpSocket->writeDatagram(byteData, QHostAddress("10.0.0.255"), 8888); //TODO settings
+            udpSocket->writeDatagram(byteData, udpIpAddress, (settings.value("UDPComm/UdpSendPort").toInt())); //TODO settings
+    }else{
+        qDebug() << "Listen to modules only";
     }
 }
 void FormLoop::ReceiveFromUDP()

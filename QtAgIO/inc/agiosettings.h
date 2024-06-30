@@ -2,8 +2,18 @@
 #define AGIOSETTINGS_H
 
 #include <QSettings>
+#include <QDebug>
+#include <QStandardPaths>
 
-// Declare the global QSettings object
-extern QSettings settings;
+class AgIOSettings : public QObject
+{
+    Q_OBJECT
+public:
+    explicit AgIOSettings(QObject *parent = nullptr);
+    // Declare the global QSettings object
+    QSettings settings;
+    void generateDefaultSettings(QSettings& settings);
+};
+
 
 #endif // AGIOSETTINGS_H

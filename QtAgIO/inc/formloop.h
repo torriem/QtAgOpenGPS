@@ -22,8 +22,10 @@ class FormLoop : public QObject
     public:
         explicit FormLoop(QObject *parent = nullptr);
 		~FormLoop();
+        QSettings settings;
 
 
+        QHostAddress udpIpAddress;
         //debug vars
         bool haveWeSentToParser = false;
         bool haveWeRecGGA = false;
