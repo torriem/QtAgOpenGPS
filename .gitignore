@@ -9,3 +9,5 @@ compile_commands.json
 Makefile
 build
 branchnotes.txt
+*.user.*
+*.user
