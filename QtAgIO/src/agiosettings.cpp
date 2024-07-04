@@ -58,15 +58,22 @@ QSettings settings;
     settings.setValue("baud", 9600);
     settings.endGroup();
 
-    settings.beginGroup("Connection2");
-    settings.setValue("type", "RTK");
-    settings.setValue("name", "NTRIP");
-    settings.setValue("url", "rtk2go.com");
-    settings.setValue("mount", "OverlandRTK");
-    settings.setValue("username", "johndoe@gmail.com");
-    settings.setValue("password", "password");
-    settings.setValue("port", 2101);
-    settings.endGroup();
+    settings.beginGroup("RTK");
+	settings.setValue("setNTRIP_isOn", false);
+	settings.setValue("setRadio_isOn", false);
+	settings.setValue("setPass_isOn", false);//
+	settings.setValue("setNTRIP_casterPort", 80);
+	settings.setValue("setNTRIP_mount", "mount");
+	settings.setValue("setNTRIP_userName", "user");
+	settings.setValue("setNTRIP_userPassword", "pass");
+	settings.setValue("setNTRIP_sendToUDPPort", 2101);
+	settings.setValue("setNTRIP_sendGGAInterval", 0);//
+	settings.setValue("setNTRIP_isGGAManual", false);
+	settings.setValue("setNTRIP_manualLat", 53.0000000);
+	settings.setValue("setNTRIP_manualLon", -111.0000000);
+	settings.setValue("setNTRIP_isTCP", false);
+	settings.setValue("setNTRIP_isHTTP10", false);
+
 
 
     settings.sync();
