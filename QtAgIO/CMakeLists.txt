@@ -12,7 +12,9 @@ add_library(qtagio
 	inc/formloop.h src/formloop.cpp
 	src/formloop_udpcomm.cpp
         src/formloop_nmea.cpp
+        src/formloop_ntripcomm.cpp
 )
+
 
 target_include_directories(qtagio
     PRIVATE src
