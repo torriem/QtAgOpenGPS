@@ -97,7 +97,7 @@ void FormLoop::StartNTRIP()
 		sendGGAInterval = settings.value("RTK/setNTRIP_sendGGAInterval").toInt(); //how often to send fixes
 
 		//if we had a timer already, kill it
-		if (tmr != NULL)
+        if (tmr != nullptr)
 		{
 			//tmr.Dispose();
 			delete tmr;
@@ -108,10 +108,10 @@ void FormLoop::StartNTRIP()
 		{
 			/*this.tmr = new System.Windows.Forms.Timer();
 			this.tmr.Interval = 5000;
-			this.tmr.Tick += new EventHandler(NTRIPtick);
-			tmr = new QTimer(this);*/
+            this.tmr.Tick += new EventHandler(NTRIPtick);*/
 			//is this right? David
-			tmr->setInterval(5000);
+            tmr = new QTimer(this);
+            tmr->setInterval(5000);
 			connect(tmr, &QTimer::timeout, this, &FormLoop::NTRIPtick);
 			tmr->start();
 

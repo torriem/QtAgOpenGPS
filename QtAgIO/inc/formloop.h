@@ -166,10 +166,10 @@ class FormLoop : public QObject
 		//for the NTRIP Client counting
 		int ntripCounter = 10;
 
-		QTcpSocket* clientSocket; //server connection   line 21
+        QTcpSocket *clientSocket; //server connection   line 21
         qint8 casterRecBuffer = 2800; //received data buffer
 
-		QTimer tmr; //send gga back timer line 25
+        QTimer *tmr; //send gga back timer line 25
 
 		QString mount;
 		QString username;
