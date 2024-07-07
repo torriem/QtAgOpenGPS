@@ -164,7 +164,7 @@ void FormLoop::ReceiveFromLoopBack()
     }
 }
 
-void FormLoop::SendUDPMessage(QByteArray byteData)
+void FormLoop::SendUDPMessage(QByteArray byteData, uint portNumber)
 {
 
     //if (isUDPNetworkConnected)
@@ -173,7 +173,9 @@ void FormLoop::SendUDPMessage(QByteArray byteData)
 
         // Send packet to the zero
         if (byteData.size() != 0)
-            udpSocket->writeDatagram(byteData, udpIpAddress, (settings.value("UDPComm/UdpSendPort").toInt())); //TODO settings
+
+            udpSocket->writeDatagram(byteData, udpIpAddress, portNumber);
+            //udpSocket->writeDatagram(byteData, udpIpAddress, (settings.value("UDPComm/UdpSendPort").toInt())); //TODO settings
     }else{
         qDebug() << "Listen to modules only";
     }

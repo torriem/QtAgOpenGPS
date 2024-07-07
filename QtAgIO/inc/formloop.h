@@ -41,6 +41,7 @@ class FormLoop : public QObject
 
 		bool isGPSSentencesOn = false, isSendNMEAToUDP;
         int focusSkipCounter = 310;
+        bool isSendToSerial = false, isSendToUDP = true;
 
 		/* formloop_udpcomm.cpp
 		 * formerly UDP.designer.cs */
@@ -56,7 +57,7 @@ class FormLoop : public QObject
 		void LoadLoopback();
 
 		//send
-		void SendUDPMessage(QByteArray byteData);
+        void SendUDPMessage(QByteArray byteData, uint portNumber);
 		void SendDataToLoopBack(QByteArray byteData);
 
 		QUdpSocket *udpSocket;
@@ -203,7 +204,6 @@ class FormLoop : public QObject
 		void IncrementNTRIPWatchDog();
 		void SendAuthorization();
         void ntripMeterTimer_Tick();
-		void NTRIPtick();
 		void NtripPort_DataReceived();
 		void ShutDownNTRIP();
 		void SettingsShutDownNTRIP();

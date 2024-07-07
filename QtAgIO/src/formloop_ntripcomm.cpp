@@ -1,6 +1,7 @@
 #include "formloop.h"
 
-
+//set up connection to caster
+// main routine
 void FormLoop::DoNTRIPSecondRoutine()
 {
 	//count up the ntrip clock only if everything is alive
@@ -10,6 +11,7 @@ void FormLoop::DoNTRIPSecondRoutine()
 	}
 
 	//Have we NTRIP connection?
+    //start if it is required
 	if (isNTRIP_RequiredOn && !isNTRIP_Connected && !isNTRIP_Connecting)
 	{
 		if (!isNTRIP_Starting && ntripCounter > 20)
@@ -18,6 +20,7 @@ void FormLoop::DoNTRIPSecondRoutine()
 		}
 	}
 
+    /*radio and serial
 	//check if we need to send...?
 	if ((isRadio_RequiredOn || isSerialPass_RequiredOn) && !isNTRIP_Connected && !isNTRIP_Connecting)
 	{
@@ -25,7 +28,7 @@ void FormLoop::DoNTRIPSecondRoutine()
 		{
 			StartNTRIP();
 		}
-	}
+    }*/
 
 	if (isNTRIP_Connecting)
 	{
@@ -111,8 +114,9 @@ void FormLoop::StartNTRIP()
             this.tmr.Tick += new EventHandler(NTRIPtick);*/
 			//is this right? David
             tmr = new QTimer(this);
+            tmr->setSingleShot(false);
             tmr->setInterval(5000);
-			connect(tmr, &QTimer::timeout, this, &FormLoop::NTRIPtick);
+            connect(tmr, &QTimer::timeout, this, &FormLoop::SendGGA);
 			tmr->start();
 
 		}
@@ -141,7 +145,7 @@ void FormLoop::StartNTRIP()
 			quint32 ipAddress = (ip1 << 24) | (ip2 << 16) | (ip3 << 8) | ip4;
 
 
-
+            //this is the socket that sends to the receiver
 			// Create the socket object
 			clientSocket = new QTcpSocket(this);
 
@@ -151,6 +155,7 @@ void FormLoop::StartNTRIP()
 			//clientSocket.BeginConnect(new IPEndPoint(IPAddress.Parse(broadCasterIP), broadCasterPort), new AsyncCallback(OnConnect), null);
 			// Connect to server
 			clientSocket->connectToHost(QHostAddress(ipAddress), broadCasterPort);
+
 		}
                     //clientSocket.BeginConnect(new IPEndPoint(IPAddress.Parse(broadCasterIP), broadCasterPort), new AsyncCallback(OnConnect), null);
 					//todo: we need a line like this 
@@ -166,7 +171,7 @@ void FormLoop::StartNTRIP()
 
 		isNTRIP_Connecting = true;
 	}
-	/*
+    /*radio
 	 * If someone wants to attempt this, go ahead. However, I don't think many
 	 * if anyone uses it. 
 	 * I think it is for a radio connected to AgIO over usb, not a radio plugged
@@ -275,13 +280,13 @@ void FormLoop::IncrementNTRIPWatchDog()
 		ReconnectRequest();
 
 	//Once all connected set the timer GGA to NTRIP Settings
-	if (sendGGAInterval > 0 && ntripCounter == 40) tmr.Interval = sendGGAInterval * 1000;
+    if (sendGGAInterval > 0 && ntripCounter == 40) tmr->setInterval(sendGGAInterval * 1000);
 }
 
 void FormLoop::SendAuthorization()
 {
 	// Check we are connected
-    if (clientSocket == NULL || !clientSocket->state() == QAbstractSocket::ConnectedState)
+    if (clientSocket == NULL || clientSocket->state() != QAbstractSocket::ConnectedState)
 	{
 		qDebug() << "At the StartNTRIP()";
 		ReconnectRequest();
@@ -321,7 +326,8 @@ void FormLoop::SendAuthorization()
 			clientSocket.Send(byteDateLine, byteDateLine.Length, 0);
 
 			//enable to periodically send GGA sentence to server.
-            if (sendGGAInterval > 0) tmr.start();
+            if (sendGGAInterval > 0) tmr->start();
+
 		}
 		//say its connected
 		isNTRIP_Connected = true;
@@ -410,7 +416,7 @@ void FormLoop::SendNTRIP(qint8 data)
 	//send out UDP Port
 	if (isSendToUDP)
 	{
-		SendUDPMessage(data, epNtrip);
+        SendUDPMessage(data, epNtrip);//I guess ip is set in the function. change before work
 	}
 }
 
@@ -431,19 +437,18 @@ void FormLoop::SendGGA()
 	{
 		isNTRIP_Sending = true;
 		BuildGGA();
-		QString str = sbGGA.toString();
+        //I'm not sure about this. sbGGA is a stringbuilder in cs, however, I think it's a
+        //regular qstring in qt.
+        //QString str = sbGGA.toString();
+        QString str = sbGGA;
 
-		Byte[] byteDateLine = Encoding.ASCII.GetBytes(str.ToCharArray());
+        qint8 byteDateLine = str.toLatin1());
 		clientSocket.Send(byteDateLine, byteDateLine.Length, 0);
 	}
 	catch (...)
 	{
 		ReconnectRequest();
 	}
-}
-void FormLoop::NTRIPtick()
-{
-	SendGGA();
 }
 
 void FormLoop::OnConnect()//where we begin to listen--if we are connected
