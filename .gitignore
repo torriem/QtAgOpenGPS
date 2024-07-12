@@ -1,4 +1,5 @@
 *.user
+*.user.*
 Wedel.txt
 *.swp
 *.autosave
