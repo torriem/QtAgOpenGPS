@@ -323,7 +323,7 @@ void FormLoop::SendAuthorization()
             //Byte[] byteDateLine = Encoding.ASCII.GetBytes(str.ToCharArray());
             QByteArray byteDateLine = str.toLatin1();
 
-			clientSocket.Send(byteDateLine, byteDateLine.Length, 0);
+            clientSocket.Send(byteDateLine, byteDateLine.length(), 0);
 
 			//enable to periodically send GGA sentence to server.
             if (sendGGAInterval > 0) tmr->start();
@@ -351,7 +351,7 @@ void FormLoop::OnAddMessage(qint8 data)
 		//move the ntrip stream to queue
         for (int i = 0; i < data.length(); i++)
 		{
-			rawTrip.Enqueue(data[i]);
+            rawTrip.enqueue(data[i]);
 		}
 
 		ntripMeterTimer.Enabled = true;
@@ -380,12 +380,12 @@ void FormLoop::ntripMeterTimer_Tick()
 	if (cnt > packetSizeNTRIP) cnt = packetSizeNTRIP;
 
 	//new data array to send
-    qint8 trip = new qint8[cnt];
+    qint8 trip = cnt;
 
 	traffic.cntrGPSInBytes += cnt;
 
 	//dequeue into the array
-	for (int i = 0; i < cnt; i++) trip[i] = rawTrip.Dequeue();
+    for (int i = 0; i < cnt; i++) trip[i] = rawTrip.dequeue();
 
 	//send it
 	SendNTRIP(trip);
@@ -442,8 +442,8 @@ void FormLoop::SendGGA()
         //QString str = sbGGA.toString();
         QString str = sbGGA;
 
-        qint8 byteDateLine = str.toLatin1());
-		clientSocket.Send(byteDateLine, byteDateLine.Length, 0);
+        QByteArray byteDateLine = str.toLatin1();
+        clientSocket.Send(byteDateLine, byteDateLine.length(), 0);
 	}
 	catch (...)
 	{
@@ -473,7 +473,7 @@ void FormLoop::OnConnect()//where we begin to listen--if we are connected
 		int nBytesRec = clientSocket.EndReceive(ar);
 		if (nBytesRec > 0)
 		{
-			byte[] localMsg = new byte[nBytesRec];
+            QByteArray localMsg(nBytesRec, 0);
 			Array.Copy(casterRecBuffer, localMsg, nBytesRec);
 
 			BeginInvoke((MethodInvoker)(() => OnAddMessage(localMsg)));
@@ -526,10 +526,20 @@ void FormLoop::NtripPort_DataReceived()//this is the serial port, right?
 
  QString FormLoop::ToBase64(QString str)
 {
-	Encoding asciiEncoding = Encoding.ASCII;
+    /*Encoding asciiEncoding = Encoding.ASCII;
 	byte[] byteArray = new byte[asciiEncoding.GetByteCount(str)];
 	byteArray = asciiEncoding.GetBytes(str);
 	return Convert.ToBase64String(byteArray, 0, byteArray.Length);
+    is the following code correct??
+    */
+
+    // Get the ASCII-encoded QByteArray
+    QByteArray byteArray = str.toLatin1(); // Latin-1 is equivalent to ASCII for plain English characters
+
+    // Convert to Base64
+    QString base64String = byteArray.toBase64();
+
+    return base64String;
 }
 
 void FormLoop::ShutDownNTRIP()
@@ -588,7 +598,7 @@ void FormLoop::SettingsShutDownNTRIP()
 QString FormLoop::CalculateChecksum(QString Sentence)
 {
 	int sum = 0, inx;
-	QChar sentence_chars = Sentence.ToCharArray();
+    QChar sentence_chars = Sentence.toWCharArray();
 	QChar tmp;
 
 	// All character xor:ed results in the trailing hex checksum
@@ -604,7 +614,9 @@ QString FormLoop::CalculateChecksum(QString Sentence)
 	}
 
 	// Calculated checksum converted to a 2 digit hex string
-	return String.Format("{0:X2}", sum);
+    //return String.Format("{0:X2}", sum);
+    return QString::asprintf("%02X", sum); //correct??
+
 }
 
 //private readonly StringBuilder sbGGA = new StringBuilder();
@@ -622,8 +634,9 @@ void FormLoop::BuildGGA()
 	}
 	else
 	{
-		latitude = this.latitude;
-		longitude = this.longitude;
+        //latitude = this.latitude;
+        latitude = this->latitude; //correct??
+        longitude = this->longitude;
 	}
 
 	//convert to DMS from Degrees
