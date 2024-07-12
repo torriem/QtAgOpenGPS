@@ -175,6 +175,16 @@ Look here: https://www.qt.io/offline-installers in the "QT Creator" section.
 
 # Contributing to source
 
+## Porting from AOG
+
+### Data types
+
+- First type is cs, second is Qt/cpp
+- Byte = quint8
+- char = QByteArray
+- string = QString
+
+
 ## Creating scalable UI's
 
 - This is very important. Creating a GUI that works on a phone screen as well as a giant desktop isn't easy. I thought I'd write this up because I don't want to convert your code to something that looks ok on a phone (and because it's more fun writing this than converting all my existing code to scalable like I need to).
