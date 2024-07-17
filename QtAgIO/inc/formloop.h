@@ -157,8 +157,8 @@ class FormLoop : public QObject
 
 		void ConfigureNTRIP(); //I think this is all UI related??
 		void StartNTRIP();
-        void OnAddMessage(qint8 data);
-        void SendNTRIP(qint8 data);
+        void OnAddMessage(QByteArray data);
+        void SendNTRIP(QByteArray data);
 		void SendGGA();
 		void OnConnect();
 		void OnReceivedData();

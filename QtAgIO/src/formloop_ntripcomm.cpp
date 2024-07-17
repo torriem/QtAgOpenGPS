@@ -152,12 +152,18 @@ void FormLoop::StartNTRIP()
 			//set socket to non-blocking mode
             clientSocket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
 
-			//clientSocket.BeginConnect(new IPEndPoint(IPAddress.Parse(broadCasterIP), broadCasterPort), new AsyncCallback(OnConnect), null);
 			// Connect to server
 			clientSocket->connectToHost(QHostAddress(ipAddress), broadCasterPort);
+            if (clientSocket->waitForConnected(5000)) {
+                qDebug() << "Ntrip client connected to server";
+
+            }
+            else{
+                qDebug() << "NTRIP Client failed to connect";
+            }
+            connect(clientSocket, &QTcpSocket::readyRead, this, &FormLoop::OnReceivedData);
 
 		}
-                    //clientSocket.BeginConnect(new IPEndPoint(IPAddress.Parse(broadCasterIP), broadCasterPort), new AsyncCallback(OnConnect), null);
 					//todo: we need a line like this 
 		// I don't think this is all good. The catch is supposed 
 		// to catch failed connections. RN, I don't think it will
@@ -323,7 +329,7 @@ void FormLoop::SendAuthorization()
             //Byte[] byteDateLine = Encoding.ASCII.GetBytes(str.ToCharArray());
             QByteArray byteDateLine = str.toLatin1();
 
-            clientSocket.Send(byteDateLine, byteDateLine.length(), 0);
+            clientSocket->write(byteDateLine, byteDateLine.length());
 
 			//enable to periodically send GGA sentence to server.
             if (sendGGAInterval > 0) tmr->start();
@@ -340,7 +346,7 @@ void FormLoop::SendAuthorization()
 	}
 }
 
-void FormLoop::OnAddMessage(qint8 data)
+void FormLoop::OnAddMessage(QByteArray data)
 {
 
 	//reset watchdog since we have updated data
@@ -380,7 +386,7 @@ void FormLoop::ntripMeterTimer_Tick()
 	if (cnt > packetSizeNTRIP) cnt = packetSizeNTRIP;
 
 	//new data array to send
-    qint8 trip = cnt;
+    QByteArray trip(cnt);
 
 	traffic.cntrGPSInBytes += cnt;
 
@@ -443,7 +449,7 @@ void FormLoop::SendGGA()
         QString str = sbGGA;
 
         QByteArray byteDateLine = str.toLatin1();
-        clientSocket.Send(byteDateLine, byteDateLine.length(), 0);
+        clientSocket.write(byteDateLine, byteDateLine.length());
 	}
 	catch (...)
 	{
@@ -451,25 +457,14 @@ void FormLoop::SendGGA()
 	}
 }
 
-void FormLoop::OnConnect()//where we begin to listen--if we are connected
-{
-	// Check if we were sucessfull
-	try
-	{
-        if (clientSocket->state() == QAbstractSocket::ConnectedState)
-			clientSocket.BeginReceive(casterRecBuffer, 0, casterRecBuffer.Length, SocketFlags.None, new AsyncCallback(OnRecievedData), null);
-	}
-	catch (...)
-	{
-		//MessageBox.Show(ex.Message, "Unusual error during Connect!");
-	}
-}
 
  void FormLoop::FormLoop::OnRecievedData() //where we listen
 {
 	// Check if we got any data
-	try
-	{
+    while (loopBackSocket->hasPendingDatagrams()){//not yet finished
+        QByteArray byteData;
+        byteData.resize(loopBackSocket->pendingDatagramSize());
+        loopBackSocket->readDatagram(byteData.data(), byteData.size());
 		int nBytesRec = clientSocket.EndReceive(ar);
 		if (nBytesRec > 0)
 		{
@@ -483,13 +478,9 @@ void FormLoop::OnConnect()//where we begin to listen--if we are connected
 		{
 			// If no data was recieved then the connection is probably dead
             qDebug() << "Shutting down clientSocket as we got no data";
-			clientSocket.Shutdown(SocketShutdown.Both);
-			clientSocket.Close();
+            //clientSocket.Shutdown(SocketShutdown.Both);
+            clientSocket.close();
 		}
-	}
-	catch (...)
-	{
-		qDebug() << "Unusual error druing Recieve!";
 	}
 }
 
