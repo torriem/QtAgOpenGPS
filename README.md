@@ -180,9 +180,10 @@ Look here: https://www.qt.io/offline-installers in the "QT Creator" section.
 ### Data types
 
 - First type is cs, second is Qt/cpp
-- Byte = quint8
+- byte = quint8
 - char = QByteArray
 - string = QString
+- Byte[] = QByteArray
 
 
 ## Creating scalable UI's
