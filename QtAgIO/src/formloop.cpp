@@ -9,7 +9,15 @@ FormLoop::FormLoop(QObject *parent)
 
     LoadLoopback();
 	LoadUDPNetwork();
-    //buffer.resize(1024);
+   //buffer.resize(1024);
+
+    ConfigureNTRIP();
+
+    oneSecondTimer = new QTimer(this);
+    oneSecondTimer->setInterval(1000);
+    connect(oneSecondTimer, &QTimer::timeout, this, &FormLoop::oneSecondLoopTimer_Tick);
+    oneSecondTimer->start();
+
 }
 
 FormLoop::~FormLoop()
@@ -17,4 +25,7 @@ FormLoop::~FormLoop()
     /* clean up our dynamically-allocated
      * objects.
      */
+}
+void FormLoop::oneSecondLoopTimer_Tick(){
+    DoNTRIPSecondRoutine();
 }

@@ -59,6 +59,15 @@ class FormLoop : public QObject
         int focusSkipCounter = 310;
         bool isSendToSerial = false, isSendToUDP = true;
 
+        int packetSizeNTRIP = 256;
+
+        QTimer ntripMeterTimer;
+
+        QTimer *oneSecondTimer;
+    public slots:
+        void oneSecondLoopTimer_Tick();
+
+
 		/* formloop_udpcomm.cpp
 		 * formerly UDP.designer.cs */
 	public:
@@ -184,7 +193,10 @@ class FormLoop : public QObject
 		int ntripCounter = 10;
 
         QTcpSocket *clientSocket; //server connection   line 21
-        qint8 casterRecBuffer = 2800; //received data buffer
+        QByteArray casterRecBuffer; //received data buffer
+        //casterRecBuffer(2800); don't know if this is right yet
+
+        QByteArray trip;
 
         QTimer *tmr; //send gga back timer line 25
 

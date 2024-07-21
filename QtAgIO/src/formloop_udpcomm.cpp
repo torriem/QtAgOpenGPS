@@ -48,8 +48,8 @@ void FormLoop::LoadUDPNetwork()
     if(!udpSocket->bind(ethUDP.address, settings.value("UDPComm/UdpListenPort").toInt())) //TODO settings
     {
         qDebug() << "Failed to bind udpSocket: " << udpSocket->errorString();
-        qDebug() << "Exiting program due to fatal error";
-        QCoreApplication::exit(0);
+        //qDebug() << "Exiting program due to fatal error";
+        //QCoreApplication::exit(0);
     }else {
         qDebug() << "udpSocket bound";
     }

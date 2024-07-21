@@ -92,7 +92,7 @@ void FormLoop::StartNTRIP()
 	if (isNTRIP_RequiredOn)
 	{
 		//load the settings
-		broadCasterPort = settings.value("RTK/setNTRIP_casterPort").toInt(); //Select correct port (usually 80 or 2101)
+        wwwNtrip.portToSend = settings.value("RTK/setNTRIP_casterPort").toInt(); //Select correct port (usually 80 or 2101)
 		mount = settings.value("RTK/setNTRIP_mount").toString(); //Insert the correct mount
 		username = settings.value("RTK/setNTRIP_userName").toString(); //Insert your username!
 		password = settings.value("RTK/setNTRIP_userPassword").toString(); //Insert your password!
@@ -137,12 +137,14 @@ void FormLoop::StartNTRIP()
             }
 
 			//NTRIP endpoint
-			uint ip1 = settings.value("UDPComm/IP1").toUInt();
-			uint ip2 = settings.value("UDPComm/IP2").toUInt();
-			uint ip3 = settings.value("UDPComm/IP3").toUInt();
+            uint ip1 = settings.value("RTK/IP1").toUInt();
+            uint ip2 = settings.value("RTK/IP2").toUInt();
+            uint ip3 = settings.value("RTK/IP3").toUInt();
 			uint ip4 = 255; //broadcast
 
 			quint32 ipAddress = (ip1 << 24) | (ip2 << 16) | (ip3 << 8) | ip4;
+
+            wwwNtrip.address.setAddress(ipAddress);
 
 
             //this is the socket that sends to the receiver
@@ -153,7 +155,7 @@ void FormLoop::StartNTRIP()
             clientSocket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
 
 			// Connect to server
-			clientSocket->connectToHost(QHostAddress(ipAddress), broadCasterPort);
+            clientSocket->connectToHost(wwwNtrip.address, wwwNtrip.portToSend);
             if (clientSocket->waitForConnected(5000)) {
                 qDebug() << "Ntrip client connected to server";
 
@@ -360,7 +362,7 @@ void FormLoop::OnAddMessage(QByteArray data)
             rawTrip.enqueue(data[i]);
 		}
 
-		ntripMeterTimer.Enabled = true;
+        ntripMeterTimer.start();
 	}
 	else
 	{
@@ -386,7 +388,7 @@ void FormLoop::ntripMeterTimer_Tick()
 	if (cnt > packetSizeNTRIP) cnt = packetSizeNTRIP;
 
 	//new data array to send
-    QByteArray trip(cnt);
+    QByteArray trip(cnt, 0);
 
 	traffic.cntrGPSInBytes += cnt;
 
@@ -399,7 +401,7 @@ void FormLoop::ntripMeterTimer_Tick()
 	//Are we done?
     if (rawTrip.size() == 0)
 	{
-		ntripMeterTimer.Enabled = false;
+        ntripMeterTimer.stop();
 
 		if (focusSkipCounter != 0)
 			traffic.cntrGPSInBytes = 0;
@@ -409,7 +411,7 @@ void FormLoop::ntripMeterTimer_Tick()
     if (rawTrip.size() > 10000) rawTrip.clear();
 }
 
-void FormLoop::SendNTRIP(qint8 data)
+void FormLoop::SendNTRIP(QByteArray data)
 {
 	//serial send out GPS port
 	/* don't worry about serial
@@ -422,7 +424,7 @@ void FormLoop::SendNTRIP(qint8 data)
 	//send out UDP Port
 	if (isSendToUDP)
 	{
-        SendUDPMessage(data, epNtrip);//I guess ip is set in the function. change before work
+        SendUDPMessage(data, ethUDP.address, sendNtripToModulePort);
 	}
 }
 
@@ -449,7 +451,7 @@ void FormLoop::SendGGA()
         QString str = sbGGA;
 
         QByteArray byteDateLine = str.toLatin1();
-        clientSocket.write(byteDateLine, byteDateLine.length());
+        clientSocket->write(byteDateLine, byteDateLine.length());
 	}
 	catch (...)
 	{
@@ -458,28 +460,29 @@ void FormLoop::SendGGA()
 }
 
 
- void FormLoop::FormLoop::OnRecievedData() //where we listen
+ void FormLoop::OnReceivedData() //where we listen
 {
 	// Check if we got any data
-    while (loopBackSocket->hasPendingDatagrams()){//not yet finished
+    while (clientSocket->bytesAvailable() > 0){//not yet finished
         QByteArray byteData;
-        byteData.resize(loopBackSocket->pendingDatagramSize());
-        loopBackSocket->readDatagram(byteData.data(), byteData.size());
-		int nBytesRec = clientSocket.EndReceive(ar);
+        byteData.resize(clientSocket->bytesAvailable());
+        clientSocket->read(byteData.data(), byteData.size());
+
+        qint64 nBytesRec = byteData.size();
+
 		if (nBytesRec > 0)
 		{
             QByteArray localMsg(nBytesRec, 0);
-			Array.Copy(casterRecBuffer, localMsg, nBytesRec);
+            //Array.Copy(casterRecBuffer, localMsg, nBytesRec);
 
-			BeginInvoke((MethodInvoker)(() => OnAddMessage(localMsg)));
-			clientSocket.BeginReceive(casterRecBuffer, 0, casterRecBuffer.Length, SocketFlags.None, new AsyncCallback(OnRecievedData), null);
+            OnAddMessage(localMsg);
 		}
 		else
 		{
 			// If no data was recieved then the connection is probably dead
             qDebug() << "Shutting down clientSocket as we got no data";
             //clientSocket.Shutdown(SocketShutdown.Both);
-            clientSocket.close();
+            clientSocket->close();
 		}
 	}
 }
@@ -589,8 +592,11 @@ void FormLoop::SettingsShutDownNTRIP()
 QString FormLoop::CalculateChecksum(QString Sentence)
 {
 	int sum = 0, inx;
-    QChar sentence_chars = Sentence.toWCharArray();
-	QChar tmp;
+
+    //char[] sentence_chars = Sentence.ToCharArray();
+    QVector<QChar> sentence_chars(Sentence.begin(), Sentence.end());
+    //is the above right? I don't know what I'm doing.
+    QChar tmp;
 
 	// All character xor:ed results in the trailing hex checksum
 	// The checksum calc starts after '$' and ends before '*'
@@ -601,8 +607,10 @@ QString FormLoop::CalculateChecksum(QString Sentence)
 		// Indicates end of data and start of checksum
 		if (tmp == '*')
 			break;
-		sum ^= tmp;    // Build checksum
-	}
+        //sum ^= tmp;    // Build checksum
+        //is this correct?
+        sum ^= tmp.unicode();    // Build checksum
+    }
 
 	// Calculated checksum converted to a 2 digit hex string
     //return String.Format("{0:X2}", sum);
