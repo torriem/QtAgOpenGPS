@@ -25,6 +25,7 @@ void FormLoop::LoadUDPNetwork()
 		 }
 		 }*/
 
+    //set the ip
     uint ip1 = settings.value("UDPComm/IP1").toUInt();
     uint ip2 = settings.value("UDPComm/IP2").toUInt();
     uint ip3 = settings.value("UDPComm/IP3").toUInt();
@@ -32,15 +33,19 @@ void FormLoop::LoadUDPNetwork()
 
     quint32 ipAddress = (ip1 << 24) | (ip2 << 16) | (ip3 << 8) | ip4;
 
-    udpIpAddress.setAddress(ipAddress);
-        qDebug() << "The UDPComm ip address is:" << udpIpAddress.toString();
+    ethUDP.address.setAddress(ipAddress);
+    qDebug() << "The UDPComm ip address is:" << ethUDP.address.toString();
+
+    //set the port where we listen
+    ethUDP.portToListen = settings.value("UDPComm/UdpListenPort").toInt();
+
     // Initialise the socket
     udpSocket = new QUdpSocket(this);
 
 
     //set up the connection
     //this is the part that listens
-    if(!udpSocket->bind(udpIpAddress, settings.value("UDPComm/UdpListenPort").toInt())) //TODO settings
+    if(!udpSocket->bind(ethUDP.address, settings.value("UDPComm/UdpListenPort").toInt())) //TODO settings
     {
         qDebug() << "Failed to bind udpSocket: " << udpSocket->errorString();
         qDebug() << "Exiting program due to fatal error";
@@ -164,7 +169,7 @@ void FormLoop::ReceiveFromLoopBack()
     }
 }
 
-void FormLoop::SendUDPMessage(QByteArray byteData, uint portNumber)
+void FormLoop::SendUDPMessage(QByteArray byteData, QHostAddress address, uint portNumber)
 {
 
     //if (isUDPNetworkConnected)
@@ -174,8 +179,8 @@ void FormLoop::SendUDPMessage(QByteArray byteData, uint portNumber)
         // Send packet to the zero
         if (byteData.size() != 0)
 
-            udpSocket->writeDatagram(byteData, udpIpAddress, portNumber);
-            //udpSocket->writeDatagram(byteData, udpIpAddress, (settings.value("UDPComm/UdpSendPort").toInt())); //TODO settings
+            udpSocket->writeDatagram(byteData, address, portNumber);
+
     }else{
         qDebug() << "Listen to modules only";
     }

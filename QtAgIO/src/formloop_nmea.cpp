@@ -290,7 +290,7 @@ void FormLoop::ParseNMEA(QString buffer)
         SendDataToLoopBack(nmeaPGN);
 
         //Send nmea to autosteer module 8888
-        if (isSendNMEAToUDP) SendUDPMessage(nmeaPGN, (settings.value("UDPComm/UdpSendPort").toInt())); //is this right? David 6/22/24
+        if (isSendNMEAToUDP) SendUDPMessage(nmeaPGN, ethUDP.address, ethUDP.portToSend);
     }
 }
 void FormLoop::ParseKSXT()

@@ -18,6 +18,19 @@
 #include <QDateTime>
 
 
+//in cs, the ipEndPoint is both the ip address and port.
+//cpp doesn't have that luxury, so we create a struct.
+//we might as well put all 3 in here.
+struct IPAndPort {
+    QHostAddress address;
+    quint16 portToSend;
+    quint16 portToListen;
+
+    IPAndPort(const QString &ipAddress, quint16 sendPort, quint16 listenPort)
+        : address(ipAddress), portToSend(sendPort), portToListen(listenPort) {}
+
+};
+
 class FormLoop : public QObject
 {
 
@@ -28,10 +41,11 @@ class FormLoop : public QObject
 		~FormLoop();
 		QSettings settings;
 
+        IPAndPort ethNtrip; //send ntrip to module
+        IPAndPort ethUDP;//the main ethernet network
 
-		QHostAddress udpIpAddress;
 		//debug vars
-		bool haveWeSentToParser = false;
+        bool haveWeSentToParser = false;
 		bool haveWeRecGGA = false;
 		bool haveWeRecNDA = false;
 		bool haveWeRecVTG = false;
@@ -57,7 +71,7 @@ class FormLoop : public QObject
 		void LoadLoopback();
 
 		//send
-        void SendUDPMessage(QByteArray byteData, uint portNumber);
+        void SendUDPMessage(QByteArray byteData, QHostAddress address, uint portNumber);
 		void SendDataToLoopBack(QByteArray byteData);
 
 		QUdpSocket *udpSocket;
