@@ -73,6 +73,10 @@ QSettings settings;
 	settings.setValue("setNTRIP_manualLon", -111.0000000);
 	settings.setValue("setNTRIP_isTCP", false);
 	settings.setValue("setNTRIP_isHTTP10", false);
+    settings.setValue("IP1", 10);
+    settings.setValue("IP2", 0);
+    settings.setValue("IP3", 0);
+    settings.endGroup();
 
 
 
