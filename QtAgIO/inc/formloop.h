@@ -41,8 +41,10 @@ class FormLoop : public QObject
 		~FormLoop();
 		QSettings settings;
 
-        IPAndPort ethNtrip; //send ntrip to module
+        IPAndPort wwwNtrip; //send ntrip to module
         IPAndPort ethUDP;//the main ethernet network
+
+        quint16 sendNtripToModulePort; // sends to .255, so ip is the same as ethUDP
 
 		//debug vars
         bool haveWeSentToParser = false;
