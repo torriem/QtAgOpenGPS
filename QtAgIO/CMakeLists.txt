@@ -13,6 +13,7 @@ add_library(qtagio
 	src/formloop_udpcomm.cpp
         src/formloop_nmea.cpp
         src/formloop_ntripcomm.cpp
+        src/formloop_ui.cpp
 )
 
 
@@ -24,11 +25,16 @@ target_include_directories(qtagio
 target_link_libraries(qtagio
     Qt6::Core
     Qt6::Network
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Quick
+    Qt6::QuickWidgets
 )
 
 # Create the AgIO executable
 qt_add_executable(QtAgIO
     main.cpp
+	agio.qrc
 )
 
 # Libraries to link
