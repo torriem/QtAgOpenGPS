@@ -1,26 +1,9 @@
 cmake_minimum_required(VERSION 3.22)
 
-# Create the agio library
-add_library(qtagio
-    #inc/IORouter.h src/IORouter.cpp
-    inc/qmlutil.h
-    inc/Connection.h src/Connection.cpp
-    inc/SerialConnection.h src/SerialConnection.cpp
-    inc/UdpConnection.h src/UdpConnection.cpp
-	inc/CTraffic.h src/CTraffic.cpp
-	inc/CScanReply.h src/CScanReply.cpp
-        inc/agiosettings.h src/agiosettings.cpp
-	inc/formloop.h src/formloop.cpp
-	src/formloop_udpcomm.cpp
-        src/formloop_nmea.cpp
-        src/formloop_ntripcomm.cpp
-        src/formloop_ui.cpp
-)
-
-
 target_include_directories(qtagio
     PRIVATE src
     PUBLIC inc
+	.
 )
 
 target_link_libraries(qtagio
@@ -36,6 +19,19 @@ target_link_libraries(qtagio
 qt_add_executable(QtAgIO
     main.cpp
 	agio.qrc
+	agiosettings.h agiosettings.cpp
+	formloop.h formloop.cpp
+	formloop_udpcomm.cpp
+    formloop_nmea.cpp
+    formloop_ntripcomm.cpp
+    formloop_ui.cpp
+    qmlutil.h
+    #inc/IORouter.h src/IORouter.cpp
+    inc/Connection.h src/Connection.cpp
+    inc/SerialConnection.h src/SerialConnection.cpp
+    inc/UdpConnection.h src/UdpConnection.cpp
+	inc/CTraffic.h src/CTraffic.cpp
+	inc/CScanReply.h src/CScanReply.cpp
 )
 
 # Libraries to link
