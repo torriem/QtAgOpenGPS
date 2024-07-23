@@ -172,6 +172,7 @@ void FormLoop::ReceiveFromLoopBack()
 void FormLoop::SendUDPMessage(QByteArray byteData, QHostAddress address, uint portNumber)
 {
 
+    qDebug() << "Sending UDP Message to " << address.toString() << ":" << portNumber;
     //if (isUDPNetworkConnected)
     if(!settings.value("UDPComm/ListenOnly").toBool())
     {

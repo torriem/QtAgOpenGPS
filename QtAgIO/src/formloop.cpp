@@ -18,6 +18,19 @@ FormLoop::FormLoop(QObject *parent)
     connect(oneSecondTimer, &QTimer::timeout, this, &FormLoop::oneSecondLoopTimer_Tick);
     oneSecondTimer->start();
 
+    tmr = new QTimer(this);// the timer used in formloop_ntripcomm
+    tmr->setSingleShot(false);
+    tmr->setInterval(5000);
+    connect(tmr, &QTimer::timeout, this, &FormLoop::SendGGA);
+    tmr->start();
+
+    ntripMeterTimer = new QTimer(this);
+    ntripMeterTimer->setSingleShot(false);
+    ntripMeterTimer->setInterval(50);
+    connect(ntripMeterTimer, &QTimer::timeout, this, &FormLoop::ntripMeterTimer_Tick);
+
+
+    clientSocket = new QTcpSocket(this);
 }
 
 FormLoop::~FormLoop()

@@ -4,6 +4,7 @@
 // main routine
 void FormLoop::DoNTRIPSecondRoutine()
 {
+    qDebug() << ntripCounter << " ntrip counter";
 	//count up the ntrip clock only if everything is alive
 	if (isNTRIP_RequiredOn || isRadio_RequiredOn || isSerialPass_RequiredOn)
 	{
@@ -47,7 +48,8 @@ void FormLoop::DoNTRIPSecondRoutine()
 	{
 
 		//Bypass if sleeping
-		if (focusSkipCounter != 0)
+        if (focusSkipCounter != 0)//I suspect this is cs leftovers... Skip if AgIO is not in
+        //"focus", or visible. However, I want the debug vars for now
 		{
 
 			//watchdog for Ntrip
@@ -57,6 +59,7 @@ void FormLoop::DoNTRIPSecondRoutine()
 			{
 				if (isNTRIP_RequiredOn && NTRIP_Watchdog > 10)
 					qDebug() << "Waiting";
+
 			}
 
 			if (sendGGAInterval > 0 && isNTRIP_Sending)
@@ -89,6 +92,7 @@ void FormLoop::ConfigureNTRIP() //set the variables to the settings
 
 void FormLoop::StartNTRIP()
 {
+    qDebug() << "Starting NTRIP";
 	if (isNTRIP_RequiredOn)
 	{
 		//load the settings
@@ -100,10 +104,12 @@ void FormLoop::StartNTRIP()
 		sendGGAInterval = settings.value("RTK/setNTRIP_sendGGAInterval").toInt(); //how often to send fixes
 
 		//if we had a timer already, kill it
-        if (tmr != nullptr)
+        if (tmr)
 		{
-			//tmr.Dispose();
-			delete tmr;
+            //tmr.Dispose();
+            tmr->stop();
+            //delete tmr;
+            //tmr = nullptr;
 		}
 
 		//create new timer at fast rate to start
@@ -117,14 +123,13 @@ void FormLoop::StartNTRIP()
             tmr->setSingleShot(false);
             tmr->setInterval(5000);
             connect(tmr, &QTimer::timeout, this, &FormLoop::SendGGA);
-			tmr->start();
+            tmr->start();
+
 
 		}
 
-		try
-		{
 			// Close the socket if it is still open
-            if (clientSocket != NULL && clientSocket->state() == QAbstractSocket::ConnectedState)
+            if (clientSocket && clientSocket->state() == QAbstractSocket::ConnectedState)
             {
                 //clientSocket.Shutdown(SocketShutdown.Both);
                 //clientSocket.Close();
@@ -136,11 +141,11 @@ void FormLoop::StartNTRIP()
                 clientSocket->close();
             }
 
-			//NTRIP endpoint
+            //NTRIP caster
             uint ip1 = settings.value("RTK/IP1").toUInt();
             uint ip2 = settings.value("RTK/IP2").toUInt();
             uint ip3 = settings.value("RTK/IP3").toUInt();
-			uint ip4 = 255; //broadcast
+            uint ip4 = settings.value("RTK/IP4").toUInt();
 
 			quint32 ipAddress = (ip1 << 24) | (ip2 << 16) | (ip3 << 8) | ip4;
 
@@ -149,33 +154,25 @@ void FormLoop::StartNTRIP()
 
             //this is the socket that sends to the receiver
 			// Create the socket object
+            qDebug() << "Creating new tcp socket";
 			clientSocket = new QTcpSocket(this);
 
 			//set socket to non-blocking mode
             clientSocket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
 
 			// Connect to server
+            qDebug() << "Connecting to server... Connecting";
             clientSocket->connectToHost(wwwNtrip.address, wwwNtrip.portToSend);
             if (clientSocket->waitForConnected(5000)) {
                 qDebug() << "Ntrip client connected to server";
 
             }
             else{
-                qDebug() << "NTRIP Client failed to connect";
+                qDebug() << "NTRIP Client failed to connect. Reconnecting...";
+                ReconnectRequest();
+                return;
             }
             connect(clientSocket, &QTcpSocket::readyRead, this, &FormLoop::OnReceivedData);
-
-		}
-					//todo: we need a line like this 
-		// I don't think this is all good. The catch is supposed 
-		// to catch failed connections. RN, I don't think it will
-		// catch anything, as I don't think tcpsocket will throw
-		// any errors.
-		catch (...)
-		{
-			ReconnectRequest();
-			return;
-		}
 
 		isNTRIP_Connecting = true;
 	}
@@ -265,7 +262,6 @@ void FormLoop::StartNTRIP()
 void FormLoop::ReconnectRequest()
 {
 	//TimedMessageBox(2000, "NTRIP Not Connected", " Reconnect Request");
-	qDebug() << "Reconnect Request";
 	ntripCounter = 15;
 	isNTRIP_Connected = false;
 	isNTRIP_Starting = false;
@@ -274,7 +270,8 @@ void FormLoop::ReconnectRequest()
 	//if we had a timer already, kill it
     if (tmr != nullptr)
 	{
-		delete tmr;
+        tmr->stop();
+        //delete tmr;
 	}
 }
 
@@ -296,14 +293,14 @@ void FormLoop::SendAuthorization()
 	// Check we are connected
     if (clientSocket == NULL || clientSocket->state() != QAbstractSocket::ConnectedState)
 	{
-		qDebug() << "At the StartNTRIP()";
+        qDebug() << "SendAuthorization isn't connected. Reconnecting";
 		ReconnectRequest();
 		return;
 	}
 
 	// Read the message from settings and send it
-	try
-	{
+    //try
+    //{
 		if (!settings.value("RTK/setNTRIP_isTCP").toBool())//if we are not using TCP. Should that go in an extension also?
 														   //a sort of "ntrip weirdos" for all the unusual stuff to go.
 		{
@@ -341,11 +338,11 @@ void FormLoop::SendAuthorization()
 		isNTRIP_Connected = true;
 		isNTRIP_Starting = false;
 		isNTRIP_Connecting = false;
-	}
+    /*}
 	catch (...)
 	{
 		ReconnectRequest();
-	}
+    }*/
 }
 
 void FormLoop::OnAddMessage(QByteArray data)
@@ -362,7 +359,7 @@ void FormLoop::OnAddMessage(QByteArray data)
             rawTrip.enqueue(data[i]);
 		}
 
-        ntripMeterTimer.start();
+        ntripMeterTimer->start();
 	}
 	else
 	{
@@ -401,7 +398,7 @@ void FormLoop::ntripMeterTimer_Tick()
 	//Are we done?
     if (rawTrip.size() == 0)
 	{
-        ntripMeterTimer.stop();
+        ntripMeterTimer->stop();
 
 		if (focusSkipCounter != 0)
 			traffic.cntrGPSInBytes = 0;
@@ -441,8 +438,8 @@ void FormLoop::SendGGA()
 	}
 
 	// Read the message from the text box and send it
-	try
-	{
+    //try
+    //{
 		isNTRIP_Sending = true;
 		BuildGGA();
         //I'm not sure about this. sbGGA is a stringbuilder in cs, however, I think it's a
@@ -452,11 +449,11 @@ void FormLoop::SendGGA()
 
         QByteArray byteDateLine = str.toLatin1();
         clientSocket->write(byteDateLine, byteDateLine.length());
-	}
+    /*}
 	catch (...)
 	{
 		ReconnectRequest();
-	}
+    }*/
 }
 
 
@@ -538,6 +535,7 @@ void FormLoop::NtripPort_DataReceived()//this is the serial port, right?
 
 void FormLoop::ShutDownNTRIP()
 {
+    qDebug() << "ShutDownNTRIP";
     if (clientSocket != NULL && clientSocket->state() == QAbstractSocket::ConnectedState)
 	{
 		//shut it down

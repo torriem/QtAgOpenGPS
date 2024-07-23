@@ -61,7 +61,7 @@ class FormLoop : public QObject
 
         int packetSizeNTRIP = 256;
 
-        QTimer ntripMeterTimer;
+        QTimer *ntripMeterTimer;
 
         QTimer *oneSecondTimer;
     public slots:
@@ -169,18 +169,18 @@ class FormLoop : public QObject
 	public:
 
 		QString brandCasterIP;
-		bool isNTRIP_RequiredOn = false;
+        bool isNTRIP_RequiredOn = false; //these are all settings-derived vars. Set in ntripcomm
 		bool isNTRIP_Connected = false;
 		bool isNTRIP_Starting = false;
 		bool isNTRIP_Connecting = false;
 		bool isNTRIP_Sending = false;
 		bool isRunGGAInterval = false;
-
 		bool isRadio_RequiredOn = false;
 		bool isSerialPass_RequiredOn = false;
+
 		unsigned int tripBytes = 0;
 
-		void ConfigureNTRIP(); //I think this is all UI related??
+        void ConfigureNTRIP();
 		void StartNTRIP();
         void OnAddMessage(QByteArray data);
         void SendNTRIP(QByteArray data);
