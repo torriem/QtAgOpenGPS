@@ -52,6 +52,10 @@ class FormLoop : public QObject
 		bool haveWeRecNDA = false;
 		bool haveWeRecVTG = false;
 
+        /*formloop_ui.cpp*/
+
+        void setupGUI();
+
 		/*formloop.cpp
 		 * formerly Formloop.cs */
 
