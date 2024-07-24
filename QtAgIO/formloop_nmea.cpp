@@ -579,7 +579,6 @@ void FormLoop::ParseAVR()
     //11 Number of satellites used in solution
     //12 The checksum data, always begins with *
 
-    bool ok;
 
     if (!words[1].isEmpty())
     {
@@ -670,7 +669,6 @@ void FormLoop::ParseOGI()
 
 			 * CHKSUM
 			 */
-    bool ok;
 
     if (!words[1].isEmpty() && !words[2].isEmpty() && !words[3].isEmpty()
         && !words[4].isEmpty() && !words[5].isEmpty())
