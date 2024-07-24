@@ -8,6 +8,7 @@
 #include "CTraffic.h"
 #include "CScanReply.h"
 #include <QUdpSocket>
+#include <QQmlApplicationEngine>
 #include "glm.h"
 #include <cmath>
 #include <QSettings>
@@ -31,15 +32,18 @@ struct IPAndPort {
 
 };
 
-class FormLoop : public QObject
+class FormLoop : public QQmlApplicationEngine
 {
 
 	Q_OBJECT
 
 	public:
-		explicit FormLoop(QObject *parent = nullptr);
+    explicit FormLoop(QWidget *parent = 0);
 		~FormLoop();
 		QSettings settings;
+
+        QObject *qml_root;
+        QWidget *qmlcontainer;
 
         IPAndPort wwwNtrip; //send ntrip to module
         IPAndPort ethUDP;//the main ethernet network

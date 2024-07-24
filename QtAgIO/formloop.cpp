@@ -1,7 +1,7 @@
 #include "formloop.h"
+#include <QQuickWindow>
 
-FormLoop::FormLoop(QObject *parent)
-    : QObject(parent),
+FormLoop::FormLoop(QWidget *parent) : QQmlApplicationEngine(parent),
     wwwNtrip("192.168.1.100", 2101, 2102), // Example initial values
     ethUDP("192.168.1.101", 2201, 2202)    // Example
 {
@@ -10,7 +10,7 @@ FormLoop::FormLoop(QObject *parent)
     LoadLoopback();
 	LoadUDPNetwork();
    //buffer.resize(1024);
-
+    setupGUI();
     ConfigureNTRIP();
 
     oneSecondTimer = new QTimer(this);

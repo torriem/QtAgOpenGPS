@@ -1,19 +1,16 @@
 cmake_minimum_required(VERSION 3.22)
 
-target_include_directories(qtagio
-    PRIVATE src
-    PUBLIC inc
-	.
+project(QtAgIO
+        VERSION 0.0
+        HOMEPAGE_URL https://github.com/torriem/QtAgOpenGPS
+        LANGUAGES CXX
 )
 
-target_link_libraries(qtagio
-    Qt6::Core
-    Qt6::Network
-    Qt6::Gui
-    Qt6::Widgets
-    Qt6::Quick
-    Qt6::QuickWidgets
-)
+
+#Qt magic
+qt_standard_project_setup()
+
+
 
 # Create the AgIO executable
 qt_add_executable(QtAgIO
@@ -33,13 +30,20 @@ qt_add_executable(QtAgIO
 	inc/CTraffic.h src/CTraffic.cpp
 	inc/CScanReply.h src/CScanReply.cpp
 )
+target_include_directories(QtAgIO
+    PRIVATE src
+    PUBLIC inc
+    PRIVATE .
+)
 
 # Libraries to link
 target_link_libraries(QtAgIO PRIVATE
     Qt6::Core
+    Qt6::Network
+    Qt6::Gui
     Qt6::Widgets
+    Qt6::Quick
     Qt6::QuickWidgets
-    qtagio
 )
 
 target_compile_options(QtAgIO PRIVATE 
