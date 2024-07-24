@@ -13,8 +13,20 @@ void FormLoop::setupGUI()
     setProperty("title", "QtAgIO");
 
     //load the QML into a view
-    rootContext()->setContextProperty("screenPixelDensity",QGuiApplication::primaryScreen()->physicalDotsPerInch() * QGuiApplication::primaryScreen()->devicePixelRatio());
-    rootContext()->setContextProperty("mainForm", this);
-    rootContext()->setContextProperty("prefix", ":");
-    load(QUrl("qrc:/qml/Main.qml"));
+    engine.rootContext()->setContextProperty("screenPixelDensity",QGuiApplication::primaryScreen()->physicalDotsPerInch() * QGuiApplication::primaryScreen()->devicePixelRatio());
+    engine.rootContext()->setContextProperty("mainForm", this);
+    engine.rootContext()->setContextProperty("prefix", ":");
+    engine.load(QUrl(QStringLiteral("qrc:/qml/Main.qml")));
+
+
+
+    if (engine.rootObjects().isEmpty())
+    {
+        qDebug() << "Failed to load QML file";
+        return;
+    }
+    else
+    {
+        qDebug() << "Displaying QML File";
+    }
 }

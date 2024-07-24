@@ -32,13 +32,13 @@ struct IPAndPort {
 
 };
 
-class FormLoop : public QQmlApplicationEngine
+class FormLoop : public QObject
 {
 
 	Q_OBJECT
 
 	public:
-    explicit FormLoop(QWidget *parent = 0);
+    explicit FormLoop(QObject *parent = nullptr);
 		~FormLoop();
 		QSettings settings;
 
@@ -99,6 +99,8 @@ class FormLoop : public QQmlApplicationEngine
 		CScanReply scanReply;
 
 	private:
+
+        QQmlApplicationEngine engine; //grasping at straws, here
 
 		//data stream
 		//QByteArray buffer(1024);

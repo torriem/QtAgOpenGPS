@@ -54,5 +54,38 @@
         <file>images/VehFileSave.png</file>
         <file>images/WindowsShutDown.png</file>
         <file>images/www.png</file>
+        <file>qml/components/ButtonColor.qml</file>
+        <file>qml/components/ComboBoxCustomized.qml</file>
+        <file>qml/components/ExpandableColumn.qml</file>
+        <file>qml/components/IconButton.qml</file>
+        <file>qml/components/IconButtonColor.qml</file>
+        <file>qml/components/IconButtonText.qml</file>
+        <file>qml/components/IconButtonTextBeside.qml</file>
+        <file>qml/components/IconButtonTransparent.qml</file>
+        <file>qml/components/LatLonTextField.qml</file>
+        <file>qml/components/MoveableDialog.qml</file>
+        <file>qml/components/MoveablePopup.qml</file>
+        <file>qml/components/OutlineText.qml</file>
+        <file>qml/components/PinButtons.qml</file>
+        <file>qml/components/ScrollViewExpandableColumn.qml</file>
+        <file>qml/components/SectionButton.qml</file>
+        <file>qml/components/SectionButtons.qml</file>
+        <file>qml/components/ShortcutCustomized.qml</file>
+        <file>qml/components/SliderCustomized.qml</file>
+        <file>qml/components/SpinBoxCM.qml</file>
+        <file>qml/components/SpinBoxCustomized.qml</file>
+        <file>qml/components/SpinBoxDecimal.qml</file>
+        <file>qml/components/SpinBoxDouble.qml</file>
+        <file>qml/components/SpinBoxFusion.qml</file>
+        <file>qml/components/SpinBoxKM.qml</file>
+        <file>qml/components/SpinBoxM.qml</file>
+        <file>qml/components/SpinBoxOneDecimal.qml</file>
+        <file>qml/components/TestSectionButtons.qml</file>
+        <file>qml/components/TextLine.qml</file>
+        <file>qml/components/TimedMessage.qml</file>
+        <file>qml/components/TimedRectangle.qml</file>
+        <file>qml/components/TitleFrame.qml</file>
+        <file>qml/components/TopLine.qml</file>
+        <file>qml/components/What_Are_Components.txt</file>
     </qresource>
 </RCC>

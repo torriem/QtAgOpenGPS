@@ -1,12 +1,11 @@
 import QtQuick
 import QtQuick.Window
 import QtQuick.Controls.Fusion
-import "../../qml/components"
-import ".."
+import "components"
 
 Window {
 
-	property string imagePath: "../../QtAgIO/images/"
+    property string imagePath: "/images/"
 
 	AgIOTheme {
 		id: theme
@@ -18,8 +17,12 @@ Window {
 	}
 
 	id: mainWindow
-	height: theme.defaultHeight
-	width: theme.defaultWidth
+    //height: theme.defaultHeight
+    //width: theme.defaultWidth
+    height: 500
+    width: 300
+    visible: true
+    onVisibleChanged: console.log("Visible!")
 
         //This is a popup message that dismisses itself after a timeout
     TimedMessage {
@@ -56,8 +59,9 @@ Window {
 			 IconButtonColor {
 				 id: btnNTRIPStatus
 				 text: qsTr("NTRIP")
-				 icon.source: "../../images/qtSpecific/NTRIP_Client.png"//qtAOG specific image--not in AOG
-				 color: agio.ntripConnected ? "green" : "red"
+                 //Oicon.source: "../../images/qtSpecific/NTRIP_Client.png"//qtAOG specific image--not in AOG
+                 icon.source: imagePath + "AgIOBtn.png"
+                 color: agio.ntripConnected ? "green" : "red"
 			 }
 		 }
 		 Column {
