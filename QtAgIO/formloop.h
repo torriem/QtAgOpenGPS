@@ -51,6 +51,7 @@ class FormLoop : public QObject
         quint16 sendNtripToModulePort; // sends to .255, so ip is the same as ethUDP
 
 		//debug vars
+        bool haveWeRecUDP = false;
         bool haveWeSentToParser = false;
 		bool haveWeRecGGA = false;
 		bool haveWeRecNDA = false;
@@ -67,13 +68,23 @@ class FormLoop : public QObject
         int focusSkipCounter = 310;
         bool isSendToSerial = false, isSendToUDP = true;
 
+        bool lastHelloGPS, lastHelloAutoSteer, lastHelloMachine, lastHelloIMU;
+        bool isConnectedIMU, isConnectedSteer, isConnectedMachine = true;
+
         int packetSizeNTRIP = 256;
 
         QTimer *ntripMeterTimer;
 
         QTimer *oneSecondTimer;
+
+		QTimer *twoSecondTimer;
+
+		void DoHelloAlarmLogic();
+		void DoTraffic();
+
     public slots:
         void oneSecondLoopTimer_Tick();
+	    void TwoSecondLoop();
 
 
 		/* formloop_udpcomm.cpp

@@ -33,8 +33,9 @@ void FormLoop::LoadUDPNetwork()
 
     quint32 ipAddress = (ip1 << 24) | (ip2 << 16) | (ip3 << 8) | ip4;
 
+    ethUDP.portToSend = settings.value("UDPComm/UdpSendPort").toInt();
+
     ethUDP.address.setAddress(ipAddress);
-    qDebug() << "The UDPComm ip address is:" << ethUDP.address.toString();
 
     //set the port where we listen
     ethUDP.portToListen = settings.value("UDPComm/UdpListenPort").toInt();
@@ -45,7 +46,8 @@ void FormLoop::LoadUDPNetwork()
 
     //set up the connection
     //this is the part that listens
-    if(!udpSocket->bind(ethUDP.address, settings.value("UDPComm/UdpListenPort").toInt())) //TODO settings
+    qDebug() << "Attempting to bind to UDP socket " << ethUDP.address << ":" << ethUDP.portToListen;
+    if(!udpSocket->bind(ethUDP.address, ethUDP.portToListen)) //TODO settings
     {
         qDebug() << "Failed to bind udpSocket: " << udpSocket->errorString();
         //qDebug() << "Exiting program due to fatal error";
@@ -172,8 +174,8 @@ void FormLoop::ReceiveFromLoopBack()
 void FormLoop::SendUDPMessage(QByteArray byteData, QHostAddress address, uint portNumber)
 {
 
-    qDebug() << "Sending UDP Message to " << address.toString() << ":" << portNumber;
-    //if (isUDPNetworkConnected)
+    //qDebug() << "Sending UDP Message to " << address.toString() << ":" << portNumber;
+    //todo if (isUdpNetworkConnected
     if(!settings.value("UDPComm/ListenOnly").toBool())
     {
 
@@ -189,6 +191,10 @@ void FormLoop::SendUDPMessage(QByteArray byteData, QHostAddress address, uint po
 void FormLoop::ReceiveFromUDP()
 {
 
+    if (!haveWeRecUDP) {
+        haveWeRecUDP = true;
+        qDebug() << "Recieved UDP!";
+    }
     //read the data
     while (udpSocket->hasPendingDatagrams()){
         QByteArray data;
@@ -196,6 +202,8 @@ void FormLoop::ReceiveFromUDP()
         udpSocket->readDatagram(data.data(), data.size());
 
         buffer = data;
+
+        //verify the datagram isn't an NMEA string, and is from the module
         if (data.length() > 4 && data[0] == (char)0x80 && data[1] == (char)0x81)
         {
             //module return via udp sent to AOG
@@ -287,7 +295,7 @@ void FormLoop::ReceiveFromUDP()
 
         else if (data[0] == 36 && (data[1] == 71 || data[1] == 80 || data[1] == 75))
         {
-            //traffic.cntrGPSOut += data.Length; // don't worry about gpsOut right now
+            traffic.cntrGPSOut += data.length();
             rawBuffer += QString::fromLatin1(data); //is this right? David
               ParseNMEA(rawBuffer);
             if(!haveWeSentToParser) {
