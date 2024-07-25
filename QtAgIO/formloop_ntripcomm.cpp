@@ -4,7 +4,7 @@
 // main routine
 void FormLoop::DoNTRIPSecondRoutine()
 {
-    qDebug() << ntripCounter << " ntrip counter";
+    //qDebug() << ntripCounter << " ntrip counter";
 	//count up the ntrip clock only if everything is alive
 	if (isNTRIP_RequiredOn || isRadio_RequiredOn || isSerialPass_RequiredOn)
 	{

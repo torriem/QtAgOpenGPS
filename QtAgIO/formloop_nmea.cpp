@@ -910,7 +910,7 @@ void FormLoop::ParsePANDA()
         imuHeading = words[12].toUShort(&ok);
         if (ok) {
             imuHeadingData = imuHeading;
-            qDebug() << "imu heading" << imuHeadingData;
+            //qDebug() << "imu heading" << imuHeadingData;
         }
 
         //roll
@@ -918,7 +918,7 @@ void FormLoop::ParsePANDA()
         imuRoll = words[13].toShort(&ok);
         if (ok) {
             imuRollData = imuRoll;
-            qDebug() << "imu roll" << imuRoll;
+            //qDebug() << "imu roll" << imuRoll;
         }
 
         //Pitch
@@ -926,7 +926,7 @@ void FormLoop::ParsePANDA()
         imuPitch = words[14].toShort(&ok);
         if (ok) {
             imuPitchData = imuPitch;
-            qDebug() << "imu pitch" << imuPitch;
+            //qDebug() << "imu pitch" << imuPitch;
         }
 
         //YawRate
