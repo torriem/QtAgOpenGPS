@@ -129,11 +129,10 @@ void FormLoop::DoHelloAlarmLogic()
     else if (traffic.helloFromIMU < 90)
         isConnectedSteer = true;
 
-    qDebug() << traffic.cntrGPSOut;
     currentHello = traffic.cntrGPSOut != 0;
 
     //I suppose we could do the logic to not go red if
-    //no GPS connected. But what's the point of AgIO if
+    //no GPS  was ever connected. But what's the point of AgIO if
     //no GPS is connected?
     if (currentHello != lastHelloGPS)
     {
