@@ -4,10 +4,7 @@
 #include <QDebug>
 #include <QSettings>
 #include <QStandardPaths>
-
-#include "IORouter.h"
 #include "formloop.h"
-#include "formudp.h"
 #include "agiosettings.h"
 
 
@@ -40,8 +37,6 @@ int main(int argc, char *argv[])
     //IORouter router(settings);
     AgIOSettings settings;
     FormLoop formLoop;
-    FormUDP formUDP;
-    formUDP.SetFormLoop(&formLoop);//set up the connection between FormLoop and FormUDP
 	
 
 	

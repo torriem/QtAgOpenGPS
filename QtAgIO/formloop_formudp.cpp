@@ -1,20 +1,10 @@
-#include "formudp.h"
+#include "formloop.h"
 #include <QNetworkInterface>
 
-
-FormUDP::FormUDP(QObject *parent)
-    : QObject(parent), mf(nullptr)//initialize mf to nullptr
-{
-    //initialization if needee
-}
-void FormUDP::SetFormLoop(FormLoop *formLoop){
-    mf = formLoop; //set the FormLoop reference
-}
-
-void FormUDP::FormUDp_Load(){
-    mf->ipAutoSet[0] = 99;
-    mf->ipAutoSet[1] = 99;
-    mf->ipAutoSet[2] = 99;
+void FormLoop::FormUDp_Load(){
+    ipAutoSet[0] = 99;
+    ipAutoSet[1] = 99;
+    ipAutoSet[2] = 99;
 
     //lblHostname.Text = Dns.GetHostName(); // Retrieve the Name of HOST
 
@@ -31,13 +21,13 @@ void FormUDP::FormUDp_Load(){
 }
 int tickCounter = 0;
 
-void FormUDP::timer1_Tick()
+void FormLoop::timer1_Tick()
 {
-    if (!mf->scanReply.isNewData)
+    if (!scanReply.isNewData)
     {
-        mf->ipAutoSet[0] = 99;
-        mf->ipAutoSet[1] = 99;
-        mf->ipAutoSet[2] = 99;
+        ipAutoSet[0] = 99;
+        ipAutoSet[1] = 99;
+        ipAutoSet[2] = 99;
         //btnAutoSet.Enabled = false;
     }
     else
@@ -45,32 +35,32 @@ void FormUDP::timer1_Tick()
         //btnAutoSet.Enabled = true;
     }
 
-    if (mf->scanReply.isNewSteer)
+    if (scanReply.isNewSteer)
     {
         //lblSteerIP.Text = mf.scanReply.steerIP;
-        mf->scanReply.isNewSteer = false;
+        scanReply.isNewSteer = false;
         //lblNewSubnet.Text = mf.scanReply.subnetStr;
     }
 
-    if (mf->scanReply.isNewMachine)
+    if (scanReply.isNewMachine)
     {
         //lblMachineIP.Text = mf                    }
         //mf.scanReply.machineIP; //should this be commented out???
-        mf->scanReply.isNewMachine = false;
+        scanReply.isNewMachine = false;
         //lblNewSubnet.Text = mf.scanReply.subnetStr;
     }
 
-    if (mf->scanReply.isNewIMU)
+    if (scanReply.isNewIMU)
     {
         //lblIMU_IP.Text = mf.scanReply.IMU_IP;
-        mf->scanReply.isNewIMU = false;
+        scanReply.isNewIMU = false;
         //lblNewSubnet.Text = mf.scanReply.subnetStr;
     }
 
-    if (mf->scanReply.isNewGPS)
+    if (scanReply.isNewGPS)
     {
         //lblGPSIP.Text = mf.scanReply.GPS_IP;
-        mf->scanReply.isNewGPS = false;
+        scanReply.isNewGPS = false;
         //lblNewSubnet.Text = mf.scanReply.subnetStr;
     }
 
@@ -106,13 +96,13 @@ void FormUDP::timer1_Tick()
 
 }
 
-void FormUDP::ScanNetwork()
+void FormLoop::ScanNetwork()
 {
 
     //tboxNets.Text = "";
 
     //lblSteerIP.Text = lblMachineIP.Text = lblGPSIP.Text = lblIMU_IP.Text = lblNewSubnet.Text = "";
-    mf->scanReply.isNewData = false;
+    scanReply.isNewData = false;
 
     //bool isSubnetMatchCard = false;
 
@@ -171,8 +161,8 @@ void FormUDP::ScanNetwork()
                             //scanSocket->setSocketOption(QAbstractSocket::ReuseAddressHint, true);
                             //scanSocket->setSocketOption(QAbstractSocket::ReuseAddressHint, true);
                             //this sets up the connection, and checks if it worked
-                            if (scanSocket->bind(mf->ethModulesSet.address, mf->ethModulesSet.portToListen))
-                                scanSocket->writeDatagram(scanModules, QHostAddress(mf->ethModulesSet.address), mf->ethModulesSet.portToSend);
+                            if (scanSocket->bind(ethModulesSet.address, ethModulesSet.portToListen))
+                                scanSocket->writeDatagram(scanModules, QHostAddress(ethModulesSet.address), ethModulesSet.portToSend);
                             else
                                 qDebug() << "ScanSocket error: " << scanSocket->errorString();
                         }
@@ -200,7 +190,7 @@ void FormUDP::ScanNetwork()
     }*/
 }
 
-void FormUDP::btnSendSubnet_Click()
+void FormLoop::btnSendSubnet_Click()
 {
 
     sendIPToModules[7] = ipNew[0];
@@ -227,7 +217,7 @@ void FormUDP::btnSendSubnet_Click()
                                 scanSocket->setSocketOption(QAbstractSocket::DontRoute, true);*/
 
                                 scanSocket->bind(QHostAddress(info.ip()), 9999);
-                                scanSocket->writeDatagram(sendIPToModules, QHostAddress(mf->ethModulesSet.address), mf->ethModulesSet.portToSend);
+                                scanSocket->writeDatagram(sendIPToModules, QHostAddress(ethModulesSet.address), ethModulesSet.portToSend);
                             }
                         }
                         catch (const std::exception& ex)
@@ -256,7 +246,7 @@ void FormUDP::btnSendSubnet_Click()
 
     quint32 ipAddress = (ip1 << 24) | (ip2 << 16) | (ip3 << 8) | ip4;
 
-    mf->ethUDP.address.setAddress(ipAddress);
+    ethUDP.address.setAddress(ipAddress);
 
     /*lblNetworkHelp.Text =
 		Properties.Settings.Default.etIP_SubnetOne.ToString() + " . " +
@@ -268,20 +258,20 @@ void FormUDP::btnSendSubnet_Click()
 //btnSerialCancel.Image = Properties.Resources.back_button;
 //}
 
-void FormUDP::btnAutoSet_Click()
+void FormLoop::btnAutoSet_Click()
 {
 
     //nudFirstIP.Value = mf.scanReply.subnet[0];
     //nudSecndIP.Value = mf.scanReply.subnet[1];
     //nudThirdIP.Value = mf.scanReply.subnet[2];
-    ipNew[0] = mf->scanReply.subnet[0];
-    ipNew[1] = mf->scanReply.subnet[1];
-    ipNew[2] = mf->scanReply.subnet[2];
+    ipNew[0] = scanReply.subnet[0];
+    ipNew[1] = scanReply.subnet[1];
+    ipNew[2] = scanReply.subnet[2];
     //btnSerialCancel.Image = Properties.Resources.Cancel64;
     //pboxSendSteer.Visible = true;
 }
 /*This is all UI. Don't know how much we'll reuse
-void FormUDP::nudFirstIP_Click()
+void FormLoop::nudFirstIP_Click()
 {
     ipNew[0] = (byte)nudFirstIP.Value;
     ipNew[1] = (byte)nudSecndIP.Value;

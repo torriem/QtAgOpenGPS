@@ -24,7 +24,7 @@ qt_add_executable(QtAgIO
     formloop_ui.cpp
     qmlutil.h
 
-    formudp.h formudp_udp.cpp
+    formloop_formudp.cpp
     #inc/IORouter.h src/IORouter.cpp
     inc/Connection.h src/Connection.cpp
     inc/SerialConnection.h src/SerialConnection.cpp
