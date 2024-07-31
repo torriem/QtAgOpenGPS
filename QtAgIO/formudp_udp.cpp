@@ -1,11 +1,20 @@
 #include "formudp.h"
+#include <QNetworkInterface>
 
 
-void FormUDp_Load(FormLoop &mf)
+FormUDP::FormUDP(QObject *parent)
+    : QObject(parent), mf(nullptr)//initialize mf to nullptr
 {
-    mf.ipAutoSet[0] = 99;
-    mf.ipAutoSet[1] = 99;
-    mf.ipAutoSet[2] = 99;
+    //initialization if needee
+}
+void FormUDP::SetFormLoop(FormLoop *formLoop){
+    mf = formLoop; //set the FormLoop reference
+}
+
+void FormUDP::FormUDp_Load(){
+    mf->ipAutoSet[0] = 99;
+    mf->ipAutoSet[1] = 99;
+    mf->ipAutoSet[2] = 99;
 
     //lblHostname.Text = Dns.GetHostName(); // Retrieve the Name of HOST
 
@@ -14,21 +23,21 @@ void FormUDp_Load(FormLoop &mf)
   Properties.Settings.Default.etIP_SubnetTwo.ToString() + " . " +
   Properties.Settings.Default.etIP_SubnetThree.ToString();*/
 
-    nudFirstIP.Value = ipNew[0] = ipCurrent[0] = Properties.Settings.Default.etIP_SubnetOne;
-    nudSecndIP.Value = ipNew[1] = ipCurrent[1] = Properties.Settings.Default.etIP_SubnetTwo;
-    nudThirdIP.Value = ipNew[2] = ipCurrent[2] = Properties.Settings.Default.etIP_SubnetThree;
+    //nudFirstIP.Value = ipNew[0] = ipCurrent[0] = Properties.Settings.Default.etIP_SubnetOne;
+    //nudSecndIP.Value = ipNew[1] = ipCurrent[1] = Properties.Settings.Default.etIP_SubnetTwo;
+    //nudThirdIP.Value = ipNew[2] = ipCurrent[2] = Properties.Settings.Default.etIP_SubnetThree;
 
     ScanNetwork();
 }
 int tickCounter = 0;
 
-void FormUDP::timer1_Tick(FormLoop &mf)
+void FormUDP::timer1_Tick()
 {
-    if (!mf.scanReply.isNewData)
+    if (!mf->scanReply.isNewData)
     {
-        mf.ipAutoSet[0] = 99;
-        mf.ipAutoSet[1] = 99;
-        mf.ipAutoSet[2] = 99;
+        mf->ipAutoSet[0] = 99;
+        mf->ipAutoSet[1] = 99;
+        mf->ipAutoSet[2] = 99;
         //btnAutoSet.Enabled = false;
     }
     else
@@ -36,32 +45,32 @@ void FormUDP::timer1_Tick(FormLoop &mf)
         //btnAutoSet.Enabled = true;
     }
 
-    if (mf.scanReply.isNewSteer)
+    if (mf->scanReply.isNewSteer)
     {
         //lblSteerIP.Text = mf.scanReply.steerIP;
-        mf.scanReply.isNewSteer = false;
+        mf->scanReply.isNewSteer = false;
         //lblNewSubnet.Text = mf.scanReply.subnetStr;
     }
 
-    if (mf.scanReply.isNewMachine)
+    if (mf->scanReply.isNewMachine)
     {
         //lblMachineIP.Text = mf                    }
-.scanReply.machineIP;
-        mf.scanReply.isNewMachine = false;
+        //mf.scanReply.machineIP; //should this be commented out???
+        mf->scanReply.isNewMachine = false;
         //lblNewSubnet.Text = mf.scanReply.subnetStr;
     }
 
-    if (mf.scanReply.isNewIMU)
+    if (mf->scanReply.isNewIMU)
     {
         //lblIMU_IP.Text = mf.scanReply.IMU_IP;
-        mf.scanReply.isNewIMU = false;
+        mf->scanReply.isNewIMU = false;
         //lblNewSubnet.Text = mf.scanReply.subnetStr;
     }
 
-    if (mf.scanReply.isNewGPS)
+    if (mf->scanReply.isNewGPS)
     {
         //lblGPSIP.Text = mf.scanReply.GPS_IP;
-        mf.scanReply.isNewGPS = false;
+        mf->scanReply.isNewGPS = false;
         //lblNewSubnet.Text = mf.scanReply.subnetStr;
     }
 
@@ -97,37 +106,40 @@ void FormUDP::timer1_Tick(FormLoop &mf)
 
 }
 
-void FormUDP::ScanNetwork(FormLoop &mf)
+void FormUDP::ScanNetwork()
 {
 
     //tboxNets.Text = "";
 
     //lblSteerIP.Text = lblMachineIP.Text = lblGPSIP.Text = lblIMU_IP.Text = lblNewSubnet.Text = "";
-    mf.scanReply.isNewData = false;
+    mf->scanReply.isNewData = false;
 
-    bool isSubnetMatchCard = false;
+    //bool isSubnetMatchCard = false;
 
-    QByteArray scanModules = { 0x80, 0x81, 0x7F, 202, 3, 202, 202, 5, 0x47 };
+    //QByteArray scanModules = { 0x80, 0x81, 0x7F, 202, 3, 202, 202, 5, 0x47 };
+    QByteArray scanModules = QByteArray::fromRawData("\x80\x81\x7F\xCA\x03\xCA\xCA\x05\x47", 9);
 
+    //I really don't want to think about how little I understand this, and how much AI did. If anything wrong, please fix
     //Send out 255x4 to each installed network interface
-    foreach (var nic in NetworkInterface.GetAllNetworkInterfaces())
+    for (const QNetworkInterface& nic : QNetworkInterface::allInterfaces())
     {
-        if (nic.Supports(NetworkInterfaceComponent.IPv4))
+        if (nic.flags().testFlag(QNetworkInterface::IsUp) && nic.flags().testFlag(QNetworkInterface::IsRunning))
         {
-            foreach (var info in nic.GetIPProperties().UnicastAddresses)
+            for (const QNetworkAddressEntry& info : nic.addressEntries())
             {
                 // Only InterNetwork and not loopback which have a subnetmask
-                if (info.Address.AddressFamily == AddressFamily.InterNetwork && !IPAddress.IsLoopback(info.Address))
+                if (info.ip().protocol() == QAbstractSocket::IPv4Protocol && !info.ip().isLoopback())
                 {
-                    QUdpSocket scanSocket;
+                    QUdpSocket* scanSocket = new QUdpSocket(this);
                     //Socket scanSocket;
 
                     try
                     {
                         //create list of interface properties
-                        if ((cboxUp.Checked && nic.OperationalStatus == OperationalStatus.Up) || !cboxUp.Checked)
+                        //all UI stuff
+                        if ((nic.flags().testFlag(QNetworkInterface::IsUp)))
                         {
-                            var properties = nic.GetIPStatistics();
+                            //var properties = nic.GetIPStatistics();
                             //tboxNets.Text +=
                             //	info.Address + "  - " + nic.OperationalStatus + "\r\n";
 
@@ -138,13 +150,15 @@ void FormUDP::ScanNetwork(FormLoop &mf)
                                         + properties.UnicastPacketsReceived).ToString() + "\r\n\r\n";*/
                         }
 
-                        if (nic.OperationalStatus == OperationalStatus.Up
-                            && info.IPv4Mask != null)
+                        if (nic.flags().testFlag(QNetworkInterface::IsUp)
+                            //&& !info.ip().netmask().isNull())
+                            && nic.flags().testFlag(QNetworkInterface::IsRunning)
+                            && !info.netmask().isNull())
                         {
-                            QByteArray data = info.Address.GetAddressBytes();
+                            QByteArray data = info.ip().toString().toUtf8();
                             if (data[0] == ipCurrent[0] && data[1] == ipCurrent[1] && data[2] == ipCurrent[2])
                             {
-                                isSubnetMatchCard = true;
+                                //isSubnetMatchCard = true;
                             }
 
                             //send scan reply out each network interface
@@ -153,25 +167,21 @@ void FormUDP::ScanNetwork(FormLoop &mf)
                             scanSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                             scanSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontRoute, true);*/
 
-                            scanSocket.setSocketOption(QAbstractSocket::MulticastLoopbackOption, true);
-                            scanSocket.setSocketOption(QAbstractSocket::ShareAddress, true);
-                            scanSocket.setSocketOption(QAbstractSocket::DontRouteOption, true);
+                            //scanSocket->setSocketOption(QAbstractSocket::MulticastLoopbackOption, true);
+                            //scanSocket->setSocketOption(QAbstractSocket::ReuseAddressHint, true);
+                            //scanSocket->setSocketOption(QAbstractSocket::ReuseAddressHint, true);
                             //this sets up the connection, and checks if it worked
-                            if (scanSocket.bind(QHostAddress(mf.epModuleSet), 9999))
-                                scanSocket.SendTo(scanModules, 0, scanModules.Length, SocketFlags.None, mf.epModuleSet);
+                            if (scanSocket->bind(mf->ethModulesSet.address, mf->ethModulesSet.portToListen))
+                                scanSocket->writeDatagram(scanModules, QHostAddress(mf->ethModulesSet.address), mf->ethModulesSet.portToSend);
                             else
-                                qDebug() << "ScanSocket error: " << scanSocket.errorString();
-
-
-
-                            scanSocket.close();
+                                qDebug() << "ScanSocket error: " << scanSocket->errorString();
                         }
                     }
-                    catch (Exception ex)
+                    catch (const std::exception& ex)
                     {
-                        Console.Write("nic Loop = ");
-                        Console.WriteLine(ex.ToString());
+                        qDebug() << "Bind Error = " << ex.what();
                     }
+                    delete scanSocket;
                 }
             }
         }
@@ -190,7 +200,7 @@ void FormUDP::ScanNetwork(FormLoop &mf)
     }*/
 }
 
-void FormUDP::btnSendSubnet_Click(FormLoop &mf)
+void FormUDP::btnSendSubnet_Click()
 {
 
     sendIPToModules[7] = ipNew[0];
@@ -198,63 +208,55 @@ void FormUDP::btnSendSubnet_Click(FormLoop &mf)
     sendIPToModules[9] = ipNew[2];
 
     //loop thru all interfaces
-    foreach (var nic in NetworkInterface.GetAllNetworkInterfaces())
+    for (const QNetworkInterface& nic : QNetworkInterface::allInterfaces())
     {
-        if (nic.Supports(NetworkInterfaceComponent.IPv4) && nic.OperationalStatus == OperationalStatus.Up)
-        {
-            foreach (var info in nic.GetIPProperties().UnicastAddresses)
+                        if (nic.flags().testFlag(QNetworkInterface::IsUp))
             {
-                // Only InterNetwork and not loopback which have a subnetmask
-                if (info.Address.AddressFamily == AddressFamily.InterNetwork &&
-                    !IPAddress.IsLoopback(info.Address) &&
-                    info.IPv4Mask != null)
+                for (const QNetworkAddressEntry& info : nic.addressEntries())
                 {
-                    //Socket scanSocket;
-                    QUdpSocket scanSocket;
-                    try
+                    //if (info.ip().protocol() == QAbstractSocket::IPv4Protocol && !info.ip().isLoopback() && !info.ip().netmask().isNull())
+                    if (info.ip().protocol() == QAbstractSocket::IPv4Protocol && !info.ip().isLoopback())
                     {
-                        if (nic.OperationalStatus == OperationalStatus.Up
-                            && info.IPv4Mask != null)
+                        QUdpSocket* scanSocket = new QUdpSocket(this);
+                        try
                         {
-                            scanSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-                            scanSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
-                            scanSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-                            scanSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontRoute, true);
-
-                            try
+                            if (nic.flags().testFlag(QNetworkInterface::IsUp) && !info.netmask().isNull())
                             {
-                                scanSocket.Bind(new IPEndPoint(info.Address, 9999));
-                                scanSocket.SendTo(sendIPToModules, 0, sendIPToModules.Length, SocketFlags.None, mf.epModuleSet);
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.Write("Bind Error = ");
-                                Console.WriteLine(ex.ToString());
-                            }
+                                /*scanSocket->setSocketOption(QAbstractSocket::Broadcast, true);
+                                scanSocket->setSocketOption(QAbstractSocket::ReuseAddress, true);
+                                scanSocket->setSocketOption(QAbstractSocket::DontRoute, true);*/
 
-                            scanSocket.Dispose();
+                                scanSocket->bind(QHostAddress(info.ip()), 9999);
+                                scanSocket->writeDatagram(sendIPToModules, QHostAddress(mf->ethModulesSet.address), mf->ethModulesSet.portToSend);
+                            }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.Write("nic Loop = ");
-                        Console.WriteLine(ex.ToString());
+                        catch (const std::exception& ex)
+                        {
+                            qDebug() << "nic Loop =" << ex.what();
+                        }
+                        delete scanSocket;
                     }
                 }
-            }
         }
     }
 
-    Properties.Settings.Default.etIP_SubnetOne = ipCurrent[0] = ipNew[0];
-    Properties.Settings.Default.etIP_SubnetTwo = ipCurrent[1] = ipNew[1];
-    Properties.Settings.Default.etIP_SubnetThree = ipCurrent[2] = ipNew[2];
+    settings.value("UDPComm/IP1") = ipCurrent[0] = ipNew[0];
+    settings.value("UDPComm/IP2") = ipCurrent[1] = ipNew[1];
+    settings.value("UDPComm/IP3") = ipCurrent[2] = ipNew[2];
 
-    Properties.Settings.Default.Save();
+    //Properties.Settings.Default.Save();
+    //does the lower replace the upper? Remove if it does
+    settings.sync();
 
-    mf.epModule = new IPEndPoint(IPAddress.Parse(
-                                     Properties.Settings.Default.etIP_SubnetOne.ToString() + "." +
-                                     Properties.Settings.Default.etIP_SubnetTwo.ToString() + "." +
-                                     Properties.Settings.Default.etIP_SubnetThree.ToString() + ".255"), 8888);
+    // update ethUDP from settings
+    uint ip1 = settings.value("UDPComm/IP1").toUInt();
+    uint ip2 = settings.value("UDPComm/IP2").toUInt();
+    uint ip3 = settings.value("UDPComm/IP3").toUInt();
+    uint ip4 = 255; //broadcast
+
+    quint32 ipAddress = (ip1 << 24) | (ip2 << 16) | (ip3 << 8) | ip4;
+
+    mf->ethUDP.address.setAddress(ipAddress);
 
     /*lblNetworkHelp.Text =
 		Properties.Settings.Default.etIP_SubnetOne.ToString() + " . " +
@@ -264,26 +266,27 @@ void FormUDP::btnSendSubnet_Click(FormLoop &mf)
 
 //pboxSendSteer.Visible = false;
 //btnSerialCancel.Image = Properties.Resources.back_button;
-}
+//}
 
-void FormUDP::btnAutoSet_Click(FormLoop &mf)
+void FormUDP::btnAutoSet_Click()
 {
 
-    nudFirstIP.Value = mf.scanReply.subnet[0];
-    nudSecndIP.Value = mf.scanReply.subnet[1];
-    nudThirdIP.Value = mf.scanReply.subnet[2];
-    ipNew[0] = mf.scanReply.subnet[0];
-    ipNew[1] = mf.scanReply.subnet[1];
-    ipNew[2] = mf.scanReply.subnet[2];
+    //nudFirstIP.Value = mf.scanReply.subnet[0];
+    //nudSecndIP.Value = mf.scanReply.subnet[1];
+    //nudThirdIP.Value = mf.scanReply.subnet[2];
+    ipNew[0] = mf->scanReply.subnet[0];
+    ipNew[1] = mf->scanReply.subnet[1];
+    ipNew[2] = mf->scanReply.subnet[2];
     //btnSerialCancel.Image = Properties.Resources.Cancel64;
     //pboxSendSteer.Visible = true;
 }
+/*This is all UI. Don't know how much we'll reuse
 void FormUDP::nudFirstIP_Click()
 {
     ipNew[0] = (byte)nudFirstIP.Value;
     ipNew[1] = (byte)nudSecndIP.Value;
     ipNew[2] = (byte)nudThirdIP.Value;
-    /*btnSendSubnet.Enabled = true;
+    btnSendSubnet.Enabled = true;
 	pboxSendSteer.Visible = true;
-    btnSerialCancel.Image = Properties.Resources.Cancel64;*/
-}
+    btnSerialCancel.Image = Properties.Resources.Cancel64;
+}*/

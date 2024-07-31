@@ -18,6 +18,7 @@
 #include <QQueue>
 #include <QDateTime>
 
+class FormUDP;
 
 //in cs, the ipEndPoint is both the ip address and port.
 //cpp doesn't have that luxury, so we create a struct.
@@ -47,6 +48,7 @@ class FormLoop : public QObject
 
         IPAndPort wwwNtrip; //send ntrip to module
         IPAndPort ethUDP;//the main ethernet network
+        IPAndPort ethModulesSet;
 
         quint16 sendNtripToModulePort; // sends to .255, so ip is the same as ethUDP
 
