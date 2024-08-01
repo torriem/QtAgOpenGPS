@@ -73,12 +73,7 @@ class FormLoop : public QObject
 
         void SetFormLoop(FormLoop *formLoop);
         void FormUDp_Load();
-        /*void timer1_Tick(FormLoop &mf);
-void ScanNetwork(FormLoop &mf);
-void btnSendSubnet_Click(FormLoop &mf);
-void btnAutoSet_Click(FormLoop &mf);*/
 
-        void timer1_Tick();
         void ScanNetwork();
         void btnSendSubnet_Click();
         void btnAutoSet_Click();
@@ -107,10 +102,13 @@ void btnAutoSet_Click(FormLoop &mf);*/
 
 		QTimer *twoSecondTimer;
 
+        QTimer *halfSecondTimer;
+
 		void DoHelloAlarmLogic();
 		void DoTraffic();
 
     public slots:
+        void timer1_Tick();
         void oneSecondLoopTimer_Tick();
 	    void TwoSecondLoop();
 
@@ -121,7 +119,7 @@ void btnAutoSet_Click(FormLoop &mf);*/
 		bool isUDPNetworkConnected;
 
 		//QByteArray ipAutoSet = "192.168.5";
-		QByteArray ipAutoSet;
+        QByteArray ipAutoSet;
 
 
 		//set up the networks

@@ -2,6 +2,12 @@
 #include <QNetworkInterface>
 
 void FormLoop::FormUDp_Load(){
+    ipCurrent.append("192");
+    ipCurrent.append("168");
+    ipCurrent.append("5");
+
+    ipAutoSet.resize(3,0);
+
     ipAutoSet[0] = 99;
     ipAutoSet[1] = 99;
     ipAutoSet[2] = 99;
@@ -161,8 +167,11 @@ void FormLoop::ScanNetwork()
                             //scanSocket->setSocketOption(QAbstractSocket::ReuseAddressHint, true);
                             //scanSocket->setSocketOption(QAbstractSocket::ReuseAddressHint, true);
                             //this sets up the connection, and checks if it worked
-                            if (scanSocket->bind(ethModulesSet.address, ethModulesSet.portToListen))
+                            if (scanSocket->bind(ethModulesSet.address, ethModulesSet.portToListen)){
+                                qDebug() << "ScanSocket Sent out";
                                 scanSocket->writeDatagram(scanModules, QHostAddress(ethModulesSet.address), ethModulesSet.portToSend);
+                            }
+
                             else
                                 qDebug() << "ScanSocket error: " << scanSocket->errorString();
                         }
@@ -200,33 +209,34 @@ void FormLoop::btnSendSubnet_Click()
     //loop thru all interfaces
     for (const QNetworkInterface& nic : QNetworkInterface::allInterfaces())
     {
-                        if (nic.flags().testFlag(QNetworkInterface::IsUp))
+        if (nic.flags().testFlag(QNetworkInterface::IsUp))
+        {
+            for (const QNetworkAddressEntry& info : nic.addressEntries())
             {
-                for (const QNetworkAddressEntry& info : nic.addressEntries())
+                //if (info.ip().protocol() == QAbstractSocket::IPv4Protocol && !info.ip().isLoopback() && !info.ip().netmask().isNull())
+                if (info.ip().protocol() == QAbstractSocket::IPv4Protocol && !info.ip().isLoopback())
                 {
-                    //if (info.ip().protocol() == QAbstractSocket::IPv4Protocol && !info.ip().isLoopback() && !info.ip().netmask().isNull())
-                    if (info.ip().protocol() == QAbstractSocket::IPv4Protocol && !info.ip().isLoopback())
+                    QUdpSocket* scanSocket = new QUdpSocket(this);
+                    try
                     {
-                        QUdpSocket* scanSocket = new QUdpSocket(this);
-                        try
+                        if (nic.flags().testFlag(QNetworkInterface::IsUp) && !info.netmask().isNull())
                         {
-                            if (nic.flags().testFlag(QNetworkInterface::IsUp) && !info.netmask().isNull())
-                            {
-                                /*scanSocket->setSocketOption(QAbstractSocket::Broadcast, true);
+                            /*scanSocket->setSocketOption(QAbstractSocket::Broadcast, true);
                                 scanSocket->setSocketOption(QAbstractSocket::ReuseAddress, true);
                                 scanSocket->setSocketOption(QAbstractSocket::DontRoute, true);*/
 
-                                scanSocket->bind(QHostAddress(info.ip()), 9999);
-                                scanSocket->writeDatagram(sendIPToModules, QHostAddress(ethModulesSet.address), ethModulesSet.portToSend);
-                            }
+                            scanSocket->bind(QHostAddress(info.ip()), 9999);
+                            scanSocket->writeDatagram(sendIPToModules, QHostAddress(ethModulesSet.address), ethModulesSet.portToSend);
+                            qDebug() << "ScanSocket Sent!";
                         }
-                        catch (const std::exception& ex)
-                        {
-                            qDebug() << "nic Loop =" << ex.what();
-                        }
-                        delete scanSocket;
                     }
+                    catch (const std::exception& ex)
+                    {
+                        qDebug() << "nic Loop =" << ex.what();
+                    }
+                    delete scanSocket;
                 }
+            }
         }
     }
 

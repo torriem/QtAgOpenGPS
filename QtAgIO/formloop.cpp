@@ -15,6 +15,11 @@ FormLoop::FormLoop(QObject *parent) : QObject(parent),
     setupGUI();
     ConfigureNTRIP();
 
+    halfSecondTimer = new QTimer(this);
+    halfSecondTimer->setInterval(500);
+    connect(halfSecondTimer, &QTimer::timeout, this, &FormLoop::timer1_Tick);
+    halfSecondTimer->start();
+
     oneSecondTimer = new QTimer(this);
     oneSecondTimer->setInterval(1000);
     connect(oneSecondTimer, &QTimer::timeout, this, &FormLoop::oneSecondLoopTimer_Tick);
@@ -39,6 +44,8 @@ FormLoop::FormLoop(QObject *parent) : QObject(parent),
 
 
     clientSocket = new QTcpSocket(this);
+
+    FormUDp_Load();
 }
 
 FormLoop::~FormLoop()
