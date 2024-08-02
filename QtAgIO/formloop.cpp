@@ -1,4 +1,5 @@
 #include "formloop.h"
+#include "qmlutil.h"
 #include <QQuickWindow>
 #include <QQmlApplicationEngine>
 
@@ -81,6 +82,7 @@ void FormLoop::DoTraffic()
 void FormLoop::DoHelloAlarmLogic()
 {
     bool currentHello;
+    QObject *agio = qmlItem(qml_root, "agio");
 
     if (isConnectedMachine)
     {
@@ -92,7 +94,11 @@ void FormLoop::DoHelloAlarmLogic()
         {
             //if (currentHello) btnMachine.BackColor = Color.LimeGreen;
             //else btnMachine.BackColor = Color.Red;
-            if (currentHello) qDebug() << "Connected to machine";
+
+            agio->setProperty("machineConnected", currentHello); //set qml
+
+            if (currentHello)
+                qDebug() << "Connected to machine";
             else qDebug() << "Not connected to machine";
             lastHelloMachine = currentHello;
                 //ShowAgIO();
@@ -110,6 +116,7 @@ void FormLoop::DoHelloAlarmLogic()
 
         if (currentHello != lastHelloAutoSteer)
         {
+            agio->setProperty("steerConnected", currentHello);
             //if (currentHello) btnSteer.BackColor = Color.LimeGreen;
             //else btnSteer.BackColor = Color.Red;
             if (currentHello) qDebug() << "Connected to steer";
@@ -127,6 +134,7 @@ void FormLoop::DoHelloAlarmLogic()
 
         if (currentHello != lastHelloIMU)
         {
+            agio->setProperty("imuConnected", currentHello);
             //if (currentHello) btnIMU.BackColor = Color.LimeGreen;
             //else btnIMU.BackColor = Color.Red;
             if (currentHello) qDebug() << "Connected to IMU";
@@ -145,6 +153,7 @@ void FormLoop::DoHelloAlarmLogic()
     //no GPS is connected?
     if (currentHello != lastHelloGPS)
     {
+        agio->setProperty("gpsConnected", currentHello);
         //if (currentHello) btnGPS.BackColor = Color.LimeGreen;
         //else btnGPS.BackColor = Color.Red;
         if (currentHello) qDebug() << "Connected to GPS";

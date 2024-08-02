@@ -6,6 +6,7 @@
 #include <QQmlEngine>
 #include "qmlutil.h"
 #include "formloop.h"
+#include "interfaceproperty.h"
 
 void FormLoop::setupGUI()
 {
@@ -29,4 +30,16 @@ void FormLoop::setupGUI()
     {
         qDebug() << "Displaying QML File";
     }
+
+    QList<QObject*> root_context = engine.rootObjects();
+
+    qml_root = root_context.first();
+
+    //have to do this for each Interface and supported data type.
+    InterfaceProperty<AgIOInterface, int>::set_qml_root(qmlItem(qml_root, "agio"));
+    InterfaceProperty<AgIOInterface, uint>::set_qml_root(qmlItem(qml_root, "agio"));
+    InterfaceProperty<AgIOInterface, bool>::set_qml_root(qmlItem(qml_root, "agio"));
+    InterfaceProperty<AgIOInterface, double>::set_qml_root(qmlItem(qml_root, "agio"));
+    //InterfaceProperty<AgIOInterface, btnStates>::set_qml_root(qmlItem(qml_root, "aog"));
+
 }

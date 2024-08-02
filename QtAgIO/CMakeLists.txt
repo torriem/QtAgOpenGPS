@@ -31,6 +31,7 @@ qt_add_executable(QtAgIO
     inc/UdpConnection.h src/UdpConnection.cpp
 	inc/CTraffic.h src/CTraffic.cpp
 	inc/CScanReply.h src/CScanReply.cpp
+    interfaceproperty.h
 )
 target_include_directories(QtAgIO
     PRIVATE src
