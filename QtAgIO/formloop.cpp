@@ -5,9 +5,10 @@
 FormLoop::FormLoop(QObject *parent) : QObject(parent),
     wwwNtrip("192.168.1.100", 2101, 2102), // Example initial values
     ethUDP("192.168.1.101", 2201, 2202),
-    ethModulesSet("255.255.255.255", ethUDP.portToSend, ethUDP.portToListen)
+    ethModulesSet("255.255.255.255", 2301, 2302)
 {
     //loadSettings();
+
 
     LoadLoopback();
 	LoadUDPNetwork();
@@ -18,7 +19,7 @@ FormLoop::FormLoop(QObject *parent) : QObject(parent),
     halfSecondTimer = new QTimer(this);
     halfSecondTimer->setInterval(500);
     connect(halfSecondTimer, &QTimer::timeout, this, &FormLoop::timer1_Tick);
-    halfSecondTimer->start();
+    //halfSecondTimer->start();
 
     oneSecondTimer = new QTimer(this);
     oneSecondTimer->setInterval(1000);

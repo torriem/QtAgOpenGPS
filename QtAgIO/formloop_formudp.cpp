@@ -2,15 +2,22 @@
 #include <QNetworkInterface>
 
 void FormLoop::FormUDp_Load(){
-    ipCurrent.append("192");
+    ipCurrent.append("192"); //set ipCurrent to hold something at least
     ipCurrent.append("168");
     ipCurrent.append("5");
+
+    ipNew.append("192");
+    ipNew.append("168");
+    ipNew.append("5");
 
     ipAutoSet.resize(3,0);
 
     ipAutoSet[0] = 99;
     ipAutoSet[1] = 99;
     ipAutoSet[2] = 99;
+
+    ethModulesSet.portToListen = ethUDP.portToListen;
+    ethModulesSet.portToSend = ethUDP.portToSend;
 
     //lblHostname.Text = Dns.GetHostName(); // Retrieve the Name of HOST
 
@@ -23,9 +30,13 @@ void FormLoop::FormUDp_Load(){
     //nudSecndIP.Value = ipNew[1] = ipCurrent[1] = Properties.Settings.Default.etIP_SubnetTwo;
     //nudThirdIP.Value = ipNew[2] = ipCurrent[2] = Properties.Settings.Default.etIP_SubnetThree;
 
+    ipNew[0] = ipCurrent[0] = settings.value("UDPComm/IP1").toInt();
+    ipNew[1] = ipCurrent[1] = settings.value("UDPComm/IP2").toInt();
+    ipNew[2] = ipCurrent[2] = settings.value("UDPComm/IP3").toInt();
+
+
     ScanNetwork();
 }
-int tickCounter = 0;
 
 void FormLoop::timer1_Tick()
 {
@@ -165,11 +176,18 @@ void FormLoop::ScanNetwork()
 
                             //scanSocket->setSocketOption(QAbstractSocket::MulticastLoopbackOption, true);
                             //scanSocket->setSocketOption(QAbstractSocket::ReuseAddressHint, true);
-                            //scanSocket->setSocketOption(QAbstractSocket::ReuseAddressHint, true);
+                            //scanSocket->setSocketOption(QAbstractSocket::ReuseAddressHint, 1);
                             //this sets up the connection, and checks if it worked
-                            if (scanSocket->bind(ethModulesSet.address, ethModulesSet.portToListen)){
-                                qDebug() << "ScanSocket Sent out";
+                            /*if (scanSocket->bind(ethModulesSet.address, ethModulesSet.portToListen, QUdpSocket::ReuseAddressHint)){
+                                qDebug() << "ScanSocket Sent out on address " << ethModulesSet.address << ":" << ethModulesSet.portToSend;
                                 scanSocket->writeDatagram(scanModules, QHostAddress(ethModulesSet.address), ethModulesSet.portToSend);
+                            }*/
+                            QHostAddress address(info.ip().toString());
+
+                            if (scanSocket->bind(address, ethModulesSet.portToListen, QUdpSocket::ReuseAddressHint)){
+                                qDebug() << "ScanSocket bound to address " << address << ":" << ethModulesSet.portToSend;
+                                scanSocket->writeDatagram(scanModules, ethModulesSet.address, ethModulesSet.portToSend);
+                                qDebug() << "ScanSocket wrote to address " << ethModulesSet.address << ":" << ethModulesSet.portToSend;
                             }
 
                             else
@@ -225,8 +243,8 @@ void FormLoop::btnSendSubnet_Click()
                                 scanSocket->setSocketOption(QAbstractSocket::ReuseAddress, true);
                                 scanSocket->setSocketOption(QAbstractSocket::DontRoute, true);*/
 
-                            scanSocket->bind(QHostAddress(info.ip()), 9999);
-                            scanSocket->writeDatagram(sendIPToModules, QHostAddress(ethModulesSet.address), ethModulesSet.portToSend);
+                            scanSocket->bind(info.ip(), 9999);
+                            scanSocket->writeDatagram(sendIPToModules, ethModulesSet.address, ethModulesSet.portToSend);
                             qDebug() << "ScanSocket Sent!";
                         }
                     }
