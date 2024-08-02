@@ -71,6 +71,8 @@ class FormLoop : public QObject
         QByteArray ipCurrent;
         QByteArray ipNew;
 
+        int tickCounter = 0;
+
         void SetFormLoop(FormLoop *formLoop);
         void FormUDp_Load();
 
@@ -144,7 +146,8 @@ class FormLoop : public QObject
 		QByteArray buffer;
 
 		//QByteArray helloFromAgIO( 0x80, 0x81, 0x7F, 200, 3, 56, 0, 0, 0x47 );
-		QByteArray helloFromAgIO;
+        QByteArray helloFromAgIO = QByteArray::fromRawData("\x80\x81\x7F\xC8\x03\x38\x00\x00\x47", 9);
+
 
 		public slots:
 

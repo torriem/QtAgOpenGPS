@@ -40,6 +40,7 @@ void FormLoop::LoadUDPNetwork()
     //set the port where we listen
     ethUDP.portToListen = settings.value("UDPComm/UdpListenPort").toInt();
 
+
     // Initialise the socket
     udpSocket = new QUdpSocket(this);
 
@@ -173,19 +174,21 @@ void FormLoop::ReceiveFromLoopBack()
 
 void FormLoop::SendUDPMessage(QByteArray byteData, QHostAddress address, uint portNumber)
 {
-
-    //qDebug() << "Sending UDP Message to " << address.toString() << ":" << portNumber;
     //todo if (isUdpNetworkConnected
     if(!settings.value("UDPComm/ListenOnly").toBool())
     {
 
         // Send packet to the zero
-        if (byteData.size() != 0)
+        if (byteData.size() != 0){
+            qint64 bytesSent = udpSocket->writeDatagram(byteData, address, portNumber);
+            if(bytesSent == -1)
+                qDebug() << "SendUDP failed to send UDP message!";
+        }else
+            qDebug() << "SendUDP was requested to send empty data message. Did not send";
 
-            udpSocket->writeDatagram(byteData, address, portNumber);
 
     }else{
-        qDebug() << "Listen to modules only";
+        qDebug() << "Listen to modules only. UDP message did not send";
     }
 }
 void FormLoop::ReceiveFromUDP()
