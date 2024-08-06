@@ -85,8 +85,8 @@ must manage those matrices ourselves anyway.
 
 QtAgIO Notes
 -------------
-AgIO backend is half-baked now. It only works with UDP, and is cli only
-at the moment. If you run it, then go to ~/Documents/QtAgOpenGPS/QtAgIO.ini,
+AgIO is half-baked now. It only works with UDP. The GUI is only half done.
+If you run it, then go to ~/Documents/QtAgOpenGPS/QtAgIO.ini,
 you can change the IP address to whatever you need. Note that the loopback
 ports are changed to 17770 and 15550, instead of 17777 and 15555 like AOG,
 so we can run with AOG on the same device. If you change back to 17777, and 
