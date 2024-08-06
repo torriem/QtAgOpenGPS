@@ -4,17 +4,17 @@
 #include <QQmlApplicationEngine>
 
 FormLoop::FormLoop(QObject *parent) : QObject(parent),
+    qml_root(parent),
     wwwNtrip("192.168.1.100", 2101, 2102), // Example initial values
     ethUDP("192.168.1.101", 2201, 2202),
     ethModulesSet("255.255.255.255", 2301, 2302)
 {
     //loadSettings();
 
-
+    setupGUI();
     LoadLoopback();
 	LoadUDPNetwork();
    //buffer.resize(1024);
-    setupGUI();
     ConfigureNTRIP();
 
     halfSecondTimer = new QTimer(this);
@@ -82,7 +82,7 @@ void FormLoop::DoTraffic()
 void FormLoop::DoHelloAlarmLogic()
 {
     bool currentHello;
-    QObject *agio = qmlItem(qml_root, "agio");
+    agio = qmlItem(qml_root, "agio");
 
     if (isConnectedMachine)
     {
@@ -92,23 +92,20 @@ void FormLoop::DoHelloAlarmLogic()
         //3 or not
         if (currentHello != lastHelloMachine)
         {
-            //if (currentHello) btnMachine.BackColor = Color.LimeGreen;
-            //else btnMachine.BackColor = Color.Red;
-
             agio->setProperty("machineConnected", currentHello); //set qml
 
             if (currentHello)
                 qDebug() << "Connected to machine";
             else qDebug() << "Not connected to machine";
+
             lastHelloMachine = currentHello;
-                //ShowAgIO();
+            ShowAgIO();
         }
     }
     // traffic.helloFromMachine starts at 99
     //so this is triggered when a machine board is connected
     else if (traffic.helloFromMachine < 90)
         isConnectedMachine = true;
-
 
     if (isConnectedSteer)
     {
@@ -117,12 +114,13 @@ void FormLoop::DoHelloAlarmLogic()
         if (currentHello != lastHelloAutoSteer)
         {
             agio->setProperty("steerConnected", currentHello);
-            //if (currentHello) btnSteer.BackColor = Color.LimeGreen;
-            //else btnSteer.BackColor = Color.Red;
+
             if (currentHello) qDebug() << "Connected to steer";
             else qDebug() << "Not connected to steer";
+
             lastHelloAutoSteer = currentHello;
-                //ShowAgIO();
+
+            ShowAgIO();
         }
     }
     else if (traffic.helloFromAutoSteer < 90)
@@ -135,12 +133,12 @@ void FormLoop::DoHelloAlarmLogic()
         if (currentHello != lastHelloIMU)
         {
             agio->setProperty("imuConnected", currentHello);
-            //if (currentHello) btnIMU.BackColor = Color.LimeGreen;
-            //else btnIMU.BackColor = Color.Red;
+
             if (currentHello) qDebug() << "Connected to IMU";
             else qDebug() << "Not connected to IMU";
+
             lastHelloIMU = currentHello;
-                //ShowAgIO();
+            ShowAgIO();
         }
     }
     else if (traffic.helloFromIMU < 90)
@@ -154,12 +152,13 @@ void FormLoop::DoHelloAlarmLogic()
     if (currentHello != lastHelloGPS)
     {
         agio->setProperty("gpsConnected", currentHello);
-        //if (currentHello) btnGPS.BackColor = Color.LimeGreen;
-        //else btnGPS.BackColor = Color.Red;
+
         if (currentHello) qDebug() << "Connected to GPS";
         else qDebug() << "Not connected to GPS";
+
         lastHelloGPS = currentHello;
-            //ShowAgIO();
+
+        ShowAgIO();
     }
 }
 

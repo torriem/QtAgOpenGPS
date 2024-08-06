@@ -18,6 +18,7 @@
 #include <QQueue>
 #include <QDateTime>
 
+
 class FormUDP;
 
 //in cs, the ipEndPoint is both the ip address and port.
@@ -44,6 +45,7 @@ class FormLoop : public QObject
 		QSettings settings;
 
         QObject *qml_root;
+        QObject *agio;
         QWidget *qmlcontainer;
 
         IPAndPort wwwNtrip; //send ntrip to module
@@ -85,6 +87,7 @@ class FormLoop : public QObject
         /*formloop_ui.cpp*/
 
         void setupGUI();
+        void ShowAgIO();
 
 		/*formloop.cpp
 		 * formerly Formloop.cs */

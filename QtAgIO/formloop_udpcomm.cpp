@@ -2,6 +2,8 @@
 #include "formloop.h"
 #include <QHostInfo>
 #include <QNetworkInterface>
+#include "qmlutil.h"
+#include "interfaceproperty.h"
 
 void FormLoop::LoadUDPNetwork()
 {
@@ -44,17 +46,17 @@ void FormLoop::LoadUDPNetwork()
     // Initialise the socket
     udpSocket = new QUdpSocket(this);
 
+    agio = qmlItem(qml_root, "agio"); //UI connection
 
     //set up the connection
     //this is the part that listens
-    qDebug() << "Attempting to bind to UDP socket " << ethUDP.address << ":" << ethUDP.portToListen;
     if(!udpSocket->bind(ethUDP.address, ethUDP.portToListen)) //TODO settings
     {
         qDebug() << "Failed to bind udpSocket: " << udpSocket->errorString();
-        //qDebug() << "Exiting program due to fatal error";
-        //QCoreApplication::exit(0);
+        agio->setProperty("ethernetConnected", false);
     }else {
         qDebug() << "udpSocket bound";
+        agio->setProperty("ethernetConnected", true);
     }
 
     //trigger ReceiveFromUDP() when a packet is present
@@ -66,14 +68,18 @@ void FormLoop::LoadUDPNetwork()
 
 void FormLoop::LoadLoopback() //set up the connection that listens to loopback
 {
+    agio = qmlItem(qml_root, "agio");
     loopBackSocket = new QUdpSocket(this);
     if(!loopBackSocket->bind(QHostAddress::LocalHost, settings.value("LoopbackComm/ListenToAOGPort").toInt()))
     {
         qDebug() <<"Failed to bind loopBackSocket: : " << loopBackSocket->errorString();
         qDebug() << "Exiting program due to fatal error";
+        agio->setProperty("aogConnected", false);
+
         QCoreApplication::exit(0);
     } else {
         qDebug() << "loopBackSocket bound";
+        agio->setProperty("aogConnected", true);
     }
 
     connect(loopBackSocket, &QUdpSocket::readyRead, this, &FormLoop::ReceiveFromLoopBack);
