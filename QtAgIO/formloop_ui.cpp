@@ -43,3 +43,19 @@ void FormLoop::setupGUI()
     //InterfaceProperty<AgIOInterface, btnStates>::set_qml_root(qmlItem(qml_root, "aog"));
 
 }
+
+void FormLoop::ShowAgIO(){
+    if (!engine.rootObjects().isEmpty()) {
+        QObject *rootObject = engine.rootObjects().first();
+        QQuickWindow *window = qobject_cast<QQuickWindow *>(rootObject);
+
+        if (window) {
+            window->raise();
+            window->requestActivate();
+        } else {
+            qDebug() << "Root object is not a QQuickWindow.";
+        }
+    } else {
+        qDebug() << "No root objects found.";
+    }
+}
