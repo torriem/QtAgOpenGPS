@@ -54,7 +54,7 @@
         <file>images/VehFileSave.png</file>
         <file>images/WindowsShutDown.png</file>
         <file>images/www.png</file>
-        <file>qml/components/ButtonColor.qml</file>
+        <file>qml/components/Button.qml</file>
         <file>qml/components/ComboBoxCustomized.qml</file>
         <file>qml/components/ExpandableColumn.qml</file>
         <file>qml/components/IconButton.qml</file>
@@ -87,5 +87,9 @@
         <file>qml/components/TitleFrame.qml</file>
         <file>qml/components/TopLine.qml</file>
         <file>qml/components/What_Are_Components.txt</file>
+        <file>qml/NTrip.qml</file>
+        <file>qml/interfaces/NTripInterface.qml</file>
+        <file>qml/components/Text.qml</file>
+        <file>qml/components/Spacer.qml</file>
     </qresource>
 </RCC>
