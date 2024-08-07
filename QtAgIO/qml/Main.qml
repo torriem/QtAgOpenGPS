@@ -116,6 +116,7 @@ Window {
 			 IconButton {
 				 id: btnNTRIP
 				 icon.source: imagePath + "NtripSettings.png"
+                 onClicked: ntrip.visible = !ntrip.visible
 			 }
 			 IconButtonText {
 				 id: btnHide
@@ -127,4 +128,10 @@ Window {
 			 }
 		 }
 	}
+
+    /************** - Put all child windows here - ********************/
+    NTrip{
+        id: ntrip
+        visible: false
+    }
 }
