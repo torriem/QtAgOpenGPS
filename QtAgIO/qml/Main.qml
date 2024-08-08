@@ -130,6 +130,9 @@ Window {
 	}
 
     /************** - Put all child windows here - ********************/
+    Message {
+		id: message
+	}
     NTrip{
         id: ntrip
         visible: false

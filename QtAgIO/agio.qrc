@@ -91,5 +91,6 @@
         <file>qml/interfaces/NTripInterface.qml</file>
         <file>qml/components/Text.qml</file>
         <file>qml/components/Spacer.qml</file>
+        <file>qml/components/Message.qml</file>
     </qresource>
 </RCC>
