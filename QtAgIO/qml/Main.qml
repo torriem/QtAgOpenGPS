@@ -55,6 +55,7 @@ Window {
 				 text: qsTr("Ethernet")
 				 icon.source: imagePath + "B_UDP.png"
 				 color: agio.ethernetConnected ? "green" : "red"
+                 onClicked: agio.btnSendSubnet_clicked()
 			 }
 			 IconButtonColor {
 				 id: btnNTRIPStatus

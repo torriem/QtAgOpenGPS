@@ -42,6 +42,12 @@ void FormLoop::setupGUI()
     InterfaceProperty<AgIOInterface, double>::set_qml_root(qmlItem(qml_root, "agio"));
     //InterfaceProperty<AgIOInterface, btnStates>::set_qml_root(qmlItem(qml_root, "aog"));
 
+    agio = qmlItem(qml_root, "agio");
+
+    //this is where the connects with the frontend happen
+
+    connect(agio, SIGNAL(btnSendSubnet_clicked()), this, SLOT(btnSendSubnet_Click())); // btnSendSubnet_Click lives in formloop_formudp.cpp
+
 }
 
 void FormLoop::ShowAgIO(){

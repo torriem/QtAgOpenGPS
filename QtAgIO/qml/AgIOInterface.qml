@@ -29,5 +29,9 @@ Item {
 	property bool imuConnected: false
 	property bool machineConnected: false
 
+
+    //these are signals that get sent to the backend
+    signal btnSendSubnet_clicked();
+
 }
 

@@ -63,10 +63,14 @@ class FormLoop : public QObject
 
         /*formloop_formUDP.cpp
          * formerly FormUDP.cs*/
+    public slots:
+        void btnSendSubnet_Click();
+        void btnAutoSet_Click();
 
+
+    public:
         //used to send communication check pgn= C8 or 200
-        //QByteArray sendIPToModules = { 0x80, 0x81, 0x7F, 201, 5, 201, 201, 192, 168, 5, 0x47 };
-        QByteArray sendIPToModules;
+        QByteArray sendIPToModules = QByteArray::fromRawData("\x80\x81\x7F\xC9\x05\xC9\xC9\xC0\xA8\x05\x47", 11);
 
         //QByteArray ipCurrent = { 192, 168, 5 };
         //QByteArray ipNew = { 192, 168, 5 };
@@ -79,8 +83,6 @@ class FormLoop : public QObject
         void FormUDp_Load();
 
         void ScanNetwork();
-        void btnSendSubnet_Click();
-        void btnAutoSet_Click();
 
         void nudFirstIP_Click();
 
