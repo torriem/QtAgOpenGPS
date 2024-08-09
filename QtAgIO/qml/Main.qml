@@ -55,7 +55,7 @@ Window {
 				 text: qsTr("Ethernet")
 				 icon.source: imagePath + "B_UDP.png"
 				 color: agio.ethernetConnected ? "green" : "red"
-                 onClicked: agio.btnSendSubnet_clicked()
+                 onClicked: ethernetConfig.visible = !ethernetConfig.visible
 			 }
 			 IconButtonColor {
 				 id: btnNTRIPStatus
@@ -138,4 +138,8 @@ Window {
         id: ntrip
         visible: false
     }
+	EthernetConfig {
+		id: ethernetConfig
+		visible: false
+	}
 }
