@@ -4,7 +4,6 @@
 // main routine
 void FormLoop::DoNTRIPSecondRoutine()
 {
-    //qDebug() << ntripCounter << " ntrip counter";
 	//count up the ntrip clock only if everything is alive
 	if (isNTRIP_RequiredOn || isRadio_RequiredOn || isSerialPass_RequiredOn)
 	{
@@ -58,25 +57,25 @@ void FormLoop::DoNTRIPSecondRoutine()
              * 1 = Authorizing
              * 2 = Waiting
              * 3 = Send GGA
-             * 4 = Listening
+             * 4 = Listening NTRIP
+             * 5 = Wait GPS
              */
 			//watchdog for Ntrip
             if (isNTRIP_Connecting){
-				qDebug() << "Authourizing";
-                agio->setProperty("ntripStatus", 1);
-            }else
+                agio->setProperty("ntripStatus", 1);//authorizing
+            }
+            else
 			{
                 if (isNTRIP_RequiredOn && NTRIP_Watchdog > 10){
-                    agio->setProperty("ntripStatus", 2);
-                    qDebug() << "Waiting";
+                    agio->setProperty("ntripStatus", 2);//waiting
                 }
+                else agio->setProperty("ntripStatus", 4); //listening GGA
 
 			}
 
 			if (sendGGAInterval > 0 && isNTRIP_Sending)
 			{
-                if(debugNTRIP) qDebug() << "Sending";
-                    agio->setProperty("ntripStatus", 3);
+                    agio->setProperty("ntripStatus", 3);// Send GGA
                 isNTRIP_Sending = false;
 			}
 		}
@@ -86,6 +85,7 @@ void FormLoop::DoNTRIPSecondRoutine()
 void FormLoop::ConfigureNTRIP() //set the variables to the settings
 {
     if(debugNTRIP) qDebug() << "Configuring NTRIP";
+    agio->setProperty("ntripStatus", 5); //Wait GPS
 	aList.clear();
 	rList.clear();
 
@@ -395,7 +395,6 @@ void FormLoop::OnAddMessage(QByteArray data)
 
 void FormLoop::ntripMeterTimer_Tick()
 {
-    qDebug() << "SizeOf rawTrip: " << rawTrip.size();
 	//we really should get here, but have to check
     if (rawTrip.size() == 0) return;
 
@@ -417,13 +416,11 @@ void FormLoop::ntripMeterTimer_Tick()
     for (int i = 0; i < cnt; i++) trip[i] = rawTrip.dequeue();
 
 	//send it
-    qDebug() << "tick tick";
 	SendNTRIP(trip);
 
 	//Are we done?
     if (rawTrip.size() == 0)
 	{
-        qDebug() << "RawTrip = 0!";
         ntripMeterTimer->stop();
 
 		if (focusSkipCounter != 0)
@@ -433,7 +430,6 @@ void FormLoop::ntripMeterTimer_Tick()
 	//Can't keep up as internet dumped a shit load so clear
     if (rawTrip.size() > 10000) {
         rawTrip.clear();
-        qDebug() << "Couldn't keep up. Cleared rawTrip";
     }
 }
 
@@ -451,7 +447,7 @@ void FormLoop::SendNTRIP(QByteArray data)
 	if (isSendToUDP)
 	{
         SendUDPMessage(data, ethUDP.address, sendNtripToModulePort);
-        if(debugNTRIP) qDebug() << "NTRIP: Sending data " << data << " to modules UDP network";
+        if(debugNTRIP) qDebug() << "NTRIP: Sending data with size " << data.size() << " to modules UDP network";
 	}
 }
 

@@ -45,7 +45,8 @@ Window {
                      agio.ntripStatus === 1 ? "Authorizing" :
                      agio.ntripStatus === 2 ? "Waiting" :
                      agio.ntripStatus === 3 ? "Send GGA" :
-                     agio.ntripStatus === 4 ? "Listening":
+                     agio.ntripStatus === 4 ? "Listening NTRIP":
+                     agio.ntripStatus === 5 ? "Wait GPS":
                      "Unknown")        }
 
 		ColumnLayout {
