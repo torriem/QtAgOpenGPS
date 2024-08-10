@@ -47,6 +47,7 @@ void FormLoop::setupGUI()
     //this is where the connects with the frontend happen
 
     connect(agio, SIGNAL(btnSendSubnet_clicked()), this, SLOT(btnSendSubnet_Click())); // btnSendSubnet_Click lives in formloop_formudp.cpp
+    connect(agio, SIGNAL(ntripDebug(bool)), this, SLOT(NTRIPDebugMode(bool)));
 
 }
 

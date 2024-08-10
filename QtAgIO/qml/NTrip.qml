@@ -26,6 +26,28 @@ Window {
 		anchors.bottom: bottomButtons.top
 		border.width: 2
 		border.color: theme.blackDayWhiteNight
+
+        CheckBox {
+            id: ckNtripDebug
+            text: "Console NTRIP Debug"
+            checked: false
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.topMargin: 100
+            anchors.leftMargin: 100
+            onCheckedChanged: agio.ntripDebug(ckNtripDebug.checkState)
+        }
+        Comp.TextLine {
+            anchors.top: ckNtripDebug.bottom
+            anchors.left: ckNtripDebug.left
+            text: "Ntrip Stat: " +
+                     (agio.ntripStatus === 0 ? "Invalid" :
+                     agio.ntripStatus === 1 ? "Authorizing" :
+                     agio.ntripStatus === 2 ? "Waiting" :
+                     agio.ntripStatus === 3 ? "Send GGA" :
+                     agio.ntripStatus === 4 ? "Listening":
+                     "Unknown")        }
+
 		ColumnLayout {
 			id: leftColumn
 			anchors.top: parent.verticalCenter

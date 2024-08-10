@@ -29,9 +29,12 @@ Item {
 	property bool imuConnected: false
 	property bool machineConnected: false
 
+    property int ntripStatus: 0
+
 
     //these are signals that get sent to the backend
     signal btnSendSubnet_clicked();
+    signal ntripDebug(bool doWeDebug);
 
 }
 
