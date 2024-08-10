@@ -7,9 +7,7 @@
 
 void FormLoop::LoadUDPNetwork()
 {
-    qDebug() << "Loading UDP Network";
-    //helloFromAgIO[5] = 56;
-
+    helloFromAgIO[5] = 56;
 
     //get the hostname
     QString hostName = QHostInfo::localHostName();
@@ -55,7 +53,7 @@ void FormLoop::LoadUDPNetwork()
         qDebug() << "Failed to bind udpSocket: " << udpSocket->errorString();
         agio->setProperty("ethernetConnected", false);
     }else {
-        qDebug() << "udpSocket bound";
+        qDebug() << "udpSocket bound to " << ethUDP.address << ":" << ethUDP.portToListen;
         agio->setProperty("ethernetConnected", true);
     }
 
