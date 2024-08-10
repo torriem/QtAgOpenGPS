@@ -52,7 +52,7 @@ class FormLoop : public QObject
         IPAndPort ethUDP;//the main ethernet network
         IPAndPort ethModulesSet;
 
-        quint16 sendNtripToModulePort; // sends to .255, so ip is the same as ethUDP
+        quint16 sendNtripToModulePort = 2233; // sends to .255, so ip is the same as ethUDP
 
 		//debug vars
         bool haveWeRecUDP = false;
@@ -246,6 +246,7 @@ class FormLoop : public QObject
 	private:
 		//for the NTRIP Client counting
 		int ntripCounter = 10;
+        bool debugNTRIP = false;
 
         QTcpSocket *clientSocket; //server connection   line 21
         QByteArray casterRecBuffer; //received data buffer
@@ -292,6 +293,8 @@ class FormLoop : public QObject
 		void SettingsShutDownNTRIP();
 		void BuildGGA();
 		QString ToBase64(QString str);
+    private slots:
+        void NTRIPDebugMode(bool doWeDebug);
 };
 
 

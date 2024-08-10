@@ -52,20 +52,32 @@ void FormLoop::DoNTRIPSecondRoutine()
         //"focus", or visible. However, I want the debug vars for now
 		{
 
+            /*
+             * qml "ntripStatus" :
+             * 0 = invalid
+             * 1 = Authorizing
+             * 2 = Waiting
+             * 3 = Send GGA
+             * 4 = Listening
+             */
 			//watchdog for Ntrip
-			if (isNTRIP_Connecting)
+            if (isNTRIP_Connecting){
 				qDebug() << "Authourizing";
-			else
+                agio->setProperty("ntripStatus", 1);
+            }else
 			{
-				if (isNTRIP_RequiredOn && NTRIP_Watchdog > 10)
-					qDebug() << "Waiting";
+                if (isNTRIP_RequiredOn && NTRIP_Watchdog > 10){
+                    agio->setProperty("ntripStatus", 2);
+                    qDebug() << "Waiting";
+                }
 
 			}
 
 			if (sendGGAInterval > 0 && isNTRIP_Sending)
 			{
-				qDebug() << "Sending";
-				isNTRIP_Sending = false;
+                if(debugNTRIP) qDebug() << "Sending";
+                    agio->setProperty("ntripStatus", 3);
+                isNTRIP_Sending = false;
 			}
 		}
 	}
@@ -73,7 +85,7 @@ void FormLoop::DoNTRIPSecondRoutine()
 
 void FormLoop::ConfigureNTRIP() //set the variables to the settings
 {
-
+    if(debugNTRIP) qDebug() << "Configuring NTRIP";
 	aList.clear();
 	rList.clear();
 
@@ -92,7 +104,7 @@ void FormLoop::ConfigureNTRIP() //set the variables to the settings
 
 void FormLoop::StartNTRIP()
 {
-    qDebug() << "Starting NTRIP";
+    if(debugNTRIP) qDebug() << "Starting NTRIP";
 	if (isNTRIP_RequiredOn)
 	{
 		//load the settings
@@ -154,21 +166,21 @@ void FormLoop::StartNTRIP()
 
             //this is the socket that sends to the receiver
 			// Create the socket object
-            qDebug() << "Creating new tcp socket";
+            if(debugNTRIP) qDebug() << "Creating new tcp socket";
 			clientSocket = new QTcpSocket(this);
 
 			//set socket to non-blocking mode
             clientSocket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
 
 			// Connect to server
-            qDebug() << "Connecting to server... Connecting";
+            if(debugNTRIP) qDebug() << "Connecting to server... Connecting";
             clientSocket->connectToHost(wwwNtrip.address, wwwNtrip.portToSend);
             if (clientSocket->waitForConnected(5000)) {
-                qDebug() << "Ntrip client connected to server";
+                if(debugNTRIP) qDebug() << "Ntrip client connected to server";
 
             }
             else{
-                qDebug() << "NTRIP Client failed to connect. Reconnecting...";
+                if(debugNTRIP) qDebug() << "NTRIP Client failed to connect. Reconnecting...";
                 ReconnectRequest();
                 return;
             }
@@ -262,6 +274,7 @@ void FormLoop::StartNTRIP()
 void FormLoop::ReconnectRequest()
 {
 	//TimedMessageBox(2000, "NTRIP Not Connected", " Reconnect Request");
+    qDebug() << "NTRIP Not Connected. Reconnect Request";
 	ntripCounter = 15;
 	isNTRIP_Connected = false;
 	isNTRIP_Starting = false;
@@ -290,6 +303,7 @@ void FormLoop::IncrementNTRIPWatchDog()
 
 void FormLoop::SendAuthorization()
 {
+    if(debugNTRIP) qDebug() << "Attempting to send Athorization";
 	// Check we are connected
     if (clientSocket == NULL || clientSocket->state() != QAbstractSocket::ConnectedState)
 	{
@@ -328,7 +342,14 @@ void FormLoop::SendAuthorization()
             //Byte[] byteDateLine = Encoding.ASCII.GetBytes(str.ToCharArray());
             QByteArray byteDateLine = str.toLatin1();
 
-            clientSocket->write(byteDateLine, byteDateLine.length());
+            if(clientSocket->write(byteDateLine, byteDateLine.length())){
+                if(debugNTRIP)
+                    qDebug() << "NTRIP wrote to clientSocket";
+                else
+                        qDebug() << "NTRIP: Failed to write to clientSocket";
+            }
+
+
 
 			//enable to periodically send GGA sentence to server.
             if (sendGGAInterval > 0) tmr->start();
@@ -351,27 +372,30 @@ void FormLoop::OnAddMessage(QByteArray data)
 	//reset watchdog since we have updated data
 	NTRIP_Watchdog = 0;
 
-	if (isNTRIP_RequiredOn)
+    if (isNTRIP_RequiredOn)
 	{
 		//move the ntrip stream to queue
         for (int i = 0; i < data.length(); i++)
 		{
             rawTrip.enqueue(data[i]);
 		}
+        //qDebug() << "RawTrip: " << rawTrip;
 
         ntripMeterTimer->start();
 	}
 	else
-	{
+    {
 		//send it
+        qDebug() << "onadd";
 		SendNTRIP(data);
-	}
+    }
 
 
 }
 
 void FormLoop::ntripMeterTimer_Tick()
 {
+    qDebug() << "SizeOf rawTrip: " << rawTrip.size();
 	//we really should get here, but have to check
     if (rawTrip.size() == 0) return;
 
@@ -393,11 +417,13 @@ void FormLoop::ntripMeterTimer_Tick()
     for (int i = 0; i < cnt; i++) trip[i] = rawTrip.dequeue();
 
 	//send it
+    qDebug() << "tick tick";
 	SendNTRIP(trip);
 
 	//Are we done?
     if (rawTrip.size() == 0)
 	{
+        qDebug() << "RawTrip = 0!";
         ntripMeterTimer->stop();
 
 		if (focusSkipCounter != 0)
@@ -405,7 +431,10 @@ void FormLoop::ntripMeterTimer_Tick()
 	}
 
 	//Can't keep up as internet dumped a shit load so clear
-    if (rawTrip.size() > 10000) rawTrip.clear();
+    if (rawTrip.size() > 10000) {
+        rawTrip.clear();
+        qDebug() << "Couldn't keep up. Cleared rawTrip";
+    }
 }
 
 void FormLoop::SendNTRIP(QByteArray data)
@@ -422,6 +451,7 @@ void FormLoop::SendNTRIP(QByteArray data)
 	if (isSendToUDP)
 	{
         SendUDPMessage(data, ethUDP.address, sendNtripToModulePort);
+        if(debugNTRIP) qDebug() << "NTRIP: Sending data " << data << " to modules UDP network";
 	}
 }
 
@@ -438,8 +468,6 @@ void FormLoop::SendGGA()
 	}
 
 	// Read the message from the text box and send it
-    //try
-    //{
 		isNTRIP_Sending = true;
 		BuildGGA();
         //I'm not sure about this. sbGGA is a stringbuilder in cs, however, I think it's a
@@ -448,12 +476,12 @@ void FormLoop::SendGGA()
         QString str = sbGGA;
 
         QByteArray byteDateLine = str.toLatin1();
-        clientSocket->write(byteDateLine, byteDateLine.length());
-    /*}
-	catch (...)
-	{
-		ReconnectRequest();
-    }*/
+        if(clientSocket->write(byteDateLine, byteDateLine.length())){
+            if(debugNTRIP) qDebug() << "Sending GGA to caster";
+        }else{
+            qDebug() << "Failed to send GGA to caster. Reconnecting";
+            ReconnectRequest();
+        }
 }
 
 
@@ -461,16 +489,18 @@ void FormLoop::SendGGA()
 {
 	// Check if we got any data
     while (clientSocket->bytesAvailable() > 0){//not yet finished
-        QByteArray byteData;
-        byteData.resize(clientSocket->bytesAvailable());
-        clientSocket->read(byteData.data(), byteData.size());
+        casterRecBuffer.resize(clientSocket->bytesAvailable());
+        clientSocket->read(casterRecBuffer.data(), casterRecBuffer.size());
 
-        qint64 nBytesRec = byteData.size();
+        qint64 nBytesRec = casterRecBuffer.size();
+        //if(debugNTRIP) qDebug() << "Recieved NTRIP data: " << byteData << " Size: " << nBytesRec;
 
 		if (nBytesRec > 0)
 		{
-            QByteArray localMsg(nBytesRec, 0);
+            QByteArray localMsg;
+            localMsg.resize(nBytesRec);
             //Array.Copy(casterRecBuffer, localMsg, nBytesRec);
+            localMsg.append(casterRecBuffer, nBytesRec);
 
             OnAddMessage(localMsg);
 		}
@@ -708,3 +738,7 @@ void FormLoop::BuildGGA()
 	   Time      Lat       Lon     FixSatsOP Alt */
 }
 
+void FormLoop::NTRIPDebugMode(bool doWeDebug){
+    debugNTRIP = doWeDebug;
+    qDebug() << "Debug mode is now" << (debugNTRIP ? "enabled" : "disabled");
+}
