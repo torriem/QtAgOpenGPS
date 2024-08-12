@@ -245,12 +245,16 @@ Window {
             anchors.top:parent.top
             anchors.left: parent.left
             anchors.leftMargin: leftColumn.width+20
-            text: qsTr(aog.fixQuality ===1 ? "GPS Single":
-                        aog.fixQuality ===2 ? "DGPS":
-                        aog.fixQuality ===3 ? "RTK Float":
-                        aog.fixQuality ===4 ? "RTK Fix":
-                         "Invalid" + ": Age: "+ Math.round(aog.age * 10)/ 10)
-            font.bold: true
+            text: (aog.fixQuality === 0 ? "Invalid":
+                  aog.fixQuality ===1 ? "GPS Single":
+                  aog.fixQuality ===2 ? "DGPS":
+                  aog.fixQuality ===3 ? "PPS":
+                  aog.fixQuality ===4 ? "RTK Fix":
+                  aog.fixQuality ===5 ? "RTK Float":
+                  aog.fixQuality ===6 ? "Estimate":
+                  aog.fixQuality ===7 ? "Man IP":
+                  aog.fixQuality ===8 ? "Sim":
+                  "Invalid") + ": Age: "+ Math.round(aog.age * 10)/ 10
             font.pixelSize: 20
             anchors.bottom: parent.verticalCenter
         }
