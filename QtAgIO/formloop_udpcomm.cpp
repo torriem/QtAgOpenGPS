@@ -111,6 +111,7 @@ void FormLoop::ReceiveFromLoopBack()
         QByteArray byteData;
         byteData.resize(loopBackSocket->pendingDatagramSize());
         loopBackSocket->readDatagram(byteData.data(), byteData.size());
+        SendUDPMessage(byteData, ethUDP.address, ethUDP.portToSend);
 
         /*
 	 * This is a part of the whole serial nightmare...
