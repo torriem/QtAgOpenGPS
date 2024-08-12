@@ -90,9 +90,11 @@ class FormLoop : public QObject
 
         void setupGUI();
         void ShowAgIO();
+		void UpdateUIVars();
 
 		/*formloop.cpp
 		 * formerly Formloop.cs */
+        int nmeaErrCounter = 0;
 
 		bool isGPSSentencesOn = false, isSendNMEAToUDP;
         int focusSkipCounter = 310;
@@ -182,6 +184,8 @@ class FormLoop : public QObject
 
 		double latitudeSend = glm::DOUBLE_MAX, longitudeSend = glm::DOUBLE_MAX, latitude, longitude;
 
+        float previousAltitude = 0;
+        bool nmeaError = false;
 
 		unsigned short satellitesData, satellitesTracked = glm::USHORT_MAX, hdopX100 = glm::USHORT_MAX, ageX100 = glm::USHORT_MAX;
 

@@ -58,6 +58,7 @@ FormLoop::~FormLoop()
 }
 void FormLoop::oneSecondLoopTimer_Tick(){
     DoNTRIPSecondRoutine();
+	UpdateUIVars();
 }
 
 void FormLoop::TwoSecondLoop()

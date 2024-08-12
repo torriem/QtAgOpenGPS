@@ -1,4 +1,5 @@
 #include "formloop.h"
+#include <QtMath>
 
 QString FormLoop::FixQuality(){
     switch(fixQualityData) {
@@ -209,6 +210,14 @@ void FormLoop::ParseNMEA(QString buffer)
         nmeaPGN[2] = 0x7C;
         nmeaPGN[3] = 0xD6;
         nmeaPGN[4] = 0x33; // nmea total array count minus 6
+
+        if(previousAltitude != 0){
+            double difference = previousAltitude - altitude;
+            if (qAbs(difference) > 1.0) {
+                nmeaError = true;
+            }
+        }
+        previousAltitude = altitude;
 
         //longitude
         //Buffer.BlockCopy(BitConverter.GetBytes(longitudeSend), 0, nmeaPGN, 5, 8);

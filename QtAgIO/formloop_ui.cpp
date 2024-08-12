@@ -66,3 +66,36 @@ void FormLoop::ShowAgIO(){
         qDebug() << "No root objects found.";
     }
 }
+void FormLoop::UpdateUIVars(){
+	agio->setProperty("latitude", latitudeSend);
+	agio->setProperty("longitude", longitudeSend);
+	agio->setProperty("altitude", altitudeData);//float
+	agio->setProperty("speed", speedData); //
+	agio->setProperty("heading", headingTrueData);//
+	agio->setProperty("imuroll", rollData);//
+    agio->setProperty("imupitch", imuPitchData);//
+	agio->setProperty("age", ageData);//ushort
+	agio->setProperty("quality", fixQuality);//quint8
+	agio->setProperty("sats", satellitesTracked);//ushort
+    agio->setProperty("yawrate", imuYawRate);//short
+	agio->setProperty("gga", ggaSentence);
+	agio->setProperty("vtg", vtgSentence);
+	agio->setProperty("panda", pandaSentence);
+	agio->setProperty("paogi", paogiSentence);
+	agio->setProperty("hdt", hdtSentence);
+	agio->setProperty("avr", avrSentence);
+	agio->setProperty("hpd", hpdSentence);
+	agio->setProperty("sxt", ksxtSentence);
+
+    //error checking altitude. If we change wildly, something wrong.
+    //most likely two gps sources
+    if(nmeaError){
+
+        if (nmeaErrCounter>10) nmeaErrCounter = 0;
+
+        nmeaErrCounter++ ;
+        agio->setProperty("nmeaError", nmeaErrCounter);
+        nmeaError = false;
+    }
+}
+
