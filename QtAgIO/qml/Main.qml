@@ -64,6 +64,11 @@ Window {
                  icon.source: imagePath + "AgIOBtn.png"
                  color: agio.ntripConnected ? "green" : "red"
 			 }
+             IconButtonTransparent {
+                 icon.source: "/images/Nmea.png"
+                 visible: agio.gpsConnected
+                 onClicked: gpsInfo.visible = !gpsInfo.visible
+             }
 		 }
 		 Column {
 			 id: moduleStatus
@@ -142,4 +147,11 @@ Window {
 		id: ethernetConfig
 		visible: false
 	}
+    GPSInfo {
+        id: gpsInfo
+        visible: false
+    }
+    AgDiag {
+        id: agdiag
+    }
 }

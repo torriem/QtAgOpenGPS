@@ -10,16 +10,15 @@ import QtQuick.Dialogs
 
 MessageDialog {
 	visible: false
-    onVisibleChanged: console.log("MessageDialog vis changed")
-	id: message
+    id: messageDia
 	title: "Title"
 	text: "Message"
     buttons: MessageDialog.Ok
-	onAccepted: message.visible = false
+    onAccepted: messageDia.visible = false
 
 	function addMessage(title: string, message: string) {
-		message.title = title
-		message.text = message
-		message.visible = true
+        messageDia.title = title
+        messageDia.text = message
+        messageDia.visible = true
 	}
 }
