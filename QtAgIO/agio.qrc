@@ -93,5 +93,7 @@
         <file>qml/components/Spacer.qml</file>
         <file>qml/components/Message.qml</file>
         <file>qml/EthernetConfig.qml</file>
+        <file>qml/GPSInfo.qml</file>
+        <file>qml/AgDiag.qml</file>
     </qresource>
 </RCC>
