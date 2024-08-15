@@ -108,6 +108,9 @@ void FormLoop::ParseNMEA(QString& buffer)
 
     gpsHz = 0.98 * gpsHz + 0.02 * nowHz;
 
+    //useful for finding delays
+    //qDebug() << "nowHz: " << nowHz << " swframeelapsed: " << swFrame.elapsed();
+
     swFrame.restart();
 
     //now we have a complete sentence or more somewhere in the portData

@@ -192,8 +192,6 @@ void FormLoop::SendUDPMessage(QByteArray byteData, QHostAddress address, uint po
             qDebug() << "SendUDP was requested to send empty data message. Did not send";
 
 
-    }else{
-        qDebug() << "Listen to modules only. UDP message did not send";
     }
 }
 void FormLoop::ReceiveFromUDP()
