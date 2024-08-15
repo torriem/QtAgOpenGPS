@@ -17,6 +17,7 @@
 #include <QTimer>
 #include <QQueue>
 #include <QDateTime>
+#include <QElapsedTimer>
 
 
 class FormUDP;
@@ -166,6 +167,9 @@ class FormLoop : public QObject
 		/* formloop_parseNMEA.cpp
 		 * formerly NMEA.designer.cs */
 	private:
+
+        double nowHz;
+        double gpsHz;
 		QString rawBuffer = 0;
 
 		QStringList words;
@@ -175,6 +179,7 @@ class FormLoop : public QObject
 		bool isNMEAToSend = false;
 
 	public:
+        QElapsedTimer swFrame;
 		QString ggaSentence, vtgSentence, hdtSentence, avrSentence, paogiSentence,
 				hpdSentence, rmcSentence, pandaSentence, ksxtSentence;
 

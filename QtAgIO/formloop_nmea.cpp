@@ -101,7 +101,15 @@ void FormLoop::ParseNMEA(QString buffer)
         return;
     }
 
+    //compute incoming hz
+    nowHz = 1000.0 / swFrame.elapsed(); //convert ms to hz
+    if (nowHz > 20) nowHz = 20;
+    if (nowHz < 3) nowHz = 3;
 
+    gpsHz = 0.98 * gpsHz + 0.02 * nowHz;
+
+    qDebug() << "Hz: " << gpsHz << "Raw Hz: " << nowHz;
+    swFrame.restart();
 
     //now we have a complete sentence or more somewhere in the portData
     while (true)

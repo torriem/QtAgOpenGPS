@@ -48,6 +48,7 @@ FormLoop::FormLoop(QObject *parent) : QObject(parent),
     clientSocket = new QTcpSocket(this);
 
     FormUDp_Load();
+    swFrame.start();
 }
 
 FormLoop::~FormLoop()
