@@ -38,7 +38,6 @@ Window {
     signal save_everything()
 
     function close() {
-		console.log("close called")
 		if (areWindowsOpen()) {
 			timedMessage.addMessage(2000,qsTr("Some windows are open. Close them first."))
 			console.log("some windows are open. close them first")
@@ -1108,7 +1107,7 @@ Window {
 
             Item{
                 id: autoTurn
-                anchors.top:manualUturnLateral.top
+                anchors.top:gridTurnBtns.top
                 anchors.right: parent.right
                 anchors.rightMargin: 200
                 width: 100 * theme.scaleWidth
@@ -1151,6 +1150,7 @@ Window {
                 }
             }
 			Grid{
+                id: gridTurnBtns
 				spacing: 10
 				rows: 2
 				columns: 2

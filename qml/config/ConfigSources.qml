@@ -164,7 +164,7 @@ Rectangle{
 		anchors.rightMargin: 5 * theme.scaleWidth
 		anchors.bottomMargin: 5 * theme.scaleHeight
 		onEnabledChanged: visible = enabled
-		visible: singleBtn.checked
+        visible: fixBtn.checked
 
         border.color: enabled ? aog.blackDayWhiteNight : "grey"
 

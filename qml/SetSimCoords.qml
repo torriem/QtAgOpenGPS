@@ -80,7 +80,7 @@ Rectangle{
             height: 50
             anchors.bottom: parent.bottom
             anchors.left: parent.left
-            placeholderText: settings.setGPS_simLatitude
+            //placeholderText: settings.setGPS_simLatitude
         }
         TextLine{
             text: qsTr("Longitude")
@@ -99,7 +99,7 @@ Rectangle{
             height: 50
             anchors.bottom: parent.bottom
             anchors.right: parent.right
-            placeholderText: settings.setGPS_simLongitude
+            //placeholderText: settings.setGPS_simLongitude
         }
     }
 
