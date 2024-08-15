@@ -63,35 +63,35 @@ Window {
 		Qt.quit()
     }
 	function areWindowsOpen() {
-		if (config.visible == true) {
+        if (config.visible === true) {
 			console.log("config visible") 
 			return true
 		}
-		else if (headlandDesigner.visible == true) {
+        else if (headlandDesigner.visible === true) {
 			console.log("headlandDesigner visible") 
 			return true
 		}
-		else if (headacheDesigner.visible == true) {
+        else if (headacheDesigner.visible === true) {
 			console.log("headacheDesigner visible") 
 			return true
 		}
-		else if (steerConfigWindow.visible == true) {
+        else if (steerConfigWindow.visible === true) {
 			console.log("steerConfigWindow visible") 
 			return true
 		}
-		else if (abCurvePicker.visible == true) {
+        else if (abCurvePicker.visible === true) {
 			console.log("abCurvePicker visible") 
 			return true
 		}
-		else if (abLinePicker.visible == true) {
+        else if (abLinePicker.visible === true) {
 			console.log("abLinePicker visible") 
 			return true
 		}
-		else if (tramLinesEditor.visible == true) {
+        else if (tramLinesEditor.visible === true) {
 			console.log("tramLinesEditor visible") 
 			return true
 		}
-		else if (lineEditor.visible == true) {
+        else if (lineEditor.visible === true) {
 			console.log("lineEditor visible") 
 			return true
 		}
@@ -99,20 +99,20 @@ Window {
 		//if (lineDrawer.visible) return false
         //if (lineNudge.acive) return false
 		//if (refNudge.acive) return false
-		else if (setSimCoords.visible == true) {
+        else if (setSimCoords.visible === true) {
 			console.log("setSimCoords visible") 
 			return true
 		}
-		else if (trackNew.visible == true) {
+        else if (trackNew.visible === true) {
 			console.log("trackNew visible") 
 			return true
 		}
-		else if (fieldNew.visible == true) {
+        else if (fieldNew.visible === true) {
 			console.log("FieldNew visible") 
 			return true
 		}
 		//if (fieldFromKML.visible) return false
-		else if (fieldOpen.visible == true) return true
+        else if (fieldOpen.visible === true) return true
 		//if (contextFlag.visible == true) return false
 		else return false
 	}
@@ -481,7 +481,7 @@ Window {
 				theme.buttonSizesChanged()
 			}
 			//Layout.maximumHeight: theme.buttonSize
-            onVisibleChanged: if(visible == false)
+            onVisibleChanged: if(visible === false)
                                   width = 0
                               else
                                   width = children.width
@@ -638,7 +638,7 @@ Window {
 				theme.buttonSizesChanged()
 			}
 			//Layout.maximumWidth: theme.buttonSize
-            onVisibleChanged: if(visible == false)
+            onVisibleChanged: if(visible === false)
                                   width = 0
                               else
                                   width = children.width
@@ -884,7 +884,7 @@ Window {
 				theme.buttonSizesChanged()
 			}
 			onVisibleChanged: {
-				if (visible == false)
+                if (visible === false)
 					height = 0
 				else
 					height = children.height				
@@ -1559,7 +1559,8 @@ Window {
             }
             FieldOpen{
                 id: fieldOpen
-                x: 100
+                x: 100    }
+
                 y: 75
             }
         }
@@ -1622,7 +1623,7 @@ Window {
             }
         }
     }
-	Shortcut{ //vim navigation rules !!!!
+    /*Shortcut{ //vim navigation rules !!!!
 		sequence: "j"
 		onActivated: aog.sim_bump_speed(true)
 	}
@@ -1680,7 +1681,7 @@ Window {
 			/*if (trk.idx > -1) //
 			 {
 				 trk.NudgeTrack((double)Properties.Settings.Default.setAS_snapDistance * -0.01);
-			 }*/
+             }
 			 lineNudge.snapLeft()
 		 }
 	 }
@@ -1716,7 +1717,7 @@ Window {
 
 		  //
 		  Form form = new FormSteerWiz(this);
-		  form.Show(this);*/
+          form.Show(this);
 
 	  }
 	  /*if (event.key == (hotkeys[11])) //section or zone button
@@ -1827,7 +1828,8 @@ Window {
 			simBarRect.zeroSteerAngle()			
 		}
 
-		/*if (event.key == Keys.OemOpenBrackets)
+*
+          For	/*if (event.key == Keys.OemOpenBrackets)
 		 {
 			 sim.stepDistance = 0;
 			 sim.isAccelBack = true;
@@ -1855,5 +1857,5 @@ Window {
 			  console.log("not implemented. go to line 260 in mainwindow.qml to implement")
 		  }
 	  }
-  }*/
-}
+  }
+}*/
