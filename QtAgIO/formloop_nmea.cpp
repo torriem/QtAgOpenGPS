@@ -26,7 +26,7 @@ QString FormLoop::FixQuality(){
     }
 }
 
-QString FormLoop::Parse(QString &buffer)
+QString FormLoop::Parse(QString& buffer)
 {
     QString sentence;
     do
@@ -61,9 +61,8 @@ QString FormLoop::Parse(QString &buffer)
 }
 
 
-void FormLoop::ParseNMEA(QString buffer)
+void FormLoop::ParseNMEA(QString& buffer)
 {
-
     if (rawBuffer.isEmpty()) return;
 
     //find end of a sentence
@@ -88,6 +87,7 @@ void FormLoop::ParseNMEA(QString buffer)
     cr = rawBuffer.indexOf('\r');
     dollar = rawBuffer.indexOf('$');
     if (cr == -1 || dollar == -1) return;
+
     if (rawBuffer.length() > 301)
     {
         //if (isLogNMEA)
@@ -108,15 +108,16 @@ void FormLoop::ParseNMEA(QString buffer)
 
     gpsHz = 0.98 * gpsHz + 0.02 * nowHz;
 
-    qDebug() << "Hz: " << gpsHz << "Raw Hz: " << nowHz;
     swFrame.restart();
 
     //now we have a complete sentence or more somewhere in the portData
     while (true)
     {
+
+
         //extract the next NMEA single sentence
         nextNMEASentence = Parse(buffer); //is this right? David 6/22/24
-        if (nextNMEASentence.isEmpty()) break;
+    if (nextNMEASentence.isEmpty()) break;
 
         words = nextNMEASentence.split(',');
 

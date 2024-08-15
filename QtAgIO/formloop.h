@@ -209,9 +209,9 @@ class FormLoop : public QObject
 		double LastUpdateUTC = 0;
 
 		QString FixQuality();
-		QString Parse(QString &buffer);
+        QString Parse(QString& buffer);
 
-		void ParseNMEA(QString rawBuffer);
+        void ParseNMEA(QString& buffer);
 		void ParseKSXT();
 		void ParseGGA();
 		void ParseVTG();
