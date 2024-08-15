@@ -1,7 +1,11 @@
 #include "formloop.h"
+#include "agioproperty.h"
 #include "qmlutil.h"
 #include <QQuickWindow>
 #include <QQmlApplicationEngine>
+#include "qmlsettings.h"
+
+extern QMLSettings qml_settings;
 
 FormLoop::FormLoop(QObject *parent) : QObject(parent),
     qml_root(parent),
@@ -9,9 +13,14 @@ FormLoop::FormLoop(QObject *parent) : QObject(parent),
     ethUDP("192.168.1.101", 2201, 2202),
     ethModulesSet("255.255.255.255", 2301, 2302)
 {
+
+	qml_settings.setupKeys();
+	qml_settings.loadSettings();
+
+	setupGUI();
+	loadSettings();
     //loadSettings();
 
-    setupGUI();
     LoadLoopback();
 	LoadUDPNetwork();
    //buffer.resize(1024);

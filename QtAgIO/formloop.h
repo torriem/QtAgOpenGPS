@@ -42,10 +42,20 @@ class FormLoop : public QObject
 
 	public:
     explicit FormLoop(QObject *parent = nullptr);
-		~FormLoop();
-		QSettings settings;
+	~FormLoop();
 
-        QObject *qml_root;
+		/* settings related stuff*/
+		//QSettings settings;
+		void loadSettings();
+
+
+		//I don't know if we need or not. But here it is
+		//settings dialog callbacks
+		void on_settings_reload();
+		void on_settings_save();
+		// end of settings related stuff
+
+		QObject *qml_root;
         QObject *agio;
         QWidget *qmlcontainer;
 
