@@ -146,7 +146,7 @@ void FormLoop::DoHelloAlarmLogic()
         }
     }
     else if (traffic.helloFromIMU < 90)
-        isConnectedSteer = true;
+        isConnectedIMU = true;
 
     currentHello = traffic.cntrGPSOut != 0;
 
