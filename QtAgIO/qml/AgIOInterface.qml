@@ -29,5 +29,40 @@ Item {
 	property bool imuConnected: false
 	property bool machineConnected: false
 
+    property int ntripStatus: 0
+
+	//NMEA variables
+	property double latitude: 0
+	property double longitude: 0
+	property double altitude: 0
+	property double speed: 0
+	property double heading: 0
+	property double imuheading: 0
+	property double imuroll: 0
+	property double imupitch: 0
+	property double age: 0
+	property int quality: 0
+	property int sats: 0
+	property double yawrate: 0
+	property double hdop: 0
+
+	property string gga: ""
+	property string vtg: ""
+	property string panda: ""
+	property string paogi: ""
+	property string hdt: ""
+	property string avr: ""
+	property string hpd: ""
+	property string sxt: ""
+
+    property int nmeaError: 0 // triggers if altitude changes drastically--a sign of 2 separate nmea strings
+
+
+    //these are signals that get sent to the backend
+    signal btnSendSubnet_clicked();
+    signal ntripDebug(bool doWeDebug);
+
+
+
 }
 

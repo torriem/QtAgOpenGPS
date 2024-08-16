@@ -55,6 +55,7 @@ Window {
 				 text: qsTr("Ethernet")
 				 icon.source: imagePath + "B_UDP.png"
 				 color: agio.ethernetConnected ? "green" : "red"
+                 onClicked: ethernetConfig.visible = !ethernetConfig.visible
 			 }
 			 IconButtonColor {
 				 id: btnNTRIPStatus
@@ -63,6 +64,11 @@ Window {
                  icon.source: imagePath + "AgIOBtn.png"
                  color: agio.ntripConnected ? "green" : "red"
 			 }
+             IconButtonTransparent {
+                 icon.source: "/images/Nmea.png"
+                 visible: agio.gpsConnected
+                 onClicked: gpsInfo.visible = !gpsInfo.visible
+             }
 		 }
 		 Column {
 			 id: moduleStatus
@@ -116,6 +122,7 @@ Window {
 			 IconButton {
 				 id: btnNTRIP
 				 icon.source: imagePath + "NtripSettings.png"
+                 onClicked: ntrip.visible = !ntrip.visible
 			 }
 			 IconButtonText {
 				 id: btnHide
@@ -127,4 +134,24 @@ Window {
 			 }
 		 }
 	}
+
+    /************** - Put all child windows here - ********************/
+    Message {
+		id: message
+	}
+    NTrip{
+        id: ntrip
+        visible: false
+    }
+	EthernetConfig {
+		id: ethernetConfig
+		visible: false
+	}
+    GPSInfo {
+        id: gpsInfo
+        visible: false
+    }
+    AgDiag {
+        id: agdiag
+    }
 }

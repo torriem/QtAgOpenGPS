@@ -133,21 +133,29 @@ MoveablePopup {
 						anchors.bottomMargin: 5 * theme.scaleHeight
 						anchors.rightMargin: 20 * theme.scaleWidth
 						anchors.leftMargin: 20 * theme.scaleWidth
-						IconButtonTransparent{
+                        IconButtonTransparent{ //was zero button
 							width: height*2
 							icon.source: "/images/SteerCenter.png"
 							implicitHeight: parent.height /5 -20
 							Layout.alignment: Qt.AlignCenter
+                            visible: false
 
 						}
 
 						SliderCustomized {
 							id: wasZeroSlider
 							width: 200 * theme.scaleWidth
-							leftText: value
-							from: -30//idk
-							to: 30
-							value: 5
+                            leftText: utils.decimalRound(value / cpDegSlider.value, 2)
+                            from: -4000
+                            to: 4000
+
+                            property int wasOffset: settings.setAS_wasOffset
+
+                            //onWasOffsetChanged: value = wasOffset / cpDegSlider.value
+
+                            value: settings.setAS_wasOffset / cpDegSlider.value
+
+                            onValueChanged: settings.setAS_wasOffset = value * cpDegSlider
 							centerTopText: "WAS Zero"
 							Layout.alignment: Qt.AlignCenter
 							implicitHeight: 50 * theme.scaleHeight

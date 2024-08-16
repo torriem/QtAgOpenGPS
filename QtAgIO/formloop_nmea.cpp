@@ -1,4 +1,5 @@
 #include "formloop.h"
+#include <QtMath>
 
 QString FormLoop::FixQuality(){
     switch(fixQualityData) {
@@ -25,7 +26,7 @@ QString FormLoop::FixQuality(){
     }
 }
 
-QString FormLoop::Parse(QString &buffer)
+QString FormLoop::Parse(QString& buffer)
 {
     QString sentence;
     do
@@ -60,9 +61,8 @@ QString FormLoop::Parse(QString &buffer)
 }
 
 
-void FormLoop::ParseNMEA(QString buffer)
+void FormLoop::ParseNMEA(QString& buffer)
 {
-
     if (rawBuffer.isEmpty()) return;
 
     //find end of a sentence
@@ -87,6 +87,7 @@ void FormLoop::ParseNMEA(QString buffer)
     cr = rawBuffer.indexOf('\r');
     dollar = rawBuffer.indexOf('$');
     if (cr == -1 || dollar == -1) return;
+
     if (rawBuffer.length() > 301)
     {
         //if (isLogNMEA)
@@ -100,14 +101,26 @@ void FormLoop::ParseNMEA(QString buffer)
         return;
     }
 
+    //compute incoming hz
+    nowHz = 1000.0 / swFrame.elapsed(); //convert ms to hz
+    if (nowHz > 20) nowHz = 20;
+    if (nowHz < 3) nowHz = 3;
 
+    gpsHz = 0.98 * gpsHz + 0.02 * nowHz;
+
+    //useful for finding delays
+    //qDebug() << "nowHz: " << nowHz << " swframeelapsed: " << swFrame.elapsed();
+
+    swFrame.restart();
 
     //now we have a complete sentence or more somewhere in the portData
     while (true)
     {
+
+
         //extract the next NMEA single sentence
         nextNMEASentence = Parse(buffer); //is this right? David 6/22/24
-        if (nextNMEASentence.isEmpty()) break;
+    if (nextNMEASentence.isEmpty()) break;
 
         words = nextNMEASentence.split(',');
 
@@ -209,6 +222,14 @@ void FormLoop::ParseNMEA(QString buffer)
         nmeaPGN[2] = 0x7C;
         nmeaPGN[3] = 0xD6;
         nmeaPGN[4] = 0x33; // nmea total array count minus 6
+
+        if(previousAltitude != 0){
+            double difference = previousAltitude - altitude;
+            if (qAbs(difference) > 1.0) {
+                nmeaError = true;
+            }
+        }
+        previousAltitude = altitude;
 
         //longitude
         //Buffer.BlockCopy(BitConverter.GetBytes(longitudeSend), 0, nmeaPGN, 5, 8);

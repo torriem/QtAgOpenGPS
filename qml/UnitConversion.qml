@@ -316,6 +316,12 @@ Item {
         return radians * 180 / Math.PI
     }
 
+    function decimalRound(number, decimals) {
+        const factor = Math.pow(10, decimals);
+        return Math.round(number * factor) / factor;
+    }
+
+
     function distanceLatLon(latitude1, longitude1, latitude2, longitude2)
     {
         //This is a haversine based distance calculation formula

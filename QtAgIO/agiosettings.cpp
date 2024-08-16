@@ -1,85 +1,248 @@
-// settings.cpp
-
 #include "agiosettings.h"
+#include <QString>
+#include <QStringList>
+#include <QColor>
+//#include "common.h"
+#include <QDebug>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QDataStream>
+#include <QFile>
+#include "qmlsettings.h"
 
-AgIOSettings::AgIOSettings(QObject *parent)
-    : QObject(parent)
+extern QMLSettings qml_settings;
+
+QVariant unset("UNSET"); //sentinal used to identify missing values in settings
+
+AgIOSettings::AgIOSettings(QObject *parent) : QSettings(parent)
 {
-// Define the global QSettings object
 
-    QSettings::setDefaultFormat(QSettings::IniFormat);
-    QSettings::setPath(QSettings::IniFormat,
-                       QSettings::UserScope,
-                       QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
-QSettings settings;
+}
 
+QVariant AgIOSettings::value(const QString &key, const QVariant &defaultvalue)
+{
+    QVariant val;
+    val = QSettings::value(key,unset);
+    if (val == unset && defaultvalue != unset) {
+        qDebug() << "type for " << key.toUtf8() << "is " <<  val.typeId();
+        QSettings::setValue(key,defaultvalue);
+        return defaultvalue;
+    }
 
-    if(!settings.contains("LoopbackComm/ListenToAOGPort"))
+    return val;
+}
+
+QVector<int> AgIOSettings::value(const QString &key, const QVector<int> &defaultvalue)
+{
+    QVariant val;
+    val = QSettings::value(key,unset);
+    if (val == unset) {
+        QSettings::setValue(key,toVariant(defaultvalue));
+        return defaultvalue;
+    }
+
+    return toVector<int>(val);
+}
+
+void AgIOSettings::setValue(const QString &key, const QVector<int> &value_list)
+{
+    QSettings::setValue(key,toVariant(value_list));
+    qml_settings.updateSetting(key);
+    //emit updateFromSettings();
+}
+
+void AgIOSettings::setValue(const QString &key, const QVariant &value)
+{
+    QSettings::setValue(key,value);
+    qml_settings.updateSetting(key);
+    //emit updateFromSettings();
+}
+
+void AgIOSettings::setValue_noqml(const QString &key, const QVariant &value)
+{
+    QSettings::setValue(key,value);
+    //emit updateFromSettings();
+}
+
+QJsonObject AgIOSettings::toJson()
+{
+    //b = QVariant(QColor::fromRgbF(1,0.5,0.2));
+    QVariant b;
+
+    QStringList keys = allKeys();
+    QString type;
+    QString json_value;
+    QJsonObject blah; // = QJsonObject::fromVariantMap(keysValuesPairs);
+
+    for (const auto &key : keys)
     {
-        generateDefaultSettings(settings);
+
+        b = value(key,unset);
+
+        if (b == unset) continue;
+        type = b.typeName();
+
+        if (type == "QStringList" ||
+            type == "QVariantList"  ||
+            type == "QJSValue")
+        {
+            QVector<int> list = value(key,QVector<int>());
+            json_value="@List:";
+            for(int i=0; i < list.length(); i++){
+                json_value += QString("%1").arg(list[i]);
+                if (i < list.length() -1)
+                    json_value +=",";
+            }
+            blah[key] = json_value;
+        } else if (type == "QPoint") {
+            QByteArray raw_value;
+            QDataStream ds(&raw_value,QIODevice::WriteOnly);
+
+            ds << b;
+
+            json_value = QLatin1String("@Variant(");
+            json_value += QString::fromLatin1(raw_value.constData(), raw_value.size());
+            json_value += ")";
+            blah[key] = json_value;
+        } else {
+            blah[key] = QJsonValue::fromVariant(b);
+        }
+        //qDebug() << key <<", " << type << ", " << json_value;
+        /*
+        } else {
+            QByteArray raw_value;
+            QDataStream ds(&raw_value,QIODevice::WriteOnly);
+
+            ds << b;
+
+            json_value = QLatin1String("@Variant(");
+            json_value += QString::fromLatin1(raw_value.constData(), raw_value.size());
+            json_value += ")";
+        }
+        */
+
+    }
+
+
+    /*
+    QMap<QString, QVariant> keysValuesPairs;
+    keysValuesPairs.insert("testing",QVariant(QColor::fromRgbF(1,0.5,0.25)));
+
+    */
+    return blah;
+
+}
+
+bool AgIOSettings::loadJson(QString filename)
+{
+    QFile loadfile(filename);
+    if (!loadfile.open(QIODevice::ReadOnly))
+    {
+        qWarning() << "Could not load json settings file " << filename;
+        return false;
+    }
+
+    QByteArray loadedjson = loadfile.readAll();
+    QJsonDocument loaded(QJsonDocument::fromJson(loadedjson));
+    QJsonObject j = loaded.object();
+    QString new_value;
+    QVariant v;
+
+    for (const auto &key : j.keys())
+    {
+        new_value = j[key].toString();
+        if (new_value.startsWith("@Variant("))
+        {
+            QByteArray raw_data;
+            QDataStream ds(&raw_data,QIODevice::ReadOnly);
+
+            raw_data = new_value.toLatin1().mid(9);
+            ds >> v;
+            QSettings::setValue(key, v);
+        } else if(new_value.startsWith("@List:")) {
+            new_value = new_value.mid(6);
+            QStringList parts = new_value.split(",");
+            QVector<int> list;
+            for(QString part: parts) {
+                list.append(part.toInt());
+            }
+
+            setValue(key,list);
+        } else {
+            //if (key == "display/isMetric")
+            //    qDebug() << "isMetric is a problem child.";
+            v = j[key].toVariant();
+            QSettings::setValue(key, v);
+        }
+
+        qml_settings.updateSetting(key);
+    }
+
+    return true;
+
+}
+
+bool AgIOSettings::saveJson(QString filename)
+{
+    QFile savefile(filename);
+    if (!savefile.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "Could not save json settings file " << filename;
+        return false;
+    }
+
+    savefile.write(QJsonDocument(toJson()).toJson());
+    savefile.close();
+
+    return true;
+
+}
+
+//TODO: why are these functions here and not in glutils.cpp?
+QColor parseColor(QString setcolor)
+{
+    //qDebug() << setcolor;
+
+    QStringList c = setcolor.split(",");
+    if (c.size() == 3) {
+        return QColor::fromRgb(c.at(0).toInt(),
+                               c.at(1).toInt(),
+                               c.at(2).toInt());
+    } else if (c.size() == 4) {
+        return QColor::fromRgb(c.at(0).toInt(),
+                               c.at(1).toInt(),
+                               c.at(2).toInt(),
+                               c.at(3).toInt());
     } else {
-        qDebug() << "Using pre-generated settings file";
-    qDebug() << "QSettings file location:" << settings.fileName();
+       return QColor::fromRgb(255,0,255); //return magenta so we can see it
     }
 }
-// Helper to generate default settings
-    void AgIOSettings::generateDefaultSettings(QSettings& settings)
+
+int colorSettingStringToInt(QString colorSettingString)
 {
-    qWarning() << "Generating default settings";
+    QStringList parts = colorSettingString.split(',');
 
-    settings.clear();
+    int color;
 
-    settings.beginGroup("UDPComm");
-    settings.setValue("UdpListenPort", 9999);
-    settings.setValue("UdpSendPort", 8888);
-    settings.setValue("ListenOnly", false); //don't send to modules. for testing while using aog in the field
-    settings.setValue("NumConnections", 2);
-    settings.setValue("IP1", 192);
-    settings.setValue("IP2", 168);
-    settings.setValue("IP3", 5);
-    settings.endGroup();
+    if (parts.length() > 3)
+        color = parts[3].toInt() << 24; //Alpha
+    else
+        color = 0xff000000;
 
-    settings.beginGroup("LoopbackComm");// setting the ip address to QHostAddress::LocalHost seems to work, on Linux at least
-    settings.setValue("ListenToAOGPort", 17770);//this way we can use on the same device as aog
-    settings.setValue("SendToAOGPort", 15550);// aog uses 17777 and 15555. Change these to use with AOG
-    settings.endGroup();
+    color |= parts[0].toInt() << 16; // red
+    color |= parts[1].toInt() << 8; // green
+    color |= parts[2].toInt();  //blue
 
-    settings.beginGroup("Connection0");
-    settings.setValue("type", "UDP");
-    settings.setValue("name", "SteerBoard");
-    settings.setValue("host", "192.168.5.12");
-    settings.setValue("port", 8888);
-    settings.endGroup();
+    return color;
+}
 
-    settings.beginGroup("Connection1");
-    settings.setValue("type", "Serial");
-    settings.setValue("name", "GPSReceiver");
-    settings.setValue("port", "/dev/ttyACM0");
-    settings.setValue("baud", 9600);
-    settings.endGroup();
+QVector3D parseColorVector(QString setcolor)
+{
+    //qDebug() << setcolor;
 
-    settings.beginGroup("RTK");
-	settings.setValue("setNTRIP_isOn", false);
-	settings.setValue("setRadio_isOn", false);
-    settings.setValue("setPass_isOn", false);//serial pass from usb to usb
-    settings.setValue("setNTRIP_casterPort", 2101);
-	settings.setValue("setNTRIP_mount", "mount");
-	settings.setValue("setNTRIP_userName", "user");
-	settings.setValue("setNTRIP_userPassword", "pass");
-    settings.setValue("setNTRIP_sendToUDPPort", 2233);//not sure what's right here
-    settings.setValue("setNTRIP_sendGGAInterval", 0);
-	settings.setValue("setNTRIP_isGGAManual", false);
-	settings.setValue("setNTRIP_manualLat", 53.0000000);
-	settings.setValue("setNTRIP_manualLon", -111.0000000);
-	settings.setValue("setNTRIP_isTCP", false);
-	settings.setValue("setNTRIP_isHTTP10", false);
-    settings.setValue("IP1", 10);
-    settings.setValue("IP2", 0);
-    settings.setValue("IP3", 0);
-    settings.setValue("IP4", 50);
-    settings.endGroup();
-
-
-
-    settings.sync();
+    QStringList c = setcolor.split(",");
+    return QVector3D(c.at(0).toInt(),
+                     c.at(1).toInt(),
+                     c.at(2).toInt());
 }

@@ -112,7 +112,6 @@ Rectangle{
 		anchors.rightMargin: 10 * theme.scaleWidth
 
 		onVisibleChanged:{
-			console.log("loading settings")
 			load_settings()
 		}
 		function load_settings(){ 

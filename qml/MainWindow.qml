@@ -38,7 +38,6 @@ Window {
     signal save_everything()
 
     function close() {
-		console.log("close called")
 		if (areWindowsOpen()) {
 			timedMessage.addMessage(2000,qsTr("Some windows are open. Close them first."))
 			console.log("some windows are open. close them first")
@@ -63,35 +62,35 @@ Window {
 		Qt.quit()
     }
 	function areWindowsOpen() {
-		if (config.visible == true) {
+        if (config.visible === true) {
 			console.log("config visible") 
 			return true
 		}
-		else if (headlandDesigner.visible == true) {
+        else if (headlandDesigner.visible === true) {
 			console.log("headlandDesigner visible") 
 			return true
 		}
-		else if (headacheDesigner.visible == true) {
+        else if (headacheDesigner.visible === true) {
 			console.log("headacheDesigner visible") 
 			return true
 		}
-		else if (steerConfigWindow.visible == true) {
+        else if (steerConfigWindow.visible === true) {
 			console.log("steerConfigWindow visible") 
 			return true
 		}
-		else if (abCurvePicker.visible == true) {
+        else if (abCurvePicker.visible === true) {
 			console.log("abCurvePicker visible") 
 			return true
 		}
-		else if (abLinePicker.visible == true) {
+        else if (abLinePicker.visible === true) {
 			console.log("abLinePicker visible") 
 			return true
 		}
-		else if (tramLinesEditor.visible == true) {
+        else if (tramLinesEditor.visible === true) {
 			console.log("tramLinesEditor visible") 
 			return true
 		}
-		else if (lineEditor.visible == true) {
+        else if (lineEditor.visible === true) {
 			console.log("lineEditor visible") 
 			return true
 		}
@@ -99,20 +98,20 @@ Window {
 		//if (lineDrawer.visible) return false
         //if (lineNudge.acive) return false
 		//if (refNudge.acive) return false
-		else if (setSimCoords.visible == true) {
+        else if (setSimCoords.visible === true) {
 			console.log("setSimCoords visible") 
 			return true
 		}
-		else if (trackNew.visible == true) {
+        else if (trackNew.visible === true) {
 			console.log("trackNew visible") 
 			return true
 		}
-		else if (fieldNew.visible == true) {
+        else if (fieldNew.visible === true) {
 			console.log("FieldNew visible") 
 			return true
 		}
 		//if (fieldFromKML.visible) return false
-		else if (fieldOpen.visible == true) return true
+        else if (fieldOpen.visible === true) return true
 		//if (contextFlag.visible == true) return false
 		else return false
 	}
@@ -245,12 +244,16 @@ Window {
             anchors.top:parent.top
             anchors.left: parent.left
             anchors.leftMargin: leftColumn.width+20
-            text: qsTr(aog.fixQuality ===1 ? "GPS Single":
-                        aog.fixQuality ===2 ? "DGPS":
-                        aog.fixQuality ===3 ? "RTK Float":
-                        aog.fixQuality ===4 ? "RTK Fix":
-                         "Invalid" + ": Age: "+ Math.round(aog.age * 10)/ 10)
-            font.bold: true
+            text: (aog.fixQuality === 0 ? "Invalid":
+                  aog.fixQuality ===1 ? "GPS Single":
+                  aog.fixQuality ===2 ? "DGPS":
+                  aog.fixQuality ===3 ? "PPS":
+                  aog.fixQuality ===4 ? "RTK Fix":
+                  aog.fixQuality ===5 ? "RTK Float":
+                  aog.fixQuality ===6 ? "Estimate":
+                  aog.fixQuality ===7 ? "Man IP":
+                  aog.fixQuality ===8 ? "Sim":
+                  "Invalid") + ": Age: "+ Math.round(aog.age * 10)/ 10
             font.pixelSize: 20
             anchors.bottom: parent.verticalCenter
         }
@@ -477,7 +480,7 @@ Window {
 				theme.buttonSizesChanged()
 			}
 			//Layout.maximumHeight: theme.buttonSize
-            onVisibleChanged: if(visible == false)
+            onVisibleChanged: if(visible === false)
                                   width = 0
                               else
                                   width = children.width
@@ -634,7 +637,7 @@ Window {
 				theme.buttonSizesChanged()
 			}
 			//Layout.maximumWidth: theme.buttonSize
-            onVisibleChanged: if(visible == false)
+            onVisibleChanged: if(visible === false)
                                   width = 0
                               else
                                   width = children.width
@@ -880,7 +883,7 @@ Window {
 				theme.buttonSizesChanged()
 			}
 			onVisibleChanged: {
-				if (visible == false)
+                if (visible === false)
 					height = 0
 				else
 					height = children.height				
@@ -1104,7 +1107,7 @@ Window {
 
             Item{
                 id: autoTurn
-                anchors.top:manualUturnLateral.top
+                anchors.top:gridTurnBtns.top
                 anchors.right: parent.right
                 anchors.rightMargin: 200
                 width: 100 * theme.scaleWidth
@@ -1147,6 +1150,7 @@ Window {
                 }
             }
 			Grid{
+                id: gridTurnBtns
 				spacing: 10
 				rows: 2
 				columns: 2
@@ -1555,7 +1559,8 @@ Window {
             }
             FieldOpen{
                 id: fieldOpen
-                x: 100
+                x: 100    }
+
                 y: 75
             }
         }
@@ -1618,7 +1623,7 @@ Window {
             }
         }
     }
-	Shortcut{ //vim navigation rules !!!!
+    /*Shortcut{ //vim navigation rules !!!!
 		sequence: "j"
 		onActivated: aog.sim_bump_speed(true)
 	}
@@ -1676,7 +1681,7 @@ Window {
 			/*if (trk.idx > -1) //
 			 {
 				 trk.NudgeTrack((double)Properties.Settings.Default.setAS_snapDistance * -0.01);
-			 }*/
+             }
 			 lineNudge.snapLeft()
 		 }
 	 }
@@ -1712,7 +1717,7 @@ Window {
 
 		  //
 		  Form form = new FormSteerWiz(this);
-		  form.Show(this);*/
+          form.Show(this);
 
 	  }
 	  /*if (event.key == (hotkeys[11])) //section or zone button
@@ -1823,7 +1828,8 @@ Window {
 			simBarRect.zeroSteerAngle()			
 		}
 
-		/*if (event.key == Keys.OemOpenBrackets)
+*
+          For	/*if (event.key == Keys.OemOpenBrackets)
 		 {
 			 sim.stepDistance = 0;
 			 sim.isAccelBack = true;
@@ -1851,5 +1857,5 @@ Window {
 			  console.log("not implemented. go to line 260 in mainwindow.qml to implement")
 		  }
 	  }
-  }*/
-}
+  }
+}*/

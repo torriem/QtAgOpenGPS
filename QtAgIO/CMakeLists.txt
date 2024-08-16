@@ -16,12 +16,18 @@ qt_standard_project_setup()
 qt_add_executable(QtAgIO
     main.cpp
 	agio.qrc
-	agiosettings.h agiosettings.cpp
+    agioproperties.cpp
+    agioproperty.h agioproperty.cpp
+    agiosettings.h agiosettings.cpp
 	formloop.h formloop.cpp
 	formloop_udpcomm.cpp
     formloop_nmea.cpp
     formloop_ntripcomm.cpp
     formloop_ui.cpp
+	formloop_settings.cpp
+    properties.h
+    qmlsettings.h qmlsettings.cpp
+    qmlsettings_addkeys.cpp
     qmlutil.h
 
     formloop_formudp.cpp

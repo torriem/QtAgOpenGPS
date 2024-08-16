@@ -4,12 +4,11 @@
 #include <QNetworkInterface>
 #include "qmlutil.h"
 #include "interfaceproperty.h"
+#include "agioproperty.h"
 
 void FormLoop::LoadUDPNetwork()
 {
-    qDebug() << "Loading UDP Network";
-    //helloFromAgIO[5] = 56;
-
+    helloFromAgIO[5] = 56;
 
     //get the hostname
     QString hostName = QHostInfo::localHostName();
@@ -28,19 +27,19 @@ void FormLoop::LoadUDPNetwork()
 		 }*/
 
     //set the ip
-    uint ip1 = settings.value("UDPComm/IP1").toUInt();
-    uint ip2 = settings.value("UDPComm/IP2").toUInt();
-    uint ip3 = settings.value("UDPComm/IP3").toUInt();
-    uint ip4 = 255; //broadcast
+    int ip1 = property_setUDP_IP1;
+    int ip2 = property_setUDP_IP2;
+    int ip3 = property_setUDP_IP3;
+    int ip4 = 255; //broadcast
 
     quint32 ipAddress = (ip1 << 24) | (ip2 << 16) | (ip3 << 8) | ip4;
 
-    ethUDP.portToSend = settings.value("UDPComm/UdpSendPort").toInt();
+    ethUDP.portToSend = property_setUDP_sendPort;
 
     ethUDP.address.setAddress(ipAddress);
 
     //set the port where we listen
-    ethUDP.portToListen = settings.value("UDPComm/UdpListenPort").toInt();
+    ethUDP.portToListen = property_setUDP_listenPort;
 
 
     // Initialise the socket
@@ -55,7 +54,7 @@ void FormLoop::LoadUDPNetwork()
         qDebug() << "Failed to bind udpSocket: " << udpSocket->errorString();
         agio->setProperty("ethernetConnected", false);
     }else {
-        qDebug() << "udpSocket bound";
+        qDebug() << "udpSocket bound to " << ethUDP.address << ":" << ethUDP.portToListen;
         agio->setProperty("ethernetConnected", true);
     }
 
@@ -68,9 +67,12 @@ void FormLoop::LoadUDPNetwork()
 
 void FormLoop::LoadLoopback() //set up the connection that listens to loopback
 {
+
+    loopListenPort = property_setLoop_listenPort;
+    loopSendPort = property_setLoop_sendPort;
     agio = qmlItem(qml_root, "agio");
     loopBackSocket = new QUdpSocket(this);
-    if(!loopBackSocket->bind(QHostAddress::LocalHost, settings.value("LoopbackComm/ListenToAOGPort").toInt()))
+    if(!loopBackSocket->bind(QHostAddress::LocalHost, loopListenPort))
     {
         qDebug() <<"Failed to bind loopBackSocket: : " << loopBackSocket->errorString();
         qDebug() << "Exiting program due to fatal error";
@@ -88,7 +90,7 @@ void FormLoop::LoadLoopback() //set up the connection that listens to loopback
 
 void FormLoop::SendDataToLoopBack(QByteArray byteData)
 {
-    loopBackSocket->writeDatagram(byteData, QHostAddress::LocalHost, settings.value("LoopbackComm/SendToAOGPort").toInt());
+    loopBackSocket->writeDatagram(byteData, QHostAddress::LocalHost, loopSendPort);
     /*try
 	  {
 	  if (byteData.Length != 0)
@@ -113,6 +115,7 @@ void FormLoop::ReceiveFromLoopBack()
         QByteArray byteData;
         byteData.resize(loopBackSocket->pendingDatagramSize());
         loopBackSocket->readDatagram(byteData.data(), byteData.size());
+        SendUDPMessage(byteData, ethUDP.address, ethUDP.portToSend);
 
         /*
 	 * This is a part of the whole serial nightmare...
@@ -181,7 +184,7 @@ void FormLoop::ReceiveFromLoopBack()
 void FormLoop::SendUDPMessage(QByteArray byteData, QHostAddress address, uint portNumber)
 {
     //todo if (isUdpNetworkConnected
-    if(!settings.value("UDPComm/ListenOnly").toBool())
+    if(!property_setUDP_listenOnly)
     {
 
         // Send packet to the zero
@@ -193,8 +196,6 @@ void FormLoop::SendUDPMessage(QByteArray byteData, QHostAddress address, uint po
             qDebug() << "SendUDP was requested to send empty data message. Did not send";
 
 
-    }else{
-        qDebug() << "Listen to modules only. UDP message did not send";
     }
 }
 void FormLoop::ReceiveFromUDP()

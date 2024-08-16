@@ -17,6 +17,7 @@
 #include <QTimer>
 #include <QQueue>
 #include <QDateTime>
+#include <QElapsedTimer>
 
 
 class FormUDP;
@@ -26,10 +27,10 @@ class FormUDP;
 //we might as well put all 3 in here.
 struct IPAndPort {
     QHostAddress address;
-    quint16 portToSend;
-    quint16 portToListen;
+    int portToSend;
+    int portToListen;
 
-    IPAndPort(const QString &ipAddress, quint16 sendPort, quint16 listenPort)
+    IPAndPort(const QString &ipAddress, int sendPort, int listenPort)
         : address(ipAddress), portToSend(sendPort), portToListen(listenPort) {}
 
 };
@@ -41,10 +42,20 @@ class FormLoop : public QObject
 
 	public:
     explicit FormLoop(QObject *parent = nullptr);
-		~FormLoop();
-		QSettings settings;
+	~FormLoop();
 
-        QObject *qml_root;
+		/* settings related stuff*/
+		//QSettings settings;
+		void loadSettings();
+
+
+		//I don't know if we need or not. But here it is
+		//settings dialog callbacks
+		void on_settings_reload();
+		void on_settings_save();
+		// end of settings related stuff
+
+		QObject *qml_root;
         QObject *agio;
         QWidget *qmlcontainer;
 
@@ -52,7 +63,7 @@ class FormLoop : public QObject
         IPAndPort ethUDP;//the main ethernet network
         IPAndPort ethModulesSet;
 
-        quint16 sendNtripToModulePort; // sends to .255, so ip is the same as ethUDP
+        quint16 sendNtripToModulePort = 2233; // sends to .255, so ip is the same as ethUDP
 
 		//debug vars
         bool haveWeRecUDP = false;
@@ -63,10 +74,14 @@ class FormLoop : public QObject
 
         /*formloop_formUDP.cpp
          * formerly FormUDP.cs*/
+    public slots:
+        void btnSendSubnet_Click();
+        void btnAutoSet_Click();
 
+
+    public:
         //used to send communication check pgn= C8 or 200
-        //QByteArray sendIPToModules = { 0x80, 0x81, 0x7F, 201, 5, 201, 201, 192, 168, 5, 0x47 };
-        QByteArray sendIPToModules;
+        QByteArray sendIPToModules = QByteArray::fromRawData("\x80\x81\x7F\xC9\x05\xC9\xC9\xC0\xA8\x05\x47", 11);
 
         //QByteArray ipCurrent = { 192, 168, 5 };
         //QByteArray ipNew = { 192, 168, 5 };
@@ -79,8 +94,6 @@ class FormLoop : public QObject
         void FormUDp_Load();
 
         void ScanNetwork();
-        void btnSendSubnet_Click();
-        void btnAutoSet_Click();
 
         void nudFirstIP_Click();
 
@@ -88,9 +101,11 @@ class FormLoop : public QObject
 
         void setupGUI();
         void ShowAgIO();
+		void UpdateUIVars();
 
 		/*formloop.cpp
 		 * formerly Formloop.cs */
+        int nmeaErrCounter = 0;
 
 		bool isGPSSentencesOn = false, isSendNMEAToUDP;
         int focusSkipCounter = 310;
@@ -111,6 +126,9 @@ class FormLoop : public QObject
 
 		void DoHelloAlarmLogic();
 		void DoTraffic();
+    private:
+        int loopListenPort;
+        int loopSendPort;
 
     public slots:
         void timer1_Tick();
@@ -162,6 +180,9 @@ class FormLoop : public QObject
 		/* formloop_parseNMEA.cpp
 		 * formerly NMEA.designer.cs */
 	private:
+
+        double nowHz;
+        double gpsHz;
 		QString rawBuffer = 0;
 
 		QStringList words;
@@ -171,6 +192,7 @@ class FormLoop : public QObject
 		bool isNMEAToSend = false;
 
 	public:
+        QElapsedTimer swFrame;
 		QString ggaSentence, vtgSentence, hdtSentence, avrSentence, paogiSentence,
 				hpdSentence, rmcSentence, pandaSentence, ksxtSentence;
 
@@ -180,6 +202,8 @@ class FormLoop : public QObject
 
 		double latitudeSend = glm::DOUBLE_MAX, longitudeSend = glm::DOUBLE_MAX, latitude, longitude;
 
+        float previousAltitude = 0;
+        bool nmeaError = false;
 
 		unsigned short satellitesData, satellitesTracked = glm::USHORT_MAX, hdopX100 = glm::USHORT_MAX, ageX100 = glm::USHORT_MAX;
 
@@ -198,9 +222,9 @@ class FormLoop : public QObject
 		double LastUpdateUTC = 0;
 
 		QString FixQuality();
-		QString Parse(QString &buffer);
+        QString Parse(QString& buffer);
 
-		void ParseNMEA(QString rawBuffer);
+        void ParseNMEA(QString& buffer);
 		void ParseKSXT();
 		void ParseGGA();
 		void ParseVTG();
@@ -244,6 +268,7 @@ class FormLoop : public QObject
 	private:
 		//for the NTRIP Client counting
 		int ntripCounter = 10;
+        bool debugNTRIP = false;
 
         QTcpSocket *clientSocket; //server connection   line 21
         QByteArray casterRecBuffer; //received data buffer
@@ -290,6 +315,8 @@ class FormLoop : public QObject
 		void SettingsShutDownNTRIP();
 		void BuildGGA();
 		QString ToBase64(QString str);
+    private slots:
+        void NTRIPDebugMode(bool doWeDebug);
 };
 
 

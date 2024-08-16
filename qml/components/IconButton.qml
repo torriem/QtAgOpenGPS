@@ -18,13 +18,16 @@ Button {
 	property alias imageFillMode: content_image.fillMode
 
     property double iconHeightScaleText: 0.75
-    property int border: 0
+    property int border: 2
 
     property bool disabled: false
 
-    property color color1: "#ffffff"
-    property color color2: "#cccccc"
-    property color color3: "#888888"
+    //property color color1: "#ffffff"
+    //property color color2: "#cccccc"
+    //property color color3: "#888888"
+    property color color1: "transparent"
+    property color color2: color1
+    property color color3: color1
 
     property color colorHover1: "#ffffff"
     property color colorHover2: "#ffffff"

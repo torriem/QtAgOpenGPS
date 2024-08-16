@@ -1,10 +1,10 @@
 #include "formloop.h"
+#include "agioproperty.h"
 
 //set up connection to caster
 // main routine
 void FormLoop::DoNTRIPSecondRoutine()
 {
-    //qDebug() << ntripCounter << " ntrip counter";
 	//count up the ntrip clock only if everything is alive
 	if (isNTRIP_RequiredOn || isRadio_RequiredOn || isSerialPass_RequiredOn)
 	{
@@ -52,20 +52,32 @@ void FormLoop::DoNTRIPSecondRoutine()
         //"focus", or visible. However, I want the debug vars for now
 		{
 
+            /*
+             * qml "ntripStatus" :
+             * 0 = invalid
+             * 1 = Authorizing
+             * 2 = Waiting
+             * 3 = Send GGA
+             * 4 = Listening NTRIP
+             * 5 = Wait GPS
+             */
 			//watchdog for Ntrip
-			if (isNTRIP_Connecting)
-				qDebug() << "Authourizing";
-			else
+            if (isNTRIP_Connecting){
+                agio->setProperty("ntripStatus", 1);//authorizing
+            }
+            else
 			{
-				if (isNTRIP_RequiredOn && NTRIP_Watchdog > 10)
-					qDebug() << "Waiting";
+                if (isNTRIP_RequiredOn && NTRIP_Watchdog > 10){
+                    agio->setProperty("ntripStatus", 2);//waiting
+                }
+                else agio->setProperty("ntripStatus", 4); //listening GGA
 
 			}
 
 			if (sendGGAInterval > 0 && isNTRIP_Sending)
 			{
-				qDebug() << "Sending";
-				isNTRIP_Sending = false;
+                    agio->setProperty("ntripStatus", 3);// Send GGA
+                isNTRIP_Sending = false;
 			}
 		}
 	}
@@ -73,14 +85,15 @@ void FormLoop::DoNTRIPSecondRoutine()
 
 void FormLoop::ConfigureNTRIP() //set the variables to the settings
 {
-
+    if(debugNTRIP) qDebug() << "Configuring NTRIP";
+    agio->setProperty("ntripStatus", 5); //Wait GPS
 	aList.clear();
 	rList.clear();
 
 	//start NTRIP if required
-	isNTRIP_RequiredOn = settings.value("RTK/setNTRIP_isOn").toBool();
-	isRadio_RequiredOn = settings.value("RTK/setRadio_isOn").toBool();
-	isSerialPass_RequiredOn = settings.value("RTK/setPass_isOn").toBool();
+    isNTRIP_RequiredOn = property_setNTRIP_isOn;
+    isRadio_RequiredOn = property_setRadio_isOn;
+    isSerialPass_RequiredOn = property_setSerialPass_isOn;
 
 	/*I'm not worrying about either one for now
 	 * if (isRadio_RequiredOn || isSerialPass_RequiredOn)
@@ -92,16 +105,16 @@ void FormLoop::ConfigureNTRIP() //set the variables to the settings
 
 void FormLoop::StartNTRIP()
 {
-    qDebug() << "Starting NTRIP";
+    if(debugNTRIP) qDebug() << "Starting NTRIP";
 	if (isNTRIP_RequiredOn)
 	{
 		//load the settings
-        wwwNtrip.portToSend = settings.value("RTK/setNTRIP_casterPort").toInt(); //Select correct port (usually 80 or 2101)
-		mount = settings.value("RTK/setNTRIP_mount").toString(); //Insert the correct mount
-		username = settings.value("RTK/setNTRIP_userName").toString(); //Insert your username!
-		password = settings.value("RTK/setNTRIP_userPassword").toString(); //Insert your password!
-		toUDP_Port = settings.value("RTK/setNTRIP_sendToUDPPort").toInt(); //send rtcm to which udp port
-		sendGGAInterval = settings.value("RTK/setNTRIP_sendGGAInterval").toInt(); //how often to send fixes
+        wwwNtrip.portToSend = property_setNTRIP_casterPort; //Select correct port (usually 80 or 2101)
+        mount = property_setNTRIP_mount; //Insert the correct mount
+        username = property_setNTRIP_userName; //insert your username!
+        password = property_setNTRIP_userPassword; //Insert your password!
+        toUDP_Port = property_setNTRIP_sendToUDPPort; //send rtcm to which udp port
+        sendGGAInterval = property_setNTRIP_sendGGAInterval; //how often to send fixes
 
 		//if we had a timer already, kill it
         if (tmr)
@@ -142,10 +155,10 @@ void FormLoop::StartNTRIP()
             }
 
             //NTRIP caster
-            uint ip1 = settings.value("RTK/IP1").toUInt();
-            uint ip2 = settings.value("RTK/IP2").toUInt();
-            uint ip3 = settings.value("RTK/IP3").toUInt();
-            uint ip4 = settings.value("RTK/IP4").toUInt();
+            int ip1 = property_setNTRIP_IP1;
+            int ip2 = property_setNTRIP_IP2;
+            int ip3 = property_setNTRIP_IP3;
+            int ip4 = property_setNTRIP_IP4;
 
 			quint32 ipAddress = (ip1 << 24) | (ip2 << 16) | (ip3 << 8) | ip4;
 
@@ -154,21 +167,21 @@ void FormLoop::StartNTRIP()
 
             //this is the socket that sends to the receiver
 			// Create the socket object
-            qDebug() << "Creating new tcp socket";
+            if(debugNTRIP) qDebug() << "Creating new tcp socket";
 			clientSocket = new QTcpSocket(this);
 
 			//set socket to non-blocking mode
             clientSocket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
 
 			// Connect to server
-            qDebug() << "Connecting to server... Connecting";
+            if(debugNTRIP) qDebug() << "Connecting to server... Connecting";
             clientSocket->connectToHost(wwwNtrip.address, wwwNtrip.portToSend);
             if (clientSocket->waitForConnected(5000)) {
-                qDebug() << "Ntrip client connected to server";
+                if(debugNTRIP) qDebug() << "Ntrip client connected to server";
 
             }
             else{
-                qDebug() << "NTRIP Client failed to connect. Reconnecting...";
+                if(debugNTRIP) qDebug() << "NTRIP Client failed to connect. Reconnecting...";
                 ReconnectRequest();
                 return;
             }
@@ -262,6 +275,7 @@ void FormLoop::StartNTRIP()
 void FormLoop::ReconnectRequest()
 {
 	//TimedMessageBox(2000, "NTRIP Not Connected", " Reconnect Request");
+    qDebug() << "NTRIP Not Connected. Reconnect Request";
 	ntripCounter = 15;
 	isNTRIP_Connected = false;
 	isNTRIP_Starting = false;
@@ -290,6 +304,7 @@ void FormLoop::IncrementNTRIPWatchDog()
 
 void FormLoop::SendAuthorization()
 {
+    if(debugNTRIP) qDebug() << "Attempting to send Athorization";
 	// Check we are connected
     if (clientSocket == NULL || clientSocket->state() != QAbstractSocket::ConnectedState)
 	{
@@ -301,7 +316,7 @@ void FormLoop::SendAuthorization()
 	// Read the message from settings and send it
     //try
     //{
-		if (!settings.value("RTK/setNTRIP_isTCP").toBool())//if we are not using TCP. Should that go in an extension also?
+        if (!property_setNTRIP_isTCP)//if we are not using TCP. Should that go in an extension also?
 														   //a sort of "ntrip weirdos" for all the unusual stuff to go.
 		{
 			//encode user and password
@@ -312,7 +327,7 @@ void FormLoop::SendAuthorization()
             GGASentence = sbGGA;
 
 			QString htt;
-            if (settings.value("RTK/setNTRIP_isHTTP10").toBool()) htt = "1.0";
+            if (property_setNTRIP_isHTTP10) htt = "1.0";
 			else htt = "1.1";
 
 			//Build authorization string
@@ -328,7 +343,14 @@ void FormLoop::SendAuthorization()
             //Byte[] byteDateLine = Encoding.ASCII.GetBytes(str.ToCharArray());
             QByteArray byteDateLine = str.toLatin1();
 
-            clientSocket->write(byteDateLine, byteDateLine.length());
+            if(clientSocket->write(byteDateLine, byteDateLine.length())){
+                if(debugNTRIP)
+                    qDebug() << "NTRIP wrote to clientSocket";
+                else
+                        qDebug() << "NTRIP: Failed to write to clientSocket";
+            }
+
+
 
 			//enable to periodically send GGA sentence to server.
             if (sendGGAInterval > 0) tmr->start();
@@ -351,21 +373,23 @@ void FormLoop::OnAddMessage(QByteArray data)
 	//reset watchdog since we have updated data
 	NTRIP_Watchdog = 0;
 
-	if (isNTRIP_RequiredOn)
+    if (isNTRIP_RequiredOn)
 	{
 		//move the ntrip stream to queue
         for (int i = 0; i < data.length(); i++)
 		{
             rawTrip.enqueue(data[i]);
 		}
+        //qDebug() << "RawTrip: " << rawTrip;
 
         ntripMeterTimer->start();
 	}
 	else
-	{
+    {
 		//send it
+        qDebug() << "onadd";
 		SendNTRIP(data);
-	}
+    }
 
 
 }
@@ -405,7 +429,9 @@ void FormLoop::ntripMeterTimer_Tick()
 	}
 
 	//Can't keep up as internet dumped a shit load so clear
-    if (rawTrip.size() > 10000) rawTrip.clear();
+    if (rawTrip.size() > 10000) {
+        rawTrip.clear();
+    }
 }
 
 void FormLoop::SendNTRIP(QByteArray data)
@@ -422,6 +448,7 @@ void FormLoop::SendNTRIP(QByteArray data)
 	if (isSendToUDP)
 	{
         SendUDPMessage(data, ethUDP.address, sendNtripToModulePort);
+        if(debugNTRIP) qDebug() << "NTRIP: Sending data with size " << data.size() << " to modules UDP network";
 	}
 }
 
@@ -438,8 +465,6 @@ void FormLoop::SendGGA()
 	}
 
 	// Read the message from the text box and send it
-    //try
-    //{
 		isNTRIP_Sending = true;
 		BuildGGA();
         //I'm not sure about this. sbGGA is a stringbuilder in cs, however, I think it's a
@@ -448,12 +473,12 @@ void FormLoop::SendGGA()
         QString str = sbGGA;
 
         QByteArray byteDateLine = str.toLatin1();
-        clientSocket->write(byteDateLine, byteDateLine.length());
-    /*}
-	catch (...)
-	{
-		ReconnectRequest();
-    }*/
+        if(clientSocket->write(byteDateLine, byteDateLine.length())){
+            if(debugNTRIP) qDebug() << "Sending GGA to caster";
+        }else{
+            qDebug() << "Failed to send GGA to caster. Reconnecting";
+            ReconnectRequest();
+        }
 }
 
 
@@ -461,16 +486,18 @@ void FormLoop::SendGGA()
 {
 	// Check if we got any data
     while (clientSocket->bytesAvailable() > 0){//not yet finished
-        QByteArray byteData;
-        byteData.resize(clientSocket->bytesAvailable());
-        clientSocket->read(byteData.data(), byteData.size());
+        casterRecBuffer.resize(clientSocket->bytesAvailable());
+        clientSocket->read(casterRecBuffer.data(), casterRecBuffer.size());
 
-        qint64 nBytesRec = byteData.size();
+        qint64 nBytesRec = casterRecBuffer.size();
+        //if(debugNTRIP) qDebug() << "Recieved NTRIP data: " << byteData << " Size: " << nBytesRec;
 
 		if (nBytesRec > 0)
 		{
-            QByteArray localMsg(nBytesRec, 0);
+            QByteArray localMsg;
+            localMsg.resize(nBytesRec);
             //Array.Copy(casterRecBuffer, localMsg, nBytesRec);
+            localMsg.append(casterRecBuffer, nBytesRec);
 
             OnAddMessage(localMsg);
 		}
@@ -624,10 +651,10 @@ void FormLoop::BuildGGA()
 	double latitude = 0;
 	double longitude = 0;
 
-	if (settings.value("RTK/setNTRIP_isGGAManual").toBool())
+    if (property_setNTRIP_isGGAManual)
 	{
-		latitude = settings.value("RTK/setNTRIP_manualLat").toDouble();
-		longitude = settings.value("RTK/setNTRIP_manualLon").toDouble();
+        latitude = property_setNTRIP_manualLat;
+        longitude = property_setNTRIP_manualLon;
 	}
 	else
 	{
@@ -708,3 +735,7 @@ void FormLoop::BuildGGA()
 	   Time      Lat       Lon     FixSatsOP Alt */
 }
 
+void FormLoop::NTRIPDebugMode(bool doWeDebug){
+    debugNTRIP = doWeDebug;
+    qDebug() << "Debug mode is now" << (debugNTRIP ? "enabled" : "disabled");
+}

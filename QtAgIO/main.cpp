@@ -2,10 +2,11 @@
 #include <QCommandLineParser>
 #include <QCoreApplication>
 #include <QDebug>
-#include <QSettings>
 #include <QStandardPaths>
 #include "formloop.h"
-#include "agiosettings.h"
+#include "agioproperty.h"
+
+AgIOSettings *settings;
 
 
 int main(int argc, char *argv[])
@@ -17,6 +18,10 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("QtAgIO");
     QCoreApplication::setApplicationVersion("0.0.1");
 
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+    QSettings::setPath(QSettings::IniFormat,
+                       QSettings::UserScope,
+                       QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
 
     QCommandLineParser parser;
     parser.setApplicationDescription("IO handler for AgOpenGPS and QtAgOpenGPS");
@@ -32,10 +37,10 @@ int main(int argc, char *argv[])
     qDebug().setVerbosity(parser.value(verbose).toInt());
 
 
-    // Check for settings and generate defaults if none present
+    settings = new AgIOSettings();
+    AgIOProperty::init_defaults();
+    settings->sync();
 
-    //IORouter router(settings);
-    AgIOSettings settings;
     FormLoop formLoop;
 	
 

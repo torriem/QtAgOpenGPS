@@ -1,7 +1,11 @@
 #include "formloop.h"
+#include "agioproperty.h"
 #include "qmlutil.h"
 #include <QQuickWindow>
 #include <QQmlApplicationEngine>
+#include "qmlsettings.h"
+
+extern QMLSettings qml_settings;
 
 FormLoop::FormLoop(QObject *parent) : QObject(parent),
     qml_root(parent),
@@ -9,9 +13,14 @@ FormLoop::FormLoop(QObject *parent) : QObject(parent),
     ethUDP("192.168.1.101", 2201, 2202),
     ethModulesSet("255.255.255.255", 2301, 2302)
 {
+
+	qml_settings.setupKeys();
+	qml_settings.loadSettings();
+
+	setupGUI();
+	loadSettings();
     //loadSettings();
 
-    setupGUI();
     LoadLoopback();
 	LoadUDPNetwork();
    //buffer.resize(1024);
@@ -48,6 +57,9 @@ FormLoop::FormLoop(QObject *parent) : QObject(parent),
     clientSocket = new QTcpSocket(this);
 
     FormUDp_Load();
+    swFrame.start();
+
+    if (property_setUDP_listenOnly) qDebug() << "Listen Only mode activated! Will not send to modules!";
 }
 
 FormLoop::~FormLoop()
@@ -58,6 +70,7 @@ FormLoop::~FormLoop()
 }
 void FormLoop::oneSecondLoopTimer_Tick(){
     DoNTRIPSecondRoutine();
+	UpdateUIVars();
 }
 
 void FormLoop::TwoSecondLoop()
@@ -142,7 +155,7 @@ void FormLoop::DoHelloAlarmLogic()
         }
     }
     else if (traffic.helloFromIMU < 90)
-        isConnectedSteer = true;
+        isConnectedIMU = true;
 
     currentHello = traffic.cntrGPSOut != 0;
 
