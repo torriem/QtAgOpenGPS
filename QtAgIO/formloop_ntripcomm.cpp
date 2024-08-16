@@ -1,4 +1,5 @@
 #include "formloop.h"
+#include "agioproperty.h"
 
 //set up connection to caster
 // main routine
@@ -90,9 +91,9 @@ void FormLoop::ConfigureNTRIP() //set the variables to the settings
 	rList.clear();
 
 	//start NTRIP if required
-	isNTRIP_RequiredOn = settings.value("RTK/setNTRIP_isOn").toBool();
-	isRadio_RequiredOn = settings.value("RTK/setRadio_isOn").toBool();
-	isSerialPass_RequiredOn = settings.value("RTK/setPass_isOn").toBool();
+    isNTRIP_RequiredOn = property_setNTRIP_isOn;
+    isRadio_RequiredOn = property_setRadio_isOn;
+    isSerialPass_RequiredOn = property_setSerialPass_isOn;
 
 	/*I'm not worrying about either one for now
 	 * if (isRadio_RequiredOn || isSerialPass_RequiredOn)
@@ -108,12 +109,12 @@ void FormLoop::StartNTRIP()
 	if (isNTRIP_RequiredOn)
 	{
 		//load the settings
-        wwwNtrip.portToSend = settings.value("RTK/setNTRIP_casterPort").toInt(); //Select correct port (usually 80 or 2101)
-		mount = settings.value("RTK/setNTRIP_mount").toString(); //Insert the correct mount
-		username = settings.value("RTK/setNTRIP_userName").toString(); //Insert your username!
-		password = settings.value("RTK/setNTRIP_userPassword").toString(); //Insert your password!
-		toUDP_Port = settings.value("RTK/setNTRIP_sendToUDPPort").toInt(); //send rtcm to which udp port
-		sendGGAInterval = settings.value("RTK/setNTRIP_sendGGAInterval").toInt(); //how often to send fixes
+        wwwNtrip.portToSend = property_setNTRIP_casterPort; //Select correct port (usually 80 or 2101)
+        mount = property_setNTRIP_mount; //Insert the correct mount
+        username = property_setNTRIP_userName; //insert your username!
+        password = property_setNTRIP_userPassword; //Insert your password!
+        toUDP_Port = property_setNTRIP_sendToUDPPort; //send rtcm to which udp port
+        sendGGAInterval = property_setNTRIP_sendGGAInterval; //how often to send fixes
 
 		//if we had a timer already, kill it
         if (tmr)
@@ -154,10 +155,10 @@ void FormLoop::StartNTRIP()
             }
 
             //NTRIP caster
-            uint ip1 = settings.value("RTK/IP1").toUInt();
-            uint ip2 = settings.value("RTK/IP2").toUInt();
-            uint ip3 = settings.value("RTK/IP3").toUInt();
-            uint ip4 = settings.value("RTK/IP4").toUInt();
+            int ip1 = property_setNTRIP_IP1;
+            int ip2 = property_setNTRIP_IP2;
+            int ip3 = property_setNTRIP_IP3;
+            int ip4 = property_setNTRIP_IP4;
 
 			quint32 ipAddress = (ip1 << 24) | (ip2 << 16) | (ip3 << 8) | ip4;
 
@@ -315,7 +316,7 @@ void FormLoop::SendAuthorization()
 	// Read the message from settings and send it
     //try
     //{
-		if (!settings.value("RTK/setNTRIP_isTCP").toBool())//if we are not using TCP. Should that go in an extension also?
+        if (!property_setNTRIP_isTCP)//if we are not using TCP. Should that go in an extension also?
 														   //a sort of "ntrip weirdos" for all the unusual stuff to go.
 		{
 			//encode user and password
@@ -326,7 +327,7 @@ void FormLoop::SendAuthorization()
             GGASentence = sbGGA;
 
 			QString htt;
-            if (settings.value("RTK/setNTRIP_isHTTP10").toBool()) htt = "1.0";
+            if (property_setNTRIP_isHTTP10) htt = "1.0";
 			else htt = "1.1";
 
 			//Build authorization string
@@ -650,10 +651,10 @@ void FormLoop::BuildGGA()
 	double latitude = 0;
 	double longitude = 0;
 
-	if (settings.value("RTK/setNTRIP_isGGAManual").toBool())
+    if (property_setNTRIP_isGGAManual)
 	{
-		latitude = settings.value("RTK/setNTRIP_manualLat").toDouble();
-		longitude = settings.value("RTK/setNTRIP_manualLon").toDouble();
+        latitude = property_setNTRIP_manualLat;
+        longitude = property_setNTRIP_manualLon;
 	}
 	else
 	{

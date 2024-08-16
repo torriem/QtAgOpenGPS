@@ -1,4 +1,5 @@
 #include "formloop.h"
+#include "agioproperty.h"
 #include <QNetworkInterface>
 
 void FormLoop::FormUDp_Load(){
@@ -30,9 +31,9 @@ void FormLoop::FormUDp_Load(){
     //nudSecndIP.Value = ipNew[1] = ipCurrent[1] = Properties.Settings.Default.etIP_SubnetTwo;
     //nudThirdIP.Value = ipNew[2] = ipCurrent[2] = Properties.Settings.Default.etIP_SubnetThree;
 
-    ipNew[0] = ipCurrent[0] = settings.value("UDPComm/IP1").toInt();
-    ipNew[1] = ipCurrent[1] = settings.value("UDPComm/IP2").toInt();
-    ipNew[2] = ipCurrent[2] = settings.value("UDPComm/IP3").toInt();
+    ipNew[0] = ipCurrent[0] = property_setUDP_IP1;
+    ipNew[1] = ipCurrent[1] = property_setUDP_IP2;
+    ipNew[2] = ipCurrent[2] = property_setUDP_IP3;
 
 
     ScanNetwork();
@@ -258,19 +259,19 @@ void FormLoop::btnSendSubnet_Click()
         }
     }
 
-    settings.value("UDPComm/IP1") = ipCurrent[0] = ipNew[0];
-    settings.value("UDPComm/IP2") = ipCurrent[1] = ipNew[1];
-    settings.value("UDPComm/IP3") = ipCurrent[2] = ipNew[2];
+    property_setUDP_IP1 = ipCurrent[0] = ipNew[0];
+    property_setUDP_IP2 = ipCurrent[1] = ipNew[1];
+    property_setUDP_IP3 = ipCurrent[2] = ipNew[2];
 
     //Properties.Settings.Default.Save();
     //does the lower replace the upper? Remove if it does
-    settings.sync();
+    settings->sync(); //do we still need this with the new settings class?
 
     // update ethUDP from settings
-    uint ip1 = settings.value("UDPComm/IP1").toUInt();
-    uint ip2 = settings.value("UDPComm/IP2").toUInt();
-    uint ip3 = settings.value("UDPComm/IP3").toUInt();
-    uint ip4 = 255; //broadcast
+    int ip1 = property_setUDP_IP1;
+    int ip2 = property_setUDP_IP2;
+    int ip3 = property_setUDP_IP3;
+    int ip4 = 255; //broadcast
 
     quint32 ipAddress = (ip1 << 24) | (ip2 << 16) | (ip3 << 8) | ip4;
 
