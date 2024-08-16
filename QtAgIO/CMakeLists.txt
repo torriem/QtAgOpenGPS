@@ -18,7 +18,6 @@ qt_add_executable(QtAgIO
 	agio.qrc
     agioproperties.cpp
     agioproperty.h agioproperty.cpp
-    agiorenderer.h agiorenderer.cpp
     agiosettings.h agiosettings.cpp
 	formloop.h formloop.cpp
 	formloop_udpcomm.cpp

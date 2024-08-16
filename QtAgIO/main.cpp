@@ -37,8 +37,8 @@ int main(int argc, char *argv[])
     qDebug().setVerbosity(parser.value(verbose).toInt());
 
 
-    settings = new AOGSettings();
-    AOGProperty::init_defaults();
+    settings = new AgIOSettings();
+    AgIOProperty::init_defaults();
     settings->sync();
 
     FormLoop formLoop;

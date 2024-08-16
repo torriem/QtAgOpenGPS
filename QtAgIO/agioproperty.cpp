@@ -29,11 +29,11 @@ void AgIOProperty::init_defaults()
 }
 
 AgIOProperty::operator int() { return settings->value(key,default_value).toInt(); }
-AOGProperty::operator char() { return (char)(settings->value(key,default_value).toInt()); }
+AgIOProperty::operator char() { return (char)(settings->value(key,default_value).toInt()); }
 AgIOProperty::operator double() { return settings->value(key,default_value).toDouble(); }
-AOGProperty::operator QString() { return settings->value(key,default_value).toString(); }
+AgIOProperty::operator QString() { return settings->value(key,default_value).toString(); }
 AgIOProperty::operator bool() { return settings->value(key,default_value).toBool(); }
-AOGProperty::operator float() { return settings->value(key,default_value).toFloat(); }
+AgIOProperty::operator float() { return settings->value(key,default_value).toFloat(); }
 AgIOProperty::operator QColor() { return settings->value(key,default_value).value<QColor>(); }
 //special case for QVector<int>.  In AgIOSettings, this type is marshalled as
 //a QVariantList so that the ini file has human-readable text in it.
