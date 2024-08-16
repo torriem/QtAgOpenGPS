@@ -7,6 +7,10 @@
 #include "qmlutil.h"
 #include "formloop.h"
 #include "interfaceproperty.h"
+#include "qmlsettings.h"
+#include "agioproperty.h"
+
+extern QMLSettings qml_settings;
 
 void FormLoop::setupGUI()
 {
@@ -16,6 +20,7 @@ void FormLoop::setupGUI()
     //load the QML into a view
     engine.rootContext()->setContextProperty("screenPixelDensity",QGuiApplication::primaryScreen()->physicalDotsPerInch() * QGuiApplication::primaryScreen()->devicePixelRatio());
     engine.rootContext()->setContextProperty("mainForm", this);
+	engine.rootContext()->setContextProperty("settings", &qml_settings);
     engine.rootContext()->setContextProperty("prefix", ":");
     engine.load(QUrl(QStringLiteral("qrc:/qml/Main.qml")));
 
