@@ -27,4 +27,5 @@ void QMLSettings::setupKeys() {
     addKey(QString("setNTRIP_IP1"), QString("comm/ntripIP1"), "int");
     addKey(QString("setNTRIP_IP2"), QString("comm/ntripIP2"), "int");
     addKey(QString("setNTRIP_IP3"), QString("comm/ntripIP3"), "int");
+    addKey(QString("setNTRIP_url"), QString("comm/ntripURL"), "QString");
 }
