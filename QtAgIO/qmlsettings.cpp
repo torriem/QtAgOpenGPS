@@ -3,6 +3,14 @@
 #include <QSettings>
 #include "agioproperty.h"
 
+
+/* Notes from David 8/16/24.
+ * the special code for QVariant has several depricated errors in it. I don't really
+ * know why they work in AOG side, but not here. But since we don't use QVariant in
+ * QtAgIO, I think just commenting it out for now will work. I also don't know enough
+ * about how this all works to fix it :).
+ */
+
 QMLSettings qml_settings;
 
 QMLSettings::QMLSettings(QObject *parent) :  QQmlPropertyMap(parent) {
@@ -31,12 +39,12 @@ void QMLSettings::loadSettings() {
         if (settings_value == unset) continue;
 
         //fix QVariant type
-        if (settings_type_map[settings_key] != "leavealone") {
+        /*if (settings_type_map[settings_key] != "leavealone") {
             auto t = QMetaType::type(settings_type_map[settings_key].toUtf8());
             if (settings_value.userType() != t && !settings_value.convert(t) && !settings_value.isNull()) {
                 qWarning() << "Could not set the type of qml setting " << key;
             }
-        } else {
+        } else {*/
             //special case these two which are lists of doubles and integers respectively
             if (settings_key == "tool/zones" && QString(settings_value.typeName()) == "QStringList") {
                 QVariantList l;
@@ -50,7 +58,7 @@ void QMLSettings::loadSettings() {
                     l.append(QVariant(i.toInt()));
                 }
                 settings_value = l;
-            }
+            //}
         }
 
         insert(key, (QVariant) settings_value);
@@ -66,12 +74,12 @@ void QMLSettings::updateSetting(const QString &settings_key) {
     if (settings_value == unset) return;
 
     //fix QVariant to have the right type
-    if (settings_type_map[settings_key] != "leavealone") {
+    /*if (settings_type_map[settings_key] != "leavealone") {
         auto t = QMetaType::type(settings_type_map[settings_key].toUtf8());
         if (settings_value.userType() != t && !settings_value.convert(t) && !settings_value.isNull()) {
             qWarning() << "Could not set the type of setting " << settings_key;
         }
-    } else {
+    } else {*/
     //special case these two which are lists of doubles and integers respectively
         if (settings_key == "tool/zones" && QString(settings_value.typeName()) == "QStringList") {
             QVariantList l;
@@ -86,7 +94,7 @@ void QMLSettings::updateSetting(const QString &settings_key) {
             }
             settings_value = l;
         }
-     }
+     //}
 
     //qDebug() << "updated " << settings_key << " from " << (*this)[qml_key] << " to " << settings_value;
 
