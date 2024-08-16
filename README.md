@@ -85,12 +85,14 @@ must manage those matrices ourselves anyway.
 
 QtAgIO Notes
 -------------
-AgIO is half-baked now. It only works with UDP. The GUI is only half done.
+QtAgIO only works with UDP. The GUI is only half done.
 If you run it, then go to ~/Documents/QtAgOpenGPS/QtAgIO.ini,
 you can change the IP address to whatever you need. Note that the loopback
 ports are changed to 17770 and 15550, instead of 17777 and 15555 like AOG,
 so we can run with AOG on the same device. If you change back to 17777, and 
 15555, you can run QtAOG with Brian's AgIO, and vice versa.
+NTRIP settings can be changed, however, the changes wil only take effect if
+you restart QtAgIO.
 
 I also added a "ListenOnly" setting to the .ini, so we can listen only on
 the UDP network, so it won't interfere with a working machine in the field.
