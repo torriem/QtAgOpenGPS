@@ -27,10 +27,10 @@ class FormUDP;
 //we might as well put all 3 in here.
 struct IPAndPort {
     QHostAddress address;
-    quint16 portToSend;
-    quint16 portToListen;
+    int portToSend;
+    int portToListen;
 
-    IPAndPort(const QString &ipAddress, quint16 sendPort, quint16 listenPort)
+    IPAndPort(const QString &ipAddress, int sendPort, int listenPort)
         : address(ipAddress), portToSend(sendPort), portToListen(listenPort) {}
 
 };
@@ -126,6 +126,9 @@ class FormLoop : public QObject
 
 		void DoHelloAlarmLogic();
 		void DoTraffic();
+    private:
+        int loopListenPort;
+        int loopSendPort;
 
     public slots:
         void timer1_Tick();
