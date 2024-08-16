@@ -64,11 +64,14 @@ Window {
 			}
 			TextField {
 				id: ntripURL
-				placeholderText: qsTr("URL")
+                text: settings.setNTRIP_url
 				width: parent.width
 				selectByMouse: true
 				onTextChanged: 
-					if (text.length > 0) ntripInterface.setUrl(text)
+                    if (text.length > 0) {
+                        settings.setNTRIP_domain = text
+                        ntripInterface.setUrl(text)
+                    }
 
 			}
             Comp.Button {
@@ -78,7 +81,9 @@ Window {
             }
 
             Comp.Text {
-				text: "IP: " + "0.0.0.0"
+                text: "IP: " + settings.setNTRIP_IP1 + "." + settings.setNTRIP_IP2 +
+                      "." + settings.setNTRIP_IP3 + "." + settings.setNTRIP_IP4
+
 			}
 		}
 		ColumnLayout {
@@ -96,9 +101,10 @@ Window {
 			}
 			TextField {
 				id: ntripUser
-				placeholderText: qsTr("Username")
+                text: settings.setNTRIP_userName
 				width: parent.width
 				selectByMouse: true
+                onTextChanged: settings.setNTRIP_userName = text
 			}
 
             Comp.Spacer{}
@@ -108,7 +114,8 @@ Window {
 			}
 			TextField {
 				id: ntripPass
-				placeholderText: qsTr("Password")
+                text: settings.setNTRIP_userPassword
+                onTextChanged: settings.setNTRIP_userPassword = text
 				width: parent.width
 				selectByMouse: true
 			}
@@ -122,19 +129,23 @@ Window {
 			}
 			TextField {
 				id: ntripMount
-				placeholderText: qsTr("Mount")
+                text: settings.setNTRIP_mount
+                onTextChanged: settings.setNTRIP_mount
 				width: parent.width
 				selectByMouse: true
 			}
             Comp.Spacer{}
             Comp.SpinBoxCustomized { //ntrip caster port number
-				value: 2101
+                value: settings.setNTRIP_casterPort
+                onValueChanged: settings.setNTRIP_casterPort = value
 				from: 0
 				to: 65535
                 text: qsTr("Caster Port:")
 			}
             Comp.Text {
                 text: qsTr("Default: 2101")
+                color: "red"
+                visible: settings.setNTRIP_casterPort !== 2101
             }
         }
 	}
@@ -151,9 +162,13 @@ Window {
 			text: qsTr("NTRIP On")
 			height: parent.height
 			width: height * 2.5
+            checkable:true
+            isChecked: settings.setNTRIP_isOn
+            onClicked: settings.setNTRIP_isOn = checked
 		}
         Comp.IconButtonTransparent {
 			id: cancel
+            visible: false //not sure if we even want/need this
 			height: parent.height
 			width: height
 			icon.source: "/images/Cancel64.png"
