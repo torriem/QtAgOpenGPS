@@ -89,6 +89,7 @@ Rectangle{
         anchors.topMargin: 20 * theme.scaleHeight
         text: qsTr("Invert Roll")
         icon.source: "/images/Config/ConDa_InvertRoll.png"
+        checkable: true
         checked: settings.setIMU_invertRoll
         onCheckedChanged: settings.setIMU_invertRoll = checked
     }
