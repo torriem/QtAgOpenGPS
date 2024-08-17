@@ -27,10 +27,7 @@ extern AgIOProperty property_setNTRIP_manualLat;
 extern AgIOProperty property_setNTRIP_manualLon;
 extern AgIOProperty property_setNTRIP_isTCP;
 extern AgIOProperty property_setNTRIP_isHTTP10;
-extern AgIOProperty property_setNTRIP_IP1;
-extern AgIOProperty property_setNTRIP_IP2;
-extern AgIOProperty property_setNTRIP_IP3;
-extern AgIOProperty property_setNTRIP_IP4;
+extern AgIOProperty property_setNTRIP_ipAddress;
 extern AgIOProperty property_setNTRIP_url;
 
 #endif

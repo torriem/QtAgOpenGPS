@@ -23,9 +23,6 @@ AgIOProperty property_setNTRIP_manualLat("comm/ntripManualLat", 53.000000);
 AgIOProperty property_setNTRIP_manualLon("comm/ntripManualLon", -111.000000);
 AgIOProperty property_setNTRIP_isTCP("comm/ntripIsTCP", false);
 AgIOProperty property_setNTRIP_isHTTP10("comm/ntripIsHTTP10", false);
-AgIOProperty property_setNTRIP_IP1("comm/ntripIP1", 10);
-AgIOProperty property_setNTRIP_IP2("comm/ntripIP2", 0);
-AgIOProperty property_setNTRIP_IP3("comm/ntripIP3", 0);
-AgIOProperty property_setNTRIP_IP4("comm/ntripIP4", 50);
+AgIOProperty property_setNTRIP_ipAddress("comm/ntripIpAddress", "127.0.0.1");
 AgIOProperty property_setNTRIP_url("comm/ntripURL", "test.test");
 
