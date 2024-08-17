@@ -69,14 +69,14 @@ Window {
 				selectByMouse: true
 				onTextChanged: 
                     if (text.length > 0) {
-                        settings.setNTRIP_domain = text
-                        ntripInterface.setUrl(text)
+                        settings.setNTRIP_url = text
+                        agio.setIPFromUrl(text)
                     }
 
 			}
             Comp.Button {
 				text: qsTr("Verify")
-				onClicked: ntripInterface.setUrl(ntripURL.text)
+                onClicked: agio.setIPFromUrl(ntripURL.text)
                 width: parent.width * .9
             }
 
@@ -130,7 +130,7 @@ Window {
 			TextField {
 				id: ntripMount
                 text: settings.setNTRIP_mount
-                onTextChanged: settings.setNTRIP_mount
+                onTextChanged: settings.setNTRIP_mount = text
 				width: parent.width
 				selectByMouse: true
 			}
@@ -159,12 +159,18 @@ Window {
 		spacing: 5 * theme.scaleWidth
         Comp.Button {
 			id: ntripOn
+            color: "white"
+            colorChecked: "green"
 			text: qsTr("NTRIP On")
 			height: parent.height
 			width: height * 2.5
-            checkable:true
-            isChecked: settings.setNTRIP_isOn
-            onClicked: settings.setNTRIP_isOn = checked
+            checkable: true
+            checked: settings.setNTRIP_isOn
+            onClicked: {
+
+                settings.setNTRIP_isOn = checked
+                message.addMessage("", "Restart of AgIO is Required - Restarting", true)
+            }
 		}
         Comp.IconButtonTransparent {
 			id: cancel
@@ -179,7 +185,10 @@ Window {
 			height: parent.height
 			width: height
 			icon.source: "/images/OK64.png"
-            onClicked: ntrip.visible = false
+            onClicked: {
+                agio.configureNTRIP()
+                ntrip.close()
+            }
         }
 	}
 }

@@ -61,6 +61,8 @@ Item {
     //these are signals that get sent to the backend
     signal btnSendSubnet_clicked();
     signal ntripDebug(bool doWeDebug);
+    signal setIPFromUrl(string url);
+    signal configureNTRIP();
 
 
 
