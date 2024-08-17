@@ -8,6 +8,7 @@
 #include "formloop.h"
 #include "interfaceproperty.h"
 #include "qmlsettings.h"
+#include <QHostInfo>
 #include "agioproperty.h"
 
 extern QMLSettings qml_settings;
@@ -54,6 +55,7 @@ void FormLoop::setupGUI()
     connect(agio, SIGNAL(btnSendSubnet_clicked()), this, SLOT(btnSendSubnet_Click())); // btnSendSubnet_Click lives in formloop_formudp.cpp
     connect(agio, SIGNAL(configureNTRIP()), this, SLOT(ConfigureNTRIP())); //ConfigureNTRIP lives in formloop_ntripcomm.cpp
     connect(agio, SIGNAL(ntripDebug(bool)), this, SLOT(NTRIPDebugMode(bool)));
+    connect(agio, SIGNAL(setIPFromUrl(QString)), this, SLOT(LookupNTripIP(QString)));
 
 }
 
@@ -71,6 +73,20 @@ void FormLoop::ShowAgIO(){
     } else {
         qDebug() << "No root objects found.";
     }
+}
+
+void FormLoop::LookupNTripIP(QString url){
+    QHostInfo::lookupHost(url, this, SLOT(ResolveNTRIPURL(QHostInfo)));
+
+}
+
+
+void FormLoop::TimedMessageBox(int timeout, QString s1, QString s2)
+{
+    qDebug() << "Timed message " << timeout << s1 << ", " << s2 << Qt::endl;
+    //TODO ask QML to display a message
+    QObject *temp = qmlItem(qml_root, "timedMessage");
+    QMetaObject::invokeMethod(temp, "addMessage", Q_ARG(int, timeout), Q_ARG(QString, s1), Q_ARG(QString, s2));
 }
 void FormLoop::UpdateUIVars(){
 	agio->setProperty("latitude", latitudeSend);

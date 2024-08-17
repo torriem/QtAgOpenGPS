@@ -1,5 +1,6 @@
 #include "formloop.h"
 #include "agioproperty.h"
+#include <QHostInfo>
 
 //set up connection to caster
 // main routine
@@ -738,4 +739,19 @@ void FormLoop::BuildGGA()
 void FormLoop::NTRIPDebugMode(bool doWeDebug){
     debugNTRIP = doWeDebug;
     qDebug() << "Debug mode is now" << (debugNTRIP ? "enabled" : "disabled");
+}
+
+void FormLoop::ResolveNTRIPURL(const QHostInfo &hostInfo) {
+    if (hostInfo.error() != QHostInfo::NoError) {
+        qDebug() << "Lookup failed:" << hostInfo.errorString();
+        TimedMessageBox(3000, tr("NTRIP Failure"), tr("URL lookup failed: ") + hostInfo.errorString());
+        return;
+    }
+
+    foreach (const QHostAddress &address, hostInfo.addresses()) {
+        if(address.protocol() == QAbstractSocket::IPv4Protocol){
+            qDebug() << "IP Address:" << address.toString();
+
+        }
+    }
 }

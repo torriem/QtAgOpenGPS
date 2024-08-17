@@ -2,6 +2,7 @@
 #define FormLoop_H
 
 #include <QHostAddress>
+#include <QHostInfo>
 #include <QNetworkDatagram>
 #include <QString>
 #include <QByteArray>
@@ -102,6 +103,7 @@ class FormLoop : public QObject
         void setupGUI();
         void ShowAgIO();
 		void UpdateUIVars();
+        void TimedMessageBox(int timeout, QString s1, QString s2);
 
 		/*formloop.cpp
 		 * formerly Formloop.cs */
@@ -134,6 +136,7 @@ class FormLoop : public QObject
         void timer1_Tick();
         void oneSecondLoopTimer_Tick();
 	    void TwoSecondLoop();
+        void LookupNTripIP(QString url);
 
 
 		/* formloop_udpcomm.cpp
@@ -315,6 +318,8 @@ class FormLoop : public QObject
 		void SettingsShutDownNTRIP();
 		void BuildGGA();
 		QString ToBase64(QString str);
+    public slots:
+        void ResolveNTRIPURL(const QHostInfo &hostInfo);
     private slots:
         void NTRIPDebugMode(bool doWeDebug);
 };
