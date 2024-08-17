@@ -70,7 +70,6 @@ Window {
 				onTextChanged: 
                     if (text.length > 0) {
                         settings.setNTRIP_url = text
-                        agio.setIPFromUrl(text)
                     }
 
 			}
@@ -81,8 +80,7 @@ Window {
             }
 
             Comp.Text {
-                text: "IP: " + settings.setNTRIP_IP1 + "." + settings.setNTRIP_IP2 +
-                      "." + settings.setNTRIP_IP3 + "." + settings.setNTRIP_IP4
+                text: "IP: " + settings.setNTRIP_ipAddress
 
 			}
 		}
@@ -167,7 +165,6 @@ Window {
             checkable: true
             checked: settings.setNTRIP_isOn
             onClicked: {
-
                 settings.setNTRIP_isOn = checked
                 message.addMessage("", "Restart of AgIO is Required - Restarting", true)
             }

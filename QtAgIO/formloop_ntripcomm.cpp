@@ -37,6 +37,7 @@ void FormLoop::DoNTRIPSecondRoutine()
 		if (ntripCounter > 29)
 		{
 			qDebug() << "Connection Problem. Not Connecting To Caster";
+            TimedMessageBox(3000, tr("Connection Problem"), tr("Not Connecting To Caster"));
 			ReconnectRequest();
 		}
         if (clientSocket != NULL && clientSocket->state() == QAbstractSocket::ConnectedState)
@@ -156,12 +157,7 @@ void FormLoop::StartNTRIP()
             }
 
             //NTRIP caster
-            int ip1 = property_setNTRIP_IP1;
-            int ip2 = property_setNTRIP_IP2;
-            int ip3 = property_setNTRIP_IP3;
-            int ip4 = property_setNTRIP_IP4;
-
-			quint32 ipAddress = (ip1 << 24) | (ip2 << 16) | (ip3 << 8) | ip4;
+            QString ipAddress = property_setNTRIP_ipAddress;
 
             wwwNtrip.address.setAddress(ipAddress);
 
@@ -275,8 +271,11 @@ void FormLoop::StartNTRIP()
 
 void FormLoop::ReconnectRequest()
 {
-	//TimedMessageBox(2000, "NTRIP Not Connected", " Reconnect Request");
+    TimedMessageBox(2000, "NTRIP Not Connected", " Reconnect Request");
     qDebug() << "NTRIP Not Connected. Reconnect Request";
+    QString url = property_setNTRIP_url;
+    QHostInfo::lookupHost(url, this, SLOT(ResolveNTRIPURL(QHostInfo)));
+
 	ntripCounter = 15;
 	isNTRIP_Connected = false;
 	isNTRIP_Starting = false;
@@ -388,7 +387,7 @@ void FormLoop::OnAddMessage(QByteArray data)
 	else
     {
 		//send it
-        qDebug() << "onadd";
+        //qDebug() << "onadd";
 		SendNTRIP(data);
     }
 
@@ -477,6 +476,7 @@ void FormLoop::SendGGA()
         if(clientSocket->write(byteDateLine, byteDateLine.length())){
             if(debugNTRIP) qDebug() << "Sending GGA to caster";
         }else{
+            TimedMessageBox(3000, tr("NTRIP Error"), tr("Failed to send GGA to caster. Reconnecting"));
             qDebug() << "Failed to send GGA to caster. Reconnecting";
             ReconnectRequest();
         }
@@ -506,6 +506,7 @@ void FormLoop::SendGGA()
 		{
 			// If no data was recieved then the connection is probably dead
             qDebug() << "Shutting down clientSocket as we got no data";
+            TimedMessageBox(3000, tr("NTRIP Error"), tr("Shutting down clientSocket as we got no data"));
             //clientSocket.Shutdown(SocketShutdown.Both);
             clientSocket->close();
 		}
@@ -563,7 +564,7 @@ void FormLoop::NtripPort_DataReceived()//this is the serial port, right?
 
 void FormLoop::ShutDownNTRIP()
 {
-    qDebug() << "ShutDownNTRIP";
+    //qDebug() << "ShutDownNTRIP";
     if (clientSocket != NULL && clientSocket->state() == QAbstractSocket::ConnectedState)
 	{
 		//shut it down
@@ -751,7 +752,7 @@ void FormLoop::ResolveNTRIPURL(const QHostInfo &hostInfo) {
     foreach (const QHostAddress &address, hostInfo.addresses()) {
         if(address.protocol() == QAbstractSocket::IPv4Protocol){
             qDebug() << "IP Address:" << address.toString();
-
+            property_setNTRIP_ipAddress = address.toString();
         }
     }
 }
