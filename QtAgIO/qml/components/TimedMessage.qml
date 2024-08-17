@@ -15,11 +15,13 @@ import QtQuick.Layouts
  *        and display a title and message, and timeout after 
  *        timeout milliseconds.
  */ 
-Popup {
-    padding: 5
-    x: parent.width / 2
-    y: parent.height * 0.25
-    modal: false
+Window {
+    //padding: 5
+    //x: parent.width / 2
+    //y: parent.height * 0.25
+    //modal: false
+    width: 500
+    height: 200
 
     property int fontsize: 14
 
@@ -48,8 +50,9 @@ Popup {
 
                 ColumnLayout {
                     anchors.fill: parent
-                    anchors.margins: 5
+                    //anchors.margins: 5
                     Item {
+                        anchors.fill: parent
                         Text {
                             id: textTitle
                             width: 450
@@ -149,7 +152,7 @@ Popup {
         }
     }
 
-    onClosed: cancelAllMessages()
+    //onClosed: cancelAllMessages()
         
     function cancelAllMessages() {
     	timedMessageModel.clear();
@@ -158,7 +161,7 @@ Popup {
 
     function addMessage(timeout: int, title: string, message: string) {
         //console.debug(timeout + " " + title + " " + message)
-        timedMessage.open()
+        timedMessage.show()
             
     	timedMessageModel.append( { timeout: timeout, title: title, message: message });
 
