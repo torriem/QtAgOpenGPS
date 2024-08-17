@@ -9,16 +9,29 @@ import QtQuick.Dialogs
  */
 
 MessageDialog {
+    property bool doWeQuit: false
 	visible: false
+    onVisibleChanged: if (visible) {
+                          mainWindow.show()
+                          mainWindow.raise()
+                      }
     id: messageDia
 	title: "Title"
 	text: "Message"
     buttons: MessageDialog.Ok
-    onAccepted: messageDia.visible = false
 
-	function addMessage(title: string, message: string) {
+    onAccepted: {
+        if(doWeQuit)
+            Qt.quit()
+
+        messageDia.visible = false
+        mainWindow.lower()
+    }
+
+    function addMessage(title: string, message: string, doWeQuit: bool) {
         messageDia.title = title
         messageDia.text = message
+        messageDia.doWeQuit = doWeQuit
         messageDia.visible = true
 	}
 }
