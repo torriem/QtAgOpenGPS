@@ -155,10 +155,7 @@ MoveablePopup {
 
                             value: settings.setAS_wasOffset / cpDegSlider.value
 
-                            onValueChanged: {
-                                settings.setAS_wasOffset = value * cpDegSlider.value
-                                console.log(value * cpDegSlider.value);
-                            }
+                            onValueChanged: settings.setAS_wasOffset = value * cpDegSlider.value
 							centerTopText: "WAS Zero"
 							Layout.alignment: Qt.AlignCenter
 							implicitHeight: 50 * theme.scaleHeight
