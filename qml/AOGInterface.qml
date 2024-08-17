@@ -178,6 +178,9 @@ Item {
     signal btnResetTool()
     signal btnHeadland()
 
+    signal btnContour(bool isOn)
+    signal btnContourPriority(bool right)
+
     signal isHydLiftOn()
     signal btnResetSim()
 

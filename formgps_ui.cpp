@@ -177,6 +177,8 @@ void FormGPS::setupGui()
     connect(aog, SIGNAL(isHydLiftOn()), this, SLOT(onBtnHydLift_clicked()));
     connect(aog, SIGNAL(btnResetTool()), this, SLOT(onBtnResetTool_clicked()));
     connect(aog, SIGNAL(btnHeadland()), this, SLOT(onBtnHeadland_clicked()));
+    connect(aog, SIGNAL(btnContour(bool)), this, SLOT(onBtnContour_clicked(bool)));
+    connect(aog, SIGNAL(btnContourPriority(bool)), this, SLOT(onBtnContourPriority_clicked(bool)));
 
     connect(aog, SIGNAL(btnResetSim()), this, SLOT(onBtnResetSim_clicked()));
     connect(aog, SIGNAL(reset_direction()), this, SLOT(onBtnResetDirection_clicked()));
@@ -271,15 +273,6 @@ void FormGPS::setupGui()
     connect(btnFlag,SIGNAL(clicked()),this,
             SLOT(onBtnFlag_clicked()));
 
-    btnContour = qmlItem(qml_root,"btnContour");
-    connect(btnContour,SIGNAL(clicked()),this,
-            SLOT(onBtnContour_clicked()));
-
-    btnContourPriority = qmlItem(qml_root,"btnContourPriority");
-    connect(btnContourPriority,SIGNAL(clicked()),this,
-            SLOT(onBtnContourPriority_clicked()));
-
-
 
     //Any objects we don't need to access later we can just store
     //temporarily
@@ -351,26 +344,8 @@ void FormGPS::onGLControl_clicked(const QVariant &event)
     openGLControl->update();
 }
 
-void FormGPS::onBtnAcres_clicked(){
-    qDebug()<<"AcresButton";
-}
-void FormGPS::onBtnSettings_clicked(){
-    qDebug()<<"Settings";
-}
 void FormGPS::onBtnAgIO_clicked(){
     qDebug()<<"AgIO";
-}
-void FormGPS::onBtnSteerConfig_clicked(){
-    qDebug()<<"Steer config`";
-}
-void FormGPS::onBtnSteerMode_clicked(){
-    qDebug()<<"Steer mode`";
-}
-void FormGPS::onBtnToggleAB_clicked(){
-    qDebug()<<"Toggle AB";
-}
-void FormGPS::onBtnToggleABBack_clicked(){
-    qDebug()<<"toggle AB back";
 }
 void FormGPS::onBtnResetTool_clicked(){
     qDebug()<<"REset tool";
@@ -423,12 +398,6 @@ void FormGPS::onBtnHydLift_clicked(){
 void FormGPS::onBtnTramlines_clicked(){
     qDebug()<<"tramline";
 }
-void FormGPS::onBtnSectionColor_clicked(){
-    qDebug()<<"Section color";
-}
-void FormGPS::onBtnLinePicker_clicked(){
-    qDebug()<<"Line picker";
-}
 void FormGPS::onBtnSnapToPivot_clicked(){
     qDebug()<<"snap to pivot";
 }
@@ -457,33 +426,18 @@ void FormGPS::onBtnFlag_clicked() {
     }
 }
 
-void FormGPS::onBtnContour_clicked(){
-    qDebug()<<"contour button clicked." ;
-
-    ct.isContourBtnOn = !ct.isContourBtnOn;
-    if (ct.isContourBtnOn) {
-        qmlItem(qml_root,"btnContour")->setProperty("isChecked",true);
-        qmlItem(qml_root,"btnContourPriority")->setProperty("visible",true);
-    } else {
-        qmlItem(qml_root,"btnContour")->setProperty("isChecked",false);
-        qmlItem(qml_root,"btnContourPriority")->setProperty("visible",false);
-    }
-
+void FormGPS::onBtnContour_clicked(bool isOn){
+    ct.isContourBtnOn = isOn;
+    qDebug() << "contour: " << isOn;
 }
 
-void FormGPS::onBtnContourPriority_clicked(){
-    qDebug()<<"contour priority button clicked." ;
+void FormGPS::onBtnContourPriority_clicked(bool isRight){
 
-    ct.isRightPriority = !ct.isRightPriority;
-    if (ct.isRightPriority)
-        qmlItem(qml_root,"btnContourPriority")->setProperty("isChecked",true);
-    else
-        qmlItem(qml_root,"btnContourPriority")->setProperty("isChecked",false);
+    ct.isRightPriority = isRight;
+    qDebug() << "isRight: " << isRight;
 }
 
 void FormGPS::onBtnTiltDown_clicked(){
-
-    qDebug()<<"TiltDown button clicked.";
 
     if (camera.camPitch > -59) camera.camPitch = -60;
     camera.camPitch += ((camera.camPitch * 0.012) - 1);
@@ -496,8 +450,6 @@ void FormGPS::onBtnTiltDown_clicked(){
 
 void FormGPS::onBtnTiltUp_clicked(){
     double camPitch = property_setDisplay_camPitch;
-
-    qDebug()<<"TiltUp button clicked.";
 
     lastHeight = -1; //redraw the sky
     camera.camPitch -= ((camera.camPitch * 0.012) - 1);

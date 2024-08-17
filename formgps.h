@@ -70,39 +70,15 @@ public:
     QTimer *tmrWatchdog;
     QTimer timerSim;
 
+    //other
+    QObject *btnFlag;
+
     /***************************
      * Qt and QML GUI elements *
      ***************************/
     //QQuickView *qmlview;
     QWidget *qmlcontainer;
     AOGRendererInSG *openGLControl;
-    //Left Menu & children
-    QObject *btnAcres;
-    QObject *btnSettings;
-    QObject *btnTools;
-    QObject *btnFieldMenu;
-    QObject *btnAgIO;
-    QObject *btnautoSteerConf;
-    QObject *btnAutoSteerMode;
-
-    QObject *btnTiltDown;
-    QObject *btnTiltUp;
-    QObject *btnZoomIn;
-    QObject *btnZoomOut;
-
-    //right menu & children
-    QObject *btnContour;
-    QObject *btnCurve;
-    QObject *btnABLine;
-    QObject *btnABLineCycle;
-    QObject *btnABLineCycleBk;
-    QObject *btnManualOffOn;
-    QObject *btnSectionOffAutoOn;
-    QObject *btnAutoSteer;
-
-    QObject *btnContourPriority;
-    //other
-    QObject *btnFlag;
 
     //flag context menu and buttons
     QObject *contextFlag;
@@ -722,26 +698,18 @@ public slots:
 
     void onBtnResetDirection_clicked();
     //left column
-    void onBtnAcres_clicked();
-    void onBtnSettings_clicked();
     void onBtnAgIO_clicked();
-    void onBtnSteerConfig_clicked();
-    void onBtnSteerMode_clicked();
     //right column
-    void onBtnContour_clicked();
-    void onBtnToggleAB_clicked();
-    void onBtnToggleABBack_clicked();
+    void onBtnContour_clicked(bool isOn);
     void onBtnAutoYouTurn_clicked();
     void onBtnSwapAutoYouTurnDirection_clicked();
-    void onBtnContourPriority_clicked();
+    void onBtnContourPriority_clicked(bool isRight);
     //bottom row
     void onBtnResetTool_clicked();
     void onBtnHeadland_clicked();
     void onBtnHydLift_clicked();
     void onBtnFlag_clicked();
     void onBtnTramlines_clicked();
-    void onBtnSectionColor_clicked();
-    void onBtnLinePicker_clicked();
     void onBtnSnapToPivot_clicked();
     //don't need ablineedit
     void onBtnYouSkip_clicked();

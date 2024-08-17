@@ -644,7 +644,6 @@ Window {
 
             IconButtonText {
                 id: btnContour
-                objectName: "btnContour"
                 isChecked: false
                 checkable: true
                 icon.source: "/images/ContourOff.png"
@@ -654,6 +653,10 @@ Window {
                 buttonText: "Contour"
                 //color: "white"
                 Layout.alignment: Qt.AlignCenter
+                onClicked: {
+                    btnContourPriority.visible = checked
+                    aog.btnContour(checked)
+                }
             }
             IconButtonText{
                 id: btnABCurve
@@ -856,12 +859,12 @@ Window {
 
             IconButton {
                 id: btnContourPriority
-                objectName: "btnContourPriority"
                 checkable: true
                 isChecked: true
                 visible: false
                 icon.source: "/images/ContourPriorityLeft.png"
                 iconChecked: "/images/ContourPriorityRight.png"
+                onClicked: aog.btnContourPriority(checked)
             }
         }
         RowLayout{
@@ -1528,7 +1531,6 @@ Window {
                 onClicked: parent.visible = false
             }
             IconButtonText{
-                objectName: "btnExitAOG"
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 color1: "transparent"
