@@ -150,9 +150,7 @@ void FormLoop::StartNTRIP()
                 //clientSocket.Close();
                 //correct? David
                 clientSocket->disconnectFromHost();
-                if (clientSocket->state() != QAbstractSocket::UnconnectedState) {
-                    clientSocket->waitForDisconnected(3000); // Optional: Wait for up to 3 seconds to ensure the socket is disconnected
-                }
+
                 clientSocket->close();
             }
 
@@ -173,7 +171,7 @@ void FormLoop::StartNTRIP()
 			// Connect to server
             if(debugNTRIP) qDebug() << "Connecting to server... Connecting";
             clientSocket->connectToHost(wwwNtrip.address, wwwNtrip.portToSend);
-            if (clientSocket->waitForConnected(5000)) {
+            /*if (clientSocket->waitForConnected(5000)) {
                 if(debugNTRIP) qDebug() << "Ntrip client connected to server";
 
             }
@@ -181,7 +179,7 @@ void FormLoop::StartNTRIP()
                 if(debugNTRIP) qDebug() << "NTRIP Client failed to connect. Reconnecting...";
                 ReconnectRequest();
                 return;
-            }
+            }*/
             connect(clientSocket, &QTcpSocket::readyRead, this, &FormLoop::OnReceivedData);
 
 		isNTRIP_Connecting = true;
