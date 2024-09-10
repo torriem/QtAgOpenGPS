@@ -295,10 +295,21 @@ Window {
                 icon.source: "/images/GPSQuality.png"
                 implicitWidth: 75 * theme.scaleWidth
                 implicitHeight: parent.height
+                color: "yellow"
                 onClicked: {
                     gpsData.visible = !gpsData.visible
                     fieldData.visible = false
                 }
+                Connections{
+                    target: aog
+                    function onFixQualityChanged() {
+                        if(aog.fixQuality == 4) rtkStatus.color = "green"
+                        else if(aog.fixQuality == 5) rtkStatus.color = "orange"
+                        else if(aog.fixQuality == 2) rtkStatus.color = "yellow"
+                        else rtkStatus.color = "red"
+                    }
+                }
+
             }
 
             Text{
