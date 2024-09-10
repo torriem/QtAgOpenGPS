@@ -4,7 +4,7 @@ import "components"
 
 Rectangle{
     id: gpsData
-    width: childrenRect.width
+    width: 250
     height: childrenRect.height + 30
     color: "#4d4d4d"
     Column{
