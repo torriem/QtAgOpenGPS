@@ -146,6 +146,10 @@ Window {
 	EthernetConfig {
 		id: ethernetConfig
 		visible: false
+        onVisibleChanged: {
+            if(visible)
+                ethernetConfig.load_settings()
+        }
 	}
     GPSInfo {
         id: gpsInfo

@@ -10,6 +10,11 @@ Window {
     width: 260
     visible: true
     title: qsTr("Ethernet Configuration")
+        function load_settings(){
+                spIP1.value = settings.setUDP_IP1
+                spIP2.value = settings.setUDP_IP2
+                spIP3.value = settings.setUDP_IP3
+        }
 
     Rectangle {
         id: ethIP
@@ -21,6 +26,7 @@ Window {
         anchors.bottom: parent.bottom
         border.width: 2
         border.color: theme.blackDayWhiteNight
+
         ColumnLayout {
             id: column
             anchors.fill: parent
@@ -28,13 +34,35 @@ Window {
                 Layout.alignment: Qt.AlignCenter
                 text: qsTr("Ethernet IP")
             }
-            TextField {
-                id: ethIPText
+            Text {
                 Layout.alignment: Qt.AlignCenter
-                placeholderText: qsTr("IP Address")
-                width: parent.width
-                selectByMouse: true
+                text: qsTr("IP Address")
             }
+
+            Row{
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 4
+                Comp.SpinBoxCustomized{
+                    id: spIP1
+                    width: 30 * theme.scaleWidth
+                   from: 0
+                   to: 255
+                }
+                Comp.SpinBoxCustomized{
+                    id: spIP2
+                    width: 30 * theme.scaleWidth
+                   from: 0
+                   to: 255
+                }
+                Comp.SpinBoxCustomized{
+                    id: spIP3
+                    width: 30 * theme.scaleWidth
+                   from: 0
+                   to: 255
+                }
+
+            }
+
 
             Comp.Spacer{}
 
@@ -46,7 +74,14 @@ Window {
                     text: qsTr("IP Set")
                     icon.source: "/images/SubnetSend.png"
                     Layout.alignment: Qt.AlignCenter
-                    onClicked: agio.btnSendSubnet_clicked()
+                    onClicked: {
+                        settings.setUDP_IP1 = spIP1.value
+                        settings.setUDP_IP2 = spIP2.value
+                        settings.setUDP_IP3 = spIP3.value
+                        timedMessage.addMessage(2000, "IP Address Change", ("IP address changed to " +
+                        settings.setUDP_IP1 + "." + settings.setUDP_IP2 + "." + settings.setUDP_IP3 + "!"))
+                        agio.btnSendSubnet_clicked()
+                    }
                     implicitWidth: btnOK.width
                     implicitHeight: btnOK.height
                 }

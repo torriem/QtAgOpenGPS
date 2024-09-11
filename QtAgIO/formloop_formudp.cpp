@@ -221,9 +221,13 @@ void FormLoop::ScanNetwork()
 void FormLoop::btnSendSubnet_Click()
 {
 
-    sendIPToModules[7] = ipNew[0];
+    /*sendIPToModules[7] = ipNew[0];
     sendIPToModules[8] = ipNew[1];
-    sendIPToModules[9] = ipNew[2];
+    sendIPToModules[9] = ipNew[2];*/
+
+    sendIPToModules[7] = property_setUDP_IP1;
+    sendIPToModules[8] = property_setUDP_IP2;
+    sendIPToModules[9] = property_setUDP_IP3;
 
     //loop thru all interfaces
     for (const QNetworkInterface& nic : QNetworkInterface::allInterfaces())
@@ -246,7 +250,7 @@ void FormLoop::btnSendSubnet_Click()
 
                             scanSocket->bind(info.ip(), 9999);
                             scanSocket->writeDatagram(sendIPToModules, ethModulesSet.address, ethModulesSet.portToSend);
-                            qDebug() << "ScanSocket Sent!";
+                            qDebug() << "IP Subnet " << ipNew[0] << "." << ipNew[1] << "." << ipNew[2] << " sent!";
                         }
                     }
                     catch (const std::exception& ex)
@@ -259,9 +263,14 @@ void FormLoop::btnSendSubnet_Click()
         }
     }
 
-    property_setUDP_IP1 = ipCurrent[0] = ipNew[0];
+    /*property_setUDP_IP1 = ipCurrent[0] = ipNew[0];
     property_setUDP_IP2 = ipCurrent[1] = ipNew[1];
-    property_setUDP_IP3 = ipCurrent[2] = ipNew[2];
+    property_setUDP_IP3 = ipCurrent[2] = ipNew[2];*/
+
+    ipNew[0] = ipCurrent[0] = property_setUDP_IP1;
+    ipNew[1] = ipCurrent[1] = property_setUDP_IP2;
+    ipNew[2] = ipCurrent[2] = property_setUDP_IP3;
+
 
     //Properties.Settings.Default.Save();
     //does the lower replace the upper? Remove if it does
