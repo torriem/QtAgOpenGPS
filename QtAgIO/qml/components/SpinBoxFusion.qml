@@ -33,7 +33,7 @@ T.SpinBox {
 		//don't ask why, you would think qt's default would work.
 		text:  value//this seems to fix above error
 		font: spinner.font
-        color: agio.blackDayWhiteNight
+        color: theme.blackDayWhiteNight
 		selectionColor: spinner.palette.highlight
 		selectedTextColor: spinner.palette.highlightedText
 		horizontalAlignment: Qt.AlignHCenter
@@ -64,7 +64,7 @@ T.SpinBox {
 			width: parent.width
 			height: parent.height
 			opacity: enabled ? 1.0 : 0.5
-            color: agio.blackDayWhiteNight
+            color: theme.blackDayWhiteNight
 			source: "qrc:/qt-project.org/imports/QtQuick/Controls/Fusion/images/arrow.png"
 			fillMode: Image.Pad
 		}
@@ -88,7 +88,7 @@ T.SpinBox {
 			width: parent.width
 			height: parent.height
 			opacity: enabled ? 1.0 : 0.5
-            color: agio.blackDayWhiteNight
+            color: theme.blackDayWhiteNight
 			source: "qrc:/qt-project.org/imports/QtQuick/Controls/Fusion/images/arrow.png"
 			fillMode: Image.Pad
 		}
@@ -99,8 +99,8 @@ T.SpinBox {
 		implicitHeight: 24
 
 		radius: 2
-        color: agio.whiteDayBlackNight
-        border.color: agio.blackDayWhiteNight
+        color: theme.whiteDayBlackNight
+        border.color: theme.blackDayWhiteNight
 
 		Rectangle {
 			x: 2
@@ -121,11 +121,11 @@ T.SpinBox {
 			gradient: Gradient { //this should all really be removed.
 			GradientStop {
 				position: 0
-                color: agio.whiteDayBlackNight
+                color: theme.whiteDayBlackNight
 			}
 			GradientStop {
 				position: 1
-                color: agio.whiteDayBlackNight
+                color: theme.whiteDayBlackNight
 			}
 		}
 
