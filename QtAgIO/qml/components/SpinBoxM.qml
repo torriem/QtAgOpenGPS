@@ -47,7 +47,7 @@ Item {
         }
     }
 
-    SpinBoxDouble {
+    SpinBoxCustomized {
         id: spinner
 		decimals: spinBoxM.decimals
         from: utils.m_to_unit(spinBoxM.from)

@@ -37,7 +37,7 @@ Item {
         spinner.value = boundValue
     }
 
-	SpinBoxFusion{
+    SpinBox{
 		id: spinner
 		from: spinBox_Customized.from * decimalFactor
 		to: spinBox_Customized.to * decimalFactor
