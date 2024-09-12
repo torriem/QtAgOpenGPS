@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Window
 import QtQuick.Controls.Fusion
-import "components"
+import "components" as Comp
 
 Window {
 
@@ -25,7 +25,7 @@ Window {
     onVisibleChanged: console.log("Visible!")
 
         //This is a popup message that dismisses itself after a timeout
-    TimedMessage {
+    Comp.TimedMessage {
         id: timedMessage
         objectName: "timedMessage"
     }
@@ -44,27 +44,27 @@ Window {
 			 anchors.bottomMargin: 5 * theme.scaleHeight
 			 anchors.topMargin: 5 * theme.scaleHeight
 			 anchors.leftMargin: 5 * theme.scaleWidth
-			 IconButtonColor {
+             Comp.IconButtonColor {
 				 id: btnAOGSStatus
 				 text: qsTr("AOG")
 				 icon.source: imagePath + "AgIOBtn.png"
 				 color: agio.aogConnected ? "green" : "red"
 			 }
-			 IconButtonColor {
+             Comp.IconButtonColor {
 				 id: btnEthernetStatus
 				 text: qsTr("Ethernet")
 				 icon.source: imagePath + "B_UDP.png"
 				 color: agio.ethernetConnected ? "green" : "red"
                  onClicked: ethernetConfig.visible = !ethernetConfig.visible
 			 }
-			 IconButtonColor {
+             Comp.IconButtonColor {
 				 id: btnNTRIPStatus
 				 text: qsTr("NTRIP")
                  //Oicon.source: "../../images/qtSpecific/NTRIP_Client.png"//qtAOG specific image--not in AOG
                  icon.source: imagePath + "AgIOBtn.png"
                  color: agio.ntripConnected ? "green" : "red"
 			 }
-             IconButtonTransparent {
+             Comp.IconButtonTransparent {
                  icon.source: "/images/Nmea.png"
                  visible: agio.gpsConnected
                  onClicked: gpsInfo.visible = !gpsInfo.visible
@@ -78,25 +78,25 @@ Window {
 			 anchors.bottomMargin: 5 * theme.scaleHeight
 			 anchors.topMargin: 5 * theme.scaleHeight
 			 anchors.leftMargin: 5 * theme.scaleWidth
-			 IconButtonColor {
+             Comp.IconButtonColor {
 				 id: btnModuleIMU
 				 text: qsTr("IMU")
 				 icon.source: imagePath + "B_IMU.png"
 				 color: agio.imuConnected ? "green" : "red"
 			 }
-			 IconButtonColor {
+             Comp.IconButtonColor {
 				 id: btnModuleSteer
 				 text: qsTr("Steer")
 				 icon.source: imagePath + "Com_AutosteerModule.png"
 				 color: agio.steerConnected ? "green" : "red"
 			 }
-			 IconButtonColor {
+             Comp.IconButtonColor {
 				 id: btnModuleGPS
 				 text: qsTr("GPS")
 				 icon.source: imagePath + "B_GPS.png"
 				 color: agio.gpsConnected ? "green" : "red"
 			 }
-			 IconButtonColor {
+             Comp.IconButtonColor {
 				 id: btnModuleMachine
 				 text: qsTr("Machine")
 				 icon.source: imagePath + "B_Machine.png"
@@ -112,19 +112,19 @@ Window {
 			 anchors.leftMargin: 5 * theme.scaleWidth
 			 anchors.bottomMargin: 5 * theme.scaleHeight
 			 spacing: (width - (btnHide.implicitWidth * 3)) / 2 //fill the parent up with equal space
-			 IconButtonText {
+             Comp.IconButtonText {
 				 id: btnSettings
 				 implicitWidth: btnNTRIP.width
 				 implicitHeight: btnNTRIP.height
 				 text: qsTr("Settings")
 				 icon.source: imagePath + "Settings48.png"
 			 }
-			 IconButton {
+             Comp.IconButton {
 				 id: btnNTRIP
 				 icon.source: imagePath + "NtripSettings.png"
                  onClicked: ntrip.visible = !ntrip.visible
 			 }
-			 IconButtonText {
+             Comp.IconButtonText {
 				 id: btnHide
 				 implicitWidth: btnNTRIP.width
 				 implicitHeight: btnNTRIP.height
@@ -136,7 +136,7 @@ Window {
 	}
 
     /************** - Put all child windows here - ********************/
-    Message {
+    Comp.Message {
 		id: message
 	}
     NTrip{
