@@ -596,7 +596,6 @@
         <file>qml/components/TimedMessage.qml</file>
         <file>qml/components/TextLine.qml</file>
         <file>qml/components/TestSectionButtons.qml</file>
-        <file>qml/components/SpinBoxDecimal.qml</file>
         <file>qml/components/SpinBoxM.qml</file>
         <file>qml/components/SpinBoxKM.qml</file>
         <file>qml/components/SpinBoxCustomized.qml</file>

@@ -307,11 +307,12 @@ Rectangle{
             anchors.left: parent.left
             anchors.leftMargin: 30 * theme.scaleWidth
         }
-        SpinBoxDecimal{
+        SpinBoxCustomized{
             id: headingOffSet
             anchors.left: head.right
 			anchors.verticalCenter: head.verticalCenter
             anchors.leftMargin: 10 * theme.scaleWidth
+            decimals: 1
             from: -100
             boundValue: settings.setGPS_dualHeadingOffset
             onValueChanged: settings.setGPS_dualHeadingOffset = value

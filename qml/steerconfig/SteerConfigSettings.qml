@@ -500,13 +500,14 @@ Rectangle{
 				   id: settingsWindow
 				   visible: settingsBtn.checked
 				   anchors.centerIn: parent
-				   SpinBoxDecimal{
+                   SpinBoxCustomized{
 					   text: "Panic Stop"
 					   implicitWidth: 100 * theme.scaleWidth
 					   implicitHeight: 65 * theme.scaleHeight
 					   from: 0
 					   value: 0
 					   to: 10
+                       decimals: 1
 					   editable: true
 					   onValueChanged: unsaved.visible = true
 				   }
@@ -684,7 +685,7 @@ Rectangle{
 								anchors.top: lineacqLAheadtitletxt.bottom
 								anchors.bottom: parent.bottom
 								width: parent.width*.5
-								SpinBoxDecimal{
+                                SpinBoxCustomized{
 									id: lineacqLAheadSetting
 									anchors.top: parent.top
 									anchors.topMargin: 25 * theme.scaleHeight
@@ -697,6 +698,7 @@ Rectangle{
 									onValueModified: settings.setAS_guidanceLookAheadTime = value
 									editable: true
 									text: qsTr("Seconds")
+                                    decimals: 1
 								}
 							}
 						}

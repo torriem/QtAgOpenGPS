@@ -25,7 +25,8 @@ Rectangle {
             id: leftNudger
             icon.source: "/images/ArrowLeft.png"
         }
-            SpinBoxDecimal{
+            SpinBoxCustomized{
+                decimals: 1
             width: leftNudger.width
             height: 50
             anchors.verticalCenter: parent.verticalCenter

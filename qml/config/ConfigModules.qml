@@ -146,7 +146,7 @@ import "../components"
                     height: 200 * theme.scaleHeight
 					fillMode: Image.Stretch
                 }
-                SpinBoxDecimal{
+                SpinBoxCustomized{
                     id: nudHydLiftLookAhead
                     from:1
                     //boundValue: settings.setVehicle_hydraulicLiftLookAhead
@@ -156,6 +156,7 @@ import "../components"
                     enabled: cboxIsHydOn.checked
                     text: qsTr("Hyd Lift Look Ahead (secs)")
                     onValueChanged: unsaved.visible = true
+                    decimals: 1
                 }
                 SpinBoxCustomized{
                     id: nudLowerTime
