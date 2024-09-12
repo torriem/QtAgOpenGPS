@@ -8,7 +8,7 @@ Item {
     property double to
     property string text: ""
 	property int stepSize: 1
-    property bool editable
+    property bool editable: true
     property double boundValue
     property int fontPixelSize: 15
 	property int decimals: 0
@@ -50,9 +50,9 @@ Item {
 		height: 30 * theme.scaleHeight
 		width: 100 * theme.scaleWidth
 
-		Keys.onReturnPressed: {
+        /*Keys.onReturnPressed: {
 			//console.debug("enter was pressed.  ignore it.")
-		}
+        }*/
 		contentItem: TextInput {
 			id: text_input
 			text: parent.value
