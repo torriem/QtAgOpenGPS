@@ -63,7 +63,6 @@ void FormLoop::timer1_Tick()
     if (scanReply.isNewMachine)
     {
         //lblMachineIP.Text = mf                    }
-        //mf.scanReply.machineIP; //should this be commented out???
         scanReply.isNewMachine = false;
         //lblNewSubnet.Text = mf.scanReply.subnetStr;
     }
