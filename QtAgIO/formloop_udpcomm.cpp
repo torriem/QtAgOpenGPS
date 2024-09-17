@@ -11,10 +11,10 @@ void FormLoop::LoadUDPNetwork()
     helloFromAgIO[5] = 56;
 
     //get the hostname
-    QString hostName = QHostInfo::localHostName();
+    //QString hostName = QHostInfo::localHostName();
 
     // Get all IP addresses associated with the host name
-    QList<QHostAddress> addresses = QNetworkInterface::allAddresses();
+    //QList<QHostAddress> addresses = QNetworkInterface::allAddresses();
     //Is the above code all right? I don't know what I"m doing. David
     /* Oh forget this for now. I'll work on it later
 		 * foreach (const QHostAddress &address, addresses) {
@@ -49,11 +49,13 @@ void FormLoop::LoadUDPNetwork()
 
     //set up the connection
     //this is the part that listens
-    if(!udpSocket->bind(ethUDP.address, ethUDP.portToListen)) //TODO settings
+    if(!udpSocket->bind(QHostAddress::Any, ethUDP.portToListen)) //TODO settings
     {
         qDebug() << "Failed to bind udpSocket: " << udpSocket->errorString();
         agio->setProperty("ethernetConnected", false);
+        isUDPNetworkConnected = true;
     }else {
+        udpSocket->setSocketOption(QAbstractSocket::MulticastLoopbackOption, 1);
         qDebug() << "udpSocket bound to " << ethUDP.address << ":" << ethUDP.portToListen;
         agio->setProperty("ethernetConnected", true);
     }
@@ -61,7 +63,6 @@ void FormLoop::LoadUDPNetwork()
     //trigger ReceiveFromUDP() when a packet is present
     connect(udpSocket, &QUdpSocket::readyRead, this, &FormLoop::ReceiveFromUDP);
 
-    isUDPNetworkConnected = true;
 
 }
 
