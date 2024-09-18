@@ -3,9 +3,9 @@ import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 
 import ".."
-import "../components"
+import "../components" as Comp
 
-MoveablePopup {
+Comp.MoveablePopup {
     function show(){
         trackNew.visible = true
     }
@@ -14,7 +14,7 @@ MoveablePopup {
     y: 40
     width: 250
     height: 300
-    TitleFrame{
+    Comp.TitleFrame{
         color: "#f2f2f2"
         border.color: "black"
         title: "Tracks"
@@ -26,19 +26,19 @@ MoveablePopup {
             flow: Grid.LeftToRight
             rows: 2
             columns: 2
-            IconButtonColor{
+            Comp.IconButtonColor{
                 icon.source: "/images/ABTrackA+.png"
                 implicitWidth: 100
                 implicitHeight: 100
                 color: "#ffffff"
             }
-            IconButtonColor{
+            Comp.IconButtonColor{
                 icon.source: "/images/ABTrackAB.png"
                 implicitWidth: 100
                 implicitHeight: 100
                 color: "#ffffff"
             }
-            IconButtonColor{
+            Comp.IconButtonColor{
                 icon.source: "/images/Cancel64.png"
                 implicitWidth: 70
                 implicitHeight: 70
@@ -46,7 +46,7 @@ MoveablePopup {
                 Layout.alignment:  Qt.alignBottom && Qt.alignLeft
                 onClicked: trackNew.visible = false
             }
-            IconButtonColor{
+            Comp.IconButtonColor{
                 icon.source: "/images/ABTrackCurve.png"
                 implicitWidth: 100
                 implicitHeight: 100
