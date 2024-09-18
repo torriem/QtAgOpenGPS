@@ -8,7 +8,7 @@ import AgOpenGPS 1.0
 
 import "interfaces" as Interfaces
 import "boundary" as Boundary
-import "steerconfig"
+import "steerconfig" as SteerConfig
 import "config"
 import "field"
 import "tracks"
@@ -1456,11 +1456,11 @@ Window {
             //anchors.verticalCenter: parent.verticalCenter
             visible: false
         }
-        SteerConfigWindow {
+        SteerConfig.SteerConfigWindow {
             id:steerConfigWindow
             visible: false
         }
-		SteerConfigSettings{
+        SteerConfig.SteerConfigSettings{
 			id: steerConfigSettings
 			anchors.fill: parent
 			visible: false
