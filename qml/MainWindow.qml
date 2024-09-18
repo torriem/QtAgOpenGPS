@@ -11,7 +11,7 @@ import "boundary" as Boundary
 import "steerconfig" as SteerConfig
 import "config" as ConfigSettings //"Config" causes errors
 import "field" as Field
-import "tracks"
+import "tracks" as Tracks
 import "components"
 
 Window {
@@ -1329,7 +1329,7 @@ Window {
             z:1
         }
 
-        TrackButtons{
+        Tracks.TrackButtons{
             id: trackButtons
             anchors.right: parent.right
             anchors.bottom: parent.bottom
@@ -1496,7 +1496,7 @@ Window {
             visible: false
         }
 
-        LineDrawer {
+        Tracks.LineDrawer {
             id:lineDrawer
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
@@ -1504,11 +1504,11 @@ Window {
             width:1024
             visible:false
         }
-        LineNudge{
+        Tracks.LineNudge{
             id: lineNudge
             visible: false
         }
-        RefNudge{
+        Tracks.RefNudge{
             id: refNudge
             visible: false
         }
@@ -1517,7 +1517,7 @@ Window {
             anchors.fill: parent
         }
 
-        TrackNew{
+        Tracks.TrackNew{
             id: trackNew
             visible: false
         }
