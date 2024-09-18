@@ -479,7 +479,6 @@ void FormGPS::onBtnN3D_clicked(){
     navPanelCounter = 0;
 }
 void FormGPS::onBtnZoomIn_clicked(){
-    qDebug() <<"ZoomIn button clicked.";
     if (camera.zoomValue <= 20) {
         if ((camera.zoomValue -= camera.zoomValue * 0.1) < 3.0)
             camera.zoomValue = 3.0;
@@ -494,7 +493,6 @@ void FormGPS::onBtnZoomIn_clicked(){
 }
 
 void FormGPS::onBtnZoomOut_clicked(){
-    qDebug() <<"ZoomOut button clicked.";
     if (camera.zoomValue <= 20) camera.zoomValue += camera.zoomValue * 0.1;
     else camera.zoomValue += camera.zoomValue * 0.05;
     if (camera.zoomValue > 220) camera.zoomValue = 220;
