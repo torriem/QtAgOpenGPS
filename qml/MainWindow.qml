@@ -9,7 +9,7 @@ import AgOpenGPS 1.0
 import "interfaces" as Interfaces
 import "boundary" as Boundary
 import "steerconfig" as SteerConfig
-import "config"
+import "config" as ConfigSettings //"Config" causes errors
 import "field"
 import "tracks"
 import "components"
@@ -1422,7 +1422,7 @@ Window {
             visible: false
         }
 
-        Config {
+        ConfigSettings.Config {
             id:config
 			x: 0
 			y: 0
