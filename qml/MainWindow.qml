@@ -290,6 +290,17 @@ Window {
             anchors.top: parent.top
             anchors.right: parent.right
 			spacing: 5 * theme.scaleWidth
+            Comp.IconButton {
+                id: btnFieldInfo
+                icon.source: "/images/FieldStats.png"
+                Layout.alignment: Qt.AlignCenter
+                implicitWidth: theme.buttonSize
+                height:parent.height
+                onClicked: {
+                    fieldData.visible = !fieldData.visible
+                    gpsData.visible = false
+                }
+            }
             Comp.IconButtonColor{
                 id: rtkStatus
                 icon.source: "/images/GPSQuality.png"
@@ -322,11 +333,6 @@ Window {
                 font.pixelSize: 35
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-            }
-            Comp.IconButtonTransparent{
-                height: parent.height
-                width: 75 * theme.scaleWidth
-                icon.source: "/images/Help.png"
             }
             Comp.IconButtonTransparent{
                 height: parent.height
@@ -955,17 +961,6 @@ Window {
                 Layout.alignment: Qt.AlignCenter
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
-            }
-            Comp.IconButtonText {
-                id: btnFieldInfo
-                icon.source: "/images/FieldStats.png"
-                Layout.alignment: Qt.AlignCenter
-				implicitWidth: theme.buttonSize
-				implicitHeight: theme.buttonSize
-                onClicked: {
-                    fieldData.visible = !fieldData.visible
-                    gpsData.visible = false
-                }
             }
             Comp.IconButtonText {
                 id: btnTramLines
