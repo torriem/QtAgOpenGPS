@@ -10,7 +10,7 @@ import "interfaces" as Interfaces
 import "boundary" as Boundary
 import "steerconfig" as SteerConfig
 import "config" as ConfigSettings //"Config" causes errors
-import "field"
+import "field" as Field
 import "tracks"
 import "components"
 
@@ -1265,7 +1265,7 @@ Window {
 
         //Components- this is where the windows that get displayed over the
         //ogl get instantiated.
-        FieldData{
+        Field.FieldData{
             id: fieldData
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
@@ -1404,11 +1404,11 @@ Window {
         }
 
 
-        FieldToolsMenu {
+        Field.FieldToolsMenu {
             id: fieldTools
             visible: false
         }
-        FieldMenu {
+        Field.FieldMenu {
             id: fieldMenu
             objectName: "slideoutMenu"
             visible: false
@@ -1557,20 +1557,20 @@ Window {
         Item{
             id: windowsArea      //container for declaring all the windows
             anchors.fill: parent //that can be displayed on the main screen
-            FieldFromExisting{
+            Field.FieldFromExisting{
                 id: fieldFromExisting
                 x: 0
                 y: 0
             }
-            FieldNew{
+            Field.FieldNew{
                 id: fieldNew
             }
-            FieldFromKML{
+            Field.FieldFromKML{
                 id: fieldFromKML
                 x: 100
                 y: 75
             }
-            FieldOpen{
+            Field.FieldOpen{
                 id: fieldOpen
                 x: 100    }
 
