@@ -7,7 +7,7 @@ import QtMultimedia
 import AgOpenGPS 1.0
 
 import "interfaces" as Interfaces
-import "boundary"
+import "boundary" as Boundary
 import "steerconfig"
 import "config"
 import "field"
@@ -1491,7 +1491,7 @@ Window {
             anchors.topMargin: 50
             visible: false
         }
-        BoundaryMenu{
+        Boundary.BoundaryMenu{
             id: boundaryMenu
             visible: false
         }
