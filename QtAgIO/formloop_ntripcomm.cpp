@@ -276,6 +276,8 @@ void FormLoop::ReconnectRequest()
 
 	ntripCounter = 15;
 	isNTRIP_Connected = false;
+    agio->setProperty("ntripConnected", false);
+    ShowAgIO();
 	isNTRIP_Starting = false;
 	isNTRIP_Connecting = false;
 
@@ -356,6 +358,7 @@ void FormLoop::SendAuthorization()
 		}
 		//say its connected
 		isNTRIP_Connected = true;
+        agio->setProperty("ntripConnected", true);
 		isNTRIP_Starting = false;
 		isNTRIP_Connecting = false;
     /*}
