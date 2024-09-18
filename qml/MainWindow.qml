@@ -6,7 +6,7 @@ import QtQuick.Effects
 import QtMultimedia
 import AgOpenGPS 1.0
 
-import "interfaces"
+import "interfaces" as Interfaces
 import "boundary"
 import "steerconfig"
 import "config"
@@ -131,27 +131,27 @@ Window {
         id: aog
         objectName: "aog"
     }
-    LinesInterface {
+    Interfaces.LinesInterface {
         objectName: "linesInterface"
         id: linesInterface
     }
 
-    FieldInterface {
+    Interfaces.FieldInterface {
         id: fieldInterface
         objectName: "fieldInterface"
     }
 
-    VehicleInterface {
+    Interfaces.VehicleInterface {
         id: vehicleInterface
         objectName: "vehicleInterface"
     }
 
-    BoundaryInterface {
+    Interfaces.BoundaryInterface {
         id: boundaryInterface
         objectName: "boundaryInterface"
     }
 
-    RecordedPathInterface {
+    Interfaces.RecordedPathInterface {
         id: recordedPathInterface
         objectName: "recordedPathInterface"
     }
