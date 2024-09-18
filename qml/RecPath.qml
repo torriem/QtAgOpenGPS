@@ -1,9 +1,9 @@
 import QtQuick 2.0
 import QtQuick.Controls.Fusion
 
-import "components"
+import "components" as Comp
 
-MoveablePopup{
+Comp.MoveablePopup{
     id: recPath
     height: parent.height *.5
     x: 40
@@ -18,29 +18,29 @@ MoveablePopup{
                       else
                           recordedPathInterface.recPathClear()
 
-    ScrollViewExpandableColumn{
+    Comp.ScrollViewExpandableColumn{
         id: recPathColumn
         width: children.width
         height: parent.height-20
         anchors.centerIn: parent
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             icon.source: "/images/Play.png"
             iconChecked: "/images/boundaryStop.png"
             onClicked: recordedPathInterface.recPathFollowStop()
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             icon.source: "/images/Stop.png"
             onClicked: recordedPathInterface.recPathResumeStyle()
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             icon.source: "/images/BoundaryRecord.png"
             iconChecked: "/images/boundaryStop.png"
             onClicked: recordedPathInterface.recPathRecordStop()
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             icon.source: "/images/FileExplorerWindows.png"
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             icon.source: "/images/ABSwapPoints.png"
             onClicked: recordedPathInterface.recPathSwapAB()
         }

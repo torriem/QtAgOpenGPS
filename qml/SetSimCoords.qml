@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.3
-import "components"
+import "components" as Comp
 
 Rectangle{
     id: setSimCoordsRoot
@@ -11,7 +11,7 @@ Rectangle{
         setSimCoordsRoot.visible = true
         console.log("showing in setsim")
     }
-    TextLine{
+    Comp.TextLine{
         id: textSimCoords
         anchors.top: parent.top
         anchors.margins: 10
@@ -33,7 +33,7 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             height: parent.height *.6
             width: children.width
-            TextLine{
+            Comp.TextLine{
                 anchors.centerIn: parent
                 text: qsTr("Latitude")
                 font.pixelSize: 30
@@ -48,7 +48,7 @@ Rectangle{
             anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width *.45
             height: children.height
-            TextLine{
+            Comp.TextLine{
                 text: qsTr("Longituge")
                 anchors.centerIn: parent
                 font.pixelSize: 30
@@ -62,19 +62,19 @@ Rectangle{
         anchors.right: buttons.left
         anchors.bottom: parent.bottom
         anchors.margins: 10
-        TextLine{
+        Comp.TextLine{
             text: qsTr("Latitude")
             anchors.bottom: latFromTo.top
             anchors.horizontalCenter: latInput.horizontalCenter
         }
-        TextLine{
+        Comp.TextLine{
             id: latFromTo
             text: qsTr("From -180 to +180")
             anchors.bottom: latInput.top
             anchors.horizontalCenter: latInput.horizontalCenter
         }
 
-        LatLonTextField{
+        Comp.LatLonTextField{
             id: latInput
             width: textInputField*.45
             height: 50
@@ -82,18 +82,18 @@ Rectangle{
             anchors.left: parent.left
             //placeholderText: settings.setGPS_simLatitude
         }
-        TextLine{
+        Comp.TextLine{
             text: qsTr("Longitude")
             anchors.bottom: lonFromTo.top
             anchors.horizontalCenter: lonInput.horizontalCenter
         }
-        TextLine{
+        Comp.TextLine{
             id: lonFromTo
             text: qsTr("From -180 to +180")
             anchors.bottom: lonInput.top
             anchors.horizontalCenter: lonInput.horizontalCenter
         }
-        LatLonTextField{
+        Comp.LatLonTextField{
             id: lonInput
             width: textInputField.width *.45
             height: 50
@@ -110,11 +110,11 @@ Rectangle{
         anchors.margins: 10
         height: children.height
         width: parent.width *.3
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             icon.source: "/images/Cancel64.png"
             onClicked: setSimCoordsRoot.visible = false
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             icon.source: "/images/OK64.png"
             onClicked: {
                 settings.setGPS_simLatitude = latInput.text

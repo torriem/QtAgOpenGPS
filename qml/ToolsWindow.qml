@@ -2,7 +2,7 @@ import QtQuick 2.0
 import QtQuick.Controls.Fusion
 
 import ".."
-import "components"
+import "components" as Comp
 
 //Item{
 //    id: toolsWindowItem
@@ -24,11 +24,11 @@ import "components"
             color: aog.blackDayWhiteNight
         }
 
-        ScrollViewExpandableColumn {
+        Comp.ScrollViewExpandableColumn {
             id: toolsGrid
             anchors.fill: parent
 
-            IconButtonTextBeside {
+            Comp.IconButtonTextBeside {
                 id: wizards
                 icon.source: "/images/WizardWand.png"
                 width: 250
@@ -38,7 +38,7 @@ import "components"
                 visible: false //todo later
             }
 
-            IconButtonTextBeside {
+            Comp.IconButtonTextBeside {
                 id: charts
                 icon.source: "/images/Chart.png"
                 width: 250
@@ -48,7 +48,7 @@ import "components"
                 visible: false //todo later
             }
 
-            IconButtonTextBeside {
+            Comp.IconButtonTextBeside {
                 id: smABCurve
                 icon.source: "/images/ABSmooth.png"
                 width: 250
@@ -57,7 +57,7 @@ import "components"
                 visible: settings.setFeature_isABSmoothOn
             }
 
-            IconButtonTextBeside {
+            Comp.IconButtonTextBeside {
                 id: delContourPaths
                 icon.source: "/images/TrashContourRef.png"
                 width: 250
@@ -66,7 +66,7 @@ import "components"
                 visible:settings.setFeature_isHideContourOn
             }
 
-            IconButtonTextBeside {
+            Comp.IconButtonTextBeside {
                 id: delAppliedArea
                 icon.source: "/images/TrashApplied.png"
                 width: 250
@@ -74,7 +74,7 @@ import "components"
                 text: qsTr("Delete Applied Area")
             }
 
-            IconButtonTextBeside {
+            Comp.IconButtonTextBeside {
                 id: webcam
                 icon.source: "/images/Webcam.png"
                 width: 250
@@ -83,7 +83,7 @@ import "components"
                 visible:settings.setFeature_isWebCamOn
             }
 
-            IconButtonTextBeside {
+            Comp.IconButtonTextBeside {
                 id: offsetFix
                 icon.source: "/images/YouTurnReverse.png" // this is horrible. This has nothing to do with YouTurnReverse.
                 width: 250
