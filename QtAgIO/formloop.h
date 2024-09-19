@@ -260,7 +260,6 @@ class FormLoop : public QObject
 
 		unsigned int tripBytes = 0;
 
-        void ConfigureNTRIP();
 		void StartNTRIP();
         void OnAddMessage(QByteArray data);
         void SendNTRIP(QByteArray data);
@@ -321,6 +320,7 @@ class FormLoop : public QObject
     public slots:
         void ResolveNTRIPURL(const QHostInfo &hostInfo);
     private slots:
+        void ConfigureNTRIP();
         void NTRIPDebugMode(bool doWeDebug);
 };
 
