@@ -25,17 +25,19 @@ Window{
             anchors.margins: 10
             flow: Grid.TopToBottom
             columns: 2
-            CheckBox{
+            Comp.CheckBoxCustomized{
                 id: ckUDPListenOnly
                 text: "UDP Listen Only"
                 checked: false
                 onCheckedChanged: agio.btnUDPListenOnly_clicked(ckUDPListenOnly.checkState)
+                Layout.alignment: Qt.AlignLeft
             }
-            CheckBox {
+            Comp.CheckBoxCustomized {
                 id: ckNtripDebug
                 text: "Console NTRIP Debug"
                 checked: false
                 onCheckedChanged: agio.ntripDebug(ckNtripDebug.checkState)
+                Layout.alignment: Qt.AlignRight
             }
         }
     }

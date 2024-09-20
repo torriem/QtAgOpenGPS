@@ -93,5 +93,6 @@
         <file>qml/AgDiag.qml</file>
         <file>qml/SettingsWindow.qml</file>
         <file>qml/AdvancedMenu.qml</file>
+        <file>qml/components/CheckBoxCustomized.qml</file>
     </qresource>
 </RCC>
