@@ -34,7 +34,7 @@ Rectangle{
             onClicked: aog.sim_reset()
         }
         Button{
-            text: "wheelangle"
+            text: aog.steerAngleActual
             font.pixelSize: 15
             height: parent.height
             width: 65 * theme.scaleWidth
