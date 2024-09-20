@@ -56,4 +56,11 @@ Button {
         color: icon_button.checked ? icon_button.colorChecked : icon_button.color
 
     }
+
+    contentItem: Text {
+        text: icon_button.text
+        font.pixelSize: 24
+        color: "black"
+        anchors.centerIn: icon_button_background
+    }
 }
