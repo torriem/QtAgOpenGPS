@@ -296,6 +296,7 @@ Window {
                 Layout.alignment: Qt.AlignCenter
                 implicitWidth: theme.buttonSize
                 height:parent.height
+				visible: aog.isJobStarted
                 onClicked: {
                     fieldData.visible = !fieldData.visible
                     gpsData.visible = false
