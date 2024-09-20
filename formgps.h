@@ -741,6 +741,8 @@ public slots:
 
     void onBtnCenterOgl_clicked();
 
+    void onDeleteAppliedArea_clicked();
+
     /***************************
      * from OpenGL.Designer.cs *
      ***************************/

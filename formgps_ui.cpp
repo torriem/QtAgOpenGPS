@@ -185,6 +185,8 @@ void FormGPS::setupGui()
 
     connect(aog, SIGNAL(centerOgl()), this, SLOT(onBtnCenterOgl_clicked()));
 
+    connect(aog, SIGNAL(deleteAppliedArea()), this, SLOT(onDeleteAppliedArea_clicked()));
+
     //manual youturn buttons
     connect(aog,SIGNAL(uturn(bool)), this, SLOT(onBtnManUTurn_clicked(bool)));
     connect(aog,SIGNAL(lateral(bool)), this, SLOT(onBtnLateral_clicked(bool)));
@@ -697,4 +699,74 @@ void FormGPS::headlines_save() {
 void FormGPS::onBtnResetSim_clicked(){
     sim.latitude = property_setGPS_SimLatitude;
     sim.longitude = property_setGPS_SimLongitude;
+}
+
+
+void FormGPS::onDeleteAppliedArea_clicked()
+{
+    if (isJobStarted)
+    {
+        /*if (autoBtnState == btnStates.Off && manualBtnState == btnStates.Off)
+        {
+
+            DialogResult result3 = MessageBox.Show(gStr.gsDeleteAllContoursAndSections,
+                                                   gStr.gsDeleteForSure,
+                                                   MessageBoxButtons.YesNo,
+                                                   MessageBoxIcon.Question,
+                                                   MessageBoxDefaultButton.Button2);
+            if (result3 == DialogResult.Yes)
+            {
+                //FileCreateElevation();
+
+                if (tool.isSectionsNotZones)
+                {
+                    //Update the button colors and text
+                    AllSectionsAndButtonsToState(btnStates.Off);
+
+                    //enable disable manual buttons
+                    LineUpIndividualSectionBtns();
+                }
+                else
+                {
+                    AllZonesAndButtonsToState(btnStates.Off);
+                    LineUpAllZoneButtons();
+                }
+
+                //turn manual button off
+                manualBtnState = btnStates.Off;
+                btnSectionMasterManual.Image = Properties.Resources.ManualOff;
+
+                //turn auto button off
+                autoBtnState = btnStates.Off;
+                btnSectionMasterAuto.Image = Properties.Resources.SectionMasterOff;
+               */
+
+                //clear out the contour Lists
+                //ct.StopContourLine();
+                //ct.ResetContour();
+                fd.workedAreaTotal = 0;
+
+                //clear the section lists
+                for (int j = 0; j < triStrip.count(); j++)
+                {
+                    //clean out the lists
+                    triStrip[j].patchList.clear();
+                    triStrip[j].triangleList.clear();
+                }
+                //patchSaveList.clear();
+
+                FileCreateContour();
+                FileCreateSections();
+
+            /*}
+            else
+            {
+                TimedMessageBox(1500, gStr.gsNothingDeleted, gStr.gsActionHasBeenCancelled);
+            }
+        }
+        else
+        {
+            TimedMessageBox(1500, "Sections are on", "Turn Auto or Manual Off First");
+        }*/
+    }
 }

@@ -206,6 +206,8 @@ Item {
 
     signal centerOgl()
 
+    signal deleteAppliedArea();
+
     property double mPerDegreeLat
     property double mPerDegreeLon
 
