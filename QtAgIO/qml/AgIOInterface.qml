@@ -65,6 +65,8 @@ Item {
     signal configureNTRIP();
 
 
+    //advanced Menu triggers
+    signal btnUDPListenOnly_clicked(bool isIt);
 
 }
 

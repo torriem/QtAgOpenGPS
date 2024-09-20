@@ -52,11 +52,27 @@ void FormLoop::setupGUI()
 
     //this is where the connects with the frontend happen
 
+    //UDP
     connect(agio, SIGNAL(btnSendSubnet_clicked()), this, SLOT(btnSendSubnet_Click())); // btnSendSubnet_Click lives in formloop_formudp.cpp
+    connect(agio, SIGNAL(btnUDPListenOnly_clicked(bool)), this, SLOT(btnUDPListenOnly_Click(bool)));
+
+    //NTRIP
     connect(agio, SIGNAL(configureNTRIP()), this, SLOT(ConfigureNTRIP())); //ConfigureNTRIP lives in formloop_ntripcomm.cpp
     connect(agio, SIGNAL(ntripDebug(bool)), this, SLOT(NTRIPDebugMode(bool)));
     connect(agio, SIGNAL(setIPFromUrl(QString)), this, SLOT(LookupNTripIP(QString)));
 
+
+}
+
+void FormLoop::btnUDPListenOnly_Click(bool isIt){
+    udpListenOnly = isIt;
+    if(udpListenOnly){
+        qDebug() << "UDP Listen Only Mode Activiate!! Will Not Send To Modules!!";
+        TimedMessageBox(3000, tr("UDP Listen Only Mode Activated!!"), tr("Warning!! Will Not Send To Modules!!"));
+    }else{
+        qDebug() << "UDP Listen Only Mode Deactivated.";
+        TimedMessageBox(1500, tr("UDP Listen Only Mode Deactivated"), "");
+    }
 }
 
 void FormLoop::ShowAgIO(){

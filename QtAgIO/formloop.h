@@ -73,6 +73,8 @@ class FormLoop : public QObject
 		bool haveWeRecNDA = false;
 		bool haveWeRecVTG = false;
 
+        bool udpListenOnly;
+
         /*formloop_formUDP.cpp
          * formerly FormUDP.cs*/
     public slots:
@@ -99,6 +101,7 @@ class FormLoop : public QObject
         void nudFirstIP_Click();
 
         /*formloop_ui.cpp*/
+
 
         void setupGUI();
         void ShowAgIO();
@@ -137,6 +140,7 @@ class FormLoop : public QObject
         void oneSecondLoopTimer_Tick();
 	    void TwoSecondLoop();
         void LookupNTripIP(QString url);
+        void btnUDPListenOnly_Click(bool isIt);
 
 
 		/* formloop_udpcomm.cpp
