@@ -19,13 +19,15 @@ Drawer{
         id: toolsColumn
         anchors.fill: parent
 
-        Comp.Button{
+        Comp.ButtonColor{
             id: advancedOptions
             width: 180
             height: 50
             text: qsTr("Advanced")
-            onClicked: advancedMenu.showMenu()
+            onClicked: {
+                settingsWindow.close()
+                advancedMenu.showMenu()
+            }
         }
     }
-
 }

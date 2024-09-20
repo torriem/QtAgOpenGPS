@@ -164,4 +164,10 @@ Window {
         id: settingsWindow
         visible: false
     }
+    AdvancedMenu{
+        id: advancedMenu
+        function showMenu(){
+            advancedMenu.visible = true
+        }
+    }
 }
