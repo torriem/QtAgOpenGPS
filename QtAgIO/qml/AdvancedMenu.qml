@@ -31,6 +31,12 @@ Window{
                 checked: false
                 onCheckedChanged: agio.btnUDPListenOnly_clicked(ckUDPListenOnly.checkState)
             }
+            CheckBox {
+                id: ckNtripDebug
+                text: "Console NTRIP Debug"
+                checked: false
+                onCheckedChanged: agio.ntripDebug(ckNtripDebug.checkState)
+            }
         }
     }
 }

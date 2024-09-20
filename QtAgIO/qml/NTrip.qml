@@ -27,19 +27,11 @@ Window {
 		border.width: 2
 		border.color: theme.blackDayWhiteNight
 
-        CheckBox {
-            id: ckNtripDebug
-            text: "Console NTRIP Debug"
-            checked: false
+        Comp.TextLine {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.topMargin: 100
             anchors.leftMargin: 100
-            onCheckedChanged: agio.ntripDebug(ckNtripDebug.checkState)
-        }
-        Comp.TextLine {
-            anchors.top: ckNtripDebug.bottom
-            anchors.left: ckNtripDebug.left
             text: "Ntrip Stat: " +
                      (agio.ntripStatus === 0 ? "Invalid" :
                      agio.ntripStatus === 1 ? "Authorizing" :
@@ -47,7 +39,8 @@ Window {
                      agio.ntripStatus === 3 ? "Send GGA" :
                      agio.ntripStatus === 4 ? "Listening NTRIP":
                      agio.ntripStatus === 5 ? "Wait GPS":
-                     "Unknown")        }
+                     "Unknown")
+        }
 
 		ColumnLayout {
 			id: leftColumn
@@ -73,7 +66,7 @@ Window {
                     }
 
 			}
-            Comp.Button {
+            Comp.ButtonColor {
 				text: qsTr("Verify")
                 onClicked: agio.setIPFromUrl(ntripURL.text)
                 width: parent.width * .9
@@ -118,7 +111,7 @@ Window {
 				selectByMouse: true
 			}
             Comp.Spacer{}
-            Comp.Button {
+            Comp.ButtonColor {
 				text: qsTr("Get Source Table")
                 width: parent.width * .9
 			}
@@ -155,7 +148,7 @@ Window {
 		anchors.bottomMargin: 5 * theme.scaleHeight
 		anchors.rightMargin: 5 * theme.scaleWidth
 		spacing: 5 * theme.scaleWidth
-        Comp.Button {
+        Comp.ButtonColor {
 			id: ntripOn
             color: "white"
             colorChecked: "green"
