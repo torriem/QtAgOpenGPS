@@ -6,7 +6,6 @@
 
 extern AgIOProperty property_setUDP_listenPort;
 extern AgIOProperty property_setUDP_sendPort;
-extern AgIOProperty property_setUDP_listenOnly;
 extern AgIOProperty property_setUDP_numConnections;
 extern AgIOProperty property_setUDP_IP1;
 extern AgIOProperty property_setUDP_IP2;

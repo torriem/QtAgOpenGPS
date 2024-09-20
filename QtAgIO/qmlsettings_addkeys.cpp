@@ -3,7 +3,6 @@
 void QMLSettings::setupKeys() {
     addKey(QString("setUDP_listenPort"), QString("comm/udpListenPort"), "int");
     addKey(QString("setUDP_sendPort"), QString("comm/udpSendPort"), "int");
-	addKey(QString("setUDP_listenOnly"), QString("comm/udpListenOnly"), "bool");
 	addKey(QString("setUDP_numConnections"), QString("comm/udpNumConnections"), "int");
     addKey(QString("setUDP_IP1"), QString("comm/udpIP1"), "int");
     addKey(QString("setUDP_IP2"), QString("comm/udpIP2"), "int");

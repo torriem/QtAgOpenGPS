@@ -184,8 +184,7 @@ void FormLoop::ReceiveFromLoopBack()
 
 void FormLoop::SendUDPMessage(QByteArray byteData, QHostAddress address, uint portNumber)
 {
-    //todo if (isUdpNetworkConnected
-    if(!property_setUDP_listenOnly)
+    if(!false) //listen only
     {
 
         // Send packet to the zero

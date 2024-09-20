@@ -59,7 +59,6 @@ FormLoop::FormLoop(QObject *parent) : QObject(parent),
     FormUDp_Load();
     swFrame.start();
 
-    if (property_setUDP_listenOnly) qDebug() << "Listen Only mode activated! Will not send to modules!";
 }
 
 FormLoop::~FormLoop()

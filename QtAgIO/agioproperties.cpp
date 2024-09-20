@@ -2,7 +2,6 @@
 
 AgIOProperty property_setUDP_listenPort("comm/udpListenPort", 9999);
 AgIOProperty property_setUDP_sendPort("comm/udpSendPort", 8888);
-AgIOProperty property_setUDP_listenOnly("comm/udpListenOnly", false);
 AgIOProperty property_setUDP_numConnections("comm/udpNumConnections", 1);
 AgIOProperty property_setUDP_IP1("comm/udpIP1", 192);
 AgIOProperty property_setUDP_IP2("comm/udpIP2", 168);
