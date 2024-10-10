@@ -72,6 +72,7 @@ import "components" as Comp
                 width: 250
                 height: 50
                 text: qsTr("Delete Applied Area")
+                onClicked: aog.deleteAppliedArea()
             }
 
             Comp.IconButtonTextBeside {
