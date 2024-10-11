@@ -334,7 +334,6 @@ public:
 
     void GetHeadland();
     void CloseTopMosts();
-    void SnapToPivot();
     void getAB();
     void FixTramModeButton();
 
@@ -710,6 +709,7 @@ public slots:
     void onBtnHydLift_clicked();
     void onBtnFlag_clicked();
     void onBtnTramlines_clicked();
+    void onBtnSnapSideways_clicked(double distance);
     void onBtnSnapToPivot_clicked();
     //don't need ablineedit
     void onBtnYouSkip_clicked();

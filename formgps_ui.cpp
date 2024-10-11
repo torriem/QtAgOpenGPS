@@ -202,6 +202,11 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(settings_reload()), this, SLOT(on_settings_reload()));
     connect(aog,SIGNAL(settings_save()), this, SLOT(on_settings_save()));
 
+    //snap track button
+
+    connect(aog,SIGNAL(snapSideways(double)), this, SLOT(onBtnSnapSideways_clicked(double)));
+    connect(aog,SIGNAL(snapToPivot()), this, SLOT(onBtnSnapToPivot_clicked()));
+
     //vehicle saving and loading
     connect(vehicleInterface,SIGNAL(vehicle_update_list()), this, SLOT(vehicle_update_list()));
     connect(vehicleInterface,SIGNAL(vehicle_load(QString)), this, SLOT(vehicle_load(QString)));
@@ -298,7 +303,7 @@ void FormGPS::setupGui()
     connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(tmrWatchdog_timeout()));
     tmrWatchdog->start(250); //fire every 50ms.
 
-    //SIM on
+    //SIM
     connect_classes();
 
 
@@ -399,9 +404,6 @@ void FormGPS::onBtnHydLift_clicked(){
 }
 void FormGPS::onBtnTramlines_clicked(){
     qDebug()<<"tramline";
-}
-void FormGPS::onBtnSnapToPivot_clicked(){
-    qDebug()<<"snap to pivot";
 }
 void FormGPS::onBtnYouSkip_clicked(){
     qDebug()<<"you skip";
@@ -699,6 +701,15 @@ void FormGPS::headlines_save() {
 void FormGPS::onBtnResetSim_clicked(){
     sim.latitude = property_setGPS_SimLatitude;
     sim.longitude = property_setGPS_SimLongitude;
+}
+
+//Track Snap buttons
+void FormGPS::onBtnSnapToPivot_clicked(){
+    qDebug()<<"snap to pivot";
+}
+void FormGPS::onBtnSnapSideways_clicked(double distance){
+    int blah = distance;
+
 }
 
 
