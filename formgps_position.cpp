@@ -1498,7 +1498,7 @@ void FormGPS::AddSectionOrPathPoints()
     prevSectionPos.easting = pn.fix.easting;
 
     // if non zero, at least one section is on.
-    int patchCounter = 0;
+    patchCounter = 0;
 
     //send the current and previous GPS fore/aft corrected fix to each section
     for (int j = 0; j < triStrip.count(); j++)
