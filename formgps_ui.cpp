@@ -178,6 +178,7 @@ void FormGPS::setupGui()
     connect(aog, SIGNAL(btnResetTool()), this, SLOT(onBtnResetTool_clicked()));
     connect(aog, SIGNAL(btnHeadland()), this, SLOT(onBtnHeadland_clicked()));
     connect(aog, SIGNAL(btnContour()), this, SLOT(onBtnContour_clicked()));
+    connect(aog, SIGNAL(btnContourLock()), this, SLOT(onBtnContourLock_clicked()));
     connect(aog, SIGNAL(btnContourPriority(bool)), this, SLOT(onBtnContourPriority_clicked(bool)));
 
     connect(aog, SIGNAL(btnResetSim()), this, SLOT(onBtnResetSim_clicked()));
@@ -445,7 +446,10 @@ void FormGPS::onBtnContour_clicked(){
 void FormGPS::onBtnContourPriority_clicked(bool isRight){
 
     ct.isRightPriority = isRight;
-    qDebug() << "isRight: " << isRight;
+    qDebug() << "Contour isRight: " << isRight;
+}
+void FormGPS::onBtnContourLock_clicked(){
+    ct.SetLockToLine();
 }
 
 void FormGPS::onBtnTiltDown_clicked(){

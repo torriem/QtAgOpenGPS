@@ -661,8 +661,9 @@ Window {
                                   width = children.width
 
             Comp.IconButtonText {
+                property bool isContourLockedByUser //store if user locked
                 id: btnContourLock
-                isChecked: aog.isContourBtnOn
+                isChecked: aog.btnIsContourLocked
                 visible: btnContour.checked
                 checkable: true
                 icon.source: "/images/ColorUnlocked.png"
@@ -672,7 +673,13 @@ Window {
                 buttonText: "Lock"
                 //color: "white"
                 Layout.alignment: Qt.AlignCenter
-                onClicked: aog.isContourBtnOn = !aog.isContourBtnOn
+                onClicked: aog.btnContourLock()
+                Connections{
+                    target: aog
+                    function onBtnIsContourLocked() {
+                        btnContourLock.checked = aog.btnIsContourLocked
+                    }
+                }
             }
             Comp.IconButtonText {
                 id: btnContour
@@ -687,7 +694,6 @@ Window {
                 Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     aog.btnContour()
-                    console.log("sending to aogiface")
                 }
                 onCheckedChanged: { //gui logic
                     btnABLineCycle.visible = !checked
@@ -854,16 +860,14 @@ Window {
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
                 onClicked: {
-                    if (checked && ((aog.currentABCurve > -1) || (aog.currentABLine > -1))) {
+                    if (checked && ((aog.currentABCurve > -1) || (aog.currentABLine > -1) || btnContour.isChecked)) {
                         console.debug("okay to turn on autosteer button.")
                         aog.isAutoSteerBtnOn = true;
                     } else {
-                        console.debug("keep autoster button off.")
+                        console.debug("keep autosteer button off.")
                         checked = false;
                         aog.isAutoSteerBtnOn = false;
                     }
-                    if (btnContour.isChecked) //auto lock the contour line if engaged
-                        btnContourLock = btnAutoSteer.isChecked
                 }
                 Connections {
                     target: aog

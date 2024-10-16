@@ -235,7 +235,7 @@ public:
     //btnStates autoBtnState = btnStates::Off;
     InterfaceProperty<AOGInterface,btnStates> manualBtnState = InterfaceProperty<AOGInterface,btnStates>("manualBtnState");
     InterfaceProperty<AOGInterface,btnStates> autoBtnState = InterfaceProperty<AOGInterface,btnStates>("autoBtnState");
-    InterfaceProperty<AOGInterface,btnStates> btnIsContourLocked = InterfaceProperty<AOGInterface,btnStates>("btnIsContourLocked");
+    //InterfaceProperty<AOGInterface,bool> ct.isLocked = InterfaceProperty<AOGInterface,bool>("btnIsContourLocked");
 
 private:
 public:
@@ -704,6 +704,7 @@ public slots:
     void onBtnAutoYouTurn_clicked();
     void onBtnSwapAutoYouTurnDirection_clicked();
     void onBtnContourPriority_clicked(bool isRight);
+    void onBtnContourLock_clicked();
     //bottom row
     void onBtnResetTool_clicked();
     void onBtnHeadland_clicked();
