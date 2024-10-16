@@ -22,6 +22,7 @@ find_package(Qt6 REQUIRED COMPONENTS OpenGL)
 find_package(Qt6 REQUIRED COMPONENTS Quick)
 find_package(Qt6 REQUIRED COMPONENTS QuickWidgets)
 find_package(Qt6 REQUIRED COMPONENTS Network)
+find_package(Qt6 REQUIRED COMPONENTS Multimedia)
 
 # Qt magic
 qt_standard_project_setup()
@@ -114,6 +115,7 @@ target_link_libraries(QtAgOpenGPS PRIVATE
     Qt6::Quick
     Qt6::QuickWidgets
     Qt6::Network
+	Qt6::Multimedia
 )
 
 # Compile defines
