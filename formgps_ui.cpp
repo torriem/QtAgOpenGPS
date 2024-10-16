@@ -177,7 +177,7 @@ void FormGPS::setupGui()
     connect(aog, SIGNAL(isHydLiftOn()), this, SLOT(onBtnHydLift_clicked()));
     connect(aog, SIGNAL(btnResetTool()), this, SLOT(onBtnResetTool_clicked()));
     connect(aog, SIGNAL(btnHeadland()), this, SLOT(onBtnHeadland_clicked()));
-    connect(aog, SIGNAL(btnContour(bool)), this, SLOT(onBtnContour_clicked(bool)));
+    connect(aog, SIGNAL(btnContour()), this, SLOT(onBtnContour_clicked()));
     connect(aog, SIGNAL(btnContourPriority(bool)), this, SLOT(onBtnContourPriority_clicked(bool)));
 
     connect(aog, SIGNAL(btnResetSim()), this, SLOT(onBtnResetSim_clicked()));
@@ -355,7 +355,6 @@ void FormGPS::onBtnAgIO_clicked(){
     qDebug()<<"AgIO";
 }
 void FormGPS::onBtnResetTool_clicked(){
-    qDebug()<<"REset tool";
                vehicle.tankPos.heading = vehicle.fixHeading;
                vehicle.tankPos.easting = vehicle.hitchPos.easting + (sin(vehicle.tankPos.heading) * (tool.tankTrailingHitchLength));
                vehicle.tankPos.northing = vehicle.hitchPos.northing + (cos(vehicle.tankPos.heading) * (tool.tankTrailingHitchLength));
@@ -430,9 +429,17 @@ void FormGPS::onBtnFlag_clicked() {
     }
 }
 
-void FormGPS::onBtnContour_clicked(bool isOn){
-    ct.isContourBtnOn = isOn;
-    qDebug() << "contour: " << isOn;
+void FormGPS::onBtnContour_clicked(){
+    ct.isContourBtnOn = !ct.isContourBtnOn;
+    if (ct.isContourBtnOn) {
+        guidanceLookAheadTime = 0.5;
+    }else{
+        if (ABLine.isBtnABLineOn | curve.isBtnCurveOn){
+            ABLine.isABValid = false;
+            curve.isCurveValid = false;
+        }
+        guidanceLookAheadTime = property_setAS_guidanceLookAheadTime;
+    }
 }
 
 void FormGPS::onBtnContourPriority_clicked(bool isRight){

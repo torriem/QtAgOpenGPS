@@ -58,6 +58,7 @@ Item {
     property variant sectionButtonState: [ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ]
 
     property bool isContourBtnOn: false
+    property bool btnIsContourLocked: false
     property bool isAutoSteerBtnOn: false
     property bool isYouTurnBtnOn: false
 
@@ -182,7 +183,8 @@ Item {
     signal btnResetTool()
     signal btnHeadland()
 
-    signal btnContour(bool isOn)
+    signal btnContour()
+    signal btnContourLock()
     signal btnContourPriority(bool right)
 
     signal isHydLiftOn()

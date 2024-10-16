@@ -661,8 +661,22 @@ Window {
                                   width = children.width
 
             Comp.IconButtonText {
+                id: btnContourLock
+                isChecked: aog.isContourBtnOn
+                visible: btnContour.checked
+                checkable: true
+                icon.source: "/images/ColorUnlocked.png"
+                iconChecked: "/images/ColorLocked.png"
+                implicitWidth: theme.buttonSize
+                implicitHeight: theme.buttonSize
+                buttonText: "Lock"
+                //color: "white"
+                Layout.alignment: Qt.AlignCenter
+                onClicked: aog.isContourBtnOn = !aog.isContourBtnOn
+            }
+            Comp.IconButtonText {
                 id: btnContour
-                isChecked: false
+                isChecked: aog.isContourBtnOn //set value from backend
                 checkable: true
                 icon.source: "/images/ContourOff.png"
                 iconChecked: "/images/ContourOn.png"
@@ -672,8 +686,13 @@ Window {
                 //color: "white"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: {
+                    aog.btnContour()
+                    console.log("sending to aogiface")
+                }
+                onCheckedChanged: { //gui logic
+                    btnABLineCycle.visible = !checked
+                    btnABLineCycleBk.visible = !checked
                     btnContourPriority.visible = checked
-                    aog.btnContour(checked)
                 }
             }
             Comp.IconButtonText{
@@ -686,6 +705,7 @@ Window {
                 Layout.alignment: Qt.AlignCenter
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
+                visible: !btnContour.checked
                 onClicked: {
                     abCurvePicker.visible = true
                     if (aog.currentABCurve > -1) {
@@ -720,6 +740,7 @@ Window {
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
                 Layout.alignment: Qt.AlignCenter
+                visible: !btnContour.checked
                 onClicked: {
                     abLinePicker.visible = true
                     if (aog.currentABLine > -1)
@@ -826,8 +847,8 @@ Window {
                 iconChecked: "/images/AutoSteerOn.png"
                 checkable: true
                 checked: aog.isAutoSteerBtnOn
-                enabled: aog.isTrackOn
-                //Is remote activation of autosteer enabled?
+                enabled: aog.isTrackOn || aog.isContourBtnOn
+                //Is remote activation of autosteer enabled? //todo. Eliminated in 6.3.3
                 buttonText: (settings.setAS_isAutoSteerAutoOn === true ? "R" : "M")
                 Layout.alignment: Qt.AlignCenter
 				implicitWidth: theme.buttonSize
@@ -841,6 +862,8 @@ Window {
                         checked = false;
                         aog.isAutoSteerBtnOn = false;
                     }
+                    if (btnContour.isChecked) //auto lock the contour line if engaged
+                        btnContourLock = btnAutoSteer.isChecked
                 }
                 Connections {
                     target: aog
