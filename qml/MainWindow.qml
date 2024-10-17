@@ -995,6 +995,7 @@ Window {
                 onClicked: aog.btnResetTool()
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
+                visible: settings.setTool_isToolTrailing === true //hide if front or rear 3 pt
             }
             Comp.IconButtonText {
                 id: btnSectionMapping
