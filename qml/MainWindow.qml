@@ -673,11 +673,24 @@ Window {
                 buttonText: "Lock"
                 //color: "white"
                 Layout.alignment: Qt.AlignCenter
-                onClicked: aog.btnContourLock()
+                onClicked: {
+                    aog.btnContourLock()
+                    if (aog.btnIsContourLocked)
+                        isContourLockedByUser = true
+                }
                 Connections{
                     target: aog
-                    function onBtnIsContourLocked() {
+                    function onBtnIsContourLockedChanged() {
                         btnContourLock.checked = aog.btnIsContourLocked
+                        if(btnContourLock.isContourLockedByUser)
+                            btnContourLock.isContourLockedByUser = false
+                    }
+                    function onIsAutoSteerBtnOnChanged() {
+                        if (!btnContourLock.isContourLockedByUser && btnContour.checked === true){
+                            if(btnContourLock.checked !== aog.isAutoSteerBtnOn){
+                                aog.btnContourLock()
+                            }
+                        }
                     }
                 }
             }
