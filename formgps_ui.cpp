@@ -182,6 +182,7 @@ void FormGPS::setupGui()
     connect(aog, SIGNAL(btnContourPriority(bool)), this, SLOT(onBtnContourPriority_clicked(bool)));
 
     connect(aog, SIGNAL(btnResetSim()), this, SLOT(onBtnResetSim_clicked()));
+    connect(aog, SIGNAL(sim_rotate()), this, SLOT(onBtnRotateSim_clicked()));
     connect(aog, SIGNAL(reset_direction()), this, SLOT(onBtnResetDirection_clicked()));
 
     connect(aog, SIGNAL(centerOgl()), this, SLOT(onBtnCenterOgl_clicked()));
@@ -712,6 +713,17 @@ void FormGPS::headlines_save() {
 void FormGPS::onBtnResetSim_clicked(){
     sim.latitude = property_setGPS_SimLatitude;
     sim.longitude = property_setGPS_SimLongitude;
+}
+
+void FormGPS::onBtnRotateSim_clicked(){
+    qDebug() << "Rotate Sim";
+    qDebug() << "But nothing else";
+    /*qDebug() << sim.headingTrue;
+    sim.headingTrue += M_PI;
+    qDebug() << sim.headingTrue;
+    ABLine.isABValid = false;
+    curve.isCurveValid = false;*/
+    //curve.lastHowManyPathsAway = 98888; not in v5
 }
 
 //Track Snap buttons

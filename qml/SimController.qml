@@ -72,7 +72,10 @@ Rectangle{
             height: parent.height
             width: 65 * theme.scaleWidth
             icon.source: "/images/YouTurn80.png"
-            onClicked: console.log("nothing")
+            onClicked: {
+                aog.sim_rotate()
+                aog.isAutoSteerBtnOn = false;
+            }
         }
     }
 }

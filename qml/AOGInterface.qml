@@ -208,6 +208,7 @@ Item {
     signal sim_bump_speed(bool up)
     signal sim_zero_speed()
     signal sim_reset()
+    signal sim_rotate()
     signal reset_direction()
 
     signal centerOgl()

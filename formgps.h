@@ -740,6 +740,7 @@ public slots:
     void onBtnManUTurn_clicked(bool right); //TODO add the skip number as a parameter
     void onBtnLateral_clicked(bool right); //TODO add the skip number as a parameter
     void onBtnResetSim_clicked();
+    void onBtnRotateSim_clicked();
 
     void onBtnCenterOgl_clicked();
 
