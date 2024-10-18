@@ -238,25 +238,25 @@ Rectangle{
 				  set <<= 1;
 				  reset <<= 1;
 				  reset += 1;
-				  if (cboxConv.currentText == "Single") sett |= set;
+                  if (cboxConv.currentText === "Single") sett |= set;
 				  else sett &= reset;
 
 				  set <<= 1;
 				  reset <<= 1;
 				  reset += 1;
-				  if (cboxMotorDrive.currentText == "Cytron") sett |= set;
+                  if (cboxMotorDrive.currentText === "Cytron") sett |= set;
 				  else sett &= reset;
 
 				  set <<= 1;
 				  reset <<= 1;
 				  reset += 1;
-				  if (cboxSteerEnable.currentText == "Switch") sett |= set;
+                  if (cboxSteerEnable.currentText === "Switch") sett |= set;
 				  else sett &= reset;
 
 				  set <<= 1;
 				  reset <<= 1;
 				  reset += 1;
-				  if (cboxSteerEnable.currentIndex == 2) sett |= set;
+                  if (cboxSteerEnable.currentIndex === 2) sett |= set;
 				  else sett &= reset;
 
 				  set <<= 1;
@@ -314,7 +314,7 @@ Rectangle{
 				  set <<= 1;
 				  reset <<= 1;
 				  reset += 1;
-				  if (cboxXY.currentIndex == 1) sett |= set;
+                  if (cboxXY.currentIndex === 1) sett |= set;
 				  else sett &= reset;
 
 				  settings.setArdSteer_setting1 = sett;
