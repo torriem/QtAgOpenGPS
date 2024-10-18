@@ -177,11 +177,17 @@ void FormGPS::setupGui()
     connect(aog, SIGNAL(isHydLiftOn()), this, SLOT(onBtnHydLift_clicked()));
     connect(aog, SIGNAL(btnResetTool()), this, SLOT(onBtnResetTool_clicked()));
     connect(aog, SIGNAL(btnHeadland()), this, SLOT(onBtnHeadland_clicked()));
+    connect(aog, SIGNAL(btnContour()), this, SLOT(onBtnContour_clicked()));
+    connect(aog, SIGNAL(btnContourLock()), this, SLOT(onBtnContourLock_clicked()));
+    connect(aog, SIGNAL(btnContourPriority(bool)), this, SLOT(onBtnContourPriority_clicked(bool)));
 
     connect(aog, SIGNAL(btnResetSim()), this, SLOT(onBtnResetSim_clicked()));
+    connect(aog, SIGNAL(sim_rotate()), this, SLOT(onBtnRotateSim_clicked()));
     connect(aog, SIGNAL(reset_direction()), this, SLOT(onBtnResetDirection_clicked()));
 
     connect(aog, SIGNAL(centerOgl()), this, SLOT(onBtnCenterOgl_clicked()));
+
+    connect(aog, SIGNAL(deleteAppliedArea()), this, SLOT(onDeleteAppliedArea_clicked()));
 
     //manual youturn buttons
     connect(aog,SIGNAL(uturn(bool)), this, SLOT(onBtnManUTurn_clicked(bool)));
@@ -197,6 +203,11 @@ void FormGPS::setupGui()
     //connect settings dialog box
     connect(aog,SIGNAL(settings_reload()), this, SLOT(on_settings_reload()));
     connect(aog,SIGNAL(settings_save()), this, SLOT(on_settings_save()));
+
+    //snap track button
+
+    connect(aog,SIGNAL(snapSideways(double)), this, SLOT(onBtnSnapSideways_clicked(double)));
+    connect(aog,SIGNAL(snapToPivot()), this, SLOT(onBtnSnapToPivot_clicked()));
 
     //vehicle saving and loading
     connect(vehicleInterface,SIGNAL(vehicle_update_list()), this, SLOT(vehicle_update_list()));
@@ -271,15 +282,6 @@ void FormGPS::setupGui()
     connect(btnFlag,SIGNAL(clicked()),this,
             SLOT(onBtnFlag_clicked()));
 
-    btnContour = qmlItem(qml_root,"btnContour");
-    connect(btnContour,SIGNAL(clicked()),this,
-            SLOT(onBtnContour_clicked()));
-
-    btnContourPriority = qmlItem(qml_root,"btnContourPriority");
-    connect(btnContourPriority,SIGNAL(clicked()),this,
-            SLOT(onBtnContourPriority_clicked()));
-
-
 
     //Any objects we don't need to access later we can just store
     //temporarily
@@ -303,7 +305,7 @@ void FormGPS::setupGui()
     connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(tmrWatchdog_timeout()));
     tmrWatchdog->start(250); //fire every 50ms.
 
-    //SIM on
+    //SIM
     connect_classes();
 
 
@@ -351,29 +353,10 @@ void FormGPS::onGLControl_clicked(const QVariant &event)
     openGLControl->update();
 }
 
-void FormGPS::onBtnAcres_clicked(){
-    qDebug()<<"AcresButton";
-}
-void FormGPS::onBtnSettings_clicked(){
-    qDebug()<<"Settings";
-}
 void FormGPS::onBtnAgIO_clicked(){
     qDebug()<<"AgIO";
 }
-void FormGPS::onBtnSteerConfig_clicked(){
-    qDebug()<<"Steer config`";
-}
-void FormGPS::onBtnSteerMode_clicked(){
-    qDebug()<<"Steer mode`";
-}
-void FormGPS::onBtnToggleAB_clicked(){
-    qDebug()<<"Toggle AB";
-}
-void FormGPS::onBtnToggleABBack_clicked(){
-    qDebug()<<"toggle AB back";
-}
 void FormGPS::onBtnResetTool_clicked(){
-    qDebug()<<"REset tool";
                vehicle.tankPos.heading = vehicle.fixHeading;
                vehicle.tankPos.easting = vehicle.hitchPos.easting + (sin(vehicle.tankPos.heading) * (tool.tankTrailingHitchLength));
                vehicle.tankPos.northing = vehicle.hitchPos.northing + (cos(vehicle.tankPos.heading) * (tool.tankTrailingHitchLength));
@@ -423,15 +406,6 @@ void FormGPS::onBtnHydLift_clicked(){
 void FormGPS::onBtnTramlines_clicked(){
     qDebug()<<"tramline";
 }
-void FormGPS::onBtnSectionColor_clicked(){
-    qDebug()<<"Section color";
-}
-void FormGPS::onBtnLinePicker_clicked(){
-    qDebug()<<"Line picker";
-}
-void FormGPS::onBtnSnapToPivot_clicked(){
-    qDebug()<<"snap to pivot";
-}
 void FormGPS::onBtnYouSkip_clicked(){
     qDebug()<<"you skip";
 }
@@ -458,32 +432,28 @@ void FormGPS::onBtnFlag_clicked() {
 }
 
 void FormGPS::onBtnContour_clicked(){
-    qDebug()<<"contour button clicked." ;
-
     ct.isContourBtnOn = !ct.isContourBtnOn;
     if (ct.isContourBtnOn) {
-        qmlItem(qml_root,"btnContour")->setProperty("isChecked",true);
-        qmlItem(qml_root,"btnContourPriority")->setProperty("visible",true);
-    } else {
-        qmlItem(qml_root,"btnContour")->setProperty("isChecked",false);
-        qmlItem(qml_root,"btnContourPriority")->setProperty("visible",false);
+        guidanceLookAheadTime = 0.5;
+    }else{
+        if (ABLine.isBtnABLineOn | curve.isBtnCurveOn){
+            ABLine.isABValid = false;
+            curve.isCurveValid = false;
+        }
+        guidanceLookAheadTime = property_setAS_guidanceLookAheadTime;
     }
-
 }
 
-void FormGPS::onBtnContourPriority_clicked(){
-    qDebug()<<"contour priority button clicked." ;
+void FormGPS::onBtnContourPriority_clicked(bool isRight){
 
-    ct.isRightPriority = !ct.isRightPriority;
-    if (ct.isRightPriority)
-        qmlItem(qml_root,"btnContourPriority")->setProperty("isChecked",true);
-    else
-        qmlItem(qml_root,"btnContourPriority")->setProperty("isChecked",false);
+    ct.isRightPriority = isRight;
+    qDebug() << "Contour isRight: " << isRight;
+}
+void FormGPS::onBtnContourLock_clicked(){
+    ct.SetLockToLine();
 }
 
 void FormGPS::onBtnTiltDown_clicked(){
-
-    qDebug()<<"TiltDown button clicked.";
 
     if (camera.camPitch > -59) camera.camPitch = -60;
     camera.camPitch += ((camera.camPitch * 0.012) - 1);
@@ -496,8 +466,6 @@ void FormGPS::onBtnTiltDown_clicked(){
 
 void FormGPS::onBtnTiltUp_clicked(){
     double camPitch = property_setDisplay_camPitch;
-
-    qDebug()<<"TiltUp button clicked.";
 
     lastHeight = -1; //redraw the sky
     camera.camPitch -= ((camera.camPitch * 0.012) - 1);
@@ -527,7 +495,6 @@ void FormGPS::onBtnN3D_clicked(){
     navPanelCounter = 0;
 }
 void FormGPS::onBtnZoomIn_clicked(){
-    qDebug() <<"ZoomIn button clicked.";
     if (camera.zoomValue <= 20) {
         if ((camera.zoomValue -= camera.zoomValue * 0.1) < 3.0)
             camera.zoomValue = 3.0;
@@ -542,7 +509,6 @@ void FormGPS::onBtnZoomIn_clicked(){
 }
 
 void FormGPS::onBtnZoomOut_clicked(){
-    qDebug() <<"ZoomOut button clicked.";
     if (camera.zoomValue <= 20) camera.zoomValue += camera.zoomValue * 0.1;
     else camera.zoomValue += camera.zoomValue * 0.05;
     if (camera.zoomValue > 220) camera.zoomValue = 220;
@@ -747,4 +713,94 @@ void FormGPS::headlines_save() {
 void FormGPS::onBtnResetSim_clicked(){
     sim.latitude = property_setGPS_SimLatitude;
     sim.longitude = property_setGPS_SimLongitude;
+}
+
+void FormGPS::onBtnRotateSim_clicked(){
+    qDebug() << "Rotate Sim";
+    qDebug() << "But nothing else";
+    /*qDebug() << sim.headingTrue;
+    sim.headingTrue += M_PI;
+    qDebug() << sim.headingTrue;
+    ABLine.isABValid = false;
+    curve.isCurveValid = false;*/
+    //curve.lastHowManyPathsAway = 98888; not in v5
+}
+
+//Track Snap buttons
+void FormGPS::onBtnSnapToPivot_clicked(){
+    qDebug()<<"snap to pivot";
+}
+void FormGPS::onBtnSnapSideways_clicked(double distance){
+    int blah = distance;
+
+}
+
+
+void FormGPS::onDeleteAppliedArea_clicked()
+{
+    if (isJobStarted)
+    {
+        /*if (autoBtnState == btnStates.Off && manualBtnState == btnStates.Off)
+        {
+
+            DialogResult result3 = MessageBox.Show(gStr.gsDeleteAllContoursAndSections,
+                                                   gStr.gsDeleteForSure,
+                                                   MessageBoxButtons.YesNo,
+                                                   MessageBoxIcon.Question,
+                                                   MessageBoxDefaultButton.Button2);
+            if (result3 == DialogResult.Yes)
+            {
+                //FileCreateElevation();
+
+                if (tool.isSectionsNotZones)
+                {
+                    //Update the button colors and text
+                    AllSectionsAndButtonsToState(btnStates.Off);
+
+                    //enable disable manual buttons
+                    LineUpIndividualSectionBtns();
+                }
+                else
+                {
+                    AllZonesAndButtonsToState(btnStates.Off);
+                    LineUpAllZoneButtons();
+                }
+
+                //turn manual button off
+                manualBtnState = btnStates.Off;
+                btnSectionMasterManual.Image = Properties.Resources.ManualOff;
+
+                //turn auto button off
+                autoBtnState = btnStates.Off;
+                btnSectionMasterAuto.Image = Properties.Resources.SectionMasterOff;
+               */
+
+                //clear out the contour Lists
+                //ct.StopContourLine();
+                //ct.ResetContour();
+                fd.workedAreaTotal = 0;
+
+                //clear the section lists
+                for (int j = 0; j < triStrip.count(); j++)
+                {
+                    //clean out the lists
+                    triStrip[j].patchList.clear();
+                    triStrip[j].triangleList.clear();
+                }
+                //patchSaveList.clear();
+
+                FileCreateContour();
+                FileCreateSections();
+
+            /*}
+            else
+            {
+                TimedMessageBox(1500, gStr.gsNothingDeleted, gStr.gsActionHasBeenCancelled);
+            }
+        }
+        else
+        {
+            TimedMessageBox(1500, "Sections are on", "Turn Auto or Manual Off First");
+        }*/
+    }
 }

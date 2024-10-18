@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 import QtQuick.Shapes
-import "components"
+import "components" as Comp
 
 Popup{
     id: headlandDesigner
@@ -326,7 +326,7 @@ Popup{
             buttons: [ headlandAB, headlandCurve ]
         }
 
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             objectName: "btnBLength"
             icon.source: "/images/APlusPlusB.png"
             Layout.alignment: Qt.AlignCenter
@@ -334,7 +334,7 @@ Popup{
                 headlandDesigner.blength()
             }
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             objectName: "btnBShrink"
             icon.source: "/images/APlusMinusB.png"
             Layout.alignment: Qt.AlignCenter
@@ -342,7 +342,7 @@ Popup{
                 headlandDesigner.bshrink()
             }
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             objectName: "btnALength"
             icon.source: "/images/APlusPlusA.png"
             Layout.alignment: Qt.AlignCenter
@@ -350,7 +350,7 @@ Popup{
                 headlandDesigner.alength()
             }
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             objectName: "btnAShrink"
             icon.source: "/images/APlusMinusA.png"
             Layout.alignment: Qt.AlignCenter
@@ -358,7 +358,7 @@ Popup{
                 headlandDesigner.ashrink()
             }
         }
-        IconButtonColor{
+        Comp.IconButtonColor{
             id: headlandCurve
             objectName: "rbtnLine"
             checkable: true
@@ -367,7 +367,7 @@ Popup{
             Layout.alignment: Qt.AlignCenter
             onClicked: curveLine = true
         }
-        IconButtonColor{
+        Comp.IconButtonColor{
             id: headlandAB
             objectName: "rbtnCurve"
             checkable: true
@@ -375,14 +375,14 @@ Popup{
             Layout.alignment: Qt.AlignCenter
             onClicked: curveLine = false
         }
-        SpinBoxM {
+        Comp.SpinBoxM {
             id: distanceSpinBox
             objectName: "nudSetDistance"
             from: 0
             to: 2000
             boundValue: numTracks.value * settings.setVehicle_toolWidth
             Layout.alignment: Qt.AlignCenter
-            TextLine {
+            Comp.TextLine {
                 anchors.top: parent.bottom;
                 text: "( "+ utils.m_unit_abbrev()+" )"
             }
@@ -390,18 +390,18 @@ Popup{
                 lineDistance = value
             }
         }
-        SpinBoxCustomized{
+        Comp.SpinBoxCustomized{
             id: numTracks
             from: 0
             to: 10
             value: 0
             Layout.alignment: Qt.AlignCenter
-            TextLine {
+            Comp.TextLine {
                 anchors.top: parent.bottom;
                 text: qsTr("Tool: ")+ utils.m_to_ft_string(settings.setVehicle_toolWidth)
             }
         }
-        IconButtonColor{
+        Comp.IconButtonColor{
             id: cboxIsZoom
             objectName: "cboxIsZoom"
             checkable: true
@@ -409,33 +409,33 @@ Popup{
             Layout.alignment: Qt.AlignCenter
         }
 
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             objectName: "btnSlice"
             icon.source: "/images/HeadlandSlice.png"
             enabled: (sliceCount > 0)
             Layout.alignment: Qt.AlignCenter
             onClicked: slice()
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             objectName: "btnBndLoop"
             icon.source: "/images/HeadlandBuild.png"
             onClicked: create_headland()
             Layout.alignment: Qt.AlignCenter
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             objectName: "btnDeletePoints"
             icon.source: "/images/HeadlandReset.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: deletePoints()
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             objectName: "btnUndo"
             icon.source: "/images/back-button.png"
             enabled: (backupCount > 0)
             Layout.alignment: Qt.AlignCenter
             onClicked: undo()
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             objectName: "cBoxIsSectionControlled"
             icon.source: "/images/HeadlandSectionOff.png"
             iconChecked: "/images/HeadlandSectionOn.png"
@@ -444,7 +444,7 @@ Popup{
             Layout.alignment: Qt.AlignCenter
             onCheckedChanged: isSectionControlled(checked)
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             icon.source: "/images/SwitchOff.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: {
@@ -452,7 +452,7 @@ Popup{
                 headlandDesigner.visible = false
             }
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             icon.source: "/images/OK64.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: {

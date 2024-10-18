@@ -57,7 +57,8 @@ Rectangle{
             source: "/images/Config/SectionLookAheadDelay.gif"
         }
 
-        SpinBoxDecimal{
+        SpinBoxCustomized{
+            decimals: 1
             anchors.horizontalCenter: onPic.horizontalCenter
             anchors.top: onPic.bottom
             anchors.topMargin: 10
@@ -67,7 +68,8 @@ Rectangle{
             to: 22
             text: qsTr("On (secs)")
         }
-        SpinBoxDecimal{
+        SpinBoxCustomized{
+            decimals: 1
             anchors.horizontalCenter: offPic.horizontalCenter
             anchors.top: offPic.bottom
             anchors.topMargin: 10
@@ -78,7 +80,8 @@ Rectangle{
             editable: true
             text: qsTr("Off (secs)")
         }
-        SpinBoxDecimal{
+        SpinBoxCustomized{
+            decimals: 1
             anchors.horizontalCenter: offDelayPic.horizontalCenter
             anchors.top: offDelayPic.bottom
             anchors.topMargin: 10

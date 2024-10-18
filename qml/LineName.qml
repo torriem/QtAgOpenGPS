@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls.Fusion
-import "components"
+import "components" as Comp
 
 Rectangle{
     id: line_Name
@@ -29,7 +29,7 @@ Rectangle{
             border.width: 1
             border.color: aog.blackDayWhiteNight
 
-            TopLine{
+            Comp.TopLine{
                 id: topLine
                 titleText: line_Name.title
             }
@@ -47,7 +47,7 @@ Rectangle{
         selectByMouse: true
     }
 
-    IconButtonTransparent{
+    Comp.IconButtonTransparent{
         objectName: "btnAddTime"
         anchors.top: textInputBox.bottom
         anchors.horizontalCenter: parent.horizontalCenter
@@ -66,7 +66,7 @@ Rectangle{
             font.pixelSize: 35
         }
     }
-    IconButtonTransparent{
+    Comp.IconButtonTransparent{
         objectName: "btnCancel"
         anchors.bottom: parent.bottom
         anchors.left: parent.left
@@ -77,7 +77,7 @@ Rectangle{
             rejected()
         }
     }
-    IconButtonTransparent{
+    Comp.IconButtonTransparent{
         objectName: "btnOk"
         anchors.bottom: parent.bottom
         anchors.right: parent.right

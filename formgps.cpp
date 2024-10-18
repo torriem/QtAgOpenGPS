@@ -148,8 +148,6 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
     isJobStarted = false;
 
     StartLoopbackServer();
-
-    simConnectSlots();
     if ((bool)property_setMenu_isSimulatorOn == false) {
         qDebug() << "Stopping simulator because it's off in settings.";
         timerSim.stop();

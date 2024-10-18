@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls.Fusion
-import 'components'
+import 'components' as Comp
 
 Rectangle {
     id: lightbar
@@ -67,7 +67,7 @@ Rectangle {
         calculateDots()
     }
 
-    OutlineText {
+    Comp.OutlineText {
         id: number
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
