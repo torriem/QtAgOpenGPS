@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls.Fusion
-import "components"
+import "components" as Comp
 
 Rectangle{
     color: boundaryInterface.isOutOfBounds ? "darksalmon" : "gray"
@@ -34,13 +34,13 @@ Rectangle{
             onClicked: aog.sim_reset()
         }
         Button{
-            text: "wheelangle"
+            text: aog.steerAngleActual
             font.pixelSize: 15
             height: parent.height
             width: 65 * theme.scaleWidth
             onClicked: steerSlider.value = 300
         }
-        SliderCustomized {
+        Comp.SliderCustomized {
             id: steerSlider
             objectName: "simSteer"
             multiplicationValue: 10
@@ -50,29 +50,32 @@ Rectangle{
             to: 600
             value: 300
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             height: parent.height
             width: 65 * theme.scaleWidth
             icon.source: "/images/DnArrow64.png"
             onClicked: aog.sim_bump_speed(false)
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             height: parent.height
             width: 65 * theme.scaleWidth
             icon.source: "/images/AutoStop.png"
             onClicked: aog.sim_zero_speed()
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             height: parent.height
             width: 65 * theme.scaleWidth
             icon.source: "/images/UpArrow64.png"
             onClicked: aog.sim_bump_speed(true)
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             height: parent.height
             width: 65 * theme.scaleWidth
             icon.source: "/images/YouTurn80.png"
-            onClicked: console.log("nothing")
+            onClicked: {
+                aog.sim_rotate()
+                aog.isAutoSteerBtnOn = false;
+            }
         }
     }
 }

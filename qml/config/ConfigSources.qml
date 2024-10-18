@@ -164,7 +164,7 @@ Rectangle{
 		anchors.rightMargin: 5 * theme.scaleWidth
 		anchors.bottomMargin: 5 * theme.scaleHeight
 		onEnabledChanged: visible = enabled
-		visible: singleBtn.checked
+        visible: fixBtn.checked
 
         border.color: enabled ? aog.blackDayWhiteNight : "grey"
 
@@ -307,11 +307,12 @@ Rectangle{
             anchors.left: parent.left
             anchors.leftMargin: 30 * theme.scaleWidth
         }
-        SpinBoxDecimal{
+        SpinBoxCustomized{
             id: headingOffSet
             anchors.left: head.right
 			anchors.verticalCenter: head.verticalCenter
             anchors.leftMargin: 10 * theme.scaleWidth
+            decimals: 1
             from: -100
             boundValue: settings.setGPS_dualHeadingOffset
             onValueChanged: settings.setGPS_dualHeadingOffset = value

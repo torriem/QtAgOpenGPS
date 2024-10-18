@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls.Fusion
-import "components"
+import "components" as Comp
 
 Rectangle {
     id: lineEditor
@@ -9,7 +9,7 @@ Rectangle {
     color: aog.backgroundColor
     border.width: 1
     border.color: aog.blackDayWhiteNight
-    TopLine{
+    Comp.TopLine{
         id: topLine
         titleText: "Edit AB"
     }
@@ -21,11 +21,12 @@ Rectangle {
         width: children.width
         spacing: 35
         height: children.height
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             id: leftNudger
             icon.source: "/images/ArrowLeft.png"
         }
-            SpinBoxDecimal{
+            Comp.SpinBoxCustomized{
+                decimals: 1
             width: leftNudger.width
             height: 50
             anchors.verticalCenter: parent.verticalCenter
@@ -35,7 +36,7 @@ Rectangle {
                 to: 9999
             }
 
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             icon.source: "/images/ArrowRight.png"
         }
     }
@@ -47,10 +48,10 @@ Rectangle {
         width: children.width
         spacing: 35
         height: children.height
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             icon.source: "/images/ABSwapPoints.png"
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             icon.source: "/images/SnapToPivot.png"
         }
 
@@ -63,7 +64,7 @@ Rectangle {
         width: children.width
         spacing: 15
         height: children.height
-        IconButtonText{
+        Comp.IconButtonText{
             icon.source: "/images/Cancel64.png"
             onClicked: lineEditor.visible = false
             color1: "transparent"
@@ -73,7 +74,7 @@ Rectangle {
             width: 75
             height: 75
         }
-        IconButtonText{
+        Comp.IconButtonText{
             icon.source: "/images/FileDontSave.png"
             color1: "transparent"
             color2: "transparent"
@@ -83,7 +84,7 @@ Rectangle {
             height: 75
             onClicked: lineEditor.visible = false
         }
-        IconButtonText{
+        Comp.IconButtonText{
             icon.source: "/images/FileSave.png"
             color1: "transparent"
             color2: "transparent"

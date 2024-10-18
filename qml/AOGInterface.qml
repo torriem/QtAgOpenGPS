@@ -59,6 +59,7 @@ Item {
     property variant sectionButtonState: [ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ]
 
     property bool isContourBtnOn: false
+    property bool btnIsContourLocked: false
     property bool isAutoSteerBtnOn: false
     property bool isYouTurnBtnOn: false
 
@@ -125,7 +126,7 @@ Item {
     property double steerAngleActualRounded: 0
     property double rawHz:0
     property double hz:0
-    property double missedSentences: 0
+    property double droppedSentences: 0
     property double gpsHeading: 0
     property double fusedHeading: 0
     property int sentenceCounter: 0 //for No GPS screen
@@ -143,6 +144,10 @@ Item {
     //onVehicle_bounding_boxChanged: console.log("vehicle box is", vehicle_bounding_box);
 
     property bool isTrackOn: false //checks if a guidance line is set.
+
+    property string dispImuHeading: "#N/A"
+    onImuHeadingChanged: imuHeading > 360 ? dispImuHeading = "#INV" :
+         dispImuHeading = Number(aog.imuHeading.toLocaleString(Qt.locale(), 'f', 1));
     onCurrentABLineChanged: {
         if(currentABLine > -1 && isJobStarted === true){
             isTrackOn = true
@@ -163,6 +168,10 @@ Item {
 
     //on-screen buttons
 
+    //snap track buttons
+    signal snapSideways(double distance)//positive, right, negative, left
+    signal snapToPivot()
+
     //DisplayButtons.qml
     signal zoomIn()
     signal zoomOut()
@@ -174,6 +183,10 @@ Item {
     signal n3D()
     signal btnResetTool()
     signal btnHeadland()
+
+    signal btnContour()
+    signal btnContourLock()
+    signal btnContourPriority(bool right)
 
     signal isHydLiftOn()
     signal btnResetSim()
@@ -196,9 +209,12 @@ Item {
     signal sim_bump_speed(bool up)
     signal sim_zero_speed()
     signal sim_reset()
+    signal sim_rotate()
     signal reset_direction()
 
     signal centerOgl()
+
+    signal deleteAppliedArea();
 
     property double mPerDegreeLat
     property double mPerDegreeLon

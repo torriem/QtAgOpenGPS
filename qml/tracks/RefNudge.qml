@@ -3,9 +3,9 @@ import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 
 import ".."
-import "../components"
+import "../components" as Comp
 
-MoveablePopup {
+Comp.MoveablePopup {
     id: refNudge
     x: 40
     y: 40
@@ -15,7 +15,7 @@ MoveablePopup {
         refNudge.visible = true
     }
 
-    TitleFrame{
+    Comp.TitleFrame{
         id: rootRect
         color: "#ff6666"
         anchors.fill: parent
@@ -31,11 +31,11 @@ MoveablePopup {
                 RowLayout{
                     Layout.alignment: Qt.AlignCenter
                     implicitWidth: parent.width
-                    IconButtonTransparent{
+                    Comp.IconButtonTransparent{
                         icon.source: "/images/SnapLeftHalf.png"
                         Layout.alignment: Qt.AlignLeft
                     }
-                    IconButtonTransparent{
+                    Comp.IconButtonTransparent{
                         icon.source: "/images/SnapRightHalf.png"
                         Layout.alignment: Qt.AlignRight
                     }
@@ -43,11 +43,11 @@ MoveablePopup {
                 RowLayout{
                     Layout.alignment: Qt.AlignCenter
                     implicitWidth: parent.width
-                    IconButtonTransparent{
+                    Comp.IconButtonTransparent{
                         icon.source: "/images/SnapLeft.png"
                         Layout.alignment: Qt.AlignLeft
                     }
-                    IconButtonTransparent{
+                    Comp.IconButtonTransparent{
                         icon.source: "/images/SnapRight.png"
                         Layout.alignment: Qt.AlignRight
                     }
@@ -58,7 +58,7 @@ MoveablePopup {
                 }
             }
         }
-        TextLine{
+        Comp.TextLine{
             id: nudgeText
             font.pixelSize: 25
             text: qsTr("0 ")+ utils.cm_unit_abbrev()
@@ -71,12 +71,12 @@ MoveablePopup {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 15
-            IconButtonTransparent{
+            Comp.IconButtonTransparent{
                 icon.source: "/images/Cancel64.png"
                 onClicked: refNudge.visible = false
                 Layout.alignment: Qt.AlignCenter
             }
-            IconButtonTransparent{
+            Comp.IconButtonTransparent{
                 icon.source: "/images/OK64.png"
                 onClicked: refNudge.visible = false
                 Layout.alignment: Qt.AlignCenter

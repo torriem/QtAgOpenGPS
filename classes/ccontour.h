@@ -63,7 +63,7 @@ public:
     //list of points for the new contour line
     QVector<Vec3> ctList;
 
-    bool isLocked = false;
+    InterfaceProperty<AOGInterface,bool> isLocked = InterfaceProperty<AOGInterface,bool>("btnIsContourLocked");
 
     explicit CContour(QObject *parent = 0);
     void SetLockToLine();

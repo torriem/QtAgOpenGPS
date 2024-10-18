@@ -71,8 +71,9 @@ Rectangle{
             isChecked: settings.setTool_isSectionOffWhenOut
             onCheckedChanged: settings.setTool_isSectionOffWhenOut = checked
         }
-        SpinBoxDecimal{
+        SpinBoxCustomized{
             //todo: this should be made english/metric
+            decimals: 1
             id: slowSpeedCutoff
             from: utils.speed_to_unit(0)
             to: utils.speed_to_unit(30)

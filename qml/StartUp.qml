@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
-import "components"
+import "components" as Comp
 
 Rectangle{
     id: startUp
@@ -18,7 +18,7 @@ Rectangle{
         anchors.fill: parent
     }
 
-    TextLine{
+    Comp.TextLine{
         id: about
         anchors.top: parent.top
         anchors.left: parent.left
@@ -121,7 +121,7 @@ Rectangle{
         anchors.bottomMargin: 40
         height: 100
         width: parent.width/2
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             icon.source: "/images/Cancel64.png"
             onClicked: Qt.quit()
             Text{
@@ -129,7 +129,7 @@ Rectangle{
                 anchors.top: parent.bottom
             }
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
 			id: ok
             icon.source: "/images/OK64.png"
             onClicked: startUp.visible = false

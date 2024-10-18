@@ -3,9 +3,9 @@ import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 
 import ".."
-import "../components"
+import "../components" as Comp
 
-MoveablePopup{
+Comp.MoveablePopup{
     id: lineNudge
     x: 40
     y: 40
@@ -27,7 +27,7 @@ MoveablePopup{
             anchors.leftMargin: 8
             text: "< 3"
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             id: closeBtn
             icon.source: "/images/WindowClose.png"
             implicitHeight: 40
@@ -52,11 +52,11 @@ MoveablePopup{
                 RowLayout{
                     Layout.alignment: Qt.AlignCenter
                     implicitWidth: parent.width
-                    IconButtonTransparent{
+                    Comp.IconButtonTransparent{
                         icon.source: "/images/SnapLeftHalf.png"
                         Layout.alignment: Qt.AlignLeft
                     }
-                    IconButtonTransparent{
+                    Comp.IconButtonTransparent{
                         icon.source: "/images/SnapRightHalf.png"
                         Layout.alignment: Qt.AlignRight
                     }
@@ -64,11 +64,11 @@ MoveablePopup{
                 RowLayout{
                     Layout.alignment: Qt.AlignCenter
                     implicitWidth: parent.width
-                    IconButtonTransparent{
+                    Comp.IconButtonTransparent{
                         icon.source: "/images/SnapLeft.png"
                         Layout.alignment: Qt.AlignLeft
                     }
-                    IconButtonTransparent{
+                    Comp.IconButtonTransparent{
                         icon.source: "/images/SnapRight.png"
                         Layout.alignment: Qt.AlignRight
                     }
@@ -81,11 +81,11 @@ MoveablePopup{
                 RowLayout{
                     Layout.alignment: Qt.AlignCenter
                     implicitWidth: parent.width
-                    IconButtonTransparent{
+                    Comp.IconButtonTransparent{
                         icon.source: "/images/SnapToPivot.png"
                         Layout.alignment: Qt.AlignLeft
                     }
-                    IconButtonTransparent{
+                    Comp.IconButtonTransparent{
                         icon.source: "/images/SteerZero.png"
                         Layout.alignment: Qt.AlignRight
                     }

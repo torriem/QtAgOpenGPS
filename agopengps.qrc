@@ -607,13 +607,10 @@
         <file>qml/components/TimedMessage.qml</file>
         <file>qml/components/TextLine.qml</file>
         <file>qml/components/TestSectionButtons.qml</file>
-        <file>qml/components/SpinBoxDecimal.qml</file>
         <file>qml/components/SpinBoxM.qml</file>
         <file>qml/components/SpinBoxKM.qml</file>
         <file>qml/components/SpinBoxCustomized.qml</file>
         <file>qml/components/SpinBoxCM.qml</file>
-        <file>qml/components/SpinBoxFusion.qml</file>
-        <file>qml/components/SpinBoxDouble.qml</file>
         <file>qml/components/SliderCustomized.qml</file>
         <file>qml/components/SectionButtons.qml</file>
         <file>qml/components/SectionButton.qml</file>
@@ -648,9 +645,10 @@
         <file>images/qtSpecific/RightAntenna4WD.png</file>
         <file>images/qtSpecific/RightAntennaHarvester.png</file>
         <file>images/qtSpecific/z_LateralManualR.png</file>
-		<file>images/qtSpecific/z_LateralManualL.png</file>
+        <file>images/qtSpecific/z_LateralManualL.png</file>
         <file>images/qtSpecific/z_TurnManualL.png</file>
 		<file>images/qtSpecific/z_TurnManualR.png</file>
 		<file>qml/components/NumberTextField.qml</file>
+>>>>>>> dev
     </qresource>
 </RCC>

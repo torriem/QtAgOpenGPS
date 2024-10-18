@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls.Fusion
 
-import "components"
+import "components" as Comp
 
 Drawer{
     id: hamburgerMenuRoot
@@ -18,36 +18,36 @@ Drawer{
         height: fieldMenu.height
 
         color: "black"
-        ScrollViewExpandableColumn{
+        Comp.ScrollViewExpandableColumn{
             id: hamburgerMenuColumn
             anchors.fill: parent
-            ButtonColor{
+            Comp.ButtonColor{
                 text: "Languages"
                 onClicked: console.log("")
                 width: 250
                 height: 50
                 visible: false//todo
             }
-            ButtonColor{
+            Comp.ButtonColor{
                 text: "Directories"
                 onClicked: console.log("")
                 width: 250
                 height: 50
                 visible: false//todo
             }
-            ButtonColor{
+            Comp.ButtonColor{
                 text: "Colors"
                 onClicked: console.log("")
                 width: 250
                 height: 50
             }
-            ButtonColor{
+            Comp.ButtonColor{
                 text: "Section Colors"
                 onClicked: console.log("")
                 width: 250
                 height: 50
             }
-            ButtonColor{
+            Comp.ButtonColor{
                 text: "Enter Sim Coords"
                 onClicked: {
                     console.log("showing")
@@ -57,7 +57,7 @@ Drawer{
                 width: 250
                 height: 50
             }
-            ButtonColor{
+            Comp.ButtonColor{
                 text: "Simulator On"
                 property bool isChecked: settings.setMenu_isSimulatorOn
                 onIsCheckedChanged: {
@@ -72,28 +72,28 @@ Drawer{
                 width: 250
                 height: 50
             }
-            ButtonColor{
+            Comp.ButtonColor{
                 text: "Reset All"
                 onClicked: console.log("")
                 width: 250
                 height: 50
                 visible: false//todo
             }
-            ButtonColor{
+            Comp.ButtonColor{
                 text: "HotKeys"
                 onClicked: console.log("")
                 width: 250
                 height: 50
                 visible: false//todo
             }
-            ButtonColor{
+            Comp.ButtonColor{
                 text: "About..."
                 onClicked: console.log("")
                 width: 250
                 height: 50
                 visible: false//todo
             }
-            ButtonColor{
+            Comp.ButtonColor{
                 text: "Help"
                 onClicked: console.log("")
                 width: 250

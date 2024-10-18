@@ -40,12 +40,14 @@ Drawer {
                 text: "Drive In"
                 icon.source: "/images/AutoManualIsAuto.png"
                 onClicked: { fieldMenu.visible = false ; fieldOpen.sortBy = 2 ; fieldOpen.visible = true; }
+                enabled: !aog.isJobStarted
             }
             IconButtonTextBeside{
                 objectName: "btnFieldISOXML"
                 isChecked: false
                 text: "ISO-XML"
                 icon.source: "/images/ISOXML.png"
+                enabled: !aog.isJobStarted
             }
             IconButtonTextBeside{
                 objectName: "btnFieldFromKML"
@@ -53,12 +55,14 @@ Drawer {
                 text: "From KML"
                 icon.source: "/images/BoundaryLoadFromGE.png"
                 onClicked: fieldFromKML.visible = true
+                enabled: !aog.isJobStarted
             }
             IconButtonTextBeside{
                 objectName: "btnFieldFromExisting"
                 isChecked: false
                 text: "From Existing"
                 icon.source: "/images/FileExisting.png"
+                enabled: !aog.isJobStarted
                 onClicked: {
                     fieldMenu.visible = false
                     fieldFromExisting.visible = true
@@ -69,6 +73,7 @@ Drawer {
                 isChecked: false
                 text: "New"
                 icon.source: "/images/FileNew.png"
+                enabled: !aog.isJobStarted
                 onClicked: {
                     fieldMenu.visible = false
                     fieldNew.visible = true
@@ -79,11 +84,22 @@ Drawer {
                 isChecked: false
                 text: "Resume"
                 icon.source: "/images/FilePrevious.png"
-                enabled: settings.setF_CurrentDir !== "Default"
+                enabled: settings.setF_CurrentDir !== "Default" && !aog.isJobStarted
+                onEnabledChanged: fieldToResumeText.visible = enabled
 
                 onClicked: {
                     fieldMenu.visible = false
                     fieldInterface.field_open(settings.setF_CurrentDir)
+                }
+                Text{ //show which field will be enabled
+                    id: fieldToResumeText
+                    visible: false
+                    onVisibleChanged: console.log("rtxt: " + fieldToResumeText.visible)
+                    anchors.left: parent.horizontalCenter
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 5
+                    font.pixelSize: 20
+                    text: settings.setF_CurrentDir
                 }
             }
             IconButtonTextBeside{
@@ -103,6 +119,7 @@ Drawer {
                 isChecked: false
                 text: "Open"
                 icon.source: "/images/FileOpen"
+                enabled: !aog.isJobStarted
                 onClicked: {
                     fieldMenu.visible = false
                     fieldOpen.visible = true;

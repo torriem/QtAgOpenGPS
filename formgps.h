@@ -70,39 +70,15 @@ public:
     QTimer *tmrWatchdog;
     QTimer timerSim;
 
+    //other
+    QObject *btnFlag;
+
     /***************************
      * Qt and QML GUI elements *
      ***************************/
     //QQuickView *qmlview;
     QWidget *qmlcontainer;
     AOGRendererInSG *openGLControl;
-    //Left Menu & children
-    QObject *btnAcres;
-    QObject *btnSettings;
-    QObject *btnTools;
-    QObject *btnFieldMenu;
-    QObject *btnAgIO;
-    QObject *btnautoSteerConf;
-    QObject *btnAutoSteerMode;
-
-    QObject *btnTiltDown;
-    QObject *btnTiltUp;
-    QObject *btnZoomIn;
-    QObject *btnZoomOut;
-
-    //right menu & children
-    QObject *btnContour;
-    QObject *btnCurve;
-    QObject *btnABLine;
-    QObject *btnABLineCycle;
-    QObject *btnABLineCycleBk;
-    QObject *btnManualOffOn;
-    QObject *btnSectionOffAutoOn;
-    QObject *btnAutoSteer;
-
-    QObject *btnContourPriority;
-    //other
-    QObject *btnFlag;
 
     //flag context menu and buttons
     QObject *contextFlag;
@@ -259,6 +235,7 @@ public:
     //btnStates autoBtnState = btnStates::Off;
     InterfaceProperty<AOGInterface,btnStates> manualBtnState = InterfaceProperty<AOGInterface,btnStates>("manualBtnState");
     InterfaceProperty<AOGInterface,btnStates> autoBtnState = InterfaceProperty<AOGInterface,btnStates>("autoBtnState");
+    //InterfaceProperty<AOGInterface,bool> ct.isLocked = InterfaceProperty<AOGInterface,bool>("btnIsContourLocked");
 
 private:
 public:
@@ -358,7 +335,6 @@ public:
 
     void GetHeadland();
     void CloseTopMosts();
-    void SnapToPivot();
     void getAB();
     void FixTramModeButton();
 
@@ -722,26 +698,20 @@ public slots:
 
     void onBtnResetDirection_clicked();
     //left column
-    void onBtnAcres_clicked();
-    void onBtnSettings_clicked();
     void onBtnAgIO_clicked();
-    void onBtnSteerConfig_clicked();
-    void onBtnSteerMode_clicked();
     //right column
     void onBtnContour_clicked();
-    void onBtnToggleAB_clicked();
-    void onBtnToggleABBack_clicked();
     void onBtnAutoYouTurn_clicked();
     void onBtnSwapAutoYouTurnDirection_clicked();
-    void onBtnContourPriority_clicked();
+    void onBtnContourPriority_clicked(bool isRight);
+    void onBtnContourLock_clicked();
     //bottom row
     void onBtnResetTool_clicked();
     void onBtnHeadland_clicked();
     void onBtnHydLift_clicked();
     void onBtnFlag_clicked();
     void onBtnTramlines_clicked();
-    void onBtnSectionColor_clicked();
-    void onBtnLinePicker_clicked();
+    void onBtnSnapSideways_clicked(double distance);
     void onBtnSnapToPivot_clicked();
     //don't need ablineedit
     void onBtnYouSkip_clicked();
@@ -770,8 +740,11 @@ public slots:
     void onBtnManUTurn_clicked(bool right); //TODO add the skip number as a parameter
     void onBtnLateral_clicked(bool right); //TODO add the skip number as a parameter
     void onBtnResetSim_clicked();
+    void onBtnRotateSim_clicked();
 
     void onBtnCenterOgl_clicked();
+
+    void onDeleteAppliedArea_clicked();
 
     /***************************
      * from OpenGL.Designer.cs *

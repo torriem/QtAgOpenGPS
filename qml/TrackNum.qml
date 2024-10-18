@@ -1,7 +1,7 @@
 import QtQuick 2.0
-import "components"
+import "components" as Comp
 
-OutlineText {
+Comp.OutlineText {
     id: tracknum
     font.pixelSize: 24
 

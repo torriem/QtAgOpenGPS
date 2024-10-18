@@ -11,10 +11,9 @@
 
 #define UDP_NMEA_PORT 9999
 
-//const QHostAddress epAgIO = QHostAddress("127.0.0.1"); // TODO for everything good
-const QHostAddress epAgIO = QHostAddress("127.255.255.255"); //TODO for windows
-const int epAgIO_port = 17777;
-
+const QHostAddress epAgIO = QHostAddress("127.0.0.1"); // TODO for everything good
+//const QHostAddress epAgIO = QHostAddress("127.255.255.255"); //TODO for windows
+const int epAgIO_port = 17770;
 void FormGPS::ReceiveFromAgIO()
 {
     double head253, rollK, Lat, Lon;
@@ -60,8 +59,8 @@ void FormGPS::ReceiveFromAgIO()
         switch ((uchar)data[3])
         {
         case 0xD6:
-            if (udpWatch.elapsed() < udpWatchLimit)
-            {
+            if (udpWatch.elapsed() < udpWatchLimit) //simple filter to remove any sentences if we
+            {                                        //just received one, like with wifi, or some network delay.
 				udpWatchCounts++;
                 //TODO implement nmea logging
                 /*
@@ -296,12 +295,15 @@ void FormGPS::DisableSim()
 void FormGPS::StartLoopbackServer()
 {
     AOGSettings s;
-    int port = 15555; //property?
+    int port = 15550; //property?
+	qDebug() << "StartLoopbackServer" << port;
 
     if(udpSocket) stopUDPServer();
 
     udpSocket = new QUdpSocket(this); //should auto delete with the form
-    udpSocket->bind(QHostAddress::Any, port); //by default, bind to all interfaces.
+    //udpSocket->bind(QHostAddress::Any, port); //by default, bind to all interfaces.
+
+	udpSocket->bind(QHostAddress::LocalHost, port);
     //TODO: change to localhost
 
     connect(udpSocket,SIGNAL(readyRead()),this,SLOT(ReceiveFromAgIO()));

@@ -1,8 +1,8 @@
 import QtQuick
 import QtQuick.Controls.Fusion
-import "components"
+import "components" as Comp
 
-TimedRectangle{
+Comp.TimedRectangle{
     id: displayButtons
     color: aog.backgroundColor
     Grid {
@@ -15,7 +15,7 @@ TimedRectangle{
 		rows: 5
         columns:2
         onChildrenChanged: console.log("childrenChanged")
-        IconButtonTransparent {
+        Comp.IconButtonTransparent {
             id: btnTiltDown
             width: 70
             height: 70
@@ -26,7 +26,7 @@ TimedRectangle{
                 displayButtons.resetTimer() 
             }
         }
-        IconButtonTransparent {
+        Comp.IconButtonTransparent {
             id: btnCamera2d
             width: 70
             height: 70
@@ -37,7 +37,7 @@ TimedRectangle{
                 displayButtons.resetTimer() 
             }
         }
-        IconButtonTransparent {
+        Comp.IconButtonTransparent {
             id: btnCameraNorth2d
             width: 70
             height: 70
@@ -48,7 +48,7 @@ TimedRectangle{
                 displayButtons.resetTimer() 
             }
         }
-        IconButtonTransparent {
+        Comp.IconButtonTransparent {
             id: btnZoomOut
             width: 70
             height: 70
@@ -59,7 +59,7 @@ TimedRectangle{
                 displayButtons.resetTimer() 
             }
         }
-        IconButtonTransparent {
+        Comp.IconButtonTransparent {
             id: btnWindowDayNight
             width: 70
             height: 70
@@ -71,7 +71,7 @@ TimedRectangle{
             onCheckedChanged: settings.setDisplay_isDayMode = checked
             onClicked: displayButtons.resetTimer()
         }
-        IconButtonTransparent {
+        Comp.IconButtonTransparent {
             id: btnBrightnessDown
             width: 70
             height: 70
@@ -80,7 +80,7 @@ TimedRectangle{
             onClicked: displayButtons.resetTimer()
 			visible: false //todo
         }
-        IconButtonTransparent {
+        Comp.IconButtonTransparent {
             id: btnTiltUp
             width: 70
             height: 70
@@ -91,7 +91,7 @@ TimedRectangle{
                 displayButtons.resetTimer() 
             }
         }
-        IconButtonTransparent {
+        Comp.IconButtonTransparent {
             id: btnCamera3d
             width: 70
             height: 70
@@ -102,7 +102,7 @@ TimedRectangle{
                 displayButtons.resetTimer() 
             }
         }
-        IconButtonTransparent {
+        Comp.IconButtonTransparent {
             id: btnCameraNorth3d
             width: 70
             height: 70
@@ -113,7 +113,7 @@ TimedRectangle{
                 displayButtons.resetTimer() 
             }
         }
-        IconButtonTransparent {
+        Comp.IconButtonTransparent {
             id: btnZoomIn
             width: 70
             height: 70
@@ -130,7 +130,7 @@ TimedRectangle{
             height: 70
             radius: 10
         }
-        IconButtonTransparent {
+        Comp.IconButtonTransparent {
             id: btnBrightnessUp
 			visible: false //todo
             width: 70
