@@ -9,12 +9,15 @@
 #include <QLabel>
 #include <QQuickWindow>
 #include "qmlsettings.h"
+#include <QSysInfo>
 
 extern QLabel *grnPixelsWindow;
 extern QMLSettings qml_settings;
 
 FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
 {
+    QString osType = QSysInfo::productType();
+    qDebug() << "Os Type: " << osType;
     connect_classes(); //make all the inter-class connections
     qml_settings.setupKeys();
     qml_settings.loadSettings();  //fetch everything from QSettings for QML to use
