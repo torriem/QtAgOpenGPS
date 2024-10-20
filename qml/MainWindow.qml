@@ -3,6 +3,7 @@ import QtQuick.Window
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 import QtQuick.Effects
+import QtQuick.Dialogs
 import QtMultimedia
 import AgOpenGPS 1.0
 
@@ -1003,6 +1004,7 @@ Window {
                 Layout.alignment: Qt.AlignCenter
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
+                onClicked: cpSectionColor.open()
             }
             Comp.IconButtonText {
                 id: btnTramLines
@@ -1671,8 +1673,28 @@ Window {
                     enabled: false
                 }
             }
+            /********************************dialogs***********************/
+            ColorDialog{
+                id: cpSectionColor
+                onSelectedColorChanged: {
+
+                    //just use the Day setting. AOG has them locked to the same color anyways
+                    settings.setDisplay_colorSectionsDay = cpSectionColor.selectedColor;
+
+                    //change the color on the fly. In AOG, we had to cycle the sections off
+                    //and back on. This does for us.
+                    if(btnSectionManual){
+                        btnSectionManual.clicked()
+                        btnSectionManual.clicked()
+                    }else if(btnSectionAuto){
+                        btnSectionAuto.clicked()
+                        btnSectionAuto.clicked()
+                    }
+                }
+            }
         }
-    }
+}
+
     /*Shortcut{ //vim navigation rules !!!!
 		sequence: "j"
 		onActivated: aog.sim_bump_speed(true)
