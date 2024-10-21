@@ -4,6 +4,7 @@
 #include <QLabel>
 #include "aogrenderer.h"
 #include "aogproperty.h"
+#include <QProcess>
 
 QLabel *grnPixelsWindow;
 AOGSettings *settings;
@@ -45,6 +46,10 @@ int main(int argc, char *argv[])
         grnPixelsWindow->setFixedHeight(500);
         grnPixelsWindow->show();
     }
+
+    QProcess process;
+    process.start("./QtAgIO/QtAgIO");
+
 
     /*
     CDubinsTurningRadius = 5.25;
