@@ -1,3 +1,8 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+
+// Displays the main QML page. All other QML windows are children of this one.
+//Loaded by formgps_ui.cpp.
 import QtQuick
 import QtQuick.Window
 import QtQuick.Controls.Fusion
@@ -24,17 +29,12 @@ Window {
     }
     //We draw native opengl to this root object
     id: mainWindow
-    //height: utils.string_after_comma(settings.setWindow_Size)
-    //width: utils.string_before_comma(settings.setWindow_Size)
 	height: theme.defaultHeight
 	width: theme.defaultWidth
-
-
 
     onVisibleChanged: if(settings.setDisplay_isStartFullScreen){
                           mainWindow.showMaximized()
                       }
-
 
     signal save_everything()
 
@@ -117,11 +117,6 @@ Window {
 		else return false
 	}
 
-    //objectName: "openGLControl"
-    //width:800
-    //height:600
-    //anchors.fill: parent
-
     //there's a global "settings" property now.  In qmlscene we'll have to fake it somehow.
 
     //MockSettings {
@@ -173,7 +168,7 @@ Window {
     }
 
 
-    Rectangle {
+    Rectangle { //do we need this
         id: background
         objectName: "background"
         anchors.top: topLine.bottom
@@ -181,19 +176,19 @@ Window {
         anchors.right: parent.right
         anchors.bottom:  parent.bottom
 
-		color: "black"
-			 /*
-			  Text {
-				  id: text2
-				  text: qsTr("No GPS")
-				  color: "white"
-				  font.pointSize: 24
-				  anchors.centerIn: parent
-			  }
-			  */
-		 }
+        color: "black"
+        /*
+              Text {
+                  id: text2
+                  text: qsTr("No GPS")
+                  color: "white"
+                  font.pointSize: 24
+                  anchors.centerIn: parent
+              }
+              */
+    }
 
-		 Rectangle{
+    Rectangle{
         id: topLine
         anchors.top: parent.top
         anchors.left: parent.left
@@ -432,6 +427,7 @@ Window {
                 visible: aog.isReverse
             }
             MouseArea{
+                //button that catches any clicks on the vehicle in the GL Display
                 id: resetDirection
                 onClicked: {
                     aog.reset_direction()
@@ -450,7 +446,7 @@ Window {
                            }
             }
 //            Rectangle{
-//              // to test the reset vehicle direction button
+//              // to show the reset vehicle direction button for testing purposes
 //                color: "blue"
 //                anchors.fill: resetDirection
 //            }
@@ -479,11 +475,11 @@ Window {
     }
 
     //----------------------------------------------------------------------------------------left column
-    Item {
+    Item {//item to hold all the main window buttons. Fills all of main screen
 
         id: buttonsArea
         anchors.top: parent.top
-        anchors.topMargin: 2 //TODO: convert to scalable
+        anchors.topMargin: 2 //TODO: convert to scalable //do we need?
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
@@ -498,7 +494,6 @@ Window {
 				theme.btnSizes[2] = height / (children.length) 
 				theme.buttonSizesChanged()
 			}
-			//Layout.maximumHeight: theme.buttonSize
             onVisibleChanged: if(visible === false)
                                   width = 0
                               else
@@ -617,18 +612,16 @@ Window {
             anchors.top: parent.top
             anchors.right: rightColumn.left
             anchors.topMargin: topLine.height + 10
-            //anchors.rightMargin: 10
             anchors.margins: 10
             visible: settings.setMenu_isSpeedoOn
 
             speed: utils.speed_to_unit(aog.speedKph)
         }
 
-        SteerCircle {
+        SteerCircle { //the IMU indicator on the bottom right -- Called the "SteerCircle" in AOG
             anchors.bottom: bottomButtons.top
             anchors.right: rightColumn.left
             anchors.margins: 10
-
             visible: true
             rollAngle: aog.imuRollDegrees
             steerColor: (aog.steerModuleConnectedCounter > 30 ?
@@ -642,7 +635,7 @@ Window {
 
 
         ColumnLayout {
-            id: rightColumn
+            id: rightColumn //buttons
             anchors.top: parent.top
             anchors.right: parent.right
             anchors.bottom: parent.bottom
@@ -655,7 +648,6 @@ Window {
 				theme.btnSizes[0] = height / (children.length) 
 				theme.buttonSizesChanged()
 			}
-			//Layout.maximumWidth: theme.buttonSize
             onVisibleChanged: if(visible === false)
                                   width = 0
                               else
@@ -672,7 +664,6 @@ Window {
                 implicitWidth: theme.buttonSize
                 implicitHeight: theme.buttonSize
                 buttonText: "Lock"
-                //color: "white"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     aog.btnContourLock()
@@ -908,24 +899,20 @@ Window {
             }
         }
 
-        Column {
-            id: rightSubColumn
+        Comp.IconButton {
+            id: btnContourPriority
             anchors.top: parent.top
             anchors.topMargin: btnContour.height + 3
             anchors.right: rightColumn.left
             anchors.rightMargin: 3
-            spacing: 3
-
-            Comp.IconButton {
-                id: btnContourPriority
-                checkable: true
-                isChecked: true
-                visible: false
-                icon.source: "/images/ContourPriorityLeft.png"
-                iconChecked: "/images/ContourPriorityRight.png"
-                onClicked: aog.btnContourPriority(checked)
-            }
+            checkable: true
+            isChecked: true
+            visible: false
+            icon.source: "/images/ContourPriorityLeft.png"
+            iconChecked: "/images/ContourPriorityRight.png"
+            onClicked: aog.btnContourPriority(checked)
         }
+
         RowLayout{
             id:bottomButtons
             anchors.bottom: parent.bottom
@@ -952,7 +939,7 @@ Window {
 
 			}
             ComboBox {
-                id: skips
+                id: cbYouSkipNumber
                 editable: true
                 Layout.alignment: Qt.AlignCenter
 				implicitWidth: theme.buttonSize
@@ -971,14 +958,14 @@ Window {
                     ListElement {text: "10"}
                 }
                 onAccepted: {
-                    if (skips.find(currentText) === -1){
+                    if (cbYouSkipNumber.find(currentText) === -1){
                         model.append({text: editText})
-                        curentIndex = skips.find(editText)
+                        curentIndex = cbYouSkipNumber.find(editText)
                     }
                 }
             }
             Comp.IconButtonText {
-                id: btnYouSkip
+                id: btnYouSkip // the "Fancy Skip" button
                 isChecked: false
                 checkable: true
                 icon.source: "/images/YouSkipOff.png"
@@ -988,7 +975,7 @@ Window {
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
             }
-            Comp.IconButtonText {
+            Comp.IconButtonText { //reset trailing tool to straight back
                 id: btnResetTool
                 icon.source: "/images/ResetTool.png"
                 buttonText: "Reset Tool"
@@ -1084,8 +1071,7 @@ Window {
             anchors.right: rightColumn.left
             anchors.bottom: bottomButtons.top
             visible: !noGPS.visible
-            Comp.IconButtonTransparent{
-                id: pan
+            Comp.IconButtonTransparent{ //button to pan around main GL
                 implicitWidth: 50
                 implicitHeight: 50 * theme.scaleHeight
                 checkable: true
@@ -1136,8 +1122,8 @@ Window {
             }
 
             Comp.OutlineText{
+                id: ageAlarm //Lost RTK count up display
                 property int age: aog.age
-                id: ageAlarm
                 visible: settings.setGPS_isRTK
                 anchors.top: simulatorOnText.bottom
                 anchors.topMargin: 30
@@ -1159,7 +1145,7 @@ Window {
             }
 
             Item{
-                id: autoTurn
+                id: autoTurn // where the auto turn button and distance to turn are held
                 anchors.top:gridTurnBtns.top
                 anchors.right: parent.right
                 anchors.rightMargin: 200
@@ -1203,7 +1189,7 @@ Window {
                 }
             }
 			Grid{
-                id: gridTurnBtns
+                id: gridTurnBtns //lateral turn and manual Uturn
 				spacing: 10
 				rows: 2
 				columns: 2
@@ -1304,13 +1290,13 @@ Window {
 
         //Components- this is where the windows that get displayed over the
         //ogl get instantiated.
-        Field.FieldData{
+        Field.FieldData{ //window that displays field acreage and such
             id: fieldData
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
             visible: false
         }
-        GPSData{
+        GPSData{ //window that displays GPS data
             id: gpsData
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
@@ -1331,7 +1317,7 @@ Window {
             visible: false
         }
 
-        Comp.OutlineText{
+        Comp.OutlineText{ //displays time on bottom right of GL
             id: timeText
             anchors.bottom: parent.bottom
             anchors.right: parent.right
@@ -1356,7 +1342,7 @@ Window {
             width: 500  * theme.scaleWidth
 			//onHeightChanged: anchors.bottomMargin = (bottomButtons.height + simBarRect.height + (24 * theme.scaleHeight))
         }
-        DisplayButtons{
+        DisplayButtons{ // window that shows the buttons to change display. Rotate up/down, day/night, zoom in/out etc. See DisplayButtons.qml
             id: displayButtons
             width: childrenRect.width + 10
             height: childrenRect.height + 10
@@ -1376,7 +1362,7 @@ Window {
             visible: false
             z:1
         }
-        Comp.IconButtonTransparent{
+        Comp.IconButtonTransparent{ //button on bottom left to show/hide the bottom and right buttons
             id: toggleButtons
             anchors.left: parent.left
             anchors.bottom: parent.bottom
@@ -1435,7 +1421,7 @@ Window {
             visible: false
         }
 
-        StartUp{
+        StartUp{ //splash we show on startup
             id: startUp
             z:10
             //visible: true
@@ -1456,7 +1442,7 @@ Window {
             id: toolsMenu
             visible: false
         }
-        HamburgerMenu{
+        HamburgerMenu{ // window behind top left on main GL
             id: hamburgerMenu
             visible: false
         }
@@ -1535,7 +1521,7 @@ Window {
             visible: false
         }
 
-        Tracks.LineDrawer {
+        Tracks.LineDrawer {//window where lines are created off field boundary/edited
             id:lineDrawer
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
@@ -1561,7 +1547,7 @@ Window {
             visible: false
         }
 
-        Rectangle{
+        Rectangle{//show "Are you sure?" when close button clicked
             id: closeDialog
             width: 500 * theme.scaleWidth
             height: 100 * theme.scaleHeight
@@ -1674,7 +1660,7 @@ Window {
                 }
             }
             /********************************dialogs***********************/
-            ColorDialog{
+            ColorDialog{//color picker
                 id: cpSectionColor
                 onSelectedColorChanged: {
 
@@ -1695,6 +1681,8 @@ Window {
         }
 }
 
+
+//stowed here so it isn't lost. No uncommented code there, though
     /*Shortcut{ //vim navigation rules !!!!
 		sequence: "j"
 		onActivated: aog.sim_bump_speed(true)
