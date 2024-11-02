@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// The panel of buttons where track editing(new, go to select which track, line and ref nudge, etc)
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Fusion
