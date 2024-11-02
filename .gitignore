@@ -12,3 +12,4 @@ build*
 cmkbuild*
 branchnotes.txt
 __pycache__
+CMakeCache.txt
