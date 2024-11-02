@@ -1,3 +1,5 @@
+# Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+# SPDX-License-Identifier: GNU General Public License v3.0 or later
 # CMake 3.22 ships with Ubuntu 22.04
 # CMake 3.27 and QtCreator 12 recommended
 cmake_minimum_required(VERSION 3.22)

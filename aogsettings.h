@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Settings wrapper class tie in
 #ifndef AOGSETTINGS_H
 #define AOGSETTINGS_H
 
