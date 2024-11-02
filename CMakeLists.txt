@@ -100,6 +100,11 @@ qt_add_executable(QtAgOpenGPS
 
 
 
+option(LOCAL_QML "Load QML from disc instead of compiling them in.")
+
+if(LOCAL_QML)
+	add_compile_definitions(LOCAL_QML)
+endif()
 # Where to look for header files
 target_include_directories(QtAgOpenGPS PRIVATE
     .
