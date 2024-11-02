@@ -1,3 +1,8 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Config for sections. Actually displays a separate child window depending on if
+// we are using sections or zones.
 import QtQuick
 import QtQuick.Controls.Fusion
 
