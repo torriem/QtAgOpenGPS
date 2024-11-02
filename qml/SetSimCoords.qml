@@ -25,7 +25,7 @@ Rectangle{
 
     Image { // map image
         id: setSimCoordsImage
-        source: "/images/LatLon.png"
+        source: prefix + "/images/LatLon.png"
         anchors.top: textSimCoords.bottom
         anchors.left: parent.left
         width: parent.width *.9
@@ -115,11 +115,11 @@ Rectangle{
         height: children.height
         width: parent.width *.3
         Comp.IconButtonTransparent{
-            icon.source: "/images/Cancel64.png"
+            icon.source: prefix + "/images/Cancel64.png"
             onClicked: setSimCoordsRoot.visible = false
         }
         Comp.IconButtonTransparent{
-            icon.source: "/images/OK64.png"
+            icon.source: prefix + "/images/OK64.png"
             onClicked: {
                 settings.setGPS_simLatitude = latInput.text
                 settings.setGPS_simLongitude = lonInput.text

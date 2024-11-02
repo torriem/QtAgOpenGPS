@@ -88,8 +88,8 @@ MoveablePopup {
         IconButtonTransparent{
             id: side2Record
             objectName: "btnBoundarySide2Record"
-            icon.source: "/images/BoundaryRight.png"
-            iconChecked: "/images/BoundaryLeft.png"
+            icon.source: prefix + "/images/BoundaryRight.png"
+            iconChecked: prefix + "/images/BoundaryLeft.png"
             checkable: true
             anchors.top: recordBoundaryWindow.top
             anchors.right: parent.right
@@ -117,7 +117,7 @@ MoveablePopup {
                 border: 1
                 id: boundaryDelete
                 objectName: "recordBoundaryDelete"
-                icon.source: "/images/BoundaryDelete.png"
+                icon.source: prefix + "/images/BoundaryDelete.png"
                 width: 80
                 height: 80
                 onClicked: boundaryInterface.reset()
@@ -149,7 +149,7 @@ MoveablePopup {
             IconButtonTransparent{
                 border: 1
                 objectName: "btnBoundaryRecordAddPoint"
-                icon.source: "/images/PointAdd.png"
+                icon.source: prefix + "/images/PointAdd.png"
                 width: 80
                 height: 80
                 onClicked: boundaryInterface.add_point()
@@ -157,7 +157,7 @@ MoveablePopup {
             IconButtonTransparent{
                 border: 1
                 objectName: "btnBoundaryRecordDeleteLastPoint"
-                icon.source: "/images/PointDelete.png"
+                icon.source: prefix + "/images/PointDelete.png"
                 width: 80
                 height: 80
                 onClicked: boundaryInterface.delete_last_point()
@@ -165,7 +165,7 @@ MoveablePopup {
             IconButtonTransparent{
                 id: boundaryRecordBtn
                 objectName: "btnBoundaryRecordRecord"
-                icon.source: "/images/BoundaryRecord.png"
+                icon.source: prefix + "/images/BoundaryRecord.png"
                 checkable: true
                 width: 80
                 height: 80
@@ -181,7 +181,7 @@ MoveablePopup {
 
             IconButtonTransparent{
                 objectName: "btnBoundaryRecordSave"
-                icon.source: "/images/OK64.png"
+                icon.source: prefix + "/images/OK64.png"
                 onClicked: {
                     boundaryRecord.visible = false
                     boundaryInterface.stop()

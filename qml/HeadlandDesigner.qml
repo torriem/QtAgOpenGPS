@@ -330,7 +330,7 @@ Popup{
 
         Comp.IconButtonTransparent{
             objectName: "btnBLength"
-            icon.source: "/images/APlusPlusB.png"
+            icon.source: prefix + "/images/APlusPlusB.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: {
                 headlandDesigner.blength()
@@ -338,7 +338,7 @@ Popup{
         }
         Comp.IconButtonTransparent{
             objectName: "btnBShrink"
-            icon.source: "/images/APlusMinusB.png"
+            icon.source: prefix + "/images/APlusMinusB.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: {
                 headlandDesigner.bshrink()
@@ -346,7 +346,7 @@ Popup{
         }
         Comp.IconButtonTransparent{
             objectName: "btnALength"
-            icon.source: "/images/APlusPlusA.png"
+            icon.source: prefix + "/images/APlusPlusA.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: {
                 headlandDesigner.alength()
@@ -354,7 +354,7 @@ Popup{
         }
         Comp.IconButtonTransparent{
             objectName: "btnAShrink"
-            icon.source: "/images/APlusMinusA.png"
+            icon.source: prefix + "/images/APlusMinusA.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: {
                 headlandDesigner.ashrink()
@@ -365,7 +365,7 @@ Popup{
             objectName: "rbtnLine"
             checkable: true
             isChecked: true
-            icon.source: "/images/ABTrackCurve.png"
+            icon.source: prefix + "/images/ABTrackCurve.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: curveLine = true
         }
@@ -373,7 +373,7 @@ Popup{
             id: headlandAB
             objectName: "rbtnCurve"
             checkable: true
-            icon.source: "/images/ABTrackAB.png"
+            icon.source: prefix + "/images/ABTrackAB.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: curveLine = false
         }
@@ -407,47 +407,47 @@ Popup{
             id: cboxIsZoom
             objectName: "cboxIsZoom"
             checkable: true
-            icon.source: "/images/ZoomOGL.png"
+            icon.source: prefix + "/images/ZoomOGL.png"
             Layout.alignment: Qt.AlignCenter
         }
 
         Comp.IconButtonTransparent{
             objectName: "btnSlice"
-            icon.source: "/images/HeadlandSlice.png"
+            icon.source: prefix + "/images/HeadlandSlice.png"
             enabled: (sliceCount > 0)
             Layout.alignment: Qt.AlignCenter
             onClicked: slice()
         }
         Comp.IconButtonTransparent{
             objectName: "btnBndLoop"
-            icon.source: "/images/HeadlandBuild.png"
+            icon.source: prefix + "/images/HeadlandBuild.png"
             onClicked: create_headland()
             Layout.alignment: Qt.AlignCenter
         }
         Comp.IconButtonTransparent{
             objectName: "btnDeletePoints"
-            icon.source: "/images/HeadlandReset.png"
+            icon.source: prefix + "/images/HeadlandReset.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: deletePoints()
         }
         Comp.IconButtonTransparent{
             objectName: "btnUndo"
-            icon.source: "/images/back-button.png"
+            icon.source: prefix + "/images/back-button.png"
             enabled: (backupCount > 0)
             Layout.alignment: Qt.AlignCenter
             onClicked: undo()
         }
         Comp.IconButtonTransparent{
             objectName: "cBoxIsSectionControlled"
-            icon.source: "/images/HeadlandSectionOff.png"
-            iconChecked: "/images/HeadlandSectionOn.png"
+            icon.source: prefix + "/images/HeadlandSectionOff.png"
+            iconChecked: prefix + "/images/HeadlandSectionOn.png"
             checkable: true
             isChecked: settings.setHeadland_isSectionControlled
             Layout.alignment: Qt.AlignCenter
             onCheckedChanged: isSectionControlled(checked)
         }
         Comp.IconButtonTransparent{
-            icon.source: "/images/SwitchOff.png"
+            icon.source: prefix + "/images/SwitchOff.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: {
                 headlandDesigner.headlandOff()
@@ -455,7 +455,7 @@ Popup{
             }
         }
         Comp.IconButtonTransparent{
-            icon.source: "/images/OK64.png"
+            icon.source: prefix + "/images/OK64.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: {
                 save_exit()

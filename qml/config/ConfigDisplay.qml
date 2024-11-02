@@ -28,7 +28,7 @@ Item {
             IconButtonColor{
                 id: fieldTexture
                 text: qsTr("Field Texture")
-                icon.source: "/images/Config/ConD_FloorTexture.png"
+                icon.source: prefix + "/images/Config/ConD_FloorTexture.png"
                 checkable: true
                 isChecked: settings.setDisplay_isTextureOn
                 onCheckedChanged: settings.setDisplay_isTextureOn = checked
@@ -39,12 +39,12 @@ Item {
                 onCheckedChanged: settings.setDisplay_isAutoDayNight = !checked
                 checkable: true
                 text: qsTr("Auto Day Night")
-                icon.source: "/images/Config/ConD_AutoDayNight.png"
+                icon.source: prefix + "/images/Config/ConD_AutoDayNight.png"
             }
             IconButtonColor{
                 id:startFullScreen
                 text: qsTr("Start FullScreen")
-                icon.source: "/images/Config/ConD_FullScreenBegin.png"
+                icon.source: prefix + "/images/Config/ConD_FullScreenBegin.png"
                 checkable: true
                 isChecked: settings.setDisplay_isStartFullScreen
                 onCheckedChanged: settings.setDisplay_isStartFullScreen = checked
@@ -52,7 +52,7 @@ Item {
             IconButtonColor{
                 id:grid
                 text: qsTr("Grid")
-                icon.source: "/images/Config/ConD_Grid.png"
+                icon.source: prefix + "/images/Config/ConD_Grid.png"
                 checkable: true
                 isChecked: settings.setMenu_isGridOn
                 onCheckedChanged: settings.setMenu_isGridOn = checked
@@ -60,7 +60,7 @@ Item {
             IconButtonColor{
                 id:sky
                 text:qsTr("Sky")
-                icon.source: "/images/Config/ConD_Sky.png"
+                icon.source: prefix + "/images/Config/ConD_Sky.png"
                 checkable: true
                 isChecked: settings.setMenu_isSkyOn
                 onCheckedChanged: settings.setMenu_isSkyOn = checked
@@ -68,7 +68,7 @@ Item {
             IconButtonColor{
                 id:brightness
                 text:qsTr("Brightness")
-                icon.source: "/images/BrightnessUp.png"
+                icon.source: prefix + "/images/BrightnessUp.png"
                 checkable: true
                 isChecked: settings.setDisplay_isBrightnessOn
                 onCheckedChanged: settings.setDisplay_isBrightnessOn = checked
@@ -76,7 +76,7 @@ Item {
             IconButtonColor{
                 id:lightBar
                 text:qsTr("Lightbar")
-                icon.source: "/images/Config/ConD_LightBar.png"
+                icon.source: prefix + "/images/Config/ConD_LightBar.png"
                 checkable: true
                 isChecked: settings.setMenu_isLightbarOn
                 onCheckedChanged: settings.setMenu_isLightbarOn = checked
@@ -85,12 +85,12 @@ Item {
                 id:logNMEA
                 text: qsTr("Log NMEA")
                 checkable: true
-                icon.source: "/images/Config/ConD_LogNMEA.png"
+                icon.source: prefix + "/images/Config/ConD_LogNMEA.png"
             }
             IconButtonColor{
                 id: guideLines
                 text: qsTr("GuideLines")
-                icon.source: "/images/Config/ConD_ExtraGuides.png"
+                icon.source: prefix + "/images/Config/ConD_ExtraGuides.png"
                 checkable: true
                 isChecked: settings.setMenu_isSideGuideLines
                 onCheckedChanged: settings.setMenu_isSideGuideLines = checked
@@ -98,7 +98,7 @@ Item {
             IconButtonColor{
                 id:svennArrow
                 text: qsTr("Svenn Arrow")
-                icon.source: "/images/SvennArrow.png"
+                icon.source: prefix + "/images/SvennArrow.png"
                 checkable: true
                 isChecked: settings.setDisplay_isSvennArrowOn
                 onCheckedChanged: settings.setDisplay_isSvennArrowOn
@@ -106,7 +106,7 @@ Item {
             IconButtonColor{
                 id: compass
                 text: qsTr("Compass")
-                icon.source: "/images/Images/z_Compass.png"
+                icon.source: prefix + "/images/Images/z_Compass.png"
                 checkable: true
                 isChecked: settings.setMenu_isCompassOn
                 onCheckedChanged: settings.setMenu_isCompassOn
@@ -114,7 +114,7 @@ Item {
             /*IconButtonColor{ //appears there is no setting for this
                 id: speedo
                 text: qsTr("Speedometer")
-                icon.source: "/images/Images/z_Speedo.png"
+                icon.source: prefix + "/images/Images/z_Speedo.png"
                 checkable: true
                 isChecked: settings.setMenu_isSpeedoOn
                 onCheckedChanged: settings.setMenu_isSpeedoOn
@@ -139,7 +139,7 @@ Item {
 
             IconButtonColor{
                 id:metric
-                icon.source: "/images/Config/ConD_Metric.png"
+                icon.source: prefix + "/images/Config/ConD_Metric.png"
                 //text: qsTr("Metric")
                 property bool settingsChecked: settings.setMenu_isMetric
                 checkable: true
@@ -148,7 +148,7 @@ Item {
             }
             IconButtonColor{
                 id:imperial
-                icon.source: "/images/Config/ConD_Imperial.png"
+                icon.source: prefix + "/images/Config/ConD_Imperial.png"
                 text: ""
                 checkable: true
                 isChecked: !settings.setMenu_isMetric

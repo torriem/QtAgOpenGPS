@@ -139,7 +139,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: 75 * theme.scaleWidth
                 height: 75 * theme.scaleHeight
-                icon.source: "/images/VehFileSaveAs"
+                icon.source: prefix + "/images/VehFileSaveAs"
                 onClicked: {
                     if (saveAsVehicle.text != "") {
                         //console.debug("Going to save", saveAsVehicle.text)
@@ -175,7 +175,7 @@ Item {
             anchors.right: parent.right
             anchors.margins: 30
             anchors.top: vehicleList.top
-            icon.source: "/images/VehFileLoad.png"
+            icon.source: prefix + "/images/VehFileLoad.png"
             text: qsTr("Load")
             color3: "white"
             border: 2
@@ -192,7 +192,7 @@ Item {
             anchors.top:load.bottom
             anchors.margins: 30 * theme.scaleWidth
             anchors.horizontalCenter: load.horizontalCenter
-            icon.source: "/images/VehFileDelete.png"
+            icon.source: prefix + "/images/VehFileDelete.png"
             text: qsTr("Delete")
             color3: "white"
             border: 2

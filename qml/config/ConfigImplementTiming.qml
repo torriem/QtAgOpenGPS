@@ -28,7 +28,7 @@ Rectangle{
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
             cache: true
-            source: "/images/Config/SectionOnLookAhead.gif"
+            source: prefix + "/images/Config/SectionOnLookAhead.gif"
         }
         AnimatedImage{
             id: offPic
@@ -41,7 +41,7 @@ Rectangle{
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             cache: true
-            source: "/images/Config/SectionLookAheadOff.gif"
+            source: prefix + "/images/Config/SectionLookAheadOff.gif"
         }
         AnimatedImage{
             id: offDelayPic
@@ -54,7 +54,7 @@ Rectangle{
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             cache: true
-            source: "/images/Config/SectionLookAheadDelay.gif"
+            source: prefix + "/images/Config/SectionLookAheadDelay.gif"
         }
 
         SpinBoxCustomized{

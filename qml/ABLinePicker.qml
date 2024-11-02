@@ -74,7 +74,7 @@ Dialog {
             width: childrenRect.width
             IconButtonTransparent{
                 objectName: "btnLineCopy"
-                icon.source: "/images/FileCopy.png"
+                icon.source: prefix + "/images/FileCopy.png"
                 onClicked: {
                     if(ablineView.currentIndex > -1) {
                         copyLineName.set_name("Copy of " + linesInterface.abLinesList[ablineView.currentIndex].name)
@@ -84,7 +84,7 @@ Dialog {
             }
             IconButtonTransparent{
                 objectName: "btnLineEdit"
-                icon.source: "/images/FileEditName.png"
+                icon.source: prefix + "/images/FileEditName.png"
                 onClicked: {
                     if (ablineView.currentIndex > -1) {
                         editLineName.set_name(linesInterface.abLinesList[ablineView.currentIndex].name)
@@ -94,7 +94,7 @@ Dialog {
             }
             IconButtonTransparent{
                 objectName: "btnLineSwapPoints"
-                icon.source: "/images/ABSwapPoints.png"
+                icon.source: prefix + "/images/ABSwapPoints.png"
                 onClicked: {
                     if(ablineView.currentIndex > -1)
                         linesInterface.abLine_swapHeading(ablineView.currentIndex);
@@ -102,7 +102,7 @@ Dialog {
             }
             IconButtonTransparent{
                 objectName: "btnLineExit"
-                icon.source: "/images/OK64.png"
+                icon.source: prefix + "/images/OK64.png"
                 onClicked: {
                     if (ablineView.currentIndex > -1) {
                         aog.currentABLine = ablineView.currentIndex
@@ -131,7 +131,7 @@ Dialog {
                 IconButtonTransparent{
                     id: btnLineDelete
                     objectName: "btnLineDelete"
-                    icon.source: "/images/ABLineDelete.png"
+                    icon.source: prefix + "/images/ABLineDelete.png"
 
                     onClicked: {
                         if (ablineView.currentIndex > -1) {
@@ -144,7 +144,7 @@ Dialog {
                 }
                 IconButtonTransparent{
                     objectName: "btnLineExit"
-                    icon.source: "/images/SwitchOff.png"
+                    icon.source: prefix + "/images/SwitchOff.png"
                     onClicked: {
                         aog.currentABLine = -1
                         ablineView.currentIndex = -1
@@ -153,7 +153,7 @@ Dialog {
                 }
                 IconButtonTransparent{
                     objectName: "btnLineAdd"
-                    icon.source: "/images/AddNew.png"
+                    icon.source: prefix + "/images/AddNew.png"
                     onClicked: {
                         abSetter.visible = true
                         abLinePickerDialog.close()
@@ -161,7 +161,7 @@ Dialog {
                 }
                 IconButtonTransparent{
                     objectName: "btnLineLoadFromKML"
-                    icon.source: "/images/BoundaryLoadFromGE.png"
+                    icon.source: prefix + "/images/BoundaryLoadFromGE.png"
                 }
             }
         }
@@ -252,7 +252,7 @@ Dialog {
                     anchors.left: parent.left
                     anchors.margins: 5
                     checkable: false
-                    icon.source: "/images/LetterABlue.png"
+                    icon.source: prefix + "/images/LetterABlue.png"
                     onClicked: {
                         abSetter.a_easting = aog.toolEasting
                         abSetter.a_northing = aog.toolNorthing
@@ -399,7 +399,7 @@ Dialog {
                     anchors.left: parent.left
                     anchors.margins: 5
                     checkable: false
-                    icon.source: "/images/LetterBBlue.png"
+                    icon.source: prefix + "/images/LetterBBlue.png"
 
                     onClicked: {
                         abSetter.b_easting = aog.toolEasting
@@ -480,7 +480,7 @@ Dialog {
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 anchors.margins: 10
-                icon.source: "/images/Cancel64.png"
+                icon.source: prefix + "/images/Cancel64.png"
                  onClicked:{
                      //cancel
                      linesInterface.abLine_setA(false,0,0,0) //turn off line setting
@@ -493,7 +493,7 @@ Dialog {
                anchors.bottom: parent.bottom
                anchors.right: parent.right
                anchors.margins: 10
-               icon.source: "/images/OK64.png"
+               icon.source: prefix + "/images/OK64.png"
                onClicked: {
                    newLineName.visible = true
                    newLineName.generate_ab_name(abSetter.heading_degrees)

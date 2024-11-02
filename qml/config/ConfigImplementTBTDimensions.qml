@@ -17,7 +17,7 @@ Rectangle{
     visible: false
     Image{
         id: image1
-        source: "/images/ToolHitchPageTBT.png"
+        source: prefix + "/images/ToolHitchPageTBT.png"
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top

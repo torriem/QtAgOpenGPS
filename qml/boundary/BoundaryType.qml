@@ -80,14 +80,14 @@ Item {
                 spacing: 60
                 IconButtonTransparent{
                     objectName: "btnBoundaryFromKML"
-                    icon.source: "/images/BoundaryLoadFromGE.png"
+                    icon.source: prefix + "/images/BoundaryLoadFromGE.png"
                     onClicked: {
                         boundaryKMLType.visible = true
                         boundaryType.visible = false
                     }
                 }
                 IconButtonTransparent{
-                    icon.source: "/images/SteerRight.png"
+                    icon.source: prefix + "/images/SteerRight.png"
                     onClicked: {
                         boundaryTypePopup.visible = false
                         boundaryRecord.visible = true
@@ -105,7 +105,7 @@ Item {
                 anchors.margins: 10
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
-                icon.source: "/images/Cancel64.png"
+                icon.source: prefix + "/images/Cancel64.png"
                 onClicked: boundaryTypePopup.visible = false
             }
         }
@@ -173,7 +173,7 @@ Item {
                 spacing: 60
                 IconButtonTransparent{
                     objectName: "btnOneKML"
-                    icon.source: "/images/BoundaryLoadFromGE.png"
+                    icon.source: prefix + "/images/BoundaryLoadFromGE.png"
                     Text{
                         anchors.left: parent.right
                         anchors.verticalCenter: parent.verticalCenter
@@ -183,7 +183,7 @@ Item {
                 }
                 IconButtonTransparent{
                     objectName: "btnMultiKML"
-                    icon.source: "/images/BoundaryLoadMultiFromGE.png"
+                    icon.source: prefix + "/images/BoundaryLoadMultiFromGE.png"
                     Text{
                         anchors.left: parent.right
                         anchors.verticalCenter: parent.verticalCenter
@@ -196,7 +196,7 @@ Item {
                 anchors.margins: 10
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
-                icon.source: "/images/Cancel64.png"
+                icon.source: prefix + "/images/Cancel64.png"
                 onClicked: boundaryKMLType.visible = false
             }
         }

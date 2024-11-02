@@ -78,7 +78,7 @@ MoveablePopup {
 				width: parent.width
 				IconButtonColor{
 					id: steerBtn
-					icon.source: "/images/Steer/ST_SteerTab.png"
+					icon.source: prefix + "/images/Steer/ST_SteerTab.png"
 					implicitWidth: parent.width /4 - 4
 					implicitHeight: 50 * theme.scaleHeight
 					checkable: true
@@ -87,7 +87,7 @@ MoveablePopup {
 				}
 				IconButtonColor{
 					id: gainBtn
-					icon.source: "/images/Steer/ST_GainTab.png"
+					icon.source: prefix + "/images/Steer/ST_GainTab.png"
 					implicitWidth: parent.width /4 - 4
 					implicitHeight: 50 * theme.scaleHeight
 					checkable: true
@@ -95,7 +95,7 @@ MoveablePopup {
 				}
 				IconButtonColor{
 					id: stanleyBtn
-					icon.source: "/images/Steer/ST_StanleyTab.png"
+					icon.source: prefix + "/images/Steer/ST_StanleyTab.png"
 					implicitWidth: parent.width /4 - 4
 					implicitHeight: 50 * theme.scaleHeight
 					checkable: true
@@ -103,7 +103,7 @@ MoveablePopup {
 				}
 				IconButtonColor{
 					id: ppBtn
-					icon.source: "/images/Steer/Sf_PPTab.png"
+					icon.source: prefix + "/images/Steer/Sf_PPTab.png"
 					implicitWidth: parent.width /4 - 4
 					implicitHeight: 50 * theme.scaleHeight
 					checkable: true
@@ -135,7 +135,7 @@ MoveablePopup {
 						anchors.leftMargin: 20 * theme.scaleWidth
                         IconButtonTransparent{ //was zero button
 							width: height*2
-							icon.source: "/images/SteerCenter.png"
+							icon.source: prefix + "/images/SteerCenter.png"
 							implicitHeight: parent.height /5 -20
 							Layout.alignment: Qt.AlignCenter
                             visible: false
@@ -205,7 +205,7 @@ MoveablePopup {
 						anchors.left: parent.left
 						anchors.bottom: parent.bottom
 						height: parent.height
-						source: "/images/Steer/Sf_SteerTab.png"
+						source: prefix + "/images/Steer/Sf_SteerTab.png"
 					}
 
 				}
@@ -266,7 +266,7 @@ MoveablePopup {
 						anchors.left: parent.left
 						anchors.bottom: parent.bottom
 						height: parent.height
-						source: "/images/Steer/Sf_GainTab.png"
+						source: prefix + "/images/Steer/Sf_GainTab.png"
 					}
 
 				}
@@ -327,7 +327,7 @@ MoveablePopup {
 						anchors.left: parent.left
 						anchors.bottom: parent.bottom
 						height: parent.height
-						source: "/images/Steer/Sf_Stanley.png"
+						source: prefix + "/images/Steer/Sf_Stanley.png"
 					}
 
 				}
@@ -402,7 +402,7 @@ MoveablePopup {
 						anchors.left: parent.left
 						anchors.bottom: parent.bottom
 						height: ppColumn.height
-						source: "/images/Steer/Sf_PP.png"
+						source: prefix + "/images/Steer/Sf_PP.png"
 					}
 				}
 				//endregion PurePursuitTab
@@ -444,7 +444,7 @@ MoveablePopup {
 						Layout.alignment: Qt.AlignCenter
 					}
 					IconButtonTransparent{
-						icon.source: "/images/ArrowRight.png"
+						icon.source: prefix + "/images/ArrowRight.png"
 						implicitWidth: parent.width/4
 						implicitHeight: parent.height
 						onClicked: angleInfoMouse.clicked(true)
@@ -477,22 +477,22 @@ MoveablePopup {
 				IconButton{
 					id: pwmSteer
 					isChecked: false
-					icon.source: "/images/SteerDriveOff.png"
-					iconChecked: "/images/SteerDriveOn.png"
+					icon.source: prefix + "/images/SteerDriveOff.png"
+					iconChecked: prefix + "/images/SteerDriveOn.png"
 					implicitWidth: parent.width/4
 					implicitHeight: parent.height
 					color3: "white"
 					border: 2
 				}
 				IconButton{
-					icon.source: "/images/SnapLeft.png"
+					icon.source: prefix + "/images/SnapLeft.png"
 					implicitWidth: parent.width/4
 					implicitHeight: parent.height
 					color3: "white"
 					border: 2
 				}
 				IconButton{
-					icon.source: "/images/SnapRight.png"
+					icon.source: prefix + "/images/SnapRight.png"
 					implicitWidth: parent.width/4
 					implicitHeight: parent.height
 					color3: "white"
@@ -500,7 +500,7 @@ MoveablePopup {
 				}
 				IconButton{
 					id: pwmZero
-					icon.source: "/images/SteerZeroSmall.png"
+					icon.source: prefix + "/images/SteerZeroSmall.png"
 					implicitWidth: parent.width/4
 					implicitHeight: parent.height
 					color3: "white"
@@ -528,8 +528,8 @@ MoveablePopup {
 				height: 75 * theme.scaleHeight
 				color3: "white"
 				border: 2
-				icon.source: "/images/BoundaryRecord.png"
-				iconChecked: "/images/Stop"
+				icon.source: prefix + "/images/BoundaryRecord.png"
+				iconChecked: prefix + "/images/Stop"
 			}
 			Text{
 				anchors.top: steerRecord.top

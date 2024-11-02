@@ -5,7 +5,7 @@ import "components" as Comp
 
 Window {
 
-    property string imagePath: "/images/"
+    property string imagePath: prefix + "/images/"
 
 	AgIOTheme {
 		id: theme
@@ -65,7 +65,7 @@ Window {
                  color: agio.ntripConnected ? "green" : "red"
 			 }
              Comp.IconButtonTransparent {
-                 icon.source: "/images/Nmea.png"
+                 icon.source: prefix + "/images/Nmea.png"
                  visible: agio.gpsConnected
                  onClicked: gpsInfo.visible = !gpsInfo.visible
              }

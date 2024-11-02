@@ -87,7 +87,7 @@ Dialog {
                 }
                 IconButtonTransparent{
                     id:vehicleMenu
-                    icon.source: "/images/Config/Con_VehicleMenu.png"
+                    icon.source: prefix + "/images/Config/Con_VehicleMenu.png"
                     width:100 * theme.scaleWidth
                     height:75 * theme.scaleHeight
 
@@ -120,26 +120,26 @@ Dialog {
 
                     IconButtonTransparent{
                         id: configTrSettings
-                        icon.source: "/images/Config/ConS_VehicleConfig.png"
+                        icon.source: prefix + "/images/Config/ConS_VehicleConfig.png"
                         checkable: true
                         radius: 0
                     }
                     IconButtonTransparent{
                         id: configTrDim
-                        icon.source: "/images/Config/ConS_ImplementHitch.png"
+                        icon.source: prefix + "/images/Config/ConS_ImplementHitch.png"
                         checkable: true
                         radius: 0
                     }
                     IconButtonTransparent{
                         id: btnconfigTrAntDim
-                        icon.source: "/images/Config/ConS_ImplementAntenna.png"
+                        icon.source: prefix + "/images/Config/ConS_ImplementAntenna.png"
                         checkable: true
                         radius: 0
                     }
                 }
                 IconButtonTransparent{
                     id:implementMenuBtn
-                    icon.source: "/images/Config/Con_ImplementMenu.png"
+                    icon.source: prefix + "/images/Config/Con_ImplementMenu.png"
                     width:100 * theme.scaleWidth
                     height:75 * theme.scaleHeight
                     radius: 0
@@ -164,50 +164,50 @@ Dialog {
                     }
                     IconButtonTransparent{
                         id: configImpSettings
-                        icon.source: "/images/Config/ConS_VehicleConfig.png"
+                        icon.source: prefix + "/images/Config/ConS_VehicleConfig.png"
                         checkable: true
                         radius: 0
                     }
                     IconButtonTransparent{
                         id: configImpDim
-                        icon.source: "/images/Config/ConS_ImplementHitch.png"
+                        icon.source: prefix + "/images/Config/ConS_ImplementHitch.png"
                         checkable: true
                         radius: 0
                     }
                     IconButtonTransparent{
                         id: configImpAxle
-                        icon.source: "/images/Config/ConS_ImplementPivot.png"
+                        icon.source: prefix + "/images/Config/ConS_ImplementPivot.png"
                         checkable: true
                         radius: 0
                     }
                     IconButtonTransparent{
                         id: configImpOffset
-                        icon.source: "/images/Config/ConS_ImplementOffset.png"
+                        icon.source: prefix + "/images/Config/ConS_ImplementOffset.png"
                         checkable: true
                         radius: 0
                     }
                     IconButtonTransparent{
                         id: configImpSection
-                        icon.source: "/images/Config/ConS_ImplementSection.png"
+                        icon.source: prefix + "/images/Config/ConS_ImplementSection.png"
                         checkable: true
                         radius: 0
                     }
                     IconButtonTransparent{
                         id: configImpTiming
-                        icon.source: "/images/Config/ConS_ImplementSettings.png"
+                        icon.source: prefix + "/images/Config/ConS_ImplementSettings.png"
                         checkable: true
                         radius: 0
                     }
                     IconButtonTransparent{
                         id: configImpSwitches
-                        icon.source: "/images/Config/ConS_ImplementSwitch.png"
+                        icon.source: prefix + "/images/Config/ConS_ImplementSwitch.png"
                         checkable: true
                         radius: 0
                     }
                 }
                 IconButtonTransparent{
                     id:sourcesMenubtn
-                    icon.source: "/images/Config/Con_SourcesMenu.png"
+                    icon.source: prefix + "/images/Config/Con_SourcesMenu.png"
                     width:100
                     radius: 0
                     checkable: true
@@ -233,19 +233,19 @@ Dialog {
                     IconButtonTransparent{
                         id: configsrcHeading
                         checkable: true
-                        icon.source: "/images/Config/ConS_VehicleConfig.png"
+                        icon.source: prefix + "/images/Config/ConS_VehicleConfig.png"
                         radius: 0
                     }
                     IconButtonTransparent{
                         id: configsrcRoll
                         checkable: true
-                        icon.source: "/images/Config/ConS_ImplementHitch.png"
+                        icon.source: prefix + "/images/Config/ConS_ImplementHitch.png"
                         radius: 0
                     }
                 }
                 IconButtonTransparent{
                     id:uTurnMenu
-                    icon.source: "/images/Config/Con_UTurnMenu.png"
+                    icon.source: prefix + "/images/Config/Con_UTurnMenu.png"
                     width:100 * theme.scaleWidth
                     height:75 * theme.scaleHeight
                     radius: 0
@@ -257,7 +257,7 @@ Dialog {
                 }
                 IconButtonTransparent{
                     id:modulesMenubtn
-                    icon.source: "/images/Config/Con_ModulesMenu.png"
+                    icon.source: prefix + "/images/Config/Con_ModulesMenu.png"
                     width:100 * theme.scaleWidth
                     height:75 * theme.scaleHeight
                     radius: 0
@@ -283,19 +283,19 @@ Dialog {
                     IconButtonTransparent{
                         id: configModulesSettings
                         checkable: true
-                        icon.source: "/images/Config/ConS_ModulesMachine.png"
+                        icon.source: prefix + "/images/Config/ConS_ModulesMachine.png"
                         radius: 0
                     }
                     IconButtonTransparent{
                         id: configModulesPinsbtn
                         checkable: true
-                        icon.source: "/images/Config/ConS_ImplementSection.png"
+                        icon.source: prefix + "/images/Config/ConS_ImplementSection.png"
                         radius: 0
                     }
                 }
                 IconButtonTransparent{
                     id:tramMenu
-                    icon.source: "/images/Config/Con_TramMenu.png"
+                    icon.source: prefix + "/images/Config/Con_TramMenu.png"
                     checkable: true
                     width:100 * theme.scaleWidth
                     height:75 * theme.scaleHeight
@@ -307,7 +307,7 @@ Dialog {
                 }
                 IconButtonTransparent{
                     id:displayMenu
-                    icon.source: "/images/Config/Con_Display.png"
+                    icon.source: prefix + "/images/Config/Con_Display.png"
                     checkable: true
                     width:100 * theme.scaleWidth
                     height:75 * theme.scaleHeight
@@ -319,7 +319,7 @@ Dialog {
                 }
                 IconButtonTransparent{
                     id:featureMenu
-                    icon.source: "/images/Config/Con_FeatureMenu.png"
+                    icon.source: prefix + "/images/Config/Con_FeatureMenu.png"
                     width:100 * theme.scaleWidth
                     height:75 * theme.scaleHeight
                     radius: 0
@@ -364,7 +364,7 @@ Dialog {
                 anchors.right: parent.right
                 width:parent.height
                 height: parent.height
-                icon.source: "/images/OK64"
+                icon.source: prefix + "/images/OK64"
                 onClicked: {
                     //closeAllConfig()
                     //fix up signs on implement dimensions

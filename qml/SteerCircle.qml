@@ -17,7 +17,7 @@ Rectangle {
     Image {
         id: steerCircleImage
         anchors.fill: parent
-        source: "/images/textures/z_SteerPointer.png"
+        source: prefix + "/images/textures/z_SteerPointer.png"
         fillMode: Image.PreserveAspectCrop
         visible: false
     }
@@ -42,7 +42,7 @@ Rectangle {
     Image {
         id: steerDotImage
         anchors.fill: parent
-        source: "/images/textures/z_SteerDot.png"
+        source: prefix + "/images/textures/z_SteerDot.png"
         fillMode: Image.PreserveAspectCrop
         visible:false
 

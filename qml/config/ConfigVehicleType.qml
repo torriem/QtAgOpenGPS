@@ -31,7 +31,7 @@ Rectangle{
             width:150  * theme.scaleWidth
             height:100 * theme.scaleHeight
             checkable: true
-            icon.source: "/images/vehiclePageHarvester.png"
+            icon.source: prefix + "/images/vehiclePageHarvester.png"
             isChecked: settings.setVehicle_vehicleType === 1
             onClicked: settings.setVehicle_vehicleType = 1
         }
@@ -39,7 +39,7 @@ Rectangle{
             width:150 * theme.scaleWidth
             height:100 * theme.scaleHeight
             id: tractor
-            icon.source: "/images/vehiclePageTractor.png"
+            icon.source: prefix + "/images/vehiclePageTractor.png"
             checkable: true
             isChecked: settings.setVehicle_vehicleType === 0
             onClicked: settings.setVehicle_vehicleType = 0
@@ -48,7 +48,7 @@ Rectangle{
             width:150 * theme.scaleWidth
             height:100 * theme.scaleHeight
             id: tr4wd
-            icon.source: "/images/vehiclePage4WD.png"
+            icon.source: prefix + "/images/vehiclePage4WD.png"
             checkable: true
             isChecked: settings.setVehicle_vehicleType === 2
             onClicked: settings.setVehicle_vehicleType = 2
@@ -60,7 +60,7 @@ Rectangle{
 		anchors.topMargin: 20
 		width:150 * theme.scaleWidth
 		height:100 * theme.scaleHeight
-		icon.source: "/images/Config/Brand/TriangleVehicle.png"
+		icon.source: prefix + "/images/Config/Brand/TriangleVehicle.png"
 		checkable: true
 		isChecked: !settings.setDisplay_isVehicleImage
 		onCheckedChanged: {

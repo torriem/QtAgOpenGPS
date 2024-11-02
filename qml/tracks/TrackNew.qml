@@ -27,27 +27,26 @@ Comp.MoveablePopup {
             rows: 2
             columns: 2
             Comp.IconButtonColor{
-                icon.source: "/images/ABTrackA+.png"
+                icon.source: prefix + "/images/ABTrackA+.png"
                 implicitWidth: 100
                 implicitHeight: 100
                 color: "#ffffff"
             }
             Comp.IconButtonColor{
-                icon.source: "/images/ABTrackAB.png"
+                icon.source: prefix + "/images/ABTrackAB.png"
                 implicitWidth: 100
                 implicitHeight: 100
                 color: "#ffffff"
             }
             Comp.IconButtonColor{
-                icon.source: "/images/Cancel64.png"
+                icon.source: prefix + "/images/Cancel64.png"
                 implicitWidth: 70
                 implicitHeight: 70
                 color: "#ffffff"
-                Layout.alignment:  Qt.alignBottom && Qt.alignLeft
                 onClicked: trackNew.visible = false
             }
             Comp.IconButtonColor{
-                icon.source: "/images/ABTrackCurve.png"
+                icon.source: prefix + "/images/ABTrackCurve.png"
                 implicitWidth: 100
                 implicitHeight: 100
                 color: "#ffffff"

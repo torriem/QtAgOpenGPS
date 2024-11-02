@@ -80,7 +80,7 @@ Popup {
             IconButtonText {
                 id: deleteField
                 objectName: "btnDeleteField"
-                icon.source: "/images/skull.png"
+                icon.source: prefix + "/images/skull.png"
                 text: "Delete Field"
                 radius: 0
                 //color3: "white"
@@ -112,7 +112,7 @@ Popup {
             IconButtonText {
                 id: cancel
                 objectName: "btnCancel"
-                icon.source: "/images/Cancel64.png"
+                icon.source: prefix + "/images/Cancel64.png"
                 text: "Cancel"
                 //color3: "white"
                 radius: 0
@@ -126,7 +126,7 @@ Popup {
             IconButtonText {
                 id: useSelected
                 objectName: "btnUseSelected"
-                icon.source: "/images/FileOpen.png"
+                icon.source: prefix + "/images/FileOpen.png"
                 text: "Use Selected"
                 radius: 0
                 //color3: "white"

@@ -56,7 +56,7 @@ Rectangle{
         anchors.top: textInputBox.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.margins: 20
-        icon.source: "/images/Time.png"
+        icon.source: prefix + "/images/Time.png"
         onClicked: {
             var time = new Date().toLocaleTimeString(Qt.locale())
             textInputBox.text += " " + time
@@ -75,7 +75,7 @@ Rectangle{
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.margins: 20
-        icon.source: "/images/Cancel64.png"
+        icon.source: prefix + "/images/Cancel64.png"
         onClicked:{
             parent.visible = false
             rejected()
@@ -86,7 +86,7 @@ Rectangle{
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         anchors.margins: 20
-        icon.source: "/images/OK64.png"
+        icon.source: prefix + "/images/OK64.png"
         onClicked:{
             line_Name.visible = false
             abLineName = textInputBox.text

@@ -15,10 +15,10 @@ Rectangle{
     visible: false
     Image {
         id: dimImage
-        source: Number(settings.setVehicle_vehicleType) === 0 ? "/images/RadiusWheelBase.png":
-                Number(settings.setVehicle_vehicleType) === 1 ? "/images/RadiusWheelBaseHarvester.png" :
-                Number(settings.setVehicle_vehicleType) === 2 ? "/images/RadiusWheelBase4WD.png":
-                "/images/Config/ConSt_Mandatory.png"
+        source: Number(settings.setVehicle_vehicleType) === 0 ? prefix + "/images/RadiusWheelBase.png":
+                Number(settings.setVehicle_vehicleType) === 1 ? prefix + "/images/RadiusWheelBaseHarvester.png" :
+                Number(settings.setVehicle_vehicleType) === 2 ? prefix + "/images/RadiusWheelBase4WD.png":
+                prefix + "/images/Config/ConSt_Mandatory.png"
         anchors.fill: parent
         anchors.margins: 15
     }

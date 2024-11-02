@@ -201,7 +201,7 @@ Window {
             id: btnfileMenu
             height: parent.height
             width: 75 * theme.scaleWidth
-            icon.source: "/images/fileMenu.png"
+            icon.source: prefix + "/images/fileMenu.png"
             onClicked: hamburgerMenu.visible = true
         }
 //        Menu{
@@ -288,7 +288,7 @@ Window {
 			spacing: 5 * theme.scaleWidth
             Comp.IconButton {
                 id: btnFieldInfo
-                icon.source: "/images/FieldStats.png"
+                icon.source: prefix + "/images/FieldStats.png"
                 Layout.alignment: Qt.AlignCenter
                 implicitWidth: theme.buttonSize
                 height:parent.height
@@ -300,7 +300,7 @@ Window {
             }
             Comp.IconButtonColor{
                 id: rtkStatus
-                icon.source: "/images/GPSQuality.png"
+                icon.source: prefix + "/images/GPSQuality.png"
                 implicitWidth: 75 * theme.scaleWidth
                 implicitHeight: parent.height
                 color: "yellow"
@@ -333,14 +333,14 @@ Window {
             }
             Comp.IconButtonTransparent{
                 height: parent.height
-                icon.source: "/images/WindowMinimize.png"
+                icon.source: prefix + "/images/WindowMinimize.png"
                 width: 75 * theme.scaleWidth
                 onClicked: mainWindow.showMinimized()
             }
             Comp.IconButtonTransparent{
 				id: btnMaximize
                 height: parent.height
-                icon.source: "/images/WindowMaximize.png"
+                icon.source: prefix + "/images/WindowMaximize.png"
                 width: 75 * theme.scaleWidth
                 onClicked: {
                     console.debug("Visibility is " + mainWindow.visibility)
@@ -355,7 +355,7 @@ Window {
             Comp.IconButtonTransparent{
                 height: parent.height
                 width: 75 * theme.scaleWidth
-                icon.source: "/images/WindowClose.png"
+                icon.source: prefix + "/images/WindowClose.png"
                 onClicked: {
                     mainWindow.save_everything()
                     mainWindow.close()
@@ -423,7 +423,7 @@ Window {
                 y: aog.vehicle_xy.y - height
                 width: 70 * theme.scaleWidth
                 height: 70 * theme.scaleHeight
-                source: "/images/Images/z_ReverseArrow.png"
+                source: prefix + "/images/Images/z_ReverseArrow.png"
                 visible: aog.isReverse
             }
             MouseArea{
@@ -465,7 +465,7 @@ Window {
 
         Image {
             id: noGPSImage
-            source: "/images/Images/z_NoGPS.png"
+            source: prefix + "/images/Images/z_NoGPS.png"
             anchors.centerIn: parent
             anchors.margins: 200
             visible: noGPS.visible
@@ -541,7 +541,7 @@ Window {
             Comp.IconButtonText {
                 id: btnnavigationSettings
                 buttonText: qsTr("Display")
-                icon.source: "/images/NavigationSettings.png"
+                icon.source: prefix + "/images/NavigationSettings.png"
                 onClicked: displayButtons.visible = !displayButtons.visible
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
@@ -550,7 +550,7 @@ Window {
             Comp.IconButtonText {
                 id: btnSettings
                 buttonText: qsTr("Settings")
-                icon.source: "/images/Settings48.png"
+                icon.source: prefix + "/images/Settings48.png"
                 onClicked: config.open()
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
@@ -559,7 +559,7 @@ Window {
             Comp.IconButtonText {
                 id: btnTools
                 buttonText: qsTr("Tools")
-                icon.source: "/images/SpecialFunctions.png"
+                icon.source: prefix + "/images/SpecialFunctions.png"
                 onClicked: toolsMenu.visible = true
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
@@ -568,7 +568,7 @@ Window {
             Comp.IconButtonText{
                 id: btnFieldMenu
                 buttonText: qsTr("Field")
-                icon.source: "/images/JobActive.png"
+                icon.source: prefix + "/images/JobActive.png"
                 onClicked: fieldMenu.visible = true
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
@@ -577,7 +577,7 @@ Window {
             Comp.IconButtonText{
                 id: btnFieldTools
                 buttonText: qsTr("Field Tools")
-                icon.source: "/images/FieldTools.png"
+                icon.source: prefix + "/images/FieldTools.png"
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
                 onClicked: fieldTools.visible = true
@@ -588,7 +588,7 @@ Window {
             Comp.IconButtonText {
                 id: btnAgIO
                 buttonText: qsTr("AgIO")
-                icon.source: "/images/AgIO.png"
+                icon.source: prefix + "/images/AgIO.png"
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
                 Layout.alignment: Qt.AlignCenter
@@ -596,7 +596,7 @@ Window {
             Comp.IconButtonText {
                 id: btnautoSteerConf
                 buttonText: qsTr("Steer config")
-                icon.source: "/images/AutoSteerConf.png"
+                icon.source: prefix + "/images/AutoSteerConf.png"
                 Layout.alignment: Qt.AlignCenter
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
@@ -659,8 +659,8 @@ Window {
                 isChecked: aog.btnIsContourLocked
                 visible: btnContour.checked
                 checkable: true
-                icon.source: "/images/ColorUnlocked.png"
-                iconChecked: "/images/ColorLocked.png"
+                icon.source: prefix + "/images/ColorUnlocked.png"
+                iconChecked: prefix + "/images/ColorLocked.png"
                 implicitWidth: theme.buttonSize
                 implicitHeight: theme.buttonSize
                 buttonText: "Lock"
@@ -690,8 +690,8 @@ Window {
                 id: btnContour
                 isChecked: aog.isContourBtnOn //set value from backend
                 checkable: true
-                icon.source: "/images/ContourOff.png"
-                iconChecked: "/images/ContourOn.png"
+                icon.source: prefix + "/images/ContourOff.png"
+                iconChecked: prefix + "/images/ContourOn.png"
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
                 buttonText: "Contour"
@@ -710,8 +710,8 @@ Window {
                 id: btnABCurve
                 isChecked: false
                 checkable: true
-                icon.source: "/images/CurveOff.png"
-                iconChecked: "/images/CurveOn.png"
+                icon.source: prefix + "/images/CurveOff.png"
+                iconChecked: prefix + "/images/CurveOn.png"
                 buttonText: "ABCurve"
                 Layout.alignment: Qt.AlignCenter
 				implicitWidth: theme.buttonSize
@@ -746,8 +746,8 @@ Window {
                 checkable: true
                 //TODO: this should be set programmatically
                 //Also the types of lines are all mutually exclusive
-                icon.source: "/images/ABLineOff.png"
-                iconChecked: "/images/ABLineOn.png"
+                icon.source: prefix + "/images/ABLineOff.png"
+                iconChecked: prefix + "/images/ABLineOn.png"
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
                 Layout.alignment: Qt.AlignCenter
@@ -777,7 +777,7 @@ Window {
 
             Comp.IconButton{
                 id: btnABLineCycle
-                icon.source: "/images/ABLineCycle.png"
+                icon.source: prefix + "/images/ABLineCycle.png"
                 width: btnABLine.width
                 height: btnABLine.height
                 Layout.alignment: Qt.AlignCenter
@@ -786,7 +786,7 @@ Window {
             }
             Comp.IconButton{
                 id: btnABLineCycleBk
-                icon.source: "/images/ABLineCycleBk.png"
+                icon.source: prefix + "/images/ABLineCycleBk.png"
                 width: btnABLine.width
                 height: btnABLine.height
                 Layout.alignment: Qt.AlignCenter
@@ -798,8 +798,8 @@ Window {
                 id: btnSectionManual
                 isChecked: aog.manualBtnState == 2
                 checkable: true
-                icon.source: "/images/ManualOff.png"
-                iconChecked: "/images/ManualOn.png"
+                icon.source: prefix + "/images/ManualOff.png"
+                iconChecked: prefix + "/images/ManualOn.png"
                 buttonText: "Manual"
                 Layout.alignment: Qt.AlignCenter
 				implicitWidth: theme.buttonSize
@@ -821,8 +821,8 @@ Window {
                 id: btnSectionAuto
                 isChecked: aog.autoBtnState == 1
                 checkable: true
-                icon.source: "/images/SectionMasterOff.png"
-                iconChecked: "/images/SectionMasterOn.png"
+                icon.source: prefix + "/images/SectionMasterOff.png"
+                iconChecked: prefix + "/images/SectionMasterOn.png"
                 buttonText: "Auto"
                 Layout.alignment: Qt.AlignCenter
 				implicitWidth: theme.buttonSize
@@ -842,8 +842,8 @@ Window {
                 id: btnAutoYouTurn
                 isChecked: aog.isYouTurnBtnOn
                 checkable: true
-                icon.source: "/images/YouTurnNo.png"
-                iconChecked: "/images/YouTurn80.png"
+                icon.source: prefix + "/images/YouTurnNo.png"
+                iconChecked: prefix + "/images/YouTurn80.png"
                 buttonText: "AutoUturn"
                 visible: aog.isTrackOn
                 enabled: aog.isAutoSteerBtnOn
@@ -854,8 +854,8 @@ Window {
             }
             Comp.IconButtonText {
                 id: btnAutoSteer
-                icon.source: "/images/AutoSteerOff.png"
-                iconChecked: "/images/AutoSteerOn.png"
+                icon.source: prefix + "/images/AutoSteerOff.png"
+                iconChecked: prefix + "/images/AutoSteerOn.png"
                 checkable: true
                 checked: aog.isAutoSteerBtnOn
                 enabled: aog.isTrackOn || aog.isContourBtnOn
@@ -908,8 +908,8 @@ Window {
             checkable: true
             isChecked: true
             visible: false
-            icon.source: "/images/ContourPriorityLeft.png"
-            iconChecked: "/images/ContourPriorityRight.png"
+            icon.source: prefix + "/images/ContourPriorityLeft.png"
+            iconChecked: prefix + "/images/ContourPriorityRight.png"
             onClicked: aog.btnContourPriority(checked)
         }
 
@@ -968,8 +968,8 @@ Window {
                 id: btnYouSkip // the "Fancy Skip" button
                 isChecked: false
                 checkable: true
-                icon.source: "/images/YouSkipOff.png"
-                iconChecked: "/images/YouSkipOn.png"
+                icon.source: prefix + "/images/YouSkipOff.png"
+                iconChecked: prefix + "/images/YouSkipOn.png"
                 buttonText: "YouSkips"
                 Layout.alignment: Qt.AlignCenter
 				implicitWidth: theme.buttonSize
@@ -977,7 +977,7 @@ Window {
             }
             Comp.IconButtonText { //reset trailing tool to straight back
                 id: btnResetTool
-                icon.source: "/images/ResetTool.png"
+                icon.source: prefix + "/images/ResetTool.png"
                 buttonText: "Reset Tool"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: aog.btnResetTool()
@@ -987,7 +987,7 @@ Window {
             }
             Comp.IconButtonText {
                 id: btnSectionMapping
-                icon.source: "/images/SectionMapping"
+                icon.source: prefix + "/images/SectionMapping"
                 Layout.alignment: Qt.AlignCenter
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
@@ -995,7 +995,7 @@ Window {
             }
             Comp.IconButtonText {
                 id: btnTramLines
-                icon.source: "/images/TramLines.png"
+                icon.source: prefix + "/images/TramLines.png"
                 buttonText: "Tram Lines"
                 Layout.alignment: Qt.AlignCenter
 				implicitWidth: theme.buttonSize
@@ -1008,8 +1008,8 @@ Window {
                 checkable: true
                 disabled: btnHeadland.checked
                 visible: utils.isTrue(settings.setArdMac_isHydEnabled) && btnHeadland.visible
-                icon.source: "/images/HydraulicLiftOff.png"
-                iconChecked: "/images/HydraulicLiftOn.png"
+                icon.source: prefix + "/images/HydraulicLiftOff.png"
+                iconChecked: prefix + "/images/HydraulicLiftOn.png"
                 buttonText: "HydLift"
                 Layout.alignment: Qt.AlignCenter
 				implicitWidth: theme.buttonSize
@@ -1023,8 +1023,8 @@ Window {
                 id: btnHeadland
                 isChecked: aog.isHeadlandOn
                 checkable: true
-                icon.source: "/images/HeadlandOff.png"
-                iconChecked: "/images/HeadlandOn.png"
+                icon.source: prefix + "/images/HeadlandOff.png"
+                iconChecked: prefix + "/images/HeadlandOn.png"
                 buttonText: "Headland"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: aog.btnHeadland()
@@ -1035,7 +1035,7 @@ Window {
                 id: btnFlag
                 objectName: "btnFlag"
                 isChecked: false
-                icon.source: "/images/FlagRed.png"
+                icon.source: prefix + "/images/FlagRed.png"
                 Layout.alignment: Qt.AlignCenter
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
@@ -1051,7 +1051,7 @@ Window {
 
             Comp.IconButtonText {
                 id: btnTrackOn
-                icon.source: "/images/TrackOn.png"
+                icon.source: prefix + "/images/TrackOn.png"
                 buttonText: "Track"
                 onClicked: trackButtons.visible = !trackButtons.visible
                 Layout.alignment: Qt.AlignCenter
@@ -1078,15 +1078,15 @@ Window {
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.margins: 30
-                icon.source: "/images/Pan.png"
-                iconChecked: "/images/SwitchOff.png"
+                icon.source: prefix + "/images/Pan.png"
+                iconChecked: prefix + "/images/SwitchOff.png"
                 onClicked: aog.panMode = !aog.panMode
             }
             Image{
                 id: hydLiftIndicator
                 property bool isDown: aog.hydLiftDown
                 visible: false
-                source: "/images/Images/z_Lift.png"
+                source: prefix + "/images/Images/z_Lift.png"
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 width: 80 * theme.scaleWidth
@@ -1155,9 +1155,9 @@ Window {
                  Image{
                     id: autoTurnImage
                     source: if(!aog.isYouTurnRight)
-                                "/images/Images/z_TurnRight.png"
+                                prefix + "/images/Images/z_TurnRight.png"
                             else
-                                "/images/Images/z_TurnLeft.png"
+                                prefix + "/images/Images/z_TurnLeft.png"
                     visible: false
                     anchors.fill: parent
                 }
@@ -1179,7 +1179,7 @@ Window {
                     Text{
                         id: distance
                         anchors.bottom: colorAutoUTurn.bottom
-                        color: colorAutoUTurn.color
+                        color: colorAutoUTurn.colorizationColor
                         anchors.horizontalCenter: parent.horizontalCenter
                         text: if(aog.distancePivotToTurnLine > 0)
                                   utils.m_to_unit_string(aog.distancePivotToTurnLine, 0) + " "+utils.m_unit_abbrev()
@@ -1203,7 +1203,7 @@ Window {
 					implicitHeight: 65 * theme.scaleHeight
 					implicitWidth: 85 * theme.scaleWidth
 					imageFillMode: Image.Stretch
-					icon.source: "/images/qtSpecific/z_TurnManualL.png"
+                    icon.source: prefix + "/images/qtSpecific/z_TurnManualL.png"
 					onClicked: {
 						if (settings.setAS_functionSpeedLimit > aog.speedKph)
 						aog.uturn(false)
@@ -1218,7 +1218,7 @@ Window {
 					implicitHeight: 65 * theme.scaleHeight
 					implicitWidth: 85 * theme.scaleWidth
 					imageFillMode: Image.Stretch
-					icon.source: "/images/qtSpecific/z_TurnManualR.png"
+                    icon.source: prefix + "/images/qtSpecific/z_TurnManualR.png"
 					onClicked: {
 						if (settings.setAS_functionSpeedLimit > aog.speedKph)
 						aog.uturn(true)
@@ -1231,7 +1231,7 @@ Window {
 					implicitHeight: 65 * theme.scaleHeight
 					implicitWidth: 85 * theme.scaleWidth
 					imageFillMode: Image.Stretch
-					icon.source: "/images/qtSpecific/z_LateralManualL.png"
+                    icon.source: prefix + "/images/qtSpecific/z_LateralManualL.png"
 					onClicked: {
 						if (settings.setAS_functionSpeedLimit > aog.speedKph)
 						aog.lateral(false)
@@ -1244,7 +1244,7 @@ Window {
 					implicitHeight: 65 * theme.scaleHeight
 					implicitWidth: 85 * theme.scaleWidth
 					imageFillMode: Image.Stretch
-					icon.source: "/images/qtSpecific/z_LateralManualR.png"
+                    icon.source: prefix + "/images/qtSpecific/z_LateralManualR.png"
 					onClicked: {
 						if (settings.setAS_functionSpeedLimit > aog.speedKph)
 						aog.lateral(true)
@@ -1370,7 +1370,7 @@ Window {
             visible: aog.isJobStarted
             width: 45 * theme.scaleWidth
             height: 25 * theme.scaleHeight
-            icon.source: "/images/MenuHideShow.png"
+            icon.source: prefix + "/images/MenuHideShow.png"
             onClicked: if(leftColumn.visible){
                            leftColumn.visible = false
                        }else{
@@ -1394,14 +1394,14 @@ Window {
                 implicitWidth: 30 * theme.scaleWidth
                 implicitHeight: 30 * theme.scaleHeight
                 radius: 0
-                icon.source: "/images/ZoomIn48.png"
+                icon.source: prefix + "/images/ZoomIn48.png"
                 onClicked: aog.zoomIn()
             }
             Comp.IconButton{
                 implicitWidth: 30 * theme.scaleWidth
                 implicitHeight: 30 * theme.scaleHeight
                 radius: 0
-                icon.source: "/images/ZoomOut48.png"
+                icon.source: prefix + "/images/ZoomOut48.png"
                 onClicked: aog.zoomOut()
             }
         }
@@ -1563,7 +1563,7 @@ Window {
                 color1: "transparent"
                 color2: "transparent"
                 color3: "transparent"
-                icon.source: "/images/back-button.png"
+                icon.source: prefix + "/images/back-button.png"
                 onClicked: parent.visible = false
             }
             Comp.IconButtonText{
@@ -1572,7 +1572,7 @@ Window {
                 color1: "transparent"
                 color2: "transparent"
                 color3: "transparent"
-                icon.source: "/images/ExitAOG.png"
+                icon.source: prefix + "/images/ExitAOG.png"
                 onClicked: {
                     mainWindow.save_everything()
                     Qt.quit()
@@ -1634,28 +1634,28 @@ Window {
                 Comp.IconButton {
                     id: redFlag
                     objectName: "btnRedFlag"
-                    icon.source: "/images/FlagRed.png";
+                    icon.source: prefix + "/images/FlagRed.png";
                 }
                 Comp.IconButton {
                     id: greenFlag
                     objectName: "btnGreenFlag"
-                    icon.source: "/images/FlagGrn.png";
+                    icon.source: prefix + "/images/FlagGrn.png";
                 }
                 Comp.IconButton {
                     id: yellowFlag
                     objectName: "btnYellowFlag"
-                    icon.source: "/images/FlagYel.png";
+                    icon.source: prefix + "/images/FlagYel.png";
                 }
                 Comp.IconButton {
                     id: deleteFlag
                     objectName: "btnDeleteFlag"
-                    icon.source: "/images/FlagDelete.png"
+                    icon.source: prefix + "/images/FlagDelete.png"
                     enabled: false
                 }
                 Comp.IconButton {
                     id: deleteAllFlags
                     objectName: "btnDeleteAllFlags"
-                    icon.source: "/images/FlagDeleteAll.png"
+                    icon.source: prefix + "/images/FlagDeleteAll.png"
                     enabled: false
                 }
             }

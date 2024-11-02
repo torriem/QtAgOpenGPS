@@ -70,7 +70,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 IconButtonTransparent{
                     objectName: "btnBoundaryDeleteCurrent"
-                    icon.source: "/images/BoundaryDelete.png"
+                    icon.source: prefix + "/images/BoundaryDelete.png"
                     enabled: (boundaryList.currentIndex === 0 &&
                               boundaryInterface.boundary_list.length === 1) ||
                              (boundaryList.currentIndex > 0)
@@ -78,7 +78,7 @@ Item {
                 }
                 IconButtonTransparent{
                     objectName: "btnBoundaryDeleteAll"
-                    icon.source: "/images/BoundaryDeleteAll.png"
+                    icon.source: prefix + "/images/BoundaryDeleteAll.png"
                     onClicked: {
                         deleteAllSure.visible = true
                     }
@@ -87,14 +87,14 @@ Item {
                 }
                 IconButtonTransparent{
                     objectName: "btnBoundaryOpenGE"
-                    icon.source: "/images/GoogleEarth.png"
+                    icon.source: prefix + "/images/GoogleEarth.png"
                 }
                 IconButtonTransparent{
                     objectName: "btnBoundaryFancyDrawer"
-                    icon.source: "/images/bing.png"
+                    icon.source: prefix + "/images/bing.png"
                 }
                 IconButtonTransparent{
-                    icon.source: "/images/AddNew.png"
+                    icon.source: prefix + "/images/AddNew.png"
                     onClicked: {
                         boundaryMenuPopup.visible = false
                         boundaryType.show()
@@ -102,7 +102,7 @@ Item {
 
                 }
                 IconButtonTransparent{
-                    icon.source: "/images/OK64.png"
+                    icon.source: prefix + "/images/OK64.png"
                     onClicked: boundaryMenuPopup.visible = false
                 }
             }

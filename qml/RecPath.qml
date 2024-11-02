@@ -28,24 +28,24 @@ Comp.MoveablePopup{
         height: parent.height-20
         anchors.centerIn: parent
         Comp.IconButtonTransparent{
-            icon.source: "/images/Play.png"
-            iconChecked: "/images/boundaryStop.png"
+            icon.source: prefix + "/images/Play.png"
+            iconChecked: prefix + "/images/boundaryStop.png"
             onClicked: recordedPathInterface.recPathFollowStop()
         }
         Comp.IconButtonTransparent{
-            icon.source: "/images/Stop.png"
+            icon.source: prefix + "/images/Stop.png"
             onClicked: recordedPathInterface.recPathResumeStyle()
         }
         Comp.IconButtonTransparent{
-            icon.source: "/images/BoundaryRecord.png"
-            iconChecked: "/images/boundaryStop.png"
+            icon.source: prefix + "/images/BoundaryRecord.png"
+            iconChecked: prefix + "/images/boundaryStop.png"
             onClicked: recordedPathInterface.recPathRecordStop()
         }
         Comp.IconButtonTransparent{
-            icon.source: "/images/FileExplorerWindows.png"
+            icon.source: prefix + "/images/FileExplorerWindows.png"
         }
         Comp.IconButtonTransparent{
-            icon.source: "/images/ABSwapPoints.png"
+            icon.source: prefix + "/images/ABSwapPoints.png"
             onClicked: recordedPathInterface.recPathSwapAB()
         }
     }

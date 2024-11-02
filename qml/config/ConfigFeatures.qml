@@ -31,7 +31,7 @@ Item {
                 anchors.fill: parent
                 IconButtonColor{
                     id: tramAll
-                    icon.source: "/images/TramAll.png"
+                    icon.source: prefix + "/images/TramAll.png"
                     text: "Tram Lines"
                     Layout.alignment: Qt.AlignCenter
                     checkable: true
@@ -39,7 +39,7 @@ Item {
                     onCheckedChanged: settings.setFeature_isTramOn = checked
                 }
                 IconButtonColor{
-                    icon.source: "/images/HeadlandOn.png"
+                    icon.source: prefix + "/images/HeadlandOn.png"
                     text: "Headland"
                     Layout.alignment: Qt.AlignCenter
                     checkable: true
@@ -47,7 +47,7 @@ Item {
                     onCheckedChanged: settings.setFeature_isHeadlandOn = checked
                 }
                 IconButtonColor{
-                    icon.source: "/images/BoundaryOuter.png"
+                    icon.source: prefix + "/images/BoundaryOuter.png"
                     text: "Boundary"
                     Layout.alignment: Qt.AlignCenter
                     checkable: true
@@ -55,7 +55,7 @@ Item {
                     onCheckedChanged: settings.setFeature_isBoundaryOn = checked
                 }
                 IconButtonColor{
-                    icon.source: "/images/RecPath.png"
+                    icon.source: prefix + "/images/RecPath.png"
                     Layout.alignment: Qt.AlignCenter
                     text: "Rec Path"
                     checkable: true
@@ -81,7 +81,7 @@ Item {
                 width: children.width
                 height: parent.height
                 IconButtonColor{
-                    icon.source: "/images/ABSmooth.png"
+                    icon.source: prefix + "/images/ABSmooth.png"
                     text: "AB Smooth"
                     Layout.alignment: Qt.AlignCenter
                     checkable: true
@@ -89,7 +89,7 @@ Item {
                     onCheckedChanged: settings.setFeature_isABSmoothOn = checked
                 }
                 IconButtonColor{
-                    icon.source: "/images/HideContour.png"
+                    icon.source: prefix + "/images/HideContour.png"
                     text: "Hide Contour"
                     Layout.alignment: Qt.AlignCenter
                     checkable: true
@@ -97,7 +97,7 @@ Item {
                     onCheckedChanged: settings.setFeature_isHideContourOn = checked
                 }
                 IconButtonColor{
-                    icon.source: "/images/Webcam.png"
+                    icon.source: prefix + "/images/Webcam.png"
                     text: "WebCam"
                     Layout.alignment: Qt.AlignCenter
                     checkable: true
@@ -105,7 +105,7 @@ Item {
                     onCheckedChanged: settings.setFeature_isWebCamOn = checked
                 }
                 IconButtonColor{
-                    icon.source: "/images/YouTurnReverse.png"
+                    icon.source: prefix + "/images/YouTurnReverse.png"
                     Layout.alignment: Qt.AlignCenter
                     checkable: true
                     text: qsTr("Offset Fix")
@@ -136,7 +136,7 @@ Item {
                 anchors.left: parent.left
                 IconButtonColor{
                     id: uturn
-                    icon.source: "/images/Images/z_TurnManual.png"
+                    icon.source: prefix + "/images/Images/z_TurnManual.png"
                     Layout.alignment: Qt.AlignCenter
                     checkable: true
                     text: qsTr("U-Turn")
@@ -145,7 +145,7 @@ Item {
                 }
                 IconButtonColor{
                     id: lateral
-                    icon.source: "/images/Images/z_LateralManual.png"
+                    icon.source: prefix + "/images/Images/z_LateralManual.png"
                     text: qsTr("Lateral")
                     Layout.alignment: Qt.AlignCenter
                     isChecked: settings.setFeature_isLateralOn
@@ -171,7 +171,7 @@ Item {
             IconButtonColor{
                 id: autoSteerSound
                 text: qsTr("Auto Steer")
-                icon.source: "/images/Config/ConF_SteerSound.png"
+                icon.source: prefix + "/images/Config/ConF_SteerSound.png"
                 checkable: true
                 isChecked: settings.setSound_isAutoSteerOn
                 onCheckedChanged: settings.setSound_isAutoSteerOn = checked
@@ -180,7 +180,7 @@ Item {
             IconButtonColor{
                 id: youTurnSound
                 text: qsTr("You Turn")
-                icon.source: "/images/Config/ConF_SteerSound.png"
+                icon.source: prefix + "/images/Config/ConF_SteerSound.png"
                 isChecked: settings.setSound_isUturnOn
                 onCheckedChanged: settings.setSound_isUturnOn = checked
                     Layout.alignment: Qt.AlignCenter
@@ -189,7 +189,7 @@ Item {
             IconButtonColor{
                 id: hydLiftSound
                 text: qsTr("Hyd Lift")
-                icon.source: "/images/Config/ConF_SteerSound.png"
+                icon.source: prefix + "/images/Config/ConF_SteerSound.png"
                 isChecked: settings.setSound_isHydLiftOn
                 onCheckedChanged: settings.setSound_isHydLiftOn = checked
                     Layout.alignment: Qt.AlignCenter
@@ -199,7 +199,7 @@ Item {
                     Layout.alignment: Qt.AlignCenter
                 visible: false // not implemented
                 text: qsTr("Boundary Approach")
-                icon.source: "/images/Config/ConF_SteerSound.png"
+                icon.source: prefix + "/images/Config/ConF_SteerSound.png"
                 isChecked: .setSound_isAutoSteerOn
                 onCheckedChanged: settings.setSound_isAutoSteerOn = checked
             }*/

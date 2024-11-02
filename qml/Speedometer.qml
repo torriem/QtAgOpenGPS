@@ -15,13 +15,13 @@ Rectangle
     Image {
         id: speedoNumbers
         anchors.fill: parent
-        source: "/images/textures/speedo.png"
+        source: prefix + "/images/textures/speedo.png"
         fillMode: Image.PreserveAspectCrop
     }
     Image {
         id: speedoNeedle
         anchors.centerIn: parent
-        source: "/images/textures/SpeedoNedle.png"
+        source: prefix + "/images/textures/SpeedoNedle.png"
         fillMode: Image.PreserveAspectCrop
         width: speedo.width * 0.829
         height: speedo.height * 0.829
