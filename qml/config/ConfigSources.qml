@@ -281,6 +281,7 @@ Rectangle{
             colorChecked: "green"
             isChecked: settings.setIMU_isReverseOn
             onClicked: settings.setIMU_isReverseOn = checked
+            width: 250*theme.scaleWidth
         }
     }
     TitleFrame {
@@ -336,6 +337,7 @@ Rectangle{
             colorChecked: "green"
             isChecked: settings.setIMU_isDualAsIMU
             onClicked: settings.setIMU_isDualAsIMU = checked
+            width: 250*theme.scaleWidth
         }
     }
 }

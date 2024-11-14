@@ -178,7 +178,7 @@ Item {
             id: load
             anchors.right: parent.right
             anchors.margins: 30
-            anchors.top: vehicleList.top
+            anchors.bottom: vehicleListRect.verticalCenter
             icon.source: prefix + "/images/VehFileLoad.png"
             text: qsTr("Load")
             color3: "white"
