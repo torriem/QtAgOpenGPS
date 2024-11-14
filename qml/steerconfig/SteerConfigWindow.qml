@@ -297,9 +297,9 @@ MoveablePopup {
 							width: 200 * theme.scaleWidth
 							from: .1
 							to: 4
-							value: Math.round(settings.stanleyDistanceErrorGain, 0)
+                            value: settings.stanleyDistanceErrorGain
 							onValueChanged: settings.stanleyDistanceErrorGain = value
-							leftText: value
+                            leftText: Math.round(value * 100)/100
 							centerTopText: "Agressiveness"
 							stepSize: .1
 						}
@@ -308,9 +308,9 @@ MoveablePopup {
 							width: 200 * theme.scaleWidth
 							from: .1
 							to: 1.5
-							value: Math.round(settings.stanleyHeadingErrorGain, 0)
+                            value: settings.stanleyHeadingErrorGain
 							onValueChanged: settings.stanleyHeadingErrorGain = value
-							leftText: value
+                            leftText: Math.round(value * 100) / 100
 							centerTopText: "OverShoot Reduction"
 							stepSize: .1
 						}
@@ -357,10 +357,10 @@ MoveablePopup {
 							id: acqLookAheadSlider
 							implicitHeight: 50 * theme.scaleHeight
 							from: 1
-							to: 5
-							value: Math.round(settings.setVehicle_goalPointLookAhead, 1)
+                            to: 7
+                            value: settings.setVehicle_goalPointLookAhead
 							onValueChanged: settings.setVehicle_goalPointLookAhead = value
-							leftText: value
+                            leftText: Math.round(value * 100) / 100
 							centerTopText: "Acquire Look Ahead"
 							stepSize: .1
 						}
@@ -369,10 +369,10 @@ MoveablePopup {
 							width: 200
 							implicitHeight: 50 * theme.scaleHeight
 							from: 1
-							to: 5
-							value: Math.round(settings.setVehicle_goalPointLookAheadHold, 1)
-							onValueChanged: settings.setVehicle_goalPointLookAheadHold = value
-							leftText: value
+                            to: 7
+                            value: settings.setVehicle_goalPointLookAheadHold
+                            onValueChanged: settings.setVehicle_goalPointLookAheadHold = utils.decimalRound(value, 1)
+                            leftText: Math.round(value * 100) / 100
 							centerTopText: "Hold Look Ahead"
 							stepSize: .1
 						}
@@ -382,9 +382,9 @@ MoveablePopup {
 							implicitHeight: 50 * theme.scaleHeight
 							from: .5
 							to: 3
-							value: Math.round(settings.setVehicle_goalPointLookAheadMult, 1)
+                            value: settings.setVehicle_goalPointLookAheadMult
 							onValueChanged: settings.setVehicle_goalPointLookAheadMult = value
-							leftText: value
+                            leftText: Math.round(value * 100) / 100
 							centerTopText: "Look Ahead Speed Gain"
 							stepSize: .1
 						}
@@ -394,9 +394,9 @@ MoveablePopup {
 							from: 0
 							implicitHeight: 50 * theme.scaleHeight
 							to: 100
-							value: Math.round(settings.purePursuitIntegralGainAB *100, 0)
+                            value: settings.purePursuitIntegralGainAB *100
 							onValueChanged: settings.purePursuitIntegralGainAB = value /100
-							leftText: value
+                            leftText: Math.round(value *100) / 100
 							centerTopText: "Integral"
 							stepSize: 1
 						}
