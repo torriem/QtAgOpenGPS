@@ -48,7 +48,24 @@ int main(int argc, char *argv[])
     }
 
     QProcess process;
+
+    QObject::connect(&process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+                     &w, &QCoreApplication::quit);
+
+    QObject::connect(&process, &QProcess::errorOccurred, [&](QProcess::ProcessError error) {
+        if (error == QProcess::Crashed) {
+            w.quit();  // Quit the main application if the process crashes
+        }
+    });
+
     process.start("./QtAgIO/QtAgIO");
+
+    // Ensure process starts successfully
+    if (!process.waitForStarted()) {
+        return -1;  // Exit if process fails to start
+    }
+
+
 
 
     /*
