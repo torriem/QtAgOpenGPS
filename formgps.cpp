@@ -9,12 +9,23 @@
 #include <QLabel>
 #include <QQuickWindow>
 #include "qmlsettings.h"
+#include <QSysInfo>
 
 extern QLabel *grnPixelsWindow;
 extern QMLSettings qml_settings;
 
 FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
 {
+    //Returns "android" on Android, "windows" on Windows. See docs https://doc.qt.io/qt-6/qsysinfo.html#productType
+    QString osType = QSysInfo::productType();
+    qInfo() << "Os Type: " << osType;
+    if (osType == "android")
+        isAndroid = true;
+    else if (osType == "windows")
+        isWindows = true;
+
+    //else assume Linux. Can add more if needed
+
     connect_classes(); //make all the inter-class connections
     qml_settings.setupKeys();
     qml_settings.loadSettings();  //fetch everything from QSettings for QML to use
