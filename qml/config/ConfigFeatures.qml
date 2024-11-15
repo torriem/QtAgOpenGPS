@@ -143,12 +143,28 @@ Item {
                     id: lateral
                     icon.source: "/images/Images/z_LateralManual.png"
                     text: qsTr("Lateral")
+                    checkable: true
                     Layout.alignment: Qt.AlignCenter
                     isChecked: settings.setFeature_isLateralOn
                     onCheckedChanged: settings.setFeature_isLateralOn = checked
                 }
             }
         }
+        ColumnLayout{//Bottom, Right menu, Autostart AgIO
+            anchors.top: screenButtons.bottom
+            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: screenButtons.horizontalCenter
+            anchors.topMargin: 20 * theme.scaleHeight
+            anchors.bottomMargin: 20 * theme.scaleHeight
+            IconButtonColor{
+                checkable: true
+                text: qsTr("Auto Start AgIO")
+                icon.source: "/images/AgIO.png"
+                isChecked: settings.setFeature_isAgIOOn
+                onCheckedChanged: settings.setFeature_isAgIOOn = checked
+            }
+        }
+
         TitleFrame{
             id: sound
             anchors.top: parent.top
