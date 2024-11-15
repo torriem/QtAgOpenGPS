@@ -2,6 +2,10 @@ QtAgOpenGPS
 ===========
 Ag Precision Mapping and Section Control Software
 
+Note!
+==========
+I haven't compiled for Windows in awhile. If this branch ever won't compile on Windows, contact me, or have a go at it yourself!
+
 What is QtAgOpenGPS?
 --------------------
 QtAgOpenGPS is a direct port of Brian Tischler's [AgOpenGPS](https://github.com/farmerbriantee/AgOpenGPS), which was originally
