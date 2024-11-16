@@ -16,6 +16,10 @@ Window {
 		objectName: "agio"
 	}
 
+    UnitConversion {
+        id: utils
+    }
+
 	id: mainWindow
     //height: theme.defaultHeight
     //width: theme.defaultWidth
@@ -28,6 +32,14 @@ Window {
     Comp.TimedMessage {
         id: timedMessage
         objectName: "timedMessage"
+    }
+    Component.onCompleted: {
+        console.log(settings.run_isFirstRun)
+        console.log(utils.isTrue(settings.run_isFirstRun))
+        if(utils.isTrue(settings.run_isFirstRun)){
+                               isFirewall.show()
+                               settings.run_isFirstRun = false
+                           }
     }
 
 	Rectangle {
@@ -168,6 +180,23 @@ Window {
         id: advancedMenu
         function showMenu(){
             advancedMenu.visible = true
+        }
+    }
+    Window{//warn that we will need to open the firewall if we are using Linux
+        //I've forgotten this several times--a real pain.
+        modality: Qt.WindowModal
+        id: isFirewall
+        visible: false
+        width: 200
+        height: 200
+        title: qsTr("Firewall")
+
+        Text{
+            anchors.centerIn: parent
+            text: qsTr("We noticed this is your first
+time running AgIO. Do you have
+a firewall enabled? If you do,
+ you must allow AgIO through.")
         }
     }
 }
