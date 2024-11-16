@@ -22,7 +22,7 @@ void FormLoop::setupGUI()
     engine.rootContext()->setContextProperty("screenPixelDensity",QGuiApplication::primaryScreen()->physicalDotsPerInch() * QGuiApplication::primaryScreen()->devicePixelRatio());
     engine.rootContext()->setContextProperty("mainForm", this);
 	engine.rootContext()->setContextProperty("settings", &qml_settings);
-    engine.rootContext()->setContextProperty("prefix", ":");
+    engine.rootContext()->setContextProperty("prefix", "");
     engine.load(QUrl(QStringLiteral("qrc:/qml/Main.qml")));
 
 
