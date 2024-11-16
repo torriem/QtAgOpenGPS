@@ -19,6 +19,8 @@ extern QMLSettings qml_settings;
 
 FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
 {
+
+
     connect_classes(); //make all the inter-class connections
     qml_settings.setupKeys();
     qml_settings.loadSettings();  //fetch everything from QSettings for QML to use
