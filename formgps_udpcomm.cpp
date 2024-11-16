@@ -309,8 +309,6 @@ void FormGPS::StartLoopbackServer()
     udpSocket = new QUdpSocket(this); //should auto delete with the form
     //udpSocket->bind(QHostAddress::Any, port); //by default, bind to all interfaces.
 
-	udpSocket->bind(QHostAddress::LocalHost, port);
-
     if(!udpSocket->bind(QHostAddress::LocalHost, port))
     {
         qDebug() << "Failed to bind udpSocket: " << udpSocket->errorString();
