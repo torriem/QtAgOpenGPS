@@ -1678,6 +1678,10 @@ Window {
                     }
                 }
             }
+            CloseAOG{
+                id: closeAOG
+            }
+
         }
 }
 

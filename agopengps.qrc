@@ -637,5 +637,6 @@
         <file>images/qtSpecific/z_LateralManualL.png</file>
         <file>images/qtSpecific/z_TurnManualL.png</file>
         <file>images/qtSpecific/z_TurnManualR.png</file>
+        <file>qml/CloseAOG.qml</file>
     </qresource>
 </RCC>

@@ -66,6 +66,10 @@ Item {
     property bool isAutoSteerBtnOn: false
     property bool isYouTurnBtnOn: false
 
+    property bool loopbackConnected: true
+
+    //loopbackConnected is true, unless the backend changes it to false
+    onLoopbackConnectedChanged: closeAOG.open()
 //    onIsAutoSteerBtnOnChanged: {
 //        console.debug("isAutoSteerBtnOn is now in aog inface " + isAutoSteerBtnOn)
 //    }
