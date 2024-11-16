@@ -5,6 +5,7 @@
 #include "aogrenderer.h"
 #include "aogproperty.h"
 #include <QProcess>
+#include <QSysInfo>
 
 QLabel *grnPixelsWindow;
 AOGSettings *settings;
@@ -47,22 +48,37 @@ int main(int argc, char *argv[])
         grnPixelsWindow->show();
     }
 
+    //Returns "android" on Android, "windows" on Windows. See docs https://doc.qt.io/qt-6/qsysinfo.html#productType
+    QString osType = QSysInfo::productType();
+    qInfo() << "Os Type: " << osType;
+    if (osType == "android")
+        w.isAndroid = true;
+    else if (osType == "windows")
+        w.isWindows = true;
+
+    //else assume Linux. Can add more if needed
+
     QProcess process;
+    //auto start AgIO
+    if((!w.isAndroid) && property_setFeature_isAgIOOn){
 
-    QObject::connect(&process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-                     &w, &QCoreApplication::quit);
+        QObject::connect(&process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+                         &w, &QCoreApplication::quit);
 
-    QObject::connect(&process, &QProcess::errorOccurred, [&](QProcess::ProcessError error) {
-        if (error == QProcess::Crashed) {
-            w.quit();  // Quit the main application if the process crashes
+        QObject::connect(&process, &QProcess::errorOccurred, [&](QProcess::ProcessError error) {
+            if (error == QProcess::Crashed) {
+                qWarning() << "AgIO Crashed! Quitting QtAgOpenGPS";
+                w.quit();  // Quit the main application if the process crashes
+            }
+        });
+
+        process.start("./QtAgIO/QtAgIO");
+
+        // Ensure process starts successfully
+        if (!process.waitForStarted()) {
+            qWarning() << "AgIO failed to start. Quitting QtAgOpenGPS";
+            return -1;  // Exit if process fails to start
         }
-    });
-
-    process.start("./QtAgIO/QtAgIO");
-
-    // Ensure process starts successfully
-    if (!process.waitForStarted()) {
-        return -1;  // Exit if process fails to start
     }
 
 
