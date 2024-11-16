@@ -66,17 +66,14 @@ int main(int argc, char *argv[])
     //auto start AgIO
     if((!w.isAndroid) && property_setFeature_isAgIOOn){
 
-        //QObject::connect(&process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-                        // &w, &QCoreApplication::quit);
-
         QObject::connect(&process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
                          [&a](int exitCode, QProcess::ExitStatus exitStatus) {
-                             qDebug() << "AgIO process finished with exit code:" << exitCode
-                                      << "and status:" << (exitStatus == QProcess::NormalExit ? "Normal" : "Crashed");
-                             qDebug() << "Closing main application...";
-                             qDebug() << "Note to Michael: This is happening in Main.cpp line 65. Remove this line if this is how you want it, or the whole 'feature' if it isn't";
-                             QCoreApplication::quit(); // Quit the application
-                         });
+            qDebug() << "AgIO process finished with exit code:" << exitCode
+                     << "and status:" << (exitStatus == QProcess::NormalExit ? "Normal" : "Crashed");
+            qDebug() << "Closing main application...";
+            qDebug() << "Note to Michael: This is happening in Main.cpp line 65. Remove this line if this is how you want it, or the whole 'feature' if it isn't";
+            QCoreApplication::quit(); // Quit the application
+        });
 
 
         QObject::connect(&process, &QProcess::errorOccurred, [&](QProcess::ProcessError error) {
