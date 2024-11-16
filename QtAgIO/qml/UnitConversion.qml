@@ -376,6 +376,10 @@ Item {
         repeat: true
         running: true
         onTriggered: {
+            if(!agio.aogConnected){
+                closeAgIO.open()
+                repeat = false
+            }
         }
     }
 

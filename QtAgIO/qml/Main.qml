@@ -197,4 +197,8 @@ a firewall enabled? If you do,
  you must allow AgIO through.")
         }
     }
+    CloseAgIO{
+        id: closeAgIO
+        visible: false
+    }
 }
