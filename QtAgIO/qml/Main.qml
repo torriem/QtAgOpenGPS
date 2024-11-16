@@ -33,9 +33,7 @@ Window {
         id: timedMessage
         objectName: "timedMessage"
     }
-    Component.onCompleted: {
-        console.log(settings.run_isFirstRun)
-        console.log(utils.isTrue(settings.run_isFirstRun))
+    Component.onCompleted: {//shows a window to warn us we might need to open up a port on the firewall
         if(utils.isTrue(settings.run_isFirstRun)){
                                isFirewall.show()
                                settings.run_isFirstRun = false
