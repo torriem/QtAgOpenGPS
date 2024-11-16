@@ -229,7 +229,7 @@ void FormLoop::ReceiveFromUDP()
                 traffic.helloFromIMU = 0;
 
             //scan Reply
-            else if (data[3] == 203 && data.size() == 13) //
+            else if (data[3] == (char)203 && data.size() == 13) //
             {
                 if (data[2] == 126)  //steer module
                 {
