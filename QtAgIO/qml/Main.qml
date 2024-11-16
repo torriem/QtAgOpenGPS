@@ -141,7 +141,7 @@ Window {
 				 implicitHeight: btnNTRIP.height
 				 text: qsTr("Hide")
 				 icon.source: imagePath + "AgIOBtn.png"
-				 onClicked: mainWindow.visible = false
+                 onClicked: mainWindow.showMinimized()
 			 }
 		 }
 	}
