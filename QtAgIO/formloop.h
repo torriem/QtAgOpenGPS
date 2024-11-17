@@ -115,7 +115,7 @@ class FormLoop : public QObject
 		 * formerly Formloop.cs */
         int nmeaErrCounter = 0;
 
-		bool isGPSSentencesOn = false, isSendNMEAToUDP;
+        bool isGPSSentencesOn = true, isSendNMEAToUDP;
         int focusSkipCounter = 310;
         bool isSendToSerial = false, isSendToUDP = true;
 
