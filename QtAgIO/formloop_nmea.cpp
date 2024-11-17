@@ -223,8 +223,11 @@ void FormLoop::ParseNMEA(QString& buffer)
         nmeaPGN[3] = 0xD6;
         nmeaPGN[4] = 0x33; // nmea total array count minus 6
 
+        //check if the difference between the two altitudes is extreme. This is indicative
+        //of a problem, most likely getting location from two separate sources.
         if(previousAltitude != 0){
             double difference = previousAltitude - altitude;
+            //if difference between altitude one sentence and now is > 1 meter--we have a problem
             if (qAbs(difference) > 1.0) {
                 nmeaError = true;
             }
