@@ -61,6 +61,7 @@ Item {
 	property string avr: ""
 	property string hpd: ""
 	property string sxt: ""
+    property string unknownSentence: ""
 
     property int nmeaError: 0 // triggers if altitude changes drastically--a sign of 2 separate nmea strings
 

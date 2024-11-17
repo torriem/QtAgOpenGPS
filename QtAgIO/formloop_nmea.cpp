@@ -209,6 +209,10 @@ void FormLoop::ParseNMEA(QString& buffer)
         {
             ParseSTI032(); //there is also an $PSTI,030,... wich contains different data!
         }
+        //Catch all unknown, so we can warn the user.
+        else if (words[0].startsWith("$")){
+            if (isGPSSentencesOn) unknownSentence = nextNMEASentence;
+        }
     }// while still data
 
     if (isNMEAToSend)

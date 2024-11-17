@@ -204,7 +204,7 @@ class FormLoop : public QObject
 	public:
         QElapsedTimer swFrame;
 		QString ggaSentence, vtgSentence, hdtSentence, avrSentence, paogiSentence,
-				hpdSentence, rmcSentence, pandaSentence, ksxtSentence;
+                hpdSentence, rmcSentence, pandaSentence, ksxtSentence, unknownSentence;
 
 		float hdopData, altitude = glm::FLOAT_MAX, headingTrue = glm::FLOAT_MAX,
 			  headingTrueDual = glm::FLOAT_MAX, speed = glm::FLOAT_MAX, roll = glm::FLOAT_MAX;

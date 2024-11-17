@@ -136,6 +136,7 @@ void FormLoop::UpdateUIVars(){
 	agio->setProperty("avr", avrSentence);
 	agio->setProperty("hpd", hpdSentence);
 	agio->setProperty("sxt", ksxtSentence);
+    agio->setProperty("unknownSentence", unknownSentence);
 
     //error checking altitude. If we change wildly, something wrong.
     //most likely two gps sources

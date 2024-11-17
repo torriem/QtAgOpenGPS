@@ -166,6 +166,12 @@ Window {
                 text: "SXT: " + agio.sxt
                 Layout.alignment: Qt.AlignLeft
             }
+            //Unknown sentences. Ones AOG just ignores. Most likely a wrong reciever config.
+            Comp.Text{
+                color: "red"
+                font.pixelSize: 10
+                text: qsTr("Unknown: ") + agio.unknownSentence
+            }
         }
     }
 }
