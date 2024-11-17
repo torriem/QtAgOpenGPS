@@ -213,6 +213,7 @@ void FormLoop::ParseNMEA(QString& buffer)
 
     if (isNMEAToSend)
     {
+        UpdateUIVars();
         isNMEAToSend = false;
 
         QByteArray nmeaPGN(57, 0); //is this right? David 6/22/24
