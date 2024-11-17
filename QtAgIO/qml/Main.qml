@@ -76,7 +76,9 @@ Window {
 			 }
              Comp.IconButtonTransparent {
                  icon.source: prefix + "/images/Nmea.png"
-                 visible: agio.gpsConnected
+                 width: btnNTRIPStatus.width
+                 height: btnNTRIPStatus.height
+                 visible: true
                  onClicked: gpsInfo.visible = !gpsInfo.visible
              }
 		 }

@@ -40,15 +40,18 @@ Item {
 	property double longitude: 0
 	property double altitude: 0
 	property double speed: 0
-	property double heading: 0
-	property double imuheading: 0
-	property double imuroll: 0
-	property double imupitch: 0
-	property double age: 0
+    property double gpsHeading: 0
+    property double dualHeading: 0
+    property double imuHeading: 0
+    property double imuRoll: 0
+    property double imuPitch: 0
+    property double age: 0
+    property int hdop: 0
 	property int quality: 0
 	property int sats: 0
 	property double yawrate: 0
-	property double hdop: 0
+    property double gpsHz: 0
+    property double nowHz:0
 
 	property string gga: ""
 	property string vtg: ""
@@ -60,7 +63,6 @@ Item {
 	property string sxt: ""
 
     property int nmeaError: 0 // triggers if altitude changes drastically--a sign of 2 separate nmea strings
-
 
     //these are signals that get sent to the backend
     signal btnSendSubnet_clicked();

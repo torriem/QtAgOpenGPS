@@ -105,17 +105,29 @@ void FormLoop::TimedMessageBox(int timeout, QString s1, QString s2)
     QMetaObject::invokeMethod(temp, "addMessage", Q_ARG(int, timeout), Q_ARG(QString, s1), Q_ARG(QString, s2));
 }
 void FormLoop::UpdateUIVars(){
-	agio->setProperty("latitude", latitudeSend);
-	agio->setProperty("longitude", longitudeSend);
-	agio->setProperty("altitude", altitudeData);//float
-	agio->setProperty("speed", speedData); //
-	agio->setProperty("heading", headingTrueData);//
-	agio->setProperty("imuroll", rollData);//
-    agio->setProperty("imupitch", imuPitchData);//
-	agio->setProperty("age", ageData);//ushort
-	agio->setProperty("quality", fixQuality);//quint8
-	agio->setProperty("sats", satellitesTracked);//ushort
-    agio->setProperty("yawrate", imuYawRate);//short
+    agio->setProperty("latitude", latitude);
+    agio->setProperty("longitude", longitude);
+    agio->setProperty("quality", fixQuality);//quint8
+    agio->setProperty("sats", satellitesData);//ushort
+    agio->setProperty("hdop", hdopData);
+    agio->setProperty("speed", speedData); //
+
+    agio->setProperty("roll", rollData);//
+    agio->setProperty("imuRoll", imuRollData);
+    agio->setProperty("imuPitch", imuPitchData);//
+    agio->setProperty("yawrate", imuYawRateData);//short
+    agio->setProperty("imuHeading", imuHeadingData);
+
+    agio->setProperty("age", ageData);//ushort
+
+    agio->setProperty("gpsHeading", headingTrueData);//
+    agio->setProperty("dualHeading", headingTrueDualData);
+
+    agio->setProperty("altitude", altitudeData);//float
+
+    agio->setProperty("gpsHz", gpsHz);
+    agio->setProperty("nowHz", nowHz);
+
 	agio->setProperty("gga", ggaSentence);
 	agio->setProperty("vtg", vtgSentence);
 	agio->setProperty("panda", pandaSentence);
