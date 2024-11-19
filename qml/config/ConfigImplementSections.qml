@@ -1,3 +1,8 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Config for sections. Actually displays a separate child window depending on if
+// we are using sections or zones.
 import QtQuick
 import QtQuick.Controls.Fusion
 
@@ -42,7 +47,7 @@ Rectangle{
                 Image{
                     id: image
 
-                    source: utils.isTrue(settings.setTool_isSectionsNotZones) ? "/images/Config/ConT_Asymmetric.png" : "/images/Config/ConT_Symmetric.png"
+                    source: utils.isTrue(settings.setTool_isSectionsNotZones) ? prefix + "/images/Config/ConT_Asymmetric.png" : prefix + "/images/Config/ConT_Symmetric.png"
                     anchors.fill: parent
                 }
             }
@@ -57,8 +62,8 @@ Rectangle{
             onValueModified: settings.setVehicle_minCoverage = value
         }
         IconButton{
-            icon.source: "/images/SectionOffBoundary.png"
-            iconChecked: "/images/SectionOnBoundary.png"
+            icon.source: prefix + "/images/SectionOffBoundary.png"
+            iconChecked: prefix + "/images/SectionOnBoundary.png"
             anchors.bottom: parent.bottom
             implicitWidth: 100 * theme.scaleWidth
             implicitHeight: 100 * theme.scaleHeight
@@ -85,7 +90,7 @@ Rectangle{
             Image{
                 anchors.bottom: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                source: "/images/SectionOffBelow.png"
+                source: prefix + "/images/SectionOffBelow.png"
             }
         }
     }

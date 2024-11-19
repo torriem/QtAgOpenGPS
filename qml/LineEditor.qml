@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Window for "Editing" lines. Rename, change heading
 import QtQuick
 import QtQuick.Controls.Fusion
 import "components" as Comp
@@ -23,7 +27,7 @@ Rectangle {
         height: children.height
         Comp.IconButtonTransparent{
             id: leftNudger
-            icon.source: "/images/ArrowLeft.png"
+            icon.source: prefix + "/images/ArrowLeft.png"
         }
             Comp.SpinBoxCustomized{
                 decimals: 1
@@ -37,7 +41,7 @@ Rectangle {
             }
 
         Comp.IconButtonTransparent{
-            icon.source: "/images/ArrowRight.png"
+            icon.source: prefix + "/images/ArrowRight.png"
         }
     }
     Row{
@@ -49,10 +53,10 @@ Rectangle {
         spacing: 35
         height: children.height
         Comp.IconButtonTransparent{
-            icon.source: "/images/ABSwapPoints.png"
+            icon.source: prefix + "/images/ABSwapPoints.png"
         }
         Comp.IconButtonTransparent{
-            icon.source: "/images/SnapToPivot.png"
+            icon.source: prefix + "/images/SnapToPivot.png"
         }
 
     }
@@ -65,7 +69,7 @@ Rectangle {
         spacing: 15
         height: children.height
         Comp.IconButtonText{
-            icon.source: "/images/Cancel64.png"
+            icon.source: prefix + "/images/Cancel64.png"
             onClicked: lineEditor.visible = false
             color1: "transparent"
             color2: "transparent"
@@ -75,7 +79,7 @@ Rectangle {
             height: 75
         }
         Comp.IconButtonText{
-            icon.source: "/images/FileDontSave.png"
+            icon.source: prefix + "/images/FileDontSave.png"
             color1: "transparent"
             color2: "transparent"
             color3: "transparent"
@@ -85,7 +89,7 @@ Rectangle {
             onClicked: lineEditor.visible = false
         }
         Comp.IconButtonText{
-            icon.source: "/images/FileSave.png"
+            icon.source: prefix + "/images/FileSave.png"
             color1: "transparent"
             color2: "transparent"
             color3: "transparent"

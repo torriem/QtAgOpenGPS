@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Main menu when we click the "Field" button on main screen. "New, Drive In, Open, Close, etc"
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
@@ -38,7 +42,7 @@ Drawer {
                 Layout.fillWidth: true
                 isChecked: false
                 text: "Drive In"
-                icon.source: "/images/AutoManualIsAuto.png"
+                icon.source: prefix + "/images/AutoManualIsAuto.png"
                 onClicked: { fieldMenu.visible = false ; fieldOpen.sortBy = 2 ; fieldOpen.visible = true; }
                 enabled: !aog.isJobStarted
             }
@@ -46,14 +50,14 @@ Drawer {
                 objectName: "btnFieldISOXML"
                 isChecked: false
                 text: "ISO-XML"
-                icon.source: "/images/ISOXML.png"
+                icon.source: prefix + "/images/ISOXML.png"
                 enabled: !aog.isJobStarted
             }
             IconButtonTextBeside{
                 objectName: "btnFieldFromKML"
                 isChecked: false
                 text: "From KML"
-                icon.source: "/images/BoundaryLoadFromGE.png"
+                icon.source: prefix + "/images/BoundaryLoadFromGE.png"
                 onClicked: fieldFromKML.visible = true
                 enabled: !aog.isJobStarted
             }
@@ -61,7 +65,7 @@ Drawer {
                 objectName: "btnFieldFromExisting"
                 isChecked: false
                 text: "From Existing"
-                icon.source: "/images/FileExisting.png"
+                icon.source: prefix + "/images/FileExisting.png"
                 enabled: !aog.isJobStarted
                 onClicked: {
                     fieldMenu.visible = false
@@ -72,7 +76,7 @@ Drawer {
                 objectName: "New"
                 isChecked: false
                 text: "New"
-                icon.source: "/images/FileNew.png"
+                icon.source: prefix + "/images/FileNew.png"
                 enabled: !aog.isJobStarted
                 onClicked: {
                     fieldMenu.visible = false
@@ -83,7 +87,7 @@ Drawer {
                 objectName: "btnFieldResume"
                 isChecked: false
                 text: "Resume"
-                icon.source: "/images/FilePrevious.png"
+                icon.source: prefix + "/images/FilePrevious.png"
                 enabled: settings.setF_CurrentDir !== "Default" && !aog.isJobStarted
                 onEnabledChanged: fieldToResumeText.visible = enabled
 
@@ -106,7 +110,7 @@ Drawer {
                 objectName: "btnFieldClose"
                 isChecked: false
                 text: "Close"
-                icon.source: "/images/FileClose.png"
+                icon.source: prefix + "/images/FileClose.png"
                 enabled: aog.isJobStarted
                 onClicked: {
                     fieldInterface.field_close()
@@ -118,7 +122,7 @@ Drawer {
                 objectName: "btnFieldOpen"
                 isChecked: false
                 text: "Open"
-                icon.source: "/images/FileOpen"
+                icon.source: prefix + "/images/FileOpen"
                 enabled: !aog.isJobStarted
                 onClicked: {
                     fieldMenu.visible = false
@@ -136,7 +140,7 @@ Drawer {
             anchors.margins: 10
             anchors.leftMargin: 100
             id: fieldCancel
-            icon.source: "/images/Cancel64.png"
+            icon.source: prefix + "/images/Cancel64.png"
             //buttonText: "Cancel"
             onClicked: fieldMenu.visible = false
             height: 75

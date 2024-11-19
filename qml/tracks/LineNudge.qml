@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+// 
+// Little popup window where we can nudge/snap to pivot
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
@@ -29,7 +33,7 @@ Comp.MoveablePopup{
         }
         Comp.IconButtonTransparent{
             id: closeBtn
-            icon.source: "/images/WindowClose.png"
+            icon.source: prefix + "/images/WindowClose.png"
             implicitHeight: 40
             implicitWidth: 40
             anchors.top: parent.top
@@ -53,11 +57,11 @@ Comp.MoveablePopup{
                     Layout.alignment: Qt.AlignCenter
                     implicitWidth: parent.width
                     Comp.IconButtonTransparent{
-                        icon.source: "/images/SnapLeftHalf.png"
+                        icon.source: prefix + "/images/SnapLeftHalf.png"
                         Layout.alignment: Qt.AlignLeft
                     }
                     Comp.IconButtonTransparent{
-                        icon.source: "/images/SnapRightHalf.png"
+                        icon.source: prefix + "/images/SnapRightHalf.png"
                         Layout.alignment: Qt.AlignRight
                     }
                 }
@@ -65,11 +69,11 @@ Comp.MoveablePopup{
                     Layout.alignment: Qt.AlignCenter
                     implicitWidth: parent.width
                     Comp.IconButtonTransparent{
-                        icon.source: "/images/SnapLeft.png"
+                        icon.source: prefix + "/images/SnapLeft.png"
                         Layout.alignment: Qt.AlignLeft
                     }
                     Comp.IconButtonTransparent{
-                        icon.source: "/images/SnapRight.png"
+                        icon.source: prefix + "/images/SnapRight.png"
                         Layout.alignment: Qt.AlignRight
                     }
                 }
@@ -82,11 +86,11 @@ Comp.MoveablePopup{
                     Layout.alignment: Qt.AlignCenter
                     implicitWidth: parent.width
                     Comp.IconButtonTransparent{
-                        icon.source: "/images/SnapToPivot.png"
+                        icon.source: prefix + "/images/SnapToPivot.png"
                         Layout.alignment: Qt.AlignLeft
                     }
                     Comp.IconButtonTransparent{
-                        icon.source: "/images/SteerZero.png"
+                        icon.source: prefix + "/images/SteerZero.png"
                         Layout.alignment: Qt.AlignRight
                     }
                 }

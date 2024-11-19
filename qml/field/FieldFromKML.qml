@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Menu when we load a field from KML
 import QtQuick
 import QtQuick.Controls.Fusion
 
@@ -50,7 +54,7 @@ Popup{
         IconButtonTransparent{
             objectName: "btnAddDate"
             id: marker
-            icon.source: "/images/JobNameCalendar.png"
+            icon.source: prefix + "/images/JobNameCalendar.png"
             Text{
                 anchors.right: parent.left
                 anchors.verticalCenter: parent.verticalCenter
@@ -59,7 +63,7 @@ Popup{
         }
         IconButtonTransparent{
             objectName: "btnAddTime"
-            icon.source: "/images/JobNameTime.png"
+            icon.source: prefix + "/images/JobNameTime.png"
             Text{
                 anchors.right: parent.left
                 anchors.verticalCenter: parent.verticalCenter
@@ -69,7 +73,7 @@ Popup{
     }
     IconButtonTransparent{
         objectName: "btnGetKML"
-        icon.source: "/images/BoundaryLoadFromGE.png"
+        icon.source: prefix + "/images/BoundaryLoadFromGE.png"
         anchors.top: additives.bottom
         anchors.left: parent.left
         anchors.margins: 20
@@ -85,11 +89,11 @@ Popup{
         spacing: 10
         IconButtonTransparent{
             onClicked: fieldFromKML.visible = false
-            icon.source: "/images/Cancel64.png"
+            icon.source: prefix + "/images/Cancel64.png"
         }
         IconButtonTransparent{
             objectName: "btnSave"
-            icon.source: "/images/OK64.png"
+            icon.source: prefix + "/images/OK64.png"
         }
     }
 }

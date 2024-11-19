@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+//
 import QtQuick 2.0
 import QtQuick.Controls.Fusion
 import "components" as Comp
@@ -24,7 +28,7 @@ Item {
             spacing: 35
             height: children.height
             Comp.IconButtonTransparent{
-                icon.source: "/images/SnapLeftHalf.png"
+                icon.source: prefix + "/images/SnapLeftHalf.png"
             }
             Text{
                 text: "2.00 m"
@@ -34,7 +38,7 @@ Item {
             }
 
             Comp.IconButtonTransparent{
-                icon.source: "/images/SnapRightHalf.png"
+                icon.source: prefix + "/images/SnapRightHalf.png"
             }
         }
         Row{
@@ -46,7 +50,7 @@ Item {
             spacing: 25
             height: children.height
             Comp.IconButtonTransparent{
-                icon.source: "/images/ArrowLeft.png"
+                icon.source: prefix + "/images/ArrowLeft.png"
             }
             Text{
                 text: "10 cm"
@@ -56,7 +60,7 @@ Item {
             }
 
             Comp.IconButtonTransparent{
-                icon.source: "/images/ArrowRight.png"
+                icon.source: prefix + "/images/ArrowRight.png"
             }
         }
         Comp.IconButtonTransparent{
@@ -65,7 +69,7 @@ Item {
             anchors.topMargin: 20
             anchors.left: parent.left
             anchors.leftMargin: 60
-            icon.source: "/images/ABSwapPoints.png"
+            icon.source: prefix + "/images/ABSwapPoints.png"
         }
         Comp.IconButtonTransparent{
             id: tramSwapMode
@@ -73,7 +77,7 @@ Item {
             anchors.topMargin: 10
             anchors.left: tramSwapAB.right
             anchors.leftMargin: 60
-            icon.source: "/images/TramLines.png"
+            icon.source: prefix + "/images/TramLines.png"
         }
         Text {
             text: qsTr("Mode")
@@ -91,7 +95,7 @@ Item {
             spacing: 25
             Comp.IconButtonTransparent{
                 id: tramPassesDown
-                icon.source: "/images/DnArrow64.png"
+                icon.source: prefix + "/images/DnArrow64.png"
             }
             Comp.SpinBoxCustomized{
                 id: passesRow
@@ -103,7 +107,7 @@ Item {
                     to: 999
             }
             Comp.IconButtonTransparent{
-                icon.source: "/images/UpArrow64.png"
+                icon.source: prefix + "/images/UpArrow64.png"
             }
         }
 
@@ -112,7 +116,7 @@ Item {
             anchors.leftMargin: 10
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 10
-            icon.source: "/images/SwitchOff.png"
+            icon.source: prefix + "/images/SwitchOff.png"
             onClicked: tramLinesEditor.visible = false
         }
         Comp.IconButtonTransparent{
@@ -120,7 +124,7 @@ Item {
             anchors.rightMargin: 10
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 10
-            icon.source: "/images/VehFileSave.png"
+            icon.source: prefix + "/images/VehFileSave.png"
         }
         Column{
             anchors.horizontalCenter: parent.horizontalCenter

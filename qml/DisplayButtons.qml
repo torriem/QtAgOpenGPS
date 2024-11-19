@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// The panel with display controls (+, -, 2d/3d etc.
 import QtQuick
 import QtQuick.Controls.Fusion
 import "components" as Comp
@@ -20,7 +24,7 @@ Comp.TimedRectangle{
             width: 70
             height: 70
             radius: 10
-            icon.source: "/images/TiltDown.png"
+            icon.source: prefix + "/images/TiltDown.png"
             onClicked: {
                 aog.tiltDown()
                 displayButtons.resetTimer() 
@@ -31,7 +35,7 @@ Comp.TimedRectangle{
             width: 70
             height: 70
             radius: 10
-            icon.source: "/images/Camera2D64.png"
+            icon.source: prefix + "/images/Camera2D64.png"
             onClicked: {
                 aog.btn2D()
                 displayButtons.resetTimer() 
@@ -42,7 +46,7 @@ Comp.TimedRectangle{
             width: 70
             height: 70
             radius: 10
-            icon.source: "/images/CameraNorth2D.png"
+            icon.source: prefix + "/images/CameraNorth2D.png"
             onClicked: {
                 aog.n2D()
                 displayButtons.resetTimer() 
@@ -53,7 +57,7 @@ Comp.TimedRectangle{
             width: 70
             height: 70
             radius: 10
-            icon.source: "/images/ZoomOut48.png"
+            icon.source: prefix + "/images/ZoomOut48.png"
             onClicked: {
                 aog.zoomOut()
                 displayButtons.resetTimer() 
@@ -64,8 +68,8 @@ Comp.TimedRectangle{
             width: 70
             height: 70
             radius: 10
-            icon.source: "/images/WindowNightMode.png"
-            iconChecked: "/images/WindowDayMode.png"
+            icon.source: prefix + "/images/WindowNightMode.png"
+            iconChecked: prefix + "/images/WindowDayMode.png"
             checkable: true
             isChecked: settings.setDisplay_isDayMode
             onCheckedChanged: settings.setDisplay_isDayMode = checked
@@ -76,7 +80,7 @@ Comp.TimedRectangle{
             width: 70
             height: 70
             radius: 10
-            icon.source: "/images/BrightnessDn.png"
+            icon.source: prefix + "/images/BrightnessDn.png"
             onClicked: displayButtons.resetTimer()
 			visible: false //todo
         }
@@ -85,7 +89,7 @@ Comp.TimedRectangle{
             width: 70
             height: 70
             radius: 10
-            icon.source: "/images/TiltUp.png"
+            icon.source: prefix + "/images/TiltUp.png"
             onClicked: {
                 aog.tiltUp()
                 displayButtons.resetTimer() 
@@ -96,7 +100,7 @@ Comp.TimedRectangle{
             width: 70
             height: 70
             radius: 10
-            icon.source: "/images/Camera3D64.png"
+            icon.source: prefix + "/images/Camera3D64.png"
             onClicked: {
                 aog.btn3D()
                 displayButtons.resetTimer() 
@@ -107,7 +111,7 @@ Comp.TimedRectangle{
             width: 70
             height: 70
             radius: 10
-            icon.source: "/images/CameraNorth64.png"
+            icon.source: prefix + "/images/CameraNorth64.png"
             onClicked: {
                 aog.n3D()
                 displayButtons.resetTimer() 
@@ -118,7 +122,7 @@ Comp.TimedRectangle{
             width: 70
             height: 70
             radius: 10
-            icon.source: "/images/ZoomIn48.png"
+            icon.source: prefix + "/images/ZoomIn48.png"
             onClicked: {
                 aog.zoomIn()
                 displayButtons.resetTimer() 
@@ -136,7 +140,7 @@ Comp.TimedRectangle{
             width: 70
             height: 70
             radius: 10
-            icon.source: "/images/BrightnessUp.png"
+            icon.source: prefix + "/images/BrightnessUp.png"
             onClicked: displayButtons.resetTimer()
         }
     }

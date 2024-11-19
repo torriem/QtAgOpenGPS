@@ -1,8 +1,13 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// This is in charge of all UDP comm.
 #include <QNetworkDatagram>
 #include "formgps.h"
 #include "aogproperty.h"
 #include "cnmea.h"
 #include <QHostAddress>
+#include "qmlutil.h"
 
 #define BitConverter_ToDouble(data,position) (*(reinterpret_cast<double *>(&(data[position]))))
 #define BitConverter_ToSingle(data,position) (*(reinterpret_cast<float *>(&(data[position]))))
@@ -300,11 +305,18 @@ void FormGPS::StartLoopbackServer()
 
     if(udpSocket) stopUDPServer();
 
+    QObject *aog = qmlItem(qml_root, "aog");
     udpSocket = new QUdpSocket(this); //should auto delete with the form
     //udpSocket->bind(QHostAddress::Any, port); //by default, bind to all interfaces.
 
-	udpSocket->bind(QHostAddress::LocalHost, port);
-    //TODO: change to localhost
+    if(!udpSocket->bind(QHostAddress::LocalHost, port))
+    {
+        qDebug() << "Failed to bind udpSocket: " << udpSocket->errorString();
+        aog->setProperty("loopbackConnected", false);
+    }else {
+        udpSocket->setSocketOption(QAbstractSocket::MulticastLoopbackOption, 1);
+        qDebug() << "udpSocket bound";
+    }
 
     connect(udpSocket,SIGNAL(readyRead()),this,SLOT(ReceiveFromAgIO()));
 

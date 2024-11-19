@@ -43,8 +43,19 @@ int main(int argc, char *argv[])
 
     FormLoop formLoop;
 	
+    //Returns "android" on Android, "windows" on Windows. See docs https://doc.qt.io/qt-6/qsysinfo.html#productType
+    QString osType = QSysInfo::productType();
+    qInfo() << "Os Type: " << osType;
+    if (osType == "android"){
+        formLoop.isAndroid = true;
+        formLoop.agio->setProperty("isWindows", true);
+    } else if (osType == "windows"){
+        formLoop.isWindows = true;
+        formLoop.agio->setProperty("isWindows", true);
+    }
 
-	
+    //else assume Linux. Can add more if needed
+
 	return app.exec();
 }
 

@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// The "Tools" button on main screen
 import QtQuick 2.0
 import QtQuick.Controls.Fusion
 
@@ -30,7 +34,7 @@ import "components" as Comp
 
             Comp.IconButtonTextBeside {
                 id: wizards
-                icon.source: "/images/WizardWand.png"
+                icon.source: prefix + "/images/WizardWand.png"
                 width: 250
                 height: 50
                 text: qsTr("Wizards")
@@ -40,7 +44,7 @@ import "components" as Comp
 
             Comp.IconButtonTextBeside {
                 id: charts
-                icon.source: "/images/Chart.png"
+                icon.source: prefix + "/images/Chart.png"
                 width: 250
                 height: 50
                 text: qsTr("Charts")
@@ -50,7 +54,7 @@ import "components" as Comp
 
             Comp.IconButtonTextBeside {
                 id: smABCurve
-                icon.source: "/images/ABSmooth.png"
+                icon.source: prefix + "/images/ABSmooth.png"
                 width: 250
                 height: 50
                 text: qsTr("Smooth AB Curve")
@@ -59,7 +63,7 @@ import "components" as Comp
 
             Comp.IconButtonTextBeside {
                 id: delContourPaths
-                icon.source: "/images/TrashContourRef.png"
+                icon.source: prefix + "/images/TrashContourRef.png"
                 width: 250
                 height: 50
                 text: qsTr("Delete Contour Paths")
@@ -68,7 +72,7 @@ import "components" as Comp
 
             Comp.IconButtonTextBeside {
                 id: delAppliedArea
-                icon.source: "/images/TrashApplied.png"
+                icon.source: prefix + "/images/TrashApplied.png"
                 width: 250
                 height: 50
                 text: qsTr("Delete Applied Area")
@@ -77,7 +81,7 @@ import "components" as Comp
 
             Comp.IconButtonTextBeside {
                 id: webcam
-                icon.source: "/images/Webcam.png"
+                icon.source: prefix + "/images/Webcam.png"
                 width: 250
                 height: 50
                 text: qsTr("WebCam")
@@ -86,7 +90,7 @@ import "components" as Comp
 
             Comp.IconButtonTextBeside {
                 id: offsetFix
-                icon.source: "/images/YouTurnReverse.png" // this is horrible. This has nothing to do with YouTurnReverse.
+                icon.source: prefix + "/images/YouTurnReverse.png" // this is horrible. This has nothing to do with YouTurnReverse.
                 width: 250
                 height: 50
                 text: qsTr("Offset Fix")

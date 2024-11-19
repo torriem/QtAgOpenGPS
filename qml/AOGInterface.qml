@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Link between the backend and QML. 
 import QtQuick
 import QtQuick.Controls.Fusion
 
@@ -62,6 +66,10 @@ Item {
     property bool isAutoSteerBtnOn: false
     property bool isYouTurnBtnOn: false
 
+    property bool loopbackConnected: true
+
+    //loopbackConnected is true, unless the backend changes it to false
+    onLoopbackConnectedChanged: closeAOG.open()
 //    onIsAutoSteerBtnOnChanged: {
 //        console.debug("isAutoSteerBtnOn is now in aog inface " + isAutoSteerBtnOn)
 //    }

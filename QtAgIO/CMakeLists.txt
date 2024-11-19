@@ -53,6 +53,7 @@ target_link_libraries(QtAgIO PRIVATE
     Qt6::Widgets
     Qt6::Quick
     Qt6::QuickWidgets
+	Qt6::Multimedia
 )
 
 target_compile_options(QtAgIO PRIVATE 

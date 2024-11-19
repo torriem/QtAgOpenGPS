@@ -355,31 +355,6 @@ Item {
         return isTrue ? byteVal | (1 << position) : byteVal & ~(1 << position);
     }
 
-    function timeTillFinished()
-    {
-        if (aog.speedKph > 2)
-        {
-            var total_time = ((aog.areaBoundaryOuterLessInner - aog.workedAreaTotal) / 1000 /
-                              (settings.setVehicle_toolWidth * aog.speedKph * 0.1));
-            var hours = Math.floor(total_time);
-            var minutes = (total_time - hours) * 60;
-
-            aog.timeTilFinished = (Number(hours).toLocaleString(Qt.locale(), 'f', 0))+ ":" + (Number(minutes).toLocaleString(Qt.locale(), 'f', 0))
-        }
-        else{
-            aog.timeTilFinished = "\u221E Hrs"
-        }
-    }
-
-    function workRate() {
-        if (isMetric())
-            aog.workRate = (Number(settings.setVehicle_toolWidth * aog.speedKph * 0.1).toLocaleString(Qt.locale(), 'f', 2)) + " ha/hr";
-        else
-            aog.workRate =  (Number(settings.setVehicle_toolWidth * aog.speedKph * 0.2471).toLocaleString(Qt.locale(), 'f', 2)) + " ac/hr";
-    }
-    function percents (){
-        aog.percentLeft = ((aog.areaBoundaryOuterLessInner - aog.workedAreaTotal) / aog.areaBoundaryOuterLessInner* 100)
-    }
     function string_before_comma(inputString){
         var commaIndex = inputString.indexOf(",");
         if (commaIndex !== -1) {
@@ -401,9 +376,10 @@ Item {
         repeat: true
         running: true
         onTriggered: {
-            workRate()
-            timeTillFinished()
-            percents()
+            if(!agio.aogConnected){
+                closeAgIO.open()
+                repeat = false
+            }
         }
     }
 

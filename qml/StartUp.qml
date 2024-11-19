@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Displayed on startup. Disclaimer
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
@@ -28,7 +32,7 @@ Rectangle{
     }
     AnimatedImage {
         id: gif
-        source: "/images/First.gif"
+        source: prefix + "/images/First.gif"
         anchors.top: about.bottom
         anchors.left: parent.left
         cache: true
@@ -122,7 +126,7 @@ Rectangle{
         height: 100
         width: parent.width/2
         Comp.IconButtonTransparent{
-            icon.source: "/images/Cancel64.png"
+            icon.source: prefix + "/images/Cancel64.png"
             onClicked: Qt.quit()
             Text{
                 text: qsTr("Disagree")
@@ -131,7 +135,7 @@ Rectangle{
         }
         Comp.IconButtonTransparent{
 			id: ok
-            icon.source: "/images/OK64.png"
+            icon.source: prefix + "/images/OK64.png"
             onClicked: startUp.visible = false
             Text{
                 text: qsTr("I Agree to the Terms<br> and Conditions")

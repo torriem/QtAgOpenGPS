@@ -1,3 +1,5 @@
+# Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+# SPDX-License-Identifier: GNU General Public License v3.0 or later
 # CMake 3.22 ships with Ubuntu 22.04
 # CMake 3.27 and QtCreator 12 recommended
 cmake_minimum_required(VERSION 3.22)
@@ -100,6 +102,11 @@ qt_add_executable(QtAgOpenGPS
 
 
 
+option(LOCAL_QML "Load QML from disc instead of compiling them in.")
+
+if(LOCAL_QML)
+	add_compile_definitions(LOCAL_QML)
+endif()
 # Where to look for header files
 target_include_directories(QtAgOpenGPS PRIVATE
     .

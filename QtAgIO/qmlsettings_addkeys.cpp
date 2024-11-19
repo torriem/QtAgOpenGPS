@@ -25,4 +25,5 @@ void QMLSettings::setupKeys() {
 	addKey(QString("setNTRIP_isHTTP10"), QString("comm/ntripIsHTTP10"), "bool");
     addKey(QString("setNTRIP_ipAddress"), QString("comm/ntripIpAddress"), "QString");
     addKey(QString("setNTRIP_url"), QString("comm/ntripURL"), "QString");
+    addKey(QString("run_isFirstRun"), QString("run/isFirstRun"), "bool");
 }

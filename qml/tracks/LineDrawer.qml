@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// ABLine drawer off boundary
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
@@ -62,53 +66,53 @@ Item {
 			rows: 9
 			flow: Grid.LeftToRight
             Comp.IconButtonTransparent{
-				icon.source: "/images/APlusPlusB.png"
+				icon.source: prefix + "/images/APlusPlusB.png"
 				Layout.alignment: Qt.AlignCenter
 			}
             Comp.IconButtonTransparent{
-				icon.source: "/images/MappingOff.png"
+				icon.source: prefix + "/images/MappingOff.png"
 				Layout.alignment: Qt.AlignCenter
 			}
             Comp.IconButtonTransparent{
-				icon.source: "/images/APlusPlusA.png"
+				icon.source: prefix + "/images/APlusPlusA.png"
 				Layout.alignment: Qt.AlignCenter
 			}
             Comp.IconButtonTransparent{
-				icon.source: "/images/HeadlandDeletePoints.png"
+				icon.source: prefix + "/images/HeadlandDeletePoints.png"
 				Layout.alignment: Qt.AlignCenter
 			}
             Comp.IconButtonTransparent{
-				icon.source: "/images/TrackVisible.png"
+				icon.source: prefix + "/images/TrackVisible.png"
 				Layout.alignment: Qt.AlignCenter
 			}
             Comp.IconButtonTransparent{
 				id: boundaryCurve
-				icon.source: "/images/BoundaryCurveLine.png"
+				icon.source: prefix + "/images/BoundaryCurveLine.png"
 				Layout.alignment: Qt.AlignCenter
 				text: "Boundary Curve"
 			}
             Comp.IconButtonTransparent{
-				icon.source: "/images/ZoomOGL.png"
+				icon.source: prefix + "/images/ZoomOGL.png"
 				Layout.alignment: Qt.AlignCenter
 			}
             Comp.IconButtonTransparent{
-				icon.source: "/images/Trash.png"
+				icon.source: prefix + "/images/Trash.png"
 				Layout.alignment: Qt.AlignCenter
 			}
             Comp.IconButtonTransparent{
-				icon.source: "/images/ABTrackCurve.png"
+				icon.source: prefix + "/images/ABTrackCurve.png"
 				Layout.alignment: Qt.AlignCenter
 			}
             Comp.IconButtonTransparent{
-				icon.source: "/images/ABTrackAB.png"
+				icon.source: prefix + "/images/ABTrackAB.png"
 				Layout.alignment: Qt.AlignCenter
 			}
             Comp.IconButtonTransparent{
-				icon.source: "/images/ABLineCycleBk.png"
+				icon.source: prefix + "/images/ABLineCycleBk.png"
 				Layout.alignment: Qt.AlignCenter
 			}
             Comp.IconButtonTransparent{
-				icon.source: "/images/ABLineCycle.png"
+				icon.source: prefix + "/images/ABLineCycle.png"
 				Layout.alignment: Qt.AlignCenter
 			}
 			Rectangle{
@@ -131,7 +135,7 @@ Item {
 				Layout.alignment: Qt.AlignCenter
 			}
             Comp.IconButtonTransparent{
-				icon.source: "/images/Time.png"
+				icon.source: prefix + "/images/Time.png"
 				Layout.alignment: Qt.AlignCenter
 				onClicked: {
 					var time = new Date().toLocaleTimeString(Qt.locale())
@@ -140,14 +144,14 @@ Item {
 			}
 
             Comp.IconButtonTransparent{
-				icon.source: "/images/Cancel64.png"
+				icon.source: prefix + "/images/Cancel64.png"
 				Layout.alignment: Qt.AlignCenter
 				onClicked: lineDrawer.visible = false
 			}
 
             Comp.IconButtonTransparent{
 				objectName: "btnDrawerSave"
-				icon.source: "/images/OK64.png"
+				icon.source: prefix + "/images/OK64.png"
 				onClicked: lineDrawer.visible = false
 				Layout.alignment: Qt.AlignCenter
 			}
