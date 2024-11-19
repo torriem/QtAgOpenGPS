@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Youturn dimensions settings
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
@@ -24,22 +28,22 @@ Item {
             height: parent.height /2
 
             Image {
-                source: "/images/Config/ConU_UturnRadius.png"
+                source: prefix + "/images/Config/ConU_UturnRadius.png"
                 height: 150
                 width: 150
             }
             Image {
-                source: "/images/Config/ConU_UturnDistance.png"
+                source: prefix + "/images/Config/ConU_UturnDistance.png"
                 height: 150
                 width: 150
             }
             Image {
-                source: "/images/Config/ConU_UturnLength.png"
+                source: prefix + "/images/Config/ConU_UturnLength.png"
                 height: 150
                 width: 150
             }
             Image {
-                source: "/images/Config/ConU_UturnSmooth.png"
+                source: prefix + "/images/Config/ConU_UturnSmooth.png"
                 height: 150
                 width: 150
             }
@@ -131,7 +135,7 @@ Radius")
 
                 IconButtonColor{
                     id: uTurnUBtn
-                    icon.source: "/images/YouTurnU.png"
+                    icon.source: prefix + "/images/YouTurnU.png"
                     checkable: true
                     isChecked: settings.set_uTurnStyle === 0
                     onClicked: settings.set_uTurnStyle = 1
@@ -139,7 +143,7 @@ Radius")
                 IconButtonColor{
                     id: uTurnHBtn
                     checkable: true
-                    icon.source: "/images/YouTurnH.png"
+                    icon.source: prefix + "/images/YouTurnH.png"
                     isChecked: settings.set_uTurnStyle === 1
                     onClicked: settings.set_uTurnStyle = 1
                 }

@@ -209,10 +209,15 @@ void FormLoop::ParseNMEA(QString& buffer)
         {
             ParseSTI032(); //there is also an $PSTI,030,... wich contains different data!
         }
+        //Catch all unknown, so we can warn the user.
+        else if (words[0].startsWith("$")){
+            if (isGPSSentencesOn) unknownSentence = nextNMEASentence;
+        }
     }// while still data
 
     if (isNMEAToSend)
     {
+        UpdateUIVars();
         isNMEAToSend = false;
 
         QByteArray nmeaPGN(57, 0); //is this right? David 6/22/24
@@ -223,8 +228,11 @@ void FormLoop::ParseNMEA(QString& buffer)
         nmeaPGN[3] = 0xD6;
         nmeaPGN[4] = 0x33; // nmea total array count minus 6
 
+        //check if the difference between the two altitudes is extreme. This is indicative
+        //of a problem, most likely getting location from two separate sources.
         if(previousAltitude != 0){
             double difference = previousAltitude - altitude;
+            //if difference between altitude one sentence and now is > 1 meter--we have a problem
             if (qAbs(difference) > 1.0) {
                 nmeaError = true;
             }

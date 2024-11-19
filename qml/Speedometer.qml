@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Main window Speedo
 import QtQuick 2.0
 
 Rectangle
@@ -11,13 +15,13 @@ Rectangle
     Image {
         id: speedoNumbers
         anchors.fill: parent
-        source: "/images/textures/speedo.png"
+        source: prefix + "/images/textures/speedo.png"
         fillMode: Image.PreserveAspectCrop
     }
     Image {
         id: speedoNeedle
         anchors.centerIn: parent
-        source: "/images/textures/SpeedoNedle.png"
+        source: prefix + "/images/textures/SpeedoNedle.png"
         fillMode: Image.PreserveAspectCrop
         width: speedo.width * 0.829
         height: speedo.height * 0.829

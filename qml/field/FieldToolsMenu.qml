@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Menu displayed when the "Field Tools" button is clicked
 import QtQuick
 import QtQuick.Controls.Fusion
 
@@ -28,7 +32,7 @@ Drawer {
             spacing: 0
             IconButtonTextBeside{
                 text: "Boundary"
-                icon.source: "/images/MakeBoundary.png"
+                icon.source: prefix + "/images/MakeBoundary.png"
                 width: 300
                 visible: settings.setFeature_isBoundaryOn
                 onClicked: {
@@ -38,7 +42,7 @@ Drawer {
             }
             IconButtonTextBeside{
                 text: "Headland"
-                icon.source: "/images/HeadlandMenu.png"
+                icon.source: prefix + "/images/HeadlandMenu.png"
                 width: 300
                 visible: settings.setFeature_isHeadlandOn
                 onClicked: {
@@ -48,7 +52,7 @@ Drawer {
             }
             IconButtonTextBeside{
                 text: "Headland (Build)"
-                icon.source: "/images/Headache.png"
+                icon.source: prefix + "/images/Headache.png"
                 visible: settings.setFeature_isHeadlandOn
                 width: 300
                 onClicked: {
@@ -58,14 +62,14 @@ Drawer {
             }
             IconButtonTextBeside{
                 text: "Tram Lines"
-                icon.source: "/images/TramLines.png"
+                icon.source: prefix + "/images/TramLines.png"
                 width: 300
                 visible: settings.setFeature_isTramOn
                 onClicked: tramLinesEditor.visible = true
             }
             IconButtonTextBeside{
                 text: "Recorded Path"
-                icon.source: "/images/RecPath.png"
+                icon.source: prefix + "/images/RecPath.png"
                 width: 300
                 visible: settings.setFeature_isHeadlandOn
                 onClicked:{

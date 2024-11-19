@@ -84,7 +84,7 @@ Window {
             Comp.IconButtonText {
                 id: ethIPSet
                 text: qsTr("IP Set")
-                icon.source: "/images/SubnetSend.png"
+                icon.source: prefix + "/images/SubnetSend.png"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     settings.setUDP_IP1 = spIP1.value
@@ -100,7 +100,7 @@ Window {
             Comp.IconButtonTransparent {
                 id: btnOK
                 Layout.alignment: Qt.AlignCenter
-                icon.source: "/images/OK64.png"
+                icon.source: prefix + "/images/OK64.png"
                 onClicked: ethernetConfig.visible = false
             }
         }

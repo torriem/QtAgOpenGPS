@@ -83,6 +83,9 @@ class FormLoop : public QObject
 
 
     public:
+
+        bool isAndroid, isWindows = false;
+
         //used to send communication check pgn= C8 or 200
         QByteArray sendIPToModules = QByteArray::fromRawData("\x80\x81\x7F\xC9\x05\xC9\xC9\xC0\xA8\x05\x47", 11);
 
@@ -112,7 +115,7 @@ class FormLoop : public QObject
 		 * formerly Formloop.cs */
         int nmeaErrCounter = 0;
 
-		bool isGPSSentencesOn = false, isSendNMEAToUDP;
+        bool isGPSSentencesOn = true, isSendNMEAToUDP;
         int focusSkipCounter = 310;
         bool isSendToSerial = false, isSendToUDP = true;
 
@@ -201,7 +204,7 @@ class FormLoop : public QObject
 	public:
         QElapsedTimer swFrame;
 		QString ggaSentence, vtgSentence, hdtSentence, avrSentence, paogiSentence,
-				hpdSentence, rmcSentence, pandaSentence, ksxtSentence;
+                hpdSentence, rmcSentence, pandaSentence, ksxtSentence, unknownSentence;
 
 		float hdopData, altitude = glm::FLOAT_MAX, headingTrue = glm::FLOAT_MAX,
 			  headingTrueDual = glm::FLOAT_MAX, speed = glm::FLOAT_MAX, roll = glm::FLOAT_MAX;

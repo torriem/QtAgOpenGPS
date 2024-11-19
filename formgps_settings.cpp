@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// This loads the setting (or some of them) into variables, that we can access later
 #include "formgps.h"
 #include "aogproperty.h"
 

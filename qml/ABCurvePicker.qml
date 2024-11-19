@@ -69,18 +69,18 @@ Dialog {
             anchors.bottomMargin: 1
             width: childrenRect.width
             IconButtonTransparent{
-                icon.source: "/images/FileCopy.png"
+                icon.source: prefix + "/images/FileCopy.png"
                 onClicked: copyCurveName.visible = true
             }
             IconButtonTransparent{
                  onClicked: editCurveName.visible = true
-               icon.source: "/images/FileEditName.png"
+               icon.source: prefix + "/images/FileEditName.png"
             }
             IconButtonTransparent{
-                icon.source: "/images/ABSwapPoints.png"
+                icon.source: prefix + "/images/ABSwapPoints.png"
             }
             IconButtonTransparent{
-                icon.source: "/images/OK64.png"
+                icon.source: prefix + "/images/OK64.png"
                 onClicked: {
                     if (abcurveView.currentIndex > -1) {
                         aog.currentABCurve = abcurveView.currentIndex
@@ -108,10 +108,10 @@ Dialog {
 
                 IconButtonTransparent{
                     id: btnLineDelete
-                    icon.source: "/images/ABLineDelete.png"
+                    icon.source: prefix + "/images/ABLineDelete.png"
                 }
                 IconButtonTransparent{
-                    icon.source: "/images/SwitchOff.png"
+                    icon.source: prefix + "/images/SwitchOff.png"
                     onClicked: {
                         aog.currentABCurve = -1
                         abcurveView.currentIndex = -1
@@ -119,11 +119,11 @@ Dialog {
                     }
                 }
                 IconButtonTransparent{
-                    icon.source: "/images/AddNew.png"
+                    icon.source: prefix + "/images/AddNew.png"
                     onClicked: abSetter.visible = true
                 }
                 IconButtonTransparent{
-                    icon.source: "/images/BoundaryLoadFromGE.png"
+                    icon.source: prefix + "/images/BoundaryLoadFromGE.png"
                 }
             }
         }
@@ -156,7 +156,7 @@ Dialog {
                 anchors.left: parent.left
                 anchors.margins: 5
                 isChecked: false
-                icon.source: "/images/LetterABlue.png"
+                icon.source: prefix + "/images/LetterABlue.png"
             }
             IconButtonTransparent{
                 anchors.top: settertopLine.bottom
@@ -164,19 +164,19 @@ Dialog {
                 anchors.margins: 5
                 isChecked: true
                 onClicked: newLineName.visible = true
-                icon.source: "/images/LetterBBlue.png"
+                icon.source: prefix + "/images/LetterBBlue.png"
             }
             IconButtonTransparent{
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 anchors.margins: 20
-                icon.source: "/images/boundaryPause.png"
+                icon.source: prefix + "/images/boundaryPause.png"
             }
             IconButtonTransparent{
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
                 anchors.margins: 20
-                icon.source: "/images/Cancel64.png"
+                icon.source: prefix + "/images/Cancel64.png"
                 onClicked:{
                     parent.visible = false
                 }

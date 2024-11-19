@@ -5,7 +5,7 @@ import "components" as Comp
 
 Window {
 
-    property string imagePath: "/images/"
+    property string imagePath: prefix + "/images/"
 
 	AgIOTheme {
 		id: theme
@@ -15,6 +15,10 @@ Window {
 		id: agio
 		objectName: "agio"
 	}
+
+    UnitConversion {
+        id: utils
+    }
 
 	id: mainWindow
     //height: theme.defaultHeight
@@ -28,6 +32,12 @@ Window {
     Comp.TimedMessage {
         id: timedMessage
         objectName: "timedMessage"
+    }
+    Component.onCompleted: {//shows a window to warn us we might need to open up a port on the firewall
+        if(utils.isTrue(settings.run_isFirstRun)){
+                               isFirewall.show()
+                               settings.run_isFirstRun = false
+                           }
     }
 
 	Rectangle {
@@ -65,8 +75,10 @@ Window {
                  color: agio.ntripConnected ? "green" : "red"
 			 }
              Comp.IconButtonTransparent {
-                 icon.source: "/images/Nmea.png"
-                 visible: agio.gpsConnected
+                 icon.source: prefix + "/images/Nmea.png"
+                 width: btnNTRIPStatus.width
+                 height: btnNTRIPStatus.height
+                 visible: true
                  onClicked: gpsInfo.visible = !gpsInfo.visible
              }
 		 }
@@ -131,7 +143,7 @@ Window {
 				 implicitHeight: btnNTRIP.height
 				 text: qsTr("Hide")
 				 icon.source: imagePath + "AgIOBtn.png"
-				 onClicked: mainWindow.visible = false
+                 onClicked: mainWindow.showMinimized()
 			 }
 		 }
 	}
@@ -169,5 +181,26 @@ Window {
         function showMenu(){
             advancedMenu.visible = true
         }
+    }
+    Window{//warn that we will need to open the firewall if we are using Linux
+        //I've forgotten this several times--a real pain.
+        modality: Qt.WindowModal
+        id: isFirewall
+        visible: false
+        width: 200
+        height: 200
+        title: qsTr("Firewall")
+
+        Text{
+            anchors.centerIn: parent
+            text: qsTr("We noticed this is your first
+time running AgIO. Do you have
+a firewall enabled? If you do,
+ you must allow AgIO through.")
+        }
+    }
+    CloseAgIO{
+        id: closeAgIO
+        visible: false
     }
 }

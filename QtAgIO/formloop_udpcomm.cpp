@@ -53,11 +53,11 @@ void FormLoop::LoadUDPNetwork()
     {
         qDebug() << "Failed to bind udpSocket: " << udpSocket->errorString();
         agio->setProperty("ethernetConnected", false);
-        isUDPNetworkConnected = true;
     }else {
         udpSocket->setSocketOption(QAbstractSocket::MulticastLoopbackOption, 1);
         qDebug() << "udpSocket bound to " << ethUDP.address << ":" << ethUDP.portToListen;
         agio->setProperty("ethernetConnected", true);
+        isUDPNetworkConnected = true;
     }
 
     //trigger ReceiveFromUDP() when a packet is present
@@ -229,7 +229,7 @@ void FormLoop::ReceiveFromUDP()
                 traffic.helloFromIMU = 0;
 
             //scan Reply
-            else if (data[3] == 203 && data.size() == 13) //
+            else if (data[3] == (char)203 && data.size() == 13) //
             {
                 if (data[2] == 126)  //steer module
                 {

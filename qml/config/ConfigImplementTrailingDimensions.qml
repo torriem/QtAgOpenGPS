@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Set the dimensions for a drawn implement
 import QtQuick
 import QtQuick.Controls.Fusion
 
@@ -17,7 +21,7 @@ Rectangle{
     visible: false
     Image{
         id: image1
-        source: "/images/ToolHitchPageTrailing.png"
+        source: prefix + "/images/ToolHitchPageTrailing.png"
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top

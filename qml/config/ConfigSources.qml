@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// GPS heading source (dual/single)
 import QtQuick
 import QtQuick.Controls.Fusion
 
@@ -48,7 +52,7 @@ Rectangle{
                 height:100 * theme.scaleHeight
                 text: "Dual"
                 checkable: true
-                icon.source: "/images/Config/Con_SourcesGPSDual.png"
+                icon.source: prefix + "/images/Config/Con_SourcesGPSDual.png"
 
                 property string headingSource: settings.setGPS_headingFromWhichSource
 
@@ -77,7 +81,7 @@ Rectangle{
                 height:100 * theme.scaleHeight
                 text: "Fix"
                 checkable: true
-                icon.source: "/images/Config/Con_SourcesGPSSingle.png"
+                icon.source: prefix + "/images/Config/Con_SourcesGPSSingle.png"
 
                 property string headingSource: settings.setGPS_headingFromWhichSource
 
@@ -128,7 +132,7 @@ Rectangle{
                 width:150 * theme.scaleWidth
                 height:100 * theme.scaleHeight
                 id: alarm
-                icon.source: "/images/Config/Con_SourcesRTKAlarm.png"
+                icon.source: prefix + "/images/Config/Con_SourcesRTKAlarm.png"
                 isChecked: settings.setGPS_isRTK
                 onClicked: settings.setGPS_isRTK = true
             }
@@ -146,7 +150,7 @@ Rectangle{
                 height:100 * theme.scaleHeight
                 checkable: true
                 id: killAutoSteer
-                icon.source: "/images/AutoSteerOff.png"
+                icon.source: prefix + "/images/AutoSteerOff.png"
                 isChecked: settings.setGPS_isRTK_KillAutoSteer
                 onClicked: settings.setGPS_isRTK_KillAutoSteer = true
             }
@@ -277,6 +281,7 @@ Rectangle{
             colorChecked: "green"
             isChecked: settings.setIMU_isReverseOn
             onClicked: settings.setIMU_isReverseOn = checked
+            width: 250*theme.scaleWidth
         }
     }
     TitleFrame {
@@ -299,7 +304,7 @@ Rectangle{
 
         Image {
             id: head
-            source: "/images/Config/Con_SourcesHead.png"
+            source: prefix + "/images/Config/Con_SourcesHead.png"
             width: 100 * theme.scaleWidth
 			height: 100 * theme.scaleHeight
             anchors.top: parent.top
@@ -332,6 +337,7 @@ Rectangle{
             colorChecked: "green"
             isChecked: settings.setIMU_isDualAsIMU
             onClicked: settings.setIMU_isDualAsIMU = checked
+            width: 250*theme.scaleWidth
         }
     }
 }

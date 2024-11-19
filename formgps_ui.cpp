@@ -71,7 +71,7 @@ void FormGPS::setupGui()
     rootContext()->setContextProperty("prefix","local:");
     load("local:/qml/MainWindow.qml");
 #else
-    rootContext()->setContextProperty("prefix",":");
+    rootContext()->setContextProperty("prefix","");
     load(QUrl("qrc:/qml/MainWindow.qml"));
 #endif
 

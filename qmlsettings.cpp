@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Interface between qml settings and backend
 #include "qmlsettings.h"
 #include <QDateTime>
 #include <QSettings>

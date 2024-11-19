@@ -167,14 +167,14 @@ Window {
             visible: false //not sure if we even want/need this
 			height: parent.height
 			width: height
-			icon.source: "/images/Cancel64.png"
+			icon.source: prefix + "/images/Cancel64.png"
             onClicked: ntrip.visible = false
 		}
         Comp.IconButtonTransparent {
 			id: btnSave
 			height: parent.height
 			width: height
-			icon.source: "/images/OK64.png"
+			icon.source: prefix + "/images/OK64.png"
             onClicked: {
                 agio.configureNTRIP()
                 ntrip.close()

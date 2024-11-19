@@ -134,7 +134,7 @@ Window {
             height: parent.height
             width: 75
             objectName: "btnfileMenu"
-            icon.source: "/images/fileMenu.png"
+            icon.source: prefix + "/images/fileMenu.png"
             onClicked: fileMenu.popup()
         }
         Menu{
@@ -216,7 +216,7 @@ Window {
             anchors.right: parent.right
             IconButtonColor{
                 id: rtkStatus
-                icon.source: "/images/GPSQuality.png"
+                icon.source: prefix + "/images/GPSQuality.png"
                 implicitWidth: 75
                 implicitHeight: parent.height
                 onClicked: {
@@ -240,19 +240,19 @@ Window {
                 objectName: "btnHelp"
                 height: parent.height
                 width: 75
-                icon.source: "/images/Help.png"
+                icon.source: prefix + "/images/Help.png"
             }
             IconButtonTransparent{
                 objectName: "btnWindowMinimize"
                 height: parent.height
-                icon.source: "/images/WindowMinimize.png"
+                icon.source: prefix + "/images/WindowMinimize.png"
                 width: 75
                 onClicked: mainWindow.showMinimized()
             }
             IconButtonTransparent{
                 objectName: "btnWindowMaximize"
                 height: parent.height
-                icon.source: "/images/WindowMaximize.png"
+                icon.source: prefix + "/images/WindowMaximize.png"
                 width: 75
                 onClicked: {
                     console.debug("Visibility is " + mainWindow.visibility)
@@ -268,7 +268,7 @@ Window {
                 objectName: "btnWindowClose"
                 height: parent.height
                 width: 75
-                icon.source: "/images/WindowClose.png"
+                icon.source: prefix + "/images/WindowClose.png"
                 onClicked: {
                     mainWindow.close()
                 }
@@ -336,7 +336,7 @@ Window {
                 y: aog.vehicle_xy.y - height
                 width: 70
                 height: 70
-                source: "/images/Images/z_ReverseArrow.png"
+                source: prefix + "/images/Images/z_ReverseArrow.png"
                 visible: aog.isReverse
             }
             MouseArea{
@@ -377,7 +377,7 @@ Window {
 
         Image {
             id: noGPSImage
-            source: "/images/Images/z_NoGPS.png"
+            source: prefix + "/images/Images/z_NoGPS.png"
             anchors.centerIn: parent
             anchors.margins: 200
             visible: noGPS.visible
@@ -450,7 +450,7 @@ Window {
                 id: btnnavigationSettings
                 objectName: "btnnavigationSettings"
                 buttonText: qsTr("Display")
-                icon.source: "/images/NavigationSettings.png"
+                icon.source: prefix + "/images/NavigationSettings.png"
                 onClicked: displayButtons.visible = !displayButtons.visible
                 Layout.alignment: Qt.AlignCenter
             }
@@ -458,7 +458,7 @@ Window {
                 id: btnSettings
                 objectName: "btnSettings"
                 buttonText: qsTr("Settings")
-                icon.source: "/images/Settings48.png"
+                icon.source: prefix + "/images/Settings48.png"
                 onClicked: config.open()
                 Layout.alignment: Qt.AlignCenter
             }
@@ -466,7 +466,7 @@ Window {
                 id: btnTools
                 objectName: "btnTools"
                 buttonText: qsTr("Tools")
-                icon.source: "/images/SpecialFunctions.png"
+                icon.source: prefix + "/images/SpecialFunctions.png"
                 onClicked: toolsWindow.visible = true
                 Layout.alignment: Qt.AlignCenter
             }
@@ -474,7 +474,7 @@ Window {
                 id: btnFieldMenu
                 objectName: "btnFieldMenu"
                 buttonText: qsTr("Field")
-                icon.source: "/images/JobActive.png"
+                icon.source: prefix + "/images/JobActive.png"
                 onClicked: fieldMenu.visible = true
                 Layout.alignment: Qt.AlignCenter
             }
@@ -482,7 +482,7 @@ Window {
                 id: btnFieldTools
                 objectName: "btnFieldTools"
                 buttonText: qsTr("Field Tools")
-                icon.source: "/images/FieldTools.png"
+                icon.source: prefix + "/images/FieldTools.png"
                 onClicked: fieldTools.visible = true
                 enabled: aog.isJobStarted ? true : false
                 Layout.alignment: Qt.AlignCenter
@@ -499,14 +499,14 @@ Window {
                 id: btnAgIO
                 objectName: "btnAgIO"
                 buttonText: qsTr("AgIO")
-                icon.source: "/images/AgIO.png"
+                icon.source: prefix + "/images/AgIO.png"
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnautoSteerConf
                 objectName: "btnAutosteerConf"
                 buttonText: qsTr("Steer config")
-                icon.source: "/images/AutoSteerConf.png"
+                icon.source: prefix + "/images/AutoSteerConf.png"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     steerConfigWindow.visible = true
@@ -564,8 +564,8 @@ Window {
                 objectName: "btnContour"
                 isChecked: false
                 checkable: true
-                icon.source: "/images/ContourOff.png"
-                iconChecked: "/images/ContourOn.png"
+                icon.source: prefix + "/images/ContourOff.png"
+                iconChecked: prefix + "/images/ContourOn.png"
                 buttonText: "Contour"
                 //color: "white"
                 Layout.alignment: Qt.AlignCenter
@@ -575,8 +575,8 @@ Window {
                 objectName: "btnABCurve"
                 isChecked: false
                 checkable: true
-                icon.source: "/images/CurveOff.png"
-                iconChecked: "/images/CurveOn.png"
+                icon.source: prefix + "/images/CurveOff.png"
+                iconChecked: prefix + "/images/CurveOn.png"
                 buttonText: "ABCurve"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: {
@@ -609,8 +609,8 @@ Window {
                 checkable: true
                 //TODO: this should be set programmatically
                 //Also the types of lines are all mutually exclusive
-                icon.source: "/images/ABLineOff.png"
-                iconChecked: "/images/ABLineOn.png"
+                icon.source: prefix + "/images/ABLineOff.png"
+                iconChecked: prefix + "/images/ABLineOn.png"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     abLinePicker.visible = true
@@ -638,7 +638,7 @@ Window {
             IconButton{
                 id: btnABLineCycle
                 objectName: "btnABLineCycle"
-                icon.source: "/images/ABLineCycle.png"
+                icon.source: prefix + "/images/ABLineCycle.png"
                 width: btnABLine.width
                 height: btnABLine.height
                 Layout.alignment: Qt.AlignCenter
@@ -646,7 +646,7 @@ Window {
             IconButton{
                 id: btnABLineCycleBk
                 objectName: "btnABLineCycleBk"
-                icon.source: "/images/ABLineCycleBk.png"
+                icon.source: prefix + "/images/ABLineCycleBk.png"
                 width: btnABLine.width
                 height: btnABLine.height
                 Layout.alignment: Qt.AlignCenter
@@ -657,8 +657,8 @@ Window {
                 objectName: "btnSectionManual"
                 isChecked: aog.manualBtnState == 2
                 checkable: true
-                icon.source: "/images/ManualOff.png"
-                iconChecked: "/images/ManualOn.png"
+                icon.source: prefix + "/images/ManualOff.png"
+                iconChecked: prefix + "/images/ManualOn.png"
                 buttonText: "Manual"
                 Layout.alignment: Qt.AlignCenter
                 onCheckedChanged: {
@@ -679,8 +679,8 @@ Window {
                 objectName: "btnSectionAuto"
                 isChecked: aog.autoBtnState == 1
                 checkable: true
-                icon.source: "/images/SectionMasterOff.png"
-                iconChecked: "/images/SectionMasterOn.png"
+                icon.source: prefix + "/images/SectionMasterOff.png"
+                iconChecked: prefix + "/images/SectionMasterOn.png"
                 buttonText: "Auto"
                 Layout.alignment: Qt.AlignCenter
                 onCheckedChanged: {
@@ -699,8 +699,8 @@ Window {
                 objectName: "btnAutoYouTurn"
                 isChecked: aog.isYouTurnBtnOn
                 checkable: true
-                icon.source: "/images/YouTurnNo.png"
-                iconChecked: "/images/YouTurn80.png"
+                icon.source: prefix + "/images/YouTurnNo.png"
+                iconChecked: prefix + "/images/YouTurn80.png"
                 buttonText: "AutoUturn"
                 visible: aog.isTrackOn
                 enabled: aog.isAutoSteerBtnOn
@@ -710,8 +710,8 @@ Window {
             IconButtonText {
                 id: btnAutoSteer
                 objectName: "btnAutoSteer"
-                icon.source: "/images/AutoSteerOff.png"
-                iconChecked: "/images/AutoSteerOn.png"
+                icon.source: prefix + "/images/AutoSteerOff.png"
+                iconChecked: prefix + "/images/AutoSteerOn.png"
                 checkable: true
                 checked: aog.isAutoSteerBtnOn
                 enabled: aog.isTrackOn
@@ -772,8 +772,8 @@ Window {
                 checkable: true
                 isChecked: true
                 visible: false
-                icon.source: "/images/ContourPriorityLeft.png"
-                iconChecked: "/images/ContourPriorityRight.png"
+                icon.source: prefix + "/images/ContourPriorityLeft.png"
+                iconChecked: prefix + "/images/ContourPriorityRight.png"
             }
         }
         RowLayout{
@@ -822,15 +822,15 @@ Window {
                 objectName: "btnYouSkip"
                 isChecked: false
                 checkable: true
-                icon.source: "/images/YouSkipOff.png"
-                iconChecked: "/images/YouSkipOn.png"
+                icon.source: prefix + "/images/YouSkipOff.png"
+                iconChecked: prefix + "/images/YouSkipOn.png"
                 buttonText: "YouSkips"
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnResetTool
                 objectName: "btnResetTool"
-                icon.source: "/images/ResetTool.png"
+                icon.source: prefix + "/images/ResetTool.png"
                 buttonText: "Reset Tool"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: aog.btnResetTool()
@@ -838,12 +838,12 @@ Window {
             IconButtonText {
                 id: btnSectionMapping
                 objectName: "btnSectionMapping"
-                icon.source: "/images/SectionMapping"
+                icon.source: prefix + "/images/SectionMapping"
                 Layout.alignment: Qt.AlignCenter
             }
             IconButtonText {
                 id: btnFieldInfo
-                icon.source: "/images/FieldStats.png"
+                icon.source: prefix + "/images/FieldStats.png"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     fieldData.visible = !fieldData.visible
@@ -853,7 +853,7 @@ Window {
             IconButtonText {
                 id: btnTramLines
                 objectName: "btnTramLines"
-                icon.source: "/images/TramLines.png"
+                icon.source: prefix + "/images/TramLines.png"
                 buttonText: "Tram Lines"
                 Layout.alignment: Qt.AlignCenter
             }
@@ -865,8 +865,8 @@ Window {
                 checkable: true
                 disabled: btnHeadland.checked
                 visible: isTrue(settings.setArdMac_isHydEnabled) && btnHeadland.visible
-                icon.source: "/images/HydraulicLiftOff.png"
-                iconChecked: "/images/HydraulicLiftOn.png"
+                icon.source: prefix + "/images/HydraulicLiftOff.png"
+                iconChecked: prefix + "/images/HydraulicLiftOn.png"
                 buttonText: "HydLift"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: {
@@ -879,8 +879,8 @@ Window {
                 objectName: "btnHeadland"
                 isChecked: aog.isHeadlandOn
                 checkable: true
-                icon.source: "/images/HeadlandOff.png"
-                iconChecked: "/images/HeadlandOn.png"
+                icon.source: prefix + "/images/HeadlandOff.png"
+                iconChecked: prefix + "/images/HeadlandOn.png"
                 buttonText: "Headland"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: aog.btnHeadland()
@@ -889,7 +889,7 @@ Window {
                 id: btnFlag
                 objectName: "btnFlag"
                 isChecked: false
-                icon.source: "/images/FlagRed.png"
+                icon.source: prefix + "/images/FlagRed.png"
                 Layout.alignment: Qt.AlignCenter
                 onPressAndHold: {
                     if (contextFlag.visible) {
@@ -903,7 +903,7 @@ Window {
 
             IconButtonText {
                 id: btnTrackOn
-                icon.source: "/images/TrackOn.png"
+                icon.source: prefix + "/images/TrackOn.png"
                 buttonText: "Track"
                 onClicked: trackButtons.visible = !trackButtons.visible
                 Layout.alignment: Qt.AlignCenter
@@ -929,15 +929,15 @@ Window {
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.margins: 30
-                icon.source: "/images/Pan.png"
-                iconChecked: "/images/SwitchOff.png"
+                icon.source: prefix + "/images/Pan.png"
+                iconChecked: prefix + "/images/SwitchOff.png"
                 onClicked: aog.panMode = !aog.panMode
             }
             Image{
                 id: hydLiftIndicator
                 property bool isDown: aog.hydLiftDown
                 visible: false
-                source: "/images/Images/z_Lift.png"
+                source: prefix + "/images/Images/z_Lift.png"
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 width: 80
@@ -1006,9 +1006,9 @@ Window {
                  Image{
                     id: autoTurnImage
                     source: if(!aog.isYouTurnRight)
-                                "/images/Images/z_TurnRight.png"
+                                prefix + "/images/Images/z_TurnRight.png"
                             else
-                                "/images/Images/z_TurnLeft.png"
+                                prefix + "/images/Images/z_TurnLeft.png"
                     visible: false
                     anchors.fill: parent
                 }
@@ -1250,7 +1250,7 @@ Window {
             visible: aog.isJobStarted
             width: 45
             height: 25
-            icon.source: "/images/MenuHideShow.png"
+            icon.source: prefix + "/images/MenuHideShow.png"
             onClicked: if(leftColumn.visible){
                            leftColumn.visible = false
                        }else{
@@ -1274,14 +1274,14 @@ Window {
                 implicitWidth: 30
                 implicitHeight: 30
                 radius: 0
-                icon.source: "/images/ZoomIn48.png"
+                icon.source: prefix + "/images/ZoomIn48.png"
                 onClicked: aog.zoomIn()
             }
             IconButton{
                 implicitWidth: 30
                 implicitHeight: 30
                 radius: 0
-                icon.source: "/images/ZoomOut48.png"
+                icon.source: prefix + "/images/ZoomOut48.png"
                 onClicked: aog.zoomOut()
             }
         }
@@ -1427,20 +1427,20 @@ Window {
                 anchors.bottom: parent.bottom
                 IconButtonTransparent{
                     objectName: "recordPlay"
-                    icon.source: "/images/Play.png"
-                    iconChecked: "/images/Stop.png"
+                    icon.source: prefix + "/images/Play.png"
+                    iconChecked: prefix + "/images/Stop.png"
                 }
                 IconButtonTransparent{
                     objectName: "recordStartPoint"
-                    icon.source: "/images/pathResumeClose.png"
+                    icon.source: prefix + "/images/pathResumeClose.png"
                 }
                 IconButtonTransparent{
                     objectName: "recordRecord"
-                    icon.source: "/images/BoundaryRecord.png"
+                    icon.source: prefix + "/images/BoundaryRecord.png"
                 }
                 IconButtonTransparent{
                     objectName: "recordOpenFile"
-                    icon.source: "/images/FileOpen.png"
+                    icon.source: prefix + "/images/FileOpen.png"
                 }
             }
         }
@@ -1461,7 +1461,7 @@ Window {
                 color1: "transparent"
                 color2: "transparent"
                 color3: "transparent"
-                icon.source: "/images/back-button.png"
+                icon.source: prefix + "/images/back-button.png"
                 onClicked: parent.visible = false
             }
             IconButtonText{
@@ -1471,7 +1471,7 @@ Window {
                 color1: "transparent"
                 color2: "transparent"
                 color3: "transparent"
-                icon.source: "/images/ExitAOG.png"
+                icon.source: prefix + "/images/ExitAOG.png"
                 onClicked: {
                     mainWindow.save_everything()
                     Qt.quit()
@@ -1510,28 +1510,28 @@ Window {
                 IconButton {
                     id: redFlag
                     objectName: "btnRedFlag"
-                    icon.source: "/images/FlagRed.png";
+                    icon.source: prefix + "/images/FlagRed.png";
                 }
                 IconButton {
                     id: greenFlag
                     objectName: "btnGreenFlag"
-                    icon.source: "/images/FlagGrn.png";
+                    icon.source: prefix + "/images/FlagGrn.png";
                 }
                 IconButton {
                     id: yellowFlag
                     objectName: "btnYellowFlag"
-                    icon.source: "/images/FlagYel.png";
+                    icon.source: prefix + "/images/FlagYel.png";
                 }
                 IconButton {
                     id: deleteFlag
                     objectName: "btnDeleteFlag"
-                    icon.source: "/images/FlagDelete.png"
+                    icon.source: prefix + "/images/FlagDelete.png"
                     enabled: false
                 }
                 IconButton {
                     id: deleteAllFlags
                     objectName: "btnDeleteAllFlags"
-                    icon.source: "/images/FlagDeleteAll.png"
+                    icon.source: prefix + "/images/FlagDeleteAll.png"
                     enabled: false
                 }
             }

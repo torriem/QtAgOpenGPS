@@ -1,4 +1,7 @@
-
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Settings in the expanded steer config. **Not the sliders**
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
@@ -32,7 +35,7 @@ Rectangle{
 
 		IconButtonTransparent {
 			id: close
-			icon.source: "/images/WindowClose.png"
+			icon.source: prefix + "/images/WindowClose.png"
 			font.pixelSize: parent.height
 			width: parent.height+3
 			height:parent.height
@@ -64,7 +67,7 @@ Rectangle{
 		anchors.horizontalCenter: parent.horizontalCenter
 		IconButtonTextBeside{
 			id: sensorsBtn
-			icon.source: "/images/Config/ConD_Speedometer.png"
+			icon.source: prefix + "/images/Config/ConD_Speedometer.png"
 			buttonText: "Sensors"
 			Layout.alignment: Qt.AlignCenter
 			checkable: true
@@ -74,7 +77,7 @@ Rectangle{
 		}
 		IconButtonTextBeside{
 			id: configBtn
-			icon.source: "/images/Config/ConS_Pins.png"
+			icon.source: prefix + "/images/Config/ConS_Pins.png"
 			buttonText: "Config"
 			Layout.alignment: Qt.AlignCenter
 			checkable: true
@@ -83,7 +86,7 @@ Rectangle{
 		}
 		IconButtonTextBeside{
 			id: settingsBtn
-			icon.source: "/images/Config/ConS_ImplementConfig.png"
+			icon.source: prefix + "/images/Config/ConS_ImplementConfig.png"
 			buttonText: "Settings"
 			Layout.alignment: Qt.AlignCenter
 			checkable: true
@@ -92,7 +95,7 @@ Rectangle{
 		}
 		IconButtonTextBeside{
 			id: steerSettingsBtn
-			icon.source: "/images/Config/ConS_ImplementConfig.png"
+			icon.source: prefix + "/images/Config/ConS_ImplementConfig.png"
 			buttonText: "Steer Settings"
 			Layout.alignment: Qt.AlignCenter
 			checkable: true
@@ -351,7 +354,7 @@ Rectangle{
 					  width: parent.width
 					  IconButtonColor{
 						  id: cboxEncoder
-						  icon.source: "/images/Config/ConSt_TurnSensor.png"
+						  icon.source: prefix + "/images/Config/ConSt_TurnSensor.png"
 						  checkable: true
 						  buttonText: "Turn Sensor"
 						  Layout.alignment: Qt.AlignCenter
@@ -359,7 +362,7 @@ Rectangle{
 					  }
 					  IconButtonColor{
 						  id: cboxPressureSensor
-						  icon.source: "/images/Config/ConSt_TurnSensorPressure.png"
+						  icon.source: prefix + "/images/Config/ConSt_TurnSensorPressure.png"
 						  checkable: true
 						  buttonText: "Pressure Turn Sensor"
 						  Layout.alignment: Qt.AlignCenter
@@ -367,7 +370,7 @@ Rectangle{
 					  }
 					  IconButtonColor{
 						  id: cboxCurrentSensor
-						  icon.source: "/images/Config/ConSt_TurnSensorCurrent.png"
+						  icon.source: prefix + "/images/Config/ConSt_TurnSensorCurrent.png"
 						  checkable: true
 						  buttonText: "Current Turn Sensor"
 						  Layout.alignment: Qt.AlignCenter
@@ -389,7 +392,7 @@ Rectangle{
 					  flow: Grid.TopToBottom
 					  IconButtonColor{
 						  id: cboxDanfoss
-						  icon.source: "/images/Config/ConST_Danfoss.png"
+						  icon.source: prefix + "/images/Config/ConST_Danfoss.png"
 						  checkable: true
 						  buttonText: "Danfoss"
 						  Layout.alignment: Qt.AlignCenter
@@ -397,7 +400,7 @@ Rectangle{
 					  }
 					  IconButtonColor{
 						  id: chkInvertWAS
-						  icon.source: "/images/Config/ConSt_InvertWAS.png"
+						  icon.source: prefix + "/images/Config/ConSt_InvertWAS.png"
 						  checkable: true
 						  Layout.alignment: Qt.AlignCenter
 						  buttonText: "Invert WAS"
@@ -405,7 +408,7 @@ Rectangle{
 					  }
 					  IconButtonColor{
 						  id: chkInvertSteer
-						  icon.source: "/images/Config/ConSt_InvertDirection.png"
+						  icon.source: prefix + "/images/Config/ConSt_InvertDirection.png"
 						  checkable: true
 						  buttonText: "Invert Motor Dir"
 						  Layout.alignment: Qt.AlignCenter
@@ -413,7 +416,7 @@ Rectangle{
 					  }
 					  IconButtonColor{
 						  id: chkSteerInvertRelays
-						  icon.source: "/images/Config/ConSt_InvertRelay.png"
+						  icon.source: prefix + "/images/Config/ConSt_InvertRelay.png"
 						  checkable: true
 						  buttonText: "Invert Relays"
 						  Layout.alignment: Qt.AlignCenter
@@ -535,7 +538,7 @@ Rectangle{
 
 						Image {
 							id: lightbarimage
-							source: "/images/Config/ConV_CmPixel.png"
+							source: prefix + "/images/Config/ConV_CmPixel.png"
 							anchors.left: parent.left
 							anchors.top: lightbartitletxt.bottom
 							anchors.bottom: parent.bottom
@@ -564,8 +567,8 @@ Rectangle{
 							anchors.bottomMargin: 20 * theme.scaleHeight
 							anchors.leftMargin: 20 * theme.scaleWidth
 							anchors.rightMargin: 20 * theme.scaleWidth
-							icon.source: "/images/AutoSteerOff.png"
-							iconChecked: "/images/AutoSteerOn.png"
+							icon.source: prefix + "/images/AutoSteerOff.png"
+							iconChecked: prefix + "/images/AutoSteerOn.png"
 							checkable: true
 							color: "red"
 							isChecked: settings.setAS_isAutoSteerAutoOn
@@ -598,7 +601,7 @@ Rectangle{
 
 							Image {
 								id: linewidthimage
-								source: "/images/Config/ConV_LineWith.png"
+								source: prefix + "/images/Config/ConV_LineWith.png"
 								anchors.left: parent.left
 								anchors.top: linewidthtitletxt.bottom
 								anchors.bottom: parent.bottom
@@ -639,7 +642,7 @@ Rectangle{
 
 							Image {
 								id: nudgedistimage
-								source: "/images/Config/ConV_SnapDistance.png"
+								source: prefix + "/images/Config/ConV_SnapDistance.png"
 								anchors.left: parent.left
 								anchors.top: nudgedisttitletxt.bottom
 								anchors.bottom: parent.bottom
@@ -680,7 +683,7 @@ Rectangle{
 
 							Image {
 								id: lineacqLAheadimage
-								source: "/images/Config/ConV_GuidanceLookAhead.png"
+								source: prefix + "/images/Config/ConV_GuidanceLookAhead.png"
 								anchors.left: parent.left
 								anchors.top: lineacqLAheadtitletxt.bottom
 								anchors.bottom: parent.bottom
@@ -725,7 +728,7 @@ Rectangle{
 								 */  
 								Text{ text: qsTr("Manual Turns Limit"); Layout.alignment: Qt.AlignCenter}
 								Image{
-									source: "/images/Config/con_VehicleFunctionSpeedLimit.png"
+									source: prefix + "/images/Config/con_VehicleFunctionSpeedLimit.png"
 									width: parent.width
 									height: 90 * theme.scaleHeight
 									Layout.alignment: Qt.AlignCenter
@@ -751,7 +754,7 @@ Rectangle{
 									 */   Text{ text: qsTr("Min AutoSteer Speed"); Layout.alignment: Qt.AlignCenter}
 									Image{
 										id: minAutoSteerImage
-										source: "/images/Config/ConV_MinAutoSteer.png"
+										source: prefix + "/images/Config/ConV_MinAutoSteer.png"
 										width: parent.width
 										height: 90 * theme.scaleHeight
 										Layout.alignment: Qt.AlignCenter
@@ -777,7 +780,7 @@ Rectangle{
 										Text{ text: qsTr("Max AutoSteer Speed"); Layout.alignment: Qt.AlignCenter}
 										Image{
 											id: maxAutoSteerImage
-											source: "/images/Config/ConV_MaxAutoSteer.png"
+											source: prefix + "/images/Config/ConV_MaxAutoSteer.png"
 											height: 90 * theme.scaleHeight
 											width: parent.width
 											Layout.alignment: Qt.AlignCenter
@@ -801,7 +804,7 @@ Rectangle{
 											 Layout.alignment: Qt.AlignTop
 											 */   Text{ text: qsTr("Max Turn Rate"); Layout.alignment: Qt.AlignCenter}
 											Image{
-												source: "/images/Config/ConV_MaxAngVel.png"
+												source: prefix + "/images/Config/ConV_MaxAngVel.png"
 												width: parent.width
 												height: 90 * theme.scaleHeight
 												Layout.alignment: Qt.AlignCenter
@@ -835,13 +838,13 @@ Rectangle{
 									IconButtonText{
 										id: wizard
 										text: qsTr("Wizard")
-										icon.source: "/images/WizardWand.png"
+										icon.source: prefix + "/images/WizardWand.png"
 										Layout.alignment: Qt.AlignCenter
 									}
 									IconButtonText{
 										id: reset
 										text: qsTr("Reset to Defaults")
-										icon.source: "/images/Reset_Default.png"
+										icon.source: prefix + "/images/Reset_Default.png"
 										Layout.alignment: Qt.AlignCenter
 									}
 									Text {
@@ -851,7 +854,7 @@ Rectangle{
 									IconButton{
 										id: send
 										Layout.alignment: Qt.AlignLeft
-										icon.source: "/images/ToolAcceptChange.png"
+										icon.source: prefix + "/images/ToolAcceptChange.png"
 										implicitWidth: 130
 										onClicked: { settingsArea.save_settings() ; unsaved.visible = false }
 									}
@@ -863,6 +866,6 @@ Rectangle{
 									anchors.rightMargin: 10 * theme.scaleWidth
 									anchors.verticalCenter: bottomRightButtons.verticalCenter
 									visible: false
-									source: "/images/Config/ConSt_Mandatory.png"
+									source: prefix + "/images/Config/ConSt_Mandatory.png"
 								}
 							}
