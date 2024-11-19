@@ -1558,14 +1558,14 @@ Window {
             id: trackNew
             visible: false
         }
-		TrackNewSet{
+        Tracks.TrackNewSet{
 			id: trackNewSet
 			anchors.fill: parent
 		}
-		TrackList{
+        Tracks.TrackList{
 			id: trackList
 		}
-		TracksNewAddName{
+        Tracks.TracksNewAddName{
 			id: trackAddName
 		}
 
