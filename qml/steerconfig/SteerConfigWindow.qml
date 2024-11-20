@@ -29,44 +29,10 @@ MoveablePopup {
 		border.width: 1
 		visible: true
 		anchors.fill: parent
-		Rectangle{
+        TopLine{
 			id:topLine
-			color:"white"
-			visible: true
-			width: parent.width
-			height: 25 * theme.scaleHeight
-			anchors.top: parent.top
-			anchors.horizontalCenter: parent.horizontalCenter
-			Text{
-				anchors.left: parent.left
-				anchors.verticalCenter: parent.verticalCenter
-				text: qsTr("Auto Steer Config")
-			}
-
-			Button {
-				id: close
-				text: qsTr("×")
-				font.pixelSize: parent.height
-				width: parent.height+3
-				height:parent.height
-				anchors.right: parent.right
-				onClicked: {
-					if(!pwmWindow.visible){
-						settings.setWindow_steerSettingsLocation.x = steerConfigWindow.x
-						settings.setWindow_steerSettingsLocation.y = steerConfigWindow.y
-					}
-					steerConfigWindow.visible = false
-				}
-			}
-			Button {
-				id: help
-				text: qsTr("?")
-				width: parent.height+3
-				height:parent.height
-				anchors.right: close.left
-				anchors.rightMargin: 20 * theme.scaleWidth
-			}
-		}
+            titleText: qsTr("Auto Steer Config")
+        }
 		Item{
 			id: steerSlidersConfig
 			height: 475 * theme.scaleHeight
@@ -78,8 +44,11 @@ MoveablePopup {
 			}
 
 			RowLayout{
+                anchors.top: parent.top
+                anchors.topMargin: 5
+                anchors.horizontalCenter: parent.horizontalCenter
 				id: buttonsTop
-				width: parent.width
+                width: parent.width - 10
 				IconButtonColor{
 					id: steerBtn
 					icon.source: prefix + "/images/Steer/ST_SteerTab.png"
@@ -218,9 +187,9 @@ MoveablePopup {
 				//region PWMtab
 				Item{
 					id: gainTab
-					visible: gainBtn.checked
 					anchors.fill: parent
-					Column{
+                    visible: gainBtn.checked
+                    Column{
 						id: gainColumn
 						anchors.bottom: parent.bottom
 						anchors.left: parent.left
@@ -230,11 +199,12 @@ MoveablePopup {
 						anchors.bottomMargin: 5 * theme.scaleHeight
 						anchors.rightMargin: 5 * theme.scaleWidth
 						spacing: 45 * theme.scaleHeight
-						anchors.leftMargin: 20
+                        anchors.leftMargin: 20 * theme.scaleWidth
 						SliderCustomized {
 							id: propGainlider
 							leftText: value
-							width: 200 * theme.scaleWidth
+                            implicitHeight: 50 * theme.scaleHeight
+                            width: 200 * theme.scaleWidth
 							from: 0
 							to: 200
 							value: Math.round(settings.setAS_Kp, 0)
@@ -246,7 +216,8 @@ MoveablePopup {
 							id: maxLimitSlider
 							centerTopText: "Maximum Limit"
 							leftText: value
-							width: 200 * theme.scaleWidth
+                            implicitHeight: 50 * theme.scaleHeight
+                            width: 200 * theme.scaleWidth
 							from: 0
 							to: 254
 							value: Math.round(settings.setAS_highSteerPWM, 0)
@@ -255,7 +226,8 @@ MoveablePopup {
 						}
 						SliderCustomized {
 							id: min2moveSlider
-							width: 200 * theme.scaleWidth
+                            implicitHeight: 50 * theme.scaleHeight
+                            width: 200 * theme.scaleWidth
 							from: 0
 							to: 100
 							value: Math.round(settings.setAS_minSteerPWM, 0)
@@ -269,7 +241,7 @@ MoveablePopup {
 						width: parent.width
 						anchors.left: parent.left
 						anchors.bottom: parent.bottom
-						height: parent.height
+                        height: gainColumn.height
 						source: prefix + "/images/Steer/Sf_GainTab.png"
 					}
 
@@ -339,10 +311,10 @@ MoveablePopup {
 				//
 				//region PurePursuitTab
 				Item{
-					anchors.fill: parent
-					visible: ppBtn.checked
 					id: ppTab
-					Column{
+                    anchors.fill: parent
+                    visible: ppBtn.checked
+                    Column{
 						id: ppColumn
 						anchors.bottom: parent.bottom
 						anchors.left: parent.left
