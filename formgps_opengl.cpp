@@ -215,7 +215,7 @@ void FormGPS::oglMain_Paint()
     gl->glClearColor(0.25122f, 0.258f, 0.275f, 1.0f);
     gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     gl->glDisable(GL_DEPTH_TEST);
-    gl->glDisable(GL_TEXTURE_2D);
+    //gl->glDisable(GL_TEXTURE_2D);
 
     if((uint)sentenceCounter > 299)
     {
