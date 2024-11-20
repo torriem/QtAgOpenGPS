@@ -115,12 +115,10 @@ MoveablePopup {
 
 						}
 
-						SliderCustomized {
+						SteerConfigSliderCustomized {
                             property int wasOffset: settings.setAS_wasOffset
                             id: wasZeroSlider
-                            Layout.alignment: Qt.AlignCenter
                             centerTopText: "WAS Zero"
-                            implicitHeight: 50 * theme.scaleHeight
                             width: 200 * theme.scaleWidth
                             from: -4000
                             leftText: utils.decimalRound(value / cpDegSlider.value, 2)
@@ -128,12 +126,10 @@ MoveablePopup {
                             to: 4000
                             value: settings.setAS_wasOffset / cpDegSlider.value
                         }
-						SliderCustomized {
+						SteerConfigSliderCustomized {
 							id: cpDegSlider
-                            Layout.alignment: Qt.AlignCenter
                             centerTopText: "Counts per Degree"
                             from: 1
-                            implicitHeight: 50 * theme.scaleHeight
                             leftText: value
                             onValueChanged: settings.setAS_countsPerDegree = value
                             stepSize: 1
@@ -141,26 +137,20 @@ MoveablePopup {
                             value: Math.round(settings.setAS_countsPerDegree, 0)
                             width: 200 * theme.scaleWidth
                         }
-						SliderCustomized {
+						SteerConfigSliderCustomized {
 							id: ackermannSlider
-                            Layout.alignment: Qt.AlignCenter
                             centerTopText: "AckerMann"
                             from: 1
-                            implicitHeight: 50 * theme.scaleHeight
                             leftText: value
                             onValueChanged: settings.setAS_ackerman = value
                             stepSize: 1
                             to: 200
                             value: Math.round(settings.setAS_ackerman, 0)
-                            width: 200 * theme.scaleWidth
                         }
-						SliderCustomized {
+						SteerConfigSliderCustomized {
 							id: maxSteerSlider
-                            Layout.alignment: Qt.AlignCenter
                             centerTopText:"Max Steer Angle"
                             from: 10
-                            implicitHeight: 50 * theme.scaleHeight
-                            implicitWidth: 200 * theme.scaleWidth
                             leftText: value
                             onValueChanged: settings.setVehicle_maxSteerAngle= value
                             stepSize: 1
@@ -195,7 +185,7 @@ MoveablePopup {
                         spacing: 45 * theme.scaleHeight
                         width: childrenRect.width
                         anchors.leftMargin: 20 * theme.scaleWidth
-                        SliderCustomized {
+                        SteerConfigSliderCustomized {
 							id: propGainlider
                             centerTopText: "Proportional Gain"
                             from: 0
@@ -204,10 +194,8 @@ MoveablePopup {
                             stepSize: 1
                             to: 200
                             value: Math.round(settings.setAS_Kp, 0)
-                            implicitHeight: 50 * theme.scaleHeight
-                            width: 200 * theme.scaleWidth
                         }
-						SliderCustomized {
+						SteerConfigSliderCustomized {
 							id: maxLimitSlider
                             centerTopText: "Maximum Limit"
                             from: 0
@@ -216,10 +204,8 @@ MoveablePopup {
                             stepSize: 1
                             to: 254
                             value: Math.round(settings.setAS_highSteerPWM, 0)
-                            implicitHeight: 50 * theme.scaleHeight
-                            width: 200 * theme.scaleWidth
                         }
-						SliderCustomized {
+						SteerConfigSliderCustomized {
 							id: min2moveSlider
                             centerTopText: "Minimum to Move"
                             from: 0
@@ -228,8 +214,6 @@ MoveablePopup {
                             stepSize: 1
                             to: 100
                             value: Math.round(settings.setAS_minSteerPWM, 0)
-                            implicitHeight: 50 * theme.scaleHeight
-                            width: 200 * theme.scaleWidth
                         }
 					}
 					Image {
@@ -259,29 +243,27 @@ MoveablePopup {
                         height: childrenRect.height
                         spacing: 45 * theme.scaleHeight
                         width: childrenRect.width
-                        SliderCustomized {
+                        SteerConfigSliderCustomized {
 							id: stanleyAggressivenessSlider
                             centerTopText: "Agressiveness"
                             from: .1
                             onValueChanged: settings.stanleyDistanceErrorGain = value
                             stepSize: .1
                             to: 4
-                            width: 200 * theme.scaleWidth
                             leftText: Math.round(value * 100)/100
                             value: settings.stanleyDistanceErrorGain
                         }
-						SliderCustomized {
+						SteerConfigSliderCustomized {
 							id: overShootReductionSlider
                             centerTopText: "OverShoot Reduction"
                             from: .1
                             onValueChanged: settings.stanleyHeadingErrorGain = value
                             stepSize: .1
                             to: 1.5
-                            width: 200 * theme.scaleWidth
                             leftText: Math.round(value * 100) / 100
                             value: settings.stanleyHeadingErrorGain
                         }
-						SliderCustomized {
+						SteerConfigSliderCustomized {
 							id: integralStanleySlider
                             centerTopText: "Integral"
                             from: 0
@@ -290,7 +272,6 @@ MoveablePopup {
                             stepSize: 1
                             to: 100
                             value: Math.round(settings.stanleyIntegralGainAB * 100, 0)
-                            width: 200 * theme.scaleWidth
                         }
 					}
 					Image {
@@ -320,50 +301,43 @@ MoveablePopup {
                         height: childrenRect.height
                         spacing: 45 * theme.scaleHeight
                         width: childrenRect.width
-                        SliderCustomized {
+                        SteerConfigSliderCustomized {
 							id: acqLookAheadSlider
                             centerTopText: "Acquire Look Ahead"
                             from: 1
-                            implicitHeight: 50 * theme.scaleHeight
                             onValueChanged: settings.setVehicle_goalPointLookAhead = value
                             stepSize: .1
                             leftText: Math.round(value * 100) / 100
                             to: 7
                             value: settings.setVehicle_goalPointLookAhead
                         }
-						SliderCustomized {
+						SteerConfigSliderCustomized {
 							id: holdLookAheadSlider
                             centerTopText: "Hold Look Ahead"
                             from: 1
-                            implicitHeight: 50 * theme.scaleHeight
                             stepSize: .1
-                            width: 200
                             leftText: Math.round(value * 100) / 100
                             onValueChanged: settings.setVehicle_goalPointLookAheadHold = utils.decimalRound(value, 1)
                             to: 7
                             value: settings.setVehicle_goalPointLookAheadHold
                         }
-						SliderCustomized {
+						SteerConfigSliderCustomized {
 							id: lookAheadSpeedGainSlider
                             centerTopText: "Look Ahead Speed Gain"
                             from: .5
-                            implicitHeight: 50 * theme.scaleHeight
                             onValueChanged: settings.setVehicle_goalPointLookAheadMult = value
                             stepSize: .1
                             to: 3
-                            width: 200 * theme.scaleWidth
                             leftText: Math.round(value * 100) / 100
                             value: settings.setVehicle_goalPointLookAheadMult
                         }
-						SliderCustomized {
+						SteerConfigSliderCustomized {
 							id: ppIntegralSlider
                             centerTopText: "Integral"
                             from: 0
-                            implicitHeight: 50 * theme.scaleHeight
                             onValueChanged: settings.purePursuitIntegralGainAB = value /100
                             stepSize: 1
                             to: 100
-                            width: 200 * theme.scaleWidth
                             leftText: Math.round(value *100) / 100
                             value: settings.purePursuitIntegralGainAB *100
                         }
