@@ -1,3 +1,6 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
 #include "glutils.h"
 #include <QThread>
 #include <QOpenGLTexture>
@@ -273,7 +276,7 @@ void glDrawArraysTexture(QOpenGLFunctions *gl,
                          bool useColor = false,
                          QColor color = QColor::fromRgbF(1,1,1))
 {
-    gl->glEnable(GL_TEXTURE_2D);
+    //gl->glEnable(GL_TEXTURE_2D);
     //bind shader
     assert(texShader->bind());
     //set mvp matrix
@@ -312,7 +315,7 @@ void glDrawArraysTexture(QOpenGLFunctions *gl,
     vertexBuffer.release();
     //release shader
     texShader->release();
-    gl->glDisable(GL_TEXTURE_2D);
+    //gl->glDisable(GL_TEXTURE_2D);
 }
 void DrawPolygon(QOpenGLFunctions *gl, QMatrix4x4 mvp, QVector<Vec2> &polygon, float size, QColor color)
 {

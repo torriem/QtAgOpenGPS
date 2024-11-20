@@ -1,3 +1,8 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Interface between formgps_ui_tracks and frontend tracks stuff. 
+// Should be renamed to TracksInterface maybe?
 import QtQuick
 
 Item {

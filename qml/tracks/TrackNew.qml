@@ -1,11 +1,15 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Windows for creating new tracks
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 
 import ".."
-import "../components"
+import "../components" as Comp
 
-MoveablePopup {
+Comp.MoveablePopup {
     function show(){
         trackNew.visible = true
     }
@@ -14,7 +18,7 @@ MoveablePopup {
     y: 40
     width: 250
     height: 300
-    TitleFrame{
+    Comp.TitleFrame{
         color: "#f2f2f2"
         border.color: "black"
         title: "Tracks"
@@ -26,28 +30,27 @@ MoveablePopup {
             flow: Grid.LeftToRight
             rows: 2
             columns: 2
-            IconButtonColor{
-                icon.source: "/images/ABTrackA+.png"
+            Comp.IconButtonColor{
+                icon.source: prefix + "/images/ABTrackA+.png"
                 implicitWidth: 100
                 implicitHeight: 100
                 color: "#ffffff"
             }
-            IconButtonColor{
-                icon.source: "/images/ABTrackAB.png"
+            Comp.IconButtonColor{
+                icon.source: prefix + "/images/ABTrackAB.png"
                 implicitWidth: 100
                 implicitHeight: 100
                 color: "#ffffff"
             }
-            IconButtonColor{
-                icon.source: "/images/Cancel64.png"
+            Comp.IconButtonColor{
+                icon.source: prefix + "/images/Cancel64.png"
                 implicitWidth: 70
                 implicitHeight: 70
                 color: "#ffffff"
-                Layout.alignment:  Qt.alignBottom && Qt.alignLeft
                 onClicked: trackNew.visible = false
             }
-            IconButtonColor{
-                icon.source: "/images/ABTrackCurve.png"
+            Comp.IconButtonColor{
+                icon.source: prefix + "/images/ABTrackCurve.png"
                 implicitWidth: 100
                 implicitHeight: 100
                 color: "#ffffff"

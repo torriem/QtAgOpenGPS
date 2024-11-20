@@ -1,3 +1,10 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// I'm going to attempt my documentation in the backend. I'm rather lost there, still. If something is wrong, please fix it.
+// I will only document in the .h files, unless several .cpp's are using one .h (like formgps.h)
+//
+// Settings wrapper class tie-in  
 #ifndef AOGPROPERTY_H
 #define AOGPROPERTY_H
 

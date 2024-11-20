@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// This runs every time we get a new GPS fix, or sim position
 #include "formgps.h"
 #include "cnmea.h"
 #include "cmodulecomm.h"
@@ -1130,7 +1134,8 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("longitude",pn.longitude);
     aog->setProperty("easting",pn.fix.easting);
     aog->setProperty("northing",pn.fix.northing);
-    aog->setProperty("heading", vehicle.fixHeading);
+    aog->setProperty("heading", gpsHeading);
+    aog->setProperty("fusedHeading", vehicle.fixHeading);
     aog->setProperty("toolEasting", vehicle.pivotAxlePos.easting);
     aog->setProperty("toolNorthing", vehicle.pivotAxlePos.northing);
     aog->setProperty("toolHeading", vehicle.pivotAxlePos.heading);
@@ -1149,12 +1154,16 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("avgPivDistance", avgPivDistance); //mm!
     aog->setProperty("offlineDistance", vehicle.guidanceLineDistanceOff);
     aog->setProperty("speedKph", vehicle.avgSpeed);
+/*            lblIMUHeading.Text = mf.GyroInDegrees;
+            lblFix2FixHeading.Text = mf.GPSHeading;
+            lblFuzeHeading.Text = (mf.fixHeading * 57.2957795).ToString("N1");
+*/
 
     // added by Wedel
     aog->setProperty("altitude", pn.altitude);
     aog->setProperty("hdop", pn.hdop);
     aog->setProperty("age", pn.age);
-    aog->setProperty("fixQuality", pn.fixQuality);
+    aog->setProperty("fixQuality", (int)pn.fixQuality);
     aog->setProperty("satellitesTracked", pn.satellitesTracked);
     aog->setProperty("imuHeading", ahrs.imuHeading);
     aog->setProperty("angVel", ahrs.angVel);
@@ -1168,6 +1177,7 @@ void FormGPS::UpdateFixPosition()
 
     aog->setProperty("steerAngleActual", mc.actualSteerAngleDegrees);
     aog->setProperty("steerAngleSet", vehicle.guidanceLineSteerAngle);
+    aog->setProperty("droppedSentences", udpWatchCounts);
 
     if (ABLine.numABLineSelected > 0) {
         //currentABLine_heading is set in formgps_ui.cpp
@@ -1492,7 +1502,7 @@ void FormGPS::AddSectionOrPathPoints()
     prevSectionPos.easting = pn.fix.easting;
 
     // if non zero, at least one section is on.
-    int patchCounter = 0;
+    patchCounter = 0;
 
     //send the current and previous GPS fore/aft corrected fix to each section
     for (int j = 0; j < triStrip.count(); j++)

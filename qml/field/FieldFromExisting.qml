@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Menu when we create a field from existing
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
@@ -121,7 +125,7 @@ Popup {
             anchors.left: editFieldName.right
             anchors.leftMargin: 5
             objectName: "btnBackSpace"
-            icon.source: "/images/BackSpace.png"
+            icon.source: prefix + "/images/BackSpace.png"
             onClicked: newField.text = ""
         }
 
@@ -137,7 +141,7 @@ Popup {
             height: children.height
             IconButtonTransparent{
                 id: btnAddVehicleName
-                icon.source: "/images/Config/Con_VehicleMenu.png"
+                icon.source: prefix + "/images/Config/Con_VehicleMenu.png"
                 Text{
                     anchors.right: parent.left
                     anchors.verticalCenter: parent.verticalCenter
@@ -149,7 +153,7 @@ Popup {
             }
             IconButtonTransparent{
                 id: marker
-                icon.source: "/images/JobNameCalendar.png"
+                icon.source: prefix + "/images/JobNameCalendar.png"
                 Text{
                     anchors.right: parent.left
                     anchors.verticalCenter: parent.verticalCenter
@@ -162,7 +166,7 @@ Popup {
             }
             IconButtonTransparent{
                 id: btnAddTime
-                icon.source: "/images/JobNameTime.png"
+                icon.source: prefix + "/images/JobNameTime.png"
                 Text{
                     anchors.right: parent.left
                     anchors.verticalCenter: parent.verticalCenter
@@ -179,7 +183,7 @@ Popup {
                 checked: false
                 width: marker.width
                 height: marker.height
-                icon.source: "/images/FlagRed.png"
+                icon.source: prefix + "/images/FlagRed.png"
                 text: "Flags"
             }
             IconButtonColor{
@@ -188,7 +192,7 @@ Popup {
                 checked: false
                 width: marker.width
                 height: marker.height
-                icon.source: "/images/ManualOff.png"
+                icon.source: prefix + "/images/ManualOff.png"
                 text: "Mapping"
             }
             IconButtonColor{
@@ -197,7 +201,7 @@ Popup {
                 checked: true
                 width: marker.width
                 height: marker.height
-                icon.source: "/images/HeadlandMenu.png"
+                icon.source: prefix + "/images/HeadlandMenu.png"
                 text: "Headland"
             }
             IconButtonColor{
@@ -206,7 +210,7 @@ Popup {
                 checked: true
                 width: marker.width
                 height: marker.height
-                icon.source: "/images/ABLineEdit.png"
+                icon.source: prefix + "/images/ABLineEdit.png"
                 text: "Lines"
             }
         }
@@ -225,11 +229,11 @@ Popup {
                     existingField.text = ""
                     fieldView.clear_selection()
                 }
-                icon.source: "/images/Cancel64.png"
+                icon.source: prefix + "/images/Cancel64.png"
             }
             IconButtonTransparent{
                 objectName: "btnSave"
-                icon.source: "/images/OK64.png"
+                icon.source: prefix + "/images/OK64.png"
                 enabled: (newField.text !== "" && existingField.text !== "" &&
                           newField.text != existingField.text &&
                           errorMessage.visible == false)

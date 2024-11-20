@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Config page for offset+overlap/gap
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
@@ -30,7 +34,7 @@ Rectangle{
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 10 * theme.scaleWidth
             IconButtonTransparent{
-                icon.source: "/images/SteerZeroSmall.png"
+                icon.source: prefix + "/images/SteerZeroSmall.png"
                 onClicked: {offsetSpin.value = 0; offsetSpin.boundValue = 0}
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -73,7 +77,7 @@ Rectangle{
             checkable: true
             isChecked: (settings.setVehicle_toolOffset < 0)
             property string offsetNum: settings.setVehicle_toolOffset
-            icon.source: "/images/Config/ToolOffsetNegativeLeft.png"
+            icon.source: prefix + "/images/Config/ToolOffsetNegativeLeft.png"
             onClicked: settings.setVehicle_toolOffset = -Math.abs(settings.setVehicle_toolOffset)
         }
 
@@ -91,7 +95,7 @@ Rectangle{
             isChecked: (settings.setVehicle_toolOffset >= 0)
             checkable: true
             onClicked: settings.setVehicle_toolOffset = Math.abs(settings.setVehicle_toolOffset)
-            icon.source: "/images/Config/ToolOffsetPositiveRight.png"
+            icon.source: prefix + "/images/Config/ToolOffsetPositiveRight.png"
             TextLine{ text: qsTr("Tool Right"); anchors.top: right.bottom}
         }
     }
@@ -113,7 +117,7 @@ Rectangle{
             spacing: 10 * theme.scaleWidth
             anchors.bottomMargin: 50 * theme.scaleHeight
             IconButtonTransparent{
-                icon.source: "/images/SteerZeroSmall.png"
+                icon.source: prefix + "/images/SteerZeroSmall.png"
                 onClicked: overlapGapSpin.value = 0
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -156,7 +160,7 @@ Rectangle{
             checkable: true
             isChecked: (settings.setVehicle_toolOverlap >= 0)
             onClicked: settings.setVehicle_toolOverlap = Math.abs(settings.setVehicle_toolOverlap)
-            icon.source: "/images/Config/ToolOverlap.png"
+            icon.source: prefix + "/images/Config/ToolOverlap.png"
             TextLine{ text: qsTr("Overlap"); anchors.top: left.bottom}
         }
 
@@ -174,7 +178,7 @@ Rectangle{
             isChecked: (settings.setVehicle_toolOverlap < 0)
             onClicked: settings.setVehicle_toolOverlap = -Math.abs(settings.setVehicle_toolOverlap)
             checkable: true
-            icon.source: "/images/Config/ToolGap.png"
+            icon.source: prefix + "/images/Config/ToolGap.png"
             TextLine{
                 anchors.horizontalCenter: undefined;
                 anchors.verticalCenter: parent.verticalCenter

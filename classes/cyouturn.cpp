@@ -31,6 +31,8 @@ void CYouTurn::loadSettings()
     rowSkipsWidth = property_set_youSkipWidth;
     Set_Alternate_skips();
 
+	ytList.capacity(128);
+
     youTurnRadius = property_set_youTurnRadius;
 
     uTurnStyle = property_set_uTurnStyle;
@@ -398,7 +400,7 @@ void CYouTurn::CreateCurveWideTurn(bool isTurnLeft, Vec3 pivotPos,
             ytList.append(currentPos);
 
             //Taken from Dubbins
-            while (fabs(head - currentPos.heading) < M_PI)
+            while (fabs(head - currentPos.heading) < M_PI) //fabs?? David
             {
                 //Update the position of the car
                 currentPos.easting += pointSpacing * sin(currentPos.heading);
@@ -903,8 +905,8 @@ bool CYouTurn::CreateABWideTurn(bool isTurnLeft,
         while (fabs(head - currentPos.heading) < M_PI)
         {
             //Update the position of the car
-            currentPos.easting += pointSpacing * Math.Sin(currentPos.heading);
-            currentPos.northing += pointSpacing * Math.Cos(currentPos.heading);
+            currentPos.easting += pointSpacing * sin(currentPos.heading);
+            currentPos.northing += pointSpacing * cos(currentPos.heading);
 
             //Which way are we turning?
             double turnParameter = isTurnLeft ? -1.0 : 1.0;
@@ -940,13 +942,13 @@ bool CYouTurn::CreateABWideTurn(bool isTurnLeft,
         if (!isTurnLeft)
         {
             //creates an imaginary curveline
-            mf.guidanceLookPos.easting += (Math.Cos(head) * turnOffset);
-            mf.guidanceLookPos.northing -= (Math.Sin(head) * turnOffset);
+            mf.guidanceLookPos.easting += (cos(head) * turnOffset);
+            mf.guidanceLookPos.northing -= (sin(head) * turnOffset);
         }
         else
         {
-            mf.guidanceLookPos.easting -= (Math.Cos(head) * turnOffset);
-            mf.guidanceLookPos.northing += (Math.Sin(head) * turnOffset);
+            mf.guidanceLookPos.easting -= (cos(head) * turnOffset);
+            mf.guidanceLookPos.northing += (sin(head) * turnOffset);
         }
 
         nextLine = new CABLine(mf);
@@ -987,8 +989,8 @@ bool CYouTurn::CreateABWideTurn(bool isTurnLeft,
         while (fabs(headie - pointPos.heading) < M_PI)
         {
             //Update the position of the car
-            pointPos.easting += pointSpacing * Math.Sin(pointPos.heading);
-            pointPos.northing += pointSpacing * Math.Cos(pointPos.heading);
+            pointPos.easting += pointSpacing * sin(pointPos.heading);
+            pointPos.northing += pointSpacing * cos(pointPos.heading);
 
             //Which way are we turning?
             double turnParameter = isTurnLeft ? 1.0 : -1.0;
@@ -1124,16 +1126,15 @@ bool CYouTurn::CreateABWideTurn(bool isTurnLeft,
         }
 
         //calculate the new points headings based on fore and aft of point - smoother turns
+		QVector<vec3> arr = ytList;
         cnt = ytList.count();
-        vec3[] arr = new vec3[cnt];
         cnt -= 2;
-        ytList.CopyTo(arr);
-        ytList.Clear();
+        ytList.clear();
 
         for (int i = 2; i < cnt; i++)
         {
             vec3 pt3 = new vec3(arr[i]);
-            pt3.heading = Math.Atan2(arr[i + 1].easting - arr[i - 1].easting,
+            pt3.heading = atan2(arr[i + 1].easting - arr[i - 1].easting,
                                      arr[i + 1].northing - arr[i - 1].northing);
             if (pt3.heading < 0) pt3.heading += glm::twoPI;
             ytList.append(pt3);
@@ -1171,8 +1172,8 @@ QVector<Vec3> &CYouTurn::MoveTurnInsideTurnLine(QVector<Vec3> uTurnList, double 
                                       const CBoundary &bnd)
 {
     //step 1 make array out of the list so that we can modify the position
-    double cosHead = Math.Cos(head);
-    double sinHead = Math.Sin(head);
+    double cosHead = cos(head);
+    double sinHead = sin(head);
 
     QVector<Vec3> arr2 = uTurnList;
 

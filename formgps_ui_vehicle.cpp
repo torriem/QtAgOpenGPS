@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// GUI to backend vehicle interface
 #include "formgps.h"
 #include "qmlutil.h"
 #include "aogproperty.h"

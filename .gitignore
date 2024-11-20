@@ -1,4 +1,5 @@
-*.pro.user
+*.user
+*.user.*
 Wedel.txt
 *.swp
 *.autosave
@@ -7,5 +8,8 @@ compile_commands.json
 .qmake.stash
 .xcf
 Makefile
-build
+build*
+cmkbuild*
 branchnotes.txt
+__pycache__
+CMakeCache.txt

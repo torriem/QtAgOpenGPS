@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Where we set the timing for section on/off
 import QtQuick
 import QtQuick.Controls.Fusion
 
@@ -28,7 +32,7 @@ Rectangle{
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
             cache: true
-            source: "/images/Config/SectionOnLookAhead.gif"
+            source: prefix + "/images/Config/SectionOnLookAhead.gif"
         }
         AnimatedImage{
             id: offPic
@@ -41,7 +45,7 @@ Rectangle{
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             cache: true
-            source: "/images/Config/SectionLookAheadOff.gif"
+            source: prefix + "/images/Config/SectionLookAheadOff.gif"
         }
         AnimatedImage{
             id: offDelayPic
@@ -54,10 +58,11 @@ Rectangle{
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             cache: true
-            source: "/images/Config/SectionLookAheadDelay.gif"
+            source: prefix + "/images/Config/SectionLookAheadDelay.gif"
         }
 
-        SpinBoxDecimal{
+        SpinBoxCustomized{
+            decimals: 1
             anchors.horizontalCenter: onPic.horizontalCenter
             anchors.top: onPic.bottom
             anchors.topMargin: 10
@@ -67,7 +72,8 @@ Rectangle{
             to: 22
             text: qsTr("On (secs)")
         }
-        SpinBoxDecimal{
+        SpinBoxCustomized{
+            decimals: 1
             anchors.horizontalCenter: offPic.horizontalCenter
             anchors.top: offPic.bottom
             anchors.topMargin: 10
@@ -78,7 +84,8 @@ Rectangle{
             editable: true
             text: qsTr("Off (secs)")
         }
-        SpinBoxDecimal{
+        SpinBoxCustomized{
+            decimals: 1
             anchors.horizontalCenter: offDelayPic.horizontalCenter
             anchors.top: offDelayPic.bottom
             anchors.topMargin: 10

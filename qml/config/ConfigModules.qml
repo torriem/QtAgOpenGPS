@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Config Hyd lift timing etc
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Fusion
@@ -123,8 +127,8 @@ import "../components"
                     id: cboxIsHydOn
                     height: 130 * theme.scaleHeight
                     width: 170 * theme.scaleWidth
-                    icon.source: "/images/SwitchOff.png"
-                    iconChecked: "/images/SwitchOn.png"
+                    icon.source: prefix + "/images/SwitchOff.png"
+                    iconChecked: prefix + "/images/SwitchOn.png"
 
                     checkable: true
                     onClicked: unsaved.visible = true
@@ -141,12 +145,12 @@ import "../components"
                     onValueChanged: unsaved.visible = true
                 }
                 Image{
-                    source: "/images/Config/ConMa_LiftRaiseTime"
+                    source: prefix + "/images/Config/ConMa_LiftRaiseTime.png"
                     width: 200 * theme.scaleWidth
                     height: 200 * theme.scaleHeight
 					fillMode: Image.Stretch
                 }
-                SpinBoxDecimal{
+                SpinBoxCustomized{
                     id: nudHydLiftLookAhead
                     from:1
                     //boundValue: settings.setVehicle_hydraulicLiftLookAhead
@@ -156,6 +160,7 @@ import "../components"
                     enabled: cboxIsHydOn.checked
                     text: qsTr("Hyd Lift Look Ahead (secs)")
                     onValueChanged: unsaved.visible = true
+                    decimals: 1
                 }
                 SpinBoxCustomized{
                     id: nudLowerTime
@@ -169,7 +174,7 @@ import "../components"
                     onValueChanged: unsaved.visible = true
                 }
                 Image{
-                    source: "/images/Config/ConMa_LiftLowerTime"
+                    source: prefix + "/images/Config/ConMa_LiftLowerTime.png"
                     width: 200 * theme.scaleWidth
                     height: 200 * theme.scaleHeight
 					fillMode: Image.Stretch
@@ -185,7 +190,7 @@ import "../components"
 			anchors.bottomMargin: 10 * theme.scaleHeight
 			anchors.leftMargin: 10 * theme.scaleWidth
 			anchors.rightMargin: 10 * theme.scaleWidth
-            icon.source: "/images/Config/ConSt_InvertRelay.png"
+            icon.source: prefix + "/images/Config/ConSt_InvertRelay.png"
             checkable: true
             enabled: cboxIsHydOn.checked
             onClicked: unsaved.visible = true
@@ -256,7 +261,7 @@ import "../components"
 				anchors.bottomMargin: 20 * theme.scaleHeight
 				anchors.rightMargin: 20 * theme.scaleWidth
                 anchors.bottom: parent.bottom
-                icon.source: "/images/ToolAcceptChange.png"
+                icon.source: prefix + "/images/ToolAcceptChange.png"
                 onClicked: { save_settings() ; unsaved.visible = false }
 
                 Text{
@@ -275,7 +280,7 @@ import "../components"
                 anchors.rightMargin: modulesSaveLabel.width + 5
                 anchors.verticalCenter: modulesSave.verticalCenter
                 visible: false
-                source: "/images/Config/ConSt_Mandatory.png"
+                source: prefix + "/images/Config/ConSt_Mandatory.png"
 					fillMode: Image.Stretch
             }
         }

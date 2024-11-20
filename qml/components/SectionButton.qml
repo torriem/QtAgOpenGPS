@@ -1,3 +1,8 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// The section buttons acress the screen. This is just one button, which is replicated 
+// in SectionButtons.qml
 import QtQuick
 /*
 Image {
@@ -13,7 +18,7 @@ Image {
             name: "on"
             PropertyChanges {
                 target: image
-                source: "images/SectionOn.png"
+                source: prefix + "images/SectionOn.png"
             }
         },
         State {
@@ -21,14 +26,14 @@ Image {
 
             PropertyChanges {
                 target: image
-                source: "images/SectionAuto.png"
+                source: prefix + "images/SectionAuto.png"
             }
         },
         State {
             name: "off"
             PropertyChanges {
                 target: image
-                source: "images/SectionOff.png"
+                source: prefix + "images/SectionOff.png"
             }
         }
     ]

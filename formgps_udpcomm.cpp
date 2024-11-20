@@ -1,8 +1,13 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// This is in charge of all UDP comm.
 #include <QNetworkDatagram>
 #include "formgps.h"
 #include "aogproperty.h"
 #include "cnmea.h"
 #include <QHostAddress>
+#include "qmlutil.h"
 
 #define BitConverter_ToDouble(data,position) (*(reinterpret_cast<double *>(&(data[position]))))
 #define BitConverter_ToSingle(data,position) (*(reinterpret_cast<float *>(&(data[position]))))
@@ -11,10 +16,9 @@
 
 #define UDP_NMEA_PORT 9999
 
-//const QHostAddress epAgIO = QHostAddress("127.0.0.1"); // TODO for everything good
-const QHostAddress epAgIO = QHostAddress("127.255.255.255"); //TODO for windows
-const int epAgIO_port = 17777;
-
+const QHostAddress epAgIO = QHostAddress("127.0.0.1"); // TODO for everything good
+//const QHostAddress epAgIO = QHostAddress("127.255.255.255"); //TODO for windows
+const int epAgIO_port = 17770;
 void FormGPS::ReceiveFromAgIO()
 {
     double head253, rollK, Lat, Lon;
@@ -60,8 +64,8 @@ void FormGPS::ReceiveFromAgIO()
         switch ((uchar)data[3])
         {
         case 0xD6:
-            if (udpWatch.elapsed() < udpWatchLimit)
-            {
+            if (udpWatch.elapsed() < udpWatchLimit) //simple filter to remove any sentences if we
+            {                                        //just received one, like with wifi, or some network delay.
 				udpWatchCounts++;
                 //TODO implement nmea logging
                 /*
@@ -296,13 +300,23 @@ void FormGPS::DisableSim()
 void FormGPS::StartLoopbackServer()
 {
     AOGSettings s;
-    int port = 15555; //property?
+    int port = 15550; //property?
+	qDebug() << "StartLoopbackServer" << port;
 
     if(udpSocket) stopUDPServer();
 
+    QObject *aog = qmlItem(qml_root, "aog");
     udpSocket = new QUdpSocket(this); //should auto delete with the form
-    udpSocket->bind(QHostAddress::Any, port); //by default, bind to all interfaces.
-    //TODO: change to localhost
+    //udpSocket->bind(QHostAddress::Any, port); //by default, bind to all interfaces.
+
+    if(!udpSocket->bind(QHostAddress::LocalHost, port))
+    {
+        qDebug() << "Failed to bind udpSocket: " << udpSocket->errorString();
+        aog->setProperty("loopbackConnected", false);
+    }else {
+        udpSocket->setSocketOption(QAbstractSocket::MulticastLoopbackOption, 1);
+        qDebug() << "udpSocket bound";
+    }
 
     connect(udpSocket,SIGNAL(readyRead()),this,SLOT(ReceiveFromAgIO()));
 
