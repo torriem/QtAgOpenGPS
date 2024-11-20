@@ -306,10 +306,7 @@ MoveablePopup {
                 MouseArea{
                     id: angleInfoMouse
                     anchors.fill: parent
-                    onClicked: {
-                        steerConfigSettings.show()
-                        steerConfigWindow.visible = false
-                    }
+                    onClicked: steerConfigSettings.show()
 
                 }
                 RowLayout{

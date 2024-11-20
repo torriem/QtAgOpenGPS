@@ -1426,7 +1426,6 @@ Window {
         }
         SteerConfig.SteerConfigSettings{
 			id: steerConfigSettings
-			anchors.fill: parent
 			visible: false
 		}
         ABCurvePicker{

@@ -10,52 +10,19 @@ import ".."
 import "../components"
 
 
-Rectangle{
-	id: steerConfig
-	anchors.fill: parent
-	z: 5
-	function show (){
-		visible = true
-	}
-	color: "lightgray"
+Window{
+    id: steerConfig
+    height: mainWindow.height
+    title: qsTr("Auto Steer Config")
+    visible: true
+    width: mainWindow.width
 
-	Rectangle{
-		id:topLine
-		color:"white"
-		visible: true
-		width: parent.width
-		height: 50 * theme.scaleHeight
-		anchors.top: parent.top
-		anchors.horizontalCenter: parent.horizontalCenter
-		Text{
-			anchors.left: parent.left
-			anchors.verticalCenter: parent.verticalCenter
-			text: qsTr("Auto Steer Config")
-		}
+    Rectangle{//background
+        anchors.fill: parent
+        color: "lightgray"
+    }
 
-		IconButtonTransparent {
-			id: close
-			icon.source: prefix + "/images/WindowClose.png"
-			font.pixelSize: parent.height
-			width: parent.height+3
-			height:parent.height
-			anchors.right: parent.right
-			onClicked: {
-				steerConfigSettings.visible = false
-				steerConfigWindow.show()
-			}
-		}
-		Button {
-			id: help
-			text: qsTr("?")
-			width: parent.height+3
-			height:parent.height
-			anchors.right: close.left
-			anchors.rightMargin: 20 * theme.scaleWidth
-			visible: false //TODO help
-		}
-	}
-	ButtonGroup{
+    ButtonGroup{
 		buttons: settingsBtns.children
 	}
 
