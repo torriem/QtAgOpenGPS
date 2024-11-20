@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Vehicle dimensions
 import QtQuick
 import QtQuick.Controls.Fusion
 
@@ -15,10 +19,10 @@ Rectangle{
     visible: false
     Image {
         id: dimImage
-        source: Number(settings.setVehicle_vehicleType) === 0 ? "/images/RadiusWheelBase.png":
-                Number(settings.setVehicle_vehicleType) === 1 ? "/images/RadiusWheelBaseHarvester.png" :
-                Number(settings.setVehicle_vehicleType) === 2 ? "/images/RadiusWheelBase4WD.png":
-                "/images/Config/ConSt_Mandatory.png"
+        source: Number(settings.setVehicle_vehicleType) === 0 ? prefix + "/images/RadiusWheelBase.png":
+                Number(settings.setVehicle_vehicleType) === 1 ? prefix + "/images/RadiusWheelBaseHarvester.png" :
+                Number(settings.setVehicle_vehicleType) === 2 ? prefix + "/images/RadiusWheelBase4WD.png":
+                prefix + "/images/Config/ConSt_Mandatory.png"
         anchors.fill: parent
         anchors.margins: 15
     }

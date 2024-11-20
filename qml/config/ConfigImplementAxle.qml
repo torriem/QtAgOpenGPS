@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Set where main axle is on implement
 import QtQuick
 import QtQuick.Controls.Fusion
 
@@ -10,7 +14,7 @@ Rectangle{
     color: aog.backgroundColor
 
     IconButtonTransparent{
-        icon.source: "/images/SteerZeroSmall.png"
+        icon.source: prefix + "/images/SteerZeroSmall.png"
         onClicked: {offsetSpin.value = 0; offsetSpin.boundValue = 0}
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: forwardBackSpin.bottom
@@ -48,7 +52,7 @@ Rectangle{
         anchors.leftMargin: 50 * theme.scaleWidth
         checkable: true
         isChecked: (settings.setTool_trailingToolToPivotLength > 0)
-        icon.source: "/images/Config/ToolHitchPivotOffsetNeg.png"
+        icon.source: prefix + "/images/Config/ToolHitchPivotOffsetNeg.png"
         onClicked: settings.setTool_trailingToolToPivotLength = Math.abs(settings.setTool_trailingToolToPivotLength)
     }
 
@@ -62,6 +66,6 @@ Rectangle{
         isChecked: (settings.setTool_trailingToolToPivotLength <= 0)
         checkable: true
         onClicked: settings.setTool_trailingToolToPivotLength = -Math.abs(settings.setTool_trailingToolToPivotLength)
-        icon.source: "/images/Config/ToolHitchPivotOffsetPos.png"
+        icon.source: prefix + "/images/Config/ToolHitchPivotOffsetPos.png"
     }
 }

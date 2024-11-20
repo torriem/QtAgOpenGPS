@@ -41,7 +41,7 @@ public:
     double slowSpeedCutoff = 0;
 
     //autosteer values
-    double goalPointLookAhead, goalPointLookAheadHold, goalPointLookAheadMult;
+    double goalPointLookAhead, goalPointLookAheadHold, goalPointLookAheadMult, uturnCompensation;
 
     double stanleyDistanceErrorGain, stanleyHeadingErrorGain;
     double minLookAheadDistance = 2.0;

@@ -1,8 +1,10 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 import QtQuick.Shapes
-import "components"
+import "components" as Comp
 
 Popup{
     id: headacheDesigner
@@ -348,42 +350,42 @@ Popup{
             rows: 2
             width: parent.width
             rowSpacing: buttons.spacing
-            IconButtonTransparent{
+            Comp.IconButtonTransparent{
                 //objectName: "btnBLength"
-                icon.source: "/images/APlusPlusB.png"
+                icon.source: prefix + "/images/APlusPlusB.png"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: headacheDesigner.blength()
             }
-            IconButtonTransparent{
+            Comp.IconButtonTransparent{
                 //objectName: "btnBShrink"
-                icon.source: "/images/APlusMinusB.png"
+                icon.source: prefix + "/images/APlusMinusB.png"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: HeadacheDesigner.bshrink()
             }
-            IconButtonTransparent{
+            Comp.IconButtonTransparent{
                 //objectName: "cBoxIsSectionControlled"
-                icon.source: "/images/HeadlandSectionOff.png"
-                iconChecked: "/images/HeadlandSectionOn.png"
+                icon.source: prefix + "/images/HeadlandSectionOff.png"
+                iconChecked: prefix + "/images/HeadlandSectionOn.png"
                 checkable: true
                 Layout.alignment: Qt.AlignCenter
                 isChecked: settings.setHeadland_isSectionControlled
                 onCheckedChanged: isSectionControlled(checked)
             }
-            IconButtonTransparent{
+            Comp.IconButtonTransparent{
                 //objectName: "btnALength"
-                icon.source: "/images/APlusPlusA.png"
+                icon.source: prefix + "/images/APlusPlusA.png"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: headacheDesigner.alength()
             }
-            IconButtonTransparent{
+            Comp.IconButtonTransparent{
                 //objectName: "btnAShrink"
-                icon.source: "/images/APlusMinusA.png"
+                icon.source: prefix + "/images/APlusMinusA.png"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: headacheDesigner.ashrink()
             }
-            IconButtonTransparent{
+            Comp.IconButtonTransparent{
                 //objectName: "btnAShrink"
-                icon.source: "/images/HeadlandDeletePoints.png"
+                icon.source: prefix + "/images/HeadlandDeletePoints.png"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: headacheDesigner.cancelTouch()
             }
@@ -394,53 +396,53 @@ Popup{
             width: parent.width
             columns: 2
             rowSpacing: buttons.spacing
-            IconButtonColor{
+            Comp.IconButtonColor{
                 id: headacheCurve
                 //objectName: "rbtnLine"
                 checkable: true
                 isChecked: true
                 Layout.alignment: Qt.AlignCenter
-                icon.source: "/images/ABTrackCurve.png"
+                icon.source: prefix + "/images/ABTrackCurve.png"
                 onClicked: curveLine = true
             }
-            IconButtonColor{
+            Comp.IconButtonColor{
                 id: headacheAB
                 //objectName: "rbtnCurve"
                 checkable: true
                 Layout.alignment: Qt.AlignCenter
-                icon.source: "/images/ABTrackAB.png"
+                icon.source: prefix + "/images/ABTrackAB.png"
                 onClicked: curveLine = false
             }
-            SpinBoxM {
+            Comp.SpinBoxM {
                 //objectName: "nudSetDistance"
                 from: 0
                 to: 2000
                 boundValue: numTracks.value * settings.setVehicle_toolWidth
                 Layout.alignment: Qt.AlignCenter
-                TextLine{anchors.top: parent.bottom; text: "( "+ utils.m_unit_abbrev()+" )"}
+                Comp.TextLine{anchors.top: parent.bottom; text: "( "+ utils.m_unit_abbrev()+" )"}
 
                 onValueChanged: lineDistance = value
             }
-            SpinBoxCustomized{
+            Comp.SpinBoxCustomized{
                 id: numTracks
                 from: 0
                 to: 10
                 value: 0
                 Layout.alignment: Qt.AlignCenter
-                TextLine{anchors.top: parent.bottom; text: qsTr("Tool: ")+ utils.m_to_ft_string(settings.setVehicle_toolWidth)}
+                Comp.TextLine{anchors.top: parent.bottom; text: qsTr("Tool: ")+ utils.m_to_ft_string(settings.setVehicle_toolWidth)}
             }
-            IconButtonColor{
+            Comp.IconButtonColor{
                 id: cboxIsZoom
                 //objectName: "cboxIsZoom"
                 checkable: true
-                icon.source: "/images/ZoomOGL.png"
+                icon.source: prefix + "/images/ZoomOGL.png"
                 Layout.alignment: Qt.AlignCenter
             }
 
-            IconButtonTransparent{
+            Comp.IconButtonTransparent{
                 //objectName: "btnBndLoop"            rows: 2
 
-                icon.source: "/images/HeadlandBuild.png"
+                icon.source: prefix + "/images/HeadlandBuild.png"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: createHeadland()
             }
@@ -451,37 +453,37 @@ Popup{
             columns: 3
             rowSpacing: buttons.spacing
             width: parent.width
-            IconButtonTransparent{
+            Comp.IconButtonTransparent{
                 //objectName: "btnDeletePoints"
-                icon.source: "/images/HeadlandReset.png"
+                icon.source: prefix + "/images/HeadlandReset.png"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: deleteHeadland()
             }
-            IconButtonTransparent{
-                icon.source: "/images/ABLineCycleBk.png"
+            Comp.IconButtonTransparent{
+                icon.source: prefix + "/images/ABLineCycleBk.png"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: cycleBackward()
             }
-            IconButtonTransparent{
-                icon.source: "/images/ABLineCycle.png"
+            Comp.IconButtonTransparent{
+                icon.source: prefix + "/images/ABLineCycle.png"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: cycleForward()
             }
-            IconButtonTransparent{
-                icon.source: "/images/SwitchOff.png"
+            Comp.IconButtonTransparent{
+                icon.source: prefix + "/images/SwitchOff.png"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     headlandOff()
                     headacheDesigner.visible = false
                 }
             }
-            IconButtonTransparent{
-                icon.source: "/images/Trash.png"
+            Comp.IconButtonTransparent{
+                icon.source: prefix + "/images/Trash.png"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: deleteCurve()
             }
-            IconButtonTransparent{
-                icon.source: "/images/OK64.png"
+            Comp.IconButtonTransparent{
+                icon.source: prefix + "/images/OK64.png"
                 Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     save_exit()

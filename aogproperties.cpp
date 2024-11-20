@@ -245,6 +245,8 @@ AOGProperty property_setWindow_QuickABLocation("dialogs/quickABLocation",QPoint(
 AOGProperty property_setDisplay_isLogElevation("display/isLogElevation",false);
 AOGProperty property_setSound_isSectionsOn("display/soundIsSectionOn",true);
 AOGProperty property_setGPS_dualReverseDetectionDistance("gps/dualReverseDetectionDistance",0.25);
+AOGProperty property_setTool_isDisplayTramControl("display/showTramControl",true);
+AOGProperty property_setAS_uTurnCompensation("autosteer/uTurnCompensation",1);
 AOGProperty property_setFeature_isHeadlandOn("displayFeatures/isHeadlandOn",true);
 AOGProperty property_setFeature_isTramOn("displayFeatures/isTramOn",true);
 AOGProperty property_setFeature_isBoundaryOn("displayFeatures/isBoundaryOn",true);
@@ -270,3 +272,7 @@ AOGProperty property_displayShowBack("display/showBack",false);
 AOGProperty property_displayAntiAliasSamples("display/antiAliasSamples",false);
 AOGProperty property_setDisplay_useTrackZero("display/useTrackZero",false);
 AOGProperty property_setDisplay_topTrackNum("display/topTrackNum",false);
+AOGProperty property_setDisplay_colorDayBackground("display/colorDayBackground",false);
+AOGProperty property_setDisplay_colorNightBackground("display/colorNightBackground",false);
+AOGProperty property_setDisplay_colorDayBorder("display/colorDayBorder",false);
+AOGProperty property_setDisplay_colorNightBorder("display/colorNightBorder",false);

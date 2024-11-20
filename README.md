@@ -2,6 +2,10 @@ QtAgOpenGPS
 ===========
 Ag Precision Mapping and Section Control Software
 
+Note!
+==========
+I haven't compiled for Windows in awhile. If this branch ever won't compile on Windows, contact me, or have a go at it yourself!
+
 What is QtAgOpenGPS?
 --------------------
 QtAgOpenGPS is a direct port of Brian Tischler's [AgOpenGPS](https://github.com/farmerbriantee/AgOpenGPS), which was originally
@@ -47,8 +51,9 @@ remains GPLv3 for now.
 
 Requirements
 ------------
-QtAOG requires Qt 5.9 or newer to build, on any Qt-supported platform
+QtAOG requires Qt 6.0 or newer to build, on any Qt-supported platform
 that supports OpenGL ES 2 or newer, or DirectX on Windows.
+It also requires cmake 3.22 or newer.
 
 Why this Port?
 --------------
@@ -72,7 +77,7 @@ Earlier I changed the case of methods to be more standard C++. I've
 started to undo that and make the method calls as close to AOG's
 original names as possible.
 
-Mmost variables, functions, and methods, retain the AOG names, unless
+Most variables, functions, and methods, retain the AOG names, unless
 architectural differences require moving code into different sections.
 For example, the OpenGL code runs in a different thread than the main
 GUI loop, the logic to set UI state has been pulled out of the function
@@ -82,18 +87,30 @@ each time we draw the frame we have to set all the variables including
 the model view and perspective matrices.  Of course in OpenGL ES we
 must manage those matrices ourselves anyway.
 
-AgIO has not yet been ported, so once UDP functionality is working,
-AgIO will be required for now.  It does not yet run under Wine on
-Linux.  The simulator works, though.
+QtAgIO Notes
+-------------
+QtAgIO only works with UDP. The GUI is only half done.
+If you run it, then go to ~/Documents/QtAgOpenGPS/QtAgIO.ini,
+you can change the IP address to whatever you need. Note that the loopback
+ports are changed to 17770 and 15550, instead of 17777 and 15555 like AOG,
+so we can run with AOG on the same device. If you change back to 17777, and 
+15555, you can run QtAOG with Brian's AgIO, and vice versa.
+NTRIP settings can be changed, however, the changes wil only take effect if
+you restart QtAgIO.
+
+I also added a "ListenOnly" setting to the .ini, so we can listen only on
+the UDP network, so it won't interfere with a working machine in the field.
+This setting is false by default, so you won't notice it, unless you change
+it on the .ini.
+
+The network flow is not all correct yet. There is no "try to reconnect" code
+right now. If you didn't connect the first time, you have to restart QtAgIO.
 
 Status of the Port
 ------------------
 As of Jan 4, 2023, the backend code is now tracking pretty closely to the
 progress being made on AgOpenGPS/isoxml branch, at least as of Dec 20,
-2023.  UDP is not yet working.
-
-David Wedel is working on the QML gui which we plan to get working during
-the month of January.
+2023.
 
 UI is still mostly non-present, but works with the built-in simulator.
 For testing purposes, a job and field is automatically started, and a 
@@ -154,7 +171,26 @@ Look here: https://www.qt.io/offline-installers in the "QT Creator" section.
 - (drink beer)
 - ./QtAgOpenGPS &
 
+- mkdir build
+- cd build
+- cmake -G "Unix Maakefiles" ../
+- make
+- (open a beer)
+- (drink beer)
+- ./QtAgOpenGPS &
+
 # Contributing to source
+
+## Porting from AOG
+
+### Data types
+
+- First type is cs, second is Qt/cpp
+- byte = quint8
+- char = QByteArray
+- string = QString
+- Byte[] = QByteArray
+
 
 ## Creating scalable UI's
 

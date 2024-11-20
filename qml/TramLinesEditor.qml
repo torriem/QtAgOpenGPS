@@ -1,12 +1,16 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+//
 import QtQuick 2.0
 import QtQuick.Controls.Fusion
-import "components"
+import "components" as Comp
 
 Item {
     width: 340
     height: 550
         id: mainWindowTram
-        TopLine{
+        Comp.TopLine{
             id: topLine
             titleText: "Tram Lines"
         }
@@ -23,8 +27,8 @@ Item {
             width: children.width
             spacing: 35
             height: children.height
-            IconButtonTransparent{
-                icon.source: "/images/SnapLeftHalf.png"
+            Comp.IconButtonTransparent{
+                icon.source: prefix + "/images/SnapLeftHalf.png"
             }
             Text{
                 text: "2.00 m"
@@ -33,8 +37,8 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            IconButtonTransparent{
-                icon.source: "/images/SnapRightHalf.png"
+            Comp.IconButtonTransparent{
+                icon.source: prefix + "/images/SnapRightHalf.png"
             }
         }
         Row{
@@ -45,8 +49,8 @@ Item {
             width: children.width
             spacing: 25
             height: children.height
-            IconButtonTransparent{
-                icon.source: "/images/ArrowLeft.png"
+            Comp.IconButtonTransparent{
+                icon.source: prefix + "/images/ArrowLeft.png"
             }
             Text{
                 text: "10 cm"
@@ -55,25 +59,25 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            IconButtonTransparent{
-                icon.source: "/images/ArrowRight.png"
+            Comp.IconButtonTransparent{
+                icon.source: prefix + "/images/ArrowRight.png"
             }
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             id: tramSwapAB
             anchors.top: tramSmallNudge.bottom
             anchors.topMargin: 20
             anchors.left: parent.left
             anchors.leftMargin: 60
-            icon.source: "/images/ABSwapPoints.png"
+            icon.source: prefix + "/images/ABSwapPoints.png"
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             id: tramSwapMode
             anchors.top: tramSmallNudge.bottom
             anchors.topMargin: 10
             anchors.left: tramSwapAB.right
             anchors.leftMargin: 60
-            icon.source: "/images/TramLines.png"
+            icon.source: prefix + "/images/TramLines.png"
         }
         Text {
             text: qsTr("Mode")
@@ -89,11 +93,11 @@ Item {
             anchors.topMargin: 30
             height:tramPassesDown.height
             spacing: 25
-            IconButtonTransparent{
+            Comp.IconButtonTransparent{
                 id: tramPassesDown
-                icon.source: "/images/DnArrow64.png"
+                icon.source: prefix + "/images/DnArrow64.png"
             }
-            SpinBoxCustomized{
+            Comp.SpinBoxCustomized{
                 id: passesRow
                 width: tramPassesDown.width
                 height: tramPassesDown.height
@@ -102,25 +106,25 @@ Item {
                     value: 1
                     to: 999
             }
-            IconButtonTransparent{
-                icon.source: "/images/UpArrow64.png"
+            Comp.IconButtonTransparent{
+                icon.source: prefix + "/images/UpArrow64.png"
             }
         }
 
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             anchors.left: parent.left
             anchors.leftMargin: 10
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 10
-            icon.source: "/images/SwitchOff.png"
+            icon.source: prefix + "/images/SwitchOff.png"
             onClicked: tramLinesEditor.visible = false
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             anchors.right: parent.right
             anchors.rightMargin: 10
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 10
-            icon.source: "/images/VehFileSave.png"
+            icon.source: prefix + "/images/VehFileSave.png"
         }
         Column{
             anchors.horizontalCenter: parent.horizontalCenter

@@ -90,6 +90,7 @@ void CVehicle::loadSettings()
     maxSteerSpeed = property_setAS_maxSteerSpeed;
     minSteerSpeed = property_setAS_minSteerSpeed;
 
+    uturnCompensation = property_setAS_uTurnCompensation;
 }
 
 CVehicle::CVehicle(QObject *parent) : QObject(parent)

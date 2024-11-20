@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Spinbox, just customized. Allows the use of decimals
 import QtQuick
 import QtQuick.Controls.Fusion
 
@@ -37,7 +41,7 @@ Item {
         spinner.value = boundValue
     }
 
-	SpinBoxFusion{
+    SpinBox{
 		id: spinner
 		from: spinBox_Customized.from * decimalFactor
 		to: spinBox_Customized.to * decimalFactor

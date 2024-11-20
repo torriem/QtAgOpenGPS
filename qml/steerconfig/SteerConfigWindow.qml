@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// The window where we set WAS, Stanley, PP, PWM
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
@@ -78,7 +82,7 @@ MoveablePopup {
 				width: parent.width
 				IconButtonColor{
 					id: steerBtn
-					icon.source: "/images/Steer/ST_SteerTab.png"
+					icon.source: prefix + "/images/Steer/ST_SteerTab.png"
 					implicitWidth: parent.width /4 - 4
 					implicitHeight: 50 * theme.scaleHeight
 					checkable: true
@@ -87,7 +91,7 @@ MoveablePopup {
 				}
 				IconButtonColor{
 					id: gainBtn
-					icon.source: "/images/Steer/ST_GainTab.png"
+					icon.source: prefix + "/images/Steer/ST_GainTab.png"
 					implicitWidth: parent.width /4 - 4
 					implicitHeight: 50 * theme.scaleHeight
 					checkable: true
@@ -95,7 +99,7 @@ MoveablePopup {
 				}
 				IconButtonColor{
 					id: stanleyBtn
-					icon.source: "/images/Steer/ST_StanleyTab.png"
+					icon.source: prefix + "/images/Steer/ST_StanleyTab.png"
 					implicitWidth: parent.width /4 - 4
 					implicitHeight: 50 * theme.scaleHeight
 					checkable: true
@@ -103,7 +107,7 @@ MoveablePopup {
 				}
 				IconButtonColor{
 					id: ppBtn
-					icon.source: "/images/Steer/Sf_PPTab.png"
+					icon.source: prefix + "/images/Steer/Sf_PPTab.png"
 					implicitWidth: parent.width /4 - 4
 					implicitHeight: 50 * theme.scaleHeight
 					checkable: true
@@ -133,21 +137,29 @@ MoveablePopup {
 						anchors.bottomMargin: 5 * theme.scaleHeight
 						anchors.rightMargin: 20 * theme.scaleWidth
 						anchors.leftMargin: 20 * theme.scaleWidth
-						IconButtonTransparent{
+                        IconButtonTransparent{ //was zero button
 							width: height*2
-							icon.source: "/images/SteerCenter.png"
+							icon.source: prefix + "/images/SteerCenter.png"
 							implicitHeight: parent.height /5 -20
 							Layout.alignment: Qt.AlignCenter
+                            visible: false
 
 						}
 
 						SliderCustomized {
 							id: wasZeroSlider
 							width: 200 * theme.scaleWidth
-							leftText: value
-							from: -30//idk
-							to: 30
-							value: 5
+                            leftText: utils.decimalRound(value / cpDegSlider.value, 2)
+                            from: -4000
+                            to: 4000
+
+                            property int wasOffset: settings.setAS_wasOffset
+
+                            //onWasOffsetChanged: value = wasOffset / cpDegSlider.value
+
+                            value: settings.setAS_wasOffset / cpDegSlider.value
+
+                            onValueChanged: settings.setAS_wasOffset = value * cpDegSlider.value
 							centerTopText: "WAS Zero"
 							Layout.alignment: Qt.AlignCenter
 							implicitHeight: 50 * theme.scaleHeight
@@ -197,7 +209,7 @@ MoveablePopup {
 						anchors.left: parent.left
 						anchors.bottom: parent.bottom
 						height: parent.height
-						source: "/images/Steer/Sf_SteerTab.png"
+						source: prefix + "/images/Steer/Sf_SteerTab.png"
 					}
 
 				}
@@ -258,7 +270,7 @@ MoveablePopup {
 						anchors.left: parent.left
 						anchors.bottom: parent.bottom
 						height: parent.height
-						source: "/images/Steer/Sf_GainTab.png"
+						source: prefix + "/images/Steer/Sf_GainTab.png"
 					}
 
 				}
@@ -285,9 +297,9 @@ MoveablePopup {
 							width: 200 * theme.scaleWidth
 							from: .1
 							to: 4
-							value: Math.round(settings.stanleyDistanceErrorGain, 0)
+                            value: settings.stanleyDistanceErrorGain
 							onValueChanged: settings.stanleyDistanceErrorGain = value
-							leftText: value
+                            leftText: Math.round(value * 100)/100
 							centerTopText: "Agressiveness"
 							stepSize: .1
 						}
@@ -296,9 +308,9 @@ MoveablePopup {
 							width: 200 * theme.scaleWidth
 							from: .1
 							to: 1.5
-							value: Math.round(settings.stanleyHeadingErrorGain, 0)
+                            value: settings.stanleyHeadingErrorGain
 							onValueChanged: settings.stanleyHeadingErrorGain = value
-							leftText: value
+                            leftText: Math.round(value * 100) / 100
 							centerTopText: "OverShoot Reduction"
 							stepSize: .1
 						}
@@ -319,7 +331,7 @@ MoveablePopup {
 						anchors.left: parent.left
 						anchors.bottom: parent.bottom
 						height: parent.height
-						source: "/images/Steer/Sf_Stanley.png"
+						source: prefix + "/images/Steer/Sf_Stanley.png"
 					}
 
 				}
@@ -345,10 +357,10 @@ MoveablePopup {
 							id: acqLookAheadSlider
 							implicitHeight: 50 * theme.scaleHeight
 							from: 1
-							to: 5
-							value: Math.round(settings.setVehicle_goalPointLookAhead, 1)
+                            to: 7
+                            value: settings.setVehicle_goalPointLookAhead
 							onValueChanged: settings.setVehicle_goalPointLookAhead = value
-							leftText: value
+                            leftText: Math.round(value * 100) / 100
 							centerTopText: "Acquire Look Ahead"
 							stepSize: .1
 						}
@@ -357,10 +369,10 @@ MoveablePopup {
 							width: 200
 							implicitHeight: 50 * theme.scaleHeight
 							from: 1
-							to: 5
-							value: Math.round(settings.setVehicle_goalPointLookAheadHold, 1)
-							onValueChanged: settings.setVehicle_goalPointLookAheadHold = value
-							leftText: value
+                            to: 7
+                            value: settings.setVehicle_goalPointLookAheadHold
+                            onValueChanged: settings.setVehicle_goalPointLookAheadHold = utils.decimalRound(value, 1)
+                            leftText: Math.round(value * 100) / 100
 							centerTopText: "Hold Look Ahead"
 							stepSize: .1
 						}
@@ -370,9 +382,9 @@ MoveablePopup {
 							implicitHeight: 50 * theme.scaleHeight
 							from: .5
 							to: 3
-							value: Math.round(settings.setVehicle_goalPointLookAheadMult, 1)
+                            value: settings.setVehicle_goalPointLookAheadMult
 							onValueChanged: settings.setVehicle_goalPointLookAheadMult = value
-							leftText: value
+                            leftText: Math.round(value * 100) / 100
 							centerTopText: "Look Ahead Speed Gain"
 							stepSize: .1
 						}
@@ -382,9 +394,9 @@ MoveablePopup {
 							from: 0
 							implicitHeight: 50 * theme.scaleHeight
 							to: 100
-							value: Math.round(settings.purePursuitIntegralGainAB *100, 0)
+                            value: settings.purePursuitIntegralGainAB *100
 							onValueChanged: settings.purePursuitIntegralGainAB = value /100
-							leftText: value
+                            leftText: Math.round(value *100) / 100
 							centerTopText: "Integral"
 							stepSize: 1
 						}
@@ -394,7 +406,7 @@ MoveablePopup {
 						anchors.left: parent.left
 						anchors.bottom: parent.bottom
 						height: ppColumn.height
-						source: "/images/Steer/Sf_PP.png"
+						source: prefix + "/images/Steer/Sf_PP.png"
 					}
 				}
 				//endregion PurePursuitTab
@@ -436,7 +448,7 @@ MoveablePopup {
 						Layout.alignment: Qt.AlignCenter
 					}
 					IconButtonTransparent{
-						icon.source: "/images/ArrowRight.png"
+						icon.source: prefix + "/images/ArrowRight.png"
 						implicitWidth: parent.width/4
 						implicitHeight: parent.height
 						onClicked: angleInfoMouse.clicked(true)
@@ -469,22 +481,22 @@ MoveablePopup {
 				IconButton{
 					id: pwmSteer
 					isChecked: false
-					icon.source: "/images/SteerDriveOff.png"
-					iconChecked: "/images/SteerDriveOn.png"
+					icon.source: prefix + "/images/SteerDriveOff.png"
+					iconChecked: prefix + "/images/SteerDriveOn.png"
 					implicitWidth: parent.width/4
 					implicitHeight: parent.height
 					color3: "white"
 					border: 2
 				}
 				IconButton{
-					icon.source: "/images/SnapLeft.png"
+					icon.source: prefix + "/images/SnapLeft.png"
 					implicitWidth: parent.width/4
 					implicitHeight: parent.height
 					color3: "white"
 					border: 2
 				}
 				IconButton{
-					icon.source: "/images/SnapRight.png"
+					icon.source: prefix + "/images/SnapRight.png"
 					implicitWidth: parent.width/4
 					implicitHeight: parent.height
 					color3: "white"
@@ -492,7 +504,7 @@ MoveablePopup {
 				}
 				IconButton{
 					id: pwmZero
-					icon.source: "/images/SteerZeroSmall.png"
+					icon.source: prefix + "/images/SteerZeroSmall.png"
 					implicitWidth: parent.width/4
 					implicitHeight: parent.height
 					color3: "white"
@@ -520,8 +532,8 @@ MoveablePopup {
 				height: 75 * theme.scaleHeight
 				color3: "white"
 				border: 2
-				icon.source: "/images/BoundaryRecord.png"
-				iconChecked: "/images/Stop"
+				icon.source: prefix + "/images/BoundaryRecord.png"
+				iconChecked: prefix + "/images/Stop"
 			}
 			Text{
 				anchors.top: steerRecord.top

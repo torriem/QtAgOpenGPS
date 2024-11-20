@@ -1,9 +1,15 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// main
 #include "formgps.h"
 #include <QApplication>
 #include <QCoreApplication>
 #include <QLabel>
 #include "aogrenderer.h"
 #include "aogproperty.h"
+#include <QProcess>
+#include <QSysInfo>
 
 QLabel *grnPixelsWindow;
 AOGSettings *settings;
@@ -45,6 +51,49 @@ int main(int argc, char *argv[])
         grnPixelsWindow->setFixedHeight(500);
         grnPixelsWindow->show();
     }
+
+    //Returns "android" on Android, "windows" on Windows. See docs https://doc.qt.io/qt-6/qsysinfo.html#productType
+    QString osType = QSysInfo::productType();
+    qInfo() << "Os Type: " << osType;
+    if (osType == "android")
+        w.isAndroid = true;
+    else if (osType == "windows")
+        w.isWindows = true;
+
+    //else assume Linux. Can add more if needed
+
+    QProcess process;
+    //auto start AgIO
+    if((!w.isAndroid) && property_setFeature_isAgIOOn){
+
+        QObject::connect(&process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+                         [&a](int exitCode, QProcess::ExitStatus exitStatus) {
+            qDebug() << "AgIO process finished with exit code:" << exitCode
+                     << "and status:" << (exitStatus == QProcess::NormalExit ? "Normal" : "Crashed");
+            qDebug() << "Closing main application...";
+            qDebug() << "Note to Michael: This is happening in Main.cpp line 65. Remove this line if this is how you want it, or the whole 'feature' if it isn't";
+            QCoreApplication::quit(); // Quit the application
+        });
+
+
+        QObject::connect(&process, &QProcess::errorOccurred, [&](QProcess::ProcessError error) {
+            if (error == QProcess::Crashed) {
+                qDebug() << "AgIO Crashed! Quitting QtAgOpenGPS";
+                w.quit();  // Quit the main application if the process crashes
+            }
+        });
+
+        process.start("./QtAgIO/QtAgIO");
+
+        // Ensure process starts successfully
+        if (!process.waitForStarted()) {
+            qWarning() << "AgIO failed to start. Quitting QtAgOpenGPS";
+            return -1;  // Exit if process fails to start
+        }
+    }
+
+
+
 
     /*
     CDubinsTurningRadius = 5.25;

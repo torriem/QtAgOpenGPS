@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Main event loop save/load files from file manager to QtAOG
 #include "formgps.h"
 #include <QDir>
 //#include "aogsettings.h"

@@ -1,8 +1,10 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 import QtQuick.Shapes
-import "components"
+import "components" as Comp
 
 Popup{
     id: headlandDesigner
@@ -326,63 +328,63 @@ Popup{
             buttons: [ headlandAB, headlandCurve ]
         }
 
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             objectName: "btnBLength"
-            icon.source: "/images/APlusPlusB.png"
+            icon.source: prefix + "/images/APlusPlusB.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: {
                 headlandDesigner.blength()
             }
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             objectName: "btnBShrink"
-            icon.source: "/images/APlusMinusB.png"
+            icon.source: prefix + "/images/APlusMinusB.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: {
                 headlandDesigner.bshrink()
             }
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             objectName: "btnALength"
-            icon.source: "/images/APlusPlusA.png"
+            icon.source: prefix + "/images/APlusPlusA.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: {
                 headlandDesigner.alength()
             }
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             objectName: "btnAShrink"
-            icon.source: "/images/APlusMinusA.png"
+            icon.source: prefix + "/images/APlusMinusA.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: {
                 headlandDesigner.ashrink()
             }
         }
-        IconButtonColor{
+        Comp.IconButtonColor{
             id: headlandCurve
             objectName: "rbtnLine"
             checkable: true
             isChecked: true
-            icon.source: "/images/ABTrackCurve.png"
+            icon.source: prefix + "/images/ABTrackCurve.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: curveLine = true
         }
-        IconButtonColor{
+        Comp.IconButtonColor{
             id: headlandAB
             objectName: "rbtnCurve"
             checkable: true
-            icon.source: "/images/ABTrackAB.png"
+            icon.source: prefix + "/images/ABTrackAB.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: curveLine = false
         }
-        SpinBoxM {
+        Comp.SpinBoxM {
             id: distanceSpinBox
             objectName: "nudSetDistance"
             from: 0
             to: 2000
             boundValue: numTracks.value * settings.setVehicle_toolWidth
             Layout.alignment: Qt.AlignCenter
-            TextLine {
+            Comp.TextLine {
                 anchors.top: parent.bottom;
                 text: "( "+ utils.m_unit_abbrev()+" )"
             }
@@ -390,70 +392,70 @@ Popup{
                 lineDistance = value
             }
         }
-        SpinBoxCustomized{
+        Comp.SpinBoxCustomized{
             id: numTracks
             from: 0
             to: 10
             value: 0
             Layout.alignment: Qt.AlignCenter
-            TextLine {
+            Comp.TextLine {
                 anchors.top: parent.bottom;
                 text: qsTr("Tool: ")+ utils.m_to_ft_string(settings.setVehicle_toolWidth)
             }
         }
-        IconButtonColor{
+        Comp.IconButtonColor{
             id: cboxIsZoom
             objectName: "cboxIsZoom"
             checkable: true
-            icon.source: "/images/ZoomOGL.png"
+            icon.source: prefix + "/images/ZoomOGL.png"
             Layout.alignment: Qt.AlignCenter
         }
 
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             objectName: "btnSlice"
-            icon.source: "/images/HeadlandSlice.png"
+            icon.source: prefix + "/images/HeadlandSlice.png"
             enabled: (sliceCount > 0)
             Layout.alignment: Qt.AlignCenter
             onClicked: slice()
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             objectName: "btnBndLoop"
-            icon.source: "/images/HeadlandBuild.png"
+            icon.source: prefix + "/images/HeadlandBuild.png"
             onClicked: create_headland()
             Layout.alignment: Qt.AlignCenter
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             objectName: "btnDeletePoints"
-            icon.source: "/images/HeadlandReset.png"
+            icon.source: prefix + "/images/HeadlandReset.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: deletePoints()
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             objectName: "btnUndo"
-            icon.source: "/images/back-button.png"
+            icon.source: prefix + "/images/back-button.png"
             enabled: (backupCount > 0)
             Layout.alignment: Qt.AlignCenter
             onClicked: undo()
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             objectName: "cBoxIsSectionControlled"
-            icon.source: "/images/HeadlandSectionOff.png"
-            iconChecked: "/images/HeadlandSectionOn.png"
+            icon.source: prefix + "/images/HeadlandSectionOff.png"
+            iconChecked: prefix + "/images/HeadlandSectionOn.png"
             checkable: true
             isChecked: settings.setHeadland_isSectionControlled
             Layout.alignment: Qt.AlignCenter
             onCheckedChanged: isSectionControlled(checked)
         }
-        IconButtonTransparent{
-            icon.source: "/images/SwitchOff.png"
+        Comp.IconButtonTransparent{
+            icon.source: prefix + "/images/SwitchOff.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: {
                 headlandDesigner.headlandOff()
                 headlandDesigner.visible = false
             }
         }
-        IconButtonTransparent{
-            icon.source: "/images/OK64.png"
+        Comp.IconButtonTransparent{
+            icon.source: prefix + "/images/OK64.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: {
                 save_exit()

@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// IMU angle display, bottom right. Called "SteerCircle:" in AOG
 import QtQuick 2.15
 import QtQuick.Effects
 
@@ -13,7 +17,7 @@ Rectangle {
     Image {
         id: steerCircleImage
         anchors.fill: parent
-        source: "/images/textures/z_SteerPointer.png"
+        source: prefix + "/images/textures/z_SteerPointer.png"
         fillMode: Image.PreserveAspectCrop
         visible: false
     }
@@ -38,7 +42,7 @@ Rectangle {
     Image {
         id: steerDotImage
         anchors.fill: parent
-        source: "/images/textures/z_SteerDot.png"
+        source: prefix + "/images/textures/z_SteerDot.png"
         fillMode: Image.PreserveAspectCrop
         visible:false
 

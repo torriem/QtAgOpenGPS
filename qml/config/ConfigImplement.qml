@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Implement type(drawn, front 3pt, etc)
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Fusion
@@ -33,7 +37,7 @@ Rectangle{
             implicitWidth:300 * theme.scaleWidth
             implicitHeight:200 * theme.scaleHeight
 			id: i3pt
-            icon.source: "/images/ToolChkRear.png"
+            icon.source: prefix + "/images/ToolChkRear.png"
             checkable: true
             isChecked: settings.setTool_isToolRearFixed
             onClicked: {
@@ -48,7 +52,7 @@ Rectangle{
             implicitWidth:300 * theme.scaleWidth
             implicitHeight:200 * theme.scaleHeight
 			id: i3ptfront
-            icon.source: "/images/ToolChkFront.png"
+            icon.source: prefix + "/images/ToolChkFront.png"
             checkable: true
             isChecked: settings.setTool_isToolFront
             onClicked: {
@@ -63,7 +67,7 @@ Rectangle{
             implicitWidth:300 * theme.scaleWidth
             implicitHeight:200 * theme.scaleHeight
 			id: itrailed
-            icon.source: "/images/ToolChkTrailing.png"
+            icon.source: prefix + "/images/ToolChkTrailing.png"
             checkable: true
             isChecked: settings.setTool_isToolTrailing && ! settings.setTool_isToolTBT
             onClicked: {
@@ -77,7 +81,7 @@ Rectangle{
             implicitWidth:300 * theme.scaleWidth
             implicitHeight:200 * theme.scaleHeight
 			id: iTBT
-            icon.source: "/images/ToolChkTBT.png"
+            icon.source: prefix + "/images/ToolChkTBT.png"
             checkable: true
             isChecked: settings.setTool_isToolTBT
             onClicked: {

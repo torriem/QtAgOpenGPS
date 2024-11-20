@@ -1,11 +1,15 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+// 
+// Little popup window where we can nudge/snap to pivot
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 
 import ".."
-import "../components"
+import "../components" as Comp
 
-MoveablePopup{
+Comp.MoveablePopup{
     id: lineNudge
     x: 40
     y: 40
@@ -27,9 +31,9 @@ MoveablePopup{
             anchors.leftMargin: 8
             text: "< 3"
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             id: closeBtn
-            icon.source: "/images/WindowClose.png"
+            icon.source: prefix + "/images/WindowClose.png"
             implicitHeight: 40
             implicitWidth: 40
             anchors.top: parent.top
@@ -52,24 +56,24 @@ MoveablePopup{
                 RowLayout{
                     Layout.alignment: Qt.AlignCenter
                     implicitWidth: parent.width
-                    IconButtonTransparent{
-                        icon.source: "/images/SnapLeftHalf.png"
+                    Comp.IconButtonTransparent{
+                        icon.source: prefix + "/images/SnapLeftHalf.png"
                         Layout.alignment: Qt.AlignLeft
                     }
-                    IconButtonTransparent{
-                        icon.source: "/images/SnapRightHalf.png"
+                    Comp.IconButtonTransparent{
+                        icon.source: prefix + "/images/SnapRightHalf.png"
                         Layout.alignment: Qt.AlignRight
                     }
                 }
                 RowLayout{
                     Layout.alignment: Qt.AlignCenter
                     implicitWidth: parent.width
-                    IconButtonTransparent{
-                        icon.source: "/images/SnapLeft.png"
+                    Comp.IconButtonTransparent{
+                        icon.source: prefix + "/images/SnapLeft.png"
                         Layout.alignment: Qt.AlignLeft
                     }
-                    IconButtonTransparent{
-                        icon.source: "/images/SnapRight.png"
+                    Comp.IconButtonTransparent{
+                        icon.source: prefix + "/images/SnapRight.png"
                         Layout.alignment: Qt.AlignRight
                     }
                 }
@@ -81,12 +85,12 @@ MoveablePopup{
                 RowLayout{
                     Layout.alignment: Qt.AlignCenter
                     implicitWidth: parent.width
-                    IconButtonTransparent{
-                        icon.source: "/images/SnapToPivot.png"
+                    Comp.IconButtonTransparent{
+                        icon.source: prefix + "/images/SnapToPivot.png"
                         Layout.alignment: Qt.AlignLeft
                     }
-                    IconButtonTransparent{
-                        icon.source: "/images/SteerZero.png"
+                    Comp.IconButtonTransparent{
+                        icon.source: prefix + "/images/SteerZero.png"
                         Layout.alignment: Qt.AlignRight
                     }
                 }

@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Vehicle picker. Where we set what vehicle we want
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
@@ -139,7 +143,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: 75 * theme.scaleWidth
                 height: 75 * theme.scaleHeight
-                icon.source: "/images/VehFileSaveAs"
+                icon.source: prefix + "/images/VehFileSaveAs"
                 onClicked: {
                     if (saveAsVehicle.text != "") {
                         //console.debug("Going to save", saveAsVehicle.text)
@@ -174,8 +178,8 @@ Item {
             id: load
             anchors.right: parent.right
             anchors.margins: 30
-            anchors.top: vehicleList.top
-            icon.source: "/images/VehFileLoad.png"
+            anchors.bottom: vehicleListRect.verticalCenter
+            icon.source: prefix + "/images/VehFileLoad.png"
             text: qsTr("Load")
             color3: "white"
             border: 2
@@ -192,7 +196,7 @@ Item {
             anchors.top:load.bottom
             anchors.margins: 30 * theme.scaleWidth
             anchors.horizontalCenter: load.horizontalCenter
-            icon.source: "/images/VehFileDelete.png"
+            icon.source: prefix + "/images/VehFileDelete.png"
             text: qsTr("Delete")
             color3: "white"
             border: 2

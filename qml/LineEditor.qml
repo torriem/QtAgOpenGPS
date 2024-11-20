@@ -1,6 +1,10 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Window for "Editing" lines. Rename, change heading
 import QtQuick
 import QtQuick.Controls.Fusion
-import "components"
+import "components" as Comp
 
 Rectangle {
     id: lineEditor
@@ -9,7 +13,7 @@ Rectangle {
     color: aog.backgroundColor
     border.width: 1
     border.color: aog.blackDayWhiteNight
-    TopLine{
+    Comp.TopLine{
         id: topLine
         titleText: "Edit AB"
     }
@@ -21,11 +25,12 @@ Rectangle {
         width: children.width
         spacing: 35
         height: children.height
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             id: leftNudger
-            icon.source: "/images/ArrowLeft.png"
+            icon.source: prefix + "/images/ArrowLeft.png"
         }
-            SpinBoxDecimal{
+            Comp.SpinBoxCustomized{
+                decimals: 1
             width: leftNudger.width
             height: 50
             anchors.verticalCenter: parent.verticalCenter
@@ -35,8 +40,8 @@ Rectangle {
                 to: 9999
             }
 
-        IconButtonTransparent{
-            icon.source: "/images/ArrowRight.png"
+        Comp.IconButtonTransparent{
+            icon.source: prefix + "/images/ArrowRight.png"
         }
     }
     Row{
@@ -47,11 +52,11 @@ Rectangle {
         width: children.width
         spacing: 35
         height: children.height
-        IconButtonTransparent{
-            icon.source: "/images/ABSwapPoints.png"
+        Comp.IconButtonTransparent{
+            icon.source: prefix + "/images/ABSwapPoints.png"
         }
-        IconButtonTransparent{
-            icon.source: "/images/SnapToPivot.png"
+        Comp.IconButtonTransparent{
+            icon.source: prefix + "/images/SnapToPivot.png"
         }
 
     }
@@ -63,8 +68,8 @@ Rectangle {
         width: children.width
         spacing: 15
         height: children.height
-        IconButtonText{
-            icon.source: "/images/Cancel64.png"
+        Comp.IconButtonText{
+            icon.source: prefix + "/images/Cancel64.png"
             onClicked: lineEditor.visible = false
             color1: "transparent"
             color2: "transparent"
@@ -73,8 +78,8 @@ Rectangle {
             width: 75
             height: 75
         }
-        IconButtonText{
-            icon.source: "/images/FileDontSave.png"
+        Comp.IconButtonText{
+            icon.source: prefix + "/images/FileDontSave.png"
             color1: "transparent"
             color2: "transparent"
             color3: "transparent"
@@ -83,8 +88,8 @@ Rectangle {
             height: 75
             onClicked: lineEditor.visible = false
         }
-        IconButtonText{
-            icon.source: "/images/FileSave.png"
+        Comp.IconButtonText{
+            icon.source: prefix + "/images/FileSave.png"
             color1: "transparent"
             color2: "transparent"
             color3: "transparent"
