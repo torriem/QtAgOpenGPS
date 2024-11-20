@@ -701,94 +701,26 @@ Window {
                     aog.btnContour()
                 }
                 onCheckedChanged: { //gui logic
-                    btnABLineCycle.visible = !checked
-                    btnABLineCycleBk.visible = !checked
+                    btnTrackCycle.visible = !checked
+                    btnTrackCycleBk.visible = !checked
                     btnContourPriority.visible = checked
                 }
             }
-            /*IconButtonText{
-                id: btnABCurve
-                isChecked: false
-                checkable: true
-                icon.source: prefix + "/images/CurveOff.png"
-                iconChecked: prefix + "/images/CurveOn.png"
-                buttonText: "ABCurve"
-                Layout.alignment: Qt.AlignCenter
-				implicitWidth: theme.buttonSize
-				implicitHeight: theme.buttonSize
-                visible: !btnContour.checked
-                onClicked: {
-                    abCurvePicker.visible = true
-                    if (aog.currentABCurve > -1) {
-                        btnABCurve.checked = true
-                    }
-                }
-                Connections {
-                    target: abCurvePicker
-                    function onAccepted(){
-                        if(aog.currentABCurve > -1) {
-                            //mutually exclusive with the other
-                            //buttons
-                            btnABCurve.checked = true
-                            btnABLine.checked = false
-                            aog.currentABLine = -1;
-                        }
-                    }
-                    function onRejected(){
-                        btnABCurve.checked = false
-                        //leave any other buttons alone
-                    }
-
-                }
-            }
-            Comp.IconButtonText{
-                id: btnABLine
-                checkable: true
-                //TODO: this should be set programmatically
-                //Also the types of lines are all mutually exclusive
-                icon.source: prefix + "/images/ABLineOff.png"
-                iconChecked: prefix + "/images/ABLineOn.png"
-				implicitWidth: theme.buttonSize
-				implicitHeight: theme.buttonSize
-                Layout.alignment: Qt.AlignCenter
-                visible: !btnContour.checked
-                onClicked: {
-                    abLinePicker.visible = true
-                    if (aog.currentABLine > -1)
-                        btnABLine.checked = true
-                }
-                Connections {
-                    target: abLinePicker
-                    function onAccepted(){
-                        if(aog.currentABLine > -1) {
-                            btnABLine.checked = true
-                            btnABCurve.checked = false
-                            aog.currentABCurve = -1
-                        }
-                        console.debug( ((aog.currentABLine > -1) || (aog.currentABCurve > -1)))
-                    }
-                    function onRejected(){
-                        btnABLine.checked = false
-                    }
-                }
-                checked: aog.currentABLine > -1 ? true : false
-                buttonText: "ABLine"
-			}*/
 
             Comp.IconButton{
-                id: btnABLineCycle
+                id: btnTrackCycle
                 icon.source: prefix + "/images/ABLineCycle.png"
-                width: btnABLine.width
-                height: btnABLine.height
+                width: btnTrack.width
+                height: btnTrack.height
                 Layout.alignment: Qt.AlignCenter
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
             }
             Comp.IconButton{
-                id: btnABLineCycleBk
+                id: btnTrackCycleBk
                 icon.source: prefix + "/images/ABLineCycleBk.png"
-                width: btnABLine.width
-                height: btnABLine.height
+                width: btnTrack.width
+                height: btnTrack.height
                 Layout.alignment: Qt.AlignCenter
 				implicitWidth: theme.buttonSize
 				implicitHeight: theme.buttonSize
@@ -933,11 +865,6 @@ Window {
             anchors.rightMargin: theme.buttonSize + 3
             visible: aog.isJobStarted && leftColumn.visible
 
-           /* onVisibleChanged: if(visible == false)
-                                  height = 0
-                              else
-                                  height = children.height*/
-            //spacing: parent.rowSpacing
 			onWidthChanged: {
 				theme.btnSizes[1] = width / (children.length) 
 				theme.buttonSizesChanged()
@@ -1555,7 +1482,7 @@ Window {
         }
 
         Tracks.TrackNewButtons{
-            id: trackNew
+            id: trackNewButtons
             visible: false
         }
         Tracks.TrackNewSet{
@@ -1735,7 +1662,7 @@ Window {
 	}
 	ShortcutCustomized{
 		hotkeys: 1 //open the steer chart
-		onActivated: btnABLineCycle.clicked();
+        onActivated: btnTrackCycle.clicked();
 	}
 	ShortcutCustomized{
 		hotkeys: 2 //FileSaveEverythingBeforeClosingField();
