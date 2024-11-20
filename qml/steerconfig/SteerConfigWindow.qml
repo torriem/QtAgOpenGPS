@@ -101,6 +101,10 @@ MoveablePopup {
                     anchors.topMargin: 5 * theme.scaleHeight
                     width: parent.width *.5
 
+                    /* Here, we just set which Sliders we want to see, and the
+                      ColumnLayout takes care of the rest. No need for
+                      4 ColumnLayouts*/
+
                     //region WAStab
                     IconButtonTransparent { //was zero button
                         width: height*2
