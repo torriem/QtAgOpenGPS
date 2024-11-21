@@ -30,45 +30,30 @@ Window{
 		id: settingsBtns
 		spacing: 3 * theme.scaleWidth
 		width: parent.width
-		anchors.top: topLine.bottom
-		anchors.horizontalCenter: parent.horizontalCenter
-		IconButtonTextBeside{
+        anchors.top: parent.top
+        anchors.topMargin: 20 * theme.scaleHeight
+        SteerConfigTopButtons{
 			id: sensorsBtn
-			icon.source: prefix + "/images/Config/ConD_Speedometer.png"
-			buttonText: "Sensors"
-			Layout.alignment: Qt.AlignCenter
-			checkable: true
-			checked: true
-			colorChecked: "lightgray"
-			implicitWidth: parent.width /4 -4
-		}
-		IconButtonTextBeside{
+            buttonText: "Sensors"
+            icon.source: prefix + "/images/Config/ConD_Speedometer.png"
+            implicitWidth: parent.width /4 -4
+            checked: true //because one has to be to start things off
+        }
+        SteerConfigTopButtons{
 			id: configBtn
-			icon.source: prefix + "/images/Config/ConS_Pins.png"
 			buttonText: "Config"
-			Layout.alignment: Qt.AlignCenter
-			checkable: true
-			colorChecked: "lightgray"
-			implicitWidth: parent.width /4 -4
-		}
-		IconButtonTextBeside{
+            icon.source: prefix + "/images/Config/ConS_Pins.png"
+        }
+        SteerConfigTopButtons{
 			id: settingsBtn
-			icon.source: prefix + "/images/Config/ConS_ImplementConfig.png"
 			buttonText: "Settings"
-			Layout.alignment: Qt.AlignCenter
-			checkable: true
-			colorChecked: "lightgray"
-			implicitWidth: parent.width /4 -4
-		}
-		IconButtonTextBeside{
+            icon.source: prefix + "/images/Config/ConS_ImplementConfig.png"
+        }
+        SteerConfigTopButtons{
 			id: steerSettingsBtn
-			icon.source: prefix + "/images/Config/ConS_ImplementConfig.png"
 			buttonText: "Steer Settings"
-			Layout.alignment: Qt.AlignCenter
-			checkable: true
-			colorChecked: "lightgray"
-			implicitWidth: parent.width /4 -4
-		}
+            icon.source: prefix + "/images/Config/ConS_ImplementConfig.png"
+        }
 	}
 	Item{
 		id: settingsArea
