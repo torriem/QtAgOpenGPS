@@ -17,6 +17,7 @@ class CNMEA;
 class CAHRS;
 class CGuidance;
 class CTrack;
+class CTrk;
 
 
 class CCurveLines
@@ -48,7 +49,7 @@ public:
 
     bool isHeadingSameWay = true;
 
-    double howManyPathsAway;
+    double howManyPathsAway, lastHowManyPathsAway;
 
     Vec2 refPoint1 = Vec2(1, 1), refPoint2 = Vec2(2, 2);
 
@@ -66,6 +67,11 @@ public:
 
     //the list of points of curve to drive on
     QVector<Vec3> curList;
+
+    bool isReady = false, isBusyWorking = false;
+
+    //the list of points of curve new list from async
+    QVector<Vec3> newCurList;
 
     //the current curve reference line.
     //CTrk refCurve;
@@ -89,6 +95,12 @@ public:
                                CTrack &trk,
                                const CBoundary &bnd,
                                const CYouTurn &yt);
+
+    void BuildNewCurveAsync(double distAway,
+                            int refCount,
+                            const CTrk &track,
+                            const CBoundary &bnd);
+
     void GetCurrentCurveLine(Vec3 pivot,
                              Vec3 steer,
                              bool isAutoSteerBtnOn,

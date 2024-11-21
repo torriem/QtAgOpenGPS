@@ -10,8 +10,8 @@
 #include "vec3.h"
 #include "vec2.h"
 #include "interfaceproperty.h"
+#include "cabline.h"
 
-class CABLine;
 class CBoundary;
 class CABCurve;
 class CVehicle;
@@ -156,7 +156,7 @@ public:
 
     bool BuildABLineDubinsYouTurn(bool isTurnLeft,
                                   const CBoundary &bnd,
-                                  const CABLine &ABLine,
+                                  const CABLine &ABLine
                                   );
 
 
