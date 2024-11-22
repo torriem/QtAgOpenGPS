@@ -189,11 +189,9 @@ void CRecordedPath::StopDrivingRecordedPath()
     emit stoppedDriving();
 }
 
-void CRecordedPath::GetDubinsPath(CVehicle &vehicle, Vec3 goal)
+void CRecordedPath::GetDubinsPath(CVehicle &vehicle, Vec3 goal, const CYouTurn &yt)
 {
-    double minTurningRadius = vehicle.minTurningRadius;
-
-    CDubinsTurningRadius = minTurningRadius * 1.2;
+    CDubinsTurningRadius = yt.youTurnRadius * 1.2;
     CDubins dubPath;
 
     // current psition
