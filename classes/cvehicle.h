@@ -33,7 +33,6 @@ public:
     double antennaHeight;
     double antennaPivot;
     double wheelbase;
-    double minTurningRadius;
     double antennaOffset, panicStopSpeed;
     int vehicleType;
 

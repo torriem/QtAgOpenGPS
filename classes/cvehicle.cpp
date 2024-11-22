@@ -52,7 +52,6 @@ void CVehicle::loadSettings()
     antennaOffset = property_setVehicle_antennaOffset;
 
     wheelbase = property_setVehicle_wheelbase;
-    minTurningRadius = property_setVehicle_minTurningRadius;
     isSteerAxleAhead = property_setVehicle_isSteerAxleAhead;
 
     slowSpeedCutoff = property_setVehicle_slowSpeedCutoff;
@@ -463,12 +462,12 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
         //draw the bright antenna dot
         gldraw.clear();
         color.setRgbF(0,0,0);
-        gldraw.append(QVector3D(0, antennaPivot, 0.1));
+        gldraw.append(QVector3D(-antennaOffset, antennaPivot, 0.1));
         gldraw.draw(gl,mvp,color,GL_POINTS,16.0f);
 
         gldraw.clear();
         color.setRgbF(0.2,0.98,0.98);
-        gldraw.append(QVector3D(0, antennaPivot, 0.1));
+        gldraw.append(QVector3D(-antennaOffset, antennaPivot, 0.1));
         gldraw.draw(gl,mvp,color,GL_POINTS,10.0f);
     }
 
@@ -563,47 +562,47 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
         }
     }
 
-    if (camera.camSetDistance < -500)
-    {
-        double theta = glm::twoPI / 20;
-        double c = cos(theta);//precalculate the sine and cosine
-        double s = sin(theta);
+    //if (camera.camSetDistance < -500)
+    //{
+    //    double theta = glm::twoPI / 20;
+    //    double c = cos(theta);//precalculate the sine and cosine
+    //    double s = sin(theta);
 
-        double x = camera.camSetDistance * -.015;//we start at angle = 0
-        double y = 0;
+    //    double x = camera.camSetDistance * -.015;//we start at angle = 0
+    //    double y = 0;
 
-        gldraw.clear();
-        gldraw.append(QVector3D(x, y, 0.0));
-        for (int ii = 0; ii < 20; ii++)
-        {
-            //output vertex
-            gldraw.append(QVector3D(x, y, 0.0));
+    //    gldraw.clear();
+    //    gldraw.append(QVector3D(x, y, 0.0));
+    //    for (int ii = 0; ii < 20; ii++)
+    //    {
+    //        //output vertex
+    //        gldraw.append(QVector3D(x, y, 0.0));
 
-            //apply the rotation matrix
-            double t = x;
-            x = (c * x) - (s * y);
-            y = (s * t) + (c * y);
-            // GL.Vertex3(x, y, 0.0);
-        }
-        gldraw.draw(gl,mvp,QColor::fromRgbF(0.5f, 0.5f, 1.2f, 0.25),
-                    GL_TRIANGLE_FAN, 1);
+    //        //apply the rotation matrix
+    //        double t = x;
+    //        x = (c * x) - (s * y);
+    //        y = (s * t) + (c * y);
+    //        // GL.Vertex3(x, y, 0.0);
+    //    }
+    //    gldraw.draw(gl,mvp,QColor::fromRgbF(0.5f, 0.5f, 1.2f, 0.25),
+    //                GL_TRIANGLE_FAN, 1);
 
-        gldraw.clear();
+    //    gldraw.clear();
 
-        for (int ii = 0; ii < 20; ii++)
-        {
-            //output vertex
-            gldraw.append(QVector3D(x, y, 0.0));
+    //    for (int ii = 0; ii < 20; ii++)
+    //    {
+    //        //output vertex
+    //        gldraw.append(QVector3D(x, y, 0.0));
 
-            //apply the rotation matrix
-            double t = x;
-            x = (c * x) - (s * y);
-            y = (s * t) + (c * y);
-            // GL.Vertex3(x, y, 0.0);
-        }
-        gldraw.draw(gl, mvp, QColor::fromRgbF(0.5f, 1.2f, 0.2f),
-                    GL_LINE_LOOP, 2);
-    }
+    //        //apply the rotation matrix
+    //        double t = x;
+    //        x = (c * x) - (s * y);
+    //        y = (s * t) + (c * y);
+    //        // GL.Vertex3(x, y, 0.0);
+    //    }
+    //    gldraw.draw(gl, mvp, QColor::fromRgbF(0.5f, 1.2f, 0.2f),
+    //                GL_LINE_LOOP, 2);
+    //}
 }
 
 void CVehicle::AverageTheSpeed(double newSpeed) {
