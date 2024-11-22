@@ -11,540 +11,423 @@ import "../components"
 
 MoveablePopup {
 	id: steerConfigWindow
-	closePolicy: Popup.NoAutoClose
-	modal: false
-	visible: false
-	height: 475 * theme.scaleHeight
-	width:400 * theme.scaleWidth
-	x: settings.setWindow_steerSettingsLocation.x
-	y: settings.setWindow_steerSettingsLocation.y
-	function show (){
+    closePolicy: Popup.NoAutoClose
+    height: 475 * theme.scaleHeight
+    modal: false
+    visible: false
+    width:400 * theme.scaleWidth
+    x: settings.setWindow_steerSettingsLocation.x
+    y: settings.setWindow_steerSettingsLocation.y
+    function show (){
 		steerConfigWindow.visible = true
 	}
 
 	Rectangle{
 		id: steerConfigFirst
-		color: aog.backgroundColor
-		border.color: aog.blackDayWhiteNight
-		border.width: 1
-		visible: true
-		anchors.fill: parent
-		Rectangle{
+        anchors.fill: parent
+        border.color: aog.blackDayWhiteNight
+        border.width: 1
+        color: aog.backgroundColor
+        visible: true
+        TopLine{
 			id:topLine
-			color:"white"
-			visible: true
-			width: parent.width
-			height: 25 * theme.scaleHeight
-			anchors.top: parent.top
-			anchors.horizontalCenter: parent.horizontalCenter
-			Text{
-				anchors.left: parent.left
-				anchors.verticalCenter: parent.verticalCenter
-				text: qsTr("Auto Steer Config")
-			}
-
-			Button {
-				id: close
-				text: qsTr("×")
-				font.pixelSize: parent.height
-				width: parent.height+3
-				height:parent.height
-				anchors.right: parent.right
-				onClicked: {
-					if(!pwmWindow.visible){
-						settings.setWindow_steerSettingsLocation.x = steerConfigWindow.x
-						settings.setWindow_steerSettingsLocation.y = steerConfigWindow.y
-					}
-					steerConfigWindow.visible = false
-				}
-			}
-			Button {
-				id: help
-				text: qsTr("?")
-				width: parent.height+3
-				height:parent.height
-				anchors.right: close.left
-				anchors.rightMargin: 20 * theme.scaleWidth
-			}
-		}
+            titleText: qsTr("Auto Steer Config")
+        }
 		Item{
 			id: steerSlidersConfig
-			height: 475 * theme.scaleHeight
-			width:400 * theme.scaleWidth
-			anchors.left: parent.left
-			anchors.top: topLine.bottom
-			ButtonGroup {
+            anchors.left: parent.left
+            anchors.top: topLine.bottom
+            height: 475 * theme.scaleHeight
+            width:400 * theme.scaleWidth
+            ButtonGroup {
 				buttons: buttonsTop.children
 			}
 
 			RowLayout{
-				id: buttonsTop
-				width: parent.width
+                id: buttonsTop
+                anchors.top: parent.top
+                anchors.topMargin: 5
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width - 10
 				IconButtonColor{
 					id: steerBtn
-					icon.source: prefix + "/images/Steer/ST_SteerTab.png"
-					implicitWidth: parent.width /4 - 4
-					implicitHeight: 50 * theme.scaleHeight
-					checkable: true
-					checked: true
-					colorChecked: "lightgray"
-				}
+                    checkable: true
+                    checked: true
+                    colorChecked: "lightgray"
+                    icon.source: prefix + "/images/Steer/ST_SteerTab.png"
+                    implicitHeight: 50 * theme.scaleHeight
+                    implicitWidth: parent.width /4 - 4
+                }
 				IconButtonColor{
 					id: gainBtn
-					icon.source: prefix + "/images/Steer/ST_GainTab.png"
-					implicitWidth: parent.width /4 - 4
-					implicitHeight: 50 * theme.scaleHeight
-					checkable: true
-					colorChecked: "lightgray"
-				}
+                    checkable: true
+                    colorChecked: "lightgray"
+                    icon.source: prefix + "/images/Steer/ST_GainTab.png"
+                    implicitHeight: 50 * theme.scaleHeight
+                    implicitWidth: parent.width /4 - 4
+                }
 				IconButtonColor{
 					id: stanleyBtn
-					icon.source: prefix + "/images/Steer/ST_StanleyTab.png"
-					implicitWidth: parent.width /4 - 4
-					implicitHeight: 50 * theme.scaleHeight
-					checkable: true
-					colorChecked: "lightgray"
-				}
+                    checkable: true
+                    colorChecked: "lightgray"
+                    icon.source: prefix + "/images/Steer/ST_StanleyTab.png"
+                    implicitHeight: 50 * theme.scaleHeight
+                    implicitWidth: parent.width /4 - 4
+                }
 				IconButtonColor{
 					id: ppBtn
-					icon.source: prefix + "/images/Steer/Sf_PPTab.png"
-					implicitWidth: parent.width /4 - 4
-					implicitHeight: 50 * theme.scaleHeight
-					checkable: true
-					colorChecked: "lightgray"
-				}
+                    checkable: true
+                    colorChecked: "lightgray"
+                    icon.source: prefix + "/images/Steer/Sf_PPTab.png"
+                    implicitHeight: 50 * theme.scaleHeight
+                    implicitWidth: parent.width /4 - 4
+                }
 			}
 
-			Item{
-				id: tabArea
-				anchors.top: buttonsTop.bottom
-				anchors.right: parent.right
-				anchors.left: parent.left
-				anchors.bottom: angleInfo.top
+            Item{
+                id: slidersArea
+                anchors.top: buttonsTop.bottom
+                anchors.right: parent.right
+                anchors.left: parent.left
+                anchors.bottom: angleInfo.top
 
-				//region WAStab
-				Item{
-					visible: steerBtn.checked
-					id: steerTab
-					anchors.fill: parent
-					ColumnLayout{
-						id: steerColumn
-						anchors.bottom: parent.bottom
-						anchors.horizontalCenter: parent.horizontalCenter
-						anchors.top: parent.top
-						width: parent.width *.5
-						anchors.topMargin: 5 * theme.scaleHeight
-						anchors.bottomMargin: 5 * theme.scaleHeight
-						anchors.rightMargin: 20 * theme.scaleWidth
-						anchors.leftMargin: 20 * theme.scaleWidth
-                        IconButtonTransparent{ //was zero button
-							width: height*2
-							icon.source: prefix + "/images/SteerCenter.png"
-							implicitHeight: parent.height /5 -20
-							Layout.alignment: Qt.AlignCenter
-                            visible: false
+                ColumnLayout{
+                    id: slidersColumn
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 5 * theme.scaleHeight
+                    anchors.left: parent.left
+                    anchors.leftMargin: 20 * theme.scaleWidth
+                    anchors.top: parent.top
+                    anchors.topMargin: 5 * theme.scaleHeight
+                    width: parent.width *.5
 
-						}
+                    /* Here, we just set which Sliders we want to see, and the
+                      ColumnLayout takes care of the rest. No need for
+                      4 ColumnLayouts*/
 
-						SliderCustomized {
-							id: wasZeroSlider
-							width: 200 * theme.scaleWidth
-                            leftText: utils.decimalRound(value / cpDegSlider.value, 2)
-                            from: -4000
-                            to: 4000
+                    //region WAStab
+                    IconButtonTransparent { //was zero button
+                        width: height*2
+                        Layout.alignment: Qt.AlignCenter
+                        icon.source: prefix + "/images/SteerCenter.png"
+                        implicitHeight: parent.height /5 -20
+                        visible: false
+                        //visible: steerBtn.checked
+                    }
 
-                            property int wasOffset: settings.setAS_wasOffset
+                    SteerConfigSliderCustomized {
+                        property int wasOffset: settings.setAS_wasOffset
+                        id: wasZeroSlider
+                        centerTopText: "WAS Zero"
+                        width: 200 * theme.scaleWidth
+                        from: -4000
+                        leftText: utils.decimalRound(value / cpDegSlider.value, 2)
+                        onValueChanged: settings.setAS_wasOffset = value * cpDegSlider.value
+                        to: 4000
+                        value: settings.setAS_wasOffset / cpDegSlider.value
+                        visible: steerBtn.checked
+                    }
+                    SteerConfigSliderCustomized {
+                        id: cpDegSlider
+                        centerTopText: "Counts per Degree"
+                        from: 1
+                        leftText: value
+                        onValueChanged: settings.setAS_countsPerDegree = value
+                        stepSize: 1
+                        to: 255
+                        value: Math.round(settings.setAS_countsPerDegree, 0)
+                        width: 200 * theme.scaleWidth
+                        visible: steerBtn.checked
+                    }
+                    SteerConfigSliderCustomized {
+                        id: ackermannSlider
+                        centerTopText: "AckerMann"
+                        from: 1
+                        leftText: value
+                        onValueChanged: settings.setAS_ackerman = value
+                        stepSize: 1
+                        to: 200
+                        value: Math.round(settings.setAS_ackerman, 0)
+                        visible: steerBtn.checked
+                    }
+                    SteerConfigSliderCustomized {
+                        id: maxSteerSlider
+                        centerTopText:"Max Steer Angle"
+                        from: 10
+                        leftText: value
+                        onValueChanged: settings.setVehicle_maxSteerAngle= value
+                        stepSize: 1
+                        to: 80
+                        value: Math.round(settings.setVehicle_maxSteerAngle)
+                        visible: steerBtn.checked
+                    }
 
-                            //onWasOffsetChanged: value = wasOffset / cpDegSlider.value
+                    //endregion WAStab
 
-                            value: settings.setAS_wasOffset / cpDegSlider.value
+                    //region PWMtab
+                    SteerConfigSliderCustomized {
+                        id: propGainlider
+                        centerTopText: "Proportional Gain"
+                        from: 0
+                        leftText: value
+                        onValueChanged: settings.setAS_Kp = value
+                        stepSize: 1
+                        to: 200
+                        value: Math.round(settings.setAS_Kp, 0)
+                        visible: gainBtn.checked
+                    }
+                    SteerConfigSliderCustomized {
+                        id: maxLimitSlider
+                        centerTopText: "Maximum Limit"
+                        from: 0
+                        leftText: value
+                        onValueChanged: settings.setAS_highSteerPWM = value
+                        stepSize: 1
+                        to: 254
+                        value: Math.round(settings.setAS_highSteerPWM, 0)
+                        visible: gainBtn.checked
+                    }
+                    SteerConfigSliderCustomized {
+                        id: min2moveSlider
+                        centerTopText: "Minimum to Move"
+                        from: 0
+                        leftText: value
+                        onValueChanged: settings.setAS_minSteerPWM = value
+                        stepSize: 1
+                        to: 100
+                        value: Math.round(settings.setAS_minSteerPWM, 0)
+                        visible: gainBtn.checked
+                    }
 
-                            onValueChanged: settings.setAS_wasOffset = value * cpDegSlider.value
-							centerTopText: "WAS Zero"
-							Layout.alignment: Qt.AlignCenter
-							implicitHeight: 50 * theme.scaleHeight
-						}
-						SliderCustomized {
-							id: cpDegSlider
-							width: 200 * theme.scaleWidth
-							centerTopText: "Counts per Degree"
-							implicitHeight: 50 * theme.scaleHeight
-							from: 1
-							to: 255
-							value: Math.round(settings.setAS_countsPerDegree, 0)
-							onValueChanged: settings.setAS_countsPerDegree = value
-							leftText: value
-							stepSize: 1
-							Layout.alignment: Qt.AlignCenter
-						}
-						SliderCustomized {
-							id: ackermannSlider
-							width: 200 * theme.scaleWidth
-							centerTopText: "AckerMann"
-							implicitHeight: 50 * theme.scaleHeight
-							from: 1
-							to: 200
-							leftText: value
-							value: Math.round(settings.setAS_ackerman, 0)
-							onValueChanged: settings.setAS_ackerman = value
-							stepSize: 1
-							Layout.alignment: Qt.AlignCenter
-						}
-						SliderCustomized {
-							id: maxSteerSlider
-							implicitWidth: 200 * theme.scaleWidth
-							leftText: value
-							implicitHeight: 50 * theme.scaleHeight
-							centerTopText:"Max Steer Angle"
-							from: 10
-							to: 80
-							value: Math.round(settings.setVehicle_maxSteerAngle)
-							onValueChanged: settings.setVehicle_maxSteerAngle= value
-							stepSize: 1
-							Layout.alignment: Qt.AlignCenter
-						}
-					}
-					Image {
-						width: parent.width
-						anchors.left: parent.left
-						anchors.bottom: parent.bottom
-						height: parent.height
-						source: prefix + "/images/Steer/Sf_SteerTab.png"
-					}
+                    //endregion PWMtab
 
-				}
-				//endregion WAStab
+                    //region StanleyTab
+                    SteerConfigSliderCustomized {
+                        id: stanleyAggressivenessSlider
+                        centerTopText: "Agressiveness"
+                        from: .1
+                        onValueChanged: settings.stanleyDistanceErrorGain = value
+                        stepSize: .1
+                        to: 4
+                        leftText: Math.round(value * 100)/100
+                        value: settings.stanleyDistanceErrorGain
+                        visible: stanleyBtn.checked
+                    }
+                    SteerConfigSliderCustomized {
+                        id: overShootReductionSlider
+                        centerTopText: "OverShoot Reduction"
+                        from: .1
+                        onValueChanged: settings.stanleyHeadingErrorGain = value
+                        stepSize: .1
+                        to: 1.5
+                        leftText: Math.round(value * 100) / 100
+                        value: settings.stanleyHeadingErrorGain
+                        visible: stanleyBtn.checked
+                    }
+                    SteerConfigSliderCustomized {
+                        id: integralStanleySlider
+                        centerTopText: "Integral"
+                        from: 0
+                        leftText: value
+                        onValueChanged: settings.stanleyIntegralGainAB = value /100
+                        stepSize: 1
+                        to: 100
+                        value: Math.round(settings.stanleyIntegralGainAB * 100, 0)
+                        visible: stanleyBtn.checked
+                    }
 
-				//region PWMtab
-				Item{
-					id: gainTab
-					visible: gainBtn.checked
-					anchors.fill: parent
-					Column{
-						id: gainColumn
-						anchors.bottom: parent.bottom
-						anchors.left: parent.left
-						height: childrenRect.height
-						width: childrenRect.width
-						anchors.topMargin: 5 * theme.scaleHeight
-						anchors.bottomMargin: 5 * theme.scaleHeight
-						anchors.rightMargin: 5 * theme.scaleWidth
-						spacing: 45 * theme.scaleHeight
-						anchors.leftMargin: 20
-						SliderCustomized {
-							id: propGainlider
-							leftText: value
-							width: 200 * theme.scaleWidth
-							from: 0
-							to: 200
-							value: Math.round(settings.setAS_Kp, 0)
-							onValueChanged: settings.setAS_Kp = value
-							centerTopText: "Proportional Gain"
-							stepSize: 1
-						}
-						SliderCustomized {
-							id: maxLimitSlider
-							centerTopText: "Maximum Limit"
-							leftText: value
-							width: 200 * theme.scaleWidth
-							from: 0
-							to: 254
-							value: Math.round(settings.setAS_highSteerPWM, 0)
-							onValueChanged: settings.setAS_highSteerPWM = value
-							stepSize: 1
-						}
-						SliderCustomized {
-							id: min2moveSlider
-							width: 200 * theme.scaleWidth
-							from: 0
-							to: 100
-							value: Math.round(settings.setAS_minSteerPWM, 0)
-							onValueChanged: settings.setAS_minSteerPWM = value
-							leftText: value
-							centerTopText: "Minimum to Move"
-							stepSize: 1
-						}
-					}
-					Image {
-						width: parent.width
-						anchors.left: parent.left
-						anchors.bottom: parent.bottom
-						height: parent.height
-						source: prefix + "/images/Steer/Sf_GainTab.png"
-					}
+                    //endregion StanleyTab
+                    //
+                    //region PurePursuitTab
+                    SteerConfigSliderCustomized {
+                        id: acqLookAheadSlider
+                        centerTopText: "Acquire Look Ahead"
+                        from: 1
+                        onValueChanged: settings.setVehicle_goalPointLookAhead = value
+                        stepSize: .1
+                        leftText: Math.round(value * 100) / 100
+                        to: 7
+                        value: settings.setVehicle_goalPointLookAhead
+                        visible: ppBtn.checked
+                    }
+                    SteerConfigSliderCustomized {
+                        id: holdLookAheadSlider
+                        centerTopText: "Hold Look Ahead"
+                        from: 1
+                        stepSize: .1
+                        leftText: Math.round(value * 100) / 100
+                        onValueChanged: settings.setVehicle_goalPointLookAheadHold = utils.decimalRound(value, 1)
+                        to: 7
+                        value: settings.setVehicle_goalPointLookAheadHold
+                        visible: ppBtn.checked
+                    }
+                    SteerConfigSliderCustomized {
+                        id: lookAheadSpeedGainSlider
+                        centerTopText: "Look Ahead Speed Gain"
+                        from: .5
+                        onValueChanged: settings.setVehicle_goalPointLookAheadMult = value
+                        stepSize: .1
+                        to: 3
+                        leftText: Math.round(value * 100) / 100
+                        value: settings.setVehicle_goalPointLookAheadMult
+                        visible: ppBtn.checked
+                    }
+                    SteerConfigSliderCustomized {
+                        id: ppIntegralSlider
+                        centerTopText: "Integral"
+                        from: 0
+                        onValueChanged: settings.purePursuitIntegralGainAB = value /100
+                        stepSize: 1
+                        to: 100
+                        leftText: Math.round(value *100) / 100
+                        value: settings.purePursuitIntegralGainAB *100
+                        visible: ppBtn.checked
+                    }
+                    //endregion PurePursuitTab
+                }
+                Image {
+                    anchors.bottom: parent.bottom
+                    anchors.left: parent.left
+                    height: slidersColumn.height
+                    source: prefix + (steerBtn.checked === true ? "/images/Steer/Sf_SteerTab.png" :
+                                     gainBtn.checked === true ? "/images/Steer/Sf_GainTab.png" :
+                                     stanleyBtn.checked === true ? "/images/Steer/Sf_Stanley.png" :
+                                    "/images/Steer/Sf_PP.png")
+                    width: parent.width
+                }
+            }
 
-				}
-				//endregion PWMtab
+            Rectangle{
+                id: angleInfo
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 50 * theme.scaleHeight
+                MouseArea{
+                    id: angleInfoMouse
+                    anchors.fill: parent
+                    onClicked: steerConfigSettings.show()
 
-				//region StanleyTab
-				Item{
-					id: stanleyTab
-					anchors.fill: parent
-					visible: stanleyBtn.checked
-					Column{
-						id: stanleyColumn
-						anchors.bottom: parent.bottom
-						anchors.left: parent.left
-						height: childrenRect.height
-						width: childrenRect.width
-						anchors.topMargin: 5 * theme.scaleHeight
-						anchors.bottomMargin: 5 * theme.scaleHeight
-						anchors.rightMargin: 5 * theme.scaleWidth
-						spacing: 45 * theme.scaleHeight
-						anchors.leftMargin: 20 * theme.scaleWidth
-						SliderCustomized {
-							id: stanleyAggressivenessSlider
-							width: 200 * theme.scaleWidth
-							from: .1
-							to: 4
-                            value: settings.stanleyDistanceErrorGain
-							onValueChanged: settings.stanleyDistanceErrorGain = value
-                            leftText: Math.round(value * 100)/100
-							centerTopText: "Agressiveness"
-							stepSize: .1
-						}
-						SliderCustomized {
-							id: overShootReductionSlider
-							width: 200 * theme.scaleWidth
-							from: .1
-							to: 1.5
-                            value: settings.stanleyHeadingErrorGain
-							onValueChanged: settings.stanleyHeadingErrorGain = value
-                            leftText: Math.round(value * 100) / 100
-							centerTopText: "OverShoot Reduction"
-							stepSize: .1
-						}
-						SliderCustomized {
-							id: integralStanleySlider
-							width: 200 * theme.scaleWidth
-							from: 0
-							to: 100
-							value: Math.round(settings.stanleyIntegralGainAB * 100, 0)
-							onValueChanged: settings.stanleyIntegralGainAB = value /100
-							leftText: value
-							centerTopText: "Integral"
-							stepSize: 1
-						}
-					}
-					Image {
-						width: parent.width
-						anchors.left: parent.left
-						anchors.bottom: parent.bottom
-						height: parent.height
-						source: prefix + "/images/Steer/Sf_Stanley.png"
-					}
+                }
+                RowLayout{
+                    id: angleInfoRow
+                    anchors.fill: parent
+                    spacing: 10 * theme.scaleWidth
 
-				}
-				//endregion StanleyTab
-				//
-				//region PurePursuitTab
-				Item{
-					anchors.fill: parent
-					visible: ppBtn.checked
-					id: ppTab
-					Column{
-						id: ppColumn
-						anchors.bottom: parent.bottom
-						anchors.left: parent.left
-						height: childrenRect.height
-						width: childrenRect.width
-						anchors.topMargin: 5 * theme.scaleHeight
-						anchors.bottomMargin: 5 * theme.scaleHeight
-						anchors.rightMargin: 5 * theme.scaleWidth
-						spacing: 45 * theme.scaleHeight
-						anchors.leftMargin: 20 * theme.scaleWidth
-						SliderCustomized {
-							id: acqLookAheadSlider
-							implicitHeight: 50 * theme.scaleHeight
-							from: 1
-                            to: 7
-                            value: settings.setVehicle_goalPointLookAhead
-							onValueChanged: settings.setVehicle_goalPointLookAhead = value
-                            leftText: Math.round(value * 100) / 100
-							centerTopText: "Acquire Look Ahead"
-							stepSize: .1
-						}
-						SliderCustomized {
-							id: holdLookAheadSlider
-							width: 200
-							implicitHeight: 50 * theme.scaleHeight
-							from: 1
-                            to: 7
-                            value: settings.setVehicle_goalPointLookAheadHold
-                            onValueChanged: settings.setVehicle_goalPointLookAheadHold = utils.decimalRound(value, 1)
-                            leftText: Math.round(value * 100) / 100
-							centerTopText: "Hold Look Ahead"
-							stepSize: .1
-						}
-						SliderCustomized {
-							id: lookAheadSpeedGainSlider
-							width: 200 * theme.scaleWidth
-							implicitHeight: 50 * theme.scaleHeight
-							from: .5
-							to: 3
-                            value: settings.setVehicle_goalPointLookAheadMult
-							onValueChanged: settings.setVehicle_goalPointLookAheadMult = value
-                            leftText: Math.round(value * 100) / 100
-							centerTopText: "Look Ahead Speed Gain"
-							stepSize: .1
-						}
-						SliderCustomized {
-							id: ppIntegralSlider
-							width: 200 * theme.scaleWidth
-							from: 0
-							implicitHeight: 50 * theme.scaleHeight
-							to: 100
-                            value: settings.purePursuitIntegralGainAB *100
-							onValueChanged: settings.purePursuitIntegralGainAB = value /100
-                            leftText: Math.round(value *100) / 100
-							centerTopText: "Integral"
-							stepSize: 1
-						}
-					}
-					Image {
-						width: parent.width
-						anchors.left: parent.left
-						anchors.bottom: parent.bottom
-						height: ppColumn.height
-						source: prefix + "/images/Steer/Sf_PP.png"
-					}
-				}
-				//endregion PurePursuitTab
-			}
-
-			Rectangle{
-				id: angleInfo
-				anchors.bottom: parent.bottom
-				anchors.left: parent.left
-				anchors.right: parent.right
-				height: 50 * theme.scaleHeight
-				MouseArea{
-					id: angleInfoMouse
-					anchors.fill: parent
-					onClicked: {
-						steerConfigSettings.show()
-						steerConfigWindow.visible = false
-					}
-
-				}
-				RowLayout{
-					id: angleInfoRow
-					anchors.fill: parent
-					spacing: 10 * theme.scaleWidth
-
-					Text {
-						text: qsTr("Set: " + aog.steerAngleSetRounded)
-						Layout.alignment: Qt.AlignCenter
-					}
-					Text {
-						text: qsTr("Act: " + aog.steerAngleActualRounded)
-						Layout.alignment: Qt.AlignCenter
-					}
-					Text {
-						id: errorlbl
-						property double err: aog.steerAngleActualRounded - aog.steerAngleSetRounded
-						text: qsTr("Err: " + err)
-						onErrChanged: err > 0 ? errorlbl.color = "red" : errorlbl.color = "darkgreen"
-						Layout.alignment: Qt.AlignCenter
-					}
-					IconButtonTransparent{
-						icon.source: prefix + "/images/ArrowRight.png"
-						implicitWidth: parent.width/4
-						implicitHeight: parent.height
-						onClicked: angleInfoMouse.clicked(true)
-						Layout.alignment: Qt.AlignRight
-					}
-				}
-			}
-		}
-		Rectangle{
-			id: pwmWindow
-			visible: false
-			anchors.top: steerSlidersConfig.bottom
-			anchors.left: steerSlidersConfig.left
-			width: steerSlidersConfig.width
-			anchors.bottom: parent.bottom
-			anchors.topMargin: 8 * theme.scaleHeight
-			anchors.bottomMargin: 8 * theme.scaleHeight
-			anchors.leftMargin: 8 * theme.scaleWidth
-			anchors.rightMargin: 8 * theme.scaleWidth
-			RowLayout{
-				id: pwmRow
-				anchors.top: parent.top
-				anchors.topMargin: 10 * theme.scaleHeight
-				anchors.bottomMargin: 10 * theme.scaleHeight
-				anchors.leftMargin: 10 * theme.scaleWidth
-				anchors.rightMargin: 10 * theme.scaleWidth
-				anchors.left: parent.left
-				width: parent.width
-				height: 50 * theme.scaleHeight
-				IconButton{
-					id: pwmSteer
-					isChecked: false
-					icon.source: prefix + "/images/SteerDriveOff.png"
-					iconChecked: prefix + "/images/SteerDriveOn.png"
-					implicitWidth: parent.width/4
-					implicitHeight: parent.height
-					color3: "white"
-					border: 2
-				}
-				IconButton{
-					icon.source: prefix + "/images/SnapLeft.png"
-					implicitWidth: parent.width/4
-					implicitHeight: parent.height
-					color3: "white"
-					border: 2
-				}
-				IconButton{
-					icon.source: prefix + "/images/SnapRight.png"
-					implicitWidth: parent.width/4
-					implicitHeight: parent.height
-					color3: "white"
-					border: 2
-				}
-				IconButton{
-					id: pwmZero
-					icon.source: prefix + "/images/SteerZeroSmall.png"
-					implicitWidth: parent.width/4
-					implicitHeight: parent.height
-					color3: "white"
-					border: 2
-				}
-			}
-			Text{
-				anchors.left: pwmRow.left
-				anchors.top: pwmRow.bottom
-				text: qsTr("PWM: ")
-			}
-			Text{
-				anchors.right: pwmRow.right
-				anchors.rightMargin: 50 * theme.scaleWidth
-				anchors.top: pwmRow.bottom
-				text: qsTr("0r +5")
-				font.pixelSize: 15
-			}
-			IconButton{
-				id: steerRecord
-				anchors.left: parent.left
-				anchors.bottom: parent.bottom
-				isChecked: false
-				width: 75 * theme.scaleWidth
-				height: 75 * theme.scaleHeight
-				color3: "white"
-				border: 2
-				icon.source: prefix + "/images/BoundaryRecord.png"
-				iconChecked: prefix + "/images/Stop"
-			}
-			Text{
-				anchors.top: steerRecord.top
-				anchors.left: steerRecord.right
-				text: qsTr("Steer Angle: ")
-			}
-			Text{
-				anchors.bottom: steerRecord.bottom
-				anchors.left: steerRecord.right
-				text: qsTr("Diameter: ")
-			}
-		}
-	}
+                    Text {
+                        text: qsTr("Set: " + aog.steerAngleSetRounded)
+                        Layout.alignment: Qt.AlignCenter
+                    }
+                    Text {
+                        text: qsTr("Act: " + aog.steerAngleActualRounded)
+                        Layout.alignment: Qt.AlignCenter
+                    }
+                    Text {
+                        property double err: aog.steerAngleActualRounded - aog.steerAngleSetRounded
+                        id: errorlbl
+                        Layout.alignment: Qt.AlignCenter
+                        onErrChanged: err > 0 ? errorlbl.color = "red" : errorlbl.color = "darkgreen"
+                        text: qsTr("Err: " + err)
+                    }
+                    IconButtonTransparent{
+                        //show angle info window
+                        Layout.alignment: Qt.AlignRight
+                        icon.source: prefix + "/images/ArrowRight.png"
+                        implicitHeight: parent.height
+                        implicitWidth: parent.width/4
+                        onClicked: angleInfoMouse.clicked(true)
+                    }
+                }
+            }
+        }
+        Rectangle{
+            id: pwmWindow
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 8 * theme.scaleHeight
+            anchors.left: steerSlidersConfig.left
+            anchors.leftMargin: 8 * theme.scaleWidth
+            anchors.rightMargin: 8 * theme.scaleWidth
+            anchors.top: steerSlidersConfig.bottom
+            anchors.topMargin: 8 * theme.scaleHeight
+            visible: false
+            width: steerSlidersConfig.width
+            RowLayout{
+                id: pwmRow
+                anchors.bottomMargin: 10 * theme.scaleHeight
+                anchors.left: parent.left
+                anchors.leftMargin: 10 * theme.scaleWidth
+                anchors.rightMargin: 10 * theme.scaleWidth
+                anchors.top: parent.top
+                anchors.topMargin: 10 * theme.scaleHeight
+                height: 50 * theme.scaleHeight
+                width: parent.width
+                IconButton{
+                    id: pwmSteer
+                    border: 2
+                    color3: "white"
+                    icon.source: prefix + "/images/SteerDriveOff.png"
+                    iconChecked: prefix + "/images/SteerDriveOn.png"
+                    implicitHeight: parent.height
+                    implicitWidth: parent.width/4
+                    isChecked: false
+                }
+                IconButton{
+                    border: 2
+                    color3: "white"
+                    icon.source: prefix + "/images/SnapLeft.png"
+                    implicitHeight: parent.height
+                    implicitWidth: parent.width/4
+                }
+                IconButton{
+                    border: 2
+                    color3: "white"
+                    icon.source: prefix + "/images/SnapRight.png"
+                    implicitHeight: parent.height
+                    implicitWidth: parent.width/4
+                }
+                IconButton{
+                    border: 2
+                    color3: "white"
+                    icon.source: prefix + "/images/SteerZeroSmall.png"
+                    id: pwmZero
+                    implicitHeight: parent.height
+                    implicitWidth: parent.width/4
+                }
+            }
+            Text{
+                anchors.left: pwmRow.left
+                anchors.top: pwmRow.bottom
+                text: qsTr("PWM: ")
+            }
+            Text{
+                anchors.right: pwmRow.right
+                anchors.rightMargin: 50 * theme.scaleWidth
+                anchors.top: pwmRow.bottom
+                font.pixelSize: 15
+                text: qsTr("0r +5")
+            }
+            IconButton{
+                id: steerRecord
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                border: 2
+                color3: "white"
+                height: 75 * theme.scaleHeight
+                icon.source: prefix + "/images/BoundaryRecord.png"
+                iconChecked: prefix + "/images/Stop"
+                isChecked: false
+                width: 75 * theme.scaleWidth
+            }
+            Text{
+                anchors.top: steerRecord.top
+                anchors.left: steerRecord.right
+                text: qsTr("Steer Angle: ")
+            }
+            Text{
+                anchors.bottom: steerRecord.bottom
+                anchors.left: steerRecord.right
+                text: qsTr("Diameter: ")
+            }
+        }
+    }
 }
