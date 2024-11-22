@@ -192,8 +192,8 @@ void CTool::DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 pro
     //line width 2 now
 
     double hite = camera.camSetDistance / -150;
-    if (hite > 0.7) hite = 0.7;
-    if (hite < 0.5) hite = 0.5;
+    if (hite > 12) hite = 12;
+    if (hite < 1) hite = 1;
 
     for (int j = 0; j < numOfSections; j++)
     {
@@ -228,7 +228,7 @@ void CTool::DrawTool(QOpenGLFunctions *gl, QMatrix4x4 &modelview, QMatrix4x4 pro
 
         gldraw.draw(gl, projection * mv, color, GL_TRIANGLE_FAN, 2.0f);
 
-        if (camera.camSetDistance > -150)
+        if (camera.camSetDistance > -width * 200)
         {
             color.setRgbF(0.0, 0.0, 0.0);
             gldraw.draw(gl,projection * mv, color, GL_LINE_LOOP, 1.0);
