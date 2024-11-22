@@ -64,11 +64,15 @@ public:
     double GridSize = 4000;
     double Count = 30;
     bool isGeoMap = false;
+    bool isRateMap = false, isRateTrigger = false;
+    int numRateChannels = 1;
+
+    double gridRotation = 0.0;
 
     explicit CWorldGrid(QObject *parent = 0);
     ~CWorldGrid();
     void DrawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, bool isTextureOn, QColor fieldColor, CCamera &camera);
-    void DrawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, double _gridZoom, QColor gridColor);
+    void DrawWorldGrid(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double _gridZoom, QColor gridColor);
     void destroyGLBuffers();
 
 public slots:

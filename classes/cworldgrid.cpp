@@ -50,7 +50,7 @@ void CWorldGrid::DrawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
 
         if (!fieldBufferCurrent) {
             //regenerate the field surface VBO
-            QVector<QVector3D> vertices;
+            //QVector<QVector3D> vertices;
 
             SurfaceVertex field[] = {
                 { QVector3D(eastingMin, northingMax, 0.10),
@@ -109,10 +109,12 @@ void CWorldGrid::DrawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
     */
 }
 
-void CWorldGrid::DrawWorldGrid(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, double _gridZoom, QColor gridColor)
+void CWorldGrid::DrawWorldGrid(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double _gridZoom, QColor gridColor)
 {
-    //draw easting lines and westing lines to produce a grid
-    _gridZoom *= 0.5;
+    //_gridZoom *= 0.5;
+
+    modelview.rotate(-gridRotation, 0, 0, 1.0);
+    QMatrix4x4 mvp = projection * modelview;
 
     GLHelperOneColor gldraw;
 
