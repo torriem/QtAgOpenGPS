@@ -651,5 +651,6 @@
         <file>images/qtSpecific/z_TurnManualR.png</file>
         <file>qml/CloseAOG.qml</file>
         <file>qml/steerconfig/SteerConfigSliderCustomized.qml</file>
+        <file>qml/steerconfig/SteerConfigTopButtons.qml</file>
     </qresource>
 </RCC>
