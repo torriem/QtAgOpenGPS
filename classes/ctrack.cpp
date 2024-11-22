@@ -53,7 +53,7 @@ int CTrack::FindClosestRefTrack(Vec3 pivot, const CVehicle &vehicle)
         else
         {
             double diff = M_PI - fabs(fabs(pivot.heading - gArr[i].heading) - M_PI);
-            if ((diff < 0.6) || (diff > 2.54))
+            if ((diff < 1) || (diff > 2.14))
                 isAlignedArr[i] = true;
             else
                 isAlignedArr[i] = false;
@@ -129,6 +129,7 @@ void CTrack::NudgeTrack(double dist, CABLine &ABLine, CABCurve &curve)
         else
         {
             curve.isCurveValid = false;
+            curve.lastHowManyPathsAway = 98888;
             curve.lastSecond = 0;
             gArr[idx].nudgeDistance += curve.isHeadingSameWay ? dist : -dist;
         }
@@ -150,6 +151,7 @@ void CTrack::NudgeDistanceReset(CABLine &ABLine, CABCurve &curve)
         else
         {
             curve.isCurveValid = false;
+            curve.lastHowManyPathsAway = 98888;
             curve.lastSecond = 0;
         }
 
@@ -189,6 +191,7 @@ void CTrack::NudgeRefTrack(double dist, CABLine &ABLine, CABCurve &curve)
         else
         {
             curve.isCurveValid = false;
+            curve.lastHowManyPathsAway = 98888;
             curve.lastSecond = 0;
             NudgeRefCurve( curve.isHeadingSameWay ? dist : -dist, curve);
         }
@@ -209,6 +212,7 @@ void CTrack::NudgeRefABLine(double dist)
 void CTrack::NudgeRefCurve(double distAway, CABCurve &curve)
 {
     curve.isCurveValid = false;
+    curve.lastHowManyPathsAway = 98888;
     curve.lastSecond = 0;
 
     QVector<Vec3> curList;
