@@ -14,6 +14,7 @@
 
 class CBoundary;
 class CABCurve;
+class CABLine;
 class CVehicle;
 class QOpenGLFunctions;
 class CVehicle;
@@ -46,6 +47,7 @@ public:
         turnLineHeading = _clo.turnLineHeading;
         curveIndex = _clo.curveIndex;
     }
+    CClose &operator=(const CClose &other) = default;
 };
 
 class CYouTurn: public QObject
@@ -104,8 +106,8 @@ public:
     QVector<Vec3> ytList2;
 
     //next curve or line to build out turn and point over
-    CABCurve nextCurve;
-    CABLine nextLine;
+    //QSharedPointer<CABCurve> nextCurve;
+    //QSharedPointer<CABLine> nextLine;
     Vec3 nextLookPos;
 
     //if we continue on the same line or change to the next one after the uTurn
@@ -148,15 +150,18 @@ public:
     void loadSettings();
 
     //Finds the point where an AB Curve crosses the turn line
-    bool BuildCurveDubinsYouTurn(CVehicle &vehicle,
-                                  const CBoundary &bnd,
-                                  const CABCurve &curve,
-                                  bool isTurnRight,
-                                  Vec3 pivotPos);
+    bool BuildCurveDubinsYouTurn(bool isTurnLeft,
+                                 Vec3 pivotPos,
+                                 CVehicle &vehicle,
+                                 const CBoundary &bnd,
+                                 const CABCurve &curve,
+                                 int &makeUTurnCounter);
 
     bool BuildABLineDubinsYouTurn(bool isTurnLeft,
+                                  CVehicle &vehicle,
                                   const CBoundary &bnd,
-                                  const CABLine &ABLine
+                                  CABLine &ABLine,
+                                  int &makeUTurnCounter
                                   );
 
 
@@ -182,20 +187,23 @@ private:
                           const CBoundary &bnd,
                           const CABLine &ABLine);
 
-    bool KStyleTurnCurve(bool isTurnLeft);
-    bool KStyleTurnAB(bool isTurnLeft);
+    bool KStyleTurnCurve(bool isTurnLeft, int &makeUTurnCounter,
+                         const CVehicle &vehicle
+                         );
+
+    bool KStyleTurnAB(bool isTurnLeft, int &makeUTurnCounter);
 
     QVector<Vec3> &MoveABTurnInsideTurnLine(QVector<Vec3> &uTurList, double head);
 
 public:
     void FindClosestTurnPoint(Vec3 fromPt);
     bool FindCurveTurnPoints(const QVector<Vec3> &xList);
-    bool FindCurveOutTurnPoint(CABCurve thisCurve, CABCurve &nextCurve, CClose inPt, bool isTurnLineSameWay);
+    bool FindCurveOutTurnPoint(const CABCurve &thisCurve, const CABCurve &nextCurve, CClose inPt, bool isTurnLineSameWay);
     bool FindABOutTurnPoint(CABLine thisCurve, CABLine &nextCurve, CClose inPt, bool isTurnLineSameWay);
 
 private:
     bool FindInnerTurnPoints(Vec3 fromPt, double inDirection, CClose refClosePt, bool isTurnLineSameWay);
-    bool FindCurveTurnPoint(CABCurve thisCurve);
+    bool FindCurveTurnPoint(const CABCurve &thisCurve);
     void FindABTurnPoint(Vec3 fromPt);
 
     bool AddABSequenceLines();
@@ -222,9 +230,9 @@ public:
     void Set_Alternate_skips();
 
     //something went seriously wrong so reset everything
-    void ResetYouTurn();
+    void ResetYouTurn(int &makeUTurnCounter);
 
-    void ResetCreatedYouTurn();
+    void ResetCreatedYouTurn(int &makeUTurnCounter);
 
     void FailCreate();
 
