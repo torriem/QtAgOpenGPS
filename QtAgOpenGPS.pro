@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl quick quickwidgets network
+QT       += core gui opengl quick quickwidgets network concurrent
 
 CONFIG += c++17
 
