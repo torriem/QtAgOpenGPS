@@ -154,14 +154,19 @@ public:
                                  Vec3 pivotPos,
                                  CVehicle &vehicle,
                                  const CBoundary &bnd,
-                                 const CABCurve &curve,
-                                 int &makeUTurnCounter);
+                                 CABCurve &curve,
+                                 const CTrack &trk,
+                                 int &makeUTurnCounter,
+                                 int secondsSinceStart
+                                 );
 
     bool BuildABLineDubinsYouTurn(bool isTurnLeft,
                                   CVehicle &vehicle,
                                   const CBoundary &bnd,
                                   CABLine &ABLine,
-                                  int &makeUTurnCounter
+                                  CTrack &trk,
+                                  int &makeUTurnCounter,
+                                  int secondsSinceStart
                                   );
 
 
@@ -170,12 +175,18 @@ private:
                               int makeUTurnCounter,
                               CVehicle &vehicle,
                               const CBoundary &bnd,
-                              const CABCurve &curve);
+                              const CABCurve &curve,
+                              const CTrack &trk,
+                              int secondsSinceStart);
+
     bool CreateCurveWideTurn(bool isTurnLeft, Vec3 pivotPos,
-                              int makeUTurnCounter,
-                              CVehicle &vehicle,
-                              const CBoundary &bnd,
-                              const CABCurve &curve);
+                             int makeUTurnCounter,
+                             CVehicle &vehicle,
+                             const CBoundary &bnd,
+                             CABCurve &curve,
+                             const CTrack &trk,
+                             int secondsSinceStart
+                             );
 
     bool CreateABOmegaTurn(bool isTurnLeft,                              int makeUTurnCounter,
                            CVehicle &vehicle,
@@ -185,21 +196,44 @@ private:
                           int makeUTurnCounter,
                           CVehicle &vehicle,
                           const CBoundary &bnd,
-                          const CABLine &ABLine);
+                          CABLine &ABLine,
+                          CTrack &trk,
+                          int secondsSinceStart);
 
     bool KStyleTurnCurve(bool isTurnLeft, int &makeUTurnCounter,
-                         const CVehicle &vehicle
-                         );
+                         CVehicle &vehicle,
+                         const CABCurve &curve,
+                         const CBoundary &bnd);
 
-    bool KStyleTurnAB(bool isTurnLeft, int &makeUTurnCounter);
+    bool KStyleTurnAB(bool isTurnLeft, int &makeUTurnCounter,
+                         CVehicle &vehicle,
+                         const CABLine &ABLine,
+                         const CBoundary &bnd);
 
     QVector<Vec3> &MoveABTurnInsideTurnLine(QVector<Vec3> &uTurList, double head);
 
 public:
-    void FindClosestTurnPoint(Vec3 fromPt);
-    bool FindCurveTurnPoints(const QVector<Vec3> &xList);
-    bool FindCurveOutTurnPoint(const CABCurve &thisCurve, const CABCurve &nextCurve, CClose inPt, bool isTurnLineSameWay);
-    bool FindABOutTurnPoint(CABLine thisCurve, CABLine &nextCurve, CClose inPt, bool isTurnLineSameWay);
+    void FindClosestTurnPoint(Vec3 fromPt,
+                         const CABLine &ABLine,
+                         const CBoundary &bnd
+                              );
+
+    bool FindCurveTurnPoints(const QVector<Vec3> &xList,
+                             const CABCurve &curve,
+                             const CBoundary &bnd
+                             );
+
+    bool FindCurveOutTurnPoint(CABCurve &thisCurve,
+                               CABCurve &nextCurve,
+                               CClose inPt,
+                               bool isTurnLineSameWay,
+                               const CBoundary &bnd);
+
+    bool FindABOutTurnPoint(CABLine &thisCurve,
+                            CABLine &nextCurve,
+                            CClose inPt,
+                            bool isTurnLineSameWay, const CABLine &ABLine,
+                            const CBoundary &bnd);
 
 private:
     bool FindInnerTurnPoints(Vec3 fromPt, double inDirection, CClose refClosePt, bool isTurnLineSameWay);
@@ -214,7 +248,10 @@ public:
                             double p2x, double p2y, double p3x, double p3y, double &iEast, double &iNorth);
 
 private:
-    QVector<Vec3> MoveTurnInsideTurnLine(QVector<Vec3> uTurnList, double head, bool deleteSecondHalf, bool invertHeading,
+    QVector<Vec3> MoveTurnInsideTurnLine(QVector<Vec3> uTurnList,
+                                         double head,
+                                         bool deleteSecondHalf,
+                                         bool invertHeading,
                                          CVehicle &vehicle,
                                          const CBoundary &bnd);
 
