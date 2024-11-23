@@ -5,7 +5,7 @@
 #include <QMatrix4x4>
 #include <QVector>
 #include <QFuture>
-#include <QtConcurrent>
+#include <QtConcurrent/QtConcurrent>
 #include "vec3.h"
 #include "vec2.h"
 #include "cvehicle.h"
@@ -28,7 +28,7 @@ CABCurve::CABCurve(QObject *parent) : QObject(parent)
 void CABCurve::BuildCurveCurrentList(Vec3 pivot,
                                      double secondsSinceStart,
                                      const CVehicle &vehicle,
-                                     CTrack &trk,
+                                     const CTrack &trk,
                                      const CBoundary &bnd,
                                      const CYouTurn &yt)
 {

@@ -92,7 +92,7 @@ public:
     void BuildCurveCurrentList(Vec3 pivot,
                                double secondsSinceStart,
                                const CVehicle &vehicle,
-                               CTrack &trk,
+                               const CTrack &trk,
                                const CBoundary &bnd,
                                const CYouTurn &yt);
 
@@ -132,6 +132,70 @@ public:
     void AddFirstLastPoints(QVector<Vec3> &xList, const CBoundary &bnd);
     void ResetCurveLine(CTrack &trk);
 
+    CABCurve &operator=(CABCurve &src)
+    {
+        A=src.A;
+        B=src.B;
+        C=src.C;
+        rA=src.rA;
+        rB=src.rB;
+        counter2 = src.counter2;
+        isBtnTrackOn = src.isBtnTrackOn;
+        isMakingCurve = src.isMakingCurve;
+
+        distanceFromCurrentLinePivot = src.distanceFromCurrentLinePivot;
+        distanceFromRefLine = src.distanceFromRefLine;
+
+        isHeadingSameWay = true;
+
+        howManyPathsAway = src.howManyPathsAway;
+        lastHowManyPathsAway = src.lastHowManyPathsAway;
+
+        refPoint1 = src.refPoint1;
+        refPoint2 = src.refPoint2;
+
+        boxC = src.boxC;
+        boxD = src.boxD;
+        currentLocationIndex = src.currentLocationIndex;
+
+        goalPointCu = src.goalPointCu;
+
+        radiusPointCu = src.radiusPointCu;
+        steerAngleCu = src.steerAngleCu;
+        rEastCu = src.rEastCu;
+        rNorthCu = src.rNorthCu;
+        ppRadiusCu = src.ppRadiusCu;
+        manualUturnHeading = src.manualUturnHeading;
+
+        isSmoothWindowOpen = src.isSmoothWindowOpen;
+        isLooping = src.isLooping;
+
+        smooList = src.smooList;
+        curList = src.curList;
+
+        isReady = src.isReady;
+        isBusyWorking = src.isBusyWorking;
+
+        newCurList = src.newCurList;
+
+        isCurveValid = src.isCurveValid;
+        isLateralTriggered = src.isLateralTriggered;
+
+        lastSecond = src.lastSecond;
+
+        desList = src.desList;
+        desName = src.desName;
+
+        pivotDistanceError = src.pivotDistanceError;
+        pivotDistanceErrorLast = src.pivotDistanceErrorLast;
+        pivotDerivative = src.pivotDerivative;
+        pivotDerivativeSmoothed = src.pivotDerivativeSmoothed;
+        lastCurveDistance = src.lastCurveDistance;
+
+        inty = src.inty;
+
+        return *this;
+    }
 
 signals:
     void TimedMessage(int timeout, QString title, QString message);
