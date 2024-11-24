@@ -210,7 +210,11 @@ private:
                          const CABLine &ABLine,
                          const CBoundary &bnd);
 
-    QVector<Vec3> &MoveABTurnInsideTurnLine(QVector<Vec3> &uTurList, double head);
+    QVector<Vec3> &MoveABTurnInsideTurnLine(QVector<Vec3> &uTurList,
+                                            double head,
+                                            CVehicle &vehicle,
+                                            const CBoundary &bnd)
+;
 
 public:
     void FindClosestTurnPoint(Vec3 fromPt,
@@ -232,16 +236,17 @@ public:
     bool FindABOutTurnPoint(CABLine &thisCurve,
                             CABLine &nextCurve,
                             CClose inPt,
-                            bool isTurnLineSameWay, const CABLine &ABLine,
+                            bool isTurnLineSameWay,
+                            const CABLine &ABLine,
                             const CBoundary &bnd);
 
 private:
-    bool FindInnerTurnPoints(Vec3 fromPt, double inDirection, CClose refClosePt, bool isTurnLineSameWay);
-    bool FindCurveTurnPoint(const CABCurve &thisCurve);
-    void FindABTurnPoint(Vec3 fromPt);
+    bool FindInnerTurnPoints(Vec3 fromPt, double inDirection, CClose refClosePt, bool isTurnLineSameWay, const CBoundary &bnd);
+    bool FindCurveTurnPoint(const CABCurve &thisCurve, const CBoundary &bnd);
+    void FindABTurnPoint(Vec3 fromPt, const CABLine &ABLine, const CBoundary &bnd);
 
-    bool AddABSequenceLines();
-    bool AddCurveSequenceLines();
+    bool AddABSequenceLines(const CABLine &ABLine, const CVehicle &vehicle);
+    bool AddCurveSequenceLines(const CABCurve &curve, const CABCurve &nextCurve);
 
 public:
     int GetLineIntersection(double p0x, double p0y, double p1x, double p1y,
@@ -259,10 +264,10 @@ public:
     void SmoothYouTurn(int smPts);
 
     //called to initiate turn
-    void YouTurnTrigger(CVehicle &vehicle, CABLine &ABLine, CABCurve &curve);
+    void YouTurnTrigger(const CTrack &trk, CVehicle &vehicle, CABLine &ABLine, CABCurve &curve);
 
     //Normal copmpletion of youturn
-    void CompleteYouTurn();
+    void CompleteYouTurn(int &makeUTurnCounter);
 
     void Set_Alternate_skips();
 
@@ -289,10 +294,10 @@ public:
 signals:
     void TimedMessage(int,QString,QString);
     void outOfBounds();
-    void swapDirection();
-    void setTriggerSequence(bool);
-    void resetSequenceEventTriggers();
+    //void setTriggerSequence(bool);
+    //void resetSequenceEventTriggers();
     void turnOffBoundAlarm();
+    void uTurnReset();
     //void guidanceLineDistanceOff(int);
     //void guidanceLineSteerAngle(int);
     //void setLookaheadGoal(double);
