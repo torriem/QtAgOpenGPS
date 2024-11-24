@@ -574,7 +574,8 @@ Item{
 	//region loadFromKML
 	FileDialog {
 		id: loadFromKML
-		currentFolder: StandardPaths.standardLocations(StandardPaths.DocumentsLocation) + "/QtAgOpenGPS/Fields"
+        //Should be populated from backend?
+        //currentFolder: StandardPaths.standardLocations(StandardPaths.DocumentsLocation) + "/QtAgOpenGPS/Fields"
 		nameFilters: ["KML Files (*.kml)"]
 	}
 /*Dialog {
