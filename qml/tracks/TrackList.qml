@@ -154,12 +154,12 @@ MoveablePopup {
                 objectName: "btnLineExit" //this is not cancel, rather, save and exit
                 icon.source: "/images/OK64.png"
                 onClicked: {
-						trackPickerDialog.visible = false
+                    trackPickerDialog.visible = false
                     if (trackView.currentIndex > -1) {
                         aog.currentTrack = trackView.currentIndex
-						trackPickerDialog.visible = false
+                        trackPickerDialog.visible = false
                     } else
-						trackPickerDialog.visible = false
+                        trackPickerDialog.visible = false
                 }
             }
         }
@@ -200,73 +200,73 @@ MoveablePopup {
                 delegate: RadioButton{
                     id: control
                     checked: trackView.currentIndex === index ? true : false
-					indicator: Rectangle{
-						color: aog.backgroundColor
-						anchors.fill: control
-						IconButtonTransparent{
-							id: isLineOrCurve
-							enabled: false
-							icon.source: "/images/TrackLine.png"
-							iconChecked: "/images/TrackCurve.png"
-							height: control.height
-							width: control.height
-						}
-						Rectangle{
-                        anchors.margins: 2
-						anchors.left: isLineOrCurve.right
-						height: control.height
-						anchors.verticalCenter: control.verticalCenter
-						anchors.right: isHidden.left
-                        //color: (control.down) ? aog.backgroundColor : aog.blackDayWhiteNight
-                        //color: (control.down) ? aog.blackDayWhiteNight : aog.backgroundColor
-                        color: control.checked ? "blue" : "white"
-                        visible: control.checked
-						}
-						ButtonColor{
-							id: isHidden
+                    indicator: Rectangle{
+                        color: aog.backgroundColor
+                        anchors.fill: control
+                        IconButtonTransparent{
+                            id: isLineOrCurve
+                            enabled: false
+                            icon.source: "/images/TrackLine.png"
+                            iconChecked: "/images/TrackCurve.png"
+                            height: control.height
+                            width: control.height
+                        }
+                        Rectangle{
+                            anchors.margins: 2
+                            anchors.left: isLineOrCurve.right
+                            height: control.height
+                            anchors.verticalCenter: control.verticalCenter
+                            anchors.right: isHidden.left
+                            //color: (control.down) ? aog.backgroundColor : aog.blackDayWhiteNight
+                            //color: (control.down) ? aog.blackDayWhiteNight : aog.backgroundColor
+                            color: control.checked ? "blue" : "white"
+                            visible: control.checked
+                        }
+                        ButtonColor{
+                            id: isHidden
                             color: "red"
-						}
+                        }
                     }
 
-						onDownChanged: {
-                            trackView.currentIndex = index
-						}
-						
+                    onDownChanged: {
+                        trackView.currentIndex = index
+                    }
 
-						//anchors.fill: parent
-						//color: "light gray"
-						Text{
-							anchors.left: parent.left
-							anchors.leftMargin: 5
-							anchors.verticalCenter: parent.verticalCenter
-							text: model.name
-							font.pixelSize: 25
-							font.bold: true
-							//color: control.checked ? aog.backgroundColor : aog.blackDayWhiteNight
-							color: control.checked ? aog.blackDayWhiteNight : aog.backgroundColor
-							z: 2
-						}
-					}
-				/*	ButtonColor{
-						id: isHidden
-						anchors.right: parent.right
-						height: parent.height * .8
-						width: height
-						anchors.verticalCenter: parent.verticalCenter
-						color: "green"
-						colorChecked: "red"
-					}*/
-				}
-			}
 
-			Rectangle{ //for some reason, listview will display on top of its parent, this blocks that
-			id: bottomRow
-			anchors.bottom: parent.bottom
-			height: 10
-			color: parent.color
-			width: trackPickerDialog.width
-			anchors.left: trackPickerDialog.left
-			z: 1
-		}
+                    //anchors.fill: parent
+                    //color: "light gray"
+                    Text{
+                        anchors.left: parent.left
+                        anchors.leftMargin: 5
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: model.name
+                        font.pixelSize: 25
+                        font.bold: true
+                        //color: control.checked ? aog.backgroundColor : aog.blackDayWhiteNight
+                        color: control.checked ? aog.blackDayWhiteNight : aog.backgroundColor
+                        z: 2
+                    }
+                }
+                /*	ButtonColor{
+                        id: isHidden
+                        anchors.right: parent.right
+                        height: parent.height * .8
+                        width: height
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: "green"
+                        colorChecked: "red"
+                    }*/
+            }
+        }
+
+        Rectangle{ //for some reason, listview will display on top of its parent, this blocks that
+            id: bottomRow
+            anchors.bottom: parent.bottom
+            height: 10
+            color: parent.color
+            width: trackPickerDialog.width
+            anchors.left: trackPickerDialog.left
+            z: 1
+        }
 	}
 }
