@@ -204,37 +204,6 @@ Window {
             icon.source: prefix + "/images/fileMenu.png"
             onClicked: hamburgerMenu.visible = true
         }
-//        Menu{
-//            id: fileMenu
-//            //anchors.left: buttonsArea.left
-//            //anchors.top: buttonsArea.top
-//            //anchors. margins: 200
-//            MenuItem{ text: "Languages"}
-//            MenuItem{ text: "Directories"}
-//            MenuItem{ text: "Colors"}
-//            MenuItem{ text: "Section Colors"}
-//            MenuItem{ text: "Top Field View"}
-//            MenuItem{ text: "Enter Sim Coords"}
-//            MenuItem{
-//                property bool isChecked: settings.setMenu_isSimulatorOn
-//                onIsCheckedChanged: {
-//                    checked = isChecked
-//                }
-
-//                text: "Simulator On"
-//                checkable: true
-//                checked: isChecked
-//                onCheckedChanged: {
-//                    settings.setMenu_isSimulatorOn = checked
-//                    console.log("Sim = "+settings.setMenu_isSimulatorOn)
-//                }
-//            }
-//            MenuItem{ text: "Reset All"}
-//            MenuItem{ text: "HotKeys"}
-//            MenuItem{ text: "About..."}
-//            MenuItem{ text: "Help"}
-//            closePolicy: Popup.CloseOnPressOutsideParent
-//        }
 
         Text{
             anchors.top:parent.top
