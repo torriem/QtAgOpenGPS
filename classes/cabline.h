@@ -121,6 +121,74 @@ public:
                      const CGuidance &gyd);
     void BuildTram(const CTrack &trk, CBoundary &bnd, CTram &tram);
 
+    CABLine &operator= (CABLine &src)
+    {
+        counter2 = src.counter2;
+        shadowOffset = src.shadowOffset;
+        widthMinusOverlap = src.widthMinusOverlap;
+
+        abFixHeadingDelta = src.abFixHeadingDelta;
+        abHeading = src.abHeading;
+        abLength = src.abLength;
+        angVel = src.angVel;
+
+        isABValid = src.isABValid;
+        isLateralTriggered = src.isLateralTriggered;
+
+        currentLinePtA = src.currentLinePtA;
+        currentLinePtB = src.currentLinePtB;
+
+        distanceFromCurrentLinePivot = src.distanceFromCurrentLinePivot;
+        distanceFromRefLine = src.distanceFromRefLine;
+
+        goalPointAB = src.goalPointAB;
+
+        refLine = src.refLine;
+
+        howManyPathsAway = src.howManyPathsAway;
+        isMakingABLine = src.isMakingABLine;
+        isHeadingSameWay = src.isHeadingSameWay;
+
+        ppRadiusAB = src.ppRadiusAB;
+
+        radiusPointAB = src.radiusPointAB;
+        rEastAB = src.rEastAB;
+        rNorthAB = src.rNorthAB;
+
+        snapDistance = src.snapDistance;
+        lastSecond = src.lastSecond;
+        steerAngleAB = src.steerAngleAB;
+        lineWidth = src.lineWidth;
+
+        desPtA = src.desPtA;
+        desPtB = src.desPtB;
+
+        desLineEndA = src.desLineEndA;
+        desLineEndB = src.desLineEndB;
+
+        refNudgePtA = src.refNudgePtA;
+        refNudgePtB = src.refNudgePtB;
+
+        desHeading = src.desHeading;
+        desName = src.desName;
+
+        pivotDistanceError = src.pivotDistanceError;
+        pivotDistanceErrorLast = src.pivotDistanceErrorLast;
+        pivotDerivative = src.pivotDerivative;
+        pivotDerivativeSmoothed = src.pivotDerivativeSmoothed;
+
+        inty = src.inty;
+        steerAngleSmoothed = src.steerAngleSmoothed;
+        pivotErrorTotal = src.pivotErrorTotal;
+        distSteerError = src.distSteerError;
+        lastDistSteerError = src.lastDistSteerError;
+        derivativeDistError = src.derivativeDistError;
+
+        tramPassEvery = src.tramPassEvery;
+
+        return *this;
+    }
+
 signals:
     void stopAutosteer();
     void TimedMessage(int,QString,QString);
