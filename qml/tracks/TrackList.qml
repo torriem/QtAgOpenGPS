@@ -201,6 +201,7 @@ MoveablePopup {
                     id: control
                     checked: trackView.currentIndex === index ? true : false
                     indicator: Rectangle{
+                        id: controlRect
                         color: aog.backgroundColor
                         anchors.fill: control
                         IconButtonTransparent{
@@ -215,7 +216,7 @@ MoveablePopup {
                             anchors.margins: 2
                             anchors.left: isLineOrCurve.right
                             height: control.height
-                            anchors.verticalCenter: control.verticalCenter
+                            anchors.verticalCenter: controlRect.verticalCenter
                             anchors.right: isHidden.left
                             //color: (control.down) ? aog.backgroundColor : aog.blackDayWhiteNight
                             //color: (control.down) ? aog.blackDayWhiteNight : aog.backgroundColor
