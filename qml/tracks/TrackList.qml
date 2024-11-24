@@ -83,7 +83,7 @@ MoveablePopup {
 				icon.source: "/images/Trash.png"
 				onClicked: {
                     if (trackView.currentIndex > -1) {
-                        if (aog.currentTrack == trackView.currentIndex)
+                        if (aog.currentTrack === trackView.currentIndex)
 						aog.currentTrack = -1
                         linesInterface.abLine_deleteLine(trackView.currentIndex)
                         trackView.currentIndex = -1
