@@ -830,9 +830,9 @@ Window {
             id:bottomButtons
             anchors.bottom: parent.bottom
             anchors.left: parent.left
-            anchors.leftMargin: theme.buttonSize + 3
+            anchors.leftMargin: leftColumn.width + 3
             anchors.right: parent.right
-            anchors.rightMargin: theme.buttonSize + 3
+            anchors.rightMargin: rightColumn.width + 3
             visible: aog.isJobStarted && leftColumn.visible
 
             onWidthChanged: {
