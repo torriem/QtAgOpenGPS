@@ -655,7 +655,8 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
                                    CYouTurn &yt,
                                    const CAHRS &ahrs,
                                    CGuidance &gyd,
-                                   CNMEA &pn)
+                                   CNMEA &pn,
+                                   int &makeUTurnCounter)
 {
     double purePursuitGain = property_purePursuitIntegralGainAB;
     double wheelBase = property_setVehicle_wheelbase;
@@ -675,7 +676,7 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
 
     if (curList.count() > 0)
     {
-        if (yt.isYouTurnTriggered && yt.DistanceFromYouTurnLine(vehicle,pn))//do the pure pursuit from youTurn
+        if (yt.isYouTurnTriggered && yt.DistanceFromYouTurnLine(vehicle,pn,makeUTurnCounter))//do the pure pursuit from youTurn
         {
             //now substitute what it thinks are AB line values with auto turn values
             steerAngleCu = yt.steerAngleYT;

@@ -125,7 +125,9 @@ void CABLine::GetCurrentABLine(Vec3 pivot, Vec3 steer,
                                CYouTurn &yt,
                                const CAHRS &ahrs,
                                CGuidance &gyd,
-                               CNMEA &pn)
+                               CNMEA &pn,
+                               int &makeUTurnCounter
+                               )
 {
     double dx, dy;
     double purePursuitIntegralGain = property_purePursuitIntegralGainAB;
@@ -133,7 +135,7 @@ void CABLine::GetCurrentABLine(Vec3 pivot, Vec3 steer,
     double maxSteerAngle = property_setVehicle_maxSteerAngle;
 
     //Check uturn first
-    if (yt.isYouTurnTriggered && yt.DistanceFromYouTurnLine(vehicle,pn))//do the pure pursuit from youTurn
+    if (yt.isYouTurnTriggered && yt.DistanceFromYouTurnLine(vehicle,pn,makeUTurnCounter))//do the pure pursuit from youTurn
     {
         //now substitute what it thinks are AB line values with auto turn values
         steerAngleAB = yt.steerAngleYT;
