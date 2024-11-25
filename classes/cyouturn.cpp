@@ -124,7 +124,6 @@ bool CYouTurn::BuildABLineDubinsYouTurn(bool isTurnLeft,
     return false;
 }
 
-
 bool CYouTurn::CreateCurveOmegaTurn(bool isTurnLeft, Vec3 pivotPos,
                                     int makeUTurnCounter,
                                     CVehicle &vehicle,
@@ -2729,7 +2728,9 @@ void CYouTurn::BuildManualYouTurn(bool isTurnRight,
 }
 
 //determine distance from youTurn guidance line
-bool CYouTurn::DistanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
+bool CYouTurn::DistanceFromYouTurnLine(CVehicle &vehicle,
+                                       CNMEA &pn,
+                                       int &makeUTurnCounter)
 {
     double maxSteerAngle = property_setVehicle_maxSteerAngle;
     double wheelbase = property_setVehicle_wheelbase;
@@ -2765,18 +2766,18 @@ bool CYouTurn::DistanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
 
             if (minDistA > 16)
             {
-                CompleteYouTurn();
+                CompleteYouTurn(makeUTurnCounter);
                 return false;
             }
 
             //just need to make sure the points continue ascending or heading switches all over the place
             if (A > B)
             {
+                int C;
                 C = A; A = B; B = C;
             }
 
             //feed backward to turn slower to keep pivot on
-            A -= 7;
             if (A < 0)
             {
                 A = 0;
@@ -2786,7 +2787,13 @@ bool CYouTurn::DistanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
             //return and reset if too far away or end of the line
             if (B >= ptCount - 8)
             {
-                CompleteYouTurn();
+                CompleteYouTurn(makeUTurnCounter);
+                return false;
+            }
+
+            if (uTurnStyle == 1 && pt3Phase == 0 && vehicle.isReverse)
+            {
+                CompleteYouTurn(makeUTurnCounter);
                 return false;
             }
 
@@ -2862,15 +2869,19 @@ bool CYouTurn::DistanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
             }
 
             //just need to make sure the points continue ascending or heading switches all over the place
-            if (A > B) { C = A; A = B; B = C; }
+            if (A > B)
+            {
+                int C;
+                C = A; A = B; B = C;
+            }
 
             onA = A;
-            double distancePiv = glm::Distance(ytList[A], vehicle.pivotAxlePos);
+            double distancePiv = glm::Distance(ytList[A], pivot);
 
             if (distancePiv > 1 || (B >= ptCount - 1))
             {
                 {
-                    CompleteYouTurn();
+                    CompleteYouTurn(makeUTurnCounter);
                     return false;
                 }
             }
@@ -2919,33 +2930,20 @@ bool CYouTurn::DistanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
                     break;
                 }
                 else distSoFar += tempDist;
+
                 start = ytList[i];
+
                 if (i == ptCount - 1)//goalPointDistance is longer than remaining u-turn
                 {
-                    CompleteYouTurn();
+                    CompleteYouTurn(makeUTurnCounter);
                     return false;
                 }
 
-                if (pt3Phase == 1 && i < 2)
+                if (uTurnStyle == 1 && pt3Phase == 0 && vehicle.isReverse)
                 {
-                    CompleteYouTurn();
+                    CompleteYouTurn(makeUTurnCounter);
                     return false;
                 }
-
-                if (uTurnStyle == 1 && pt3Phase == 0 && isLastFrameForward && vehicle.isReverse)
-                {
-                    ytList.clear();
-                    pt3Phase++;
-                    return true;
-                }
-
-                if (uTurnStyle == 1 && pt3Phase == 1 && !isLastFrameForward && !vehicle.isReverse)
-                {
-                    CompleteYouTurn();
-                    return false;
-                }
-
-                isLastFrameForward = vehicle.isReverse;
             }
 
             //calc "D" the distance from pivot axle to lookahead point
@@ -2957,6 +2955,8 @@ bool CYouTurn::DistanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
 
             steerAngleYT = glm::toDegrees(atan(2 * (((goalPointYT.easting - pivot.easting) * cos(localHeading))
                                                         + ((goalPointYT.northing - pivot.northing) * sin(localHeading))) * wheelbase / goalPointDistanceSquared));
+
+            steerAngleYT *= vehicle.uturnCompensation;
 
             if (steerAngleYT < -maxSteerAngle) steerAngleYT = -maxSteerAngle;
             if (steerAngleYT > maxSteerAngle) steerAngleYT = maxSteerAngle;
@@ -2982,26 +2982,8 @@ bool CYouTurn::DistanceFromYouTurnLine(CVehicle &vehicle, CNMEA &pn)
     }
     else
     {
-        CompleteYouTurn();
+        CompleteYouTurn(makeUTurnCounter);
         return false;
-    }
-}
-
-void CYouTurn::Check3PtSequence(void)
-{
-    if (pt3Phase == 0)
-    {
-        ytList.clear();
-        //ytList.AddRange(pt3ListSecondLine);
-        pt3Phase++;
-        //mf.sim.stepDistance = 0;
-        //mf.sim.isAccelBack = true;
-    }
-    else
-    {
-        CompleteYouTurn();
-        //mf.sim.stepDistance = 0;
-        //mf.sim.isAccelForward = true;
     }
 }
 

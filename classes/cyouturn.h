@@ -144,6 +144,8 @@ public:
     CClose outClosestTurnPt;
     CClose startOfTurnPt;
 
+    int onA;
+
     //constructor
     explicit CYouTurn(QObject *parent = 0);
 
@@ -294,7 +296,7 @@ public:
                             );
 
     //determine distance from youTurn guidance line
-    bool DistanceFromYouTurnLine(CVehicle &v, CNMEA &pn);
+    bool DistanceFromYouTurnLine(CVehicle &v, CNMEA &pn, int &makeUTurnCounter);
 
     //Duh.... What does this do....
     void DrawYouTurn(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
