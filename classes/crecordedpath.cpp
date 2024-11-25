@@ -12,7 +12,9 @@ CRecordedPath::CRecordedPath(QObject *parent) : QObject(parent)
 
 }
 
-bool CRecordedPath::StartDrivingRecordedPath(CVehicle &vehicle)
+bool CRecordedPath::StartDrivingRecordedPath(CVehicle &vehicle,
+                                             const CYouTurn &yt
+                                             )
 {
     //create the dubins path based on start and goal to start of recorded path
     A = B = C = 0;
@@ -72,7 +74,7 @@ bool CRecordedPath::StartDrivingRecordedPath(CVehicle &vehicle)
     Vec3 goal = Vec3(recList[idx].easting, recList[idx].northing, recList[idx].heading);
 
     //get the dubins for approach to recorded path
-    GetDubinsPath(vehicle, goal);
+    GetDubinsPath(vehicle, goal, yt);
     shuttleListCount = shuttleDubinsList.count();
 
     //has a valid dubins path been created?
