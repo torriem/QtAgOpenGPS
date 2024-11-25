@@ -20,6 +20,7 @@ class CCamera;
 class CABCurve;
 class CABLine;
 class CContour;
+class CTrack;
 
 class CVehicle: public QObject
 {
@@ -120,10 +121,7 @@ public:
                      QRect viewport,
                      const CCamera &camera,
                      const CTool &tool,
-                     CBoundary &bnd,
-                     const CContour &ct,
-                     const CABCurve &curve,
-                     const CABLine &ABLine);
+                     CBoundary &bnd);
 
 
 

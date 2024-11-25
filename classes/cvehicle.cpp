@@ -14,6 +14,7 @@
 #include "cabline.h"
 #include "cabcurve.h"
 #include "ccontour.h"
+#include "ctrack.h"
 
 QRect find_bounding_box(int viewport_height, QVector3D p1, QVector3D p2, QVector3D p3, QVector3D p4) {
     float x_min = glm::FLOAT_MAX;
@@ -141,10 +142,8 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
                            QRect viewport,
                            const CCamera &camera,
                            const CTool &tool,
-                           CBoundary &bnd,
-                           const CContour &ct,
-                           const CABCurve &curve,
-                           const CABLine &ABLine)
+                           CBoundary &bnd
+                           )
 {
     //draw vehicle
     modelview.rotate(glm::toDegrees(-fixHeading), 0.0, 0.0, 1.0);
@@ -527,8 +526,13 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
         gldraw.draw(gl,mvp,color,GL_LINE_STRIP,property_setDisplay_lineWidth);
     }
 
-    if(!(bool)property_setDisplay_topTrackNum) {
+    /*
+    // TODO: Track number and nudge offset need to be done in QML.
+    // Probably will need CTrack to put this information in its model
+
+    if(!(bool)property_setDisplay_topTrackNum && trk.idx > -1 && !ct.isContourBtnOn) {
         color.setRgbF(1.269, 1.25, 1.2510, 0.87); //?? why over 1.0?
+
         if (curve.isBtnCurveOn && (bool)ct.isContourBtnOn == false)
         {
             if (curve.howManyPathsAway == 0) {
@@ -561,6 +565,7 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
             }
         }
     }
+    */
 
     //if (camera.camSetDistance < -500)
     //{
