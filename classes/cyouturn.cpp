@@ -2585,29 +2585,36 @@ void CYouTurn::FailCreate()
 }
 
 //build the points and path of youturn to be scaled and transformed
-void CYouTurn::BuildManualYouLateral(CVehicle &vehicle, CABLine &ABLine, CABCurve &curve,
-                                  bool isTurnRight)
+void CYouTurn::BuildManualYouLateral(bool isTurnRight,
+                                     CVehicle &vehicle,
+                                     const CTrack &trk,
+                                     CABLine &ABLine,
+                                     CABCurve &curve
+                                     )
 {
     double tool_toolWidth = property_setVehicle_toolWidth;
     double tool_toolOverlap = property_setVehicle_toolOverlap;
 
     double head;
     //point on AB line closest to pivot axle point from ABLine PurePursuit
-    if (ABLine.isABLineSet)
+    if (trk.idx > -1 && trk.gArr.count() >0)
     {
-        rEastYT = ABLine.rEastAB;
-        rNorthYT = ABLine.rNorthAB;
-        isHeadingSameWay = ABLine.isHeadingSameWay;
-        head = ABLine.abHeading;
-        ABLine.isLateralTriggered = true;
-    }
-    else if(curve.isCurveSet)
-    {
-        rEastYT = curve.rEastCu;
-        rNorthYT = curve.rNorthCu;
-        isHeadingSameWay = curve.isHeadingSameWay;
-        head = curve.manualUturnHeading;
-        curve.isLateralTriggered = true;
+        if (trk.gArr[trk.idx].mode == (int)TrackMode::AB)
+        {
+            rEastYT = ABLine.rEastAB;
+            rNorthYT = ABLine.rNorthAB;
+            isHeadingSameWay = ABLine.isHeadingSameWay;
+            head = ABLine.abHeading;
+            ABLine.isLateralTriggered = true;
+        }
+        else
+        {
+            rEastYT = curve.rEastCu;
+            rNorthYT = curve.rNorthCu;
+            isHeadingSameWay = curve.isHeadingSameWay;
+            head = curve.manualUturnHeading;
+            curve.isLateralTriggered = true;
+        }
     }
     else return;
 
@@ -2635,9 +2642,12 @@ void CYouTurn::BuildManualYouLateral(CVehicle &vehicle, CABLine &ABLine, CABCurv
     curve.isCurveValid = false;
 }
 
-//build the points and path of youturn to be scaled and transformed
-void CYouTurn::BuildManualYouTurn(CVehicle &vehicle, CABLine &ABLine, CABCurve &curve,
-                                  bool isTurnRight, bool isTurnButtonTriggered)
+void CYouTurn::BuildManualYouTurn(bool isTurnRight,
+                                  bool isTurnButtonTriggered,
+                                  CVehicle &vehicle,
+                                  const CTrack &trk,
+                                  CABLine &ABLine,
+                                  CABCurve &curve)
 {
     double minTurningRadius = property_setVehicle_minTurningRadius;
     double tool_toolWidth = property_setVehicle_toolWidth;
@@ -2648,21 +2658,24 @@ void CYouTurn::BuildManualYouTurn(CVehicle &vehicle, CABLine &ABLine, CABCurve &
 
     double head;
     //point on AB line closest to pivot axle point from ABLine PurePursuit
-    if (ABLine.isABLineSet)
+    if (trk.idx > -1 && trk.gArr.count() > 0)
     {
-        rEastYT = ABLine.rEastAB;
-        rNorthYT = ABLine.rNorthAB;
-        isHeadingSameWay = ABLine.isHeadingSameWay;
-        head = ABLine.abHeading;
-        ABLine.isLateralTriggered = true;
-    }
-    else if (curve.isCurveSet)
-    {
-        rEastYT = curve.rEastCu;
-        rNorthYT = curve.rNorthCu;
-        isHeadingSameWay = curve.isHeadingSameWay;
-        head = curve.manualUturnHeading;
-        curve.isLateralTriggered = true;
+        if (trk.gArr[trk.idx].mode == (int)TrackMode::AB)
+        {
+            rEastYT = ABLine.rEastAB;
+            rNorthYT = ABLine.rNorthAB;
+            isHeadingSameWay = ABLine.isHeadingSameWay;
+            head = ABLine.abHeading;
+            ABLine.isLateralTriggered = true;
+        }
+        else
+        {
+            rEastYT = curve.rEastCu;
+            rNorthYT = curve.rNorthCu;
+            isHeadingSameWay = curve.isHeadingSameWay;
+            head = curve.manualUturnHeading;
+            curve.isLateralTriggered = true;
+        }
     }
     else return;
 
@@ -2712,6 +2725,7 @@ void CYouTurn::BuildManualYouTurn(CVehicle &vehicle, CABLine &ABLine, CABCurve &
 
     ABLine.isABValid = false;
     curve.isCurveValid = false;
+    curve.lastHowManyPathsAway = 98888;
 }
 
 //determine distance from youTurn guidance line

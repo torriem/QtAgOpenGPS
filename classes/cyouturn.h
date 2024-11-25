@@ -274,17 +274,24 @@ public:
     //something went seriously wrong so reset everything
     void ResetYouTurn(int &makeUTurnCounter);
 
-    void ResetCreatedYouTurn(int &makeUTurnCounter);
+    void ResetCreatedYouTurn(int &makeUturnCounter);
 
     void FailCreate();
 
     //build the points and path of youturn to be scaled and transformed
-    void BuildManualYouLateral(CVehicle &vehicle,
-                               CABLine &ABLine, CABCurve &curve,
-                            bool isTurnLeft);
-    void BuildManualYouTurn(CVehicle &vehicle,
-                            CABLine &ABLine, CABCurve &curve,
-                            bool isTurnLeft, bool isTurnButtonTriggered);
+    void BuildManualYouLateral(bool isTurnLeft,
+                               CVehicle &vehicle,
+                               const CTrack &trk,
+                               CABLine &ABLine,
+                               CABCurve &curve);
+
+    //build the points and path of youturn to be scaled and transformed
+    void BuildManualYouTurn(bool isTurnLeft, bool isTurnButtonTriggered,
+                            CVehicle &vehicle,
+                            const CTrack &trk,
+                            CABLine &ABLine,
+                            CABCurve &curve
+                            );
 
     //determine distance from youTurn guidance line
     bool DistanceFromYouTurnLine(CVehicle &v, CNMEA &pn);
