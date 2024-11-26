@@ -38,6 +38,7 @@ void FormGPS::setupGui()
 #ifdef LOCAL_QML
     // Look for QML files relative to our current directory
     QStringList search_pathes = { "..",
+                                 "../../",
                                  "../qtaog",
                                  "../QtAgOpenGPS",
                                  "."
