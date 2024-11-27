@@ -8,12 +8,6 @@ import QtQuick.Controls.Fusion
 import ".."
 import "../components"
 
-/*todo:
-//in the application output we get the warning from this page:
-qrc:/qml/ConfigImplementDimensions.qml:26:9: QML SpinBoxCM: Binding loop detected for property "value"
-qrc:/qml/ConfigImplementDimensions.qml:16:9: QML SpinBoxCM: Binding loop detected for property "value"
-I'm not sure why, I think I did them the same as everywhere else.
-*/
 Rectangle{
     id: configImpDimWin
     anchors.fill: parent
