@@ -55,7 +55,7 @@ Item{
 				Layout.alignment: Qt.AlignCenter
 				icon.source: prefix + "/images/BoundaryRight.png"
 				onClicked: {
-					if (icon.source == prefix + "/images/BoundaryRight.png") {
+                    if (icon.source === prefix + "/images/BoundaryRight.png") {
 						icon.source = prefix + "/images/BoundaryLeft.png"
 					} else {
 						icon.source = prefix + "/images/BoundaryRight.png"
@@ -122,7 +122,7 @@ Item{
 				Layout.columnSpan: 2
 				icon.source: prefix + "/images/BoundaryRight.png"
 				onClicked: {
-					if (icon.source == prefix + "/images/BoundaryRight.png") {
+                    if (icon.source === prefix + "/images/BoundaryRight.png") {
 						icon.source = prefix + "/images/BoundaryLeft.png"
 					} else {
 						icon.source = prefix + "/images/BoundaryRight.png"
@@ -183,7 +183,7 @@ Item{
 				Layout.columnSpan: 2
 				icon.source: prefix + "/images/BoundaryRight.png"
 				onClicked: {
-					if (icon.source == prefix + "/images/BoundaryRight.png") {
+                    if (icon.source === prefix + "/images/BoundaryRight.png") {
 						icon.source = prefix + "/images/BoundaryLeft.png"
 					} else {
 						icon.source = prefix + "/images/BoundaryRight.png"
