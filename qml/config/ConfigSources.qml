@@ -8,8 +8,6 @@ import QtQuick.Controls.Fusion
 import ".."
 import "../components"
 
-/* todo:
-  */
 Rectangle{
     id: configSources
     anchors.fill: parent
