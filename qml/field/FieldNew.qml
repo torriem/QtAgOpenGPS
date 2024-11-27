@@ -119,7 +119,7 @@ Popup {
             icon.source: prefix + "/images/Cancel64.png"
         }
         IconButtonTransparent{
-            enabled: newField.text != "" && errorMessage.visible == false;
+            enabled: newField.text !== "" && errorMessage.visible === false;
             objectName: "btnSave"
             icon.source: prefix + "/images/OK64.png"
 
