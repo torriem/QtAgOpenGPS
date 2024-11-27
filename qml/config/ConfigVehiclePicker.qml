@@ -145,7 +145,7 @@ Item {
                 height: 75 * theme.scaleHeight
                 icon.source: prefix + "/images/VehFileSaveAs"
                 onClicked: {
-                    if (saveAsVehicle.text != "") {
+                    if (saveAsVehicle.text !== "") {
                         //console.debug("Going to save", saveAsVehicle.text)
                         vehicleInterface.vehicle_saveas(saveAsVehicle.text)
                         //just setting the name is probably enough to get it to save the vehicle
