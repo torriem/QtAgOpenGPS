@@ -9,11 +9,11 @@ import "components" as Comp
 Item {
     width: 340
     height: 550
-        id: mainWindowTram
-        Comp.TopLine{
-            id: topLine
-            titleText: "Tram Lines"
-        }
+    id: mainWindowTram
+    Comp.TopLine{
+        id: topLine
+        titleText: "Tram Lines"
+    }
     Rectangle{
         anchors.left: parent.left
         anchors.bottom: parent.bottom
@@ -101,10 +101,10 @@ Item {
                 id: passesRow
                 width: tramPassesDown.width
                 height: tramPassesDown.height
-                    text: qsTr("Passes")
-                    from: 1
-                    value: 1
-                    to: 999
+                text: qsTr("Passes")
+                from: 1
+                value: 1
+                to: 999
             }
             Comp.IconButtonTransparent{
                 icon.source: prefix + "/images/UpArrow64.png"
