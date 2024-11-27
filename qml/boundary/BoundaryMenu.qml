@@ -20,10 +20,10 @@ Item {
 
     MoveablePopup {
         id: boundaryMenuPopup
-        width: 500
         height: 400
         modal: true
         visible: boundaryMenu.visible
+        width: 500
         x: 40
         y: 40
         TopLine{
@@ -49,11 +49,11 @@ Item {
                 anchors.topMargin: 50
                 ScrollBar.vertical: ScrollBar {
                     id: scrollbar
-					anchors.right: parent.right
-                    width: 10
-                    policy: ScrollBar.AlwaysOn
+                    anchors.right: parent.right
                     active: true
                     contentItem.opacity: 1
+                    policy: ScrollBar.AlwaysOn
+                    width: 10
                 }
 
                 onChangeDriveThrough: {
@@ -64,16 +64,16 @@ Item {
 
             RowLayout{
                 id: buttonsRow
-                width: parent.width - 20
+                anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 height: children.height
-                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width - 20
                 IconButtonTransparent{
                     objectName: "btnBoundaryDeleteCurrent"
-                    icon.source: prefix + "/images/BoundaryDelete.png"
                     enabled: (boundaryList.currentIndex === 0 &&
                               boundaryInterface.boundary_list.length === 1) ||
                              (boundaryList.currentIndex > 0)
+                    icon.source: prefix + "/images/BoundaryDelete.png"
                     onClicked: boundaryInterface.delete_boundary(boundaryList.currentIndex)
                 }
                 IconButtonTransparent{
@@ -111,7 +111,6 @@ Item {
     Dialog {
         id: deleteAllSure
         visible: false
-        //anchors.centerIn: mainWindow
         title: qsTr("Delete All Boundaries?")
         standardButtons: Dialog.No | Dialog.Yes
         width: 500
