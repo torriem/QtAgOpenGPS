@@ -17,22 +17,9 @@ Popup {
     function show(){
         parent.visible = true
     }
-
-    Rectangle{
+    TopLine{
         id: topLine
-        anchors.top:parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        height: 40
-        z: 1
-        color: aog.backgroundColor
-        Text{
-            anchors.fill: parent
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: "Create New Field from Existing Field"
-            font.pixelSize: 30
-        }
+        titleText: qsTr("Create New Field from Existing Field")
     }
 
     FieldTable {

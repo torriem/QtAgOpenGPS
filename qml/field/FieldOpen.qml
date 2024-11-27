@@ -23,22 +23,11 @@ Popup {
 
     property int sortBy: 1
 
-    Rectangle {
+    TopLine{
         id: topLine
-        objectName: "topLine"
-        width: parent.width
-        height: screenPixelDensity * 0.5 //.3" tall
-        color: "light grey"
-        z: 4
-        border.color: "black"
-        border.width: 1
-        Text {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            text: "Open Field"
-            font.pointSize: 20
-        }
+        titleText: qsTr("Open Field")
     }
+
     FieldTable {
         id: fieldTable
         anchors.top: topLine.bottom
