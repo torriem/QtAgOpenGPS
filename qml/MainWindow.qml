@@ -699,8 +699,8 @@ Window {
                 id: btnAutoTrack
                 checkable: true
                 isChecked: aog.autoTrackBtnState
-                icon.source: "/images/AutoTrackOff.png"
-                iconChecked: "/images/AutoTrack.png"
+                icon.source: prefix + "/images/AutoTrackOff.png"
+				iconChecked: prefix + "/images/AutoTrack.png"
                 Layout.alignment: Qt.AlignCenter
                 implicitWidth: theme.buttonSize
                 implicitHeight: theme.buttonSize

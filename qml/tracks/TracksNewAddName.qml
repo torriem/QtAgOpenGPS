@@ -35,7 +35,7 @@ MoveablePopup {
 		IconButtonTransparent{
 			Layout.columnSpan: 2
 			Layout.alignment: Qt.AlignCenter
-			icon.source: "/images/JobNameTime.png"
+			icon.source: prefix + "/images/JobNameTime.png"
 			Text{
 				anchors.right: parent.left
 				anchors.verticalCenter: parent.verticalCenter
@@ -48,13 +48,13 @@ MoveablePopup {
 		}
 
 		IconButtonTransparent {
-			icon.source: "/images/Cancel64.png"
+			icon.source: prefix + "/images/Cancel64.png"
 			onClicked: {
 				trackAddName.visible = false
 			}
 		}
 		IconButtonTransparent {
-			icon.source: "/images/OK64.png"
+			icon.source: prefix + "/images/OK64.png"
 			onClicked: {
 				trackAddName.visible = false
 				trackList.show()

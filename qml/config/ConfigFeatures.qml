@@ -163,7 +163,7 @@ Item {
             IconButtonColor{
                 checkable: true
                 text: qsTr("Auto Start AgIO")
-                icon.source: "/images/AgIO.png"
+                icon.source: prefix	+ "/images/AgIO.png"
                 isChecked: settings.setFeature_isAgIOOn
                 onCheckedChanged: settings.setFeature_isAgIOOn = checked
             }

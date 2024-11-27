@@ -53,18 +53,18 @@ Item{
 			// pick left or right 
 			IconButtonTransparent { 
 				Layout.alignment: Qt.AlignCenter
-				icon.source: "/images/BoundaryRight.png"
+				icon.source: prefix + "/images/BoundaryRight.png"
 				onClicked: {
-					if (icon.source == "/images/BoundaryRight.png") {
-						icon.source = "/images/BoundaryLeft.png"
+					if (icon.source == prefix + "/images/BoundaryRight.png") {
+						icon.source = prefix + "/images/BoundaryLeft.png"
 					} else {
-						icon.source = "/images/BoundaryRight.png"
+						icon.source = prefix + "/images/BoundaryRight.png"
 					}
 				}
 			}
 			IconButtonTransparent {
 				Layout.alignment: Qt.AlignCenter
-				icon.source: "/images/LetterABlue.png"
+				icon.source: prefix + "/images/LetterABlue.png"
 				onClicked: {
 					aPlusHeading.enabled = true
 					aPlusHeading.text = (Number(utils.radians_to_deg(aog.heading)).toLocaleString(Qt.locale(), 'f', 4))
@@ -84,14 +84,14 @@ Item{
 			}	
 			IconButtonTransparent {
 				Layout.alignment: Qt.AlignCenter
-				icon.source: "/images/Cancel64.png"
+				icon.source: prefix + "/images/Cancel64.png"
 				onClicked: setAPlus.visible = false
 			}
 			IconButtonTransparent {
 				id: btnAPlusOk
 				Layout.alignment: Qt.AlignCenter
 				enabled: false
-				icon.source: "/images/OK64.png"
+				icon.source: prefix + "/images/OK64.png"
 				onClicked: {
 					setAPlus.visible = false
 					trackAddName.show("A+ "+aPlusHeading.text+"°")
@@ -120,18 +120,18 @@ Item{
 			IconButtonTransparent { 
 				Layout.alignment: Qt.AlignCenter
 				Layout.columnSpan: 2
-				icon.source: "/images/BoundaryRight.png"
+				icon.source: prefix + "/images/BoundaryRight.png"
 				onClicked: {
-					if (icon.source == "/images/BoundaryRight.png") {
-						icon.source = "/images/BoundaryLeft.png"
+					if (icon.source == prefix + "/images/BoundaryRight.png") {
+						icon.source = prefix + "/images/BoundaryLeft.png"
 					} else {
-						icon.source = "/images/BoundaryRight.png"
+						icon.source = prefix + "/images/BoundaryRight.png"
 					}
 				}
 			}
 			IconButtonTransparent {
 				Layout.alignment: Qt.AlignCenter
-				icon.source: "/images/LetterABlue.png"
+				icon.source: prefix + "/images/LetterABlue.png"
 				onClicked: {
 					btnB.enabled = true
 				}
@@ -140,19 +140,19 @@ Item{
 				id: btnB
 				Layout.alignment: Qt.AlignCenter
 				enabled: false
-				icon.source: "/images/LetterBBlue.png"
+				icon.source: prefix + "/images/LetterBBlue.png"
 				onClicked: btnABOk.enabled = true
 			}
 			IconButtonTransparent {
 				Layout.alignment: Qt.AlignCenter
-				icon.source: "/images/Cancel64.png"
+				icon.source: prefix + "/images/Cancel64.png"
 				onClicked: setAB.visible = false
 			}
 			IconButtonTransparent {
 				id: btnABOk
 				Layout.alignment: Qt.AlignCenter
 				enabled: false
-				icon.source: "/images/OK64.png"
+				icon.source: prefix + "/images/OK64.png"
 				onClicked: {
 					setAB.visible = false
 					trackAddName.show("AB "+"not added"+"°")
@@ -181,19 +181,19 @@ Item{
 			IconButtonTransparent { 
 				Layout.alignment: Qt.AlignCenter
 				Layout.columnSpan: 2
-				icon.source: "/images/BoundaryRight.png"
+				icon.source: prefix + "/images/BoundaryRight.png"
 				onClicked: {
-					if (icon.source == "/images/BoundaryRight.png") {
-						icon.source = "/images/BoundaryLeft.png"
+					if (icon.source == prefix + "/images/BoundaryRight.png") {
+						icon.source = prefix + "/images/BoundaryLeft.png"
 					} else {
-						icon.source = "/images/BoundaryRight.png"
+						icon.source = prefix + "/images/BoundaryRight.png"
 					}
 				}
 			}
 			IconButtonTransparent {
 				id: btnACurve
 				Layout.alignment: Qt.AlignCenter
-				icon.source: "/images/LetterABlue.png"
+				icon.source: prefix + "/images/LetterABlue.png"
 				onClicked: {
 					btnBCurve.enabled = true
 					btnRecord.enabled = true
@@ -203,7 +203,7 @@ Item{
 				id: btnBCurve
 				Layout.alignment: Qt.AlignCenter
 				enabled: false
-				icon.source: "/images/LetterBBlue.png"
+				icon.source: prefix + "/images/LetterBBlue.png"
 				onClicked: {
 					setABCurve.visible = false
 					trackAddName.show("Cu "+aog.heading+"°")
@@ -220,13 +220,13 @@ Item{
 				Layout.alignment: Qt.AlignCenter
 				enabled: false
 				checkable: true
-				icon.source: "/images/boundaryPause.png"
-				iconChecked: "/images/BoundaryRecord.png"
+				icon.source: prefix + "/images/boundaryPause.png"
+				iconChecked: prefix + "/images/BoundaryRecord.png"
 				onCheckedChanged: checked ? btnBCurve.enabled = false : btnBCurve.enabled = true
 			}
 			IconButtonTransparent {
 				Layout.alignment: Qt.AlignCenter
-				icon.source: "/images/Cancel64.png"
+				icon.source: prefix + "/images/Cancel64.png"
 				onClicked: setABCurve.visible = false
 			}
 		}
@@ -258,7 +258,7 @@ Item{
 
 			// send current position to point A
 			IconButtonTransparent {
-				icon.source: "/images/Config/ConS_ImplementAntenna.png"
+				icon.source: prefix + "/images/Config/ConS_ImplementAntenna.png"
 				Layout.rowSpan: 3
 				Layout.row: 2
 				Layout.column: 0
@@ -270,7 +270,7 @@ Item{
 
 			// send current position to point B
 			IconButtonTransparent {
-				icon.source: "/images/Config/ConS_ImplementAntenna.png"
+				icon.source: prefix + "/images/Config/ConS_ImplementAntenna.png"
 				Layout.rowSpan: 3
 				Layout.row: 5
 				Layout.column: 0
@@ -284,7 +284,7 @@ Item{
 			 * we don't want to convert to locale string
 			 */
 			IconButtonTransparent {
-				icon.source: "/images/Cancel64.png"
+				icon.source: prefix + "/images/Cancel64.png"
 				onClicked: latLonLatLon.visible = false
 				Layout.row: 8
 				Layout.column: 0
@@ -368,7 +368,7 @@ Item{
 				}
 			}
 			IconButtonTransparent {
-				icon.source: "/images/OK64.png"
+				icon.source: prefix + "/images/OK64.png"
 				Layout.row: 8
 				Layout.column: 1
 				Layout.alignment: Qt.AlignRight
@@ -405,7 +405,7 @@ Item{
 
 			// send current position to point A
 			IconButtonTransparent {
-				icon.source: "/images/Config/ConS_ImplementAntenna.png"
+				icon.source: prefix + "/images/Config/ConS_ImplementAntenna.png"
 				Layout.rowSpan: 2
 				Layout.column: 0
 				onClicked: {
@@ -415,7 +415,7 @@ Item{
 			}
 
 			IconButtonTransparent {
-				icon.source: "/images/Cancel64.png"
+				icon.source: prefix + "/images/Cancel64.png"
 				onClicked: latLonHeading.visible = false
 				Layout.row: 4
 				Layout.column: 0
@@ -472,7 +472,7 @@ Item{
 				}
 			}	
 			IconButtonTransparent {
-				icon.source: "/images/OK64.png"
+				icon.source: prefix + "/images/OK64.png"
 				Layout.row: 4
 				Layout.column: 1
 				Layout.alignment: Qt.AlignRight
@@ -508,7 +508,7 @@ Item{
 
 			// send current position to point A
 			IconButtonTransparent {
-				icon.source: "/images/Config/ConS_ImplementAntenna.png"
+				icon.source: prefix + "/images/Config/ConS_ImplementAntenna.png"
 				Layout.rowSpan: 2
 				Layout.column: 0
 				onClicked: {
@@ -518,7 +518,7 @@ Item{
 			}
 
 			IconButtonTransparent {
-				icon.source: "/images/Cancel64.png"
+				icon.source: prefix + "/images/Cancel64.png"
 				onClicked: circleTrack.visible = false
 				Layout.row: 3
 				Layout.column: 0
@@ -558,7 +558,7 @@ Item{
 				}
 			}
 			IconButtonTransparent {
-				icon.source: "/images/OK64.png"
+				icon.source: prefix + "/images/OK64.png"
 				Layout.row: 3
 				Layout.column: 1
 				Layout.alignment: Qt.AlignRight
@@ -660,7 +660,7 @@ Item{
 				anchors.left: parent.left
 				anchors.margins: 5
 				checkable: false
-				icon.source: "/images/LetterABlue.png"
+				icon.source: prefix + "/images/LetterABlue.png"
 				onClicked: {
 					abSetter.a_easting = aog.toolEasting
 					abSetter.a_northing = aog.toolNorthing
@@ -807,7 +807,7 @@ Item{
 				anchors.left: parent.left
 				anchors.margins: 5
 				checkable: false
-				icon.source: "/images/LetterBBlue.png"
+				icon.source: prefix + "/images/LetterBBlue.png"
 
 				onClicked: {
 					abSetter.b_easting = aog.toolEasting
@@ -888,7 +888,7 @@ Item{
 			anchors.bottom: parent.bottom
 			anchors.left: parent.left
 			anchors.margins: 10
-			icon.source: "/images/Cancel64.png"
+			icon.source: prefix + "/images/Cancel64.png"
 			onClicked:{
 				//cancel
 				linesInterface.abLine_setA(false,0,0,0) //turn off line setting
@@ -901,7 +901,7 @@ Item{
 			anchors.bottom: parent.bottom
 			anchors.right: parent.right
 			anchors.margins: 10
-			icon.source: "/images/OK64.png"
+			icon.source: prefix + "/images/OK64.png"
 			onClicked: {
 				newLineName.visible = true
 				newLineName.generate_ab_name(abSetter.heading_degrees)
