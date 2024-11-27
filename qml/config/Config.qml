@@ -350,7 +350,7 @@ Dialog {
                 anchors.right: parent.right
                 width:parent.height
                 height: parent.height
-                icon.source: prefix + "/images/OK64"
+                icon.source: prefix + "/images/OK64.png"
                 onClicked: {
                     //closeAllConfig()
                     //fix up signs on implement dimensions

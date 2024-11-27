@@ -895,7 +895,7 @@ Window {
             }
             Comp.IconButtonText {
                 id: btnSectionMapping
-                icon.source: prefix + "/images/SectionMapping"
+                icon.source: prefix + "/images/SectionMapping.png"
                 Layout.alignment: Qt.AlignCenter
                 implicitWidth: theme.buttonSize
                 implicitHeight: theme.buttonSize

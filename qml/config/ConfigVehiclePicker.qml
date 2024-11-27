@@ -143,7 +143,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: 75 * theme.scaleWidth
                 height: 75 * theme.scaleHeight
-                icon.source: prefix + "/images/VehFileSaveAs"
+                icon.source: prefix + "/images/VehFileSaveAs.png"
                 onClicked: {
                     if (saveAsVehicle.text !== "") {
                         //console.debug("Going to save", saveAsVehicle.text)

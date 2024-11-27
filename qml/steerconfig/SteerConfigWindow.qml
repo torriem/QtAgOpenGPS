@@ -415,7 +415,7 @@ MoveablePopup {
                 color3: "white"
                 height: 75 * theme.scaleHeight
                 icon.source: prefix + "/images/BoundaryRecord.png"
-                iconChecked: prefix + "/images/Stop"
+                iconChecked: prefix + "/images/Stop.png"
                 isChecked: false
                 width: 75 * theme.scaleWidth
             }
