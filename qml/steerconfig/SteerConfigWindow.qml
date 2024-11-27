@@ -31,6 +31,7 @@ MoveablePopup {
         visible: true
         TopLine{
 			id:topLine
+            onBtnCloseClicked:  steerConfigWindow.close()
             titleText: qsTr("Auto Steer Config")
         }
 		Item{
