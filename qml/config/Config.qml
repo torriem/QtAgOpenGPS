@@ -39,22 +39,8 @@ Dialog {
         border.width: 8 * theme.scaleWidth
         visible: true
         anchors.fill: parent
-        Rectangle{
-            id:topLine
-            color: aog.borderColor
-            visible: true
-            width: parent.width-16
-            height: 40 * theme.scaleHeight
-            anchors.top: parent.top
-            anchors.topMargin: 8
-            anchors.horizontalCenter: parent.horizontalCenter
-            Button {
-                id: help
-                text: qsTr("?")
-                width: parent.height+3
-                height:parent.height
-                anchors.right: parent.right
-            }
+        TopLine{
+            id: topLine
         }
 
         ScrollView {
