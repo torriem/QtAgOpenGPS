@@ -236,9 +236,9 @@ Popup {
                 icon.source: prefix + "/images/OK64.png"
                 enabled: (newField.text !== "" && existingField.text !== "" &&
                           newField.text != existingField.text &&
-                          errorMessage.visible == false)
+                          errorMessage.visible === false)
                 onClicked: {
-                    if(newField.text != "" && existingField.text != "" &&
+                    if(newField.text !== "" && existingField.text !== "" &&
                             newField.text != existingField.text) {
                         var flag = 0;
                         if (btnKeepFlags.checked)
