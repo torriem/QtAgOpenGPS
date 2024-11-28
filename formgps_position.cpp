@@ -10,6 +10,7 @@
 #include "cvehicle.h"
 #include "csection.h"
 #include "cboundary.h"
+#include "ctrack.h"
 #include <QQuickView>
 #include <QOpenGLContext>
 #include <QPair>
@@ -272,22 +273,29 @@ void FormGPS::UpdateFixPosition()
                                               pn.fix.northing - stepFixPts[currentStepFix].northing);
             if (newGPSHeading < 0) newGPSHeading += glm::twoPI;
 
-            ////what is angle between the last valid heading before stopping and one just now
-            delta = fabs(M_PI - fabs(fabs(newGPSHeading - imuCorrected) - M_PI));
-
-            //ie change in direction
-            if (delta > 1.57) //
+            if (ahrs.isReverseOn)
             {
-                vehicle.isReverse = true;
-                newGPSHeading += M_PI;
-                if (newGPSHeading < 0) newGPSHeading += glm::twoPI;
-                else if (newGPSHeading >= glm::twoPI) newGPSHeading -= glm::twoPI;
-                isReverseWithIMU = true;
+                ////what is angle between the last valid heading before stopping and one just now
+                delta = fabs(M_PI - fabs(fabs(newGPSHeading - imuCorrected) - M_PI));
+
+                //ie change in direction
+                if (delta > 1.57) //
+                {
+                    vehicle.isReverse = true;
+                    newGPSHeading += M_PI;
+                    if (newGPSHeading < 0) newGPSHeading += glm::twoPI;
+                    else if (newGPSHeading >= glm::twoPI) newGPSHeading -= glm::twoPI;
+                    isReverseWithIMU = true;
+                }
+                else
+                {
+                    vehicle.isReverse = false;
+                    isReverseWithIMU = false;
+                }
             }
             else
             {
                 vehicle.isReverse = false;
-                isReverseWithIMU = false;
             }
 
             if (vehicle.isReverse)
@@ -311,12 +319,12 @@ void FormGPS::UpdateFixPosition()
             //Difference between the IMU heading and the GPS heading
             gyroDelta = 0;
 
-            if (!isReverseWithIMU)
-                gyroDelta = (imuHeading + imuGPS_Offset) - gpsHeading;
-            else
-            {
-                gyroDelta = 0;
-            }
+            //if (!isReverseWithIMU)
+            gyroDelta = (imuHeading + imuGPS_Offset) - gpsHeading;
+            //else
+            //{
+            //    gyroDelta = 0;
+            //}
 
             if (gyroDelta < 0) gyroDelta += glm::twoPI;
             else if (gyroDelta > glm::twoPI) gyroDelta -= glm::twoPI;
@@ -332,8 +340,10 @@ void FormGPS::UpdateFixPosition()
             else if (gyroDelta < -glm::twoPI) gyroDelta += glm::twoPI;
 
             //moe the offset to line up imu with gps
-            imuGPS_Offset += (gyroDelta * (ahrs.fusionWeight));
-            //imuGPS_Offset += (gyroDelta * (0.06));
+            if(!isReverseWithIMU)
+                imuGPS_Offset += (gyroDelta * (ahrs.fusionWeight));
+            else
+                imuGPS_Offset += (gyroDelta * (0.02));
 
             if (imuGPS_Offset > glm::twoPI) imuGPS_Offset -= glm::twoPI;
             else if (imuGPS_Offset < 0) imuGPS_Offset += glm::twoPI;
@@ -377,45 +387,54 @@ void FormGPS::UpdateFixPosition()
                                               pn.fix.northing - stepFixPts[currentStepFix].northing);
             if (newGPSHeading < 0) newGPSHeading += glm::twoPI;
 
-            ////what is angle between the last valid heading before stopping and one just now
-            delta = fabs(M_PI - fabs(fabs(newGPSHeading - gpsHeading) - M_PI));
-
-            filteredDelta = delta * 0.2 + filteredDelta * 0.8;
-
-            //filtered delta different then delta
-            if (fabs(filteredDelta - delta) > 0.5)
+            if (ahrs.isReverseOn)
             {
-                isChangingDirection = true;
-            }
-            else
-            {
-                isChangingDirection = false;
-            }
 
-            //we can't be sure if changing direction so do nothing
-            if (isChangingDirection)
-                goto byPass;
+                ////what is angle between the last valid heading before stopping and one just now
+                delta = fabs(M_PI - fabs(fabs(newGPSHeading - gpsHeading) - M_PI));
 
-            //ie change in direction
-            if (filteredDelta > 1.57) //
-            {
-                vehicle.isReverse = true;
-                newGPSHeading += M_PI;
+                filteredDelta = delta * 0.2 + filteredDelta * 0.8;
+
+                //filtered delta different then delta
+                if (fabs(filteredDelta - delta) > 0.5)
+                {
+                    isChangingDirection = true;
+                }
+                else
+                {
+                    isChangingDirection = false;
+                }
+
+                //we can't be sure if changing direction so do nothing
+                if (isChangingDirection)
+                    goto byPass;
+
+                //ie change in direction
+                if (filteredDelta > 1.57) //
+                {
+                    vehicle.isReverse = true;
+                    newGPSHeading += M_PI;
+                    if (newGPSHeading < 0) newGPSHeading += glm::twoPI;
+                    else if (newGPSHeading >= glm::twoPI) newGPSHeading -= glm::twoPI;
+                }
+                else
+                    vehicle.isReverse = false;
+
+                if (vehicle.isReverse)
+                    newGPSHeading -= glm::toRadians(vehicle.antennaPivot / 1
+                                                    * mc.actualSteerAngleDegrees * ahrs.reverseComp);
+                else
+                    newGPSHeading -= glm::toRadians(vehicle.antennaPivot / 1
+                                                    * mc.actualSteerAngleDegrees * ahrs.forwardComp);
+
                 if (newGPSHeading < 0) newGPSHeading += glm::twoPI;
                 else if (newGPSHeading >= glm::twoPI) newGPSHeading -= glm::twoPI;
             }
+
             else
+            {
                 vehicle.isReverse = false;
-
-            if (vehicle.isReverse)
-                newGPSHeading -= glm::toRadians(vehicle.antennaPivot / 1
-                                               * mc.actualSteerAngleDegrees * ahrs.reverseComp);
-            else
-                newGPSHeading -= glm::toRadians(vehicle.antennaPivot / 1
-                                               * mc.actualSteerAngleDegrees * ahrs.forwardComp);
-
-            if (newGPSHeading < 0) newGPSHeading += glm::twoPI;
-            else if (newGPSHeading >= glm::twoPI) newGPSHeading -= glm::twoPI;
+            }
 
             //set the headings
             vehicle.fixHeading = gpsHeading = newGPSHeading;
@@ -667,6 +686,35 @@ void FormGPS::UpdateFixPosition()
     //else {
     //}
 
+    if (vehicle.fixHeading >= glm::twoPI)
+        vehicle.fixHeading-= glm::twoPI;
+
+//#endregion
+
+//#region Corrected Position for GPS_OUT
+    //NOTE: Michael, I'm not sure about this entire region
+
+    double rollCorrectedLat;
+    double rollCorrectedLon;
+    pn.ConvertLocalToWGS84(pn.fix.northing, pn.fix.easting, rollCorrectedLat, rollCorrectedLon);
+
+    QByteArray pgnRollCorrectedLatLon(22, 0);
+
+    pgnRollCorrectedLatLon[0] = 0x80;
+    pgnRollCorrectedLatLon[1] = 0x81;
+    pgnRollCorrectedLatLon[2] = 0x7F;
+    pgnRollCorrectedLatLon[3] = 0x64;
+    pgnRollCorrectedLatLon[4] = 16;
+
+    std::memcpy(pgnRollCorrectedLatLon.data() + 5, &rollCorrectedLon, 8);
+    std::memcpy(pgnRollCorrectedLatLon.data() + 13, &rollCorrectedLat, 8);
+
+    SendPgnToLoop(pgnRollCorrectedLatLon);
+
+//#endregion
+
+//#region AutoSteer
+
     //preset the values
     vehicle.guidanceLineDistanceOff = 32000;
 
@@ -676,15 +724,38 @@ void FormGPS::UpdateFixPosition()
     }
     else
     {
-        if (curve.isCurveSet && curve.isBtnCurveOn)
+        //auto track routine
+        //NOTE: Michael. CS has "isBtnAutoSteerOn", but I get an error when I do that.
+        if (trk.isAutoTrack && !isAutoSteerBtnOn && trk.autoTrack3SecTimer > 1)
         {
-            //do the calcs for AB Curve
-            curve.GetCurrentCurveLine(vehicle.pivotAxlePos, vehicle.steerAxlePos, secondsSinceStart, isAutoSteerBtnOn, mc.steerSwitchHigh, vehicle, bnd,yt,ahrs,gyd,pn);
+            trk.autoTrack3SecTimer = 0;
+            int lastIndex = trk.idx;
+            //NOTE: Michael. Is this right?
+            trk.idx = trk.FindClosestRefTrack(vehicle.steerAxlePos, vehicle);
+            if ( lastIndex != trk.idx )
+            {
+                curve.isCurveValid = false;
+                ABLine.isABValid = false;
+            }
         }
 
-        if (ABLine.isABLineSet && ABLine.isBtnABLineOn)
+        //NOTE: hmmm. Not sure about this all
+        //like normal
+        if (trk.gArr.count() > 0 && trk.idx > -1)
         {
-            ABLine.GetCurrentABLine(vehicle.pivotAxlePos, vehicle.steerAxlePos, secondsSinceStart, isAutoSteerBtnOn, mc.steerSwitchHigh, vehicle, yt, ahrs, gyd, pn);
+            if (trk.gArr[trk.idx].mode == TrackMode.AB)
+            {
+                ABLine.BuildCurrentABLineList(vehicle.pivotAxlePos);
+
+                ABLine.GetCurrentABLine(vehicle.pivotAxlePos, vehicle.steerAxlePos);
+            }
+            else
+            {
+                //build new current ref line if required
+                curve.BuildCurveCurrentList(vehicle.pivotAxlePos);
+
+                curve.GetCurrentCurveLine(vehicle.pivotAxlePos, steerAxlePos);
+            }
         }
     }
 
@@ -706,6 +777,7 @@ void FormGPS::UpdateFixPosition()
 
         if (!isAutoSteerBtnOn) //32020 means auto steer is off
         {
+            //NOTE: Is this supposed to be commented out?
             //vehicle.guidanceLineDistanceOff = 32020;
             p_254.pgn[p_254.status] = 0;
         }
@@ -834,6 +906,8 @@ void FormGPS::UpdateFixPosition()
     //#region AutoSteer
 
     //preset the values
+    /*
+     * NOTE: Can this all be removed? It's not present in CS
     vehicle.guidanceLineDistanceOff = 32000;
 
     if (ct.isContourBtnOn)
@@ -997,14 +1071,8 @@ void FormGPS::UpdateFixPosition()
     }
 
     //#endregion
-
+*/
     //#region Youturn
-
-    //reset the fault distance to an appropriate weird number
-    //-2222 means it fell out of the loop completely
-    //-3333 means unable to find a nearest point at all even though inside the work area of field
-    // -4444 means cross trac error too high
-    distancePivotToTurnLine = -4444;
 
     //if an outer boundary is set, then apply critical stop logic
     if (bnd.bndList.count() > 0)
@@ -1026,24 +1094,32 @@ void FormGPS::UpdateFixPosition()
                 mc.isOutOfBounds = false;
                 isOutOfBounds = false;
                 //now check to make sure we are not in an inner turn boundary - drive thru is ok
-                if (yt.youTurnPhase != 3)
+                if (yt.youTurnPhase != 10)
                 {
-                    if (crossTrackError > 500)
+                    if (crossTrackError > 1000)
                     {
                         yt.ResetCreatedYouTurn();
                     }
                     else
                     {
-                        if (ABLine.isABLineSet)
+                        if (trk.gArr[trk.idx].mode == TrackMode.AB)
                         {
                             yt.BuildABLineDubinsYouTurn(vehicle, bnd, ABLine, yt.isYouTurnRight);
                         }
                         else yt.BuildCurveDubinsYouTurn(vehicle, bnd, curve, yt.isYouTurnRight, vehicle.pivotAxlePos);
                     }
 
-                    if (yt.uTurnStyle == 0 && yt.youTurnPhase == 3) yt.SmoothYouTurn(yt.uTurnSmoothing);
+                    if (yt.uTurnStyle == 0 && yt.youTurnPhase == 10)
+                    {
+                        yt.SmoothYouTurn(6);
+                    }
+                    if (yt.isTurnCreationTooClose && !yt.turnTooCloseTrigger)
+                    {
+                        yt.turnTooCloseTrigger = true;
+                        //if (sounds.isTurnSoundOn) sounds.sndUTurnTooClose.Play(); Implemented in QML
+                    }
                 }
-                else //wait to trigger the actual turn since its made and waiting
+                else if (yt.ytList.count() > 5)//wait to trigger the actual turn since its made and waiting
                 {
                     //distance from current pivot to first point of youturn pattern
                     distancePivotToTurnLine = glm::Distance(yt.ytList[5], vehicle.pivotAxlePos);
@@ -1065,10 +1141,10 @@ void FormGPS::UpdateFixPosition()
                         //sounds.isBoundAlarming = false;
                     }
 
-                    if (isAutoSteerBtnOn && vehicle.guidanceLineDistanceOff > 300 && !yt.isYouTurnTriggered)
-                    {
-                        yt.ResetCreatedYouTurn();
-                    }
+                    //if (isAutoSteerBtnOn && vehicle.guidanceLineDistanceOff > 300 && !yt.isYouTurnTriggered)
+                    //{
+                    //    yt.ResetCreatedYouTurn();
+                    //}
                 }
             }
             else
@@ -1118,6 +1194,12 @@ void FormGPS::UpdateFixPosition()
     AOGRendererInSG *renderer = qml_root->findChild<AOGRendererInSG *>("openglcontrol");
     renderer->update();
 
+    //NOTE: Not sure here.
+    //stop the timer and calc how long it took to do calcs and draw
+    frameTimeRough = (double)(swFrame.ElapsedTicks*1000) / (double)System.Diagnostics.Stopwatch.Frequency;
+
+    if (frameTimeRough > 80) frameTimeRough = 80;
+    frameTime = frameTime * 0.90 + frameTimeRough * 0.1;
     //oglBack_Paint will schedule processSectionLookAhead() once it's done drawing.
     //processSectionLookahead();
 
@@ -1159,7 +1241,6 @@ void FormGPS::UpdateFixPosition()
             lblFuzeHeading.Text = (mf.fixHeading * 57.2957795).ToString("N1");
 */
 
-    // added by Wedel
     aog->setProperty("altitude", pn.altitude);
     aog->setProperty("hdop", pn.hdop);
     aog->setProperty("age", pn.age);
@@ -1179,6 +1260,7 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("steerAngleSet", vehicle.guidanceLineSteerAngle);
     aog->setProperty("droppedSentences", udpWatchCounts);
 
+    //NOTE:This will need some help. Also, do we still need the if statement at 1274?
     if (ABLine.numABLineSelected > 0) {
         //currentABLine_heading is set in formgps_ui.cpp
         aog->setProperty("current_trackNum", ABLine.howManyPathsAway);
@@ -1215,6 +1297,26 @@ void FormGPS::TheRest()
     //To prevent drawing high numbers of triangles, determine and test before drawing vertex
     sectionTriggerDistance = glm::Distance(pn.fix, prevSectionPos);
     contourTriggerDistance = glm::Distance(pn.fix, prevContourPos);
+    gridTriggerDistance = glm::DistanceSquared(pn.fix, prevGridPos);
+
+    //NOTE: Michael, maybe verify this is all good
+    if ( isLogElevation && gridTriggerDistance > 2.9 && patchCounter !=0 && isJobStarted)
+    {
+        //grab fix and elevation
+        sbGrid.append(
+            QString::number(pn.latitude, 'f', 7).toUtf8() + ","
+            + QString::number(pn.longitude, 'f', 7).toUtf8() + ","
+            + QString::number(pn.altitude - vehicle.antennaHeight, 'f', 3).toUtf8() + ","
+            + QString::number(pn.fixQuality).toUtf8() + ","
+            + QString::number(pn.fix.easting, 'f', 2).toUtf8() + ","
+            + QString::number(pn.fix.northing, 'f', 2).toUtf8() + ","
+            + QString::number(vehicle.pivotAxlePos.heading, 'f', 3).toUtf8() + ","
+            + QString::number(ahrs.imuRoll, 'f', 3).toUtf8()
+            + "\r\n");
+
+        prevGridPos.easting = vehicle.pivotAxlePos.easting;
+        prevGridPos.northing = vehicle.pivotAxlePos.northing;
+    }
 
     //contour points
     if (isJobStarted &&(contourTriggerDistance > tool.contourWidth
@@ -1227,13 +1329,6 @@ void FormGPS::TheRest()
     if (sectionTriggerDistance > sectionTriggerStepDistance && isJobStarted)
     {
         AddSectionOrPathPoints();
-
-        //grab fix and elevation
-        if (isLogElevation) sbFix.append(QString("%1, %2, %3, %4, %5").arg(pn.fix.easting,0,'g',3)
-                             .arg(pn.fix.northing,0,'g',3)
-                             .arg(pn.fix.northing,0,'g',3)
-                             .arg(pn.latitude,0,'g',7)
-                             .arg(pn.longitude,0,'g',7).toUtf8());
     }
 
     //test if travelled far enough for new boundary point
@@ -1271,14 +1366,12 @@ void FormGPS::CalculatePositionHeading()
     vehicle.steerAxlePos.northing = vehicle.pivotAxlePos.northing + (cos(vehicle.fixHeading) * vehicle.wheelbase);
     vehicle.steerAxlePos.heading = vehicle.fixHeading;
 
-    if (!ABLine.isLateralTriggered && !curve.isLateralTriggered)
-    {
-        double speed1 = tool.width * 0.5;
-        double speed2 = vehicle.avgSpeed * 0.277777 * guidanceLookAheadTime;
-        double guidanceLookDist = (speed1 < speed2 ? speed2 : speed1);
-        vehicle.guidanceLookPos.easting = vehicle.pivotAxlePos.easting + (sin(vehicle.fixHeading) * guidanceLookDist);
-        vehicle.guidanceLookPos.northing = vehicle.pivotAxlePos.northing + (cos(vehicle.fixHeading) * guidanceLookDist);
-    }
+    //guidance look ahead distance based on time or tool width at least
+
+    double guidanceLookDist = (max(tool.width * 0.5, vehicle.avgSpeed * 0.277777 * guidanceLookAheadTime));
+    guidanceLookPos.easting = vehicle.pivotAxlePos.easting + (sin(vehicle.fixHeading) * guidanceLookDist);
+    guidanceLookPos.northing = vehicle.pivotAxlePos.northing + (cos(vehicle.fixHeading) * guidanceLookDist);
+
 
     //determine where the rigid vehicle hitch ends
     vehicle.hitchPos.easting = pn.fix.easting + (sin(vehicle.fixHeading) * (tool.hitchLength - vehicle.antennaPivot));
@@ -1293,19 +1386,8 @@ void FormGPS::CalculatePositionHeading()
             //Torriem rules!!!!! Oh yes, this is all his. Thank-you
             if (distanceCurrentStepFix != 0)
             {
-                /* AOG algorithm was not quite correct
-                double t = (tool.tankTrailingHitchLength) / distanceCurrentStepFix;
-                vehicle.tankPos.easting = vehicle.hitchPos.easting + t * (vehicle.hitchPos.easting - vehicle.tankPos.easting);
-                vehicle.tankPos.northing = vehicle.hitchPos.northing + t * (vehicle.hitchPos.northing - vehicle.tankPos.northing);
                 vehicle.tankPos.heading = atan2(vehicle.hitchPos.easting - vehicle.tankPos.easting, vehicle.hitchPos.northing - vehicle.tankPos.northing);
-
-                turns out we can do it with just a heading, as down below the tankPos
-                is set based hitchPos, extended out along the heading we calculate here.
-                */
-                vehicle.tankPos.heading = atan2(vehicle.hitchPos.easting - vehicle.tankPos.easting, vehicle.hitchPos.northing - vehicle.tankPos.northing);
-
                 if (vehicle.tankPos.heading < 0) vehicle.tankPos.heading += glm::twoPI;
-
             }
 
             ////the tool is seriously jacknifed or just starting out so just spring it back.
@@ -1337,16 +1419,7 @@ void FormGPS::CalculatePositionHeading()
         //Torriem rules!!!!! Oh yes, this is all his. Thank-you
         if (distanceCurrentStepFix != 0)
         {
-            /*
-             * AOG algorithm wasn't quite right.
-            double t = (tool.trailingHitchLength) / distanceCurrentStepFix;
-            vehicle.toolPivotPos.easting = vehicle.tankPos.easting + t * (vehicle.tankPos.easting - vehicle.toolPivotPos.easting);
-            vehicle.toolPivotPos.northing = vehicle.tankPos.northing + t * (vehicle.tankPos.northing - vehicle.toolPivotPos.northing);
             vehicle.toolPivotPos.heading = atan2(vehicle.tankPos.easting - vehicle.toolPivotPos.easting, vehicle.tankPos.northing - vehicle.toolPivotPos.northing);
-            */
-            //since position of tool is calculated below based on the tankPos, all we need is this heading
-            vehicle.toolPivotPos.heading = atan2(vehicle.tankPos.easting - vehicle.toolPivotPos.easting, vehicle.tankPos.northing - vehicle.toolPivotPos.northing);
-
             if (vehicle.toolPivotPos.heading < 0) vehicle.toolPivotPos.heading += glm::twoPI;
         }
 
@@ -1378,6 +1451,10 @@ void FormGPS::CalculatePositionHeading()
     //rigidly connected to vehicle
     else
     {
+        vehicle.toolPivotPos.heading = vehicle.fixHeading;
+        vehicle.toolPivotPos.easting = vehicle.hitchPos.easting;
+        vehicle.toolPivotPos.northing = vehicle.hitchPos.northing;
+
         vehicle.toolPos.heading = vehicle.fixHeading;
         vehicle.toolPos.easting = vehicle.hitchPos.easting;
         vehicle.toolPos.northing = vehicle.hitchPos.northing;
@@ -1408,14 +1485,124 @@ void FormGPS::CalculatePositionHeading()
     }
 
     //finally fixed distance for making a curve line
-    if (!curve.isOkToAddDesPoints) vehicle.sectionTriggerStepDistance = vehicle.sectionTriggerStepDistance + 0.5;
+    if (!curve.isMakingCurve) vehicle.sectionTriggerStepDistance = vehicle.sectionTriggerStepDistance + 0.5;
     //if (ct.isContourBtnOn) vehicle.sectionTriggerStepDistance *=0.5;
 
     //precalc the sin and cos of heading * -1
-    vehicle.sinSectionHeading = sin(-vehicle.toolPos.heading);
-    vehicle.cosSectionHeading = cos(-vehicle.toolPos.heading);
+    vehicle.sinSectionHeading = sin(-vehicle.toolPivotPos.heading);
+    vehicle.cosSectionHeading = cos(-vehicle.toolPivotPos.heading);
 }
 
+//calculate the extreme tool left, right velocities, each section lookahead, and whether or not its going backwards
+void FormGPS::CalculateSectionLookAhead(double northing, double easting, double cosHeading, double sinHeading)
+{
+    //calculate left side of section 1
+    Vec2 left;
+    Vec2 right = left;
+    double leftSpeed = 0, rightSpeed = 0;
+
+    //speed max for section kmh*0.277 to m/s * 10 cm per pixel * 1.7 max speed
+    double meterPerSecPerPixel = fabs(vehicle.avgSpeed) * 4.5;
+    //qDebug() << pn.speed << ", m/s per pixel is " << meterPerSecPerPixel;
+
+    //now loop all the section rights and the one extreme left
+    for (int j = 0; j < tool.numOfSections; j++)
+    {
+        if (j == 0)
+        {
+            //only one first left point, the rest are all rights moved over to left
+            tool.section[j].leftPoint = Vec2(cosHeading * (tool.section[j].positionLeft) + easting,
+                               sinHeading * (tool.section[j].positionLeft) + northing);
+
+            left = tool.section[j].leftPoint - tool.section[j].lastLeftPoint;
+
+            //save a copy for next time
+            tool.section[j].lastLeftPoint = tool.section[j].leftPoint;
+
+            //get the speed for left side only once
+
+            leftSpeed = left.getLength() * gpsHz * 10;
+            //qDebug() << leftSpeed << " - left speed";
+            if (leftSpeed > meterPerSecPerPixel) leftSpeed = meterPerSecPerPixel;
+        }
+        else
+        {
+            //right point from last section becomes this left one
+            tool.section[j].leftPoint = tool.section[j - 1].rightPoint;
+            left = tool.section[j].leftPoint - tool.section[j].lastLeftPoint;
+
+            //save a copy for next time
+            tool.section[j].lastLeftPoint = tool.section[j].leftPoint;
+
+            //save the slower of the 2
+            if (leftSpeed > rightSpeed) leftSpeed = rightSpeed;
+        }
+
+        tool.section[j].rightPoint = Vec2(cosHeading * (tool.section[j].positionRight) + easting,
+                            sinHeading * (tool.section[j].positionRight) + northing);
+        /*
+        qDebug() << j << ": " << tool.section[j].leftPoint.easting << "," <<
+                                 tool.section[j].leftPoint.northing <<" " <<
+                                 tool.section[j].rightPoint.easting << ", " <<
+                                 tool.section[j].rightPoint.northing;
+                                 */
+
+
+        //now we have left and right for this section
+        right = tool.section[j].rightPoint - tool.section[j].lastRightPoint;
+
+        //save a copy for next time
+        tool.section[j].lastRightPoint = tool.section[j].rightPoint;
+
+        //grab vector length and convert to meters/sec/10 pixels per meter
+        rightSpeed = right.getLength() * gpsHz * 10;
+        if (rightSpeed > meterPerSecPerPixel) rightSpeed = meterPerSecPerPixel;
+
+        //Is section outer going forward or backward
+        double head = left.headingXZ();
+
+        if (head < 0) head += glm::twoPI;
+
+        if (M_PI - fabs(fabs(head - vehicle.toolPos.heading) - M_PI) > glm::PIBy2)
+        {
+            if (leftSpeed > 0) leftSpeed *= -1;
+        }
+
+        head = right.headingXZ();
+        if (head < 0) head += glm::twoPI;
+        if (M_PI - fabs(fabs(head - vehicle.toolPos.heading) - M_PI) > glm::PIBy2)
+        {
+            if (rightSpeed > 0) rightSpeed *= -1;
+        }
+
+        double sped = 0;
+        //save the far left and right speed in m/sec averaged over 20%
+        if (j==0)
+        {
+            sped = (leftSpeed * 0.1);
+            if (sped < 0.1) sped = 0.1;
+            tool.farLeftSpeed = tool.farLeftSpeed * 0.7 + sped * 0.3;
+            //qWarning() << sped << tool.farLeftSpeed << vehicle.avgSpeed;
+        }
+
+        if (j == tool.numOfSections - 1)
+        {
+            sped = (rightSpeed * 0.1);
+            if(sped < 0.1) sped = 0.1;
+            tool.farRightSpeed = tool.farRightSpeed * 0.7 + sped * 0.3;
+        }
+        //choose fastest speed
+        if (leftSpeed > rightSpeed)
+        {
+            sped = leftSpeed;
+            leftSpeed = rightSpeed;
+        }
+        else sped = rightSpeed;
+        tool.section[j].speedPixels = tool.section[j].speedPixels * 0.7 + sped * 0.3;
+    }
+}
+
+//perimeter and boundary point generation
 void FormGPS::AddBoundaryPoint()
 {
     //save the north & east as previous
@@ -1492,9 +1679,9 @@ void FormGPS::AddSectionOrPathPoints()
         recPath.recList.append(CRecPathPt(vehicle.pivotAxlePos.easting, vehicle.pivotAxlePos.northing, vehicle.pivotAxlePos.heading, speed, autoBtn));
     }
 
-    if (curve.isOkToAddDesPoints)
+    if (curve.isMakingCurve)
     {
-        curve.refList.append(Vec3(vehicle.pivotAxlePos.easting, vehicle.pivotAxlePos.northing, vehicle.pivotAxlePos.heading));
+        curve.destList.append(Vec3(vehicle.pivotAxlePos.easting, vehicle.pivotAxlePos.northing, vehicle.pivotAxlePos.heading));
     }
 
     //save the north & east as previous
@@ -1509,119 +1696,16 @@ void FormGPS::AddSectionOrPathPoints()
     {
         if (triStrip[j].isDrawing)
         {
+            //NOTE: Michael. isPatchesChangingColor is from Controls.Designer.cs
+            if (isPatchesChangingColor)
+            {
+                triStrip[j].numTriangles = 64;
+                isPatchesChangingColor = false;
+            }
+
             triStrip[j].AddMappingPoint(tool, fd, j);
             patchCounter++;
         }
-    }
-}
-
-//calculate the extreme tool left, right velocities, each section lookahead, and whether or not its going backwards
-void FormGPS::CalculateSectionLookAhead(double northing, double easting, double cosHeading, double sinHeading)
-{
-    //calculate left side of section 1
-    Vec2 left;
-    Vec2 right = left;
-    double leftSpeed = 0, rightSpeed = 0;
-
-    //speed max for section kmh*0.277 to m/s * 10 cm per pixel * 1.7 max speed
-    double meterPerSecPerPixel = fabs(vehicle.avgSpeed) * 4.5;
-    //qDebug() << pn.speed << ", m/s per pixel is " << meterPerSecPerPixel;
-
-    //now loop all the section rights and the one extreme left
-    for (int j = 0; j < tool.numOfSections; j++)
-    {
-        if (j == 0)
-        {
-            //only one first left point, the rest are all rights moved over to left
-            tool.section[j].leftPoint = Vec2(cosHeading * (tool.section[j].positionLeft) + easting,
-                               sinHeading * (tool.section[j].positionLeft) + northing);
-
-            left = tool.section[j].leftPoint - tool.section[j].lastLeftPoint;
-
-            //save a copy for next time
-            tool.section[j].lastLeftPoint = tool.section[j].leftPoint;
-
-            //get the speed for left side only once
-
-            leftSpeed = left.getLength() * gpsHz * 10;
-            //qDebug() << leftSpeed << " - left speed";
-            if (leftSpeed > meterPerSecPerPixel) leftSpeed = meterPerSecPerPixel;
-
-        }
-        else
-        {
-            //right point from last section becomes this left one
-            tool.section[j].leftPoint = tool.section[j - 1].rightPoint;
-            left = tool.section[j].leftPoint - tool.section[j].lastLeftPoint;
-
-            //save a copy for next time
-            tool.section[j].lastLeftPoint = tool.section[j].leftPoint;
-
-            //save the slower of the 2
-            if (leftSpeed > rightSpeed) leftSpeed = rightSpeed;
-        }
-
-        tool.section[j].rightPoint = Vec2(cosHeading * (tool.section[j].positionRight) + easting,
-                            sinHeading * (tool.section[j].positionRight) + northing);
-        /*
-        qDebug() << j << ": " << tool.section[j].leftPoint.easting << "," <<
-                                 tool.section[j].leftPoint.northing <<" " <<
-                                 tool.section[j].rightPoint.easting << ", " <<
-                                 tool.section[j].rightPoint.northing;
-                                 */
-
-
-        //now we have left and right for this section
-        right = tool.section[j].rightPoint - tool.section[j].lastRightPoint;
-
-        //save a copy for next time
-        tool.section[j].lastRightPoint = tool.section[j].rightPoint;
-
-        //grab vector length and convert to meters/sec/10 pixels per meter
-        rightSpeed = right.getLength() * gpsHz * 10;
-        if (rightSpeed > meterPerSecPerPixel) rightSpeed = meterPerSecPerPixel;
-
-        //Is section outer going forward or backward
-        double head = left.headingXZ();
-
-        if (head < 0) head += glm::twoPI;
-
-        if (M_PI - fabs(fabs(head - vehicle.toolPos.heading) - M_PI) > glm::PIBy2)
-        {
-            if (leftSpeed > 0) leftSpeed *= -1;
-        }
-
-        head = right.headingXZ();
-        if (head < 0) head += glm::twoPI;
-        if (M_PI - fabs(fabs(head - vehicle.toolPos.heading) - M_PI) > glm::PIBy2)
-        {
-            if (rightSpeed > 0) rightSpeed *= -1;
-        }
-
-        double sped = 0;
-        //save the far left and right speed in m/sec averaged over 20%
-        if (j==0)
-        {
-            sped = (leftSpeed * 0.1);
-            if (sped < 0.1) sped = 0.1;
-            tool.farLeftSpeed = tool.farLeftSpeed * 0.7 + sped * 0.3;
-            //qWarning() << sped << tool.farLeftSpeed << vehicle.avgSpeed;
-        }
-
-        if (j == tool.numOfSections - 1)
-        {
-            sped = (rightSpeed * 0.1);
-            if(sped < 0.1) sped = 0.1;
-            tool.farRightSpeed = tool.farRightSpeed * 0.7 + sped * 0.3;
-        }
-        //choose fastest speed
-        if (leftSpeed > rightSpeed)
-        {
-            sped = leftSpeed;
-            leftSpeed = rightSpeed;
-        }
-        else sped = rightSpeed;
-        tool.section[j].speedPixels = tool.section[j].speedPixels * 0.7 + sped * 0.3;
     }
 }
 

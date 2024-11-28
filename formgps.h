@@ -280,9 +280,12 @@ public:
 
     //ABLine Instance
     //QScopedPointer<CABLine> ABLine;
+
+    //NOTE: do these get removed? David
     CABLine ABLine;
     CABCurve curve;
 
+    CTrack trk;
     CGuidance gyd;
 
     CTram tram;
@@ -352,7 +355,7 @@ public:
     double startGPSHeading = 0;
 
     //string to record fixes for elevation maps
-    QByteArray sbFix;
+    QByteArray sbGrid;
 
     // autosteer variables for sending serial moved to CVehicle
     //short guidanceLineDistanceOff, guidanceLineSteerAngle; --> CVehicle
@@ -390,9 +393,10 @@ public:
     //double cosSectionHeading = 1.0, sinSectionHeading = 0.0;
 
     //how far travelled since last section was added, section points
-    double sectionTriggerDistance = 0, contourTriggerDistance = 0, sectionTriggerStepDistance = 0;
+    double sectionTriggerDistance = 0, contourTriggerDistance = 0, sectionTriggerStepDistance = 0, gridTriggerDistance;
     Vec2 prevSectionPos;
     Vec2 prevContourPos;
+    Vec2 prevGridPos;
     int patchCounter = 0;
 
     Vec2 prevBoundaryPos;
