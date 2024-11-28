@@ -191,6 +191,12 @@ Look here: https://www.qt.io/offline-installers in the "QT Creator" section.
 - string = QString
 - Byte[] = QByteArray
 
+### Other Useful Porting Notes
+CS:
+Buffer.BlockCopy(BitConverter.GetBytes(longitudeSend), 0, nmeaPGN, 5, 8);
+cpp: 
+std::memcpy(nmeaPGN.data() + 5, &longitudeSend, 8);
+
 
 ## Creating scalable UI's
 
