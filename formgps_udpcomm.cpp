@@ -92,12 +92,11 @@ void FormGPS::ReceiveFromAgIO()
 
                 //From dual antenna heading sentences
                 float temp = BitConverter_ToSingle(data, 21);
-                if (temp != glm::DOUBLE_MAX)
+                if (temp != glm::FLOAT_MAX)
                 {
                     pn.headingTrueDual = temp + pn.headingTrueDualOffset;
                     if (pn.headingTrueDual >= 360) pn.headingTrueDual -= 360;
                     else if (pn.headingTrueDual < 0) pn.headingTrueDual += 360;
-                    if (ahrs.isDualAsIMU) ahrs.imuHeading = pn.headingTrueDual;
                 }
 
                 //from single antenna sentences (VTG,RMC)
@@ -287,10 +286,6 @@ void FormGPS::DisableSim()
     isGPSPositionInitialized = false;
     isFirstHeadingSet = false;
     startCounter = 0;
-    //TODO, turn off sim in UI
-    //panelSim.Visible = false;
-    //timerSim.Enabled = false;
-    //simulatorOnToolStripMenuItem.Checked = false;
     property_setMenu_isSimulatorOn = false;
     //TODO, do we need to save explicitly?
     //Properties.Settings.Default.Save();
