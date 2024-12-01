@@ -71,7 +71,11 @@ int main(int argc, char *argv[])
             }
         });
 
-        process.start("./QtAgIO/QtAgIO");
+		if(isWindows){
+			process.start("./QtAgIO.exe")
+		}else{//assume linux
+			process.start("./QtAgIO/QtAgIO");
+		}
 
         // Ensure process starts successfully
         if (!process.waitForStarted()) {
