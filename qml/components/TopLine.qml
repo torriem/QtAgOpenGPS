@@ -29,7 +29,7 @@ Rectangle{
         width: parent.height * 2
         text: "?"
         font.pixelSize: 15
-        anchors.right: close.left
+        anchors.right: btnClose.left
         anchors.rightMargin: 10
         anchors.verticalCenter: parent.verticalCenter
         onClicked: topLine.btnHelpClicked()
