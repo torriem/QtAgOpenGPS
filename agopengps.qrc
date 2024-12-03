@@ -655,5 +655,6 @@
         <file>qml/config/components/Components.txt</file>
         <file>qml/config/components/MainConfigMainBtns.qml</file>
         <file>qml/config/components/MainConfigSecondaryBtns.qml</file>
+        <file>qml/config/components/DisplayAndFeaturesBtns.qml</file>
     </qresource>
 </RCC>
