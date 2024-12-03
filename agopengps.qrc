@@ -651,5 +651,6 @@
         <file>qml/CloseAOG.qml</file>
         <file>qml/steerconfig/SteerConfigSliderCustomized.qml</file>
         <file>qml/steerconfig/SteerConfigTopButtons.qml</file>
+        <file>qml/components/MainWindowBtns.qml</file>
     </qresource>
 </RCC>
