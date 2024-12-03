@@ -150,6 +150,7 @@ Window {
 		spacing: 5 * theme.scaleWidth
         Comp.ButtonColor {
 			id: ntripOn
+            property bool statusChanged: false
             color: "white"
             colorChecked: "green"
 			text: qsTr("NTRIP On")
@@ -159,7 +160,7 @@ Window {
             checked: settings.setNTRIP_isOn
             onClicked: {
                 settings.setNTRIP_isOn = checked
-                message.addMessage("", "Restart of AgIO is Required - Restarting", true)
+                ntripOn.statusChanged = true;
             }
 		}
         Comp.IconButtonTransparent {
@@ -178,6 +179,9 @@ Window {
             onClicked: {
                 agio.configureNTRIP()
                 ntrip.close()
+                //restart if anything changed
+                if(ntripOn.statusChanged)
+                    message.addMessage("", "Restart of AgIO is Required - Restarting", true)
             }
         }
 	}
