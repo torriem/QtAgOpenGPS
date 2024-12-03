@@ -238,7 +238,7 @@ Window{
 				  //else sett &= reset;
 
 				  settings.setArdSteer_setting0 = sett;
-				  settings.setArdMac_isDanfoss = cboxDanfoss.checked;
+                  settings.setArdMac_isDanfoss = cboxDanfoss.checked;
 
 				  if (cboxCurrentSensor.checked || cboxPressureSensor.checked)
 				  {
@@ -791,7 +791,8 @@ Window{
 									anchors.rightMargin: unsaved.width + 20
 									anchors.left: parent.left
 									anchors.bottom: parent.bottom
-									height: 70 * theme.scaleHeight
+                                    anchors.bottomMargin: 10 * theme.scaleHeight
+                                    height: wizard.height
 									IconButtonText{
 										id: wizard
 										text: qsTr("Wizard")
