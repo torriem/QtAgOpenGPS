@@ -10,52 +10,27 @@ import ".."
 import "../components"
 
 
-Rectangle{
-	id: steerConfig
-	anchors.fill: parent
-	z: 5
-	function show (){
-		visible = true
-	}
-	color: "lightgray"
+Window{
+    id: steerConfig
+    height: mainWindow.height
+    title: qsTr("Auto Steer Config")
+    visible: true
+    width: mainWindow.width
 
-	Rectangle{
-		id:topLine
-		color:"white"
-		visible: true
-		width: parent.width
-		height: 50 * theme.scaleHeight
-		anchors.top: parent.top
-		anchors.horizontalCenter: parent.horizontalCenter
-		Text{
-			anchors.left: parent.left
-			anchors.verticalCenter: parent.verticalCenter
-			text: qsTr("Auto Steer Config")
-		}
 
-		IconButtonTransparent {
-			id: close
-			icon.source: prefix + "/images/WindowClose.png"
-			font.pixelSize: parent.height
-			width: parent.height+3
-			height:parent.height
-			anchors.right: parent.right
-			onClicked: {
-				steerConfigSettings.visible = false
-				steerConfigWindow.show()
-			}
-		}
-		Button {
-			id: help
-			text: qsTr("?")
-			width: parent.height+3
-			height:parent.height
-			anchors.right: close.left
-			anchors.rightMargin: 20 * theme.scaleWidth
-			visible: false //TODO help
-		}
-	}
-	ButtonGroup{
+    onVisibleChanged:{
+        if(visible){
+            settingsArea.load_settings()
+            console.log("Settings loaded")
+        }
+    }
+
+    Rectangle{//background
+        anchors.fill: parent
+        color: "lightgray"
+    }
+
+    ButtonGroup{
 		buttons: settingsBtns.children
 	}
 
@@ -63,45 +38,30 @@ Rectangle{
 		id: settingsBtns
 		spacing: 3 * theme.scaleWidth
 		width: parent.width
-		anchors.top: topLine.bottom
-		anchors.horizontalCenter: parent.horizontalCenter
-		IconButtonTextBeside{
+        anchors.top: parent.top
+        anchors.topMargin: 20 * theme.scaleHeight
+        SteerConfigTopButtons{
 			id: sensorsBtn
-			icon.source: prefix + "/images/Config/ConD_Speedometer.png"
-			buttonText: "Sensors"
-			Layout.alignment: Qt.AlignCenter
-			checkable: true
-			checked: true
-			colorChecked: "lightgray"
-			implicitWidth: parent.width /4 -4
-		}
-		IconButtonTextBeside{
+            buttonText: "Sensors"
+            icon.source: prefix + "/images/Config/ConD_Speedometer.png"
+            implicitWidth: parent.width /4 -4
+            checked: true //because one has to be to start things off
+        }
+        SteerConfigTopButtons{
 			id: configBtn
-			icon.source: prefix + "/images/Config/ConS_Pins.png"
 			buttonText: "Config"
-			Layout.alignment: Qt.AlignCenter
-			checkable: true
-			colorChecked: "lightgray"
-			implicitWidth: parent.width /4 -4
-		}
-		IconButtonTextBeside{
+            icon.source: prefix + "/images/Config/ConS_Pins.png"
+        }
+        SteerConfigTopButtons{
 			id: settingsBtn
-			icon.source: prefix + "/images/Config/ConS_ImplementConfig.png"
 			buttonText: "Settings"
-			Layout.alignment: Qt.AlignCenter
-			checkable: true
-			colorChecked: "lightgray"
-			implicitWidth: parent.width /4 -4
-		}
-		IconButtonTextBeside{
+            icon.source: prefix + "/images/Config/ConS_ImplementConfig.png"
+        }
+        SteerConfigTopButtons{
 			id: steerSettingsBtn
-			icon.source: prefix + "/images/Config/ConS_ImplementConfig.png"
 			buttonText: "Steer Settings"
-			Layout.alignment: Qt.AlignCenter
-			checkable: true
-			colorChecked: "lightgray"
-			implicitWidth: parent.width /4 -4
-		}
+            icon.source: prefix + "/images/Config/ConS_ImplementConfig.png"
+        }
 	}
 	Item{
 		id: settingsArea
@@ -114,9 +74,6 @@ Rectangle{
 		anchors.leftMargin: 10 * theme.scaleWidth
 		anchors.rightMargin: 10 * theme.scaleWidth
 
-		onVisibleChanged:{
-			load_settings()
-		}
 		function load_settings(){ 
 			if (visible) {
 				var sett = settings.setArdSteer_setting1
@@ -281,7 +238,7 @@ Rectangle{
 				  //else sett &= reset;
 
 				  settings.setArdSteer_setting0 = sett;
-				  settings.setArdMac_isDanfoss = cboxDanfoss.checked;
+                  settings.setArdMac_isDanfoss = cboxDanfoss.checked;
 
 				  if (cboxCurrentSensor.checked || cboxPressureSensor.checked)
 				  {
@@ -834,7 +791,8 @@ Rectangle{
 									anchors.rightMargin: unsaved.width + 20
 									anchors.left: parent.left
 									anchors.bottom: parent.bottom
-									height: 70 * theme.scaleHeight
+                                    anchors.bottomMargin: 10 * theme.scaleHeight
+                                    height: wizard.height
 									IconButtonText{
 										id: wizard
 										text: qsTr("Wizard")

@@ -18,10 +18,10 @@ Item {
             id: fieldMenuText
             anchors.top: parent.top
             anchors.left: parent.left
-			anchors.topMargin: 30 * theme.scaleHeight
-			anchors.rightMargin: 30 * theme.scaleWidth
-			anchors.leftMargin: 30 * theme.scaleWidth
-			anchors.bottomMargin: 30 * theme.scaleHeight
+            anchors.topMargin: 30 * theme.scaleHeight
+            anchors.rightMargin: 30 * theme.scaleWidth
+            anchors.leftMargin: 30 * theme.scaleWidth
+            anchors.bottomMargin: 30 * theme.scaleHeight
             title: "Field Menu"
             font.bold: true
             width: tramAll.width
@@ -70,10 +70,10 @@ Item {
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             anchors.left: fieldMenuText.right
-			anchors.topMargin: 30 * theme.scaleHeight
-			anchors.rightMargin: 30 * theme.scaleWidth
-			anchors.leftMargin: 30 * theme.scaleWidth
-			anchors.bottomMargin: 30 * theme.scaleHeight
+            anchors.topMargin: 30 * theme.scaleHeight
+            anchors.rightMargin: 30 * theme.scaleWidth
+            anchors.leftMargin: 30 * theme.scaleWidth
+            anchors.bottomMargin: 30 * theme.scaleHeight
             title: "Tools Menu"
             font.bold: true
             ColumnLayout{
@@ -119,10 +119,10 @@ Item {
             id: screenButtons
             anchors.top: parent.top
             anchors.left: toolsMenuText.right
-			anchors.topMargin: 30 * theme.scaleHeight
-			anchors.rightMargin: 30 * theme.scaleWidth
-			anchors.leftMargin: 30 * theme.scaleWidth
-			anchors.bottomMargin: 30 * theme.scaleHeight
+            anchors.topMargin: 30 * theme.scaleHeight
+            anchors.rightMargin: 30 * theme.scaleWidth
+            anchors.leftMargin: 30 * theme.scaleWidth
+            anchors.bottomMargin: 30 * theme.scaleHeight
             width: screenButtonsRow.width *2  + screenButtonsRow.spacing
             height: screenButtonsRow.height
             title: "Screen Buttons"
@@ -163,7 +163,7 @@ Item {
             IconButtonColor{
                 checkable: true
                 text: qsTr("Auto Start AgIO")
-                icon.source: "/images/AgIO.png"
+                icon.source: prefix	+ "/images/AgIO.png"
                 isChecked: settings.setFeature_isAgIOOn
                 onCheckedChanged: settings.setFeature_isAgIOOn = checked
             }
@@ -176,41 +176,41 @@ Item {
             width: tramAll.width
             anchors.bottom: parent.bottom
             anchors.bottomMargin: parent.height *.3
-			anchors.topMargin: 100 * theme.scaleHeight
-			anchors.rightMargin: 30 * theme.scaleWidth
-			anchors.leftMargin: 30 * theme.scaleWidth
+            anchors.topMargin: 100 * theme.scaleHeight
+            anchors.rightMargin: 30 * theme.scaleWidth
+            anchors.leftMargin: 30 * theme.scaleWidth
             title: "Sound"
             ColumnLayout{
                 width: children.width
                 height: parent.height
 
-            IconButtonColor{
-                id: autoSteerSound
-                text: qsTr("Auto Steer")
-                icon.source: prefix + "/images/Config/ConF_SteerSound.png"
-                checkable: true
-                isChecked: settings.setSound_isAutoSteerOn
-                onCheckedChanged: settings.setSound_isAutoSteerOn = checked
+                IconButtonColor{
+                    id: autoSteerSound
+                    text: qsTr("Auto Steer")
+                    icon.source: prefix + "/images/Config/ConF_SteerSound.png"
+                    checkable: true
+                    isChecked: settings.setSound_isAutoSteerOn
+                    onCheckedChanged: settings.setSound_isAutoSteerOn = checked
                     Layout.alignment: Qt.AlignCenter
-            }
-            IconButtonColor{
-                id: youTurnSound
-                text: qsTr("You Turn")
-                icon.source: prefix + "/images/Config/ConF_SteerSound.png"
-                isChecked: settings.setSound_isUturnOn
-                onCheckedChanged: settings.setSound_isUturnOn = checked
+                }
+                IconButtonColor{
+                    id: youTurnSound
+                    text: qsTr("You Turn")
+                    icon.source: prefix + "/images/Config/ConF_SteerSound.png"
+                    isChecked: settings.setSound_isUturnOn
+                    onCheckedChanged: settings.setSound_isUturnOn = checked
                     Layout.alignment: Qt.AlignCenter
-            }
+                }
 
-            IconButtonColor{
-                id: hydLiftSound
-                text: qsTr("Hyd Lift")
-                icon.source: prefix + "/images/Config/ConF_SteerSound.png"
-                isChecked: settings.setSound_isHydLiftOn
-                onCheckedChanged: settings.setSound_isHydLiftOn = checked
+                IconButtonColor{
+                    id: hydLiftSound
+                    text: qsTr("Hyd Lift")
+                    icon.source: prefix + "/images/Config/ConF_SteerSound.png"
+                    isChecked: settings.setSound_isHydLiftOn
+                    onCheckedChanged: settings.setSound_isHydLiftOn = checked
                     Layout.alignment: Qt.AlignCenter
-            }
-            /*IconButtonColor{
+                }
+                /*IconButtonColor{
                 id: boundaryApproachSound
                     Layout.alignment: Qt.AlignCenter
                 visible: false // not implemented

@@ -72,11 +72,4 @@ Rectangle{
 			console.log(settings.setDisplay_isVehicleImage)
 		}
 	}
-    /*
-    Text {
-        anchors.bottom: parent.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        text: qsTr("I consider the rest of this page nonessential for now and will be added at a later date")
-    }
-    */
 }

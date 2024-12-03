@@ -52,6 +52,7 @@ Item {
     property int autoBtnState: 0
     property bool autoYouturnBtnState: true
     property bool isYouTurnRight: true
+	property bool autoTrackBtnState: false
     property double distancePivotToTurnLine: -2222
 
 

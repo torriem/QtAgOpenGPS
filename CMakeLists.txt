@@ -32,7 +32,7 @@ qt_standard_project_setup()
 # Create the executable
 qt_add_executable(QtAgOpenGPS
     main.cpp
-    agopengps.qrc
+    $<$<NOT:$<BOOL:${LOCAL_QML}>>:agopengps.qrc>
     aogproperties.cpp
     aogproperty.h aogproperty.cpp
     aogrenderer.h aogrenderer.cpp

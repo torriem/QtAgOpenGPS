@@ -35,9 +35,10 @@ Window {
     }
     Component.onCompleted: {//shows a window to warn us we might need to open up a port on the firewall
         if(utils.isTrue(settings.run_isFirstRun)){
+            if((!agio.isAndroid) && (!agio.isWindows))
                                isFirewall.show()
-                               settings.run_isFirstRun = false
-                           }
+            settings.run_isFirstRun = false
+         }
     }
 
 	Rectangle {

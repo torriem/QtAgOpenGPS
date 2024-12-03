@@ -19,10 +19,10 @@ Rectangle{
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-		anchors.topMargin: 7 * theme.scaleHeight
-		anchors.bottomMargin: 7 * theme.scaleHeight
-		anchors.leftMargin: 7 * theme.scaleWidth
-		anchors.rightMargin: 7 * theme.scaleWidth
+        anchors.topMargin: 7 * theme.scaleHeight
+        anchors.bottomMargin: 7 * theme.scaleHeight
+        anchors.leftMargin: 7 * theme.scaleWidth
+        anchors.rightMargin: 7 * theme.scaleWidth
         height: parent.height*.75
         SpinBoxCM{
             id: toolTrailingHitchLength
@@ -45,10 +45,10 @@ Rectangle{
             onValueModified: settings.setVehicle_tankTrailingHitchLength = -value
         }
     }
-        TextLine{
-            text: qsTr("Units: ")+ utils.cm_unit_abbrev()
-            font.bold: true
-            anchors.top: image1.bottom
-            anchors.topMargin: toolTrailingHitchLength.height + (15 * theme.scaleHeight)
-        }
+    TextLine{
+        text: qsTr("Units: ")+ utils.cm_unit_abbrev()
+        font.bold: true
+        anchors.top: image1.bottom
+        anchors.topMargin: toolTrailingHitchLength.height + (15 * theme.scaleHeight)
+    }
 }

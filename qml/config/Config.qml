@@ -39,22 +39,8 @@ Dialog {
         border.width: 8 * theme.scaleWidth
         visible: true
         anchors.fill: parent
-        Rectangle{
-            id:topLine
-            color: aog.borderColor
-            visible: true
-            width: parent.width-16
-            height: 40 * theme.scaleHeight
-            anchors.top: parent.top
-            anchors.topMargin: 8
-            anchors.horizontalCenter: parent.horizontalCenter
-            Button {
-                id: help
-                text: qsTr("?")
-                width: parent.height+3
-                height:parent.height
-                anchors.right: parent.right
-            }
+        TopLine{
+            id: topLine
         }
 
         ScrollView {
@@ -364,7 +350,7 @@ Dialog {
                 anchors.right: parent.right
                 width:parent.height
                 height: parent.height
-                icon.source: prefix + "/images/OK64"
+                icon.source: prefix + "/images/OK64.png"
                 onClicked: {
                     //closeAllConfig()
                     //fix up signs on implement dimensions

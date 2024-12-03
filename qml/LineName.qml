@@ -30,13 +30,13 @@ Rectangle{
     }
 
     color: aog.backgroundColor
-            border.width: 1
-            border.color: aog.blackDayWhiteNight
+    border.width: 1
+    border.color: aog.blackDayWhiteNight
 
-            Comp.TopLine{
-                id: topLine
-                titleText: line_Name.title
-            }
+    Comp.TopLine{
+        id: topLine
+        titleText: line_Name.title
+    }
 
     TextField {
         id: textInputBox

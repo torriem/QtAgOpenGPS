@@ -27,25 +27,25 @@ Item {
         id: configWhichVehicle
         anchors.fill: parent
         color: aog.backgroundColor
-    Column{
-        id: column
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        anchors.right: vehicleList.left
-        anchors.margins: 10 * theme.scaleWidth
-        anchors.topMargin: 130 * theme.scaleHeight
-        spacing: 15 * theme.scaleHeight
-        TextLine{ text: qsTr("Units: ")+ (utils.isMetric() ? "Metric" : "Imperial")}
-        TextLine{ text: qsTr("Width: ")+ utils.m_to_ft_string(settings.setVehicle_toolWidth)}
-        TextLine{ text: qsTr("Sections: ")+ settings.setVehicle_numSections}
-        TextLine{ text: qsTr("Offset: ")+  utils.cm_to_unit_string(settings.setVehicle_toolOffset, 0)+ " "+ utils.cm_unit_abbrev()}
-        TextLine{ text: qsTr("Overlap: ")+  utils.cm_to_unit_string(settings.setVehicle_toolOverlap, 0)+ " "+ utils.cm_unit_abbrev()}
-        TextLine{ text: qsTr("LookAhead: ")+ settings.setVehicle_toolLookAheadOn}
-        TextLine{ text: qsTr("Nudge: ")+ utils.cm_to_unit_string(settings.setVehicle_setAS_snapDistance, 0)+ " "+ utils.cm_unit_abbrev()}
-        TextLine{ text: qsTr("Tram Width: ")+ utils.m_to_ft_string(settings.setTram_tramWidth )}
-        TextLine{ text: qsTr("Wheelbase: ")+ utils.cm_to_unit_string(settings.setVehicle_wheelbase, 0)+ " "+ utils.cm_unit_abbrev() }
-    }
+        Column{
+            id: column
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            anchors.right: vehicleList.left
+            anchors.margins: 10 * theme.scaleWidth
+            anchors.topMargin: 130 * theme.scaleHeight
+            spacing: 15 * theme.scaleHeight
+            TextLine{ text: qsTr("Units: ")+ (utils.isMetric() ? "Metric" : "Imperial")}
+            TextLine{ text: qsTr("Width: ")+ utils.m_to_ft_string(settings.setVehicle_toolWidth)}
+            TextLine{ text: qsTr("Sections: ")+ settings.setVehicle_numSections}
+            TextLine{ text: qsTr("Offset: ")+  utils.cm_to_unit_string(settings.setVehicle_toolOffset, 0)+ " "+ utils.cm_unit_abbrev()}
+            TextLine{ text: qsTr("Overlap: ")+  utils.cm_to_unit_string(settings.setVehicle_toolOverlap, 0)+ " "+ utils.cm_unit_abbrev()}
+            TextLine{ text: qsTr("LookAhead: ")+ settings.setVehicle_toolLookAheadOn}
+            TextLine{ text: qsTr("Nudge: ")+ utils.cm_to_unit_string(settings.setVehicle_setAS_snapDistance, 0)+ " "+ utils.cm_unit_abbrev()}
+            TextLine{ text: qsTr("Tram Width: ")+ utils.m_to_ft_string(settings.setTram_tramWidth )}
+            TextLine{ text: qsTr("Wheelbase: ")+ utils.cm_to_unit_string(settings.setVehicle_wheelbase, 0)+ " "+ utils.cm_unit_abbrev() }
+        }
         Rectangle{
             id: vehicleListRect
             border.color: aog.blackDayWhiteNight
@@ -62,7 +62,7 @@ Item {
                 for (var i=0; i < vehicleInterface.vehicle_list.length ; i++) {
                     //console.debug(vehicleInterface.vehicle_list[i])
                     vehicleList.append( { index: vehicleInterface.vehicle_list[i].index,
-                                         name: vehicleInterface.vehicle_list[i].name })
+                                           name: vehicleInterface.vehicle_list[i].name })
                 }
             }
 
@@ -143,9 +143,9 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: 75 * theme.scaleWidth
                 height: 75 * theme.scaleHeight
-                icon.source: prefix + "/images/VehFileSaveAs"
+                icon.source: prefix + "/images/VehFileSaveAs.png"
                 onClicked: {
-                    if (saveAsVehicle.text != "") {
+                    if (saveAsVehicle.text !== "") {
                         //console.debug("Going to save", saveAsVehicle.text)
                         vehicleInterface.vehicle_saveas(saveAsVehicle.text)
                         //just setting the name is probably enough to get it to save the vehicle

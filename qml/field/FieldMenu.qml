@@ -122,7 +122,7 @@ Drawer {
                 objectName: "btnFieldOpen"
                 isChecked: false
                 text: "Open"
-                icon.source: prefix + "/images/FileOpen"
+                icon.source: prefix + "/images/FileOpen.png"
                 enabled: !aog.isJobStarted
                 onClicked: {
                     fieldMenu.visible = false

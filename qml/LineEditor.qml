@@ -29,16 +29,16 @@ Rectangle {
             id: leftNudger
             icon.source: prefix + "/images/ArrowLeft.png"
         }
-            Comp.SpinBoxCustomized{
-                decimals: 1
+        Comp.SpinBoxCustomized{
+            decimals: 1
             width: leftNudger.width
             height: 50
             anchors.verticalCenter: parent.verticalCenter
-                text: qsTr("cm")
-                from: 0
-                value: 7.5
-                to: 9999
-            }
+            text: qsTr("cm")
+            from: 0
+            value: 7.5
+            to: 9999
+        }
 
         Comp.IconButtonTransparent{
             icon.source: prefix + "/images/ArrowRight.png"

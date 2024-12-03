@@ -12,8 +12,6 @@ import "../components"
 
 MoveablePopup {
     id: boundaryRecord
-    //anchors.top: parent.top
-    //anchors.left: parent.left
     width: 250
     visible: false
     height: 415
@@ -25,44 +23,11 @@ MoveablePopup {
             boundaryInterface.start()
         }
     }
-
-    Rectangle{
+    TopLine{
         id: recordTopLine
-        anchors.top:parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: 1
-        height: 30
-        color: "white"
-        z: 1
-        Text {
-            text: qsTr("Record Boundary")
-            font.pixelSize: 15
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
-            anchors.leftMargin: 5
-        }
-        Button{
-            objectName: "lineHelp"
-            height: parent.height
-            width: parent.height * 2
-            text: "?"
-            font.pixelSize: 15
-            anchors.right: boundaryClose.left
-            anchors.rightMargin: 10
-            anchors.verticalCenter: parent.verticalCenter
-        }
-        Button{
-            id: boundaryClose
-            height: parent.height
-            width: parent.height * 2
-            text: "×"
-            font.pixelSize: 15
-            anchors.right: parent.right
-            anchors.rightMargin: 2
-            anchors.verticalCenter: parent.verticalCenter
-        }
+        titleText: qsTr("Record Boundary")
     }
+
     Rectangle{
         id: recordBoundaryWindow
         anchors.top: recordTopLine.bottom

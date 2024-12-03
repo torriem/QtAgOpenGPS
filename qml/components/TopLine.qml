@@ -8,6 +8,8 @@ import QtQuick.Controls.Fusion
 
 Rectangle{
     property string titleText: ""
+    signal btnCloseClicked()
+    signal btnHelpClicked()
     id: topLine
     anchors.top: parent.top
     anchors.left: parent.left
@@ -27,12 +29,13 @@ Rectangle{
         width: parent.height * 2
         text: "?"
         font.pixelSize: 15
-        anchors.right: close.left
+        anchors.right: btnClose.left
         anchors.rightMargin: 10
         anchors.verticalCenter: parent.verticalCenter
+        onClicked: topLine.btnHelpClicked()
     }
     Button{
-        id: close
+        id: btnClose
         height: parent.height
         width: parent.height * 2
         text: "×"
@@ -40,5 +43,6 @@ Rectangle{
         anchors.right: parent.right
         anchors.rightMargin: 2
         anchors.verticalCenter: parent.verticalCenter
+        onClicked: topLine.btnCloseClicked()
     }
 }
