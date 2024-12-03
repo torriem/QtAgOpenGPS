@@ -150,17 +150,9 @@ Dialog {
                         icon.source: prefix + "/images/Config/ConS_ImplementSwitch.png"
                     }
                 }
-                MainConfigSecondaryBtns{
+                MainConfigMainBtns{
                     id:sourcesMenubtn
                     icon.source: prefix + "/images/Config/Con_SourcesMenu.png"
-                    width:100
-                    radius: 0
-                    checkable: true
-                    height:75 * theme.scaleHeight
-                    //todo put logic in IconButton
-                    property bool toggle: false
-                    onClicked: if (toggle) { checked = false ; toggle = false }
-                    onPressed: if (checked) toggle=true
                 }
                 ButtonGroup {
                     buttons: [ configsrcHeading, configsrcRoll ]
