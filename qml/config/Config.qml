@@ -11,6 +11,7 @@ import Qt.labs.folderlistmodel
 
 import ".."
 import "../components"
+import "components"
 
 Dialog {
 	x: 0
@@ -104,23 +105,17 @@ Dialog {
                         buttons: [configTrSettings, configTrDim, btnconfigTrAntDim, ]
                     }
 
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configTrSettings
                         icon.source: prefix + "/images/Config/ConS_VehicleConfig.png"
-                        checkable: true
-                        radius: 0
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configTrDim
                         icon.source: prefix + "/images/Config/ConS_ImplementHitch.png"
-                        checkable: true
-                        radius: 0
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: btnconfigTrAntDim
                         icon.source: prefix + "/images/Config/ConS_ImplementAntenna.png"
-                        checkable: true
-                        radius: 0
                     }
                 }
                 IconButtonTransparent{
@@ -148,50 +143,36 @@ Dialog {
                     ButtonGroup {
                         buttons: [ configImpSettings, configImpDim, configImpAxle, configImpOffset, configImpSection, configImpTiming, configImpSwitches ]
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configImpSettings
                         icon.source: prefix + "/images/Config/ConS_VehicleConfig.png"
-                        checkable: true
-                        radius: 0
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configImpDim
                         icon.source: prefix + "/images/Config/ConS_ImplementHitch.png"
-                        checkable: true
-                        radius: 0
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configImpAxle
                         icon.source: prefix + "/images/Config/ConS_ImplementPivot.png"
-                        checkable: true
-                        radius: 0
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configImpOffset
                         icon.source: prefix + "/images/Config/ConS_ImplementOffset.png"
-                        checkable: true
-                        radius: 0
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configImpSection
                         icon.source: prefix + "/images/Config/ConS_ImplementSection.png"
-                        checkable: true
-                        radius: 0
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configImpTiming
                         icon.source: prefix + "/images/Config/ConS_ImplementSettings.png"
-                        checkable: true
-                        radius: 0
                     }
                     IconButtonTransparent{
                         id: configImpSwitches
                         icon.source: prefix + "/images/Config/ConS_ImplementSwitch.png"
-                        checkable: true
-                        radius: 0
                     }
                 }
-                IconButtonTransparent{
+                MainConfigSecondaryBtns{
                     id:sourcesMenubtn
                     icon.source: prefix + "/images/Config/Con_SourcesMenu.png"
                     width:100
@@ -216,17 +197,13 @@ Dialog {
                             configsrcHeading.checked = true
                     }
 
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configsrcHeading
-                        checkable: true
                         icon.source: prefix + "/images/Config/ConS_VehicleConfig.png"
-                        radius: 0
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configsrcRoll
-                        checkable: true
                         icon.source: prefix + "/images/Config/ConS_ImplementHitch.png"
-                        radius: 0
                     }
                 }
                 IconButtonTransparent{
@@ -266,17 +243,13 @@ Dialog {
                             configModulesSettings.checked = true
                     }
 
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configModulesSettings
-                        checkable: true
                         icon.source: prefix + "/images/Config/ConS_ModulesMachine.png"
-                        radius: 0
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configModulesPinsbtn
-                        checkable: true
                         icon.source: prefix + "/images/Config/ConS_ImplementSection.png"
-                        radius: 0
                     }
                 }
                 IconButtonTransparent{
