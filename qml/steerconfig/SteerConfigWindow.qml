@@ -336,7 +336,7 @@ MoveablePopup {
                         icon.source: prefix + "/images/ArrowRight.png"
                         implicitHeight: parent.height
                         implicitWidth: parent.width/4
-                        onClicked: angleInfoMouse.clicked(true)
+                        onClicked: steerConfigSettings.show()
                     }
                 }
             }
