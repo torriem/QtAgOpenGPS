@@ -34,6 +34,7 @@ Item {
 	property bool machineConnected: false
 
     property int ntripStatus: 0
+    property int tripBytes: 0
 
 	//NMEA variables
 	property double latitude: 0

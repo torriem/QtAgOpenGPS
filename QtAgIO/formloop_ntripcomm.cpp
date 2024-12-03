@@ -371,7 +371,10 @@ void FormLoop::SendAuthorization()
 void FormLoop::OnAddMessage(QByteArray data)
 {
 
-	//reset watchdog since we have updated data
+    //update gui with stats
+    tripBytes += (uint)data.length();
+    agio->setProperty("tripBytes", tripBytes);
+    //reset watchdog since we have updated data
 	NTRIP_Watchdog = 0;
 
     if (isNTRIP_RequiredOn)
