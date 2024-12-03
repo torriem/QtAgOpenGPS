@@ -17,6 +17,14 @@ Window{
     visible: true
     width: mainWindow.width
 
+
+    onVisibleChanged:{
+        if(visible){
+            settingsArea.load_settings()
+            console.log("Settings loaded")
+        }
+    }
+
     Rectangle{//background
         anchors.fill: parent
         color: "lightgray"
@@ -66,9 +74,6 @@ Window{
 		anchors.leftMargin: 10 * theme.scaleWidth
 		anchors.rightMargin: 10 * theme.scaleWidth
 
-		onVisibleChanged:{
-			load_settings()
-		}
 		function load_settings(){ 
 			if (visible) {
 				var sett = settings.setArdSteer_setting1
