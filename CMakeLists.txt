@@ -100,6 +100,10 @@ qt_add_executable(QtAgOpenGPS
     classes/vecfix2fix.h
 )
 
+# Display the qrc file in the project tree without compiling it
+if(LOCAL_QML)
+    add_custom_target(AOGQML SOURCES agopengps.qrc)
+endif()
 
 
 option(LOCAL_QML "Load QML from disc instead of compiling them in.")
