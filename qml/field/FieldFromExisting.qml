@@ -11,8 +11,8 @@ import "../components"
 
 Popup {
     id: fieldFromExisting
-    height: 700
-    width:1024
+    height: 500  * theme.scaleHeight
+    width:700  * theme.scaleWidth
     visible: false
     function show(){
         parent.visible = true
