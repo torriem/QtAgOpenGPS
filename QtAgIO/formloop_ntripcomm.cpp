@@ -6,6 +6,8 @@
 // main routine
 void FormLoop::DoNTRIPSecondRoutine()
 {
+    agio->setProperty("ntripCounter", ntripCounter);
+
 	//count up the ntrip clock only if everything is alive
 	if (isNTRIP_RequiredOn || isRadio_RequiredOn || isSerialPass_RequiredOn)
 	{
@@ -78,9 +80,10 @@ void FormLoop::DoNTRIPSecondRoutine()
 
 			if (sendGGAInterval > 0 && isNTRIP_Sending)
 			{
-                    agio->setProperty("ntripStatus", 3);// Send GGA
+                agio->setProperty("ntripStatus", 3);// Send GGA
                 isNTRIP_Sending = false;
 			}
+
 		}
 	}
 }
