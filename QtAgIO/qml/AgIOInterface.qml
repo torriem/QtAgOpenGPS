@@ -36,6 +36,7 @@ Item {
     property int ntripStatus: 0
     property int tripBytes: 0
     property int ntripCounter: 0
+    property int rawTripCount: 0
 
 
 	//NMEA variables

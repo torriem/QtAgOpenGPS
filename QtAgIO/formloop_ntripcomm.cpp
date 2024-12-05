@@ -424,6 +424,8 @@ void FormLoop::ntripMeterTimer_Tick()
     if (rawTrip.size() > 10000) {
         rawTrip.clear();
     }
+
+    agio->setProperty("rawTripCount", rawTrip.count()); // tell the UI
 }
 
 void FormLoop::SendNTRIP(QByteArray data)
