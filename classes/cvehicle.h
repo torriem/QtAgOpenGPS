@@ -7,6 +7,7 @@
 #include "common.h"
 #include <QObject>
 #include <QMatrix4x4>
+#include "interfaceproperty.h"
 
 #include <QOpenGLBuffer>
 
@@ -51,6 +52,7 @@ public:
 
     double hydLiftLookAheadDistanceLeft, hydLiftLookAheadDistanceRight;
 
+    InterfaceProperty<VehicleInterface,bool> isHydLiftOn = InterfaceProperty<VehicleInterface,bool>("isHydLiftOn");
     bool isHydLiftOn;
     double stanleyIntegralDistanceAwayTriggerAB, stanleyIntegralGainAB, purePursuitIntegralGain;
 
