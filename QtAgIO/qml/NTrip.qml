@@ -151,15 +151,12 @@ Window {
         Comp.ButtonColor {
 			id: ntripOn
             property bool statusChanged: false
-            color: "white"
-            colorChecked: "green"
 			text: qsTr("NTRIP On")
 			height: parent.height
 			width: height * 2.5
-            checkable: true
-            checked: settings.setNTRIP_isOn
+            isChecked: utils.isTrue(settings.setNTRIP_isOn)
             onClicked: {
-                settings.setNTRIP_isOn = checked
+                settings.setNTRIP_isOn = !utils.isTrue(settings.setNTRIP_isOn)
                 ntripOn.statusChanged = true;
             }
 		}
