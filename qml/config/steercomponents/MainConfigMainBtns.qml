@@ -1,7 +1,6 @@
 import QtQuick
 
 import "../../components"
-import "../.."
 
 IconButtonTransparent {
     width: 100 * theme.scaleWidth

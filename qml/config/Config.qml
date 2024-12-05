@@ -11,7 +11,7 @@ import Qt.labs.folderlistmodel
 
 import ".."
 import "../components"
-import "components"
+import "steercomponents"
 
 Dialog {
 	x: 0
