@@ -4,14 +4,15 @@
 // Menu when we load a field from KML
 import QtQuick
 import QtQuick.Controls.Fusion
+import QtQuick.Controls.Material
 
 import ".."
 import "../components"
 
-Popup{
+Dialog{
     id: fieldFromKML
-    width: 500
-    height: 450
+    height: 400  * theme.scaleHeight
+    width:700  * theme.scaleWidth
     visible: false
     function show(){
         parent.visible = true
@@ -25,10 +26,10 @@ Popup{
 
     Rectangle{
         id: textEntry
-        width: 450
-        height: 30
+        width:parent.width*0.75
+        height: 50  * theme.scaleHeight
         anchors.top:parent.top
-        anchors.topMargin: 50
+        anchors.topMargin: 75
         anchors.horizontalCenter: parent.horizontalCenter
         color: aog.backgroundColor
         border.color: "darkgray"
@@ -74,7 +75,7 @@ Popup{
     IconButtonTransparent{
         objectName: "btnGetKML"
         icon.source: prefix + "/images/BoundaryLoadFromGE.png"
-        anchors.top: additives.bottom
+        anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.margins: 20
     }
