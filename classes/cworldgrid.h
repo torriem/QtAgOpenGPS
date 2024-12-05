@@ -18,10 +18,12 @@ class CWorldGrid: public QObject
 private:
     QOpenGLShaderProgram *fieldShader=0;
     QOpenGLBuffer fieldBuffer;
+    QOpenGLBuffer rateMapBuffer;
     QOpenGLBuffer gridBuffer;
     int gridBufferCount;
 
     bool fieldBufferCurrent = false;
+    bool rateMapBufferCurrent = false;
     double lastGridZoom = -1;
     double lastCount = -1;
     double lastNorthingMax = 0;
@@ -38,6 +40,7 @@ private:
             (lastCount != Count) ) {
         lastGridZoom = -1;
         fieldBufferCurrent = false;
+        rateMapBufferCurrent = false;
         lastCount = -1;
         }
     }
@@ -61,8 +64,18 @@ public:
 
     double eastingMinGeo;
 
-    double GridSize = 4000;
-    double Count = 30;
+    //Y
+    double northingMaxRate;
+
+    double northingMinRate;
+
+    //X
+    double eastingMaxRate;
+
+    double eastingMinRate;
+
+    double GridSize = 6000;
+    double Count = 40;
     bool isGeoMap = false;
     bool isRateMap = false, isRateTrigger = false;
     int numRateChannels = 1;
@@ -71,7 +84,7 @@ public:
 
     explicit CWorldGrid(QObject *parent = 0);
     ~CWorldGrid();
-    void DrawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, bool isTextureOn, QColor fieldColor, CCamera &camera);
+    void DrawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, bool isTextureOn, bool, QColor fieldColor, CCamera &camera);
     void DrawWorldGrid(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double _gridZoom, QColor gridColor);
     void destroyGLBuffers();
 

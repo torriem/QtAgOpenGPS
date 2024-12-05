@@ -22,6 +22,10 @@ CWorldGrid::CWorldGrid(QObject *parent) : QObject(parent)
     northingMinGeo = -300;
     eastingMaxGeo = 300;
     eastingMinGeo = -300;
+    northingMaxRate = 300;
+    northingMinRate = -300;
+    eastingMaxRate = 300;
+    eastingMinRate = -300;
 }
 
 CWorldGrid::~CWorldGrid() {
@@ -31,12 +35,14 @@ CWorldGrid::~CWorldGrid() {
 }
 
 void CWorldGrid::DrawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
-                                  bool isTextureOn, QColor fieldColor,
+                                  bool isTextureOn, bool, QColor fieldColor,
                                   CCamera &camera)
 {
     //We can save a lot of time by keeping this grid buffer on the GPU unless it needs to
     //be altered.
-    if (isTextureOn) {
+
+    if (isRateMap)
+    {
         //adjust bitmap zoom based on cam zoom
         if (camera.zoomValue > 100) Count = 4;
         else if (camera.zoomValue > 80) Count = 8;
@@ -53,13 +59,13 @@ void CWorldGrid::DrawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
             //QVector<QVector3D> vertices;
 
             SurfaceVertex field[] = {
-                { QVector3D(eastingMin, northingMax, 0.10),
+                { QVector3D(eastingMin, northingMax, -2.10),
                   QVector2D(0,0) },
-                { QVector3D(eastingMax, northingMax, 0.10),
+                { QVector3D(eastingMax, northingMax, -2.10),
                   QVector2D(Count, 0.0) },
-                { QVector3D(eastingMin, northingMin, 0.10),
+                { QVector3D(eastingMin, northingMin, -2.10),
                   QVector2D(0,Count) },
-                { QVector3D(eastingMax, northingMin, 0.10),
+                { QVector3D(eastingMax, northingMin, -2.10),
                   QVector2D(Count, Count) }
             };
 
@@ -75,6 +81,7 @@ void CWorldGrid::DrawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
         }
 
         //Now draw the field surface
+
         //bind field surface texture
         texture[Textures::FLOOR]->bind();
         //qDebug() << texture[Textures::FLOOR] -> width();
@@ -83,30 +90,124 @@ void CWorldGrid::DrawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
 
         texture[Textures::FLOOR]->release();
 
-        //TODO If isGeoMap
+        //Draw rate Map
+        if (!rateMapBufferCurrent) {
+            //regenerate the field surface VBO
+            //QVector<QVector3D> vertices;
 
+            SurfaceVertex field[] = {
+                { QVector3D(eastingMinRate, northingMaxRate, -1.05),
+                  QVector2D(0,0) },
+                { QVector3D(eastingMaxRate, northingMaxRate, -1.05),
+                  QVector2D(Count, 0.0) },
+                { QVector3D(eastingMinRate, northingMinRate, -1.05),
+                  QVector2D(0,Count) },
+                { QVector3D(eastingMaxRate, northingMinRate, -1.05),
+                  QVector2D(Count, Count) }
+            };
+
+            if (rateMapBuffer.isCreated())
+                rateMapBuffer.destroy();
+            rateMapBuffer.create();
+            rateMapBuffer.bind();
+            rateMapBuffer.allocate(field, sizeof(SurfaceVertex) * 4);
+            rateMapBuffer.release();
+
+            rateMapBufferCurrent = true;
+        }
+
+        //Now draw the field surface
+
+        //bind field surface texture
+        //TODO: texture[Textures::RATEMAP1]->bind();
+
+        //TODO: glDrawArraysTexture(gl, mvp, GL_TRIANGLE_STRIP, fieldBuffer, GL_FLOAT, 4, true, QColor::from(1.0f, 1.0f, 1.0f, 0.5f));
+
+        //TODO: texture[Textures::RATEMAP1->release();
     }
     else
     {
-        GLHelperOneColor gldraw;
+        //adjust bitmap zoom based on cam zoom
+        if (camera.zoomValue > 100) Count = 4;
+        else if (camera.zoomValue > 80) Count = 8;
+        else if (camera.zoomValue > 50) Count = 16;
+        else if (camera.zoomValue > 20) Count = 32;
+        else if (camera.zoomValue > 10) Count = 64;
+        else Count = 80;
 
-        gldraw.append(QVector3D(eastingMin, northingMax, 0.0));
-        gldraw.append(QVector3D(eastingMax, northingMax, 0.0));
-        gldraw.append(QVector3D(eastingMin, northingMin, 0.0));
-        gldraw.append(QVector3D(eastingMax, northingMin, 0.0));
+        if (isTextureOn)
+        {
+            //check to see if we need to regenerate the buffers
+            invalidateBuffers();
 
-        gldraw.draw(gl,mvp,fieldColor,GL_TRIANGLE_STRIP,1.0f);
+            if (!fieldBufferCurrent) {
+                //regenerate the field surface VBO
+                //QVector<QVector3D> vertices;
+
+                SurfaceVertex field[] = {
+                    { QVector3D(eastingMin, northingMax, -0.10),
+                      QVector2D(0,0) },
+                    { QVector3D(eastingMax, northingMax, -0.10),
+                      QVector2D(Count, 0.0) },
+                    { QVector3D(eastingMin, northingMin, -0.10),
+                      QVector2D(0,Count) },
+                    { QVector3D(eastingMax, northingMin, -0.10),
+                      QVector2D(Count, Count) }
+                };
+
+                if (fieldBuffer.isCreated())
+                    fieldBuffer.destroy();
+                fieldBuffer.create();
+                fieldBuffer.bind();
+                fieldBuffer.allocate(field, sizeof(SurfaceVertex) * 4);
+                fieldBuffer.release();
+
+                fieldBufferCurrent = true;
+                lastCount=Count;
+            }
+
+            //Now draw the field surface
+
+            //bind field surface texture
+            texture[Textures::FLOOR]->bind();
+            //qDebug() << texture[Textures::FLOOR] -> width();
+
+            glDrawArraysTexture(gl, mvp, GL_TRIANGLE_STRIP, fieldBuffer, GL_FLOAT, 4, true, fieldColor);
+
+            texture[Textures::FLOOR]->release();
+        }
+        else
+        {
+            GLHelperOneColor field;
+
+            field.append(QVector3D(eastingMin, northingMax, -0.10));
+            field.append(QVector3D(eastingMax, northingMax, -0.10));
+            field.append(QVector3D(eastingMin, northingMin, -0.10));
+            field.append(QVector3D(eastingMax, northingMin, -0.10));
+
+            field.draw(gl, mvp, fieldColor, GL_TRIANGLE_STRIP,1.0f);
+        }
+
+        if (isGeoMap)
+        {
+            QColor geomap_color = QColor::fromRgbF(0.6f, 0.6f, 0.6f, 0.5f);
+
+            SurfaceVertex field[] = {
+                { QVector3D(eastingMin, northingMax, -0.05),
+                  QVector2D(0,0) },
+                { QVector3D(eastingMax, northingMax, -0.05),
+                  QVector2D(Count, 0.0) },
+                { QVector3D(eastingMin, northingMin, -0.05),
+                  QVector2D(0,Count) },
+                { QVector3D(eastingMax, northingMin, -0.05),
+                  QVector2D(Count, Count) }
+            };
+
+            //TODO: bind bing map texture
+            //TODO: glDrawArraysTexture(gl, mvp, GL_TRIANGLE_STRIP, fieldBuffer, GL_FLOAT, 4, true, geomap_color);
+            //TODO: unbind texture
+        }
     }
-
-
-    /*
-    GLHelperTexture gldraw;
-    gldraw.append( { QVector3D(eastingMin, northingMax, 0.0), QVector2D(0,0) } );
-    gldraw.append( { QVector3D(eastingMax, northingMax, 0.0), QVector2D(texZoomE, 0) } );
-    gldraw.append( { QVector3D(eastingMin, northingMin, 0.0), QVector2D(0,texZoomN) } );
-    gldraw.append( { QVector3D(eastingMax, northingMin, 0.0), QVector2D(texZoomE, texZoomN) } );
-    gldraw.draw(gl, mvp, Textures::FLOOR, GL_TRIANGLE_STRIP, true, fieldColor);
-    */
 }
 
 void CWorldGrid::DrawWorldGrid(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double _gridZoom, QColor gridColor)
@@ -118,49 +219,25 @@ void CWorldGrid::DrawWorldGrid(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatr
 
     GLHelperOneColor gldraw;
 
-    //if (_gridZoom != lastGridZoom) { //use epsilon here?
-        // if the grid has changed, regenerate the buffer to save
-        // us time later.
-        //QVector<QVector3D> vertices;
-        //lastGridZoom = _gridZoom;
-
-
-        for (double num = glm::roundMidAwayFromZero(eastingMin / _gridZoom) * _gridZoom; num < eastingMax; num += _gridZoom)
-        {
-            if (num < eastingMin) continue;
-            //vertices.append(QVector3D(num,northingMax, 0.1));
-            //vertices.append(QVector3D(num,northingMin, 0.1));
-            gldraw.append(QVector3D(num,northingMax, 0.1));
-            gldraw.append(QVector3D(num,northingMin, 0.1));
-        }
-
-        for (double num2 = glm::roundMidAwayFromZero(northingMin / _gridZoom) * _gridZoom; num2 < northingMax; num2 += _gridZoom)
-        {
-            if (num2 < northingMin) continue;
-            //vertices.append(QVector3D(eastingMax,num2, 0.1));
-            //vertices.append(QVector3D(eastingMin,num2, 0.1));
-            gldraw.append(QVector3D(eastingMax,num2, 0.1));
-            gldraw.append(QVector3D(eastingMin,num2, 0.1));
-        }
-
-        gldraw.draw(gl, mvp, gridColor, GL_LINES, 1.0f);
-
-/*
-        if (gridBuffer.isCreated())
-            gridBuffer.destroy();
-        gridBuffer.create();
-        gridBuffer.bind();
-        gridBuffer.allocate(vertices.data(),vertices.count() * sizeof(QVector3D));
-        gridBuffer.release();
-
-        gridBufferCount = vertices.count();
+    for (double num = glm::roundMidAwayFromZero(eastingMin / _gridZoom) * _gridZoom; num < eastingMax; num += _gridZoom)
+    {
+        if (num < eastingMin) continue;
+        //vertices.append(QVector3D(num,northingMax, 0.1));
+        //vertices.append(QVector3D(num,northingMin, 0.1));
+        gldraw.append(QVector3D(num,northingMax, 0.1));
+        gldraw.append(QVector3D(num,northingMin, 0.1));
     }
-    gl->glLineWidth(1);
-    glDrawArraysColor(gl, mvp,
-                      GL_LINES, gridColor,
-                      gridBuffer,GL_FLOAT,
-                      gridBufferCount);
-*/
+
+    for (double num2 = glm::roundMidAwayFromZero(northingMin / _gridZoom) * _gridZoom; num2 < northingMax; num2 += _gridZoom)
+    {
+        if (num2 < northingMin) continue;
+        //vertices.append(QVector3D(eastingMax,num2, 0.1));
+        //vertices.append(QVector3D(eastingMin,num2, 0.1));
+        gldraw.append(QVector3D(eastingMax,num2, 0.1));
+        gldraw.append(QVector3D(eastingMin,num2, 0.1));
+    }
+
+    gldraw.draw(gl, mvp, gridColor, GL_LINES, 1.0f);
 }
 
 void CWorldGrid::checkZoomWorldGrid(double northing, double easting) {
