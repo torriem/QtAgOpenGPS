@@ -741,7 +741,7 @@ public slots:
     void onBtnDeleteFlag_clicked();
     void onBtnDeleteAllFlags_clicked();
 
-    void swapDirection();
+    void SwapDirection();
     void turnOffBoundAlarm();
 
     void onBtnManUTurn_clicked(bool right); //TODO add the skip number as a parameter

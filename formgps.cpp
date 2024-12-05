@@ -255,12 +255,7 @@ void FormGPS::processSectionLookahead() {
     if (rpHeight < 8) rpHeight = 8;
 
     //read the whole block of pixels up to max lookahead, one read only
-    //pixels are already read
-    //GL.ReadPixels(tool.rpXPosition, 0, tool.rpWidth, (int)rpHeight, OpenTK.Graphics.OpenGL.PixelFormat.Green, PixelType.UnsignedByte, grnPixels);
-
-    //Paint to context for troubleshooting
-    //oglBack.MakeCurrent();
-    //oglBack.SwapBuffers();
+    //pixels are already read in another thread.
 
     //determine if headland is in read pixel buffer left middle and right.
     int start = 0, end = 0, tagged = 0, totalPixel = 0;
@@ -284,6 +279,7 @@ void FormGPS::processSectionLookahead() {
             if (grnPixels[tool.rpWidth / 2 + (int)(tram.halfWheelTrack * 10)].green == 245) tram.controlByte += 1;
         }
     }
+    else tram.controlByte = 0;
 
     //determine if in or out of headland, do hydraulics if on
     if (bnd.isHeadlandOn)
@@ -312,6 +308,10 @@ void FormGPS::processSectionLookahead() {
 
         //set hydraulics based on tool in headland or not
         bnd.SetHydPosition(autoBtnState, p_239, vehicle);
+
+        //set hydraulics based on tool in headland or not
+        bnd.SetHydPosition(autoBtnState, p_239, vehicle);
+
     }
 
     ///////////////////////////////////////////   Section control        ssssssssssssssssssssss
@@ -725,13 +725,14 @@ void FormGPS::processSectionLookahead() {
     //draw the section control window off screen buffer
     //if (bbCounter == 0)
     //{
+    if (isJobStarted)
+    {
         p_239.pgn[p_239.geoStop] = mc.isOutOfBounds ? 1 : 0;
 
         SendPgnToLoop(p_239.pgn);
 
-        if (!tool.isSectionsNotZones)
-            SendPgnToLoop(p_229.pgn);
-    //}
+        SendPgnToLoop(p_229.pgn);
+    }
 
 
     lock.unlock();
@@ -1049,15 +1050,15 @@ QString FormGPS::speedMPH() {
     return locale.toString(spd,'f',1);
 }
 
-void FormGPS::swapDirection() {
+void FormGPS::SwapDirection() {
     if (!yt.isYouTurnTriggered)
     {
         yt.isYouTurnRight = ! yt.isYouTurnRight;
-        yt.ResetCreatedYouTurn();
+        yt.ResetCreatedYouTurn(makeUTurnCounter);
     }
     else if (yt.isYouTurnBtnOn)
     {
-        //btnAutoYouTurn.PerformClick();
+        yt.isYouTurnBtnOn = false;
     }
 }
 
@@ -1065,9 +1066,9 @@ void FormGPS::swapDirection() {
 void FormGPS::JobClose()
 {
     recPath.resumeState = 0;
-    //TODO: reset resume path button
-    //btnResumePath.Image = Properties.Resources.pathResumeStart;
     recPath.currentPositonIndex = 0;
+
+    sbGrid.clear();
 
     //reset field offsets
     if (!isKeepOffsetsOn)
@@ -1077,44 +1078,29 @@ void FormGPS::JobClose()
     }
 
     //turn off headland
-    bnd.isHeadlandOn = false;
-
-    //TODO: reset headland button
-    //btnHeadlandOnOff.Image = Properties.Resources.HeadlandOff;
-    //btnHeadlandOnOff.Visible = false;
+    bnd.isHeadlandOn = false; //this turns off the button
 
     recPath.recList.clear();
     recPath.StopDrivingRecordedPath();
-    //panelDrag.Visible = false;
 
     //make sure hydraulic lift is off
     p_239.pgn[p_239.hydLift] = 0;
-    vehicle.isHydLiftOn = false;
-    //TODO: reset hydlift button, make it invisible
-    //btnHydLift.Image = Properties.Resources.HydraulicLiftOff;
-    //btnHydLift.Visible = false;
+    vehicle.isHydLiftOn = false; //this turns off the button also
 
-    //zoom gone
     //oglZoom.SendToBack();
 
     //clean all the lines
     bnd.bndList.clear();
+    bnd.shpList.clear();
 
-    //TODO: turn off right panel
-    //panelRight.Enabled = false;
-    //TODO: FieldMenuButtonEnableDisable(false);
 
-    //menustripLanguage.Enabled = true;
     isJobStarted = false;
 
     //fix ManualOffOnAuto buttons
     manualBtnState = btnStates::Off;
-    //btnSectionMasterManual.Image = Properties.Resources.ManualOff;
 
     //fix auto button
     autoBtnState = btnStates::Off;
-    //TODO reset section master button
-    //btnSectionMasterAuto.Image = Properties.Resources.SectionMasterOff;
 
     /*
     btnZone1.BackColor = Color.Silver;
