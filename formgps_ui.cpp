@@ -197,7 +197,7 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(swapAutoYouTurnDirection()), this, SLOT(onBtnSwapAutoYouTurnDirection_clicked()));
 
 
-    connect(qml_root, SIGNAL(save_everything()), this, SLOT(fileSaveEverythingBeforeClosingField()));
+    connect(qml_root, SIGNAL(save_everything()), this, SLOT(FileSaveEverythingBeforeClosingField()));
     //connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
 
 

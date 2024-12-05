@@ -168,6 +168,7 @@ public:
 
 private:
     //For field saving in background
+    int fileSaveCounter = 1;
     int minuteCounter = 1;
 
     int tenMinuteCounter = 1;
@@ -790,7 +791,7 @@ public slots:
     /*
      * misc
      */
-    void fileSaveEverythingBeforeClosingField();
+    void FileSaveEverythingBeforeClosingField();
 
     /* formgps_classcallbacks.cpp */
     void onStopAutoSteer(); //cancel autosteer and ensure button state
