@@ -338,9 +338,10 @@ void FormLoop::SendAuthorization()
         if(clientSocket->write(byteDateLine, byteDateLine.length())){
             if(debugNTRIP)
                 qDebug() << "NTRIP wrote to clientSocket";
-            else
-                qDebug() << "NTRIP: Failed to write to clientSocket";
         }
+        else
+            qDebug() << "NTRIP: Failed to write to clientSocket"
+                     << "Error:" << clientSocket->errorString();  ;
 
 
 
