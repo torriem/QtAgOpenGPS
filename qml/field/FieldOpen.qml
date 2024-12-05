@@ -10,13 +10,13 @@ import QtQuick.Controls.Material
 import ".."
 import "../components"
 
-Popup {
+Dialog {
     id:fieldOpen
     //color: "ghostwhite"
     visible: false
-    width: 700
-    height: 500
-    modal: true
+    height: 500  * theme.scaleHeight
+    width:700  * theme.scaleWidth
+    modal: falce
     function show(){
         parent.visible = true
     }
@@ -70,15 +70,15 @@ Popup {
             spacing: 4
             //flow: Grid.TopToBottom
             //rows: 1
-            IconButtonText {
+            IconButtonTransparent {
                 id: deleteField
                 objectName: "btnDeleteField"
                 icon.source: prefix + "/images/skull.png"
                 text: "Delete Field"
-                radius: 0
+                //radius: 0
                 //color3: "white"
-                border: 1
-                height: 75
+                //border: 1
+                //height: 75
                 enabled: fieldTable.currentIndex > -1
                 onClicked: {
                     fieldInterface.field_delete(fieldTable.currentFieldName)
@@ -89,42 +89,44 @@ Popup {
         Row {
             spacing: 5
             anchors.right: parent.right
-            IconButtonText {
+            IconButtonTransparent {
                 id: sort
+                icon.source: prefix + "/images/Sort.png"
                 //color3: "white"
-                height: 75
+                //height: 75
                 text: "Toggle Sort"
-                radius: 0
+                //radius: 0
 
-                border: 1
+                //border: 1
                 onClicked: {
                     fieldTable.sortBy = (fieldTable.sortBy % 3) + 1
                 }
             }
 
-            IconButtonText {
+            IconButtonTransparent {
                 id: cancel
                 objectName: "btnCancel"
                 icon.source: prefix + "/images/Cancel64.png"
                 text: "Cancel"
                 //color3: "white"
-                radius: 0
-                border: 1
-                height: 75
+                //radius: 0
+                //border: 1
+                //height: 75
                 onClicked: {
                     fieldTable.clear_selection()
                     fieldOpen.close()
+                    closeDialog()
                 }
             }
-            IconButtonText {
+            IconButtonTransparent {
                 id: useSelected
                 objectName: "btnUseSelected"
                 icon.source: prefix + "/images/FileOpen.png"
                 text: "Use Selected"
-                radius: 0
+                //radius: 0
                 //color3: "white"
-                border: 1
-                height: 75
+                //border: 1
+                //height: 75
                 enabled: fieldTable.currentIndex > -1
                 onClicked: {
                     fieldInterface.field_open(fieldTable.currentFieldName)

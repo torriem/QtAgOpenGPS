@@ -13,7 +13,7 @@ Drawer {
     id: fieldMenu
     //modal: false
     //height: mainWindow.height
-    width: 300
+    width: 270 * theme.scaleWidth
     height: mainWindow.height
     visible: false
     modal: true
