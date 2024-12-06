@@ -1536,7 +1536,7 @@ void FormGPS::FileSaveContour()
     writer.setLocale(QLocale::C);
     writer.setRealNumberNotation(QTextStream::FixedNotation);
 
-    for (QSharedPointer<QVector<Vec3>> triList: contourSaveList)
+    for (QSharedPointer<QVector<Vec3>> &triList: contourSaveList)
     {
         int count2 = triList->count();
 
