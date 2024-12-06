@@ -7,7 +7,7 @@ import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 
 import ".."
-import "components"
+import "steercomponents"
 import "../components"
 Item {
     anchors.fill: parent
