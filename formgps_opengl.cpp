@@ -221,48 +221,8 @@ void FormGPS::oglMain_Paint()
     gl->glDisable(GL_DEPTH_TEST);
     //gl->glDisable(GL_TEXTURE_2D);
 
-    if((uint)sentenceCounter > 299)
-    {
-        modelview.setToIdentity();
-        modelview.translate(0,0.3,-10);
-        //rotate the camera down to look at fix
-        //modelview.rotate(-60, 1.0, 0.0, 0.0);
-        modelview.rotate(deadCam, 0.0, 1.0, 0.0);
-        deadCam += 5;
 
-        //TODO: replace with QML widget
-
-        //draw with NoGPS texture 21
-       /* color.setRgbF(1.25f, 1.25f, 1.275f, 0.75);
-        gldrawtex.append( { QVector3D(2.5, 2.5, 0), QVector2D(1,0) } ); //Top Right
-        gldrawtex.append( { QVector3D(-2.5, 2.5, 0), QVector2D(0,0) } ); //Top Left
-        gldrawtex.append( { QVector3D(2.5, -2.5, 0), QVector2D(1,1) } ); //Bottom Right
-        gldrawtex.append( { QVector3D(-2.5, -2.5, 0), QVector2D(0,1) } ); //Bottom Left
-
-        gldrawtex.draw(gl, projection * modelview, Textures::NOGPS, GL_TRIANGLE_STRIP, true,color);
-*/
-
-        // 2D Ortho ---------------------------------------////////-------------------------------------------------
-
-        //we don't need to save the matrix since it's regenerated every time through this method
-        projection.setToIdentity();
-
-        //negative and positive on width, 0 at top to bottom ortho view
-        projection.ortho(-(double)width / 2, (double)width / 2, (double)height, 0, -1, 1);
-
-        //  Create the appropriate modelview matrix.
-        modelview.setToIdentity();
-
-        color.setRgbF(0.98f, 0.98f, 0.70f);
-        int edge = -(double)width / 2 + 10;
-
-        drawText(gl,projection * modelview,edge,height - 240, "<-- AgIO ?",1.0,true,color);
-
-        gl->glFlush();
-
-        //GUI widgets have to be updated elsewhere
-    }
-    else
+    if((uint)sentenceCounter < 299)
     {
         if (isGPSPositionInitialized)
         {
@@ -292,15 +252,15 @@ void FormGPS::oglMain_Paint()
 
             ////if grid is on draw it
             if (isGridOn)
-                worldGrid.DrawWorldGrid(gl,projection*modelview,gridZoom, QColor::fromRgbF(0,0,0));
+                worldGrid.DrawWorldGrid(gl,projection, modelview, gridZoom, QColor::fromRgbF(0,0,0));
 
             //OpenGL ES does not support wireframe in this way. If we want wireframe,
             //we'll have to do it with LINES
             //if (isDrawPolygons) gl->glPolygonMode(GL_FRONT, GL_LINE);
-            //turn on blend for paths
-            gl->glEnable(GL_BLEND);
 
+            gl->glEnable(GL_BLEND);
             //draw patches of sections
+
             for (int j = 0; j < triStrip.count(); j++)
             {
                 //every time the section turns off and on is a new patch
@@ -318,9 +278,9 @@ void FormGPS::oglMain_Paint()
                     if (camera.camSetDistance < -2400) mipmap = 8;
                     if (camera.camSetDistance < -4800) mipmap = 16;
                     */
-                    //for every new chunk of patch
 
-                    for (QSharedPointer<PatchTriangleList> triList: triStrip[j].patchList)
+                    //for every new chunk of patch
+                    for (QSharedPointer<PatchTriangleList> &triList: triStrip[j].patchList)
                     {
                         isDraw = false;
                         int count2 = triList->size();
@@ -422,8 +382,14 @@ void FormGPS::oglMain_Paint()
             }
             else// draw the current and reference AB Lines or CurveAB Ref and line
             {
-                if (ABLine.isABLineSet | ABLine.isABLineBeingSet) ABLine.DrawABLines(gl, projection*modelview, isFontOn, bnd, yt, camera, gyd);
-                if (curve.isBtnCurveOn) curve.DrawCurve(gl, projection*modelview, isFontOn, vehicle, yt, camera);
+                //when switching lines, draw the ghost
+                if (trk.idx > -1)
+                {
+                    if (trk.gArr[trk.idx].mode == (int)TrackMode::AB)
+                        ABLine.DrawABLines(gl,projection * modelview, isFontOn, trk, yt, camera, gyd);
+                    else
+                        curve.DrawCurve(gl, projection * modelview, isFontOn, trk, yt, camera);
+                }
             }
 
             //if (recPath.isRecordOn)
@@ -440,7 +406,7 @@ void FormGPS::oglMain_Paint()
                 {
                     bnd.DrawFenceLines(vehicle,mc,gl,projection*modelview);
 
-                    color.setRgbF(0.0f, 0.95f, 0.95f); //TODO: not sure what color turnLines should actually be
+                    color.setRgbF(0.3555f, 0.6232f, 0.20f); //TODO: not sure what color turnLines should actually be
 
                     for (int i = 0; i < bnd.bndList.count(); i++)
                     {
@@ -474,26 +440,30 @@ void FormGPS::oglMain_Paint()
             double steerangle;
             if(timerSim.isActive()) steerangle = sim.steerangleAve;
             else steerangle = mc.actualSteerAngleDegrees;
-            vehicle.DrawVehicle(gl, modelview, projection,steerangle,isFirstHeadingSet,QRect(0,0,width,height),camera,tool,bnd,ct,curve,ABLine);
+            vehicle.DrawVehicle(gl, modelview, projection, steerangle, isFirstHeadingSet,
+                                QRect(0,0,width,height),camera,tool,bnd);
             modelview = mv; //pop matrix
 
             if (camera.camSetDistance > -150)
             {
                 gldraw1.clear();
                 color.setRgbF(0.98, 0.98, 0.098);
-                if (ABLine.isBtnABLineOn)
+                if (trk.idx > -1)
                 {
-                    gldraw1.clear();
-                    gldraw1.append(QVector3D(ABLine.goalPointAB.easting, ABLine.goalPointAB.northing, 0));
-                    gldraw1.draw(gl,projection*modelview,QColor::fromRgbF(0,0,0),GL_POINTS,16);
-                    gldraw1.draw(gl,projection*modelview,color,GL_POINTS,10);
-                }
-                else if (curve.isBtnCurveOn)
-                {
-                    gldraw1.clear();
-                    gldraw1.append(QVector3D(curve.goalPointCu.easting, curve.goalPointCu.northing, 0));
-                    gldraw1.draw(gl,projection*modelview,QColor::fromRgbF(0,0,0),GL_POINTS,16);
-                    gldraw1.draw(gl,projection*modelview,color,GL_POINTS,10);
+                    if (trk.gArr[trk.idx].mode == (int)TrackMode::AB)
+                    {
+                        gldraw1.clear();
+                        gldraw1.append(QVector3D(ABLine.goalPointAB.easting, ABLine.goalPointAB.northing, 0));
+                        gldraw1.draw(gl,projection*modelview,QColor::fromRgbF(0,0,0),GL_POINTS,16);
+                        gldraw1.draw(gl,projection*modelview,color,GL_POINTS,10);
+                    }
+                    else
+                    {
+                        gldraw1.clear();
+                        gldraw1.append(QVector3D(curve.goalPointCu.easting, curve.goalPointCu.northing, 0));
+                        gldraw1.draw(gl,projection*modelview,QColor::fromRgbF(0,0,0),GL_POINTS,16);
+                        gldraw1.draw(gl,projection*modelview,color,GL_POINTS,10);
+                    }
                 }
             }
 
@@ -506,12 +476,10 @@ void FormGPS::oglMain_Paint()
             //  Create the appropriate modelview matrix.
             modelview.setToIdentity();
 
+            //lightbar, button status, compasstext, steer circle, Hyd Lift, RTK
+            // alarm, etc are all done in QML based on properties in Interface.qml
+
             if(isSkyOn) DrawSky(gl, projection*modelview, width, height);
-
-
-            if (vehicle.isHydLiftOn) DrawLiftIndicator(gl, modelview, projection, width, height);
-
-            //if (pn.age > pn.ageAlarm) DrawAge(gl, projection * modelview, width);
 
             gl->glFlush();
 
@@ -533,8 +501,6 @@ void FormGPS::oglMain_Paint()
             gl->glClear(GL_COLOR_BUFFER_BIT);
         }
 
-        //qmlview->resetOpenGLState();
-
         //directly call section lookahead GL stuff from here
         if (! newframe) {
             //No new position, so no need to repaint the back buffer
@@ -545,6 +511,48 @@ void FormGPS::oglMain_Paint()
         }
         oglBack_Paint();
         gl->glFlush();
+
+    }
+    else
+    {
+        modelview.setToIdentity();
+        modelview.translate(0,0.3,-10);
+        //rotate the camera down to look at fix
+        //modelview.rotate(-60, 1.0, 0.0, 0.0);
+        modelview.rotate(deadCam, 0.0, 1.0, 0.0);
+        deadCam += 5;
+
+        //TODO: replace with QML widget
+
+        //draw with NoGPS texture 21
+       /* color.setRgbF(1.25f, 1.25f, 1.275f, 0.75);
+        gldrawtex.append( { QVector3D(2.5, 2.5, 0), QVector2D(1,0) } ); //Top Right
+        gldrawtex.append( { QVector3D(-2.5, 2.5, 0), QVector2D(0,0) } ); //Top Left
+        gldrawtex.append( { QVector3D(2.5, -2.5, 0), QVector2D(1,1) } ); //Bottom Right
+        gldrawtex.append( { QVector3D(-2.5, -2.5, 0), QVector2D(0,1) } ); //Bottom Left
+
+        gldrawtex.draw(gl, projection * modelview, Textures::NOGPS, GL_TRIANGLE_STRIP, true,color);
+*/
+
+        // 2D Ortho ---------------------------------------////////-------------------------------------------------
+
+        //we don't need to save the matrix since it's regenerated every time through this method
+        projection.setToIdentity();
+
+        //negative and positive on width, 0 at top to bottom ortho view
+        projection.ortho(-(double)width / 2, (double)width / 2, (double)height, 0, -1, 1);
+
+        //  Create the appropriate modelview matrix.
+        modelview.setToIdentity();
+
+        color.setRgbF(0.98f, 0.98f, 0.70f);
+        int edge = -(double)width / 2 + 10;
+
+        drawText(gl,projection * modelview,edge,height - 240, "<-- AgIO ?",1.0,true,color);
+
+        gl->glFlush();
+
+        //GUI widgets have to be updated elsewhere
     }
     lock.unlock();
     if(newframe && (bool)isJobStarted) {
@@ -691,7 +699,7 @@ void FormGPS::oglBack_Paint()
         if (patchCount > 0)
         {
             //for every new chunk of patch
-            for (QSharedPointer<QVector<QVector3D>> triList: triStrip[j].patchList)
+            for (QSharedPointer<QVector<QVector3D>> &triList: triStrip[j].patchList)
             {
                 isDraw = false;
                 int count2 = triList->size();
@@ -746,7 +754,7 @@ void FormGPS::oglBack_Paint()
 
     //draw 245 green for the tram tracks
 
-    if (tram.displayMode !=0 && (curve.isBtnCurveOn || ABLine.isBtnABLineOn))
+    if (tram.displayMode !=0 && tram.displayMode !=0 && (trk.idx > -1))
     {
         if ((tram.displayMode == 1 || tram.displayMode == 2))
         {
@@ -801,6 +809,33 @@ void FormGPS::oglBack_Paint()
     grnPix = temp; //only show clipped image
     memcpy(grnPixels, temp.constBits(), temp.size().width() * temp.size().height() * 4);
     //grnPix = temp;
+
+    //first channel
+    if (worldGrid.numRateChannels > 0)
+    {
+        /*
+        GL.Enable(EnableCap.Texture2D);
+
+        GL.BindTexture(TextureTarget.Texture2D, texture[(int)textures.RateMap1]);
+        GL.Begin(PrimitiveType.TriangleStrip);
+        GL.Color3(1.0f, 1.0f, 1.0f);
+        GL.TexCoord2(0, 0);
+        GL.Vertex3(worldGrid.eastingMinRate, worldGrid.northingMaxRate, 0.10);
+        GL.TexCoord2(1, 0.0);
+        GL.Vertex3(worldGrid.eastingMaxRate, worldGrid.northingMaxRate, 0.10);
+        GL.TexCoord2(0.0, 1);
+        GL.Vertex3(worldGrid.eastingMinRate, worldGrid.northingMinRate, 0.10);
+        GL.TexCoord2(1, 1);
+        GL.Vertex3(worldGrid.eastingMaxRate, worldGrid.northingMinRate, 0.0);
+        GL.End();
+
+        GL.Flush();
+
+        //read the whole block of pixels up to max lookahead, one read only
+        GL.ReadPixels(250, 1, 1, 1, OpenTK.Graphics.OpenGL.PixelFormat.Red, PixelType.UnsignedByte, rateRed);
+        */
+    }
+
 
     //The remaining code from the original method in the C# code is
     //broken out into a callback in formgps.cpp called
@@ -1126,21 +1161,6 @@ void FormGPS::DrawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int heigh
 //    gldraw.draw(gl, projection*modelview, Textures::COMPASS, GL_TRIANGLE_STRIP, true, QColor::fromRgbF(0.952f, 0.870f, 0.73f, 0.8f));
 //}
 
-
-//should this be moved somewhere? hydLiftDown sends to the frontend, so it is necessary
-void FormGPS::DrawLiftIndicator(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, int Width, int Height)
-{
-    if (p_239.pgn[p_239.hydLift] == (char)2)
-    {
-        hydLiftDown = false;
-    }
-    else
-    {
-        hydLiftDown = true;
-    }
-}
-
-
 void FormGPS::CalcFrustum(const QMatrix4x4 &mvp)
 {
     //const float *clip = mvp.constData(); //column major order
@@ -1269,7 +1289,7 @@ void FormGPS::calculateMinMax()
             if (patchCount > 0)
             {
                 //for every new chunk of patch
-                for (QSharedPointer<PatchTriangleList>triList: triStrip[j].patchList)
+                for (QSharedPointer<PatchTriangleList> &triList: triStrip[j].patchList)
                 {
                     int count2 = triList->count();
                     for (int i = 0; i < count2; i += 3)
