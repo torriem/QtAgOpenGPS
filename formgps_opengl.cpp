@@ -479,6 +479,16 @@ void FormGPS::oglMain_Paint()
             //lightbar, button status, compasstext, steer circle, Hyd Lift, RTK
             // alarm, etc are all done in QML based on properties in Interface.qml
 
+            //if this is on, vehicleInterface.isHydLiftOn is true
+            if (p_239.pgn[p_239.hydLift] == 2)
+            {
+                vehicle.hydLiftDown = false; //vehicleInterface.hydLiftDown in QML
+            }
+            else
+            {
+                vehicle.hydLiftDown = true;
+            }
+
             if(isSkyOn) DrawSky(gl, projection*modelview, width, height);
 
             gl->glFlush();
