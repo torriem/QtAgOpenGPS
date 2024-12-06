@@ -35,7 +35,7 @@ CWorldGrid::~CWorldGrid() {
 }
 
 void CWorldGrid::DrawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
-                                  bool isTextureOn, bool, QColor fieldColor,
+                                  bool isTextureOn, QColor fieldColor,
                                   CCamera &camera)
 {
     //We can save a lot of time by keeping this grid buffer on the GPU unless it needs to

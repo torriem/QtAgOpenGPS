@@ -84,7 +84,7 @@ public:
 
     explicit CWorldGrid(QObject *parent = 0);
     ~CWorldGrid();
-    void DrawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, bool isTextureOn, bool, QColor fieldColor, CCamera &camera);
+    void DrawFieldSurface(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, bool isTextureOn, QColor fieldColor, CCamera &camera);
     void DrawWorldGrid(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double _gridZoom, QColor gridColor);
     void destroyGLBuffers();
 
