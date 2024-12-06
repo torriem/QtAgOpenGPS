@@ -116,7 +116,7 @@ public:
 
     void DrawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                    bool isFontOn,
-                   const CTrack trk,
+                   const CTrack &trk,
                    CYouTurn &yt, const CCamera &camera
                    );
 

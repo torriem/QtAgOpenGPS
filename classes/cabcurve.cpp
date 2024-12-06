@@ -984,7 +984,7 @@ void CABCurve::DrawCurveNew(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
 
 void CABCurve::DrawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                          bool isFontOn,
-                         const CTrack trk,
+                         const CTrack &trk,
                          CYouTurn &yt, const CCamera &camera)
 {
     //double tool_toolWidth = property_setVehicle_toolWidth;
