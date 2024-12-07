@@ -508,68 +508,47 @@ Window {
                     }
                 }
             }
-            Comp.IconButtonText {
+            Comp.MainWindowBtns {
                 id: btnnavigationSettings
                 buttonText: qsTr("Display")
                 icon.source: prefix + "/images/NavigationSettings.png"
                 onClicked: displayButtons.visible = !displayButtons.visible
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
-                Layout.alignment: Qt.AlignCenter
             }
-            Comp.IconButtonText {
+            Comp.MainWindowBtns {
                 id: btnSettings
                 buttonText: qsTr("Settings")
                 icon.source: prefix + "/images/Settings48.png"
                 onClicked: config.open()
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
-                Layout.alignment: Qt.AlignCenter
             }
-            Comp.IconButtonText {
+            Comp.MainWindowBtns {
                 id: btnTools
                 buttonText: qsTr("Tools")
                 icon.source: prefix + "/images/SpecialFunctions.png"
                 onClicked: toolsMenu.visible = true
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
-                Layout.alignment: Qt.AlignCenter
             }
-            Comp.IconButtonText{
+            Comp.MainWindowBtns{
                 id: btnFieldMenu
                 buttonText: qsTr("Field")
                 icon.source: prefix + "/images/JobActive.png"
                 onClicked: fieldMenu.visible = true
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
-                Layout.alignment: Qt.AlignCenter
             }
-            Comp.IconButtonText{
+            Comp.MainWindowBtns{
                 id: btnFieldTools
                 buttonText: qsTr("Field Tools")
                 icon.source: prefix + "/images/FieldTools.png"
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
                 onClicked: fieldTools.visible = true
                 enabled: aog.isJobStarted ? true : false
-                Layout.alignment: Qt.AlignCenter
             }
 
-            Comp.IconButtonText {
+            Comp.MainWindowBtns {
                 id: btnAgIO
                 buttonText: qsTr("AgIO")
                 icon.source: prefix + "/images/AgIO.png"
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
-                Layout.alignment: Qt.AlignCenter
             }
-            Comp.IconButtonText {
+            Comp.MainWindowBtns {
                 id: btnautoSteerConf
                 buttonText: qsTr("Steer config")
                 icon.source: prefix + "/images/AutoSteerConf.png"
-                Layout.alignment: Qt.AlignCenter
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
                 onClicked: {
                     steerConfigWindow.visible = true
                     steerConfigWindow.show()
@@ -623,7 +602,7 @@ Window {
                               else
                                   width = children.width
 
-            Comp.IconButtonText {
+            Comp.MainWindowBtns {
                 property bool isContourLockedByUser //store if user locked
                 id: btnContourLock
                 isChecked: aog.btnIsContourLocked
@@ -631,10 +610,7 @@ Window {
                 checkable: true
                 icon.source: prefix + "/images/ColorUnlocked.png"
                 iconChecked: prefix + "/images/ColorLocked.png"
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
                 buttonText: "Lock"
-                Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     aog.btnContourLock()
                     if (aog.btnIsContourLocked)
@@ -656,17 +632,13 @@ Window {
                     }
                 }
             }
-            Comp.IconButtonText {
+            Comp.MainWindowBtns {
                 id: btnContour
                 isChecked: aog.isContourBtnOn //set value from backend
                 checkable: true
                 icon.source: prefix + "/images/ContourOff.png"
                 iconChecked: prefix + "/images/ContourOn.png"
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
                 buttonText: "Contour"
-                //color: "white"
-                Layout.alignment: Qt.AlignCenter
                 onClicked: {
                     aog.btnContour()
                 }
@@ -707,16 +679,13 @@ Window {
                 onCheckedChanged: checked ? aog.autoTrackBtnState = 1 : aog.autoTrackBtnState = 0
             }
 
-            Comp.IconButtonText {
+            Comp.MainWindowBtns {
                 id: btnSectionManual
                 isChecked: aog.manualBtnState == 2
                 checkable: true
                 icon.source: prefix + "/images/ManualOff.png"
                 iconChecked: prefix + "/images/ManualOn.png"
                 buttonText: "Manual"
-                Layout.alignment: Qt.AlignCenter
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
                 onCheckedChanged: {
                     if (checked) {
                         btnSectionAuto.checked = false;
@@ -730,16 +699,13 @@ Window {
                 }
             }
 
-            Comp.IconButtonText {
+            Comp.MainWindowBtns {
                 id: btnSectionAuto
                 isChecked: aog.autoBtnState == 1
                 checkable: true
                 icon.source: prefix + "/images/SectionMasterOff.png"
                 iconChecked: prefix + "/images/SectionMasterOn.png"
                 buttonText: "Auto"
-                Layout.alignment: Qt.AlignCenter
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
                 onCheckedChanged: {
                     if (checked) {
                         btnSectionManual.checked = false;
@@ -751,7 +717,7 @@ Window {
                     }
                 }
             }
-            Comp.IconButtonText {
+            Comp.MainWindowBtns {
                 id: btnAutoYouTurn
                 isChecked: aog.isYouTurnBtnOn
                 checkable: true
@@ -761,11 +727,8 @@ Window {
                 visible: aog.isTrackOn
                 enabled: aog.isAutoSteerBtnOn
                 onClicked: aog.autoYouTurn()
-                Layout.alignment: Qt.AlignCenter
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
             }
-            Comp.IconButtonText {
+            Comp.MainWindowBtns {
                 id: btnAutoSteer
                 icon.source: prefix + "/images/AutoSteerOff.png"
                 iconChecked: prefix + "/images/AutoSteerOn.png"
@@ -774,9 +737,6 @@ Window {
                 enabled: aog.isTrackOn || aog.isContourBtnOn
                 //Is remote activation of autosteer enabled? //todo. Eliminated in 6.3.3
                 buttonText: (settings.setAS_isAutoSteerAutoOn === true ? "R" : "M")
-                Layout.alignment: Qt.AlignCenter
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
                 onClicked: {
                     if (checked && ((aog.currentABCurve > -1) || (aog.currentABLine > -1) || btnContour.isChecked)) {
                         console.debug("okay to turn on autosteer button.")
@@ -872,36 +832,27 @@ Window {
                     }
                 }
             }
-            Comp.IconButtonText {
+            Comp.MainWindowBtns {
                 id: btnYouSkip // the "Fancy Skip" button
                 isChecked: false
                 checkable: true
                 icon.source: prefix + "/images/YouSkipOff.png"
                 iconChecked: prefix + "/images/YouSkipOn.png"
                 buttonText: "YouSkips"
-                Layout.alignment: Qt.AlignCenter
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
             }
-            Comp.IconButtonText { //reset trailing tool to straight back
+            Comp.MainWindowBtns { //reset trailing tool to straight back
                 id: btnResetTool
                 icon.source: prefix + "/images/ResetTool.png"
                 buttonText: "Reset Tool"
-                Layout.alignment: Qt.AlignCenter
                 onClicked: aog.btnResetTool()
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
                 visible: settings.setTool_isToolTrailing === true //hide if front or rear 3 pt
             }
-            Comp.IconButtonText {
+            Comp.MainWindowBtns {
                 id: btnSectionMapping
                 icon.source: prefix + "/images/SectionMapping.png"
-                Layout.alignment: Qt.AlignCenter
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
                 onClicked: cpSectionColor.open()
             }
-            Comp.IconButtonText {
+            Comp.MainWindowBtns {
                 id: btnTramLines
                 icon.source: prefix + "/images/TramLines.png"
                 buttonText: "Tram Lines"
@@ -909,7 +860,7 @@ Window {
                 implicitWidth: theme.buttonSize
                 implicitHeight: theme.buttonSize
             }
-            Comp.IconButtonText {
+            Comp.MainWindowBtns {
                 property bool isOn: false
                 id: btnHydLift
                 isChecked: isOn
@@ -919,34 +870,25 @@ Window {
                 icon.source: prefix + "/images/HydraulicLiftOff.png"
                 iconChecked: prefix + "/images/HydraulicLiftOn.png"
                 buttonText: "HydLift"
-                Layout.alignment: Qt.AlignCenter
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
                 onClicked: {
                     isOn = !isOn
                     aog.isHydLiftOn(isOn)
                 }
             }
-            Comp.IconButtonText {
+            Comp.MainWindowBtns {
                 id: btnHeadland
                 isChecked: aog.isHeadlandOn
                 checkable: true
                 icon.source: prefix + "/images/HeadlandOff.png"
                 iconChecked: prefix + "/images/HeadlandOn.png"
                 buttonText: "Headland"
-                Layout.alignment: Qt.AlignCenter
                 onClicked: aog.btnHeadland()
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
             }
-            Comp.IconButtonText {
+            Comp.MainWindowBtns {
                 id: btnFlag
                 objectName: "btnFlag"
                 isChecked: false
                 icon.source: prefix + "/images/FlagRed.png"
-                Layout.alignment: Qt.AlignCenter
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
                 onPressAndHold: {
                     if (contextFlag.visible) {
                         contextFlag.visible = false;
@@ -957,15 +899,12 @@ Window {
                 buttonText: "Flag"
             }
 
-            Comp.IconButtonText {
+            Comp.MainWindowBtns {
                 id: btnTrack
                 icon.source: prefix + "/images/TrackOff.png"
                 iconChecked: prefix + "/images/TrackOn.png"
                 buttonText: "Track"
                 onClicked: trackButtons.visible = !trackButtons.visible
-                Layout.alignment: Qt.AlignCenter
-                implicitWidth: theme.buttonSize
-                implicitHeight: theme.buttonSize
             }
 
         }

@@ -6,6 +6,8 @@
 // main routine
 void FormLoop::DoNTRIPSecondRoutine()
 {
+    agio->setProperty("ntripCounter", ntripCounter);
+
 	//count up the ntrip clock only if everything is alive
 	if (isNTRIP_RequiredOn || isRadio_RequiredOn || isSerialPass_RequiredOn)
 	{
@@ -78,9 +80,10 @@ void FormLoop::DoNTRIPSecondRoutine()
 
 			if (sendGGAInterval > 0 && isNTRIP_Sending)
 			{
-                    agio->setProperty("ntripStatus", 3);// Send GGA
+                agio->setProperty("ntripStatus", 3);// Send GGA
                 isNTRIP_Sending = false;
 			}
+
 		}
 	}
 }
@@ -171,15 +174,6 @@ void FormLoop::StartNTRIP()
 			// Connect to server
             if(debugNTRIP) qDebug() << "Connecting to server... Connecting";
             clientSocket->connectToHost(wwwNtrip.address, wwwNtrip.portToSend);
-            /*if (clientSocket->waitForConnected(5000)) {
-                if(debugNTRIP) qDebug() << "Ntrip client connected to server";
-
-            }
-            else{
-                if(debugNTRIP) qDebug() << "NTRIP Client failed to connect. Reconnecting...";
-                ReconnectRequest();
-                return;
-            }*/
             connect(clientSocket, &QTcpSocket::readyRead, this, &FormLoop::OnReceivedData);
 
 		isNTRIP_Connecting = true;
@@ -313,65 +307,62 @@ void FormLoop::SendAuthorization()
 		return;
 	}
 
-	// Read the message from settings and send it
-    //try
-    //{
-        if (!property_setNTRIP_isTCP)//if we are not using TCP. Should that go in an extension also?
-														   //a sort of "ntrip weirdos" for all the unusual stuff to go.
-		{
-			//encode user and password
-			QString auth = ToBase64(username + ":" + password);
+    // Read the message from settings and send it
+    if (!property_setNTRIP_isTCP)//if we are not using TCP. Should that go in an extension also?
+    //a sort of "ntrip weirdos" for all the unusual stuff to go.
+    {
+        //encode user and password
+        QString auth = ToBase64(username + ":" + password);
 
-			//grab location sentence
-			BuildGGA();
-            GGASentence = sbGGA;
+        //grab location sentence
+        BuildGGA();
+        GGASentence = sbGGA;
 
-			QString htt;
-            if (property_setNTRIP_isHTTP10) htt = "1.0";
-			else htt = "1.1";
+        QString htt;
+        if (property_setNTRIP_isHTTP10) htt = "1.0";
+        else htt = "1.1";
 
-			//Build authorization string
-			QString str = "GET /" + mount + " HTTP/" + htt + "\r\n";
-			str += "User-Agent: NTRIP AgOpenGPSClient/20221020\r\n";
-			str += "Authorization: Basic " + auth + "\r\n"; //This line can be removed if no authorization is needed
-															//str += GGASentence; //this line can be removed if no position feedback is needed
-			str += "Accept: */*\r\nConnection: close\r\n";
-			str += "\r\n";
+        //Build authorization string
+        QString str = "GET /" + mount + " HTTP/" + htt + "\r\n";
+        str += "User-Agent: NTRIP AgOpenGPSClient/20221020\r\n";
+        str += "Authorization: Basic " + auth + "\r\n"; //This line can be removed if no authorization is needed
+            //str += GGASentence; //this line can be removed if no position feedback is needed
+        str += "Accept: */*\r\nConnection: close\r\n";
+        str += "\r\n";
 
-            // Convert to byte array and send.
-            // is this right? david
-            //Byte[] byteDateLine = Encoding.ASCII.GetBytes(str.ToCharArray());
-            QByteArray byteDateLine = str.toLatin1();
+        // Convert to byte array and send.
+        // is this right? david
+        //Byte[] byteDateLine = Encoding.ASCII.GetBytes(str.ToCharArray());
+        QByteArray byteDateLine = str.toLatin1();
 
-            if(clientSocket->write(byteDateLine, byteDateLine.length())){
-                if(debugNTRIP)
-                    qDebug() << "NTRIP wrote to clientSocket";
-                else
-                        qDebug() << "NTRIP: Failed to write to clientSocket";
-            }
-
+        if(clientSocket->write(byteDateLine, byteDateLine.length())){
+            if(debugNTRIP)
+                qDebug() << "NTRIP wrote to clientSocket";
+        }
+        else
+            qDebug() << "NTRIP: Failed to write to clientSocket"
+                     << "Error:" << clientSocket->errorString();  ;
 
 
-			//enable to periodically send GGA sentence to server.
-            if (sendGGAInterval > 0) tmr->start();
 
-		}
-		//say its connected
-		isNTRIP_Connected = true;
-        agio->setProperty("ntripConnected", true);
-		isNTRIP_Starting = false;
-		isNTRIP_Connecting = false;
-    /*}
-	catch (...)
-	{
-		ReconnectRequest();
-    }*/
+        //enable to periodically send GGA sentence to server.
+        if (sendGGAInterval > 0) tmr->start();
+
+    }
+    //say its connected
+    isNTRIP_Connected = true;
+    agio->setProperty("ntripConnected", true);
+    isNTRIP_Starting = false;
+    isNTRIP_Connecting = false;
 }
 
 void FormLoop::OnAddMessage(QByteArray data)
 {
 
-	//reset watchdog since we have updated data
+    //update gui with stats
+    tripBytes += (uint)data.length();
+    agio->setProperty("tripBytes", tripBytes);
+    //reset watchdog since we have updated data
 	NTRIP_Watchdog = 0;
 
     if (isNTRIP_RequiredOn)
@@ -433,6 +424,8 @@ void FormLoop::ntripMeterTimer_Tick()
     if (rawTrip.size() > 10000) {
         rawTrip.clear();
     }
+
+    agio->setProperty("rawTripCount", rawTrip.count()); // tell the UI
 }
 
 void FormLoop::SendNTRIP(QByteArray data)

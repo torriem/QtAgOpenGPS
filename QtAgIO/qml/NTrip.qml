@@ -27,7 +27,7 @@ Window {
 		border.width: 2
 		border.color: theme.blackDayWhiteNight
 
-        Comp.TextLine {
+        /*Comp.TextLine {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.topMargin: 100
@@ -40,7 +40,22 @@ Window {
                      agio.ntripStatus === 4 ? "Listening NTRIP":
                      agio.ntripStatus === 5 ? "Wait GPS":
                      "Unknown")
-        }
+        }*/
+
+        //TODO: all the ntrip diagnostics stuff. I'm too lazy to do it now.
+        /*Comp.ScrollableTextArea{
+            id: rawTripTxt
+            property int rawTripCount: agio.rawTripCount
+            property double blah: 0
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.bottom: leftColumn.top
+            anchors.right: rightColumn.left
+            anchors.margins: 40
+            onRawTripCountChanged: {
+                rawTripTxt.append(rawTripCount)
+            }
+        }*/
 
 		ColumnLayout {
 			id: leftColumn
@@ -150,16 +165,14 @@ Window {
 		spacing: 5 * theme.scaleWidth
         Comp.ButtonColor {
 			id: ntripOn
-            color: "white"
-            colorChecked: "green"
+            property bool statusChanged: false
 			text: qsTr("NTRIP On")
 			height: parent.height
 			width: height * 2.5
-            checkable: true
-            checked: settings.setNTRIP_isOn
+            isChecked: utils.isTrue(settings.setNTRIP_isOn)
             onClicked: {
-                settings.setNTRIP_isOn = checked
-                message.addMessage("", "Restart of AgIO is Required - Restarting", true)
+                settings.setNTRIP_isOn = !utils.isTrue(settings.setNTRIP_isOn)
+                ntripOn.statusChanged = true;
             }
 		}
         Comp.IconButtonTransparent {
@@ -178,6 +191,9 @@ Window {
             onClicked: {
                 agio.configureNTRIP()
                 ntrip.close()
+                //restart if anything changed
+                if(ntripOn.statusChanged)
+                    message.addMessage("", "Restart of AgIO is Required - Restarting", true)
             }
         }
 	}

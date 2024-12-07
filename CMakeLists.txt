@@ -100,13 +100,24 @@ qt_add_executable(QtAgOpenGPS
     classes/vecfix2fix.h
 )
 
-
-
-option(LOCAL_QML "Load QML from disc instead of compiling them in.")
+if(ANDROID)
+    set(LOCAL_QML OFF)
+else()
+        option(LOCAL_QML "Load QML from disc instead of compiling them in.")
+endif()
 
 if(LOCAL_QML)
-	add_compile_definitions(LOCAL_QML)
+    add_compile_definitions(LOCAL_QML)
+
+    # Display the qrc file in the project tree without compiling it
+    add_custom_target(AOGQML SOURCES agopengps.qrc)
+
+    message("Local QML is ON!")
+elseif(NOT ANDROID)
+    message("Local QML is off. Turn on for faster QML development")
+    message("See https://github.com/torriem/QtAgOpenGPS/wiki/Building-QtAgOpenGPS-without-compiling-resources-with-QMake for more information")
 endif()
+
 # Where to look for header files
 target_include_directories(QtAgOpenGPS PRIVATE
     .

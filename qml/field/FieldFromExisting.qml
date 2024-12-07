@@ -5,14 +5,15 @@
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
+import QtQuick.Controls.Material
 
 import ".."
 import "../components"
 
-Popup {
+Dialog {
     id: fieldFromExisting
-    height: 700
-    width:1024
+    height: 500  * theme.scaleHeight
+    width:1000  * theme.scaleWidth
     visible: false
     function show(){
         parent.visible = true
@@ -48,18 +49,19 @@ Popup {
 
     Rectangle{
         id: bottomRect
-        height: 200
+        height: parent.height*0.4
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         color: aog.backgroundColor
         Rectangle{
             id: editFieldName
-            height: 30
-            width: 550
+            height: parent.height*0.15
+            width: parent.width*0.5
             anchors.left: parent.left
             anchors.bottom: bottomButtons.top
             anchors.bottomMargin: 50
+            anchors.topMargin: 20
             anchors.leftMargin: 10
             color: "lightgray"
             border.color: "darkgray"
@@ -114,6 +116,9 @@ Popup {
             objectName: "btnBackSpace"
             icon.source: prefix + "/images/BackSpace.png"
             onClicked: newField.text = ""
+            height: 50  * theme.scaleHeight
+            width: 100  * theme.scaleWidth
+
         }
 
         RowLayout{
