@@ -96,5 +96,6 @@
         <file>qml/components/CheckBoxCustomized.qml</file>
         <file>qml/UnitConversion.qml</file>
         <file>qml/CloseAgIO.qml</file>
+        <file>qml/components/ScrollableTextArea.qml</file>
     </qresource>
 </RCC>
