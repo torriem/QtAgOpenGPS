@@ -19,9 +19,7 @@ Dialog{
     }
     TopLine{
         id: topLine
-        width: parent.width
-        height: screenPixelDensity *.5
-        titleText: "Load From KML"
+        titleText: qsTr("Load From KML")
     }
 
     Rectangle{

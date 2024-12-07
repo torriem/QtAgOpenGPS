@@ -4,25 +4,29 @@ import QtQuick
 import QtQuick.Layouts
 import Qt.labs.folderlistmodel
 import QtQuick.Controls.Fusion
+import QtQuick.Controls.Material
 
 import ".."
 import "../components"
 
 Item {
     id: boundaryType
-
+    width: parent.width
+    height: parent.height
     function show() {
-        boundaryTypePopup.visible = true
+    boundaryTypePopup.visible = true
     }
 
     //----------pick whether to import kml or record------------------------------------
-    Popup{
+    Dialog{
         id: boundaryTypePopup
         //anchors.top: parent.top
         //anchors.left: parent.left
-        width: 250
-        height: 400
+        height: 350  * theme.scaleHeight
+        width:200  * theme.scaleWidth
         visible: boundaryType.visible
+        anchors.centerIn: parent
+
         modal: true
 
         TopLine{
@@ -79,13 +83,15 @@ Item {
         }
     }
         //----------------Window for picking whether to import 1 or several kml files
-    Popup{
+    Dialog{
         id: boundaryKMLType
         //anchors.top: parent.top
         //anchors.left: parent.left
-        width: 250
+        height: 350  * theme.scaleHeight
+        width:200  * theme.scaleWidth
+        anchors.centerIn: parent
         visible: false
-        height: 400
+
 
         TopLine{
             id: kmlTypeTopLine
@@ -141,11 +147,15 @@ Item {
 
     BoundaryRecord {
         id: boundaryRecord
+        Material.theme: Material.Dark
         //anchors.top: parent.top
         //anchors.left: parent.left
-        width: 250
+        height: 350  * theme.scaleHeight
+        width:200  * theme.scaleWidth
+        //anchors.centerIn: parent
+        x: 850  * theme.scaleHeight
+        y:100  * theme.scaleWidth
         visible: false
-        height: 415
         modal: false
         closePolicy: Popup.NoAutoClose
     }

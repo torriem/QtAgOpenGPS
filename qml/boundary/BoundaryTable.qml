@@ -3,6 +3,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Fusion
+import QtQuick.Controls.Material
 
 ListView {
     id: tableView

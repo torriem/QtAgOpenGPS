@@ -6,15 +6,15 @@ import QtQuick
 import QtQuick.Layouts
 import Qt.labs.folderlistmodel
 import QtQuick.Controls.Fusion
+import QtQuick.Controls.Material
 
 import ".."
 import "../components"
 
 MoveablePopup {
     id: boundaryRecord
-    width: 250
+
     visible: false
-    height: 415
     modal: false
 
     onVisibleChanged: {

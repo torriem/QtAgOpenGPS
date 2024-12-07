@@ -2,32 +2,46 @@
 // SPDX-License-Identifier: GNU General Public License v3.0 or later
 //
 //
-import QtQuick 2.0
+import QtQuick
+import QtQuick.Layouts
+import Qt.labs.folderlistmodel
 import QtQuick.Controls.Fusion
-import "components" as Comp
+import QtQuick.Controls.Material
+
+import ".."
+import "./components"
+
 
 Item {
-    width: 340
-    height: 550
+
     id: mainWindowTram
-    Comp.TopLine{
-        id: topLine
-        titleText: "Tram Lines"
-    }
-    Rectangle{
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        anchors.top: topLine.bottom
+    width: parent.width
+    height: parent.height
+
+
+    Popup {
+        //anchors.left: parent.left
+        //anchors.bottom: parent.bottom
+        //anchors.right: parent.right
+        //anchors.top: topLine.bottom
+        height: 500  * theme.scaleHeight
+        width: 250  * theme.scaleWidth
+        modal: true
+        visible: mainWindowTram.visible
+        anchors.centerIn: parent
+        TopLine{
+            id: tramtopLine
+            titleText: "Tram Lines"
+        }
         Row{
-            anchors.top: parent.top
+            anchors.top: tramtopline.bottom
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
             id: tramHalfNudge
             width: children.width
             spacing: 35
             height: children.height
-            Comp.IconButtonTransparent{
+            IconButtonTransparent{
                 icon.source: prefix + "/images/SnapLeftHalf.png"
             }
             Text{
@@ -37,7 +51,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            Comp.IconButtonTransparent{
+            IconButtonTransparent{
                 icon.source: prefix + "/images/SnapRightHalf.png"
             }
         }
@@ -49,7 +63,7 @@ Item {
             width: children.width
             spacing: 25
             height: children.height
-            Comp.IconButtonTransparent{
+            IconButtonTransparent{
                 icon.source: prefix + "/images/ArrowLeft.png"
             }
             Text{
@@ -59,11 +73,11 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            Comp.IconButtonTransparent{
+            IconButtonTransparent{
                 icon.source: prefix + "/images/ArrowRight.png"
             }
         }
-        Comp.IconButtonTransparent{
+        IconButtonTransparent{
             id: tramSwapAB
             anchors.top: tramSmallNudge.bottom
             anchors.topMargin: 20
@@ -71,7 +85,7 @@ Item {
             anchors.leftMargin: 60
             icon.source: prefix + "/images/ABSwapPoints.png"
         }
-        Comp.IconButtonTransparent{
+        IconButtonTransparent{
             id: tramSwapMode
             anchors.top: tramSmallNudge.bottom
             anchors.topMargin: 10
@@ -93,11 +107,11 @@ Item {
             anchors.topMargin: 30
             height:tramPassesDown.height
             spacing: 25
-            Comp.IconButtonTransparent{
+            IconButtonTransparent{
                 id: tramPassesDown
                 icon.source: prefix + "/images/DnArrow64.png"
             }
-            Comp.SpinBoxCustomized{
+            SpinBoxCustomized{
                 id: passesRow
                 width: tramPassesDown.width
                 height: tramPassesDown.height
@@ -106,12 +120,12 @@ Item {
                 value: 1
                 to: 999
             }
-            Comp.IconButtonTransparent{
+            IconButtonTransparent{
                 icon.source: prefix + "/images/UpArrow64.png"
             }
         }
 
-        Comp.IconButtonTransparent{
+        IconButtonTransparent{
             anchors.left: parent.left
             anchors.leftMargin: 10
             anchors.bottom: parent.bottom
@@ -119,7 +133,7 @@ Item {
             icon.source: prefix + "/images/SwitchOff.png"
             onClicked: tramLinesEditor.visible = false
         }
-        Comp.IconButtonTransparent{
+        IconButtonTransparent{
             anchors.right: parent.right
             anchors.rightMargin: 10
             anchors.bottom: parent.bottom
