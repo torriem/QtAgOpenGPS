@@ -115,8 +115,8 @@ Item {
         visible: false
         title: qsTr("Delete All Boundaries?")
         standardButtons: Dialog.No | Dialog.Yes
-        width: 500
-        height: 300
+        height: 300  * theme.scaleHeight
+        width: 500  * theme.scaleWidth
         modal: true
 
         onAccepted: {

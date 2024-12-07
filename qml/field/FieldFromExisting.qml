@@ -12,8 +12,9 @@ import "../components"
 
 Dialog {
     id: fieldFromExisting
-    height: 500  * theme.scaleHeight
+    height: 700  * theme.scaleHeight
     width:1000  * theme.scaleWidth
+    anchors.centerIn: parent
     visible: false
     function show(){
         parent.visible = true

@@ -24,9 +24,9 @@ Item {
         //anchors.bottom: parent.bottom
         //anchors.right: parent.right
         //anchors.top: topLine.bottom
-        height: 500  * theme.scaleHeight
-        width: 250  * theme.scaleWidth
-        modal: true
+        height: 600  * theme.scaleHeight
+        width: 300  * theme.scaleWidth
+        modal: false
         visible: mainWindowTram.visible
         anchors.centerIn: parent
         TopLine{
@@ -34,12 +34,12 @@ Item {
             titleText: "Tram Lines"
         }
         Row{
-            anchors.top: tramtopline.bottom
-            anchors.topMargin: 10
+            anchors.top: tramtopLine.bottom
+            anchors.topMargin: 20  * theme.scaleHeight
             anchors.horizontalCenter: parent.horizontalCenter
             id: tramHalfNudge
             width: children.width
-            spacing: 35
+            spacing: 25  * theme.scaleWidth
             height: children.height
             IconButtonTransparent{
                 icon.source: prefix + "/images/SnapLeftHalf.png"
@@ -58,10 +58,10 @@ Item {
         Row{
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: tramHalfNudge.bottom
-            anchors.topMargin: 30
+            anchors.topMargin: 30  * theme.scaleHeight
             id: tramSmallNudge
             width: children.width
-            spacing: 25
+            spacing: 25  * theme.scaleWidth
             height: children.height
             IconButtonTransparent{
                 icon.source: prefix + "/images/ArrowLeft.png"
@@ -77,36 +77,36 @@ Item {
                 icon.source: prefix + "/images/ArrowRight.png"
             }
         }
+        Row{
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: tramSmallNudge.bottom
+            anchors.topMargin: 30  * theme.scaleHeight
+            id: tramSwapModeRow
+            width: children.width
+            spacing: 25  * theme.scaleWidth
+            height: children.height
         IconButtonTransparent{
             id: tramSwapAB
-            anchors.top: tramSmallNudge.bottom
-            anchors.topMargin: 20
-            anchors.left: parent.left
-            anchors.leftMargin: 60
             icon.source: prefix + "/images/ABSwapPoints.png"
-        }
-        IconButtonTransparent{
-            id: tramSwapMode
-            anchors.top: tramSmallNudge.bottom
-            anchors.topMargin: 10
-            anchors.left: tramSwapAB.right
-            anchors.leftMargin: 60
-            icon.source: prefix + "/images/TramLines.png"
         }
         Text {
             text: qsTr("Mode")
             font.pixelSize: 15
-            anchors.left: tramSwapMode.right
-            anchors.leftMargin: 30
-            anchors.verticalCenter: tramSwapMode.verticalCenter
+            anchors.verticalCenter: parent.verticalCenter
+        }
+        IconButtonTransparent{
+            id: tramSwapMode
+            icon.source: prefix + "/images/TramLines.png"
+        }
+
         }
         Row{
             id: tramPasses
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: tramSwapMode.bottom
-            anchors.topMargin: 30
+            anchors.top: tramSwapModeRow.bottom
+            anchors.topMargin: 30  * theme.scaleHeight
             height:tramPassesDown.height
-            spacing: 25
+            spacing: 25  * theme.scaleWidth
             IconButtonTransparent{
                 id: tramPassesDown
                 icon.source: prefix + "/images/DnArrow64.png"
@@ -127,24 +127,24 @@ Item {
 
         IconButtonTransparent{
             anchors.left: parent.left
-            anchors.leftMargin: 10
+            anchors.leftMargin: 10  * theme.scaleWidth
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
+            anchors.bottomMargin: 10  * theme.scaleHeight
             icon.source: prefix + "/images/SwitchOff.png"
             onClicked: tramLinesEditor.visible = false
         }
         IconButtonTransparent{
             anchors.right: parent.right
-            anchors.rightMargin: 10
+            anchors.rightMargin: 10  * theme.scaleWidth
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
+            anchors.bottomMargin: 10  * theme.scaleHeight
             icon.source: prefix + "/images/VehFileSave.png"
         }
         Column{
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.topMargin: 30
+            anchors.topMargin: 30  * theme.scaleHeight
             anchors.top: tramPasses.bottom
-            spacing: 10
+            spacing: 10  * theme.scaleHeight
             Text{
                 text: "Seed"
             }

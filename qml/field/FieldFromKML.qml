@@ -13,6 +13,7 @@ Dialog{
     id: fieldFromKML
     height: 400  * theme.scaleHeight
     width:700  * theme.scaleWidth
+    anchors.centerIn: parent
     visible: false
     function show(){
         parent.visible = true

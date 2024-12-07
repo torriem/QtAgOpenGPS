@@ -23,7 +23,7 @@ Item {
         //anchors.top: parent.top
         //anchors.left: parent.left
         height: 350  * theme.scaleHeight
-        width:200  * theme.scaleWidth
+        width:350  * theme.scaleWidth
         visible: boundaryType.visible
         anchors.centerIn: parent
 
@@ -147,11 +147,10 @@ Item {
 
     BoundaryRecord {
         id: boundaryRecord
-        Material.theme: Material.Dark
         //anchors.top: parent.top
         //anchors.left: parent.left
-        height: 350  * theme.scaleHeight
-        width:200  * theme.scaleWidth
+        height: 450  * theme.scaleHeight
+        width:250  * theme.scaleWidth
         //anchors.centerIn: parent
         x: 850  * theme.scaleHeight
         y:100  * theme.scaleWidth
