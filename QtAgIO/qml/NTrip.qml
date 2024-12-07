@@ -27,7 +27,7 @@ Window {
 		border.width: 2
 		border.color: theme.blackDayWhiteNight
 
-        Comp.TextLine {
+        /*Comp.TextLine {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.topMargin: 100
@@ -40,7 +40,22 @@ Window {
                      agio.ntripStatus === 4 ? "Listening NTRIP":
                      agio.ntripStatus === 5 ? "Wait GPS":
                      "Unknown")
-        }
+        }*/
+
+        //TODO: all the ntrip diagnostics stuff. I'm too lazy to do it now.
+        /*Comp.ScrollableTextArea{
+            id: rawTripTxt
+            property int rawTripCount: agio.rawTripCount
+            property double blah: 0
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.bottom: leftColumn.top
+            anchors.right: rightColumn.left
+            anchors.margins: 40
+            onRawTripCountChanged: {
+                rawTripTxt.append(rawTripCount)
+            }
+        }*/
 
 		ColumnLayout {
 			id: leftColumn
