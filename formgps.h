@@ -337,6 +337,8 @@ public:
     bool isTT;
     bool isABCyled = false;
 
+    InterfaceProperty<AOGInterface,bool> isPatchesChangingColor = InterfaceProperty<AOGInterface,bool>("isPatchesChangingColor");
+
     void GetHeadland();
     void CloseTopMosts();
     void getAB();

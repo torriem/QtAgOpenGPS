@@ -1685,7 +1685,7 @@ void FormGPS::AddSectionOrPathPoints()
 
     if (curve.isMakingCurve)
     {
-        curve.destList.append(Vec3(vehicle.pivotAxlePos.easting, vehicle.pivotAxlePos.northing, vehicle.pivotAxlePos.heading));
+        curve.desList.append(Vec3(vehicle.pivotAxlePos.easting, vehicle.pivotAxlePos.northing, vehicle.pivotAxlePos.heading));
     }
 
     //save the north & east as previous
@@ -1700,8 +1700,7 @@ void FormGPS::AddSectionOrPathPoints()
     {
         if (triStrip[j].isDrawing)
         {
-            //NOTE: Michael. isPatchesChangingColor is from Controls.Designer.cs
-            if (isPatchesChangingColor)
+            if ((bool)isPatchesChangingColor)
             {
                 triStrip[j].numTriangles = 64;
                 isPatchesChangingColor = false;
