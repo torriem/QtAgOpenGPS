@@ -53,6 +53,8 @@ public:
     double hydLiftLookAheadDistanceLeft, hydLiftLookAheadDistanceRight;
 
     InterfaceProperty<VehicleInterface,bool> isHydLiftOn = InterfaceProperty<VehicleInterface,bool>("isHydLiftOn");
+    InterfaceProperty<VehicleInterface,bool> hydLiftDown = InterfaceProperty<VehicleInterface,bool>("hydLiftDown");
+
     double stanleyIntegralDistanceAwayTriggerAB, stanleyIntegralGainAB, purePursuitIntegralGain;
 
     //flag for free drive window to control autosteer

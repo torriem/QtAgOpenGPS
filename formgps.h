@@ -230,8 +230,6 @@ public:
     int navPanelCounter = 0;
 
     InterfaceProperty<AOGInterface,uint> sentenceCounter = InterfaceProperty<AOGInterface,uint>("sentenceCounter");
-    bool hydLiftDown = false;
-
 
     //master Manual and Auto, 3 states possible
     //btnStates manualBtnState = btnStates::Off;
@@ -338,6 +336,8 @@ public:
 public:
     bool isTT;
     bool isABCyled = false;
+
+    InterfaceProperty<AOGInterface,bool> isPatchesChangingColor = InterfaceProperty<AOGInterface,bool>("isPatchesChangingColor");
 
     void GetHeadland();
     void CloseTopMosts();

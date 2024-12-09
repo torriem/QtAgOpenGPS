@@ -96,6 +96,7 @@ void CVehicle::loadSettings()
 CVehicle::CVehicle(QObject *parent) : QObject(parent)
 {
     isHydLiftOn = false;
+    hydLiftDown = false;
     isInFreeDriveMode = false;
     loadSettings();
 

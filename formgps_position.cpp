@@ -743,18 +743,18 @@ void FormGPS::UpdateFixPosition()
         //like normal
         if (trk.gArr.count() > 0 && trk.idx > -1)
         {
-            if (trk.gArr[trk.idx].mode == TrackMode.AB)
+            if (trk.gArr[trk.idx].mode == TrackMode::AB)
             {
-                ABLine.BuildCurrentABLineList(vehicle.pivotAxlePos);
+                ABLine.BuildCurrentABLineList(vehicle.pivotAxlePos,secondsSinceStart,trk,yt,vehicle);
 
-                ABLine.GetCurrentABLine(vehicle.pivotAxlePos, vehicle.steerAxlePos);
+                ABLine.GetCurrentABLine(vehicle.pivotAxlePos, vehicle.steerAxlePos,isAutoSteerBtnOn,vehicle,yt,ahrs,gyd,pn,makeUTurnCounter);
             }
             else
             {
                 //build new current ref line if required
-                curve.BuildCurveCurrentList(vehicle.pivotAxlePos);
+                curve.BuildCurveCurrentList(vehicle.pivotAxlePos,secondsSinceStart,vehicle,trk,bnd,yt);
 
-                curve.GetCurrentCurveLine(vehicle.pivotAxlePos, steerAxlePos);
+                curve.GetCurrentCurveLine(vehicle.pivotAxlePos, vehicle.steerAxlePos,isAutoSteerBtnOn,vehicle,trk,yt,ahrs,gyd,pn,makeUTurnCounter);
             }
         }
     }
@@ -1098,15 +1098,18 @@ void FormGPS::UpdateFixPosition()
                 {
                     if (crossTrackError > 1000)
                     {
-                        yt.ResetCreatedYouTurn();
+                        yt.ResetCreatedYouTurn(makeUTurnCounter);
                     }
                     else
                     {
-                        if (trk.gArr[trk.idx].mode == TrackMode.AB)
+                        if (trk.gArr[trk.idx].mode == TrackMode::AB)
                         {
-                            yt.BuildABLineDubinsYouTurn(vehicle, bnd, ABLine, yt.isYouTurnRight);
+                            yt.BuildABLineDubinsYouTurn(yt.isYouTurnRight,vehicle,bnd,ABLine,
+                                                        trk,makeUTurnCounter,secondsSinceStart);
                         }
-                        else yt.BuildCurveDubinsYouTurn(vehicle, bnd, curve, yt.isYouTurnRight, vehicle.pivotAxlePos);
+                        else yt.BuildCurveDubinsYouTurn(yt.isYouTurnRight, vehicle.pivotAxlePos,
+                                                        vehicle,bnd,curve,trk,makeUTurnCounter,
+                                                        secondsSinceStart);
                     }
 
                     if (yt.uTurnStyle == 0 && yt.youTurnPhase == 10)
@@ -1136,7 +1139,7 @@ void FormGPS::UpdateFixPosition()
                     //if we are close enough to pattern, trigger.
                     if ((distancePivotToTurnLine <= 1.0) && (distancePivotToTurnLine >= 0) && !yt.isYouTurnTriggered)
                     {
-                        yt.YouTurnTrigger(vehicle, ABLine, curve);
+                        yt.YouTurnTrigger(trk, vehicle, ABLine, curve);
                         //TODO: sounds
                         //sounds.isBoundAlarming = false;
                     }
@@ -1151,7 +1154,7 @@ void FormGPS::UpdateFixPosition()
             {
                 if (!yt.isYouTurnTriggered)
                 {
-                    yt.ResetCreatedYouTurn();
+                    yt.ResetCreatedYouTurn(makeUTurnCounter);
                     mc.isOutOfBounds = !bnd.IsPointInsideFenceArea(vehicle.pivotAxlePos);
                     isOutOfBounds = mc.isOutOfBounds;
                 }
@@ -1196,7 +1199,7 @@ void FormGPS::UpdateFixPosition()
 
     //NOTE: Not sure here.
     //stop the timer and calc how long it took to do calcs and draw
-    frameTimeRough = (double)(swFrame.ElapsedTicks*1000) / (double)System.Diagnostics.Stopwatch.Frequency;
+    frameTimeRough = swFrame.elapsed();
 
     if (frameTimeRough > 80) frameTimeRough = 80;
     frameTime = frameTime * 0.90 + frameTimeRough * 0.1;
@@ -1248,8 +1251,6 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("satellitesTracked", pn.satellitesTracked);
     aog->setProperty("imuHeading", ahrs.imuHeading);
     aog->setProperty("angVel", ahrs.angVel);
-    aog->setProperty("hydLiftDown", hydLiftDown);
-    aog->setProperty("hydLiftisOn", vehicle.isHydLiftOn);
     aog->setProperty("isYouTurnRight", yt.isYouTurnRight);
     aog->setProperty("distancePivotToTurnLine", distancePivotToTurnLine);
 
@@ -1261,13 +1262,16 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("droppedSentences", udpWatchCounts);
 
     //NOTE:This will need some help. Also, do we still need the if statement at 1274?
-    if (ABLine.numABLineSelected > 0) {
+
+    if (trk.idx > -1) {
+        if (trk.gArr[trk.idx].mode == TrackMode::AB) {
         //currentABLine_heading is set in formgps_ui.cpp
-        aog->setProperty("current_trackNum", ABLine.howManyPathsAway);
-    } else if (curve.numCurveLineSelected > 0) {
-        aog->setProperty("current_trackNum", curve.howManyPathsAway);
-    //TODO: add contour
+            aog->setProperty("current_trackNum", ABLine.howManyPathsAway);
+        } else {
+            aog->setProperty("current_trackNum", curve.howManyPathsAway);
+        }
     } else {
+        //TODO: add contour
         aog->setProperty("current_trackNum", 0);
     }
 
@@ -1681,7 +1685,7 @@ void FormGPS::AddSectionOrPathPoints()
 
     if (curve.isMakingCurve)
     {
-        curve.destList.append(Vec3(vehicle.pivotAxlePos.easting, vehicle.pivotAxlePos.northing, vehicle.pivotAxlePos.heading));
+        curve.desList.append(Vec3(vehicle.pivotAxlePos.easting, vehicle.pivotAxlePos.northing, vehicle.pivotAxlePos.heading));
     }
 
     //save the north & east as previous
@@ -1696,8 +1700,7 @@ void FormGPS::AddSectionOrPathPoints()
     {
         if (triStrip[j].isDrawing)
         {
-            //NOTE: Michael. isPatchesChangingColor is from Controls.Designer.cs
-            if (isPatchesChangingColor)
+            if ((bool)isPatchesChangingColor)
             {
                 triStrip[j].numTriangles = 64;
                 isPatchesChangingColor = false;
