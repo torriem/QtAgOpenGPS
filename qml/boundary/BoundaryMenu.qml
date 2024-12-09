@@ -6,6 +6,7 @@ import QtQuick
 import QtQuick.Layouts
 import Qt.labs.folderlistmodel
 import QtQuick.Controls.Fusion
+import QtQuick.Controls.Material
 
 import ".."
 import "../components"
@@ -13,19 +14,20 @@ import "../components"
 Item {
     id: boundaryMenu
 
+    width: parent.width
+    height: parent.height
     function show() {
         boundaryInterface.update_list()
         boundaryMenuPopup.visible = true
     }
 
-    MoveablePopup {
+    Dialog {
         id: boundaryMenuPopup
-        height: 400
+        height: 500  * theme.scaleHeight
+        width:700  * theme.scaleWidth
         modal: true
         visible: boundaryMenu.visible
-        width: 500
-        x: 40
-        y: 40
+        anchors.centerIn: parent
         TopLine{
             id: topLine
             titleText: "Start or Delete A Boundary"
@@ -113,8 +115,8 @@ Item {
         visible: false
         title: qsTr("Delete All Boundaries?")
         standardButtons: Dialog.No | Dialog.Yes
-        width: 500
-        height: 300
+        height: 300  * theme.scaleHeight
+        width: 500  * theme.scaleWidth
         modal: true
 
         onAccepted: {

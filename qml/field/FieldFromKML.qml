@@ -13,15 +13,14 @@ Dialog{
     id: fieldFromKML
     height: 400  * theme.scaleHeight
     width:700  * theme.scaleWidth
+    anchors.centerIn: parent
     visible: false
     function show(){
         parent.visible = true
     }
     TopLine{
         id: topLine
-        width: parent.width
-        height: screenPixelDensity *.5
-        titleText: "Load From KML"
+        titleText: qsTr("Load From KML")
     }
 
     Rectangle{

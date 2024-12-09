@@ -11,8 +11,8 @@ import "../components"
 Drawer {
     id: fieldToolsMenu
 
-    width: 300
     visible: false
+    width: 270 * theme.scaleWidth
     height: mainWindow.height
     modal: true
 
@@ -33,7 +33,7 @@ Drawer {
             IconButtonTextBeside{
                 text: "Boundary"
                 icon.source: prefix + "/images/MakeBoundary.png"
-                width: 300
+                //width: 300
                 visible: settings.setFeature_isBoundaryOn
                 onClicked: {
                     fieldToolsMenu.visible = false
@@ -43,7 +43,7 @@ Drawer {
             IconButtonTextBeside{
                 text: "Headland"
                 icon.source: prefix + "/images/HeadlandMenu.png"
-                width: 300
+                //width: 300
                 visible: settings.setFeature_isHeadlandOn
                 onClicked: {
                     fieldToolsMenu.visible = false
@@ -54,7 +54,7 @@ Drawer {
                 text: "Headland (Build)"
                 icon.source: prefix + "/images/Headache.png"
                 visible: settings.setFeature_isHeadlandOn
-                width: 300
+                //width: 300
                 onClicked: {
                     fieldToolsMenu.visible = false
                     headacheDesigner.show()
@@ -63,14 +63,14 @@ Drawer {
             IconButtonTextBeside{
                 text: "Tram Lines"
                 icon.source: prefix + "/images/TramLines.png"
-                width: 300
+                //width: 300
                 visible: settings.setFeature_isTramOn
                 onClicked: tramLinesEditor.visible = true
             }
             IconButtonTextBeside{
                 text: "Recorded Path"
                 icon.source: prefix + "/images/RecPath.png"
-                width: 300
+                //width: 300
                 visible: settings.setFeature_isHeadlandOn
                 onClicked:{
                     fieldToolsMenu.visible = false
