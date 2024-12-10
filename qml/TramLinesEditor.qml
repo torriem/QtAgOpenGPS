@@ -9,7 +9,7 @@ import QtQuick.Controls.Fusion
 import QtQuick.Controls.Material
 
 import ".."
-import "./components"
+import "components" as Comp
 
 
 Item {
@@ -29,7 +29,7 @@ Item {
         modal: false
         visible: mainWindowTram.visible
         anchors.centerIn: parent
-        TopLine{
+        Comp.TopLine{
             id: tramtopLine
             titleText: "Tram Lines"
         }
@@ -41,7 +41,7 @@ Item {
             width: children.width
             spacing: 25  * theme.scaleWidth
             height: children.height
-            IconButtonTransparent{
+            Comp.IconButtonTransparent{
                 icon.source: prefix + "/images/SnapLeftHalf.png"
             }
             Text{
@@ -51,7 +51,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            IconButtonTransparent{
+            Comp.IconButtonTransparent{
                 icon.source: prefix + "/images/SnapRightHalf.png"
             }
         }
@@ -63,7 +63,7 @@ Item {
             width: children.width
             spacing: 25  * theme.scaleWidth
             height: children.height
-            IconButtonTransparent{
+            Comp.IconButtonTransparent{
                 icon.source: prefix + "/images/ArrowLeft.png"
             }
             Text{
@@ -73,7 +73,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            IconButtonTransparent{
+            Comp.IconButtonTransparent{
                 icon.source: prefix + "/images/ArrowRight.png"
             }
         }
@@ -85,20 +85,19 @@ Item {
             width: children.width
             spacing: 25  * theme.scaleWidth
             height: children.height
-        IconButtonTransparent{
-            id: tramSwapAB
-            icon.source: prefix + "/images/ABSwapPoints.png"
-        }
-        Text {
-            text: qsTr("Mode")
-            font.pixelSize: 15
-            anchors.verticalCenter: parent.verticalCenter
-        }
-        IconButtonTransparent{
-            id: tramSwapMode
-            icon.source: prefix + "/images/TramLines.png"
-        }
-
+			Comp.IconButtonTransparent{
+				id: tramSwapAB
+				icon.source: prefix + "/images/ABSwapPoints.png"
+			}
+			Text {
+				text: qsTr("Mode")
+				font.pixelSize: 15
+				anchors.verticalCenter: parent.verticalCenter
+			}
+			Comp.IconButtonTransparent{
+				id: tramSwapMode
+				icon.source: prefix + "/images/TramLines.png"
+			}
         }
         Row{
             id: tramPasses
@@ -107,11 +106,11 @@ Item {
             anchors.topMargin: 30  * theme.scaleHeight
             height:tramPassesDown.height
             spacing: 25  * theme.scaleWidth
-            IconButtonTransparent{
+            Comp.IconButtonTransparent{
                 id: tramPassesDown
                 icon.source: prefix + "/images/DnArrow64.png"
             }
-            SpinBoxCustomized{
+            Comp.SpinBoxCustomized{
                 id: passesRow
                 width: tramPassesDown.width
                 height: tramPassesDown.height
@@ -120,12 +119,12 @@ Item {
                 value: 1
                 to: 999
             }
-            IconButtonTransparent{
+            Comp.IconButtonTransparent{
                 icon.source: prefix + "/images/UpArrow64.png"
             }
         }
 
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             anchors.left: parent.left
             anchors.leftMargin: 10  * theme.scaleWidth
             anchors.bottom: parent.bottom
@@ -133,7 +132,7 @@ Item {
             icon.source: prefix + "/images/SwitchOff.png"
             onClicked: tramLinesEditor.visible = false
         }
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             anchors.right: parent.right
             anchors.rightMargin: 10  * theme.scaleWidth
             anchors.bottom: parent.bottom
