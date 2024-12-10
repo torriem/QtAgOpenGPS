@@ -152,7 +152,7 @@ Item {
         height: 450  * theme.scaleHeight
         width:250  * theme.scaleWidth
         //anchors.centerIn: parent
-        x: 850  * theme.scaleHeight
+        x: 650  * theme.scaleHeight
         y:100  * theme.scaleWidth
         visible: false
         modal: false
