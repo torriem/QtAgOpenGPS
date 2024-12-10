@@ -15,7 +15,7 @@ qt_standard_project_setup()
 # Create the AgIO executable
 qt_add_executable(QtAgIO
     main.cpp
-    agio.qrc
+    $<$<NOT:$<BOOL:${LOCAL_QML}>>:agio.qrc>
     agioproperties.cpp
     agioproperty.h agioproperty.cpp
     agiosettings.h agiosettings.cpp
@@ -34,6 +34,18 @@ qt_add_executable(QtAgIO
     inc/CScanReply.h src/CScanReply.cpp
     interfaceproperty.h
 )
+
+if(LOCAL_QML)
+    add_compile_definitions(LOCAL_QML)
+
+    # Display the qrc file in the project tree without compiling it
+    add_custom_target(AgIOQML SOURCES agio.qrc)
+
+    message("Local QML is ON!")
+elseif(NOT ANDROID)
+    message("Local QML is off. Turn on for faster QML development")
+    message("See https://github.com/torriem/QtAgOpenGPS/wiki/Building-QtAgOpenGPS-without-compiling-resources-with-QMake for more information")
+endif()
 target_include_directories(QtAgIO
     PRIVATE src
     PUBLIC inc
@@ -48,7 +60,7 @@ target_link_libraries(QtAgIO PRIVATE
     Qt6::Widgets
     Qt6::Quick
     Qt6::QuickWidgets
-	Qt6::Multimedia
+    Qt6::Multimedia
 )
 
 target_compile_options(QtAgIO PRIVATE 

@@ -9,6 +9,7 @@
 #include "interfaceproperty.h"
 #include "qmlsettings.h"
 #include <QHostInfo>
+#include <QDir>
 #include "agioproperty.h"
 
 extern QMLSettings qml_settings;
@@ -22,9 +23,48 @@ void FormLoop::setupGUI()
     engine.rootContext()->setContextProperty("screenPixelDensity",QGuiApplication::primaryScreen()->physicalDotsPerInch() * QGuiApplication::primaryScreen()->devicePixelRatio());
     engine.rootContext()->setContextProperty("mainForm", this);
 	engine.rootContext()->setContextProperty("settings", &qml_settings);
-    engine.rootContext()->setContextProperty("prefix", "");
-    engine.load(QUrl(QStringLiteral("qrc:/qml/Main.qml")));
 
+#ifdef LOCAL_QML
+    // Look for QML files relative to our current directory
+    QStringList search_pathes = { "..",
+                                 "../..",
+                                 "../qtaog",
+                                 "../QtAgOpenGPS",
+                                 "."
+    };
+
+    qWarning() << "Looking for QML.";
+    for(QString search_path : search_pathes) {
+        //look relative to current working directory
+        QDir d = QDir(QDir::currentPath() + "/../" + search_path + "/QtAgIO/qml/");
+        //qDebug() << d.absolutePath();
+        if (d.exists("AgIOInterface.qml")) {
+            QDir::addSearchPath("local",QDir::currentPath() + "/../" + search_path);
+            qWarning() << "QML path is " << search_path;
+            break;
+        }
+
+        //look relative to the executable's directory
+        d = QDir(QCoreApplication::applicationDirPath() + "/../" + search_path + "/qml/");
+        //qDebug() << d.absolutePath();
+        if (d.exists("AgIOInterface.qml")) {
+            QDir::addSearchPath("local",QCoreApplication::applicationDirPath() + "/../" + search_path);
+            qWarning() << "QML path is " << search_path;
+            break;
+        }
+    }
+
+    QObject::connect(&engine, &QQmlApplicationEngine::warnings, this, [=](const QList<QQmlError>& warnings) {
+        for (const QQmlError& error : warnings) {
+            qWarning() << "warning: " << error.toString();
+        }
+    });
+    engine.rootContext()->setContextProperty("prefix","local:/QtAgIO");
+    engine.load("local:/QtAgIO/qml/Main.qml");
+#else
+    engine.rootContext()->setContextProperty("prefix","");
+    engine.load(QUrl(QStringLiteral("qrc:/qml/Main.qml")));
+#endif
 
 
     if (engine.rootObjects().isEmpty())
