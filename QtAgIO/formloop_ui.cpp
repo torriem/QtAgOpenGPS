@@ -19,10 +19,20 @@ void FormLoop::setupGUI()
     //Load the QML UI and display it in the main area of the GUI
     setProperty("title", "QtAgIO");
 
+//tell the QML what OS we are using
+#ifdef __ANDROID__
+    engine.rootContext()->setContextProperty("OS", "ANDROID");
+#elif defined(__WIN32)
+    engine.rootContext()->setContextProperty("OS", "WINDOWS");
+#else
+    engine.rootContext()->setContextProperty("OS", "LINUX");
+#endif
+
     //load the QML into a view
     engine.rootContext()->setContextProperty("screenPixelDensity",QGuiApplication::primaryScreen()->physicalDotsPerInch() * QGuiApplication::primaryScreen()->devicePixelRatio());
     engine.rootContext()->setContextProperty("mainForm", this);
 	engine.rootContext()->setContextProperty("settings", &qml_settings);
+
 
 #ifdef LOCAL_QML
     // Look for QML files relative to our current directory
