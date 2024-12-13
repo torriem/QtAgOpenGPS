@@ -20,10 +20,6 @@ import QtQuick.Controls.Fusion
 Item {
     id: agioInterfaceType
 
-    //in case we need to know if we are running android or windows
-    property bool isWindows: false
-    property bool isAndroid: false
-
 	//These are the status booleans for the various connections.
 	property bool ethernetConnected: false
 	property bool ntripConnected: false
