@@ -51,38 +51,32 @@ int main(int argc, char *argv[])
         grnPixelsWindow->setFixedHeight(500);
         grnPixelsWindow->show();
     }
-#ifdef __ANDROID__
-        w.isAndroid = true;
-    qDebug() << "android";
-#elif defined(__WIN32)
-    w.isWindows = true;
-    qDebug() << "win";
-#else
-    qDebug() << "linux";
-#endif
 
-    //else assume Linux. Can add more if needed
-
+//auto start AgIO
+#ifndef __ANDROID__
     QProcess process;
-    //auto start AgIO
-    if((!w.isAndroid) && property_setFeature_isAgIOOn){
+    if(property_setFeature_isAgIOOn){
         QObject::connect(&process, &QProcess::errorOccurred, [&](QProcess::ProcessError error) {
             if (error == QProcess::Crashed) {
                 qDebug() << "AgIO Crashed! Continuing QtAgOpenGPS like normal";
             }
         });
 
-		if(w.isWindows){
-			process.start("./QtAgIO.exe");
-		}else{//assume linux
-			process.start("./QtAgIO/QtAgIO");
-		}
+//start the application
+#ifdef __WIN32
+        process.start("./QtAgIO.exe");
+
+#else //assume linux
+        process.start("./QtAgIO/QtAgIO");
+
+#endif
 
         // Ensure process starts successfully
         if (!process.waitForStarted()) {
             qWarning() << "AgIO failed to start. Continuing QtAgOpenGPS like normal";
         }
     }
+#endif
 
 
 
