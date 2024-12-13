@@ -51,14 +51,15 @@ int main(int argc, char *argv[])
         grnPixelsWindow->setFixedHeight(500);
         grnPixelsWindow->show();
     }
-
-    //Returns "android" on Android, "windows" on Windows. See docs https://doc.qt.io/qt-6/qsysinfo.html#productType
-    QString osType = QSysInfo::productType();
-    qInfo() << "Os Type: " << osType;
-    if (osType == "android")
+#ifdef __ANDROID__
         w.isAndroid = true;
-    else if (osType == "windows")
-        w.isWindows = true;
+    qDebug() << "android";
+#elif defined(__WIN32)
+    w.isWindows = true;
+    qDebug() << "win";
+#else
+    qDebug() << "linux";
+#endif
 
     //else assume Linux. Can add more if needed
 
