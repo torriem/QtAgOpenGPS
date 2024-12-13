@@ -58,7 +58,7 @@ MoveablePopup {
             checkable: true
             anchors.top: recordBoundaryWindow.top
             anchors.right: parent.right
-            anchors.margins: 5
+            anchors.margins: 5  * theme.scaleHeight
             border: 1
             height: 80  * theme.scaleHeight
             width: 80  * theme.scaleWidth
@@ -73,7 +73,7 @@ MoveablePopup {
 
         Row{
             anchors.top: side2Record.bottom
-            anchors.margins: 5
+            anchors.margins: 5  * theme.scaleHeight
             width: parent.width -10
             anchors.horizontalCenter: parent.horizontalCenter
             height: childrenRect.height
@@ -90,7 +90,7 @@ MoveablePopup {
             Column{
                 height: boundaryDelete.height
                 width: boundaryDelete.width
-                spacing: 20
+                spacing: 20 * theme.scaleHeight
                 Text{
                     text: qsTr("Area:") + " " + utils.area_to_unit_string(boundaryInterface.area,1) + " " + utils.area_unit()
                 }
@@ -105,12 +105,12 @@ MoveablePopup {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.margins: 5
+            anchors.margins: 5  * theme.scaleHeight
             height: children.height
             columns: 2
             rows: 2
             flow: Grid.LeftToRight
-            spacing:	30
+            spacing:	30  * theme.scaleHeight
             IconButtonTransparent{
                 border: 1
                 objectName: "btnBoundaryRecordAddPoint"

@@ -46,7 +46,7 @@ Item {
             Column{
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.topMargin: 10
+                anchors.topMargin: 10  * theme.scaleHeight
                 width: children.width
                 height: children.height
                 spacing: 60
@@ -67,14 +67,14 @@ Item {
                     Text{
                         anchors.bottom: parent.top
                         anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.bottomMargin: 20
+                        anchors.bottomMargin: 20  * theme.scaleHeight
                         text: "?"
                         font.bold: true
                     }
                 }
             }
             IconButtonTransparent{
-                anchors.margins: 10
+                anchors.margins: 10  * theme.scaleHeight
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
                 icon.source: prefix + "/images/Cancel64.png"
@@ -110,7 +110,7 @@ Item {
             Column{
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.topMargin: 10
+                anchors.topMargin: 10  * theme.scaleHeight
                 width: children.width
                 height: children.height
                 spacing: 60
@@ -120,7 +120,7 @@ Item {
                     Text{
                         anchors.left: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.leftMargin: 20
+                        anchors.leftMargin: 20 * theme.scaleWidth
                         text: "+"
                     }
                 }
@@ -130,7 +130,7 @@ Item {
                     Text{
                         anchors.left: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.leftMargin: 20
+                        anchors.leftMargin: 20 * theme.scaleWidth
                         text: "+++"
                     }
                 }

@@ -47,15 +47,15 @@ Item {
                 anchors.right: parent.right
                 anchors.top: buttonsRow.bottom
                 anchors.bottom: parent.bottom
-                anchors.margins: 20
-                anchors.topMargin: 50
+                anchors.margins: 25   * theme.scaleHeight
+                anchors.topMargin: 50   * theme.scaleHeight
                 ScrollBar.vertical: ScrollBar {
                     id: scrollbar
                     anchors.right: parent.right
                     active: true
                     contentItem.opacity: 1
                     policy: ScrollBar.AlwaysOn
-                    width: 10
+                    width: 10  * theme.scaleWidth
                 }
 
                 onChangeDriveThrough: {
