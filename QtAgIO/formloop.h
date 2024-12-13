@@ -84,8 +84,6 @@ class FormLoop : public QObject
 
     public:
 
-        bool isAndroid, isWindows = false;
-
         //used to send communication check pgn= C8 or 200
         QByteArray sendIPToModules = QByteArray::fromRawData("\x80\x81\x7F\xC9\x05\xC9\xC9\xC0\xA8\x05\x47", 11);
 
