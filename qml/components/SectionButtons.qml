@@ -60,8 +60,8 @@ Rectangle {
 
     function setSectionState (sectionNo: int, new_state: int) {
         //states: 0 = off, 1 = auto, 2 = on
-        var temp1 = aog.sectionButtonState
-        var temp2 = sectionButtons.buttonState
+        var temp1 = aog.sectionButtonState //actual sections or row units
+        var temp2 = sectionButtons.buttonState //onscreen section button
         var j
 
 
@@ -85,7 +85,7 @@ Rectangle {
 
             //set all sections between left and right
             for (j = zone_left ; j < zone_right ; j++) {
-                temp1[j] = new_state
+                temp1[j] = new_state //set individual sections button state (grouped together)
             }
         }
         aog.sectionButtonState = temp1

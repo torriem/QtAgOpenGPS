@@ -154,6 +154,8 @@ void FormGPS::setupGui()
 //    qml_root->setProperty("width",1024);
 //    qml_root->setProperty("height",768);
 
+    connect(aog,SIGNAL(sectionButtonStateChanged()), &tool.sectionButtonState, SLOT(onStatesUpdated()));
+
     //AB Line Picker
     //react to UI changing these properties
     connect(aog,SIGNAL(currentABLineChanged()), this, SLOT(update_current_ABline_from_qml()));
