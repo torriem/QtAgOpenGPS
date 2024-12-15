@@ -16,6 +16,7 @@ Dialog {
     visible: false
     height: 500  * theme.scaleHeight
     width:700  * theme.scaleWidth
+    anchors.centerIn: parent
     modal: falce
     function show(){
         parent.visible = true

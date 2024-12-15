@@ -6,15 +6,15 @@ import QtQuick
 import QtQuick.Layouts
 import Qt.labs.folderlistmodel
 import QtQuick.Controls.Fusion
+import QtQuick.Controls.Material
 
 import ".."
 import "../components"
 
 MoveablePopup {
     id: boundaryRecord
-    width: 250
+
     visible: false
-    height: 415
     modal: false
 
     onVisibleChanged: {
@@ -38,7 +38,7 @@ MoveablePopup {
         border.color: "aqua"
         border.width: 2
         SpinBoxCM{
-            height: 50
+            height: 80  * theme.scaleHeight
             anchors.left: parent.left
             anchors.right: side2Record.left
             anchors.top: recordBoundaryWindow.top
@@ -58,10 +58,10 @@ MoveablePopup {
             checkable: true
             anchors.top: recordBoundaryWindow.top
             anchors.right: parent.right
-            anchors.margins: 5
+            anchors.margins: 5  * theme.scaleHeight
             border: 1
-            width: 80
-            height: 80
+            height: 80  * theme.scaleHeight
+            width: 80  * theme.scaleWidth
             isChecked: ! boundaryInterface.isDrawRightSide
             onClicked: {
                 if (checked)
@@ -73,7 +73,7 @@ MoveablePopup {
 
         Row{
             anchors.top: side2Record.bottom
-            anchors.margins: 5
+            anchors.margins: 5  * theme.scaleHeight
             width: parent.width -10
             anchors.horizontalCenter: parent.horizontalCenter
             height: childrenRect.height
@@ -83,14 +83,14 @@ MoveablePopup {
                 id: boundaryDelete
                 objectName: "recordBoundaryDelete"
                 icon.source: prefix + "/images/BoundaryDelete.png"
-                width: 80
-                height: 80
+                height: 80  * theme.scaleHeight
+                width: 80  * theme.scaleWidth
                 onClicked: boundaryInterface.reset()
             }
             Column{
                 height: boundaryDelete.height
                 width: boundaryDelete.width
-                spacing: 20
+                spacing: 20 * theme.scaleHeight
                 Text{
                     text: qsTr("Area:") + " " + utils.area_to_unit_string(boundaryInterface.area,1) + " " + utils.area_unit()
                 }
@@ -105,26 +105,26 @@ MoveablePopup {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.margins: 5
+            anchors.margins: 5  * theme.scaleHeight
             height: children.height
             columns: 2
             rows: 2
             flow: Grid.LeftToRight
-            spacing:	30
+            spacing:	30  * theme.scaleHeight
             IconButtonTransparent{
                 border: 1
                 objectName: "btnBoundaryRecordAddPoint"
                 icon.source: prefix + "/images/PointAdd.png"
-                width: 80
-                height: 80
+                height: 80  * theme.scaleHeight
+                width: 80  * theme.scaleWidth
                 onClicked: boundaryInterface.add_point()
             }
             IconButtonTransparent{
                 border: 1
                 objectName: "btnBoundaryRecordDeleteLastPoint"
                 icon.source: prefix + "/images/PointDelete.png"
-                width: 80
-                height: 80
+                height: 80  * theme.scaleHeight
+                width: 80  * theme.scaleWidth
                 onClicked: boundaryInterface.delete_last_point()
             }
             IconButtonTransparent{
@@ -132,8 +132,8 @@ MoveablePopup {
                 objectName: "btnBoundaryRecordRecord"
                 icon.source: prefix + "/images/BoundaryRecord.png"
                 checkable: true
-                width: 80
-                height: 80
+                height: 80  * theme.scaleHeight
+                width: 80  * theme.scaleWidth
                 border: 1
 
                 onCheckedChanged: {
@@ -151,8 +151,8 @@ MoveablePopup {
                     boundaryRecord.visible = false
                     boundaryInterface.stop()
                 }
-                width: 80
-                height: 80
+                height: 80  * theme.scaleHeight
+                width: 80  * theme.scaleWidth
             }
         }
     }

@@ -4,25 +4,29 @@ import QtQuick
 import QtQuick.Layouts
 import Qt.labs.folderlistmodel
 import QtQuick.Controls.Fusion
+import QtQuick.Controls.Material
 
 import ".."
 import "../components"
 
 Item {
     id: boundaryType
-
+    width: parent.width
+    height: parent.height
     function show() {
-        boundaryTypePopup.visible = true
+    boundaryTypePopup.visible = true
     }
 
     //----------pick whether to import kml or record------------------------------------
-    Popup{
+    Dialog{
         id: boundaryTypePopup
         //anchors.top: parent.top
         //anchors.left: parent.left
-        width: 250
-        height: 400
+        height: 350  * theme.scaleHeight
+        width:350  * theme.scaleWidth
         visible: boundaryType.visible
+        anchors.centerIn: parent
+
         modal: true
 
         TopLine{
@@ -42,7 +46,7 @@ Item {
             Column{
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.topMargin: 10
+                anchors.topMargin: 10  * theme.scaleHeight
                 width: children.width
                 height: children.height
                 spacing: 60
@@ -63,14 +67,14 @@ Item {
                     Text{
                         anchors.bottom: parent.top
                         anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.bottomMargin: 20
+                        anchors.bottomMargin: 20  * theme.scaleHeight
                         text: "?"
                         font.bold: true
                     }
                 }
             }
             IconButtonTransparent{
-                anchors.margins: 10
+                anchors.margins: 10  * theme.scaleHeight
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
                 icon.source: prefix + "/images/Cancel64.png"
@@ -79,13 +83,15 @@ Item {
         }
     }
         //----------------Window for picking whether to import 1 or several kml files
-    Popup{
+    Dialog{
         id: boundaryKMLType
         //anchors.top: parent.top
         //anchors.left: parent.left
-        width: 250
+        height: 350  * theme.scaleHeight
+        width:200  * theme.scaleWidth
+        anchors.centerIn: parent
         visible: false
-        height: 400
+
 
         TopLine{
             id: kmlTypeTopLine
@@ -104,7 +110,7 @@ Item {
             Column{
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.topMargin: 10
+                anchors.topMargin: 10  * theme.scaleHeight
                 width: children.width
                 height: children.height
                 spacing: 60
@@ -114,7 +120,7 @@ Item {
                     Text{
                         anchors.left: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.leftMargin: 20
+                        anchors.leftMargin: 20 * theme.scaleWidth
                         text: "+"
                     }
                 }
@@ -124,7 +130,7 @@ Item {
                     Text{
                         anchors.left: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.leftMargin: 20
+                        anchors.leftMargin: 20 * theme.scaleWidth
                         text: "+++"
                     }
                 }
@@ -143,9 +149,12 @@ Item {
         id: boundaryRecord
         //anchors.top: parent.top
         //anchors.left: parent.left
-        width: 250
+        height: 450  * theme.scaleHeight
+        width:250  * theme.scaleWidth
+        //anchors.centerIn: parent
+        x: 650  * theme.scaleHeight
+        y:100  * theme.scaleWidth
         visible: false
-        height: 415
         modal: false
         closePolicy: Popup.NoAutoClose
     }

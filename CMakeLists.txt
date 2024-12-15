@@ -144,6 +144,7 @@ target_compile_definitions(QtAgOpenGPS PRIVATE
 set_target_properties(QtAgOpenGPS PROPERTIES
     WIN32_EXECUTABLE ON
     MACOSX_BUNDLE ON
+    QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/android
 )
 
 

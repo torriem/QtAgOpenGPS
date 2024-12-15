@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
+        classpath 'com.android.tools.build:gradle:7.4.1'
     }
 }
 
@@ -19,12 +19,6 @@ apply plugin: 'com.android.application'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation 'androidx.core:core:1.13.1'
-}
-
-configurations.all {
-    resolutionStrategy {
-        force "androidx.core:core:1.13.1"
-    }
 }
 
 android {

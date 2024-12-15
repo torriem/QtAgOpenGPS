@@ -1187,7 +1187,7 @@ Window {
                 anchors.bottom: simBarRect.top
                 anchors.bottomMargin: 8
                 height: 40 * theme.scaleHeight
-                width: 500  * theme.scaleWidth
+                width: 660  * theme.scaleWidth
                 //onHeightChanged: anchors.bottomMargin = (bottomButtons.height + simBarRect.height + (24 * theme.scaleHeight))
             }
             DisplayButtons{ // window that shows the buttons to change display. Rotate up/down, day/night, zoom in/out etc. See DisplayButtons.qml

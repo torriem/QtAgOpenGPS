@@ -30,6 +30,15 @@ void FormGPS::setupGui()
     /* Load the QML UI and display it in the main area of the GUI */
     setProperty("title","QtAgOpenGPS");
 
+//tell the QML what OS we are using
+#ifdef __ANDROID__
+    rootContext()->setContextProperty("OS", "ANDROID");
+#elif defined(__WIN32)
+    rootContext()->setContextProperty("OS", "WINDOWS");
+#else
+    rootContext()->setContextProperty("OS", "LINUX");
+#endif
+
     //Load the QML into a view
     rootContext()->setContextProperty("screenPixelDensity",QGuiApplication::primaryScreen()->physicalDotsPerInch() * QGuiApplication::primaryScreen()->devicePixelRatio());
     rootContext()->setContextProperty("mainForm", this);

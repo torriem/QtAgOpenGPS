@@ -584,7 +584,6 @@ public:
    /**********************
      * OpenGL.Designer.cs *
      **********************/
-    bool isAndroid, isWindows = false;
     ulong number = 0, lastNumber = 0;
 
     bool isHeadlandClose = false;

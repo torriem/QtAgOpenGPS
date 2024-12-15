@@ -9,10 +9,10 @@ import "components" as Comp
 
 Comp.MoveablePopup{
     id: recPath
-    height: parent.height *.5
+    height: 500  * theme.scaleHeight
+    width: 100  * theme.scaleWidth
     x: 40
     y: 40
-    width: recPathColumn.width + 20
     closePolicy: Popup.NoAutoClose
     function show(){
         recPath.visible = !recPath.visible

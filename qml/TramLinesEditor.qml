@@ -2,30 +2,44 @@
 // SPDX-License-Identifier: GNU General Public License v3.0 or later
 //
 //
-import QtQuick 2.0
+import QtQuick
+import QtQuick.Layouts
+import Qt.labs.folderlistmodel
 import QtQuick.Controls.Fusion
+import QtQuick.Controls.Material
+
+import ".."
 import "components" as Comp
 
+
 Item {
-    width: 340
-    height: 550
+
     id: mainWindowTram
-    Comp.TopLine{
-        id: topLine
-        titleText: "Tram Lines"
-    }
-    Rectangle{
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        anchors.top: topLine.bottom
+    width: parent.width
+    height: parent.height
+
+
+    Popup {
+        //anchors.left: parent.left
+        //anchors.bottom: parent.bottom
+        //anchors.right: parent.right
+        //anchors.top: topLine.bottom
+        height: 600  * theme.scaleHeight
+        width: 300  * theme.scaleWidth
+        modal: false
+        visible: mainWindowTram.visible
+        anchors.centerIn: parent
+        Comp.TopLine{
+            id: tramtopLine
+            titleText: "Tram Lines"
+        }
         Row{
-            anchors.top: parent.top
-            anchors.topMargin: 10
+            anchors.top: tramtopLine.bottom
+            anchors.topMargin: 20  * theme.scaleHeight
             anchors.horizontalCenter: parent.horizontalCenter
             id: tramHalfNudge
             width: children.width
-            spacing: 35
+            spacing: 25  * theme.scaleWidth
             height: children.height
             Comp.IconButtonTransparent{
                 icon.source: prefix + "/images/SnapLeftHalf.png"
@@ -44,10 +58,10 @@ Item {
         Row{
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: tramHalfNudge.bottom
-            anchors.topMargin: 30
+            anchors.topMargin: 30  * theme.scaleHeight
             id: tramSmallNudge
             width: children.width
-            spacing: 25
+            spacing: 25  * theme.scaleWidth
             height: children.height
             Comp.IconButtonTransparent{
                 icon.source: prefix + "/images/ArrowLeft.png"
@@ -63,36 +77,35 @@ Item {
                 icon.source: prefix + "/images/ArrowRight.png"
             }
         }
-        Comp.IconButtonTransparent{
-            id: tramSwapAB
+        Row{
+            anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: tramSmallNudge.bottom
-            anchors.topMargin: 20
-            anchors.left: parent.left
-            anchors.leftMargin: 60
-            icon.source: prefix + "/images/ABSwapPoints.png"
-        }
-        Comp.IconButtonTransparent{
-            id: tramSwapMode
-            anchors.top: tramSmallNudge.bottom
-            anchors.topMargin: 10
-            anchors.left: tramSwapAB.right
-            anchors.leftMargin: 60
-            icon.source: prefix + "/images/TramLines.png"
-        }
-        Text {
-            text: qsTr("Mode")
-            font.pixelSize: 15
-            anchors.left: tramSwapMode.right
-            anchors.leftMargin: 30
-            anchors.verticalCenter: tramSwapMode.verticalCenter
+            anchors.topMargin: 30  * theme.scaleHeight
+            id: tramSwapModeRow
+            width: children.width
+            spacing: 25  * theme.scaleWidth
+            height: children.height
+			Comp.IconButtonTransparent{
+				id: tramSwapAB
+				icon.source: prefix + "/images/ABSwapPoints.png"
+			}
+			Text {
+				text: qsTr("Mode")
+				font.pixelSize: 15
+				anchors.verticalCenter: parent.verticalCenter
+			}
+			Comp.IconButtonTransparent{
+				id: tramSwapMode
+				icon.source: prefix + "/images/TramLines.png"
+			}
         }
         Row{
             id: tramPasses
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: tramSwapMode.bottom
-            anchors.topMargin: 30
+            anchors.top: tramSwapModeRow.bottom
+            anchors.topMargin: 30  * theme.scaleHeight
             height:tramPassesDown.height
-            spacing: 25
+            spacing: 25  * theme.scaleWidth
             Comp.IconButtonTransparent{
                 id: tramPassesDown
                 icon.source: prefix + "/images/DnArrow64.png"
@@ -113,24 +126,24 @@ Item {
 
         Comp.IconButtonTransparent{
             anchors.left: parent.left
-            anchors.leftMargin: 10
+            anchors.leftMargin: 10  * theme.scaleWidth
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
+            anchors.bottomMargin: 10  * theme.scaleHeight
             icon.source: prefix + "/images/SwitchOff.png"
             onClicked: tramLinesEditor.visible = false
         }
         Comp.IconButtonTransparent{
             anchors.right: parent.right
-            anchors.rightMargin: 10
+            anchors.rightMargin: 10  * theme.scaleWidth
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
+            anchors.bottomMargin: 10  * theme.scaleHeight
             icon.source: prefix + "/images/VehFileSave.png"
         }
         Column{
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.topMargin: 30
+            anchors.topMargin: 30  * theme.scaleHeight
             anchors.top: tramPasses.bottom
-            spacing: 10
+            spacing: 10  * theme.scaleHeight
             Text{
                 text: "Seed"
             }
