@@ -434,7 +434,8 @@ public:
     double distanceCurrentStepFix = 0, distanceCurrentStepFixDisplay = 0, minHeadingStepDist = 1, startSpeed = 0.5;
     double fixToFixHeadingDistance = 0, gpsMinimumStepDistance = 0.05;
 
-    bool isChangingDirection, isReverseWithIMU;
+    InterfaceProperty<VehicleInterface,bool> isChangingDirection = InterfaceProperty<VehicleInterface,bool>("isChangingDirection");
+    bool isReverseWithIMU;
 
     double nowHz = 0, filteredDelta = 0, delta = 0;
 
@@ -594,14 +595,9 @@ public:
     QString strHeading;
     int lenth = 4;
 
-    void DrawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
     void MakeFlagMark(QOpenGLFunctions *gl);
     void DrawFlags(QOpenGLFunctions *gl, QMatrix4x4 mvp);
-    void DrawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int height);
-    void DrawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height);
-    void DrawCompass(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width);
-    void DrawLostRTK(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);
-    void DrawAge(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);
+    void DrawTramMarkers(QOpenGLFunctions *gl, QMatrix4x4 mvp);
     void CalcFrustum(const QMatrix4x4 &mvp);
     void calculateMinMax();
 

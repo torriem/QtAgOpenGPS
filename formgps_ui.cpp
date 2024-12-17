@@ -128,6 +128,15 @@ void FormGPS::setupGui()
 
     QMLSectionButtons::set_aog_root(qmlItem(qml_root, "aog"));
 
+    //initialize interface properties
+    isAutoSteerBtnOn = false;
+    sentenceCounter = 0;
+    manualBtnState = false;
+    autoBtnState = false;
+    isPatchesChangingColor = false;
+    isChangingDirection = false;
+    isOutOfBounds = false;
+
     //hook up our AOGInterface properties
     QObject *aog = qmlItem(qml_root, "aog");
     QObject *linesInterface = qmlItem(qml_root, "linesInterface");
