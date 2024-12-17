@@ -14,6 +14,8 @@
 
 CTram::CTram()
 {
+    isLeftManualOn = false;
+    isRightManualOn = false;
     loadSettings();
     IsTramOuterOrInner();
     displayMode=0;

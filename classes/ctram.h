@@ -4,6 +4,7 @@
 #include <QVector>
 #include <QMatrix4x4>
 #include "vec2.h"
+#include "interfaceproperty.h"
 
 class CBoundary;
 class QOpenGLFunctions;
@@ -29,6 +30,9 @@ public:
     int passes;
 
     bool isOuter;
+
+    InterfaceProperty<AOGInterface,bool> isLeftManualOn = InterfaceProperty<AOGInterface,bool>("isTramLeftManualOn");
+    InterfaceProperty<AOGInterface,bool> isRightManualOn = InterfaceProperty<AOGInterface,bool>("isTramRightManualOn");
 
     //tramlines
     QSharedPointer<QVector<Vec2>> tramArr;
