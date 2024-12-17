@@ -486,11 +486,11 @@ void FormGPS::oglMain_Paint()
             //if this is on, vehicleInterface.isHydLiftOn is true
             if (p_239.pgn[p_239.hydLift] == 2)
             {
-                vehicle.hydLiftDown = false; //vehicleInterface.hydLiftDown in QML
+                vehicle.setHydLiftDown(false); //vehicleInterface.hydLiftDown in QML
             }
             else
             {
-                vehicle.hydLiftDown = true;
+                vehicle.setHydLiftDown(true);
             }
 
             //Reverse indicator in QML

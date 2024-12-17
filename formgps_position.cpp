@@ -281,7 +281,7 @@ void FormGPS::UpdateFixPosition()
                 //ie change in direction
                 if (delta > 1.57) //
                 {
-                    vehicle.isReverse = true;
+                    vehicle.setIsReverse(true);
                     newGPSHeading += M_PI;
                     if (newGPSHeading < 0) newGPSHeading += glm::twoPI;
                     else if (newGPSHeading >= glm::twoPI) newGPSHeading -= glm::twoPI;
@@ -289,13 +289,13 @@ void FormGPS::UpdateFixPosition()
                 }
                 else
                 {
-                    vehicle.isReverse = false;
+                    vehicle.setIsReverse(false);
                     isReverseWithIMU = false;
                 }
             }
             else
             {
-                vehicle.isReverse = false;
+                vehicle.setIsReverse(false);
             }
 
             if (vehicle.isReverse)
@@ -398,27 +398,27 @@ void FormGPS::UpdateFixPosition()
                 //filtered delta different then delta
                 if (fabs(filteredDelta - delta) > 0.5)
                 {
-                    isChangingDirection = true;
+                    vehicle.setIsChangingDirection(true);
                 }
                 else
                 {
-                    isChangingDirection = false;
+                    vehicle.setIsChangingDirection(false);
                 }
 
                 //we can't be sure if changing direction so do nothing
-                if (isChangingDirection)
+                if (vehicle.isChangingDirection)
                     goto byPass;
 
                 //ie change in direction
                 if (filteredDelta > 1.57) //
                 {
-                    vehicle.isReverse = true;
+                    vehicle.setIsReverse(true);
                     newGPSHeading += M_PI;
                     if (newGPSHeading < 0) newGPSHeading += glm::twoPI;
                     else if (newGPSHeading >= glm::twoPI) newGPSHeading -= glm::twoPI;
                 }
                 else
-                    vehicle.isReverse = false;
+                    vehicle.setIsReverse(false);
 
                 if (vehicle.isReverse)
                     newGPSHeading -= glm::toRadians(vehicle.antennaPivot / 1
@@ -433,7 +433,7 @@ void FormGPS::UpdateFixPosition()
 
             else
             {
-                vehicle.isReverse = false;
+                vehicle.setIsReverse(false);
             }
 
             //set the headings
@@ -860,7 +860,7 @@ void FormGPS::UpdateFixPosition()
         p_254.pgn[p_254.steerAngleHi] = (char)(vehicle.guidanceLineSteerAngle >> 8);
         p_254.pgn[p_254.steerAngleLo] = (char)(vehicle.guidanceLineSteerAngle);
 
-        if (isChangingDirection && ahrs.imuHeading == 99999)
+        if (vehicle.isChangingDirection && ahrs.imuHeading == 99999)
             p_254.pgn[p_254.status] = 0;
 
         //for now if backing up, turn off autosteer
@@ -1226,7 +1226,7 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("toolHeading", vehicle.pivotAxlePos.heading);
     aog->setProperty("rawHz", nowHz);
 	aog->setProperty("hz", gpsHz);
-    aog->setProperty("isReverse" , vehicle.isReverse);
+    //aog->setProperty("isReverse" , vehicle.isReverse);
     aog->setProperty("isReverseWithIMU", isReverseWithIMU);
 
     double tool_lat, tool_lon;
