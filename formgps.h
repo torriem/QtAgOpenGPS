@@ -434,7 +434,6 @@ public:
     double distanceCurrentStepFix = 0, distanceCurrentStepFixDisplay = 0, minHeadingStepDist = 1, startSpeed = 0.5;
     double fixToFixHeadingDistance = 0, gpsMinimumStepDistance = 0.05;
 
-    InterfaceProperty<VehicleInterface,bool> isChangingDirection = InterfaceProperty<VehicleInterface,bool>("isChangingDirection");
     bool isReverseWithIMU;
 
     double nowHz = 0, filteredDelta = 0, delta = 0;

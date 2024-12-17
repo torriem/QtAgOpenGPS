@@ -95,8 +95,6 @@ void CVehicle::loadSettings()
 
 CVehicle::CVehicle(QObject *parent) : QObject(parent)
 {
-    isHydLiftOn = false;
-    hydLiftDown = false;
     isInFreeDriveMode = false;
     loadSettings();
 
@@ -613,4 +611,38 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
 
 void CVehicle::AverageTheSpeed(double newSpeed) {
     avgSpeed = newSpeed * 0.75 + avgSpeed * 0.25;
+}
+
+void CVehicle::setIsHydLiftOn(bool value)
+{
+    if (isHydLiftOn != value) {
+        isHydLiftOn = value;
+        emit isHydLiftOnChanged();
+    }
+}
+
+void CVehicle::setHydLiftDown(bool value)
+{
+    if (hydLiftDown != value) {
+        hydLiftDown = value;
+        emit hydLiftDownChanged();
+    }
+}
+
+void CVehicle::setIsChangingDirection(bool value)
+{
+    if (isChangingDirection != value)
+    {
+        isChangingDirection = value;
+        emit isChangingDirectionChanged();
+    }
+}
+
+void CVehicle::setIsReverse(bool value)
+{
+    if (isReverse != value)
+    {
+        isReverse = value;
+        emit isReverseChanged();
+    }
 }
