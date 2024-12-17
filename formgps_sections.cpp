@@ -207,7 +207,7 @@ void FormGPS::DoRemoteSwitches()
                 {
 
                     for(int s=0; s< 8; s++) {
-                        if ((mc.ssP[mc.swOffGr0] & (1 << s)) && (mc.ss[mc.swOffGr0] & (1 << s)) && (tool.sectionButtonState.get(s) == btnStates::Off))
+                        if ((mc.ssP[mc.swOffGr0] & (1 << s)) && !(mc.ss[mc.swOffGr0] & (1 << s)) && (tool.sectionButtonState.get(s) == btnStates::Off))
                         {
                             tool.sectionButtonState.set(s,btnStates::Auto);
                             tool.section[s].sectionBtnState = btnStates::Auto;
@@ -223,7 +223,7 @@ void FormGPS::DoRemoteSwitches()
                 if (autoBtnState == btnStates::Auto)
                 {
                     for(int s=8; s< 16; s++) {
-                        if ((mc.ssP[mc.swOffGr1] & (1 << s)) && (mc.ss[mc.swOffGr1] & (1 << s)) && (tool.sectionButtonState.get(s+8) == btnStates::Off))
+                        if ((mc.ssP[mc.swOffGr1] & (1 << s)) && !(mc.ss[mc.swOffGr1] & (1 << s)) && (tool.sectionButtonState.get(s+8) == btnStates::Off))
                         {
                             tool.sectionButtonState.set(s+8,btnStates::Auto);
                             tool.section[s+8].sectionBtnState = btnStates::Auto;
