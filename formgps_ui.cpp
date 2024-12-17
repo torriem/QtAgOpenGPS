@@ -44,6 +44,10 @@ void FormGPS::setupGui()
     rootContext()->setContextProperty("mainForm", this);
     rootContext()->setContextProperty("settings", &qml_settings);
 
+    rootContext()->setContextProperty("vehicleInterface", &vehicle);
+    //populate vehicle_list property in vehicleInterface
+    vehicle_update_list();
+
 #ifdef LOCAL_QML
     // Look for QML files relative to our current directory
     QStringList search_pathes = { "..",
@@ -117,12 +121,6 @@ void FormGPS::setupGui()
     InterfaceProperty<FieldInterface, double>::set_qml_root(qmlItem(qml_root, "fieldInterface"));
     InterfaceProperty<FieldInterface, btnStates>::set_qml_root(qmlItem(qml_root, "fieldInterface"));
 
-    InterfaceProperty<VehicleInterface, int>::set_qml_root(qmlItem(qml_root, "vehicleInterface"));
-    InterfaceProperty<VehicleInterface, uint>::set_qml_root(qmlItem(qml_root, "vehicleInterface"));
-    InterfaceProperty<VehicleInterface, bool>::set_qml_root(qmlItem(qml_root, "vehicleInterface"));
-    InterfaceProperty<VehicleInterface, double>::set_qml_root(qmlItem(qml_root, "vehicleInterface"));
-    InterfaceProperty<VehicleInterface, btnStates>::set_qml_root(qmlItem(qml_root, "vehicleInterface"));
-
     InterfaceProperty<BoundaryInterface, int>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
     InterfaceProperty<BoundaryInterface, uint>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
     InterfaceProperty<BoundaryInterface, bool>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
@@ -140,16 +138,15 @@ void FormGPS::setupGui()
     //initialize interface properties
     isAutoSteerBtnOn = false;
     sentenceCounter = 0;
-    manualBtnState = false;
-    autoBtnState = false;
+    manualBtnState = btnStates::Off;
+    autoBtnState = btnStates::Off;
     isPatchesChangingColor = false;
-    isChangingDirection = false;
     isOutOfBounds = false;
 
     //hook up our AOGInterface properties
     QObject *aog = qmlItem(qml_root, "aog");
     QObject *linesInterface = qmlItem(qml_root, "linesInterface");
-    QObject *vehicleInterface = qmlItem(qml_root, "vehicleInterface");
+    //QObject *vehicleInterface = qmlItem(qml_root, "vehicleInterface");
     QObject *fieldInterface = qmlItem(qml_root, "fieldInterface");
     QObject *boundaryInterface = qmlItem(qml_root, "boundaryInterface");
 
@@ -231,10 +228,10 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(snapToPivot()), this, SLOT(onBtnSnapToPivot_clicked()));
 
     //vehicle saving and loading
-    connect(vehicleInterface,SIGNAL(vehicle_update_list()), this, SLOT(vehicle_update_list()));
-    connect(vehicleInterface,SIGNAL(vehicle_load(QString)), this, SLOT(vehicle_load(QString)));
-    connect(vehicleInterface,SIGNAL(vehicle_delete(QString)), this, SLOT(vehicle_delete(QString)));
-    connect(vehicleInterface,SIGNAL(vehicle_saveas(QString)), this, SLOT(vehicle_saveas(QString)));
+    connect(&vehicle,SIGNAL(vehicle_update_list()), this, SLOT(vehicle_update_list()));
+    connect(&vehicle,SIGNAL(vehicle_load(QString)), this, SLOT(vehicle_load(QString)));
+    connect(&vehicle,SIGNAL(vehicle_delete(QString)), this, SLOT(vehicle_delete(QString)));
+    connect(&vehicle,SIGNAL(vehicle_saveas(QString)), this, SLOT(vehicle_saveas(QString)));
 
     //field saving and loading
     connect(fieldInterface,SIGNAL(field_update_list()), this, SLOT(field_update_list()));
@@ -433,10 +430,13 @@ void FormGPS::onBtnYouSkip_clicked(){
 void FormGPS::onBtnResetDirection_clicked(){
     qDebug()<<"reset Direction";
     // c#Array.Clear(stepFixPts, 0, stepFixPts.Length);
+
     std::memset(stepFixPts, 0, sizeof(stepFixPts));
-                    isFirstHeadingSet = false;
-                    vehicle.isReverse = false;
-                    TimedMessageBox(2000, "Reset Direction", "Drive Forward > 1.5 kmh");
+    isFirstHeadingSet = false;
+
+    //TODO: most of this should be done in QML
+    vehicle.setIsReverse(false);
+    TimedMessageBox(2000, "Reset Direction", "Drive Forward > 1.5 kmh");
 }
 void FormGPS::onBtnFlag_clicked() {
 
@@ -457,10 +457,10 @@ void FormGPS::onBtnContour_clicked(){
     if (ct.isContourBtnOn) {
         guidanceLookAheadTime = 0.5;
     }else{
-        if (ABLine.isBtnABLineOn | curve.isBtnCurveOn){
-            ABLine.isABValid = false;
-            curve.isCurveValid = false;
-        }
+        //if (ABLine.isBtnABLineOn | curve.isBtnCurveOn){
+        //    ABLine.isABValid = false;
+        //    curve.isCurveValid = false;
+        //}
         guidanceLookAheadTime = property_setAS_guidanceLookAheadTime;
     }
 }
@@ -470,6 +470,7 @@ void FormGPS::onBtnContourPriority_clicked(bool isRight){
     ct.isRightPriority = isRight;
     qDebug() << "Contour isRight: " << isRight;
 }
+
 void FormGPS::onBtnContourLock_clicked(){
     ct.SetLockToLine();
 }
@@ -597,13 +598,13 @@ void FormGPS::onBtnAutoYouTurn_clicked(){
      if (!yt.isYouTurnBtnOn)
      {
          //new direction so reset where to put turn diagnostic
-         yt.ResetCreatedYouTurn();
+         yt.ResetCreatedYouTurn(makeUTurnCounter);
 
          if (!isAutoSteerBtnOn) return;
          yt.isYouTurnBtnOn = true;
          yt.isTurnCreationTooClose = false;
          yt.isTurnCreationNotCrossingError = false;
-         yt.ResetYouTurn();
+         yt.ResetYouTurn(makeUTurnCounter);
          //mc.autoSteerData[mc.sdX] = 0;
 //         mc.machineControlData[mc.cnYouTurn] = 0;
 //         btnAutoYouTurn.Image = Properties.Resources.Youturn80;
@@ -613,10 +614,10 @@ void FormGPS::onBtnAutoYouTurn_clicked(){
          yt.isYouTurnBtnOn = false;
 //         yt.rowSkipsWidth = Properties.Vehicle.Default.set_youSkipWidth;
 //         btnAutoYouTurn.Image = Properties.Resources.YouTurnNo;
-         yt.ResetYouTurn();
+         yt.ResetYouTurn(makeUTurnCounter);
 
          //new direction so reset where to put turn diagnostic
-         yt.ResetCreatedYouTurn();
+         yt.ResetCreatedYouTurn(makeUTurnCounter);
 
          //mc.autoSteerData[mc.sdX] = 0;commented in aog
 //         mc.machineControlData[mc.cnYouTurn] = 0;
@@ -627,7 +628,7 @@ void FormGPS::onBtnSwapAutoYouTurnDirection_clicked()
      if (!yt.isYouTurnTriggered)
      {
          yt.isYouTurnRight = !yt.isYouTurnRight;
-         yt.ResetCreatedYouTurn();
+         yt.ResetCreatedYouTurn(makeUTurnCounter);
      }
      //else if (yt.isYouTurnBtnOn)
          //btnAutoYouTurn.PerformClick();
@@ -636,16 +637,16 @@ void FormGPS::onBtnSwapAutoYouTurnDirection_clicked()
 void FormGPS::onBtnManUTurn_clicked(bool right)
 {
     if (yt.isYouTurnTriggered) {
-        yt.ResetYouTurn();
+        yt.ResetYouTurn(makeUTurnCounter);
     }else {
         yt.isYouTurnTriggered = true;
-        yt.BuildManualYouTurn(vehicle, ABLine, curve, right, true);
+        yt.BuildManualYouTurn( right, true, vehicle, trk, ABLine, curve);
    }
 }
 
 void FormGPS::onBtnLateral_clicked(bool right)
 {
-   yt.BuildManualYouLateral(vehicle, ABLine, curve, right);
+   yt.BuildManualYouLateral(right, vehicle, trk, ABLine, curve);
 }
 
 void FormGPS::TimedMessageBox(int timeout, QString s1, QString s2)

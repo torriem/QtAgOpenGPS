@@ -66,7 +66,6 @@ void FormGPS::vehicle_delete(QString vehicle_name) {
 
     QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
                             + "/" + QCoreApplication::applicationName() + "/Vehicles";
-    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, vehicle_name);
 
     QDir vehicleDir(directoryName);
     if (vehicleDir.exists()) {
@@ -76,12 +75,8 @@ void FormGPS::vehicle_delete(QString vehicle_name) {
 }
 
 void FormGPS::vehicle_update_list() {
-    QObject *vehicleInterface;
-
     QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
                             + "/" + QCoreApplication::applicationName() + "/Vehicles";
-
-    vehicleInterface = qmlItem(qml_root, "vehicleInterface");
 
     QDir vehicleDirectory(directoryName);
     if(!vehicleDirectory.exists()) {
@@ -96,7 +91,7 @@ void FormGPS::vehicle_update_list() {
     QMap<QString, QVariant>vehicle;
     int index = 0;
 
-    for (QFileInfo file : filesList) {
+    for (QFileInfo &file : filesList) {
         vehicle.clear();
         vehicle["index"] = index;
         vehicle["name"] = file.fileName();
@@ -104,7 +99,6 @@ void FormGPS::vehicle_update_list() {
         index++;
     }
 
-    vehicleInterface->setProperty("vehicle_list", vehicleList);
-
+    this->vehicle.setProperty("vehicle_list", vehicleList);
 }
 
