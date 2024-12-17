@@ -137,10 +137,12 @@ Window {
         objectName: "fieldInterface"
     }
 
+    /* only use in a mock setting.  Normally C++ will provide
+       this as a CVehicle instance.
     Interfaces.VehicleInterface {
         id: vehicleInterface
         objectName: "vehicleInterface"
-    }
+    }*/
 
     Interfaces.BoundaryInterface {
         id: boundaryInterface
@@ -394,7 +396,7 @@ Window {
                 width: 70 * theme.scaleWidth
                 height: 70 * theme.scaleHeight
                 source: prefix + "/images/Images/z_ReverseArrow.png"
-                visible: aog.isReverse || vehicleInterface.isChangingDirection
+                visible: vehicleInterface.isReverse || vehicleInterface.isChangingDirection
             }
             MouseArea{
                 //button that catches any clicks on the vehicle in the GL Display
