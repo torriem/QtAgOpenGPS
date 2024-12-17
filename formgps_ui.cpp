@@ -137,6 +137,15 @@ void FormGPS::setupGui()
 
     QMLSectionButtons::set_aog_root(qmlItem(qml_root, "aog"));
 
+    //initialize interface properties
+    isAutoSteerBtnOn = false;
+    sentenceCounter = 0;
+    manualBtnState = false;
+    autoBtnState = false;
+    isPatchesChangingColor = false;
+    isChangingDirection = false;
+    isOutOfBounds = false;
+
     //hook up our AOGInterface properties
     QObject *aog = qmlItem(qml_root, "aog");
     QObject *linesInterface = qmlItem(qml_root, "linesInterface");
@@ -162,6 +171,8 @@ void FormGPS::setupGui()
     //TODO: save and restore these numbers from settings
 //    qml_root->setProperty("width",1024);
 //    qml_root->setProperty("height",768);
+
+    connect(aog,SIGNAL(sectionButtonStateChanged()), &tool.sectionButtonState, SLOT(onStatesUpdated()));
 
     //AB Line Picker
     //react to UI changing these properties

@@ -25,32 +25,20 @@ struct VertexTexcoord {
 };
 
 enum Textures {
-    SKY=0,
-    FLOOR=1,
-    FONT=2,
-    TURN=3,
-    TURNCANCEL=4,
-    TURNMANUAL=5,
-    COMPASS=6,
-    SPEEDO=7,
-    SPEEDONEDLE=8,
-    HYDLIFT=9,
-    SKYNIGHT=10,
-    STEER_POINTER=11,
-    STEER_DOT=12,
-    TRACTOR=13,
-    QUESTION_MARK=14,
-    FRONT_WHEELS=15,
-    TRACTOR_4WD_FRONT=16,
-    TRACTOR_4WD_REAR=17,
-    HARVESTER=18,
-    LATERAL_MANUAL=19,
-    BING_MAP=20, //unused
-    NOGPS=21,
-    ZOOM_IN=22,
-    ZOOM_OUT=23,
-    PAN=24,
-    TOOLWHEELS=25
+    FLOOR,
+    FONT,
+    HYDLIFT,
+    TRACTOR,
+    QUESTION_MARK,
+    FRONT_WHEELS,
+    TRACTOR_4WD_FRONT,
+    TRACTOR_4WD_REAR,
+    HARVESTER,
+    TOOLWHEELS,
+    TIRE,
+    TRAMDOT,
+    YOUTURNU,
+    YOUTURNH
 };
 
 extern bool isFontOn;

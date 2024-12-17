@@ -6,6 +6,13 @@
 #include <QVariantList>
 #include "btnenum.h"
 
+//This object provides a convenient way to access section button states
+//stored in AOGInterface.sectionButtonState.  This array is not the same
+//thing as the on-screen buttons.  Since there are only 16 on-screen or
+//physical buttons allowed, when using zones, one on-screen button
+//represents a zone of multiple sections (typically row units), each of
+//which has a button state that is either off, auto, or on.
+
 class QMLSectionButtons : public QObject
 {
     Q_OBJECT

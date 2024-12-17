@@ -8,5 +8,7 @@ QMLSectionButtons::QMLSectionButtons(QObject *parent): QObject(parent)
 
 void QMLSectionButtons::onStatesUpdated(void) {
     //if QML updated things we need to re-read the items
+    //formgps_ui connects aog.sectionButtonStateChanged to this function,
+    //used in CTool.sectionButtonState
     needRead = true;
 }

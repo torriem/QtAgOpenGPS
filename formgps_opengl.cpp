@@ -479,6 +479,10 @@ void FormGPS::oglMain_Paint()
             //lightbar, button status, compasstext, steer circle, Hyd Lift, RTK
             // alarm, etc are all done in QML based on properties in Interface.qml
 
+            //uturn buttons drawn in QML
+
+            if (tool.isDisplayTramControl && tram.displayMode != 0) { DrawTramMarkers(gl,projection*modelview); }
+
             //if this is on, vehicleInterface.isHydLiftOn is true
             if (p_239.pgn[p_239.hydLift] == 2)
             {
@@ -489,7 +493,10 @@ void FormGPS::oglMain_Paint()
                 vehicle.hydLiftDown = true;
             }
 
-            if(isSkyOn) DrawSky(gl, projection*modelview, width, height);
+            //Reverse indicator in QML
+            //RTK alarm implemented in QML
+            //RTK age implemented in QML
+            //guidance line text implemented in QML
 
             gl->glFlush();
 
@@ -865,79 +872,6 @@ void FormGPS::openGLControlBack_Initialized()
 {
 }
 
-void FormGPS::DrawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp)
-{
-    QColor color;
-    Textures whichtex;
-    GLHelperTexture gldraw;
-    VertexTexcoord vt;
-    QLocale locale;
-
-    if (!yt.isYouTurnTriggered)
-    {
-        whichtex = Textures::TURN;
-        if (distancePivotToTurnLine > 0 && !yt.isOutOfBounds) color = QColor::fromRgbF(0.3f, 0.95f, 0.3f);
-        else color = QColor::fromRgbF(0.97f, 0.635f, 0.4f);
-    }
-    else
-    {
-        whichtex = Textures::TURNCANCEL;
-        color = QColor::fromRgbF(0.90f, 0.90f, 0.293f);
-    }
-
-    int two3 = qmlItem(qml_root, "openglcontrol")->property("width").toReal() / 5;
-    if (!yt.isYouTurnRight)
-    {
-        vt.texcoord = QVector2D(0, 0); vt.vertex = QVector3D(-62 + two3, 50,0); //
-        gldraw.append(vt);
-        vt.texcoord = QVector2D(1, 0); vt.vertex = QVector3D(62 + two3, 50,0); //
-        gldraw.append(vt);
-        vt.texcoord = QVector2D(0, 1); vt.vertex = QVector3D(-62 + two3, 120,0); //
-        gldraw.append(vt);
-        vt.texcoord = QVector2D(1, 1); vt.vertex = QVector3D(62 + two3, 120,0); //
-        gldraw.append(vt);
-    }
-    else
-    {
-        vt.texcoord = QVector2D(0, 0); vt.vertex = QVector3D(62 + two3, 50,0); //
-        gldraw.append(vt);
-        vt.texcoord = QVector2D(1, 0); vt.vertex = QVector3D(-62 + two3, 50,0); //
-        gldraw.append(vt);
-        vt.texcoord = QVector2D(0, 1); vt.vertex = QVector3D(62 + two3, 120,0); //
-        gldraw.append(vt);
-        vt.texcoord = QVector2D(1, 1); vt.vertex = QVector3D(-62 + two3, 120,0); //
-        gldraw.append(vt);
-    }
-
-    gldraw.draw(gl, mvp, whichtex, GL_TRIANGLE_STRIP, true, color);
-
-    // Done Building Triangle Strip
-    if (isMetric)
-    {
-        if (!yt.isYouTurnTriggered)
-        {
-            //drawText(gl, mvp, -30 + two3, 80, DistPivotM, 1.0, true, color);
-        }
-        else
-        {
-            drawText(gl, mvp, -30 + two3, 80, locale.toString(yt.onA), 1.0, true, color);
-        }
-    }
-    else
-    {
-
-        if (!yt.isYouTurnTriggered)
-        {
-            //drawText(gl, mvp, -40 + two3, 85, DistPivotFt, 1.0, true, color);
-        }
-        else
-        {
-            drawText(gl, mvp, -40 + two3, 85, locale.toString(yt.onA), 1.0, true, color);
-        }
-    }
-
-}
-
 void FormGPS::MakeFlagMark(QOpenGLFunctions *gl)
 {
     leftMouseDownOnOpenGL = false;
@@ -963,6 +897,54 @@ void FormGPS::MakeFlagMark(QOpenGLFunctions *gl)
 
     /*TODO: popup flag menu*/
     //have to set a flag for the main loop
+
+}
+
+void FormGPS::DrawTramMarkers(QOpenGLFunctions *gl, QMatrix4x4 mvp)
+{
+    //int sizer = 60;
+    int center = -50 ;
+    int bottomSide = 100;
+
+    GLHelperTexture gltex;
+
+    QColor dot_color;
+
+    if (((tram.controlByte) & 2) == 2) dot_color = QColor::fromRgbF(0.29f, 0.990f, 0.290f, 0.983f);
+    else dot_color = QColor::fromRgbF(0.9f, 0.0f, 0.0f, 0.53f);
+
+    if ((bool)tram.isLeftManualOn)
+    {
+        if (isFlashOnOff) dot_color = QColor::fromRgbF(0.0f, 0.0f, 0.0f, 0.993f);
+        else dot_color = QColor::fromRgbF(0.99f, 0.990f, 0.0f, 0.993f);
+    }
+
+    gltex.append( { QVector3D(center - 32, bottomSide - 32, 0), QVector2D(0,0) } );
+    gltex.append( { QVector3D(center + 32, bottomSide - 32, 0), QVector2D(1, 0) } );
+    gltex.append( { QVector3D(center + 32, bottomSide + 32, 0), QVector2D(1, 1) } );
+    gltex.append( { QVector3D(center - 32, bottomSide + 32, 0), QVector2D(0, 1) });
+
+    gltex.draw(gl,mvp,Textures::TRAMDOT,GL_QUADS,true,dot_color);
+
+    if (((tram.controlByte) & 1) == 1) dot_color = QColor::fromRgbF(0.29f, 0.990f, 0.290f, 0.983f);
+    else dot_color = QColor::fromRgbF(0.9f, 0.0f, 0.0f, 0.53f);
+
+    if ((bool)tram.isRightManualOn)
+    {
+        if (isFlashOnOff) dot_color = QColor::fromRgbF(0.0f, 0.0f, 0.0f, 0.993f);
+        else dot_color = QColor::fromRgbF(0.99f, 0.990f, 0.0f, 0.993f);
+    }
+
+    center += 100;
+
+    gltex.clear();
+
+    gltex.append( { QVector3D(center - 32, bottomSide - 32, 0), QVector2D(0, 0) } );
+    gltex.append( { QVector3D(center + 32, bottomSide - 32, 0), QVector2D(1, 0) } );
+    gltex.append( { QVector3D(center + 32, bottomSide + 32, 0), QVector2D(1, 1) } );
+    gltex.append( { QVector3D(center - 32, bottomSide + 32, 0), QVector2D(0, 1) } );
+
+    gltex.draw(gl,mvp,Textures::TRAMDOT,GL_QUADS,true,dot_color);
 
 }
 
@@ -1011,165 +993,6 @@ void FormGPS::DrawFlags(QOpenGLFunctions *gl, QMatrix4x4 mvp)
                     GL_LINE_STRIP, 4.0);
     }
 }
-
-void FormGPS::DrawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int height)
-{
-    //VertexTexcoord vertices[4];
-    GLHelperTexture gldrawtex;
-    QColor color;
-    Textures tex;
-
-    ////draw the background when in 3D
-    if (camera.camPitch < -52)
-    {
-        //-10 to -32 (top) is camera pitch range. Set skybox to line up with horizon
-        double hite = (camera.camPitch + 66) * -0.025;
-
-        //the background
-        double winLeftPos = -(double)width / 2;
-        double winRightPos = -winLeftPos;
-
-        if (isDay)
-        {
-            color.setRgbF(0.75, 0.75, 0.75);
-            tex = Textures::SKY;
-        }
-        else
-        {
-            color.setRgbF(0.5, 0.5, 0.5);
-            tex = Textures::SKYNIGHT;
-        }
-
-        double u = (vehicle.fixHeading)/glm::twoPI;
-
-        gldrawtex.append( { QVector3D( winRightPos,0,0 ),             QVector2D(u+0.25, 0) } );
-        gldrawtex.append( { QVector3D( winLeftPos,0,0 ),              QVector2D(u, 0) } );
-        gldrawtex.append( { QVector3D( winRightPos,hite * height,0 ), QVector2D(u+0.25, 1) } );
-        gldrawtex.append( { QVector3D( winLeftPos,hite * height,0 ),  QVector2D(u, 1) } );
-
-        gldrawtex.draw(gl,mvp,tex,GL_TRIANGLE_STRIP,true,color);
-
-        /*
-        if ( (lastWidth != width)  || (lastHeight != height)) {
-            lastWidth = width;
-            lastHeight = height;
-
-            //-10 to -32 (top) is camera pitch range. Set skybox to line up with horizon
-            double hite = (camPitch + 63) * -0.026;
-            //hite = 0.001;
-
-            //the background
-            double winLeftPos = -(double)width / 2;
-            double winRightPos = -winLeftPos;
-
-
-            //map texture coordinates to model coordinates
-            vertices[0].vertex = QVector3D(winRightPos, 0.0, 0);
-            vertices[0].texcoord = QVector2D(0,0); //top right
-
-            vertices[1].vertex = QVector3D(winLeftPos, 0.0, 0);
-            vertices[1].texcoord = QVector2D(1,0); //top left
-
-            vertices[2].vertex = QVector3D(winRightPos, hite*(double)height,0);
-            vertices[2].texcoord = QVector2D(0,1); //bottom right
-
-            vertices[3].vertex = QVector3D(winLeftPos, hite*(double)height,0);
-            vertices[3].texcoord = QVector2D(1,1); //bottom left
-
-            //rebuild sky buffer
-            if (skyBuffer.isCreated())
-                skyBuffer.destroy();
-            skyBuffer.create();
-            skyBuffer.bind();
-            skyBuffer.allocate(vertices,4*sizeof(VertexTexcoord));
-            //skyBuffer.allocate(vertices,4*sizeof(QVector3D));
-            skyBuffer.release();
-        }
-
-        texture[Textures::SKY]->bind(0);
-        //TODO nighttime sky
-
-        glDrawArraysTexture(gl, mvp,
-                            GL_TRIANGLE_STRIP, skyBuffer,
-                            GL_FLOAT,
-                            4, true, QColor::fromRgbF(0.5,0.5,0.5));
-        texture[Textures::SKY]->release();
-        */
-
-    }
-}
-
-//this is now drawn in qml
-//void FormGPS::DrawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height)
-//{
-//    QLocale locale;
-//    QColor color;
-//    /*
-//    //torriem TODO: buttons should all be in qml not in opengl  Zoom buttons
-//    GLHelperTexture gldrawtex;
-
-
-//    color.fromRgbf(0.90f, 0.90f, 0.93f);
-
-//    int center = Width / 2 - 60;
-
-//    gldrawtex.append ( { QVector3D(center, 50, 0),      QVector2D(0,0) } );
-//    gldrawtex.append ( { QVector3D(center + 32, 50, 0), QVector2D(1,0) } );
-//    gldrawtex.append ( { QVector3D(center + 32, 82, 0), QVector2D(1,1) } );
-//    gldrawtex.append ( { QVector3D(center, 82, 0),      QVector2D(0,1) } );
-
-//    gldrawtex.draw(gl,mvp,Texture::
-//    */
-//    int center = Width / 2 - 10;
-//    color.setRgbF( 0.9852f, 0.982f, 0.983f);
-//    strHeading = locale.toString(glm::toDegrees(vehicle.fixHeading),'f',1);
-//    lenth = 15 * strHeading.length();
-//    drawText(gl, mvp, Width / 2 - lenth, 10, strHeading, 0.8);
-
-//    //GPS Step
-//    if(distanceCurrentStepFixDisplay < 0.03*100)
-//        color.setRgbF(0.98f, 0.82f, 0.653f);
-//    drawText(gl, mvp, center, 10, locale.toString(distanceCurrentStepFixDisplay,'f',1) + tr("cm"),0.8, true, color);
-
-//    if (isMaxAngularVelocity)
-//    {
-//        color.setRgbF(0.98f, 0.4f, 0.4f);
-//        drawText(gl,mvp,center-10, Height-260, "*", 2, true, color);
-//    }
-
-//    color.setRgbF(0.9752f, 0.62f, 0.325f);
-//    if (timerSim.isActive()) drawText(gl, mvp, -110, Height - 130, "Simulator On", 1, true, color);
-
-//    if (ct.isContourBtnOn)
-//    {
-//        if (isFlashOnOff && ct.isLocked)
-//        {
-//            color.setRgbF(0.9652f, 0.752f, 0.75f);
-//            drawText(gl, mvp, -center - 100, Height / 2.3, "Locked", 1,true, color);
-//        }
-//    }
-
-//}
-
-//void FormGPS::DrawCompass(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width)
-//{
-//    //Heading text
-//    int center = Width / 2 - 55;
-//    drawText(gl, projection*modelview, center-8, 40, "^", 0.8);
-
-//    GLHelperTexture gldraw;
-
-
-//    modelview.translate(center, 78, 0);
-
-//    modelview.rotate(-camera.camHeading, 0, 0, 1);
-//    gldraw.append( { QVector3D(-52, -52, 0), QVector2D(0, 0) }); //bottom left
-//    gldraw.append( { QVector3D(52, -52.0, 0), QVector2D(1, 0) }); //bottom right
-//    gldraw.append( { QVector3D(-52, 52, 0), QVector2D(0, 1) }); // top left
-//    gldraw.append( { QVector3D(52, 52, 0), QVector2D(1, 1) }); // top right
-
-//    gldraw.draw(gl, projection*modelview, Textures::COMPASS, GL_TRIANGLE_STRIP, true, QColor::fromRgbF(0.952f, 0.870f, 0.73f, 0.8f));
-//}
 
 void FormGPS::CalcFrustum(const QMatrix4x4 &mvp)
 {
