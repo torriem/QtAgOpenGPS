@@ -74,11 +74,10 @@ void FormGPS::FileSaveHeadLines()
     writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     int cnt = hdl.tracksArr.count();
+    writer << "$HeadLines" << Qt::endl;
 
     if (cnt > 0)
     {
-        writer << "$HeadLines" << Qt::endl;
-
         for (int i = 0; i < cnt; i++)
         {
             //write out the name
@@ -127,6 +126,7 @@ void FormGPS::FileLoadHeadLines()
         bool ok = loadDir.mkpath(directoryName);
         if (!ok) {
             qWarning() << "Couldn't create path " << directoryName;
+            TimedMessageBox(1000,tr("Cannot create field directory!"),tr("Cannot create field directory at ") + directoryName);
             return;
         }
     }
@@ -136,8 +136,8 @@ void FormGPS::FileLoadHeadLines()
     QFile headfile(filename);
     if (!headfile.open(QIODevice::ReadOnly))
     {
-        qWarning() << "Couldn't open " << filename << "for reading!";
-        //TODO timed messagebox
+        qWarning() << "Couldn't open " << filename << "for reading! Error was" << headfile.errorString();
+        TimedMessageBox(1000,tr("Cannot read headlines."),tr("Cannot read headlines.") + tr(" Error was ") + headfile.errorString());
         return;
     }
 
@@ -145,6 +145,7 @@ void FormGPS::FileLoadHeadLines()
     reader.setLocale(QLocale::C);
 
     hdl.tracksArr.clear();
+    hdl.idx = -1;
 
     //get the file of previous AB Lines
     QString line;
@@ -180,6 +181,13 @@ void FormGPS::FileLoadHeadLines()
             {
                 line = reader.readLine();
                 QStringList words = line.split(',');
+                if (words.count() < 3) {
+                    qDebug() << "Corrupt file!  Ignoring " << filename << ".";
+                    hdl.tracksArr.clear();
+                    hdl.idx = -1;
+                    TimedMessageBox(1000,tr("Corrupt File!"), tr("Corrupt headline for this field. Deleting lines."));
+                    FileSaveHeadLines();
+                }
                 Vec3 vecPt(words[0].toDouble(),
                            words[1].toDouble(),
                            words[2].toDouble());
@@ -196,6 +204,195 @@ void FormGPS::FileLoadHeadLines()
     }
 
     hdl.idx = -1;
+}
+
+void FormGPS::FileSaveTracks()
+{
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+
+    QDir saveDir(directoryName);
+    if (!saveDir.exists()) {
+        bool ok = saveDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            return;
+        }
+    }
+
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "TrackLines.txt");
+
+    int cnt = trk.gArr.count();
+
+    QFile curveFile(filename);
+    if (!curveFile.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "couldn't open " << filename << "for writing!";
+        return;
+    }
+
+    QTextStream writer(&curveFile);
+    writer.setLocale(QLocale::C);
+    writer.setRealNumberNotation(QTextStream::FixedNotation);
+
+    writer << "$TrackLines" << Qt::endl;
+    if (cnt > 0)
+    {
+        for (int i = 0; i < cnt; i++)
+        {
+            //write out the name
+            writer << trk.gArr[i].name << Qt::endl;
+
+            //write out the heading
+            writer << trk.gArr[i].heading << Qt::endl;
+
+            //A and B
+            writer << qSetRealNumberPrecision(3) << trk.gArr[i].ptA.easting << ","
+                   << qSetRealNumberPrecision(3) << trk.gArr[i].ptA.northing << ","
+                   << Qt::endl;
+
+            writer << qSetRealNumberPrecision(3) << trk.gArr[i].ptB.easting << ","
+                   << qSetRealNumberPrecision(3) << trk.gArr[i].ptB.northing << ","
+                   << Qt::endl;
+
+            //write out the nudgedistance
+            writer << trk.gArr[i].nudgeDistance << Qt::endl;
+
+            //write out the mode
+            writer << trk.gArr[i].mode << Qt::endl;
+
+            //visible?
+            if (trk.gArr[i].isVisible)
+                writer << "True" << Qt::endl;
+            else
+                writer << "False" << Qt::endl;
+
+            //write out the points of ref line
+            int cnt2 = trk.gArr[i].curvePts.count();
+
+            writer << cnt2 << Qt::endl;
+            if (trk.gArr[i].curvePts.count() > 0)
+            {
+                for (int j = 0; j < cnt2; j++)
+                    writer << qSetRealNumberPrecision(3) << trk.gArr[i].curvePts[j].easting << ","
+                           << qSetRealNumberPrecision(3) << trk.gArr[i].curvePts[j].northing << ","
+                           << qSetRealNumberPrecision(3) << trk.gArr[i].curvePts[j].heading
+                           << Qt::endl;
+            }
+        }
+    }
+    FileSaveABLines();
+    FileSaveCurveLines();
+}
+
+void FormGPS::FileLoadTracks()
+{
+    trk.gArr.clear();
+
+    //current field directory should already exist
+    QString directoryName = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/" + QCoreApplication::applicationName() + "/Fields/" + currentFieldDirectory;
+
+    QDir loadDir(directoryName);
+    if (!loadDir.exists()) {
+        bool ok = loadDir.mkpath(directoryName);
+        if (!ok) {
+            qWarning() << "Couldn't create path " << directoryName;
+            TimedMessageBox(1000,tr("Cannot create field directory!"),tr("Cannot create field directory at ") + directoryName);
+            return;
+        }
+    }
+
+    QString filename = directoryName + "/" + caseInsensitiveFilename(directoryName, "TrackLines.txt");
+
+    QFile headfile(filename);
+    if (!headfile.open(QIODevice::ReadOnly))
+    {
+        FileLoadABLines();
+        FileLoadCurveLines();
+        FileSaveTracks();
+        return;
+    }
+
+    QTextStream reader(&headfile);
+    reader.setLocale(QLocale::C);
+
+
+    QString line;
+
+    //read header $CurveLine
+    line = reader.readLine();
+
+    while (!reader.atEnd())
+    {
+        line = reader.readLine();
+        if(line.isNull()) break; //no more to read
+
+        trk.gArr.append(CTrk());
+        trk.idx = trk.gArr.count() - 1;
+
+        //read header $CurveLine
+        trk.gArr[trk.idx].name = reader.readLine();
+
+        trk.gArr[trk.idx].heading = reader.readLine().toDouble();
+
+        line = reader.readLine();
+        QStringList words = line.split(",");
+        if (words.count() < 2) {
+            TimedMessageBox(1000,tr("Corrupt File!"), tr("Corrupt TracksList.txt. Not all tracks were loaded."));
+            trk.gArr.pop_back();
+            trk.idx = trk.gArr.count() - 1;
+            return;
+        }
+
+        trk.gArr[trk.idx].ptA = Vec2(words[0].toDouble(),words[1].toDouble());
+
+        line = reader.readLine();
+        if (words.count() < 2) {
+            TimedMessageBox(1000,tr("Corrupt File!"), tr("Corrupt TracksList.txt. Not all tracks were loaded."));
+            trk.gArr.pop_back();
+            trk.idx = trk.gArr.count() - 1;
+            return;
+        }
+
+        trk.gArr[trk.idx].ptB = Vec2(words[0].toDouble(),words[1].toDouble());
+
+        line = reader.readLine();
+        trk.gArr[trk.idx].nudgeDistance = line.toDouble();
+
+        line = reader.readLine();
+        trk.gArr[trk.idx].mode = line.toInt();
+
+        line = reader.readLine();
+        if (line == "True")
+            trk.gArr[trk.idx].isVisible = true;
+        else
+            trk.gArr[trk.idx].isVisible = false;
+
+        line = reader.readLine();
+        int numPoints = line.toInt();
+
+        if (numPoints > 3)
+        {
+            trk.gArr[trk.idx].curvePts.clear();
+
+            for (int i = 0; i < numPoints; i++)
+            {
+                line = reader.readLine();
+                words = line.split(',');
+                if (words.count() < 3) {
+                    TimedMessageBox(1000,tr("Corrupt File!"), tr("Corrupt TracksList.txt. Not all tracks were loaded."));
+                    trk.gArr.pop_back();
+                    trk.idx = trk.gArr.count() - 1;
+                    return;
+                }
+
+                trk.gArr[trk.idx].curvePts.append(Vec3(words[0].toDouble(),
+                                                       words[1].toDouble(),
+                                                       words[2].toDouble()));
+            }
+        }
+    }
 }
 
 void FormGPS::FileSaveCurveLines()
@@ -1893,6 +2090,12 @@ void FormGPS::FileLoadRecPath()
         {
             line = reader.readLine();
             QStringList words = line.split(',');
+            if (words.count() < 5) {
+                recPath.recList.clear();
+                qWarning() << "Ignoring " << filename << " because it is corrupt and cannot be read.";
+                return;
+            }
+
             CRecPathPt point(
                 words[0].toDouble(),
                 words[1].toDouble(),

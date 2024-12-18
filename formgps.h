@@ -479,6 +479,8 @@ public:
 
     void FileSaveHeadLines();
     void FileLoadHeadLines();
+    void FileSaveTracks();
+    void FileLoadTracks();
     void FileSaveCurveLines();
     void FileLoadCurveLines();
     void FileSaveABLines();
