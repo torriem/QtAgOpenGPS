@@ -903,45 +903,7 @@ bool FormGPS::FileOpenField(QString fieldDir, int flags)
     if (flags & LOAD_LINES) {
 
         // ABLine -------------------------------------------------------------------------------------------------
-        FileLoadABLines();
-
-        if (ABLine.lineArr.count() > 0)
-        {
-            ABLine.numABLineSelected = 1;
-            ABLine.refPoint1 = ABLine.lineArr[ABLine.numABLineSelected - 1].origin;
-            //ABLine.refPoint2 = ABLine.lineArr[ABLine.numABLineSelected - 1].ref2;
-            ABLine.abHeading = ABLine.lineArr[ABLine.numABLineSelected - 1].heading;
-            ABLine.SetABLineByHeading();
-            ABLine.isABLineSet = false;
-            ABLine.isABLineLoaded = true;
-        }
-        else
-        {
-            ABLine.isABLineSet = false;
-            ABLine.isABLineLoaded = false;
-        }
-
-
-        //CurveLines
-        FileLoadCurveLines();
-        if (curve.curveArr.count() > 0)
-        {
-            curve.numCurveLineSelected = 1;
-            int idx = curve.numCurveLineSelected - 1;
-            curve.aveLineHeading = curve.curveArr[idx].aveHeading;
-
-            curve.refList.clear();
-            for (int i = 0; i < curve.curveArr[idx].curvePts.count(); i++)
-            {
-                curve.refList.append(curve.curveArr[idx].curvePts[i]);
-            }
-            curve.isCurveSet = true;
-        }
-        else
-        {
-            curve.isCurveSet = false;
-            curve.refList.clear();
-        }
+        FileLoadTracks();
     }
 
     if (flags & LOAD_MAPPING) {
@@ -1579,6 +1541,7 @@ void FormGPS::FileCreateElevation()
 
     writer << "StartFix" << Qt::endl;
     writer << pn.latitude << "," << pn.longitude << Qt::endl;
+    writer << "Latitude,Longitude,Elevation,Quality,Easting,Northing,Heading,Roll";
 
     fieldFile.close();
 }
@@ -2205,7 +2168,6 @@ void FormGPS::FileSaveNMEA()
 
     QTextStream writer(&nmeafile);
     writer.setLocale(QLocale::C);
-    writer.setRealNumberNotation(QTextStream::FixedNotation);
 
     writer << pn.logNMEASentence;
 
@@ -2239,11 +2201,10 @@ void FormGPS::FileSaveElevation()
 
     QTextStream writer(&elevfile);
     writer.setLocale(QLocale::C);
-    writer.setRealNumberNotation(QTextStream::FixedNotation);
 
-    writer << sbFix;
+    writer << sbGrid;
 
-    sbFix.clear();
+    sbGrid.clear();
 
     elevfile.close();
 }
