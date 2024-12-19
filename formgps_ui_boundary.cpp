@@ -30,7 +30,7 @@ void FormGPS::boundary_update_list() {
 
     int index = 0;
 
-    for (CBoundaryList b: bnd.bndList) {
+    for (CBoundaryList &b: bnd.bndList) {
         bndMap["index"] = index++;
         bndMap["area"] = b.area;
         bndMap["drive_through"] = b.isDriveThru;
