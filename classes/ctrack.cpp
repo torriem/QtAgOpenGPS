@@ -15,6 +15,11 @@ CTrack::CTrack(QObject* parent) : QAbstractListModel(parent)
     m_roleNames[NameRole] = "name";
     m_roleNames[IsVisibleRole] = "isVisible";
     m_roleNames[ModeRole] = "mode";
+    m_roleNames[ptA] = "ptA";
+    m_roleNames[ptB] = "ptB";
+    m_roleNames[endPtA] = "endPtA";
+    m_roleNames[endPtB] = "endPtB";
+    m_roleNames[nudgeDistance] = "nudgeDistance";
 
     idx = -1;
 }
@@ -332,12 +337,22 @@ QVariant CTrack::data(const QModelIndex &index, int role) const
     const CTrk &trk = gArr.at(row);
     qDebug() << row << role << trk.name;
     switch(role) {
-    case NameRole:
+    case RoleNames::NameRole:
         return trk.name;
-    case ModeRole:
+    case RoleNames::ModeRole:
         return trk.mode;
-    case IsVisibleRole:
+    case RoleNames::IsVisibleRole:
         return trk.isVisible;
+    case RoleNames::ptA:
+        return QVector2D(trk.ptA.easting, trk.ptA.northing);
+    case RoleNames::ptB:
+        return QVector2D(trk.ptB.easting, trk.ptB.northing);
+    case RoleNames::endPtA:
+        return QVector2D(trk.endPtA.easting, trk.endPtA.northing);
+    case RoleNames::endPtB:
+        return QVector2D(trk.endPtB.easting, trk.endPtB.northing);
+    case RoleNames::nudgeDistance:
+        return trk.nudgeDistance;
     }
 
     return QVariant();
