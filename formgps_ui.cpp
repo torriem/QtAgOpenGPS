@@ -48,6 +48,8 @@ void FormGPS::setupGui()
     //populate vehicle_list property in vehicleInterface
     vehicle_update_list();
 
+    rootContext()->setContextProperty("trk", &trk);
+
 #ifdef LOCAL_QML
     // Look for QML files relative to our current directory
     QStringList search_pathes = { "..",
@@ -171,6 +173,8 @@ void FormGPS::setupGui()
 
     connect(aog,SIGNAL(sectionButtonStateChanged()), &tool.sectionButtonState, SLOT(onStatesUpdated()));
 
+
+    /*
     //AB Line Picker
     //react to UI changing these properties
     connect(aog,SIGNAL(currentABLineChanged()), this, SLOT(update_current_ABline_from_qml()));
@@ -182,6 +186,7 @@ void FormGPS::setupGui()
     connect(linesInterface,SIGNAL(abLine_deleteLine(int)), this, SLOT( delete_ABLine(int)));
     connect(linesInterface,SIGNAL(abLine_swapHeading(int)), this, SLOT(swap_heading_ABLine(int)));
     connect(linesInterface,SIGNAL(abLine_changeName(int, QString)), this, SLOT(change_name_ABLine(int,QString)));
+    */
 
     //on screen buttons
     connect(aog,SIGNAL(zoomIn()), this, SLOT(onBtnZoomIn_clicked()));

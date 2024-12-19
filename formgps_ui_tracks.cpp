@@ -6,6 +6,7 @@
 #include "qmlutil.h"
 #include "aogproperty.h"
 
+/*
 void FormGPS::update_current_ABline_from_qml()
 {
     //AOGInterface currentABLine property changed; sync our
@@ -184,4 +185,4 @@ void FormGPS::change_name_ABLine(int which_one, QString name)
         FileSaveABLines();
     }
 }
-
+*/
