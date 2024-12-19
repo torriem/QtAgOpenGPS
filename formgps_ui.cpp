@@ -49,6 +49,7 @@ void FormGPS::setupGui()
     vehicle_update_list();
 
     rootContext()->setContextProperty("trk", &trk);
+    rootContext()->setContextProperty("tram", &tram);
 
 #ifdef LOCAL_QML
     // Look for QML files relative to our current directory

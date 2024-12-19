@@ -12,7 +12,7 @@
 //      to refer to settings
 #define DEFAULT_EQWIDTH 24
 
-CTram::CTram()
+CTram::CTram(QObject *parent): QObject(parent)
 {
     isLeftManualOn = false;
     isRightManualOn = false;
