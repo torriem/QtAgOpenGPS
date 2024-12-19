@@ -58,7 +58,7 @@ public:
 
     //InterfaceProperty<VehicleInterface,bool> hydLiftDown = InterfaceProperty<VehicleInterface,bool>("hydLiftDown");
     bool hydLiftDown = false;
-    Q_PROPERTY(bool hydLiftDown MEMBER hydLiftDown NOTIFY hydLiftDownChange)
+    Q_PROPERTY(bool hydLiftDown MEMBER hydLiftDown NOTIFY hydLiftDownChanged)
 
     double stanleyIntegralDistanceAwayTriggerAB, stanleyIntegralGainAB, purePursuitIntegralGain;
 
