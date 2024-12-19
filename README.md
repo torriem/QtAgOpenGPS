@@ -2,6 +2,14 @@ QtAgOpenGPS
 ===========
 Ag Precision Mapping and Section Control Software
 
+Note!
+==========
+I haven't compiled for Windows in awhile. If this branch ever won't compile on Windows, contact me, or have a go at it yourself!
+
+Dev Notes
+----------
+Developer how-to has been moved to the [wiki](https://github.com/torriem/qtagopengps/wiki)
+
 What is QtAgOpenGPS?
 --------------------
 QtAgOpenGPS is a direct port of Brian Tischler's [AgOpenGPS](https://github.com/farmerbriantee/AgOpenGPS), which was originally
@@ -47,8 +55,9 @@ remains GPLv3 for now.
 
 Requirements
 ------------
-QtAOG requires Qt 5.9 or newer to build, on any Qt-supported platform
+QtAOG requires Qt 6.0 or newer to build, on any Qt-supported platform
 that supports OpenGL ES 2 or newer, or DirectX on Windows.
+It also requires cmake 3.22 or newer.
 
 Why this Port?
 --------------
@@ -72,7 +81,7 @@ Earlier I changed the case of methods to be more standard C++. I've
 started to undo that and make the method calls as close to AOG's
 original names as possible.
 
-Mmost variables, functions, and methods, retain the AOG names, unless
+Most variables, functions, and methods, retain the AOG names, unless
 architectural differences require moving code into different sections.
 For example, the OpenGL code runs in a different thread than the main
 GUI loop, the logic to set UI state has been pulled out of the function
@@ -82,18 +91,22 @@ each time we draw the frame we have to set all the variables including
 the model view and perspective matrices.  Of course in OpenGL ES we
 must manage those matrices ourselves anyway.
 
-AgIO has not yet been ported, so once UDP functionality is working,
-AgIO will be required for now.  It does not yet run under Wine on
-Linux.  The simulator works, though.
+QtAgIO Notes
+-------------
+QtAgIO only works with UDP. The GUI is only half done.
+Note that the loopback
+ports are changed to 17770 and 15550, instead of 17777 and 15555 like AOG,
+so we can run with AOG on the same device. If you change back to 17777, and 
+15555, (in the settings.ini), you can run QtAOG with Brian's AgIO, and vice versa.
+
+The network flow is not all correct yet. There is no "try to reconnect" code
+right now. If you didn't connect the first time, you have to restart QtAgIO.
 
 Status of the Port
 ------------------
 As of Jan 4, 2023, the backend code is now tracking pretty closely to the
 progress being made on AgOpenGPS/isoxml branch, at least as of Dec 20,
-2023.  UDP is not yet working.
-
-David Wedel is working on the QML gui which we plan to get working during
-the month of January.
+2023.
 
 UI is still mostly non-present, but works with the built-in simulator.
 For testing purposes, a job and field is automatically started, and a 
@@ -115,80 +128,3 @@ Bugs and TODOs
 - Hook in the GUI that David Wedel is contributing.
 
 ----------------
-
-# Compiling from source
-
-(As tested on a fresh Ubuntu 22.0.4 installation)
-
-- sudo apt update
-- sudo apt upgrade
-  - (reboot if necessary)
-- sudo apt install git libxcb-cursor0 -y
-
-## Install QT Creator
-Look here: https://www.qt.io/offline-installers in the "QT Creator" section.
-
-- Download the file "QT Creator x.x.x for Linux 64-bit"
-- Set it to be executable
-  - chmod +x qt-creator-opensource-linux-x86_64-12.0.1.run 
-  - run it to install, log in (yes, you have to register first) and accept the default path in your home profile if that's your thing
-  - accept the defaults
-  - That'll do, pig
-
-## Grab the source
-- mkdir github
-- cd github
-- git clone https://github.com/torriem/QtAgOpenGPS.git
-  - (if you want to switch branch away from main)
-  - git branch -r
-  - (if you see something you like)
-  - git pull origin __branchname__
-  - git checkout -b __branchname__
-
-## Dependencies
-- sudo apt install qtcreator qtbase5-dev qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qt-labs-folderlistmodel qml-module-qtquick-dialogs qml-module-qtquick-extras qml-module-qtquick-dialogs qml-module-qtquick-extras qt5-qmake cmake libqt5serialbus5-dev libqt5serialport5-dev qtdeclarative5-dev qttools5-dev qml-module-qtquick-shapes -y
-- (ensure you are in the github/QtAgOpenGPS folder)
-- qmake
-- make
-- (open a beer)
-- (drink beer)
-- ./QtAgOpenGPS &
-
-# Contributing to source
-
-## Creating scalable UI's
-
-- This is very important. Creating a GUI that works on a phone screen as well as a giant desktop isn't easy. I thought I'd write this up because I don't want to convert your code to something that looks ok on a phone (and because it's more fun writing this than converting all my existing code to scalable like I need to).
- ### Every width, length, anchor margin that is coded to a number MUST have the scale factor calculated in. 
- - My first 6 months of code was written like:
-
-    - ```width: 500```
-    - ```height: 100```
-    - ```anchors.left: 10```
-    - ```anchors.top: 10```
-    - etc etc
-
-- Now if all you're going to do is use your application on is your computer, no issue. BUT try that on a phone and you'll regret ever trying to code. 
-- The correct way is(as I learned yesterday):
-    - ```width: 500 * theme.scaleWidth```
-    - ```height: 100 * theme.scaleHeight```
-    - ```anchors.left: 10 * theme.scaleWidth```
-    - ```anchors.top: 10 * theme.scaleHeight```
-
-- "theme.scaleWidth/scaleHeight" change based on screen size, so the GUI will look the same on a phone, just smaller.
-- Now if your ```width: parent.width / 2```(or whatever), no scale factor is necessary, since parent will scale correctly.
-- But if you go ```width: parent.width / 2 + 10```, you must change to ```width: parent.width / 2 + (10 * theme.scaleWidth)``` to figure in the scale factor.
-
-- Obviously the width related sizes need ```theme.scaleWidth``` and the height related sizes need ```theme.scaleHeight```
-
-### ```anchors.margins``` is off limits!
-- If you go ```anchors.margins: 10```, then what do you set your scale factor to?? Is it a width setting, or a height?  
-The answer is neither. So don't use it. Instead, go:
-    - ```anchors.left: 10 * theme.scaleWidth```
-    - ```anchors.top: 10 * theme.scaleHeight```
-    - ```anchors.right: 10 * theme.scaleWidth```
-    - ```anchors.bottom: 10 * theme.scaleHeight```
-<br>  
-    
-<br>  
-Easy, right? If you have questions, PLEASE ask someone, instead of writing 3000 lines of code with no scaling!

@@ -1,9 +1,13 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// ABLine drawer off boundary
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 
 import ".."
-import "../components"
+import "../components" as Comp
 //import AgOpenGPS 1.0
 
 Item {
@@ -12,7 +16,7 @@ Item {
 		lineDrawer.visible = true
 	}
 
-	TopLine{
+    Comp.TopLine{
 		id: topLine
 		titleText: "Click 2 points on the Boundary to Begin"
 	}
@@ -28,7 +32,7 @@ Item {
 			id: lineDrawerField
 			objectName: "lineDrawerField"
 			anchors.fill: parent
-			TextLine{ text: "nothing to see here yet"}
+            Comp.TextLine{ text: "nothing to see here yet"}
 
 			signal clicked(var mouse)
 
@@ -61,54 +65,54 @@ Item {
 			columns: 2
 			rows: 9
 			flow: Grid.LeftToRight
-			IconButtonTransparent{
-				icon.source: "/images/APlusPlusB.png"
+            Comp.IconButtonTransparent{
+				icon.source: prefix + "/images/APlusPlusB.png"
 				Layout.alignment: Qt.AlignCenter
 			}
-			IconButtonTransparent{
-				icon.source: "/images/MappingOff.png"
+            Comp.IconButtonTransparent{
+				icon.source: prefix + "/images/MappingOff.png"
 				Layout.alignment: Qt.AlignCenter
 			}
-			IconButtonTransparent{
-				icon.source: "/images/APlusPlusA.png"
+            Comp.IconButtonTransparent{
+				icon.source: prefix + "/images/APlusPlusA.png"
 				Layout.alignment: Qt.AlignCenter
 			}
-			IconButtonTransparent{
-				icon.source: "/images/HeadlandDeletePoints.png"
+            Comp.IconButtonTransparent{
+				icon.source: prefix + "/images/HeadlandDeletePoints.png"
 				Layout.alignment: Qt.AlignCenter
 			}
-			IconButtonTransparent{
-				icon.source: "/images/TrackVisible.png"
+            Comp.IconButtonTransparent{
+				icon.source: prefix + "/images/TrackVisible.png"
 				Layout.alignment: Qt.AlignCenter
 			}
-			IconButtonTransparent{
+            Comp.IconButtonTransparent{
 				id: boundaryCurve
-				icon.source: "/images/BoundaryCurveLine.png"
+				icon.source: prefix + "/images/BoundaryCurveLine.png"
 				Layout.alignment: Qt.AlignCenter
 				text: "Boundary Curve"
 			}
-			IconButtonTransparent{
-				icon.source: "/images/ZoomOGL.png"
+            Comp.IconButtonTransparent{
+				icon.source: prefix + "/images/ZoomOGL.png"
 				Layout.alignment: Qt.AlignCenter
 			}
-			IconButtonTransparent{
-				icon.source: "/images/Trash.png"
+            Comp.IconButtonTransparent{
+				icon.source: prefix + "/images/Trash.png"
 				Layout.alignment: Qt.AlignCenter
 			}
-			IconButtonTransparent{
-				icon.source: "/images/ABTrackCurve.png"
+            Comp.IconButtonTransparent{
+				icon.source: prefix + "/images/ABTrackCurve.png"
 				Layout.alignment: Qt.AlignCenter
 			}
-			IconButtonTransparent{
-				icon.source: "/images/ABTrackAB.png"
+            Comp.IconButtonTransparent{
+				icon.source: prefix + "/images/ABTrackAB.png"
 				Layout.alignment: Qt.AlignCenter
 			}
-			IconButtonTransparent{
-				icon.source: "/images/ABLineCycleBk.png"
+            Comp.IconButtonTransparent{
+				icon.source: prefix + "/images/ABLineCycleBk.png"
 				Layout.alignment: Qt.AlignCenter
 			}
-			IconButtonTransparent{
-				icon.source: "/images/ABLineCycle.png"
+            Comp.IconButtonTransparent{
+				icon.source: prefix + "/images/ABLineCycle.png"
 				Layout.alignment: Qt.AlignCenter
 			}
 			Rectangle{
@@ -130,8 +134,8 @@ Item {
 				text: "1/16"
 				Layout.alignment: Qt.AlignCenter
 			}
-			IconButtonTransparent{
-				icon.source: "/images/Time.png"
+            Comp.IconButtonTransparent{
+				icon.source: prefix + "/images/Time.png"
 				Layout.alignment: Qt.AlignCenter
 				onClicked: {
 					var time = new Date().toLocaleTimeString(Qt.locale())
@@ -139,15 +143,15 @@ Item {
 				}
 			}
 
-			IconButtonTransparent{
-				icon.source: "/images/Cancel64.png"
+            Comp.IconButtonTransparent{
+				icon.source: prefix + "/images/Cancel64.png"
 				Layout.alignment: Qt.AlignCenter
 				onClicked: lineDrawer.visible = false
 			}
 
-			IconButtonTransparent{
+            Comp.IconButtonTransparent{
 				objectName: "btnDrawerSave"
-				icon.source: "/images/OK64.png"
+				icon.source: prefix + "/images/OK64.png"
 				onClicked: lineDrawer.visible = false
 				Layout.alignment: Qt.AlignCenter
 			}

@@ -7,7 +7,7 @@
 
 class AOGInterface;
 class FieldInterface;
-class VehicleInterface;
+//class VehicleInterface;
 class LinesInterface;
 class BoundaryInterface;
 class RecordedPathInterface;

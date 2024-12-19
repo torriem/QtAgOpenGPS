@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Interface between qml settings and backend
 #include "qmlsettings.h"
 #include <QDateTime>
 #include <QSettings>
@@ -24,7 +28,7 @@ void QMLSettings::loadSettings() {
     QString settings_key;
     QVariant settings_value;
 
-    for (QString key: qml_to_settings_map.keys()) {
+    for (QString &key: qml_to_settings_map.keys()) {
         settings_key = qml_to_settings_map[key];
         settings_value = settings->value(settings_key, unset);
 
@@ -40,13 +44,13 @@ void QMLSettings::loadSettings() {
             //special case these two which are lists of doubles and integers respectively
             if (settings_key == "tool/zones" && QString(settings_value.typeName()) == "QStringList") {
                 QVariantList l;
-                for(QString i: settings_value.toStringList()) {
+                for(QString &i: settings_value.toStringList()) {
                     l.append(QVariant(i.toInt()));
                 }
                 settings_value = l;
             } else if (settings_key == "todo/relayPincofig" && QString(settings_value.typeName()) == "QStringList"){
                 QVariantList l;
-                for(QString i: settings_value.toStringList()) {
+                for(QString &i: settings_value.toStringList()) {
                     l.append(QVariant(i.toInt()));
                 }
                 settings_value = l;

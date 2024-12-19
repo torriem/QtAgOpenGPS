@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+//
 import QtQuick 2.0
 
 //a collection of functions to do unit and coordinate conversions
@@ -315,6 +319,12 @@ Item {
     function radians_to_deg(radians){
         return radians * 180 / Math.PI
     }
+
+    function decimalRound(number, decimals) {
+        const factor = Math.pow(10, decimals);
+        return Math.round(number * factor) / factor;
+    }
+
 
     function distanceLatLon(latitude1, longitude1, latitude2, longitude2)
     {

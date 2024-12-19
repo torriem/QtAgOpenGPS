@@ -1,65 +1,39 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
 import QtQuick
 import QtQuick.Layouts
 import Qt.labs.folderlistmodel
 import QtQuick.Controls.Fusion
+import QtQuick.Controls.Material
 
 import ".."
 import "../components"
 
 Item {
     id: boundaryType
-
+    width: parent.width
+    height: parent.height
     function show() {
-        boundaryTypePopup.visible = true
+    boundaryTypePopup.visible = true
     }
 
     //----------pick whether to import kml or record------------------------------------
-    Popup{
+    Dialog{
         id: boundaryTypePopup
         //anchors.top: parent.top
         //anchors.left: parent.left
-        width: 250
-        height: 400
+        height: 350  * theme.scaleHeight
+        width:350  * theme.scaleWidth
         visible: boundaryType.visible
+        anchors.centerIn: parent
+
         modal: true
 
-        Rectangle{
+        TopLine{
             id: typeTopLine
-            anchors.top:parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.margins: 1
-            height: 30
-            color: "white"
-            z: 1
-            Text {
-                text: qsTr("Choose a Type")
-                font.pixelSize: 15
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                anchors.leftMargin: 5
-            }
-            Button{
-                objectName: "lineHelp"
-                height: parent.height
-                width: parent.height * 2
-                text: "?"
-                font.pixelSize: 15
-                anchors.right: typeClose.left
-                anchors.rightMargin: 10
-                anchors.verticalCenter: parent.verticalCenter
-            }
-            Button{
-                id: typeClose
-                height: parent.height
-                width: parent.height * 2
-                text: "×"
-                font.pixelSize: 15
-                anchors.right: parent.right
-                anchors.rightMargin: 2
-                anchors.verticalCenter: parent.verticalCenter
-            }
+            titleText: qsTr("Choose a Type")
         }
+
         Rectangle{
             id: typeMain
             anchors.bottom: parent.bottom
@@ -72,20 +46,20 @@ Item {
             Column{
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.topMargin: 10
+                anchors.topMargin: 10  * theme.scaleHeight
                 width: children.width
                 height: children.height
                 spacing: 60
                 IconButtonTransparent{
                     objectName: "btnBoundaryFromKML"
-                    icon.source: "/images/BoundaryLoadFromGE.png"
+                    icon.source: prefix + "/images/BoundaryLoadFromGE.png"
                     onClicked: {
                         boundaryKMLType.visible = true
                         boundaryType.visible = false
                     }
                 }
                 IconButtonTransparent{
-                    icon.source: "/images/SteerRight.png"
+                    icon.source: prefix + "/images/SteerRight.png"
                     onClicked: {
                         boundaryTypePopup.visible = false
                         boundaryRecord.visible = true
@@ -93,66 +67,37 @@ Item {
                     Text{
                         anchors.bottom: parent.top
                         anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.bottomMargin: 20
+                        anchors.bottomMargin: 20  * theme.scaleHeight
                         text: "?"
                         font.bold: true
                     }
                 }
             }
             IconButtonTransparent{
-                anchors.margins: 10
+                anchors.margins: 10  * theme.scaleHeight
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
-                icon.source: "/images/Cancel64.png"
+                icon.source: prefix + "/images/Cancel64.png"
                 onClicked: boundaryTypePopup.visible = false
             }
         }
     }
         //----------------Window for picking whether to import 1 or several kml files
-    Popup{
+    Dialog{
         id: boundaryKMLType
         //anchors.top: parent.top
         //anchors.left: parent.left
-        width: 250
+        height: 350  * theme.scaleHeight
+        width:200  * theme.scaleWidth
+        anchors.centerIn: parent
         visible: false
-        height: 400
-        Rectangle{
+
+
+        TopLine{
             id: kmlTypeTopLine
-            anchors.top:parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.margins: 1
-            height: 30
-            color: "white"
-            z: 1
-            Text {
-                text: qsTr("Choose a Type")
-                font.pixelSize: 15
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                anchors.leftMargin: 5
-            }
-            Button{
-                objectName: "lineHelp"
-                height: parent.height
-                width: parent.height * 2
-                text: "?"
-                font.pixelSize: 15
-                anchors.right: kmlTypeClose.left
-                anchors.rightMargin: 10
-                anchors.verticalCenter: parent.verticalCenter
-            }
-            Button{
-                id: kmlTypeClose
-                height: parent.height
-                width: parent.height * 2
-                text: "×"
-                font.pixelSize: 15
-                anchors.right: parent.right
-                anchors.rightMargin: 2
-                anchors.verticalCenter: parent.verticalCenter
-            }
+            titleText: qsTr("Choose a Type")
         }
+
         Rectangle{
             id: kmlTypeMain
             anchors.bottom: parent.bottom
@@ -165,27 +110,27 @@ Item {
             Column{
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.topMargin: 10
+                anchors.topMargin: 10  * theme.scaleHeight
                 width: children.width
                 height: children.height
                 spacing: 60
                 IconButtonTransparent{
                     objectName: "btnOneKML"
-                    icon.source: "/images/BoundaryLoadFromGE.png"
+                    icon.source: prefix + "/images/BoundaryLoadFromGE.png"
                     Text{
                         anchors.left: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.leftMargin: 20
+                        anchors.leftMargin: 20 * theme.scaleWidth
                         text: "+"
                     }
                 }
                 IconButtonTransparent{
                     objectName: "btnMultiKML"
-                    icon.source: "/images/BoundaryLoadMultiFromGE.png"
+                    icon.source: prefix + "/images/BoundaryLoadMultiFromGE.png"
                     Text{
                         anchors.left: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.leftMargin: 20
+                        anchors.leftMargin: 20 * theme.scaleWidth
                         text: "+++"
                     }
                 }
@@ -194,7 +139,7 @@ Item {
                 anchors.margins: 10
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
-                icon.source: "/images/Cancel64.png"
+                icon.source: prefix + "/images/Cancel64.png"
                 onClicked: boundaryKMLType.visible = false
             }
         }
@@ -204,9 +149,12 @@ Item {
         id: boundaryRecord
         //anchors.top: parent.top
         //anchors.left: parent.left
-        width: 250
+        height: 450  * theme.scaleHeight
+        width:250  * theme.scaleWidth
+        //anchors.centerIn: parent
+        x: 650  * theme.scaleHeight
+        y:100  * theme.scaleWidth
         visible: false
-        height: 415
         modal: false
         closePolicy: Popup.NoAutoClose
     }

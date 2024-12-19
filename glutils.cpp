@@ -1,3 +1,6 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
 #include "glutils.h"
 #include <QThread>
 #include <QOpenGLTexture>
@@ -62,87 +65,53 @@ void initializeShaders() {
 void initializeTextures() {
     QOpenGLTexture *t;
 
-    //  Background
-    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/Landscape.png"));
-    texture.append(t); //position 0 SKY?
+    texture.clear();
 
     t = new QOpenGLTexture(QImage(PREFIX "/images/textures/floor.png"));
     t->setMinMagFilters(QOpenGLTexture::Linear, QOpenGLTexture::Linear);
-    texture.append(t); //position 1 FLOOR
+    texture.append(t); //FLOOR
 
     t = new QOpenGLTexture(QImage(PREFIX "/images/textures/Font.png"));
     textureWidth = t->width();
     textureHeight= t->height();
-    texture.append(t); //position 2 FONT
-
-    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/Turn.png"));
-    texture.append(t); //position 3 TURN
-
-    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/TurnCancel.png"));
-    texture.append(t); //position 4 TURNCANCEL
-
-    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/TurnManual.png"));
-    texture.append(t); //position 5 TURNMANUAL
-
-    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/Compass.png"));
-    texture.append(t); //position 6 COMPASS
-
-    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/speedo.png"));
-    texture.append(t); //position 7 SPEEDO
-
-    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/SpeedoNedle.png"));
-    texture.append(t); //position 8 SPEEDONEEDLE
+    texture.append(t); //FONT
 
     t = new QOpenGLTexture(QImage(PREFIX "/images/textures/Lift.png"));
-    texture.append(t); //position 9 HYDIFT
-
-    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/LandscapeNight.png"));
-    texture.append(t); //position 10 SKYNIGHT
-
-    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/z_SteerPointer.png"));
-    texture.append(t); //position 11 STEER_POINTER
-
-    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/z_SteerDot.png"));
-    texture.append(t); //position 12 STEER_DOT
+    texture.append(t); //HYDIFT
 
     t = new QOpenGLTexture(QImage(PREFIX "/images/textures/z_Tractor.png"));
-    texture.append(t); //position 13 TRACTOR
+    texture.append(t); //TRACTOR
 
     t = new QOpenGLTexture(QImage(PREFIX "/images/textures/z_QuestionMark.png"));
-    texture.append(t); //position 14 QUESTION_MARK
+    texture.append(t); //QUESTION_MARK
 
     t = new QOpenGLTexture(QImage(PREFIX "/images/textures/FrontWheels.png"));
-    texture.append(t); //position 15 FRONT_WHEELS
+    texture.append(t); //FRONT_WHEELS
 
     t = new QOpenGLTexture(QImage(PREFIX "/images/textures/Tractor4WDFront.png"));
-    texture.append(t); //position 16 TRACTOR_4WD_FRONT
+    texture.append(t); //TRACTOR_4WD_FRONT
 
     t = new QOpenGLTexture(QImage(PREFIX "/images/textures/Tractor4WDRear.png"));
-    texture.append(t); //position 17 TRACTOR_4WD_REAR
+    texture.append(t); //TRACTOR_4WD_REAR
 
     t = new QOpenGLTexture(QImage(PREFIX "/images/textures/Harvester.png"));
-    texture.append(t); //position 18 HARVESTER
-
-    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/z_LateralManual.png"));
-    texture.append(t); //position 19 LATERAL_MANUAL
-
-    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/bingMap.png"));
-    texture.append(t); //position 20 BING_MAP
-
-    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/z_NoGPS.png"));
-    texture.append(t); //position 21 NOGPS
-
-    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/bingMap.png")); //unused I think
-    texture.append(t); //position 22 ZOOM_IN
-
-    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/bingMap.png"));
-    texture.append(t); //position 23 ZOOM_OUT
-
-    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/bingMap.png"));
-    texture.append(t); //position 24 PAN
+    texture.append(t); //HARVESTER
 
     t = new QOpenGLTexture(QImage(PREFIX "/images/textures/z_Tool.png"));
-    texture.append(t); //position 25 TOOLWHEELS
+    texture.append(t); //TOOLWHEELS
+
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/z_Tire.png"));
+    texture.append(t); //TIRE
+
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/z_TramOnOff.png"));
+    texture.append(t); //TRAMDOT
+
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/YouTurnU.png"));
+    texture.append(t); //YOUTURNU
+
+    t = new QOpenGLTexture(QImage(PREFIX "/images/textures/YouTurnH.png"));
+    texture.append(t); //YOUTURNH
+
 }
 
 void destroyShaders() {
@@ -166,6 +135,7 @@ void destroyShaders() {
 
 void destroyTextures() {
 
+    //TODO: compiler says this code is problematic.
     for(const QOpenGLTexture *t: texture) {
         delete t;
     }
@@ -273,7 +243,7 @@ void glDrawArraysTexture(QOpenGLFunctions *gl,
                          bool useColor = false,
                          QColor color = QColor::fromRgbF(1,1,1))
 {
-    gl->glEnable(GL_TEXTURE_2D);
+    //gl->glEnable(GL_TEXTURE_2D);
     //bind shader
     assert(texShader->bind());
     //set mvp matrix
@@ -312,7 +282,7 @@ void glDrawArraysTexture(QOpenGLFunctions *gl,
     vertexBuffer.release();
     //release shader
     texShader->release();
-    gl->glDisable(GL_TEXTURE_2D);
+    //gl->glDisable(GL_TEXTURE_2D);
 }
 void DrawPolygon(QOpenGLFunctions *gl, QMatrix4x4 mvp, QVector<Vec2> &polygon, float size, QColor color)
 {

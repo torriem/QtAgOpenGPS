@@ -1,13 +1,19 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Menu when we create new field
 import QtQuick
 import QtQuick.Controls.Fusion
+import QtQuick.Controls.Material
 
 import ".."
 import "../components"
 
-Popup {
+Dialog {
     id: fieldNew
-    width: 500
-    height: 300
+    height: 300  * theme.scaleHeight
+    width:700  * theme.scaleWidth
+    anchors.centerIn: parent
     visible: false
     function show(){
         parent.visible = true
@@ -17,13 +23,16 @@ Popup {
         if (visible)
             newField.text = ""
     }
-
+    TopLine{
+        id: topLine
+        titleText: qsTr("New Field")
+    }
 
     //color: "lightgray"
     Rectangle{
         id: textEntry
-        width: 450
-        height: 40
+        width:parent.width*0.75
+        height: 50  * theme.scaleHeight
         anchors.top:parent.top
         anchors.topMargin: 50
         anchors.horizontalCenter: parent.horizontalCenter
@@ -72,7 +81,7 @@ Popup {
         IconButtonTransparent{
             objectName: "btnAddDate"
             id: marker
-            icon.source: "/images/JobNameCalendar.png"
+            icon.source: prefix + "/images/JobNameCalendar.png"
             Text{
                 anchors.right: parent.left
                 anchors.verticalCenter: parent.verticalCenter
@@ -86,7 +95,7 @@ Popup {
         }
         IconButtonTransparent{
             objectName: "btnAddTime"
-            icon.source: "/images/JobNameTime.png"
+            icon.source: prefix + "/images/JobNameTime.png"
             Text{
                 anchors.right: parent.left
                 anchors.verticalCenter: parent.verticalCenter
@@ -112,12 +121,12 @@ Popup {
                 fieldNew.visible = false
                 newField.text = ""
             }
-            icon.source: "/images/Cancel64.png"
+            icon.source: prefix + "/images/Cancel64.png"
         }
         IconButtonTransparent{
-            enabled: newField.text != "" && errorMessage.visible == false;
+            enabled: newField.text !== "" && errorMessage.visible === false;
             objectName: "btnSave"
-            icon.source: "/images/OK64.png"
+            icon.source: prefix + "/images/OK64.png"
 
             onClicked: {
                 fieldNew.visible = false

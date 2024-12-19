@@ -6,6 +6,7 @@
 #include "vec2.h"
 #include "vec3.h"
 #include <QString>
+#include "ctrack.h"
 
 class QOpenGLFunctions;
 //namespace AgOpenGPS
@@ -46,8 +47,8 @@ public:
 
 
     //the current AB guidance line
-    Vec3 currentABLineP1 = Vec3(0.0, 0.0, 0.0);
-    Vec3 currentABLineP2 = Vec3(0.0, 1.0, 0.0);
+    Vec3 currentLinePtA = Vec3(0.0, 0.0, 0.0);
+    Vec3 currentLinePtB = Vec3(0.0, 1.0, 0.0);
 
     double distanceFromCurrentLinePivot;
     double distanceFromRefLine = 0.0;
@@ -56,38 +57,32 @@ public:
     Vec2 goalPointAB = Vec2(0, 0);
 
     //List of all available ABLines
-    QVector<CABLines> lineArr;
-    int numABLines, numABLineSelected;
+    CTrk refLine;
 
-    double howManyPathsAway = 0.0, moveDistance;
-    bool isABLineBeingSet;
-    bool isABLineSet, isABLineLoaded;
+    double howManyPathsAway = 0.0;
+    bool isMakingABLine;
     bool isHeadingSameWay = true;
-    bool isBtnABLineOn;
 
     double ppRadiusAB;
+
     Vec2 radiusPointAB;
     double rEastAB, rNorthAB;
 
-    //the reference line endpoints
-    Vec2 refABLineP1 = Vec2(0.0, 0.0);
-    Vec2 refABLineP2 = Vec2(0.0, 1.0);
-    double refLineSide = 1.0;
-
-    //the two inital A and B points
-    Vec2 refPoint1 = Vec2(0.2, 0.15);
-    Vec2 refPoint2 = Vec2(0.3, 0.3);
     double snapDistance, lastSecond = 0;
     double steerAngleAB;
     int lineWidth;
 
     //design
-    Vec2 desPoint1 = Vec2(0.2, 0.15);
+    Vec2 desPtA = Vec2(0.2, 0.15);
+    Vec2 desPtB = Vec2(0.2, 0.15);
 
-    Vec2 desPoint2 = Vec2(0.3, 0.3);
+    Vec2 desLineEndA = Vec2(0.3, 0.3);
+    Vec2 desLineEndB = Vec2(0.3, 0.3);
+
+    Vec2 refNudgePtA = Vec2(1,1);
+    Vec2 refNudgePtB = Vec2(2,2);
+
     double desHeading = 0;
-    Vec2 desP1 = Vec2(0.0, 0.0);
-    Vec2 desP2 = Vec2(999997, 1.0);
     QString desName = "";
 
     double pivotDistanceError, pivotDistanceErrorLast, pivotDerivative, pivotDerivativeSmoothed;
@@ -105,28 +100,94 @@ public:
 
     void BuildCurrentABLineList(Vec3 pivot,
                                 double secondsSinceStart,
+                                CTrack &trk,
                                 const CYouTurn &yt,
                                 const CVehicle &vehicle);
     void GetCurrentABLine(Vec3 pivot, Vec3 steer,
-                          double secondsSinceStart,
                           bool isAutoSteerBtnOn,
-                          bool steerSwitchHigh,
                           CVehicle &vehicle,
                           CYouTurn &yt,
                           const CAHRS &ahrs,
                           CGuidance &gyd,
-                          CNMEA &pn);
-    void DrawABLines(QOpenGLFunctions *g, const QMatrix4x4 &mvp,
+                          CNMEA &pn, int &makeUTurnCounter);
+    void DrawABLineNew(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
+                       const CCamera &camera);
+
+    void DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                      bool isFontOn,
-                     CBoundary &bnd,
+                     const CTrack &trk,
                      CYouTurn &yt,
                      const CCamera &camera,
                      const CGuidance &gyd);
-    void BuildTram(CBoundary &bnd, CTram &tram);
-    void DeleteAB();
-    void SetABLineByBPoint(const CVehicle &vehicle);
-    void SetABLineByHeading(); //do we need to pass in heading somewhere from the main form?
-    void MoveABLine(double dist);
+    void BuildTram(const CTrack &trk, CBoundary &bnd, CTram &tram);
+
+    CABLine &operator= (CABLine &src)
+    {
+        counter2 = src.counter2;
+        shadowOffset = src.shadowOffset;
+        widthMinusOverlap = src.widthMinusOverlap;
+
+        abFixHeadingDelta = src.abFixHeadingDelta;
+        abHeading = src.abHeading;
+        abLength = src.abLength;
+        angVel = src.angVel;
+
+        isABValid = src.isABValid;
+        isLateralTriggered = src.isLateralTriggered;
+
+        currentLinePtA = src.currentLinePtA;
+        currentLinePtB = src.currentLinePtB;
+
+        distanceFromCurrentLinePivot = src.distanceFromCurrentLinePivot;
+        distanceFromRefLine = src.distanceFromRefLine;
+
+        goalPointAB = src.goalPointAB;
+
+        refLine = src.refLine;
+
+        howManyPathsAway = src.howManyPathsAway;
+        isMakingABLine = src.isMakingABLine;
+        isHeadingSameWay = src.isHeadingSameWay;
+
+        ppRadiusAB = src.ppRadiusAB;
+
+        radiusPointAB = src.radiusPointAB;
+        rEastAB = src.rEastAB;
+        rNorthAB = src.rNorthAB;
+
+        snapDistance = src.snapDistance;
+        lastSecond = src.lastSecond;
+        steerAngleAB = src.steerAngleAB;
+        lineWidth = src.lineWidth;
+
+        desPtA = src.desPtA;
+        desPtB = src.desPtB;
+
+        desLineEndA = src.desLineEndA;
+        desLineEndB = src.desLineEndB;
+
+        refNudgePtA = src.refNudgePtA;
+        refNudgePtB = src.refNudgePtB;
+
+        desHeading = src.desHeading;
+        desName = src.desName;
+
+        pivotDistanceError = src.pivotDistanceError;
+        pivotDistanceErrorLast = src.pivotDistanceErrorLast;
+        pivotDerivative = src.pivotDerivative;
+        pivotDerivativeSmoothed = src.pivotDerivativeSmoothed;
+
+        inty = src.inty;
+        steerAngleSmoothed = src.steerAngleSmoothed;
+        pivotErrorTotal = src.pivotErrorTotal;
+        distSteerError = src.distSteerError;
+        lastDistSteerError = src.lastDistSteerError;
+        derivativeDistError = src.derivativeDistError;
+
+        tramPassEvery = src.tramPassEvery;
+
+        return *this;
+    }
 
 signals:
     void stopAutosteer();

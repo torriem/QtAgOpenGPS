@@ -30,14 +30,31 @@ void FormGPS::setupGui()
     /* Load the QML UI and display it in the main area of the GUI */
     setProperty("title","QtAgOpenGPS");
 
+//tell the QML what OS we are using
+#ifdef __ANDROID__
+    rootContext()->setContextProperty("OS", "ANDROID");
+#elif defined(__WIN32)
+    rootContext()->setContextProperty("OS", "WINDOWS");
+#else
+    rootContext()->setContextProperty("OS", "LINUX");
+#endif
+
     //Load the QML into a view
     rootContext()->setContextProperty("screenPixelDensity",QGuiApplication::primaryScreen()->physicalDotsPerInch() * QGuiApplication::primaryScreen()->devicePixelRatio());
     rootContext()->setContextProperty("mainForm", this);
     rootContext()->setContextProperty("settings", &qml_settings);
 
+    rootContext()->setContextProperty("vehicleInterface", &vehicle);
+    //populate vehicle_list property in vehicleInterface
+    vehicle_update_list();
+
+    rootContext()->setContextProperty("trk", &trk);
+    rootContext()->setContextProperty("tram", &tram);
+
 #ifdef LOCAL_QML
     // Look for QML files relative to our current directory
     QStringList search_pathes = { "..",
+                                 "../../",
                                  "../qtaog",
                                  "../QtAgOpenGPS",
                                  "."
@@ -71,7 +88,7 @@ void FormGPS::setupGui()
     rootContext()->setContextProperty("prefix","local:");
     load("local:/qml/MainWindow.qml");
 #else
-    rootContext()->setContextProperty("prefix",":");
+    rootContext()->setContextProperty("prefix","");
     load(QUrl("qrc:/qml/MainWindow.qml"));
 #endif
 
@@ -107,12 +124,6 @@ void FormGPS::setupGui()
     InterfaceProperty<FieldInterface, double>::set_qml_root(qmlItem(qml_root, "fieldInterface"));
     InterfaceProperty<FieldInterface, btnStates>::set_qml_root(qmlItem(qml_root, "fieldInterface"));
 
-    InterfaceProperty<VehicleInterface, int>::set_qml_root(qmlItem(qml_root, "vehicleInterface"));
-    InterfaceProperty<VehicleInterface, uint>::set_qml_root(qmlItem(qml_root, "vehicleInterface"));
-    InterfaceProperty<VehicleInterface, bool>::set_qml_root(qmlItem(qml_root, "vehicleInterface"));
-    InterfaceProperty<VehicleInterface, double>::set_qml_root(qmlItem(qml_root, "vehicleInterface"));
-    InterfaceProperty<VehicleInterface, btnStates>::set_qml_root(qmlItem(qml_root, "vehicleInterface"));
-
     InterfaceProperty<BoundaryInterface, int>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
     InterfaceProperty<BoundaryInterface, uint>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
     InterfaceProperty<BoundaryInterface, bool>::set_qml_root(qmlItem(qml_root, "boundaryInterface"));
@@ -127,10 +138,18 @@ void FormGPS::setupGui()
 
     QMLSectionButtons::set_aog_root(qmlItem(qml_root, "aog"));
 
+    //initialize interface properties
+    isAutoSteerBtnOn = false;
+    sentenceCounter = 0;
+    manualBtnState = btnStates::Off;
+    autoBtnState = btnStates::Off;
+    isPatchesChangingColor = false;
+    isOutOfBounds = false;
+
     //hook up our AOGInterface properties
     QObject *aog = qmlItem(qml_root, "aog");
     QObject *linesInterface = qmlItem(qml_root, "linesInterface");
-    QObject *vehicleInterface = qmlItem(qml_root, "vehicleInterface");
+    //QObject *vehicleInterface = qmlItem(qml_root, "vehicleInterface");
     QObject *fieldInterface = qmlItem(qml_root, "fieldInterface");
     QObject *boundaryInterface = qmlItem(qml_root, "boundaryInterface");
 
@@ -153,6 +172,10 @@ void FormGPS::setupGui()
 //    qml_root->setProperty("width",1024);
 //    qml_root->setProperty("height",768);
 
+    connect(aog,SIGNAL(sectionButtonStateChanged()), &tool.sectionButtonState, SLOT(onStatesUpdated()));
+
+
+    /*
     //AB Line Picker
     //react to UI changing these properties
     connect(aog,SIGNAL(currentABLineChanged()), this, SLOT(update_current_ABline_from_qml()));
@@ -164,6 +187,7 @@ void FormGPS::setupGui()
     connect(linesInterface,SIGNAL(abLine_deleteLine(int)), this, SLOT( delete_ABLine(int)));
     connect(linesInterface,SIGNAL(abLine_swapHeading(int)), this, SLOT(swap_heading_ABLine(int)));
     connect(linesInterface,SIGNAL(abLine_changeName(int, QString)), this, SLOT(change_name_ABLine(int,QString)));
+    */
 
     //on screen buttons
     connect(aog,SIGNAL(zoomIn()), this, SLOT(onBtnZoomIn_clicked()));
@@ -177,11 +201,17 @@ void FormGPS::setupGui()
     connect(aog, SIGNAL(isHydLiftOn()), this, SLOT(onBtnHydLift_clicked()));
     connect(aog, SIGNAL(btnResetTool()), this, SLOT(onBtnResetTool_clicked()));
     connect(aog, SIGNAL(btnHeadland()), this, SLOT(onBtnHeadland_clicked()));
+    connect(aog, SIGNAL(btnContour()), this, SLOT(onBtnContour_clicked()));
+    connect(aog, SIGNAL(btnContourLock()), this, SLOT(onBtnContourLock_clicked()));
+    connect(aog, SIGNAL(btnContourPriority(bool)), this, SLOT(onBtnContourPriority_clicked(bool)));
 
     connect(aog, SIGNAL(btnResetSim()), this, SLOT(onBtnResetSim_clicked()));
+    connect(aog, SIGNAL(sim_rotate()), this, SLOT(onBtnRotateSim_clicked()));
     connect(aog, SIGNAL(reset_direction()), this, SLOT(onBtnResetDirection_clicked()));
 
     connect(aog, SIGNAL(centerOgl()), this, SLOT(onBtnCenterOgl_clicked()));
+
+    connect(aog, SIGNAL(deleteAppliedArea()), this, SLOT(onDeleteAppliedArea_clicked()));
 
     //manual youturn buttons
     connect(aog,SIGNAL(uturn(bool)), this, SLOT(onBtnManUTurn_clicked(bool)));
@@ -190,7 +220,7 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(swapAutoYouTurnDirection()), this, SLOT(onBtnSwapAutoYouTurnDirection_clicked()));
 
 
-    connect(qml_root, SIGNAL(save_everything()), this, SLOT(fileSaveEverythingBeforeClosingField()));
+    connect(qml_root, SIGNAL(save_everything()), this, SLOT(FileSaveEverythingBeforeClosingField()));
     //connect(qml_root,SIGNAL(closing(QQuickCloseEvent *)), this, SLOT(fileSaveEverythingBeforeClosingField(QQuickCloseEvent *)));
 
 
@@ -198,11 +228,16 @@ void FormGPS::setupGui()
     connect(aog,SIGNAL(settings_reload()), this, SLOT(on_settings_reload()));
     connect(aog,SIGNAL(settings_save()), this, SLOT(on_settings_save()));
 
+    //snap track button
+
+    connect(aog,SIGNAL(snapSideways(double)), this, SLOT(onBtnSnapSideways_clicked(double)));
+    connect(aog,SIGNAL(snapToPivot()), this, SLOT(onBtnSnapToPivot_clicked()));
+
     //vehicle saving and loading
-    connect(vehicleInterface,SIGNAL(vehicle_update_list()), this, SLOT(vehicle_update_list()));
-    connect(vehicleInterface,SIGNAL(vehicle_load(QString)), this, SLOT(vehicle_load(QString)));
-    connect(vehicleInterface,SIGNAL(vehicle_delete(QString)), this, SLOT(vehicle_delete(QString)));
-    connect(vehicleInterface,SIGNAL(vehicle_saveas(QString)), this, SLOT(vehicle_saveas(QString)));
+    connect(&vehicle,SIGNAL(vehicle_update_list()), this, SLOT(vehicle_update_list()));
+    connect(&vehicle,SIGNAL(vehicle_load(QString)), this, SLOT(vehicle_load(QString)));
+    connect(&vehicle,SIGNAL(vehicle_delete(QString)), this, SLOT(vehicle_delete(QString)));
+    connect(&vehicle,SIGNAL(vehicle_saveas(QString)), this, SLOT(vehicle_saveas(QString)));
 
     //field saving and loading
     connect(fieldInterface,SIGNAL(field_update_list()), this, SLOT(field_update_list()));
@@ -271,15 +306,6 @@ void FormGPS::setupGui()
     connect(btnFlag,SIGNAL(clicked()),this,
             SLOT(onBtnFlag_clicked()));
 
-    btnContour = qmlItem(qml_root,"btnContour");
-    connect(btnContour,SIGNAL(clicked()),this,
-            SLOT(onBtnContour_clicked()));
-
-    btnContourPriority = qmlItem(qml_root,"btnContourPriority");
-    connect(btnContourPriority,SIGNAL(clicked()),this,
-            SLOT(onBtnContourPriority_clicked()));
-
-
 
     //Any objects we don't need to access later we can just store
     //temporarily
@@ -303,7 +329,7 @@ void FormGPS::setupGui()
     connect (tmrWatchdog, SIGNAL(timeout()),this,SLOT(tmrWatchdog_timeout()));
     tmrWatchdog->start(250); //fire every 50ms.
 
-    //SIM on
+    //SIM
     connect_classes();
 
 
@@ -351,29 +377,10 @@ void FormGPS::onGLControl_clicked(const QVariant &event)
     openGLControl->update();
 }
 
-void FormGPS::onBtnAcres_clicked(){
-    qDebug()<<"AcresButton";
-}
-void FormGPS::onBtnSettings_clicked(){
-    qDebug()<<"Settings";
-}
 void FormGPS::onBtnAgIO_clicked(){
     qDebug()<<"AgIO";
 }
-void FormGPS::onBtnSteerConfig_clicked(){
-    qDebug()<<"Steer config`";
-}
-void FormGPS::onBtnSteerMode_clicked(){
-    qDebug()<<"Steer mode`";
-}
-void FormGPS::onBtnToggleAB_clicked(){
-    qDebug()<<"Toggle AB";
-}
-void FormGPS::onBtnToggleABBack_clicked(){
-    qDebug()<<"toggle AB back";
-}
 void FormGPS::onBtnResetTool_clicked(){
-    qDebug()<<"REset tool";
                vehicle.tankPos.heading = vehicle.fixHeading;
                vehicle.tankPos.easting = vehicle.hitchPos.easting + (sin(vehicle.tankPos.heading) * (tool.tankTrailingHitchLength));
                vehicle.tankPos.northing = vehicle.hitchPos.northing + (cos(vehicle.tankPos.heading) * (tool.tankTrailingHitchLength));
@@ -423,25 +430,19 @@ void FormGPS::onBtnHydLift_clicked(){
 void FormGPS::onBtnTramlines_clicked(){
     qDebug()<<"tramline";
 }
-void FormGPS::onBtnSectionColor_clicked(){
-    qDebug()<<"Section color";
-}
-void FormGPS::onBtnLinePicker_clicked(){
-    qDebug()<<"Line picker";
-}
-void FormGPS::onBtnSnapToPivot_clicked(){
-    qDebug()<<"snap to pivot";
-}
 void FormGPS::onBtnYouSkip_clicked(){
     qDebug()<<"you skip";
 }
 void FormGPS::onBtnResetDirection_clicked(){
     qDebug()<<"reset Direction";
     // c#Array.Clear(stepFixPts, 0, stepFixPts.Length);
+
     std::memset(stepFixPts, 0, sizeof(stepFixPts));
-                    isFirstHeadingSet = false;
-                    vehicle.isReverse = false;
-                    TimedMessageBox(2000, "Reset Direction", "Drive Forward > 1.5 kmh");
+    isFirstHeadingSet = false;
+
+    //TODO: most of this should be done in QML
+    vehicle.setIsReverse(false);
+    TimedMessageBox(2000, "Reset Direction", "Drive Forward > 1.5 kmh");
 }
 void FormGPS::onBtnFlag_clicked() {
 
@@ -458,32 +459,29 @@ void FormGPS::onBtnFlag_clicked() {
 }
 
 void FormGPS::onBtnContour_clicked(){
-    qDebug()<<"contour button clicked." ;
-
     ct.isContourBtnOn = !ct.isContourBtnOn;
     if (ct.isContourBtnOn) {
-        qmlItem(qml_root,"btnContour")->setProperty("isChecked",true);
-        qmlItem(qml_root,"btnContourPriority")->setProperty("visible",true);
-    } else {
-        qmlItem(qml_root,"btnContour")->setProperty("isChecked",false);
-        qmlItem(qml_root,"btnContourPriority")->setProperty("visible",false);
+        guidanceLookAheadTime = 0.5;
+    }else{
+        //if (ABLine.isBtnABLineOn | curve.isBtnCurveOn){
+        //    ABLine.isABValid = false;
+        //    curve.isCurveValid = false;
+        //}
+        guidanceLookAheadTime = property_setAS_guidanceLookAheadTime;
     }
-
 }
 
-void FormGPS::onBtnContourPriority_clicked(){
-    qDebug()<<"contour priority button clicked." ;
+void FormGPS::onBtnContourPriority_clicked(bool isRight){
 
-    ct.isRightPriority = !ct.isRightPriority;
-    if (ct.isRightPriority)
-        qmlItem(qml_root,"btnContourPriority")->setProperty("isChecked",true);
-    else
-        qmlItem(qml_root,"btnContourPriority")->setProperty("isChecked",false);
+    ct.isRightPriority = isRight;
+    qDebug() << "Contour isRight: " << isRight;
+}
+
+void FormGPS::onBtnContourLock_clicked(){
+    ct.SetLockToLine();
 }
 
 void FormGPS::onBtnTiltDown_clicked(){
-
-    qDebug()<<"TiltDown button clicked.";
 
     if (camera.camPitch > -59) camera.camPitch = -60;
     camera.camPitch += ((camera.camPitch * 0.012) - 1);
@@ -496,8 +494,6 @@ void FormGPS::onBtnTiltDown_clicked(){
 
 void FormGPS::onBtnTiltUp_clicked(){
     double camPitch = property_setDisplay_camPitch;
-
-    qDebug()<<"TiltUp button clicked.";
 
     lastHeight = -1; //redraw the sky
     camera.camPitch -= ((camera.camPitch * 0.012) - 1);
@@ -527,7 +523,6 @@ void FormGPS::onBtnN3D_clicked(){
     navPanelCounter = 0;
 }
 void FormGPS::onBtnZoomIn_clicked(){
-    qDebug() <<"ZoomIn button clicked.";
     if (camera.zoomValue <= 20) {
         if ((camera.zoomValue -= camera.zoomValue * 0.1) < 3.0)
             camera.zoomValue = 3.0;
@@ -542,7 +537,6 @@ void FormGPS::onBtnZoomIn_clicked(){
 }
 
 void FormGPS::onBtnZoomOut_clicked(){
-    qDebug() <<"ZoomOut button clicked.";
     if (camera.zoomValue <= 20) camera.zoomValue += camera.zoomValue * 0.1;
     else camera.zoomValue += camera.zoomValue * 0.05;
     if (camera.zoomValue > 220) camera.zoomValue = 220;
@@ -610,13 +604,13 @@ void FormGPS::onBtnAutoYouTurn_clicked(){
      if (!yt.isYouTurnBtnOn)
      {
          //new direction so reset where to put turn diagnostic
-         yt.ResetCreatedYouTurn();
+         yt.ResetCreatedYouTurn(makeUTurnCounter);
 
          if (!isAutoSteerBtnOn) return;
          yt.isYouTurnBtnOn = true;
          yt.isTurnCreationTooClose = false;
          yt.isTurnCreationNotCrossingError = false;
-         yt.ResetYouTurn();
+         yt.ResetYouTurn(makeUTurnCounter);
          //mc.autoSteerData[mc.sdX] = 0;
 //         mc.machineControlData[mc.cnYouTurn] = 0;
 //         btnAutoYouTurn.Image = Properties.Resources.Youturn80;
@@ -626,10 +620,10 @@ void FormGPS::onBtnAutoYouTurn_clicked(){
          yt.isYouTurnBtnOn = false;
 //         yt.rowSkipsWidth = Properties.Vehicle.Default.set_youSkipWidth;
 //         btnAutoYouTurn.Image = Properties.Resources.YouTurnNo;
-         yt.ResetYouTurn();
+         yt.ResetYouTurn(makeUTurnCounter);
 
          //new direction so reset where to put turn diagnostic
-         yt.ResetCreatedYouTurn();
+         yt.ResetCreatedYouTurn(makeUTurnCounter);
 
          //mc.autoSteerData[mc.sdX] = 0;commented in aog
 //         mc.machineControlData[mc.cnYouTurn] = 0;
@@ -640,7 +634,7 @@ void FormGPS::onBtnSwapAutoYouTurnDirection_clicked()
      if (!yt.isYouTurnTriggered)
      {
          yt.isYouTurnRight = !yt.isYouTurnRight;
-         yt.ResetCreatedYouTurn();
+         yt.ResetCreatedYouTurn(makeUTurnCounter);
      }
      //else if (yt.isYouTurnBtnOn)
          //btnAutoYouTurn.PerformClick();
@@ -649,16 +643,16 @@ void FormGPS::onBtnSwapAutoYouTurnDirection_clicked()
 void FormGPS::onBtnManUTurn_clicked(bool right)
 {
     if (yt.isYouTurnTriggered) {
-        yt.ResetYouTurn();
+        yt.ResetYouTurn(makeUTurnCounter);
     }else {
         yt.isYouTurnTriggered = true;
-        yt.BuildManualYouTurn(vehicle, ABLine, curve, right, true);
+        yt.BuildManualYouTurn( right, true, vehicle, trk, ABLine, curve);
    }
 }
 
 void FormGPS::onBtnLateral_clicked(bool right)
 {
-   yt.BuildManualYouLateral(vehicle, ABLine, curve, right);
+   yt.BuildManualYouLateral(right, vehicle, trk, ABLine, curve);
 }
 
 void FormGPS::TimedMessageBox(int timeout, QString s1, QString s2)
@@ -747,4 +741,94 @@ void FormGPS::headlines_save() {
 void FormGPS::onBtnResetSim_clicked(){
     sim.latitude = property_setGPS_SimLatitude;
     sim.longitude = property_setGPS_SimLongitude;
+}
+
+void FormGPS::onBtnRotateSim_clicked(){
+    qDebug() << "Rotate Sim";
+    qDebug() << "But nothing else";
+    /*qDebug() << sim.headingTrue;
+    sim.headingTrue += M_PI;
+    qDebug() << sim.headingTrue;
+    ABLine.isABValid = false;
+    curve.isCurveValid = false;*/
+    //curve.lastHowManyPathsAway = 98888; not in v5
+}
+
+//Track Snap buttons
+void FormGPS::onBtnSnapToPivot_clicked(){
+    qDebug()<<"snap to pivot";
+}
+void FormGPS::onBtnSnapSideways_clicked(double distance){
+    int blah = distance;
+
+}
+
+
+void FormGPS::onDeleteAppliedArea_clicked()
+{
+    if (isJobStarted)
+    {
+        /*if (autoBtnState == btnStates.Off && manualBtnState == btnStates.Off)
+        {
+
+            DialogResult result3 = MessageBox.Show(gStr.gsDeleteAllContoursAndSections,
+                                                   gStr.gsDeleteForSure,
+                                                   MessageBoxButtons.YesNo,
+                                                   MessageBoxIcon.Question,
+                                                   MessageBoxDefaultButton.Button2);
+            if (result3 == DialogResult.Yes)
+            {
+                //FileCreateElevation();
+
+                if (tool.isSectionsNotZones)
+                {
+                    //Update the button colors and text
+                    AllSectionsAndButtonsToState(btnStates.Off);
+
+                    //enable disable manual buttons
+                    LineUpIndividualSectionBtns();
+                }
+                else
+                {
+                    AllZonesAndButtonsToState(btnStates.Off);
+                    LineUpAllZoneButtons();
+                }
+
+                //turn manual button off
+                manualBtnState = btnStates.Off;
+                btnSectionMasterManual.Image = Properties.Resources.ManualOff;
+
+                //turn auto button off
+                autoBtnState = btnStates.Off;
+                btnSectionMasterAuto.Image = Properties.Resources.SectionMasterOff;
+               */
+
+                //clear out the contour Lists
+                //ct.StopContourLine();
+                //ct.ResetContour();
+                fd.workedAreaTotal = 0;
+
+                //clear the section lists
+                for (int j = 0; j < triStrip.count(); j++)
+                {
+                    //clean out the lists
+                    triStrip[j].patchList.clear();
+                    triStrip[j].triangleList.clear();
+                }
+                //patchSaveList.clear();
+
+                FileCreateContour();
+                FileCreateSections();
+
+            /*}
+            else
+            {
+                TimedMessageBox(1500, gStr.gsNothingDeleted, gStr.gsActionHasBeenCancelled);
+            }
+        }
+        else
+        {
+            TimedMessageBox(1500, "Sections are on", "Turn Auto or Manual Off First");
+        }*/
+    }
 }

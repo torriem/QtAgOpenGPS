@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Main class where everything is initialized
 #include "formgps.h"
 #include "aogproperty.h"
 #include <QColor>
@@ -15,6 +19,7 @@ extern QMLSettings qml_settings;
 
 FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
 {
+
     connect_classes(); //make all the inter-class connections
     qml_settings.setupKeys();
     qml_settings.loadSettings();  //fetch everything from QSettings for QML to use
@@ -148,8 +153,6 @@ FormGPS::FormGPS(QWidget *parent) : QQmlApplicationEngine(parent)
     isJobStarted = false;
 
     StartLoopbackServer();
-
-    simConnectSlots();
     if ((bool)property_setMenu_isSimulatorOn == false) {
         qDebug() << "Stopping simulator because it's off in settings.";
         timerSim.stop();
@@ -251,12 +254,7 @@ void FormGPS::processSectionLookahead() {
     if (rpHeight < 8) rpHeight = 8;
 
     //read the whole block of pixels up to max lookahead, one read only
-    //pixels are already read
-    //GL.ReadPixels(tool.rpXPosition, 0, tool.rpWidth, (int)rpHeight, OpenTK.Graphics.OpenGL.PixelFormat.Green, PixelType.UnsignedByte, grnPixels);
-
-    //Paint to context for troubleshooting
-    //oglBack.MakeCurrent();
-    //oglBack.SwapBuffers();
+    //pixels are already read in another thread.
 
     //determine if headland is in read pixel buffer left middle and right.
     int start = 0, end = 0, tagged = 0, totalPixel = 0;
@@ -280,6 +278,7 @@ void FormGPS::processSectionLookahead() {
             if (grnPixels[tool.rpWidth / 2 + (int)(tram.halfWheelTrack * 10)].green == 245) tram.controlByte += 1;
         }
     }
+    else tram.controlByte = 0;
 
     //determine if in or out of headland, do hydraulics if on
     if (bnd.isHeadlandOn)
@@ -308,6 +307,10 @@ void FormGPS::processSectionLookahead() {
 
         //set hydraulics based on tool in headland or not
         bnd.SetHydPosition(autoBtnState, p_239, vehicle);
+
+        //set hydraulics based on tool in headland or not
+        bnd.SetHydPosition(autoBtnState, p_239, vehicle);
+
     }
 
     ///////////////////////////////////////////   Section control        ssssssssssssssssssssss
@@ -721,13 +724,14 @@ void FormGPS::processSectionLookahead() {
     //draw the section control window off screen buffer
     //if (bbCounter == 0)
     //{
+    if (isJobStarted)
+    {
         p_239.pgn[p_239.geoStop] = mc.isOutOfBounds ? 1 : 0;
 
         SendPgnToLoop(p_239.pgn);
 
-        if (!tool.isSectionsNotZones)
-            SendPgnToLoop(p_229.pgn);
-    //}
+        SendPgnToLoop(p_229.pgn);
+    }
 
 
     lock.unlock();
@@ -794,72 +798,6 @@ void FormGPS::tmrWatchdog_timeout()
     {
         //reset the counter
         tenSeconds = 0;
-        if (isJobStarted)
-        {
-            if (isMetric)
-            {
-                /* TODO:
-                if (bnd.bndList.count() > 0)
-                {
-                    lblFieldStatus.Text = "(" + fd.AreaBoundaryLessInnersHectares + " - "
-                                          + fd.WorkedHectares + " = "
-                                          + fd.WorkedAreaRemainHectares + ")  "
-                                          + fd.WorkedAreaRemainPercentage + "  ("
-                                          + fd.AreaBoundaryLessInnersHectares + " - "
-                                          + fd.ActualAreaWorkedHectares + " = "
-                                          + fd.ActualRemainHectares + ")  "
-                                          + fd.ActualOverlapPercent + "  "
-                                          + fd.TimeTillFinished + "  "
-                                          + fd.WorkRateHectares;
-                }
-                else
-                    lblFieldStatus.Text =
-                        fd.WorkedHectares + "  *"
-                        + fd.ActualAreaWorkedHectares + " *"
-                        + fd.ActualOverlapPercent + "   "
-                        + fd.WorkRateHectares;
-                */
-            }
-            else //imperial
-            {
-                /* TODO:
-                if (bnd.bndList.count() > 0)
-                    lblFieldStatus.Text = fd.AreaBoundaryLessInnersAcres + " - "
-                                          + fd.WorkedAcres + " = "
-                                          + fd.WorkedAreaRemainAcres + ")  "
-                                          + fd.WorkedAreaRemainPercentage + "  ("
-                                          + fd.AreaBoundaryLessInnersAcres + " - "
-                                          + fd.ActualAreaWorkedAcres + " = "
-                                          + fd.ActualRemainAcres + ")  "
-                                          + fd.ActualOverlapPercent + "  "
-                                          + fd.TimeTillFinished + "  "
-                                          + fd.WorkRateHectares;
-                else
-                    lblFieldStatus.Text =
-                        fd.WorkedAcres + "  *"
-                        + fd.ActualAreaWorkedAcres + " *"
-                        + fd.ActualOverlapPercent + "   "
-                        + fd.WorkRateAcres;
-                */
-            }
-
-            //TODO: lblCurrentField.Text = displayFieldName;
-
-            if (curve.numCurveLineSelected > 0 && curve.isBtnCurveOn)
-            {
-                //TODO: lblGuidanceLine.Text = curve.curveArr[curve.numCurveLineSelected - 1].Name;
-            }
-            else if (ABLine.numABLineSelected > 0 && ABLine.isBtnABLineOn)
-            {
-                //TODO: lblGuidanceLine.Text = ABLine.lineArr[ABLine.numABLineSelected - 1].Name;
-            }
-            //TODO: else lblGuidanceLine.Text = "Guidance Line";
-        }
-        else
-        {
-            //TODO: lblFieldStatus.Text = string.Empty;
-            //TODO: lblCurrentField.Text = (tool.width * m2FtOrM).ToString("N2") + unitsFtM + " - " + vehicleFileName;
-        }
     }
     /////////////////////////////////////////////////////////   333333333333333  ////////////////////////////////////////
     //every 3 second update status
@@ -886,48 +824,6 @@ void FormGPS::tmrWatchdog_timeout()
         lblTime.Text = DateTime.Now.ToString("T");
         */
 
-        if (isJobStarted)
-        {
-            if (ABLine.isBtnABLineOn || curve.isBtnCurveOn)
-            {
-                /* TODO
-                if (!btnEditAB.Visible)
-                {
-                    //btnMakeLinesFromBoundary.Visible = true;
-                    btnEditAB.Visible = true;
-                    //btnSnapToPivot.Visible = true;
-                    cboxpRowWidth.Visible = true;
-                    btnYouSkipEnable.Visible = true;
-                }
-
-                if (curve.numCurveLineSelected > 0 && curve.isBtnCurveOn)
-                {
-                    lblGuidanceLine.Text = curve.curveArr[curve.numCurveLineSelected - 1].Name;
-                }
-
-                else if (ABLine.numABLineSelected > 0 && ABLine.isBtnABLineOn)
-                {
-                    lblGuidanceLine.Text = ABLine.lineArr[ABLine.numABLineSelected - 1].Name;
-                }
-                else lblGuidanceLine.Text = gStr.gsNoGuidanceLines;
-               */
-            }
-            /*TODO :else
-            {
-                if (btnEditAB.Visible)
-                {
-                    //btnMakeLinesFromBoundary.Visible = false;
-                    btnEditAB.Visible = false;
-                    //btnSnapToPivot.Visible = false;
-                    cboxpRowWidth.Visible = false;
-                    btnYouSkipEnable.Visible = false;
-                }
-            }*/
-
-        }
-
-
-
         //save nmea log file
         //TODO: if (isLogNMEA) FileSaveNMEA();
 
@@ -945,58 +841,6 @@ void FormGPS::tmrWatchdog_timeout()
         //counter used for saving field in background
         minuteCounter++;
         tenMinuteCounter++;
-
-        if (isStanleyUsed)
-        {
-            if (curve.isBtnCurveOn || ABLine.isBtnABLineOn)
-            {
-                //TODO
-                //lblInty.Text = gyd.inty.ToString("N3");
-            }
-        }
-        else
-        {
-            if (curve.isBtnCurveOn)
-            {
-                //TODO
-                //lblInty.Text = curve.inty.ToString("N3");
-            }
-
-            else if (ABLine.isBtnABLineOn && !ct.isContourBtnOn)
-            {
-                //TODO
-                //lblInty.Text = ABLine.inty.ToString("N3");
-            }
-
-            else if (ct.isContourBtnOn) {}//TODO lblInty.Text = ct.inty.ToString("N3");
-        }
-
-        if (recPath.isDrivingRecordedPath) {} //TODO lblInty.Text = recPath.inty.ToString("N3");
-
-        //if (ABLine.isBtnABLineOn && !ct.isContourBtnOn)
-        //{
-        //    btnEditAB.Text = ((int)(ABLine.moveDistance * 100)).ToString();
-        //}
-        //if (curve.isBtnCurveOn && !ct.isContourBtnOn)
-        //{
-        //    btnEditAB.Text = ((int)(curve.moveDistance * 100)).ToString();
-        //}
-
-        //statusbar flash red undefined headland
-        //TODO: flash background alternately
-        /*
-        if (mc.isOutOfBounds && panelSim.BackColor == Color.Transparent
-            || !mc.isOutOfBounds && panelSim.BackColor == Color.Tomato)
-        {
-            if (!mc.isOutOfBounds)
-            {
-                panelSim.BackColor = Color.Transparent;
-            }
-            else
-            {
-                panelSim.BackColor = Color.Tomato;
-            }
-        }*/
     }
 
     //every half of a second update all status  ////////////////    0.5  0.5   0.5    0.5    /////////////////
@@ -1007,54 +851,23 @@ void FormGPS::tmrWatchdog_timeout()
 
         isFlashOnOff = !isFlashOnOff;
 
-        //the main formgps window
-        if (isMetric)  //metric or imperial
-        {
-            //status strip values
-            //TODO: qmlItem(qml_root,"btnPerimeter")->setProperty("buttonText", fd.WorkedUserHectares());
-            //TODO: distanceToolBtn.Text = fd.DistanceUserMeters + "\r\n" + fd.WorkedUserHectares;
-
-        }
-        else  //Imperial Measurements
-        {
-            //acres on the master section soft control and sections
-            //status strip values
-            //TODO: qmlItem(qml_root,"btnPerimeter")->setProperty("buttonText", fd.WorkedUserAcres());
-            //TODO: distanceToolBtn.Text = fd.DistanceUserFeet + "\r\n" + fd.WorkedUserAcres;
-        }
+        //the ratemap trigger
+        worldGrid.isRateTrigger = true;
 
         //Make sure it is off when it should
-        if ((!ABLine.isBtnABLineOn && !ct.isContourBtnOn && !curve.isBtnCurveOn && isAutoSteerBtnOn)
+        if ((!ct.isContourBtnOn && trk.idx == -1 && isAutoSteerBtnOn)
             ) onStopAutoSteer();
-
-        //the main formgps window
-        if (isMetric)  //metric or imperial
-        {
-            //TODO: lblSpeed.Text = SpeedKPH;
-            //btnContour.Text = XTE; //cross track error
-
-        }
-        else  //Imperial Measurements
-        {
-            //TODO: lblSpeed.Text = SpeedMPH;
-            //btnContour.Text = InchXTE; //cross track error
-        }
 
     } //end every 1/2 second
 
-    //every fifth second update  ///////////////////////////   FIFTH Fifth ////////////////////////////
-    if (displayUpdateOneFifthCounter != oneFifthSecond)
+    //every fourth second update  ///////////////////////////   Fourth  ////////////////////////////
     {
         //reset the counter
-        displayUpdateOneFifthCounter = oneFifthSecond;
-
-        //TODO: btnAutoSteerConfig.Text = SetSteerAngle + "\r\n" + ActualSteerAngle;
+        oneHalfSecondCounter++;
+        oneSecondCounter++;
+        makeUTurnCounter++;
 
         secondsSinceStart = stopwatch.elapsed() / 1000.0;
-
-        //integralStatusLeftSide.Text = "I: " + gyd.inty.ToString("N3");
-
-        //lblAV.Text = ABLine.angVel
     }
 }
 
@@ -1076,15 +889,15 @@ QString FormGPS::speedMPH() {
     return locale.toString(spd,'f',1);
 }
 
-void FormGPS::swapDirection() {
+void FormGPS::SwapDirection() {
     if (!yt.isYouTurnTriggered)
     {
         yt.isYouTurnRight = ! yt.isYouTurnRight;
-        yt.ResetCreatedYouTurn();
+        yt.ResetCreatedYouTurn(makeUTurnCounter);
     }
     else if (yt.isYouTurnBtnOn)
     {
-        //btnAutoYouTurn.PerformClick();
+        yt.isYouTurnBtnOn = false;
     }
 }
 
@@ -1092,9 +905,9 @@ void FormGPS::swapDirection() {
 void FormGPS::JobClose()
 {
     recPath.resumeState = 0;
-    //TODO: reset resume path button
-    //btnResumePath.Image = Properties.Resources.pathResumeStart;
     recPath.currentPositonIndex = 0;
+
+    sbGrid.clear();
 
     //reset field offsets
     if (!isKeepOffsetsOn)
@@ -1104,44 +917,29 @@ void FormGPS::JobClose()
     }
 
     //turn off headland
-    bnd.isHeadlandOn = false;
-
-    //TODO: reset headland button
-    //btnHeadlandOnOff.Image = Properties.Resources.HeadlandOff;
-    //btnHeadlandOnOff.Visible = false;
+    bnd.isHeadlandOn = false; //this turns off the button
 
     recPath.recList.clear();
     recPath.StopDrivingRecordedPath();
-    //panelDrag.Visible = false;
 
     //make sure hydraulic lift is off
     p_239.pgn[p_239.hydLift] = 0;
-    vehicle.isHydLiftOn = false;
-    //TODO: reset hydlift button, make it invisible
-    //btnHydLift.Image = Properties.Resources.HydraulicLiftOff;
-    //btnHydLift.Visible = false;
+    vehicle.isHydLiftOn = false; //this turns off the button also
 
-    //zoom gone
     //oglZoom.SendToBack();
 
     //clean all the lines
     bnd.bndList.clear();
+    //TODO: bnd.shpList.clear();
 
-    //TODO: turn off right panel
-    //panelRight.Enabled = false;
-    //TODO: FieldMenuButtonEnableDisable(false);
 
-    //menustripLanguage.Enabled = true;
     isJobStarted = false;
 
     //fix ManualOffOnAuto buttons
     manualBtnState = btnStates::Off;
-    //btnSectionMasterManual.Image = Properties.Resources.ManualOff;
 
     //fix auto button
     autoBtnState = btnStates::Off;
-    //TODO reset section master button
-    //btnSectionMasterAuto.Image = Properties.Resources.SectionMasterOff;
 
     /*
     btnZone1.BackColor = Color.Silver;
@@ -1212,24 +1010,13 @@ void FormGPS::JobClose()
     flagPts.clear();
 
     //ABLine
-    //TODO: btnABLine.Enabled = false;
-    //TODO: reset ABLine button state
-    //btnABLine.Image = Properties.Resources.ABLineOff;
-    ABLine.isBtnABLineOn = false;
-    ABLine.DeleteAB();
-    ABLine.lineArr.clear();
-    ABLine.numABLineSelected = 0;
     tram.tramList.clear();
 
-    //curve line
-    //TODO btnCurve.Enabled = false;
-    //TODO: reset curve button state
-    //btnCurve.Image = Properties.Resources.CurveOff;
-    curve.isBtnCurveOn = false;
-    curve.isCurveSet = false;
-    curve.ResetCurveLine();
-    curve.curveArr.clear();
-    curve.numCurveLineSelected = 0;
+    curve.ResetCurveLine(trk);
+
+    //tracks
+    trk.gArr.clear();
+    trk.idx = -1;
 
     //clean up tram
     tram.displayMode = 0;
@@ -1238,17 +1025,11 @@ void FormGPS::JobClose()
     tram.tramBndOuterArr.clear();
 
     //clear out contour and Lists
-    //btnContour.Enabled = false;
-    //btnContourPriority.Enabled = false;
-    //btnSnapToPivot.Image = Properties.Resources.SnapToPivot;
     ct.ResetContour();
-    ct.isContourBtnOn = false;
-    //TODO: reset contour button state
-    //btnContour.Image = Properties.Resources.ContourOff;
+    ct.isContourBtnOn = false; //turns off button in gui
     ct.isContourOn = false;
 
     //btnABDraw.Enabled = false;
-    //TODO: reset ABLineCycle button
     //btnCycleLines.Image = Properties.Resources.ABLineCycle;
     //btnCycleLines.Enabled = false;
     //btnCycleLinesBk.Image = Properties.Resources.ABLineCycleBk;
@@ -1256,18 +1037,12 @@ void FormGPS::JobClose()
 
     //AutoSteer
     //btnAutoSteer.Enabled = false;
-    //isAutoSteerBtnOn = false;
-    //btnAutoSteer.Image = Properties.Resources.AutoSteerOff;
+    isAutoSteerBtnOn = false;
 
     //auto YouTurn shutdown
     yt.isYouTurnBtnOn = false;
-    //btnAutoYouTurn.Image = Properties.Resources.YouTurnNo;
-    //btnAutoYouTurn.Enabled = false;
 
-    //btnABDraw.Visible = false;
-
-    yt.ResetYouTurn();
-    //DisableYouTurnButtons();
+    yt.ResetYouTurn(makeUTurnCounter);
 
     //reset acre and distance counters
     fd.workedAreaTotal = 0;
@@ -1276,7 +1051,6 @@ void FormGPS::JobClose()
     fd.UpdateFieldBoundaryGUIAreas(bnd.bndList);
 
     displayFieldName = tr("None");
-    //TODO: FixTramModeButton();
 
     recPath.recList.clear();
     recPath.shortestDubinsList.clear();
@@ -1285,6 +1059,7 @@ void FormGPS::JobClose()
     //FixPanelsAndMenus();
     SetZoom();
     worldGrid.isGeoMap = false;
+    worldGrid.isRateMap = false;
 
     //release Bing texture
 
@@ -1295,8 +1070,6 @@ void FormGPS::JobNew()
     isJobStarted = true;
     startCounter = 0;
 
-    //btnFieldStats.Visible = true;
-
     //btnSectionMasterManual.Enabled = true;
     manualBtnState = btnStates::Off;
     //btnSectionMasterManual.Image = Properties.Resources.ManualOff;
@@ -1305,87 +1078,14 @@ void FormGPS::JobNew()
     autoBtnState = btnStates::Off;
     //btnSectionMasterAuto.Image = Properties.Resources.SectionMasterOff;
 
-    //btnSection1Man.BackColor = Color.Red;
-    //btnSection2Man.BackColor = Color.Red;
-    //btnSection3Man.BackColor = Color.Red;
-    //btnSection4Man.BackColor = Color.Red;
-    //btnSection5Man.BackColor = Color.Red;
-    //btnSection6Man.BackColor = Color.Red;
-    //btnSection7Man.BackColor = Color.Red;
-    //btnSection8Man.BackColor = Color.Red;
-    //btnSection9Man.BackColor = Color.Red;
-    //btnSection10Man.BackColor = Color.Red;
-    //btnSection11Man.BackColor = Color.Red;
-    //btnSection12Man.BackColor = Color.Red;
-    //btnSection13Man.BackColor = Color.Red;
-    //btnSection14Man.BackColor = Color.Red;
-    //btnSection15Man.BackColor = Color.Red;
-    //btnSection16Man.BackColor = Color.Red;
-
-    //btnSection1Man.Enabled = true;
-    //btnSection2Man.Enabled = true;
-    //btnSection3Man.Enabled = true;
-    //btnSection4Man.Enabled = true;
-    //btnSection5Man.Enabled = true;
-    //btnSection6Man.Enabled = true;
-    //btnSection7Man.Enabled = true;
-    //btnSection8Man.Enabled = true;
-    //btnSection9Man.Enabled = true;
-    //btnSection10Man.Enabled = true;
-    //btnSection11Man.Enabled = true;
-    //btnSection12Man.Enabled = true;
-    //btnSection13Man.Enabled = true;
-    //btnSection14Man.Enabled = true;
-    //btnSection15Man.Enabled = true;
-    //btnSection16Man.Enabled = true;
-
-    /*
-    btnZone1.BackColor = Color.Red;
-    btnZone2.BackColor = Color.Red;
-    btnZone3.BackColor = Color.Red;
-    btnZone4.BackColor = Color.Red;
-    btnZone5.BackColor = Color.Red;
-    btnZone6.BackColor = Color.Red;
-    btnZone7.BackColor = Color.Red;
-    btnZone8.BackColor = Color.Red;
-
-    btnZone1.Enabled = true;
-    btnZone2.Enabled = true;
-    btnZone3.Enabled = true;
-    btnZone4.Enabled = true;
-    btnZone5.Enabled = true;
-    btnZone6.Enabled = true;
-    btnZone7.Enabled = true;
-    btnZone8.Enabled = true;
-
-    btnABLine.Enabled = true;
-    btnContour.Enabled = true;
-    btnCurve.Enabled = true;
-    btnABDraw.Enabled = true;
-    btnCycleLines.Image = Properties.Resources.ABLineCycle;
-    btnCycleLinesBk.Image = Properties.Resources.ABLineCycleBk;
-    */
-
     ABLine.abHeading = 0.00;
-    //btnAutoSteer.Enabled = true;
 
-    //TODO: call QML javascrip to do this DisableYouTurnButtons();
-    //btnFlag.Enabled = true;
-
-    //update the menu
-    //this.menustripLanguage.Enabled = false;
-    //panelRight.Enabled = true;
-    //boundaryToolStripBtn.Enabled = true;
-    //isPanelABHidden = false;
-
-    //FieldMenuButtonEnableDisable(true);
     SetZoom();
-    minuteCounter = 25;
-
-
+    fileSaveCounter = 25;
+    trk.isAutoTrack = false;
 }
 
-void FormGPS::fileSaveEverythingBeforeClosingField()
+void FormGPS::FileSaveEverythingBeforeClosingField()
 {
     qDebug() << "shutting down, saving field items.";
 
@@ -1429,4 +1129,3 @@ void FormGPS::fileSaveEverythingBeforeClosingField()
     //Text = "AgOpenGPS";
 
 }
-

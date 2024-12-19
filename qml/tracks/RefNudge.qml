@@ -1,11 +1,15 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Where we nudge the ref.
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 
 import ".."
-import "../components"
+import "../components" as Comp
 
-MoveablePopup {
+Comp.MoveablePopup {
     id: refNudge
     x: 40
     y: 40
@@ -15,7 +19,7 @@ MoveablePopup {
         refNudge.visible = true
     }
 
-    TitleFrame{
+    Comp.TitleFrame{
         id: rootRect
         color: "#ff6666"
         anchors.fill: parent
@@ -31,24 +35,24 @@ MoveablePopup {
                 RowLayout{
                     Layout.alignment: Qt.AlignCenter
                     implicitWidth: parent.width
-                    IconButtonTransparent{
-                        icon.source: "/images/SnapLeftHalf.png"
+                    Comp.IconButtonTransparent{
+                        icon.source: prefix + "/images/SnapLeftHalf.png"
                         Layout.alignment: Qt.AlignLeft
                     }
-                    IconButtonTransparent{
-                        icon.source: "/images/SnapRightHalf.png"
+                    Comp.IconButtonTransparent{
+                        icon.source: prefix + "/images/SnapRightHalf.png"
                         Layout.alignment: Qt.AlignRight
                     }
                 }
                 RowLayout{
                     Layout.alignment: Qt.AlignCenter
                     implicitWidth: parent.width
-                    IconButtonTransparent{
-                        icon.source: "/images/SnapLeft.png"
+                    Comp.IconButtonTransparent{
+                        icon.source: prefix + "/images/SnapLeft.png"
                         Layout.alignment: Qt.AlignLeft
                     }
-                    IconButtonTransparent{
-                        icon.source: "/images/SnapRight.png"
+                    Comp.IconButtonTransparent{
+                        icon.source: prefix + "/images/SnapRight.png"
                         Layout.alignment: Qt.AlignRight
                     }
                 }
@@ -58,7 +62,7 @@ MoveablePopup {
                 }
             }
         }
-        TextLine{
+        Comp.TextLine{
             id: nudgeText
             font.pixelSize: 25
             text: qsTr("0 ")+ utils.cm_unit_abbrev()
@@ -71,13 +75,13 @@ MoveablePopup {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 15
-            IconButtonTransparent{
-                icon.source: "/images/Cancel64.png"
+            Comp.IconButtonTransparent{
+                icon.source: prefix + "/images/Cancel64.png"
                 onClicked: refNudge.visible = false
                 Layout.alignment: Qt.AlignCenter
             }
-            IconButtonTransparent{
-                icon.source: "/images/OK64.png"
+            Comp.IconButtonTransparent{
+                icon.source: prefix + "/images/OK64.png"
                 onClicked: refNudge.visible = false
                 Layout.alignment: Qt.AlignCenter
             }

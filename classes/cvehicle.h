@@ -7,6 +7,7 @@
 #include "common.h"
 #include <QObject>
 #include <QMatrix4x4>
+#include "interfaceproperty.h"
 
 #include <QOpenGLBuffer>
 
@@ -20,6 +21,7 @@ class CCamera;
 class CABCurve;
 class CABLine;
 class CContour;
+class CTrack;
 
 class CVehicle: public QObject
 {
@@ -33,7 +35,6 @@ public:
     double antennaHeight;
     double antennaPivot;
     double wheelbase;
-    double minTurningRadius;
     double antennaOffset, panicStopSpeed;
     int vehicleType;
 
@@ -41,7 +42,7 @@ public:
     double slowSpeedCutoff = 0;
 
     //autosteer values
-    double goalPointLookAhead, goalPointLookAheadHold, goalPointLookAheadMult;
+    double goalPointLookAhead, goalPointLookAheadHold, goalPointLookAheadMult, uturnCompensation;
 
     double stanleyDistanceErrorGain, stanleyHeadingErrorGain;
     double minLookAheadDistance = 2.0;
@@ -51,7 +52,14 @@ public:
 
     double hydLiftLookAheadDistanceLeft, hydLiftLookAheadDistanceRight;
 
-    bool isHydLiftOn;
+    //InterfaceProperty<VehicleInterface,bool> isHydLiftOn = InterfaceProperty<VehicleInterface,bool>("isHydLiftOn");
+    bool isHydLiftOn = false;
+    Q_PROPERTY(bool isHydLiftOn MEMBER isHydLiftOn NOTIFY isHydLiftOnChanged)
+
+    //InterfaceProperty<VehicleInterface,bool> hydLiftDown = InterfaceProperty<VehicleInterface,bool>("hydLiftDown");
+    bool hydLiftDown = false;
+    Q_PROPERTY(bool hydLiftDown MEMBER hydLiftDown NOTIFY hydLiftDownChanged)
+
     double stanleyIntegralDistanceAwayTriggerAB, stanleyIntegralGainAB, purePursuitIntegralGain;
 
     //flag for free drive window to control autosteer
@@ -69,6 +77,12 @@ public:
     //from pn or main form:
     double avgSpeed;//for average speed
     int ringCounter = 0;
+
+    //InterfaceProperty<VehicleInterface,bool> isChangingDirection = InterfaceProperty<VehicleInterface,bool>("isChangingDirection");
+    bool isChangingDirection = false;
+    Q_PROPERTY(bool isChangingDirection MEMBER isChangingDirection NOTIFY isChangingDirectionChanged)
+
+
 
     //headings
     double fixHeading = 0.0;
@@ -107,6 +121,7 @@ public:
 
     //from Position.Designer.cs
     bool isReverse;
+    Q_PROPERTY (bool isReverse MEMBER isReverse NOTIFY isReverseChanged)
 
     QRect bounding_box;
     QPoint pivot_axle_xy;
@@ -121,16 +136,28 @@ public:
                      QRect viewport,
                      const CCamera &camera,
                      const CTool &tool,
-                     CBoundary &bnd,
-                     const CContour &ct,
-                     const CABCurve &curve,
-                     const CABLine &ABLine);
+                     CBoundary &bnd);
 
-
-
+    //C++ code should always use these to set these flags so
+    //that QML can be notified of changes.  Changes from QML
+    //will automatically be reflectd in the flags in C++
+    void setIsHydLiftOn(bool value);
+    void setHydLiftDown(bool value);
+    void setIsChangingDirection(bool value);
+    void setIsReverse(bool value);
 
 signals:
     //void setLookAheadGoal(double);
+    void isHydLiftOnChanged();
+    void hydLiftDownChanged();
+    void isChangingDirectionChanged();
+    void isReverseChanged();
+
+    //QML signals
+    void vehicle_saveas(QString vehicle_name);
+    void vehicle_load(QString vehicle_name);
+    void vehicle_delete(QString vehicle_name);
+    void vehicle_update_list();
 
 public slots:
     void AverageTheSpeed(double newSpeed);

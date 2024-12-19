@@ -1,18 +1,20 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Record Boudnary window
 import QtQuick
 import QtQuick.Layouts
 import Qt.labs.folderlistmodel
 import QtQuick.Controls.Fusion
+import QtQuick.Controls.Material
 
 import ".."
 import "../components"
 
 MoveablePopup {
     id: boundaryRecord
-    //anchors.top: parent.top
-    //anchors.left: parent.left
-    width: 250
+
     visible: false
-    height: 415
     modal: false
 
     onVisibleChanged: {
@@ -21,44 +23,11 @@ MoveablePopup {
             boundaryInterface.start()
         }
     }
-
-    Rectangle{
+    TopLine{
         id: recordTopLine
-        anchors.top:parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: 1
-        height: 30
-        color: "white"
-        z: 1
-        Text {
-            text: qsTr("Record Boundary")
-            font.pixelSize: 15
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
-            anchors.leftMargin: 5
-        }
-        Button{
-            objectName: "lineHelp"
-            height: parent.height
-            width: parent.height * 2
-            text: "?"
-            font.pixelSize: 15
-            anchors.right: boundaryClose.left
-            anchors.rightMargin: 10
-            anchors.verticalCenter: parent.verticalCenter
-        }
-        Button{
-            id: boundaryClose
-            height: parent.height
-            width: parent.height * 2
-            text: "×"
-            font.pixelSize: 15
-            anchors.right: parent.right
-            anchors.rightMargin: 2
-            anchors.verticalCenter: parent.verticalCenter
-        }
+        titleText: qsTr("Record Boundary")
     }
+
     Rectangle{
         id: recordBoundaryWindow
         anchors.top: recordTopLine.bottom
@@ -69,7 +38,7 @@ MoveablePopup {
         border.color: "aqua"
         border.width: 2
         SpinBoxCM{
-            height: 50
+            height: 80  * theme.scaleHeight
             anchors.left: parent.left
             anchors.right: side2Record.left
             anchors.top: recordBoundaryWindow.top
@@ -84,15 +53,15 @@ MoveablePopup {
         IconButtonTransparent{
             id: side2Record
             objectName: "btnBoundarySide2Record"
-            icon.source: "/images/BoundaryRight.png"
-            iconChecked: "/images/BoundaryLeft.png"
+            icon.source: prefix + "/images/BoundaryRight.png"
+            iconChecked: prefix + "/images/BoundaryLeft.png"
             checkable: true
             anchors.top: recordBoundaryWindow.top
             anchors.right: parent.right
-            anchors.margins: 5
+            anchors.margins: 5  * theme.scaleHeight
             border: 1
-            width: 80
-            height: 80
+            height: 80  * theme.scaleHeight
+            width: 80  * theme.scaleWidth
             isChecked: ! boundaryInterface.isDrawRightSide
             onClicked: {
                 if (checked)
@@ -104,7 +73,7 @@ MoveablePopup {
 
         Row{
             anchors.top: side2Record.bottom
-            anchors.margins: 5
+            anchors.margins: 5  * theme.scaleHeight
             width: parent.width -10
             anchors.horizontalCenter: parent.horizontalCenter
             height: childrenRect.height
@@ -113,15 +82,15 @@ MoveablePopup {
                 border: 1
                 id: boundaryDelete
                 objectName: "recordBoundaryDelete"
-                icon.source: "/images/BoundaryDelete.png"
-                width: 80
-                height: 80
+                icon.source: prefix + "/images/BoundaryDelete.png"
+                height: 80  * theme.scaleHeight
+                width: 80  * theme.scaleWidth
                 onClicked: boundaryInterface.reset()
             }
             Column{
                 height: boundaryDelete.height
                 width: boundaryDelete.width
-                spacing: 20
+                spacing: 20 * theme.scaleHeight
                 Text{
                     text: qsTr("Area:") + " " + utils.area_to_unit_string(boundaryInterface.area,1) + " " + utils.area_unit()
                 }
@@ -136,35 +105,35 @@ MoveablePopup {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.margins: 5
+            anchors.margins: 5  * theme.scaleHeight
             height: children.height
             columns: 2
             rows: 2
             flow: Grid.LeftToRight
-            spacing:	30
+            spacing:	30  * theme.scaleHeight
             IconButtonTransparent{
                 border: 1
                 objectName: "btnBoundaryRecordAddPoint"
-                icon.source: "/images/PointAdd.png"
-                width: 80
-                height: 80
+                icon.source: prefix + "/images/PointAdd.png"
+                height: 80  * theme.scaleHeight
+                width: 80  * theme.scaleWidth
                 onClicked: boundaryInterface.add_point()
             }
             IconButtonTransparent{
                 border: 1
                 objectName: "btnBoundaryRecordDeleteLastPoint"
-                icon.source: "/images/PointDelete.png"
-                width: 80
-                height: 80
+                icon.source: prefix + "/images/PointDelete.png"
+                height: 80  * theme.scaleHeight
+                width: 80  * theme.scaleWidth
                 onClicked: boundaryInterface.delete_last_point()
             }
             IconButtonTransparent{
                 id: boundaryRecordBtn
                 objectName: "btnBoundaryRecordRecord"
-                icon.source: "/images/BoundaryRecord.png"
+                icon.source: prefix + "/images/BoundaryRecord.png"
                 checkable: true
-                width: 80
-                height: 80
+                height: 80  * theme.scaleHeight
+                width: 80  * theme.scaleWidth
                 border: 1
 
                 onCheckedChanged: {
@@ -177,13 +146,13 @@ MoveablePopup {
 
             IconButtonTransparent{
                 objectName: "btnBoundaryRecordSave"
-                icon.source: "/images/OK64.png"
+                icon.source: prefix + "/images/OK64.png"
                 onClicked: {
                     boundaryRecord.visible = false
                     boundaryInterface.stop()
                 }
-                width: 80
-                height: 80
+                height: 80  * theme.scaleHeight
+                width: 80  * theme.scaleWidth
             }
         }
     }

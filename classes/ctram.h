@@ -3,14 +3,17 @@
 
 #include <QVector>
 #include <QMatrix4x4>
+#include <QObject>
 #include "vec2.h"
+#include "setter.h"
 
 class CBoundary;
 class QOpenGLFunctions;
 class CCamera;
 
-class CTram
+class CTram : public QObject
 {
+    Q_OBJECT
 private:
 
 public:
@@ -30,6 +33,12 @@ public:
 
     bool isOuter;
 
+    Q_PROPERTY (bool isLeftManualOn MEMBER isLeftManualOn NOTIFY isLeftManualOnChanged)
+    bool isLeftManualOn;
+
+    Q_PROPERTY (bool isRightManualOn MEMBER isRightManualOn NOTIFY isRightManualOnChanged)
+    bool isRightManualOn;
+
     //tramlines
     QSharedPointer<QVector<Vec2>> tramArr;
     QVector<QSharedPointer<QVector<Vec2>>> tramList;
@@ -39,13 +48,20 @@ public:
 
     int controlByte;
 
-    CTram();
+    explicit CTram(QObject *parent = 0);
     void loadSettings();
     void IsTramOuterOrInner();
     void DrawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, CCamera &camera);
     void BuildTramBnd(const CBoundary &bnd);
     void CreateBndInnerTramTrack(const CBoundary &bnd);
     void CreateBndOuterTramTrack(const CBoundary &bnd);
+
+    SETTER(bool, isLeftManualOn, setIsLeftManualOn)
+    SETTER(bool, isRightManualOn, setIsRightManualOn)
+
+signals:
+    void isLeftManualOnChanged();
+    void isRightManualOnChanged();
 };
 
 #endif // CTRAM_H

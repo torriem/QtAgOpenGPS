@@ -4,6 +4,8 @@
 #include <QOpenGLFunctions>
 #include <QMatrix4x4>
 #include <QVector>
+#include <QFuture>
+#include <QtConcurrent/QtConcurrent>
 #include "vec3.h"
 #include "vec2.h"
 #include "cvehicle.h"
@@ -16,133 +18,473 @@
 #include "cahrs.h"
 #include "cguidance.h"
 #include "aogproperty.h"
+#include "ctrack.h"
 
 CABCurve::CABCurve(QObject *parent) : QObject(parent)
 {
 
 }
+
 void CABCurve::BuildCurveCurrentList(Vec3 pivot,
                                      double secondsSinceStart,
                                      const CVehicle &vehicle,
+                                     const CTrack &trk,
                                      const CBoundary &bnd,
                                      const CYouTurn &yt)
 {
     double minDistA = 1000000, minDistB;
-    //move the ABLine over based on the overlap amount set in vehicle
 
     double tool_width = property_setVehicle_toolWidth;
     double tool_overlap = property_setVehicle_toolOverlap;
     double tool_offset = property_setVehicle_toolOffset;
 
+    //move the ABLine over based on the overlap amount set in vehicle
     double widthMinusOverlap = tool_width - tool_overlap;
 
-    int refCount = refList.count();
-    if (refCount < 5)
+    int idx = trk.idx;
+
+    if (trk.gArr[trk.idx].mode != (int)TrackMode::waterPivot)
     {
+        int refCount = trk.gArr[trk.idx].curvePts.count();
+        if (refCount < 5)
+        {
+            curList.clear();
+            return;
+        }
+
+        //close call hit
+        int cc = 0, dd;
+
+        for (int j = 0; j < refCount; j += 10)
+        {
+            double dist = ((vehicle.guidanceLookPos.easting - trk.gArr[trk.idx].curvePts[j].easting)
+                           * (vehicle.guidanceLookPos.easting - trk.gArr[trk.idx].curvePts[j].easting))
+                          + ((vehicle.guidanceLookPos.northing - trk.gArr[trk.idx].curvePts[j].northing)
+                             * (vehicle.guidanceLookPos.northing - trk.gArr[trk.idx].curvePts[j].northing));
+            if (dist < minDistA)
+            {
+                minDistA = dist;
+                cc = j;
+            }
+        }
+
+        minDistA = minDistB = 1000000;
+
+        dd = cc + 7;
+        if (dd > refCount - 1) dd = refCount;
+        cc -= 7;
+        if (cc < 0) cc = 0;
+
+        //find the closest 2 points to current close call
+        for (int j = cc; j < dd; j++)
+        {
+            double dist = ((vehicle.guidanceLookPos.easting - trk.gArr[trk.idx].curvePts[j].easting)
+                           * (vehicle.guidanceLookPos.easting - trk.gArr[trk.idx].curvePts[j].easting))
+                          + ((vehicle.guidanceLookPos.northing - trk.gArr[trk.idx].curvePts[j].northing)
+                             * (vehicle.guidanceLookPos.northing - trk.gArr[trk.idx].curvePts[j].northing));
+            if (dist < minDistA)
+            {
+                minDistB = minDistA;
+                rB = rA;
+                minDistA = dist;
+                rA = j;
+            }
+            else if (dist < minDistB)
+            {
+                minDistB = dist;
+                rB = j;
+            }
+        }
+
+        //reset the line over jump
+        isLateralTriggered = false;
+
+        if (rA > rB) {
+            C = rA;
+            rA = rB;
+            rB = C;
+        }
+
+        //same way as line creation or not
+        isHeadingSameWay = M_PI - fabs(fabs(pivot.heading - trk.gArr[trk.idx].curvePts[rA].heading) - M_PI) < glm::PIBy2;
+
+        if (yt.isYouTurnTriggered && yt.isGoingStraightThrough) isHeadingSameWay = !isHeadingSameWay;
+
+        //which side of the closest point are we on is next
+        //calculate endpoints of reference line based on closest point
+        refPoint1.easting = trk.gArr[trk.idx].curvePts[rA].easting - (sin(trk.gArr[trk.idx].curvePts[rA].heading) * 300.0);
+        refPoint1.northing = trk.gArr[trk.idx].curvePts[rA].northing - (cos(trk.gArr[trk.idx].curvePts[rA].heading) * 300.0);
+
+        refPoint2.easting = trk.gArr[trk.idx].curvePts[rA].easting + (sin(trk.gArr[trk.idx].curvePts[rA].heading) * 300.0);
+        refPoint2.northing = trk.gArr[trk.idx].curvePts[rA].northing + (cos(trk.gArr[trk.idx].curvePts[rA].heading) * 300.0);
+
+        if (idx > -1 && trk.gArr[trk.idx].nudgeDistance != 0)
+        {
+            refPoint1.easting += (sin(trk.gArr[trk.idx].curvePts[rA].heading + glm::PIBy2) * trk.gArr[trk.idx].nudgeDistance);
+            refPoint1.northing += (cos(trk.gArr[trk.idx].curvePts[rA].heading + glm::PIBy2) * trk.gArr[trk.idx].nudgeDistance);
+
+            refPoint2.easting += (sin(trk.gArr[trk.idx].curvePts[rA].heading + glm::PIBy2) * trk.gArr[trk.idx].nudgeDistance);
+            refPoint2.northing += (cos(trk.gArr[trk.idx].curvePts[rA].heading + glm::PIBy2) * trk.gArr[trk.idx].nudgeDistance);
+        }
+
+        //x2-x1
+        double dx = refPoint2.easting - refPoint1.easting;
+        //z2-z1
+        double dz = refPoint2.northing - refPoint1.northing;
+
+        //how far are we away from the reference line at 90 degrees - 2D cross product and distance
+        distanceFromRefLine = ((dz * vehicle.guidanceLookPos.easting) -
+                               (dx * vehicle.guidanceLookPos.northing) +
+                               (refPoint2.easting * refPoint1.northing) -
+                               (refPoint2.northing * refPoint1.easting))
+                              / sqrt((dz * dz) + (dx * dx));
+
+        distanceFromRefLine -= (0.5 * widthMinusOverlap);
+
+        double RefDist = (distanceFromRefLine +
+                          (isHeadingSameWay ? tool_offset : -tool_offset)) / widthMinusOverlap;
+
+        if (RefDist < 0) howManyPathsAway = (int)(RefDist - 0.5);
+        else howManyPathsAway = (int)(RefDist + 0.5);
+
+        if (trk.gArr[trk.idx].mode != (int)TrackMode::bndCurve)
+        {
+
+            //build current list
+            isCurveValid = true;
+
+            if (howManyPathsAway == lastHowManyPathsAway)
+            {
+                return;
+            }
+
+            lastHowManyPathsAway = howManyPathsAway;
+
+            //build the current line
+            curList.clear();
+
+            double distAway = widthMinusOverlap * howManyPathsAway +
+                              (isHeadingSameWay ? -tool_offset : tool_offset);
+
+            distAway += (0.5 * widthMinusOverlap);
+
+            if (howManyPathsAway > -1) howManyPathsAway += 1;
+
+            double step = widthMinusOverlap * 0.48;
+            if (step > 4) step = 4;
+            if (step < 1) step = 1;
+
+            double distSqAway = (distAway * distAway) - 0.01;
+
+            Vec3 point;
+            for (int i = 0; i < refCount; i++)
+            {
+                point = Vec3(
+                    trk.gArr[trk.idx].curvePts[i].easting + (sin(glm::PIBy2 + trk.gArr[trk.idx].curvePts[i].heading) * distAway),
+                    trk.gArr[trk.idx].curvePts[i].northing + (cos(glm::PIBy2 + trk.gArr[trk.idx].curvePts[i].heading) * distAway),
+                    trk.gArr[trk.idx].curvePts[i].heading);
+                bool Add = true;
+
+                for (int t = 0; t < refCount; t++)
+                {
+                    double dist = ((point.easting - trk.gArr[trk.idx].curvePts[t].easting) *
+                                   (point.easting - trk.gArr[trk.idx].curvePts[t].easting))
+                                  + ((point.northing - trk.gArr[trk.idx].curvePts[t].northing) *
+                                     (point.northing - trk.gArr[trk.idx].curvePts[t].northing));
+                    if (dist < distSqAway)
+                    {
+                        Add = false;
+                        break;
+                    }
+                }
+
+                if (Add)
+                {
+                    if (curList.count() > 0)
+                    {
+                        double dist = ((point.easting - curList[curList.count() - 1].easting) *
+                                       (point.easting - curList[curList.count() - 1].easting))
+                                      + ((point.northing - curList[curList.count() - 1].northing) *
+                                         (point.northing - curList[curList.count() - 1].northing));
+                        if (dist > 2)
+                            curList.append(point);
+                    }
+                    else curList.append(point);
+                }
+            }
+
+            int cnt = curList.count();
+            if (cnt > 6)
+            {
+                QVector<Vec3> arr(curList);
+
+                curList.clear();
+
+                for (int i = 0; i < (arr.count() - 1); i++)
+                {
+                    arr[i].heading = atan2(arr[i + 1].easting - arr[i].easting,
+                                           arr[i + 1].northing - arr[i].northing);
+                    if (arr[i].heading < 0) arr[i].heading += glm::twoPI;
+                    if (arr[i].heading >= glm::twoPI) arr[i].heading -= glm::twoPI;
+                }
+
+                arr[arr.length() - 1].heading = arr[arr.length() - 2].heading;
+
+                cnt = arr.length();
+                double distance;
+
+                //add the first point of loop - it will be p1
+                curList.append(arr[0]);
+                //curList.append(arr[1]);
+
+                for (int i = 0; i < cnt - 3; i++)
+                {
+                    // add p1
+                    curList.append(arr[i + 1]);
+
+                    distance = glm::Distance(arr[i + 1], arr[i + 2]);
+
+                    if (distance > step)
+                    {
+                        int loopTimes = (int)(distance / step + 1);
+                        for (int j = 1; j < loopTimes; j++)
+                        {
+                            Vec3 pos(glm::Catmull(j / (double)(loopTimes), arr[i], arr[i + 1], arr[i + 2], arr[i + 3]));
+                            curList.append(pos);
+                        }
+                    }
+                }
+
+                curList.append(arr[cnt - 2]);
+                curList.append(arr[cnt - 1]);
+
+                //to calc heading based on next and previous points to give an average heading.
+                cnt = curList.count();
+                arr = QVector<Vec3>(curList);
+                cnt--;
+                curList.clear();
+
+                curList.append(Vec3(arr[0]));
+
+                //middle points
+                for (int i = 1; i < cnt; i++)
+                {
+                    Vec3 pt3(arr[i]);
+                    pt3.heading = atan2(arr[i + 1].easting - arr[i - 1].easting,
+                                        arr[i + 1].northing - arr[i - 1].northing);
+                    if (pt3.heading < 0) pt3.heading += glm::twoPI;
+                    curList.append(pt3);
+                }
+
+                int k = arr.length() - 1;
+                Vec3 pt33(arr[k]);
+                pt33.heading = atan2(arr[k].easting - arr[k - 1].easting,
+                                     arr[k].northing - arr[k - 1].northing);
+                if (pt33.heading < 0) pt33.heading += glm::twoPI;
+                curList.append(pt33);
+
+                if (trk.gArr.count() == 0 || idx == -1) return;
+
+                if (bnd.bndList.count() > 0 && !(trk.gArr[trk.idx].mode == (int)TrackMode::bndCurve))
+                {
+                    int ptCnt = curList.count() - 1;
+
+                    bool isAdding = false;
+                    //end
+                    while (glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar,curList[curList.count() - 1]))
+                    {
+                        isAdding = true;
+                        for (int i = 1; i < 10; i++)
+                        {
+                            Vec3 pt(curList[ptCnt]);
+                            pt.easting += (sin(pt.heading) * i);
+                            pt.northing += (cos(pt.heading) * i);
+                            curList.append(pt);
+                        }
+                        ptCnt = curList.count() - 1;
+                    }
+
+                    if (isAdding)
+                    {
+                        Vec3 pt(curList[curList.count() - 1]);
+                        for (int i = 1; i < 5; i++)
+                        {
+                            pt.easting += (sin(pt.heading) * 2);
+                            pt.northing += (cos(pt.heading) * 2);
+                            curList.append(pt);
+                        }
+                    }
+
+                    isAdding = false;
+
+                    //and the beginning
+                    pt33 = Vec3(curList[0]);
+
+                    while (glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar,curList[0]))
+                    {
+                        isAdding = true;
+                        pt33 = Vec3(curList[0]);
+
+                        for (int i = 1; i < 10; i++)
+                        {
+                            Vec3 pt(pt33);
+                            pt.easting -= (sin(pt.heading) * i);
+                            pt.northing -= (cos(pt.heading) * i);
+                            curList.insert(0, pt);
+                        }
+                    }
+
+                    if (isAdding)
+                    {
+                        Vec3 pt(curList[0]);
+                        for (int i = 1; i < 5; i++)
+                        {
+                            pt.easting -= (sin(pt.heading) * 2);
+                            pt.northing -= (cos(pt.heading) * 2);
+                            curList.insert(0, pt);
+                        }
+                    }
+
+                }
+            }
+        }
+        else
+        {
+            //is boundary curve - use task
+            if (isReady)
+            {
+                curList.clear();
+                isReady = false;
+            }
+
+            //build current list
+            isCurveValid = true;
+
+            if (howManyPathsAway == lastHowManyPathsAway)
+            {
+                return;
+            }
+
+            lastHowManyPathsAway = howManyPathsAway;
+
+            //build the current line
+            //curList?.Clear();
+
+            double distAway = (tool_width - tool_overlap) * howManyPathsAway + (isHeadingSameWay ? -tool_offset : tool_offset) + trk.gArr[idx].nudgeDistance;
+
+            if (howManyPathsAway > -1) howManyPathsAway += 1;
+
+            distAway += (0.5 * (tool_width - tool_overlap));
+
+            if (!isBusyWorking) auto result = QtConcurrent::run([this, distAway, refCount, &trk, idx, &bnd] () { BuildNewCurveAsync( distAway, refCount, trk.gArr[idx], bnd); }  ) ;
+        }
+    }
+    else //pivot guide list
+    {
+        //pivot circle center
+        refPoint1 = trk.gArr[trk.idx].ptA;
+
+        //cross product
+        isHeadingSameWay = ((vehicle.pivotAxlePos.easting - refPoint1.easting) * (vehicle.steerAxlePos.northing - refPoint1.northing)
+                            - (vehicle.pivotAxlePos.northing - refPoint1.northing) * (vehicle.steerAxlePos.easting - refPoint1.easting)) < 0;
+
+        //how far are we away from the reference line at 90 degrees - 2D cross product and distance
+        distanceFromRefLine = glm::Distance(vehicle.guidanceLookPos, refPoint1);
+
+        distanceFromRefLine -= (0.5 * widthMinusOverlap);
+
+        double RefDist = (distanceFromRefLine
+                          + (isHeadingSameWay ? tool_offset : -tool_offset)
+                          + trk.gArr[trk.idx].nudgeDistance) / widthMinusOverlap;
+
+        if (RefDist < 0) howManyPathsAway = (int)(RefDist - 0.5);
+        else howManyPathsAway = (int)(RefDist + 0.5);
+
+        //build current list
+        isCurveValid = true;
+
+        //build the current line
         curList.clear();
-        return;
+
+        double distAway = widthMinusOverlap * howManyPathsAway
+                          + (isHeadingSameWay ? -tool_offset : tool_offset) - trk.gArr[trk.idx].nudgeDistance;
+
+        distAway += (0.5 * widthMinusOverlap);
+
+        if (howManyPathsAway > -1) howManyPathsAway += 1;
+
+        double pointSpacing = distAway * 0.05;
+
+        //distAway += mf.trk.gArr[trk.idx].nudgeDistance;
+
+        Vec3 currentPos(refPoint1.easting-distAway, refPoint1.northing, 0);
+
+        while (currentPos.heading < glm::twoPI)
+        {
+            //Update the position of the car
+            currentPos.easting += pointSpacing * sin(currentPos.heading);
+            currentPos.northing += pointSpacing * cos(currentPos.heading);
+
+            //Update the heading
+            currentPos.heading += (pointSpacing / distAway);
+
+            //Add the new coordinate to the path
+            curList.append(currentPos);
+        }
+
+        QVector<Vec3> arr(curList);
+        curList.clear();
+
+        for (int i = 0; i < (arr.count() - 1); i++)
+        {
+            arr[i].heading = atan2(arr[i + 1].easting - arr[i].easting, arr[i + 1].northing - arr[i].northing);
+            if (arr[i].heading < 0) arr[i].heading += glm::twoPI;
+            if (arr[i].heading >= glm::twoPI) arr[i].heading -= glm::twoPI;
+        }
+
+        arr[arr.count() - 1].heading = arr[arr.count() - 2].heading;
+
+        curList.append(arr);
     }
 
-    //close call hit
-    int cc = 0, dd;
+    lastSecond = secondsSinceStart;
 
-    for (int j = 0; j < refCount; j += 10)
-    {
-        double dist = ((vehicle.guidanceLookPos.easting - refList[j].easting) * (vehicle.guidanceLookPos.easting - refList[j].easting))
-                      + ((vehicle.guidanceLookPos.northing - refList[j].northing) * (vehicle.guidanceLookPos.northing - refList[j].northing));
-        if (dist < minDistA)
-        {
-            minDistA = dist;
-            cc = j;
-        }
-    }
+}
 
-    minDistA = minDistB = 1000000;
+void CABCurve::BuildNewCurveAsync(double distAway,
+                                  int refCount,
+                                  const CTrk &track,
+                                  const CBoundary &bnd)
+{
+    //was an async task in C#, using QtConcurrent::run here
+    isBusyWorking = true;
+    isReady = false;
 
-    dd = cc + 7; if (dd > refCount - 1) dd = refCount;
-    cc -= 7; if (cc < 0) cc = 0;
+    newCurList.clear();
 
-    //find the closest 2 points to current close call
-    for (int j = cc; j < dd; j++)
-    {
-        double dist = ((vehicle.guidanceLookPos.easting - refList[j].easting) * (vehicle.guidanceLookPos.easting - refList[j].easting))
-                      + ((vehicle.guidanceLookPos.northing - refList[j].northing) * (vehicle.guidanceLookPos.northing - refList[j].northing));
-        if (dist < minDistA)
-        {
-            minDistB = minDistA;
-            rB = rA;
-            minDistA = dist;
-            rA = j;
-        }
-        else if (dist < minDistB)
-        {
-            minDistB = dist;
-            rB = j;
-        }
-    }
-
-    //reset the line over jump
-    isLateralTriggered = false;
-
-    if (rA > rB) { C = rA; rA = rB; rB = C; }
-
-    //same way as line creation or not
-    isHeadingSameWay = M_PI - fabs(fabs(pivot.heading - refList[rA].heading) - M_PI) < glm::PIBy2;
-
-    if (yt.isYouTurnTriggered) isHeadingSameWay = !isHeadingSameWay;
-
-    //which side of the closest point are we on is next
-    //calculate endpoints of reference line based on closest point
-    refPoint1.easting = refList[rA].easting - (sin(refList[rA].heading) * 300.0);
-    refPoint1.northing = refList[rA].northing - (cos(refList[rA].heading) * 300.0);
-
-    refPoint2.easting = refList[rA].easting + (sin(refList[rA].heading) * 300.0);
-    refPoint2.northing = refList[rA].northing + (cos(refList[rA].heading) * 300.0);
-
-    //x2-x1
-    double dx = refPoint2.easting - refPoint1.easting;
-    //z2-z1
-    double dz = refPoint2.northing - refPoint1.northing;
-
-    //how far are we away from the reference line at 90 degrees - 2D cross product and distance
-    distanceFromRefLine = ((dz * vehicle.guidanceLookPos.easting) -
-                           (dx * vehicle.guidanceLookPos.northing) +
-                           (refPoint2.easting * refPoint1.northing) -
-                           (refPoint2.northing * refPoint1.easting))
-                          / sqrt((dz * dz) + (dx * dx));
-
-    double RefDist = (distanceFromRefLine +
-                      (isHeadingSameWay ? tool_offset : tool_offset)) / widthMinusOverlap;
-    if (RefDist < 0) howManyPathsAway = (int)(RefDist - 0.5);
-    else howManyPathsAway = (int)(RefDist + 0.5);
-
-    //build current list
-    isCurveValid = true;
-
-    //build the current line
-    curList.clear();
-
-    double distAway = widthMinusOverlap * howManyPathsAway +
-                      (isHeadingSameWay ? -tool_offset : tool_offset);
-
-    if (howManyPathsAway > -1) howManyPathsAway += 1;
+    double tool_width = property_setVehicle_toolWidth;
+    double tool_overlap = property_setVehicle_toolOverlap;
+    double step = (tool_width - tool_overlap) * 0.48;
+    if (step > 4) step = 4;
+    if (step < 1) step = 1;
 
     double distSqAway = (distAway * distAway) - 0.01;
+
     Vec3 point;
+
+    //try
     for (int i = 0; i < refCount; i++)
     {
         point = Vec3(
-            refList[i].easting + (sin(glm::PIBy2 + refList[i].heading) * distAway),
-            refList[i].northing + (cos(glm::PIBy2 + refList[i].heading) * distAway),
-            refList[i].heading);
+            track.curvePts[i].easting + (sin(glm::PIBy2 + track.curvePts[i].heading) * distAway),
+            track.curvePts[i].northing + (cos(glm::PIBy2 + track.curvePts[i].heading) * distAway),
+            track.curvePts[i].heading);
         bool Add = true;
 
         for (int t = 0; t < refCount; t++)
         {
-            double dist = ((point.easting - refList[t].easting) *
-                           (point.easting - refList[t].easting))
-                          + ((point.northing - refList[t].northing) *
-                             (point.northing - refList[t].northing));
+            double dist = ((point.easting - track.curvePts[t].easting) * (point.easting - track.curvePts[t].easting))
+                          + ((point.northing - track.curvePts[t].northing) * (point.northing - track.curvePts[t].northing));
             if (dist < distSqAway)
             {
                 Add = false;
@@ -152,160 +494,189 @@ void CABCurve::BuildCurveCurrentList(Vec3 pivot,
 
         if (Add)
         {
-            if (curList.count() > 0)
+            if (newCurList.count() > 0)
             {
-                double dist = ((point.easting - curList[curList.count() - 1].easting) *
-                               (point.easting - curList[curList.count() - 1].easting))
-                              + ((point.northing - curList[curList.count() - 1].northing) *
-                                 (point.northing - curList[curList.count() - 1].northing));
-                if (dist > 1.5)
-                    curList.append(point);
+                double dist = ((point.easting - newCurList[newCurList.count() - 1].easting) * (point.easting - newCurList[newCurList.count() - 1].easting))
+                              + ((point.northing - newCurList[newCurList.count() - 1].northing) * (point.northing - newCurList[newCurList.count() - 1].northing));
+                if (dist > step)
+                    newCurList.append(point);
             }
-            else curList.append(point);
+            else newCurList.append(point);
         }
     }
 
-    int cnt = curList.count();
+    int cnt = newCurList.count();
     if (cnt > 6)
     {
-        QVector<Vec3> arr(curList);
-
-        curList.clear();
+        QVector<Vec3> arr(newCurList);
+        newCurList.clear();
 
         for (int i = 0; i < (arr.count() - 1); i++)
         {
-            arr[i].heading = atan2(arr[i + 1].easting - arr[i].easting,
-                                   arr[i + 1].northing - arr[i].northing);
+            arr[i].heading = atan2(arr[i + 1].easting - arr[i].easting, arr[i + 1].northing - arr[i].northing);
             if (arr[i].heading < 0) arr[i].heading += glm::twoPI;
             if (arr[i].heading >= glm::twoPI) arr[i].heading -= glm::twoPI;
         }
 
-        arr[arr.length() - 1].heading = arr[arr.length() - 2].heading;
+        arr[arr.count() - 1].heading = arr[arr.count() - 2].heading;
 
-        cnt = arr.length();
+        cnt = arr.count();
         double distance;
-        double spacing = 1.5;
 
         //add the first point of loop - it will be p1
-        curList.append(arr[0]);
-        //curList.append(arr[1]);
+        newCurList.append(arr[0]);
+        //newCurList.append(arr[1]);
 
         for (int i = 0; i < cnt - 3; i++)
         {
             // add p1
-            curList.append(arr[i + 1]);
+            newCurList.append(arr[i + 1]);
 
             distance = glm::Distance(arr[i + 1], arr[i + 2]);
 
-            if (distance > spacing)
+            if (distance > step)
             {
-                int loopTimes = (int)(distance / spacing + 1);
+                int loopTimes = (int)(distance / step + 1);
                 for (int j = 1; j < loopTimes; j++)
                 {
-                    Vec3 pos(glm::Catmull(j / (double)(loopTimes), arr[i], arr[i + 1], arr[i + 2], arr[i + 3]));
-                    curList.append(pos);
+                    Vec3 pos = Vec3(glm::Catmull(j / (double)(loopTimes), arr[i], arr[i + 1], arr[i + 2], arr[i + 3]));
+                    newCurList.append(pos);
                 }
             }
         }
 
-        curList.append(arr[cnt - 2]);
-        curList.append(arr[cnt - 1]);
+        newCurList.append(arr[cnt - 2]);
+        newCurList.append(arr[cnt - 1]);
 
         //to calc heading based on next and previous points to give an average heading.
-        cnt = curList.count();
-        arr = QVector<Vec3>(curList);
+        cnt = newCurList.count();
+        arr = newCurList;
         cnt--;
-        curList.clear();
+        newCurList.clear();
 
-        curList.append(Vec3(arr[0]));
+        newCurList.append(Vec3(arr[0]));
 
         //middle points
         for (int i = 1; i < cnt; i++)
         {
-            Vec3 pt3(arr[i]);
-            pt3.heading = atan2(arr[i + 1].easting - arr[i - 1].easting,
-                                arr[i + 1].northing - arr[i - 1].northing);
+            Vec3 pt3 = Vec3(arr[i]);
+            pt3.heading = atan2(arr[i + 1].easting - arr[i - 1].easting, arr[i + 1].northing - arr[i - 1].northing);
             if (pt3.heading < 0) pt3.heading += glm::twoPI;
-            curList.append(pt3);
+            newCurList.append(pt3);
         }
 
-        int k = arr.length() - 1;
-        Vec3 pt33(arr[k]);
-        pt33.heading = atan2(arr[k].easting - arr[k - 1].easting,
-                             arr[k].northing - arr[k - 1].northing);
+        int k = arr.count() - 1;
+        Vec3 pt33 = Vec3(arr[k]);
+        pt33.heading = atan2(arr[k].easting - arr[k - 1].easting, arr[k].northing - arr[k - 1].northing);
         if (pt33.heading < 0) pt33.heading += glm::twoPI;
-        curList.append(pt33);
+        newCurList.append(pt33);
 
-        if (curveArr.count() == 0) return;
-        if (bnd.bndList.count() > 0 && !(curveArr[numCurveLineSelected - 1].Name == "Boundary Curve"))
+        if (track.curvePts.count() == 0)
         {
-            int ptCnt = curList.count() - 1;
+            isReady = false;
+            isBusyWorking = false;
+            return;
+        }
 
+        if (bnd.bndList.count() > 0 && !(track.mode == (int)TrackMode::bndCurve))
+        {
+            int ptCnt = newCurList.count() - 1;
+
+            bool isAdding = false;
             //end
-            while (glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar,curList[curList.count() - 1]))
+            while (glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar,newCurList[newCurList.count() - 1]))
             {
+                isAdding = true;
                 for (int i = 1; i < 10; i++)
                 {
-                    Vec3 pt(curList[ptCnt]);
-                    pt.easting += (sin(pt.heading) * i);
-                    pt.northing += (cos(pt.heading) * i);
-                    curList.append(pt);
+                    Vec3 pt = Vec3(newCurList[ptCnt]);
+                    pt.easting += (sin(pt.heading) * i * 2);
+                    pt.northing += (cos(pt.heading) * i * 2);
+                    newCurList.append(pt);
                 }
-                ptCnt = curList.count() - 1;
+                ptCnt = newCurList.count() - 1;
             }
+
+            if (isAdding)
+            {
+                Vec3 pt = Vec3(newCurList[newCurList.count() - 1]);
+                for (int i = 1; i < 5; i++)
+                {
+                    pt.easting += (sin(pt.heading) * 2);
+                    pt.northing += (cos(pt.heading) * 2);
+                    newCurList.append(pt);
+                }
+            }
+
+            isAdding = false;
 
             //and the beginning
-            pt33 = Vec3(curList[0]);
+            pt33 = Vec3(newCurList[0]);
 
-            while (glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar,curList[0]))
+            while (glm::IsPointInPolygon(bnd.bndList[0].fenceLineEar,newCurList[0]))
             {
-                pt33 = Vec3(curList[0]);
+                isAdding = true;
+                pt33 = Vec3(newCurList[0]);
 
                 for (int i = 1; i < 10; i++)
                 {
-                    Vec3 pt(pt33);
-                    pt.easting -= (sin(pt.heading) * i);
-                    pt.northing -= (cos(pt.heading) * i);
-                    curList.insert(0, pt);
+                    Vec3 pt = Vec3(pt33);
+                    pt.easting -= (sin(pt.heading) * i * 2);
+                    pt.northing -= (cos(pt.heading) * i * 2);
+                    newCurList.insert(0, pt);
+                }
+            }
+
+            if (isAdding)
+            {
+                Vec3 pt = Vec3(newCurList[0]);
+                for (int i = 1; i < 5; i++)
+                {
+                    pt.easting -= (sin(pt.heading) * 2);
+                    pt.northing -= (cos(pt.heading) * 2);
+                    newCurList.insert(0, pt);
                 }
             }
         }
-    }
 
-    lastSecond = secondsSinceStart;
+        isReady = true;
+    }
+    //catch (Exception)
+
+    isBusyWorking = false;
 
 }
 
 void CABCurve::GetCurrentCurveLine(Vec3 pivot,
                                    Vec3 steer,
-                                   double secondsSinceStart,
                                    bool isAutoSteerBtnOn,
-                                   bool steerSwitchHigh,
                                    CVehicle &vehicle,
-                                   const CBoundary &bnd,
+                                   CTrack &trk,
                                    CYouTurn &yt,
                                    const CAHRS &ahrs,
                                    CGuidance &gyd,
-                                   CNMEA &pn)
+                                   CNMEA &pn,
+                                   int &makeUTurnCounter)
 {
     double purePursuitGain = property_purePursuitIntegralGainAB;
     double wheelBase = property_setVehicle_wheelbase;
     double maxSteerAngle = property_setVehicle_maxSteerAngle;
 
-    if (refList.count() < 5) return;
-
-    //build new current ref line if required
-    if (!isCurveValid || ((secondsSinceStart - lastSecond) > 0.66
-                          && (!isAutoSteerBtnOn || steerSwitchHigh)))
-        BuildCurveCurrentList(pivot,secondsSinceStart,vehicle,bnd,yt);
+    if (trk.gArr[trk.idx].curvePts.count() == 0 || trk.gArr[trk.idx].curvePts.count() < 5)
+    {
+        if (trk.gArr[trk.idx].mode != (int)TrackMode::waterPivot)
+        {
+            return;
+        }
+    }
 
     double dist, dx, dz;
     double minDistA = 1000000, minDistB = 1000000;
-    int ptCount = curList.count();
+    //int ptCount = curList.count();
 
-    if (ptCount > 0)
+    if (curList.count() > 0)
     {
-        if (yt.isYouTurnTriggered && yt.DistanceFromYouTurnLine(vehicle,pn))//do the pure pursuit from youTurn
+        if (yt.isYouTurnTriggered && yt.DistanceFromYouTurnLine(vehicle,pn,makeUTurnCounter))//do the pure pursuit from youTurn
         {
             //now substitute what it thinks are AB line values with auto turn values
             steerAngleCu = yt.steerAngleYT;
@@ -323,52 +694,116 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
         }
         else// Pure Pursuit ------------------------------------------
         {
-            minDistA = minDistB = glm::DOUBLE_MAX;
-            //close call hit
-            int cc = 0, dd;
-
-            for (int j = 0; j < curList.count(); j += 10)
-            {
-                dist = glm::DistanceSquared(pivot, curList[j]);
-                if (dist < minDistA)
-                {
-                    minDistA = dist;
-                    cc = j;
-                }
-            }
-
             minDistA = glm::DOUBLE_MAX;
+            //close call hit
 
-            dd = cc + 8; if (dd > curList.count() - 1) dd = curList.count();
-            cc -= 8; if (cc < 0) cc = 0;
-
-            //find the closest 2 points to current close call
-            for (int j = cc; j < dd; j++)
+            //If is a curve
+            if (trk.gArr[trk.idx].mode <= (int)TrackMode::Curve)
             {
-                dist = glm::DistanceSquared(pivot, curList[j]);
-                if (dist < minDistA)
+                minDistA = minDistB = glm::DOUBLE_MAX;
+                //close call hit
+                int cc = 0, dd;
+
+                for (int j = 0; j < curList.count(); j += 10)
                 {
-                    minDistB = minDistA;
-                    B = A;
-                    minDistA = dist;
-                    A = j;
+                    dist = glm::DistanceSquared(pivot, curList[j]);
+                    if (dist < minDistA)
+                    {
+                        minDistA = dist;
+                        cc = j;
+                    }
                 }
-                else if (dist < minDistB)
+
+                minDistA = glm::DOUBLE_MAX;
+
+                dd = cc + 8;
+                if (dd > curList.count() - 1) dd = curList.count();
+                cc -= 8;
+                if (cc < 0) cc = 0;
+
+                //find the closest 2 points to current close call
+                for (int j = cc; j < dd; j++)
                 {
-                    minDistB = dist;
-                    B = j;
+                    dist = glm::DistanceSquared(pivot, curList[j]);
+                    if (dist < minDistA)
+                    {
+                        minDistB = minDistA;
+                        B = A;
+                        minDistA = dist;
+                        A = j;
+                    }
+                    else if (dist < minDistB)
+                    {
+                        minDistB = dist;
+                        B = j;
+                    }
                 }
+
+                //just need to make sure the points continue ascending or heading switches all over the place
+                if (A > B) {
+                    C = A;
+                    A = B;
+                    B = C;
+                }
+
+                currentLocationIndex = A;
+
+                //get the distance from currently active AB line
+
+                if (A > curList.count() - 1 || B > curList.count() - 1)
+                    return;
+            }
+            else
+            {
+                for (int j = 0; j < curList.count(); j++)
+                {
+                    dist = glm::DistanceSquared(pivot, curList[j]);
+                    if (dist < minDistA)
+                    {
+                        minDistA = dist;
+                        A = j;
+                    }
+                }
+
+                currentLocationIndex = A;
+
+                if (A > curList.count() - 1)
+                    return;
+
+                //initial forward Test if pivot InRange AB
+                if (A == curList.count() - 1) B = 0;
+                else B = A + 1;
+
+                if (glm::InRangeBetweenAB(curList[A].easting, curList[A].northing,
+                                         curList[B].easting, curList[B].northing, pivot.easting, pivot.northing))
+                    goto SegmentFound;
+
+                A = currentLocationIndex;
+                //step back one
+                if (A == 0)
+                {
+                    A = curList.count() - 1;
+                    B = 0;
+                }
+                else
+                {
+                    A = A - 1;
+                    B = A + 1;
+                }
+
+                if (glm::InRangeBetweenAB(curList[A].easting, curList[A].northing,
+                                         curList[B].easting, curList[B].northing, pivot.easting, pivot.northing))
+                    goto SegmentFound;
+
+                //realy really lost
+                return;
+
             }
 
-            //just need to make sure the points continue ascending or heading switches all over the place
-            if (A > B) { C = A; A = B; B = C; }
-
-            currentLocationIndex = A;
+            SegmentFound:
 
             //get the distance from currently active AB line
 
-            if (A > curList.count() - 1 || B > curList.count() - 1)
-                return;
             dx = curList[B].easting - curList[A].easting;
             dz = curList[B].northing - curList[A].northing;
 
@@ -440,7 +875,7 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
             Vec3 start(rEastCu, rNorthCu, 0);
             double distSoFar = 0;
 
-            for (int i = ReverseHeading ? B : A; i < ptCount && i >= 0; i += count)
+            for (int i = ReverseHeading ? B : A; i < curList.count() && i >= 0; i += count)
             {
                 // used for calculating the length squared of next segment.
                 double tempDist = glm::Distance(start, curList[i]);
@@ -456,24 +891,30 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
                 }
                 else distSoFar += tempDist;
                 start = curList[i];
+                i += count;
+                if (i < 0) i = curList.count() - 1;
+                if (i > curList.count() - 1) i = 0;
             }
 
-            if (isAutoSteerBtnOn && !vehicle.isReverse)
+            if (trk.gArr[trk.idx].mode <= (int)TrackMode::Curve)
             {
-                if (isHeadingSameWay)
+                if (isAutoSteerBtnOn && !vehicle.isReverse)
                 {
-                    if (glm::Distance(goalPointCu, curList[(curList.count() - 1)]) < 0.5)
+                    if (isHeadingSameWay)
                     {
-                        emit TimedMessage(2000,tr("Guidance Stopped"), tr("Past end of curve"));
-                        emit stopAutoSteer();
+                        if (glm::Distance(goalPointCu, curList[(curList.count() - 1)]) < 0.5)
+                        {
+                            emit TimedMessage(2000,tr("Guidance Stopped"), tr("Past end of curve"));
+                            emit stopAutoSteer();
+                        }
                     }
-                }
-                else
-                {
-                    if (glm::Distance(goalPointCu, curList[0]) < 0.5)
+                    else
                     {
-                        emit TimedMessage(2000,tr("Guidance Stopped"), tr("Past end of curve"));
-                        emit stopAutoSteer();
+                        if (glm::Distance(goalPointCu, curList[0]) < 0.5)
+                        {
+                            emit TimedMessage(2000,tr("Guidance Stopped"), tr("Past end of curve"));
+                            emit stopAutoSteer();
+                        }
                     }
                 }
             }
@@ -532,9 +973,18 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
     }
 }
 
+void CABCurve::DrawCurveNew(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
+{
+    GLHelperOneColor gldraw;
+
+    for (int h = 0; h < desList.count(); h++) gldraw.append(QVector3D(desList[h].easting, desList[h].northing, 0));
+
+    gldraw.draw(gl, mvp, QColor::fromRgbF(0.95f, 0.42f, 0.750f), GL_LINE_STRIP, 4.0f); //TODO is 4 pixels right?  check main form call
+}
+
 void CABCurve::DrawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                          bool isFontOn,
-                         const CVehicle &vehicle,
+                         const CTrack &trk,
                          CYouTurn &yt, const CCamera &camera)
 {
     //double tool_toolWidth = property_setVehicle_toolWidth;
@@ -553,87 +1003,105 @@ void CABCurve::DrawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
         for (int h = 0; h < desList.count(); h++)
             gldraw.append(QVector3D(desList[h].easting, desList[h].northing, 0));
 
-        gldraw.draw(gl,mvp,color.fromRgbF(0.95f, 0.42f, 0.750f),GL_LINE_STRIP,lineWidth);
+        gldraw.draw(gl,mvp,QColor::fromRgbF(0.95f, 0.42f, 0.750f),GL_LINE_STRIP,lineWidth);
     }
 
-    int ptCount = refList.count();
-    if (refList.count() == 0) return;
-
-    cv.color = QVector4D(0.96, 0.2f, 0.2f, 1.0f);
-    for (int h = 0; h < ptCount; h++) {
-        cv.vertex = QVector3D(refList[h].easting, refList[h].northing, 0);
-        gldraw_colors.append(cv);
-    }
-
-    if (!isCurveSet)
+    int ptCount = trk.gArr[trk.idx].curvePts.count();
+    if (trk.gArr[trk.idx].mode != TrackMode::waterPivot)
     {
-        cv.color = QVector4D(0.930f, 0.0692f, 0.260f, 1.0f);
-        ptCount--;
-        cv.vertex = QVector3D(refList[ptCount].easting, refList[ptCount].northing, 0);
-        gldraw_colors.append(cv);
-        cv.vertex = QVector3D(vehicle.pivotAxlePos.easting, vehicle.pivotAxlePos.northing, 0);
-        gldraw_colors.append(cv);
-    }
-    gldraw_colors.draw(gl,mvp,GL_LINES,lineWidth);
-
-    if (isFontOn)
-    {
-        color.setRgbF(0.40f, 0.90f, 0.95f);
-        drawText3D(camera, gl, mvp, refList[0].easting, refList[0].northing, "&A", 1.0, true, color);
-        drawText3D(camera, gl, mvp, refList[refList.count() - 1].easting, refList[refList.count() - 1].northing, "&B", 1.0, true, color);
-    }
-
-    //just draw ref and smoothed line if smoothing window is open
-    if (isSmoothWindowOpen)
-    {
-        if (smooList.count() == 0) return;
+        if (trk.gArr[trk.idx].curvePts.count() == 0) return;
 
         gldraw.clear();
+        //cv.color = QVector4D(0.96, 0.2f, 0.2f, 1.0f);
+        for (int h = 0; h < ptCount; h++) {
+            gldraw.append(QVector3D(trk.gArr[trk.idx].curvePts[h].easting, trk.gArr[trk.idx].curvePts[h].northing, 0));
+        }
 
-        for (int h = 0; h < smooList.count(); h++)
-            gldraw.append(QVector3D(smooList[h].easting, smooList[h].northing, 0));
+        gldraw.draw(gl,mvp,QColor::fromRgbF(0.96, 0.2f, 0.2f), GL_LINES, 4.0);
 
-        gldraw.draw(gl,mvp,color,GL_LINES,lineWidth);
-    }
-    else //normal. Smoothing window is not open.
-    {
-        if (curList.count() > 0 && isCurveSet)
+        if (isFontOn)
         {
-            color.setRgbF(0.95f, 0.2f, 0.95f);
+            color.setRgbF(0.40f, 0.90f, 0.95f);
+            drawText3D(camera, gl, mvp, trk.gArr[trk.idx].curvePts[0].easting, trk.gArr[trk.idx].curvePts[0].northing, "&A", 1.0, true, color);
+            drawText3D(camera, gl, mvp, trk.gArr[trk.idx].curvePts[trk.gArr[trk.idx].curvePts.count() - 1].easting, trk.gArr[trk.idx].curvePts[trk.gArr[trk.idx].curvePts.count() - 1].northing, "&B", 1.0, true, color);
+        }
+
+        //just draw ref and smoothed line if smoothing window is open
+        if (isSmoothWindowOpen)
+        {
+            if (smooList.count() == 0) return;
+
             gldraw.clear();
+
+            for (int h = 0; h < smooList.count(); h++)
+                gldraw.append(QVector3D(smooList[h].easting, smooList[h].northing, 0));
+
+            gldraw.draw(gl,mvp,QColor::fromRgbF(0.930f, 0.92f, 0.260f),GL_LINES,lineWidth);
+        }
+        else //normal. Smoothing window is not open.
+        {
+            if (curList.count() > 0)
+            {
+                color.setRgbF(0.95f, 0.2f, 0.95f);
+                gldraw.clear();
+
+                for (int h = 0; h < curList.count(); h++)
+                    gldraw.append(QVector3D(curList[h].easting, curList[h].northing, 0));
+
+                //ablines and curves are a line - the rest a loop
+
+                if(trk.gArr[trk.idx].mode <= (int)TrackMode::Curve)
+                    gldraw.draw(gl,mvp,color,GL_LINE_STRIP,lineWidth);
+                else
+                    gldraw.draw(gl,mvp,color,GL_LINE_LOOP,lineWidth);
+
+                if (!(bool)property_setVehicle_isStanleyUsed && camera.camSetDistance > -200)
+                {
+                    gldraw.clear();
+                    //Draw lookahead Point
+                    color.setRgbF(1.0f, 0.95f, 0.195f);
+
+                    gldraw.append(QVector3D(goalPointCu.easting, goalPointCu.northing, 0.0));
+                    gldraw.draw(gl,mvp,color,GL_POINTS,8.0f);
+                }
+
+                yt.DrawYouTurn(gl,mvp);
+
+                gldraw.clear();
+                for (int h = 0; h < curList.count(); h++)
+                    gldraw.append(QVector3D(curList[h].easting, curList[h].northing, 0));
+
+                gldraw.draw(gl, mvp, QColor::fromRgbF(0.920f, 0.6f, 0.950f), GL_POINTS, 3.0f);
+            }
+        }
+    }
+
+    else
+    {
+        if (curList.count() > 0)
+        {
+            gldraw.clear();
+            gldraw.append(QVector3D(trk.gArr[trk.idx].ptA.easting, trk.gArr[trk.idx].ptA.northing, 0));
             for (int h = 0; h < curList.count(); h++)
                 gldraw.append(QVector3D(curList[h].easting, curList[h].northing, 0));
 
-            gldraw.draw(gl,mvp,color,GL_LINE_STRIP,lineWidth);
-
-            //GL.PointSize(8);
-            //GL.Color3(0.95f, 0.82f, 0.95f);
-            //GL.Begin(PrimitiveType.Points);
-
-            //GL.Vertex3(refList[refList.count() - 1].easting, refList[refList.count() - 1].northing, 0);
-            //GL.Vertex3(refList[0].easting, refList[0].northing, 0);
-            ////GL.Vertex3(refList[refList.count() - 1].easting, curList[curList.count() - 1].northing, 0);
-            ////GL.Vertex3(refList[refList.count() - 1].easting, curList[curList.count() - 1].northing, 0);
-            //GL.End();
+            gldraw.draw(gl, mvp, QColor::fromRgbF(0.95f, 0.2f, 0.95f),GL_LINE_STRIP, lineWidth);
 
             if (!(bool)property_setVehicle_isStanleyUsed && camera.camSetDistance > -200)
             {
-                gldraw.clear();
                 //Draw lookahead Point
-                color.setRgbF(1.0f, 0.95f, 0.195f);
-
+                gldraw.clear();
                 gldraw.append(QVector3D(goalPointCu.easting, goalPointCu.northing, 0.0));
-                gldraw.draw(gl,mvp,color,GL_POINTS,8.0f);
+                gldraw.draw(gl, mvp, QColor::fromRgbF(1.0f, 0.95f, 0.195f), GL_POINTS, 8.0f);
             }
-
-            yt.DrawYouTurn(gl,mvp);
         }
     }
 }
 
-void CABCurve::BuildTram(CBoundary &bnd, CTram &tram)
+void CABCurve::BuildTram(CBoundary &bnd, CTram &tram, const CTrack &trk)
 {
-    double tool_halfWidth = ((double)property_setVehicle_toolWidth - (double)property_setVehicle_toolOverlap) / 2.0;
+    double halfWheelTrack = (double)property_setVehicle_trackWidth * 0.5;
+
     //if all or bnd only then make outer loop pass
     if (tram.generateMode != 1)
     {
@@ -652,7 +1120,7 @@ void CABCurve::BuildTram(CBoundary &bnd, CTram &tram)
 
     bool isBndExist = bnd.bndList.count() != 0;
 
-    int refCount = refList.count();
+    int refCount = trk.gArr[trk.idx].curvePts.count();
 
     int cntr = 0;
     if (isBndExist)
@@ -669,7 +1137,7 @@ void CABCurve::BuildTram(CBoundary &bnd, CTram &tram)
         tram.tramArr = QSharedPointer<QVector<Vec2>>(new QVector<Vec2>());
         tram.tramList.append(tram.tramArr);
 
-        widd = (double)property_setTram_tramWidth * 0.5 - tool_halfWidth - (double)property_setVehicle_trackWidth*0.5;
+        widd = (double)property_setTram_tramWidth * 0.5 - halfWheelTrack;
         widd += ((double)property_setTram_tramWidth * i);
 
         double distSqAway = widd * widd * 0.999999;
@@ -677,18 +1145,18 @@ void CABCurve::BuildTram(CBoundary &bnd, CTram &tram)
         for (int j = 0; j < refCount; j += 1)
         {
             Vec2 point(
-                (sin(glm::PIBy2 + refList[j].heading) *
-                 widd) + refList[j].easting,
-                (cos(glm::PIBy2 + refList[j].heading) *
-                 widd) + refList[j].northing
+                (sin(glm::PIBy2 + trk.gArr[trk.idx].curvePts[j].heading) *
+                 widd) + trk.gArr[trk.idx].curvePts[j].easting,
+                (cos(glm::PIBy2 + trk.gArr[trk.idx].curvePts[j].heading) *
+                 widd) + trk.gArr[trk.idx].curvePts[j].northing
                 );
 
             bool Add = true;
             for (int t = 0; t < refCount; t++)
             {
                 //distance check to be not too close to ref line
-                double dist = ((point.easting - refList[t].easting) * (point.easting - refList[t].easting))
-                              + ((point.northing - refList[t].northing) * (point.northing - refList[t].northing));
+                double dist = ((point.easting - trk.gArr[trk.idx].curvePts[t].easting) * (point.easting - trk.gArr[trk.idx].curvePts[t].easting))
+                              + ((point.northing - trk.gArr[trk.idx].curvePts[t].northing) * (point.northing - trk.gArr[trk.idx].curvePts[t].northing));
                 if (dist < distSqAway)
                 {
                     Add = false;
@@ -717,7 +1185,7 @@ void CABCurve::BuildTram(CBoundary &bnd, CTram &tram)
         tram.tramArr = QSharedPointer<QVector<Vec2>>(new QVector<Vec2>());
         tram.tramList.append(tram.tramArr);
 
-        widd = (double)property_setTram_tramWidth * 0.5 - tool_halfWidth - (double)property_setVehicle_trackWidth*0.5;
+        widd = (double)property_setTram_tramWidth * 0.5 + halfWheelTrack;
         widd += ((double)property_setTram_tramWidth * i);
 
         double distSqAway = widd * widd * 0.999999;
@@ -725,18 +1193,18 @@ void CABCurve::BuildTram(CBoundary &bnd, CTram &tram)
         for (int j = 0; j < refCount; j += 1)
         {
             Vec2 point(
-                sin(glm::PIBy2 + refList[j].heading) *
-                        widd + refList[j].easting,
-                cos(glm::PIBy2 + refList[j].heading) *
-                        widd + refList[j].northing
+                sin(glm::PIBy2 + trk.gArr[trk.idx].curvePts[j].heading) *
+                        widd + trk.gArr[trk.idx].curvePts[j].easting,
+                cos(glm::PIBy2 + trk.gArr[trk.idx].curvePts[j].heading) *
+                        widd + trk.gArr[trk.idx].curvePts[j].northing
                 );
 
             bool Add = true;
             for (int t = 0; t < refCount; t++)
             {
                 //distance check to be not too close to ref line
-                double dist = ((point.easting - refList[t].easting) * (point.easting - refList[t].easting))
-                              + ((point.northing - refList[t].northing) * (point.northing - refList[t].northing));
+                double dist = ((point.easting - trk.gArr[trk.idx].curvePts[t].easting) * (point.easting - trk.gArr[trk.idx].curvePts[t].easting))
+                              + ((point.northing - trk.gArr[trk.idx].curvePts[t].northing) * (point.northing - trk.gArr[trk.idx].curvePts[t].northing));
                 if (dist < distSqAway)
                 {
                     Add = false;
@@ -761,13 +1229,13 @@ void CABCurve::BuildTram(CBoundary &bnd, CTram &tram)
     }
 }
 
-void CABCurve::SmoothAB(int smPts)
+void CABCurve::SmoothAB(int smPts, const CTrack &trk)
 {
     //count the reference list of original curve
-    int cnt = refList.count();
+    int cnt = trk.gArr[trk.idx].curvePts.count();
 
     //just go back if not very long
-    if (!isCurveSet || cnt < 200) return;
+    if (cnt < 200) return;
 
     //the temp array
     Vec3 *arr = new Vec3[cnt];
@@ -775,16 +1243,16 @@ void CABCurve::SmoothAB(int smPts)
     //read the points before and after the setpoint
     for (int s = 0; s < smPts / 2; s++)
     {
-        arr[s].easting = refList[s].easting;
-        arr[s].northing = refList[s].northing;
-        arr[s].heading = refList[s].heading;
+        arr[s].easting = trk.gArr[trk.idx].curvePts[s].easting;
+        arr[s].northing = trk.gArr[trk.idx].curvePts[s].northing;
+        arr[s].heading = trk.gArr[trk.idx].curvePts[s].heading;
     }
 
     for (int s = cnt - (smPts / 2); s < cnt; s++)
     {
-        arr[s].easting = refList[s].easting;
-        arr[s].northing = refList[s].northing;
-        arr[s].heading = refList[s].heading;
+        arr[s].easting = trk.gArr[trk.idx].curvePts[s].easting;
+        arr[s].northing = trk.gArr[trk.idx].curvePts[s].northing;
+        arr[s].heading = trk.gArr[trk.idx].curvePts[s].heading;
     }
 
     //average them - center weighted average
@@ -792,12 +1260,12 @@ void CABCurve::SmoothAB(int smPts)
     {
         for (int j = -smPts / 2; j < smPts / 2; j++)
         {
-            arr[i].easting += refList[j + i].easting;
-            arr[i].northing += refList[j + i].northing;
+            arr[i].easting += trk.gArr[trk.idx].curvePts[j + i].easting;
+            arr[i].northing += trk.gArr[trk.idx].curvePts[j + i].northing;
         }
         arr[i].easting /= smPts;
         arr[i].northing /= smPts;
-        arr[i].heading = refList[i].heading;
+        arr[i].heading = trk.gArr[trk.idx].curvePts[i].heading;
     }
 
     //make a list to draw
@@ -810,15 +1278,20 @@ void CABCurve::SmoothAB(int smPts)
     delete[] arr;
 }
 
-void CABCurve::CalculateTurnHeadings()
+void CABCurve::CalculateHeadings(QVector<Vec3> &xList)
 {
     //to calc heading based on next and previous points to give an average heading.
-    int cnt = refList.size();
-    if (cnt > 0)
+    int cnt = xList.count();
+    if (cnt > 3)
     {
-        QVector<Vec3> arr = refList;
+        QVector<Vec3> arr = xList;
         cnt--;
-        refList.clear();
+        xList.clear();
+
+        Vec3 pt3(arr[0]);
+        pt3.heading = atan2(arr[1].easting - arr[0].easting, arr[1].northing - arr[0].northing);
+        if (pt3.heading < 0) pt3.heading += glm::twoPI;
+        xList.append(pt3);
 
         //middle points
         for (int i = 1; i < cnt; i++)
@@ -826,19 +1299,44 @@ void CABCurve::CalculateTurnHeadings()
             Vec3 pt3 = arr[i];
             pt3.heading = atan2(arr[i + 1].easting - arr[i - 1].easting, arr[i + 1].northing - arr[i - 1].northing);
             if (pt3.heading < 0) pt3.heading += glm::twoPI;
-            refList.append(pt3);
+            xList.append(pt3);
         }
     }
 }
 
-void CABCurve::SaveSmoothAsRefList()
+void CABCurve::MakePointMinimumSpacing(QVector<Vec3> &xList, double minDistance)
+{
+    int cnt = xList.count();
+    if (cnt > 3)
+    {
+        //make sure point distance isn't too big
+        for (int i = 0; i < cnt - 1; i++)
+        {
+            int j = i + 1;
+            //if (j == cnt) j = 0;
+            double distance = glm::Distance(xList[i], xList[j]);
+            if (distance > minDistance)
+            {
+                Vec3 pointB((xList[i].easting + xList[j].easting) / 2.0,
+                            (xList[i].northing + xList[j].northing) / 2.0,
+                            xList[i].heading);
+
+                xList.insert(j, pointB);
+                cnt = xList.count();
+                i = -1;
+            }
+        }
+    }
+}
+
+void CABCurve::SaveSmoothList(CTrack &trk)
 {
     //oops no smooth list generated
     int cnt = smooList.size();
     if (cnt == 0) return;
 
     //eek
-    refList.clear();
+    trk.gArr[trk.idx].curvePts.clear();
 
     //copy to an array to calculate all the new headings
     QVector<Vec3> arr = smooList;
@@ -848,28 +1346,8 @@ void CABCurve::SaveSmoothAsRefList()
     {
         arr[i].heading = atan2(arr[i + 1].easting - arr[i].easting, arr[i + 1].northing - arr[i].northing);
         if (arr[i].heading < 0) arr[i].heading += glm::twoPI;
-        refList.append(arr[i]);
+        trk.gArr[trk.idx].curvePts.append(arr[i]);
     }
-}
-
-void CABCurve::MoveABCurve(double dist)
-{
-    isCurveValid = false;
-    lastSecond = 0;
-
-    int cnt = refList.count();
-    QVector<Vec3> arr = refList;
-    refList.clear();
-
-    moveDistance += isHeadingSameWay ? dist : -dist;
-
-    for (int i = 0; i < cnt; i++)
-    {
-        arr[i].easting += cos(arr[i].heading) * (isHeadingSameWay ? dist : -dist);
-        arr[i].northing -= sin(arr[i].heading) * (isHeadingSameWay ? dist : -dist);
-        refList.append(arr[i]);
-    }
-
 }
 
 bool CABCurve::PointOnLine(Vec3 pt1, Vec3 pt2, Vec3 pt)
@@ -956,10 +1434,9 @@ void CABCurve::AddFirstLastPoints(QVector<Vec3> &xList,
     }
 }
 
-void CABCurve::ResetCurveLine()
+void CABCurve::ResetCurveLine(CTrack &trk)
 {
     curList.clear();
-    refList.clear();
-    isCurveSet = false;
+    trk.idx = -1;
 }
 

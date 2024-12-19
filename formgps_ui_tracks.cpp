@@ -1,7 +1,12 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// GUI to backend tracks interface
 #include "formgps.h"
 #include "qmlutil.h"
 #include "aogproperty.h"
 
+/*
 void FormGPS::update_current_ABline_from_qml()
 {
     //AOGInterface currentABLine property changed; sync our
@@ -180,4 +185,4 @@ void FormGPS::change_name_ABLine(int which_one, QString name)
         FileSaveABLines();
     }
 }
-
+*/

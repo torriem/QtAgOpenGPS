@@ -1,9 +1,15 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// main
 #include "formgps.h"
 #include <QApplication>
 #include <QCoreApplication>
 #include <QLabel>
 #include "aogrenderer.h"
 #include "aogproperty.h"
+#include <QProcess>
+#include <QSysInfo>
 
 QLabel *grnPixelsWindow;
 AOGSettings *settings;
@@ -45,6 +51,35 @@ int main(int argc, char *argv[])
         grnPixelsWindow->setFixedHeight(500);
         grnPixelsWindow->show();
     }
+
+//auto start AgIO
+#ifndef __ANDROID__
+    QProcess process;
+    if(property_setFeature_isAgIOOn){
+        QObject::connect(&process, &QProcess::errorOccurred, [&](QProcess::ProcessError error) {
+            if (error == QProcess::Crashed) {
+                qDebug() << "AgIO Crashed! Continuing QtAgOpenGPS like normal";
+            }
+        });
+
+//start the application
+#ifdef __WIN32
+        process.start("./QtAgIO.exe");
+
+#else //assume linux
+        process.start("./QtAgIO/QtAgIO");
+
+#endif
+
+        // Ensure process starts successfully
+        if (!process.waitForStarted()) {
+            qWarning() << "AgIO failed to start. Continuing QtAgOpenGPS like normal";
+        }
+    }
+#endif
+
+
+
 
     /*
     CDubinsTurningRadius = 5.25;

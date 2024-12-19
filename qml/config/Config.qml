@@ -1,3 +1,7 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Main Config window. Holds all the buttons.
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
@@ -7,6 +11,7 @@ import Qt.labs.folderlistmodel
 
 import ".."
 import "../components"
+import "steercomponents"
 
 Dialog {
 	x: 0
@@ -35,22 +40,8 @@ Dialog {
         border.width: 8 * theme.scaleWidth
         visible: true
         anchors.fill: parent
-        Rectangle{
-            id:topLine
-            color: aog.borderColor
-            visible: true
-            width: parent.width-16
-            height: 40 * theme.scaleHeight
-            anchors.top: parent.top
-            anchors.topMargin: 8
-            anchors.horizontalCenter: parent.horizontalCenter
-            Button {
-                id: help
-                text: qsTr("?")
-                width: parent.height+3
-                height:parent.height
-                anchors.right: parent.right
-            }
+        TopLine{
+            id: topLine
         }
 
         ScrollView {
@@ -81,23 +72,9 @@ Dialog {
                 ButtonGroup {
                     buttons: [ vehicleMenu, implementMenuBtn, sourcesMenubtn, uTurnMenu,  modulesMenubtn, tramMenu, displayMenu, featureMenu ]
                 }
-                IconButtonTransparent{
+                MainConfigMainBtns{
                     id:vehicleMenu
-                    icon.source: "/images/Config/Con_VehicleMenu.png"
-                    width:100 * theme.scaleWidth
-                    height:75 * theme.scaleHeight
-
-                    //colorChecked1: "#aaaaaa"
-                    //colorChecked2: "#aaaaaa"
-                    //colorChecked3: "#777777"
-                    checkable: true
-                    radius: 0
-
-                    //todo put logic in IconButton
-                    property bool toggle: false
-                    onClicked: if (toggle) { checked = false ; toggle = false }
-                    onPressed: if (checked) toggle=true
-
+                    icon.source: prefix + "/images/Config/Con_VehicleMenu.png"
                 }
                 Column{
                     x: 25
@@ -114,36 +91,22 @@ Dialog {
                         buttons: [configTrSettings, configTrDim, btnconfigTrAntDim, ]
                     }
 
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configTrSettings
-                        icon.source: "/images/Config/ConS_VehicleConfig.png"
-                        checkable: true
-                        radius: 0
+                        icon.source: prefix + "/images/Config/ConS_VehicleConfig.png"
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configTrDim
-                        icon.source: "/images/Config/ConS_ImplementHitch.png"
-                        checkable: true
-                        radius: 0
+                        icon.source: prefix + "/images/Config/ConS_ImplementHitch.png"
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: btnconfigTrAntDim
-                        icon.source: "/images/Config/ConS_ImplementAntenna.png"
-                        checkable: true
-                        radius: 0
+                        icon.source: prefix + "/images/Config/ConS_ImplementAntenna.png"
                     }
                 }
-                IconButtonTransparent{
+                MainConfigMainBtns{
                     id:implementMenuBtn
-                    icon.source: "/images/Config/Con_ImplementMenu.png"
-                    width:100 * theme.scaleWidth
-                    height:75 * theme.scaleHeight
-                    radius: 0
-                    checkable: true
-                    //todo put logic in IconButton
-                    property bool toggle: false
-                    onClicked: if (toggle) { checked = false ; toggle = false }
-                    onPressed: if (checked) toggle=true
+                    icon.source: prefix + "/images/Config/Con_ImplementMenu.png"
                 }
                 Column{
                     id: implementMenu
@@ -158,60 +121,38 @@ Dialog {
                     ButtonGroup {
                         buttons: [ configImpSettings, configImpDim, configImpAxle, configImpOffset, configImpSection, configImpTiming, configImpSwitches ]
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configImpSettings
-                        icon.source: "/images/Config/ConS_VehicleConfig.png"
-                        checkable: true
-                        radius: 0
+                        icon.source: prefix + "/images/Config/ConS_VehicleConfig.png"
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configImpDim
-                        icon.source: "/images/Config/ConS_ImplementHitch.png"
-                        checkable: true
-                        radius: 0
+                        icon.source: prefix + "/images/Config/ConS_ImplementHitch.png"
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configImpAxle
-                        icon.source: "/images/Config/ConS_ImplementPivot.png"
-                        checkable: true
-                        radius: 0
+                        icon.source: prefix + "/images/Config/ConS_ImplementPivot.png"
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configImpOffset
-                        icon.source: "/images/Config/ConS_ImplementOffset.png"
-                        checkable: true
-                        radius: 0
+                        icon.source: prefix + "/images/Config/ConS_ImplementOffset.png"
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configImpSection
-                        icon.source: "/images/Config/ConS_ImplementSection.png"
-                        checkable: true
-                        radius: 0
+                        icon.source: prefix + "/images/Config/ConS_ImplementSection.png"
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configImpTiming
-                        icon.source: "/images/Config/ConS_ImplementSettings.png"
-                        checkable: true
-                        radius: 0
+                        icon.source: prefix + "/images/Config/ConS_ImplementSettings.png"
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configImpSwitches
-                        icon.source: "/images/Config/ConS_ImplementSwitch.png"
-                        checkable: true
-                        radius: 0
+                        icon.source: prefix + "/images/Config/ConS_ImplementSwitch.png"
                     }
                 }
-                IconButtonTransparent{
+                MainConfigMainBtns{
                     id:sourcesMenubtn
-                    icon.source: "/images/Config/Con_SourcesMenu.png"
-                    width:100
-                    radius: 0
-                    checkable: true
-                    height:75 * theme.scaleHeight
-                    //todo put logic in IconButton
-                    property bool toggle: false
-                    onClicked: if (toggle) { checked = false ; toggle = false }
-                    onPressed: if (checked) toggle=true
+                    icon.source: prefix + "/images/Config/Con_SourcesMenu.png"
                 }
                 ButtonGroup {
                     buttons: [ configsrcHeading, configsrcRoll ]
@@ -226,42 +167,22 @@ Dialog {
                             configsrcHeading.checked = true
                     }
 
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configsrcHeading
-                        checkable: true
-                        icon.source: "/images/Config/ConS_VehicleConfig.png"
-                        radius: 0
+                        icon.source: prefix + "/images/Config/ConS_VehicleConfig.png"
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configsrcRoll
-                        checkable: true
-                        icon.source: "/images/Config/ConS_ImplementHitch.png"
-                        radius: 0
+                        icon.source: prefix + "/images/Config/ConS_ImplementHitch.png"
                     }
                 }
-                IconButtonTransparent{
+                MainConfigMainBtns{
                     id:uTurnMenu
-                    icon.source: "/images/Config/Con_UTurnMenu.png"
-                    width:100 * theme.scaleWidth
-                    height:75 * theme.scaleHeight
-                    radius: 0
-                    checkable: true
-                    //todo put logic in IconButton
-                    property bool toggle: false
-                    onClicked: if (toggle) { checked = false ; toggle = false }
-                    onPressed: if (checked) toggle=true
+                    icon.source: prefix + "/images/Config/Con_UTurnMenu.png"
                 }
-                IconButtonTransparent{
+                MainConfigMainBtns{
                     id:modulesMenubtn
-                    icon.source: "/images/Config/Con_ModulesMenu.png"
-                    width:100 * theme.scaleWidth
-                    height:75 * theme.scaleHeight
-                    radius: 0
-                    checkable: true
-                    //todo put logic in IconButton
-                    property bool toggle: false
-                    onClicked: if (toggle) { checked = false ; toggle = false }
-                    onPressed: if (checked) toggle=true
+                    icon.source: prefix + "/images/Config/Con_ModulesMenu.png"
                 }
                 ButtonGroup {
                     buttons: [ configModulesSettings, configModulesPinsbtn ]
@@ -276,54 +197,26 @@ Dialog {
                             configModulesSettings.checked = true
                     }
 
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configModulesSettings
-                        checkable: true
-                        icon.source: "/images/Config/ConS_ModulesMachine.png"
-                        radius: 0
+                        icon.source: prefix + "/images/Config/ConS_ModulesMachine.png"
                     }
-                    IconButtonTransparent{
+                    MainConfigSecondaryBtns{
                         id: configModulesPinsbtn
-                        checkable: true
-                        icon.source: "/images/Config/ConS_ImplementSection.png"
-                        radius: 0
+                        icon.source: prefix + "/images/Config/ConS_ImplementSection.png"
                     }
                 }
-                IconButtonTransparent{
+                MainConfigMainBtns{
                     id:tramMenu
-                    icon.source: "/images/Config/Con_TramMenu.png"
-                    checkable: true
-                    width:100 * theme.scaleWidth
-                    height:75 * theme.scaleHeight
-                    radius: 0
-                    //todo put logic in IconButton
-                    property bool toggle: false
-                    onClicked: if (toggle) { checked = false ; toggle = false }
-                    onPressed: if (checked) toggle=true
+                    icon.source: prefix + "/images/Config/Con_TramMenu.png"
                 }
-                IconButtonTransparent{
+                MainConfigMainBtns{
                     id:displayMenu
-                    icon.source: "/images/Config/Con_Display.png"
-                    checkable: true
-                    width:100 * theme.scaleWidth
-                    height:75 * theme.scaleHeight
-                    radius: 0
-                    //todo put logic in IconButton
-                    property bool toggle: false
-                    onClicked: if (toggle) { checked = false ; toggle = false }
-                    onPressed: if (checked) toggle=true
+                    icon.source: prefix + "/images/Config/Con_Display.png"
                 }
-                IconButtonTransparent{
+                MainConfigMainBtns{
                     id:featureMenu
-                    icon.source: "/images/Config/Con_FeatureMenu.png"
-                    width:100 * theme.scaleWidth
-                    height:75 * theme.scaleHeight
-                    radius: 0
-                    checkable: true
-                    //todo put logic in IconButton
-                    property bool toggle: false
-                    onClicked: if (toggle) { checked = false ; toggle = false }
-                    onPressed: if (checked) toggle=true
+                    icon.source: prefix + "/images/Config/Con_FeatureMenu.png"
                 }
             }
         }
@@ -360,7 +253,7 @@ Dialog {
                 anchors.right: parent.right
                 width:parent.height
                 height: parent.height
-                icon.source: "/images/OK64"
+                icon.source: prefix + "/images/OK64.png"
                 onClicked: {
                     //closeAllConfig()
                     //fix up signs on implement dimensions

@@ -1,30 +1,34 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Menu when we load a field from KML
 import QtQuick
 import QtQuick.Controls.Fusion
+import QtQuick.Controls.Material
 
 import ".."
 import "../components"
 
-Popup{
+Dialog{
     id: fieldFromKML
-    width: 500
-    height: 450
+    height: 400  * theme.scaleHeight
+    width:700  * theme.scaleWidth
+    anchors.centerIn: parent
     visible: false
     function show(){
         parent.visible = true
     }
     TopLine{
         id: topLine
-        width: parent.width
-        height: screenPixelDensity *.5
-        titleText: "Load From KML"
+        titleText: qsTr("Load From KML")
     }
 
     Rectangle{
         id: textEntry
-        width: 450
-        height: 30
+        width:parent.width*0.75
+        height: 50  * theme.scaleHeight
         anchors.top:parent.top
-        anchors.topMargin: 50
+        anchors.topMargin: 75
         anchors.horizontalCenter: parent.horizontalCenter
         color: aog.backgroundColor
         border.color: "darkgray"
@@ -50,7 +54,7 @@ Popup{
         IconButtonTransparent{
             objectName: "btnAddDate"
             id: marker
-            icon.source: "/images/JobNameCalendar.png"
+            icon.source: prefix + "/images/JobNameCalendar.png"
             Text{
                 anchors.right: parent.left
                 anchors.verticalCenter: parent.verticalCenter
@@ -59,7 +63,7 @@ Popup{
         }
         IconButtonTransparent{
             objectName: "btnAddTime"
-            icon.source: "/images/JobNameTime.png"
+            icon.source: prefix + "/images/JobNameTime.png"
             Text{
                 anchors.right: parent.left
                 anchors.verticalCenter: parent.verticalCenter
@@ -69,8 +73,8 @@ Popup{
     }
     IconButtonTransparent{
         objectName: "btnGetKML"
-        icon.source: "/images/BoundaryLoadFromGE.png"
-        anchors.top: additives.bottom
+        icon.source: prefix + "/images/BoundaryLoadFromGE.png"
+        anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.margins: 20
     }
@@ -85,11 +89,11 @@ Popup{
         spacing: 10
         IconButtonTransparent{
             onClicked: fieldFromKML.visible = false
-            icon.source: "/images/Cancel64.png"
+            icon.source: prefix + "/images/Cancel64.png"
         }
         IconButtonTransparent{
             objectName: "btnSave"
-            icon.source: "/images/OK64.png"
+            icon.source: prefix + "/images/OK64.png"
         }
     }
 }

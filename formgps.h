@@ -70,39 +70,15 @@ public:
     QTimer *tmrWatchdog;
     QTimer timerSim;
 
+    //other
+    QObject *btnFlag;
+
     /***************************
      * Qt and QML GUI elements *
      ***************************/
     //QQuickView *qmlview;
     QWidget *qmlcontainer;
     AOGRendererInSG *openGLControl;
-    //Left Menu & children
-    QObject *btnAcres;
-    QObject *btnSettings;
-    QObject *btnTools;
-    QObject *btnFieldMenu;
-    QObject *btnAgIO;
-    QObject *btnautoSteerConf;
-    QObject *btnAutoSteerMode;
-
-    QObject *btnTiltDown;
-    QObject *btnTiltUp;
-    QObject *btnZoomIn;
-    QObject *btnZoomOut;
-
-    //right menu & children
-    QObject *btnContour;
-    QObject *btnCurve;
-    QObject *btnABLine;
-    QObject *btnABLineCycle;
-    QObject *btnABLineCycleBk;
-    QObject *btnManualOffOn;
-    QObject *btnSectionOffAutoOn;
-    QObject *btnAutoSteer;
-
-    QObject *btnContourPriority;
-    //other
-    QObject *btnFlag;
 
     //flag context menu and buttons
     QObject *contextFlag;
@@ -192,6 +168,7 @@ public:
 
 private:
     //For field saving in background
+    int fileSaveCounter = 1;
     int minuteCounter = 1;
 
     int tenMinuteCounter = 1;
@@ -203,6 +180,8 @@ private:
     int oneSecondCounter = 0, oneSecond = 0;
     int oneHalfSecondCounter = 0, oneHalfSecond = 0;
     int oneFifthSecondCounter = 0, oneFifthSecond = 0;
+
+    int makeUTurnCounter = 0;
 
 
      /*******************
@@ -251,14 +230,13 @@ public:
     int navPanelCounter = 0;
 
     InterfaceProperty<AOGInterface,uint> sentenceCounter = InterfaceProperty<AOGInterface,uint>("sentenceCounter");
-    bool hydLiftDown = false;
-
 
     //master Manual and Auto, 3 states possible
     //btnStates manualBtnState = btnStates::Off;
     //btnStates autoBtnState = btnStates::Off;
     InterfaceProperty<AOGInterface,btnStates> manualBtnState = InterfaceProperty<AOGInterface,btnStates>("manualBtnState");
     InterfaceProperty<AOGInterface,btnStates> autoBtnState = InterfaceProperty<AOGInterface,btnStates>("autoBtnState");
+    //InterfaceProperty<AOGInterface,bool> ct.isLocked = InterfaceProperty<AOGInterface,bool>("btnIsContourLocked");
 
 private:
 public:
@@ -301,9 +279,12 @@ public:
 
     //ABLine Instance
     //QScopedPointer<CABLine> ABLine;
+
+    //NOTE: do these get removed? David
     CABLine ABLine;
     CABCurve curve;
 
+    CTrack trk;
     CGuidance gyd;
 
     CTram tram;
@@ -356,9 +337,10 @@ public:
     bool isTT;
     bool isABCyled = false;
 
+    InterfaceProperty<AOGInterface,bool> isPatchesChangingColor = InterfaceProperty<AOGInterface,bool>("isPatchesChangingColor");
+
     void GetHeadland();
     void CloseTopMosts();
-    void SnapToPivot();
     void getAB();
     void FixTramModeButton();
 
@@ -374,7 +356,7 @@ public:
     double startGPSHeading = 0;
 
     //string to record fixes for elevation maps
-    QByteArray sbFix;
+    QByteArray sbGrid;
 
     // autosteer variables for sending serial moved to CVehicle
     //short guidanceLineDistanceOff, guidanceLineSteerAngle; --> CVehicle
@@ -412,9 +394,10 @@ public:
     //double cosSectionHeading = 1.0, sinSectionHeading = 0.0;
 
     //how far travelled since last section was added, section points
-    double sectionTriggerDistance = 0, contourTriggerDistance = 0, sectionTriggerStepDistance = 0;
+    double sectionTriggerDistance = 0, contourTriggerDistance = 0, sectionTriggerStepDistance = 0, gridTriggerDistance;
     Vec2 prevSectionPos;
     Vec2 prevContourPos;
+    Vec2 prevGridPos;
     int patchCounter = 0;
 
     Vec2 prevBoundaryPos;
@@ -451,7 +434,7 @@ public:
     double distanceCurrentStepFix = 0, distanceCurrentStepFixDisplay = 0, minHeadingStepDist = 1, startSpeed = 0.5;
     double fixToFixHeadingDistance = 0, gpsMinimumStepDistance = 0.05;
 
-    bool isChangingDirection, isReverseWithIMU;
+    bool isReverseWithIMU;
 
     double nowHz = 0, filteredDelta = 0, delta = 0;
 
@@ -496,6 +479,8 @@ public:
 
     void FileSaveHeadLines();
     void FileLoadHeadLines();
+    void FileSaveTracks();
+    void FileLoadTracks();
     void FileSaveCurveLines();
     void FileLoadCurveLines();
     void FileSaveABLines();
@@ -610,15 +595,9 @@ public:
     QString strHeading;
     int lenth = 4;
 
-    void DrawUTurnBtn(QOpenGLFunctions *gl, QMatrix4x4 mvp);
     void MakeFlagMark(QOpenGLFunctions *gl);
     void DrawFlags(QOpenGLFunctions *gl, QMatrix4x4 mvp);
-    void DrawSky(QOpenGLFunctions *gl, QMatrix4x4 mvp, int width, int height);
-    void DrawCompassText(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width, double Height);
-    void DrawCompass(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, double Width);
-    void DrawLiftIndicator(QOpenGLFunctions *gl, QMatrix4x4 modelview, QMatrix4x4 projection, int Width, int Height);
-    void DrawLostRTK(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);
-    void DrawAge(QOpenGLFunctions *gl, QMatrix4x4 mvp, double Width);
+    void DrawTramMarkers(QOpenGLFunctions *gl, QMatrix4x4 mvp);
     void CalcFrustum(const QMatrix4x4 &mvp);
     void calculateMinMax();
 
@@ -666,6 +645,7 @@ public slots:
 
     void TimedMessageBox(int timeout, QString s1, QString s2);
 
+    /*
     //AB Lines in GUI. TODO: rename these, make them consistent
     void update_ABlines_in_qml();
     void update_current_ABline_from_qml();
@@ -674,7 +654,7 @@ public slots:
     void delete_ABLine(int which_line);
     void swap_heading_ABLine(int which_line);
     void change_name_ABLine(int which_line, QString name);
-
+    */
 
     //settings dialog callbacks
     void on_settings_reload();
@@ -722,26 +702,20 @@ public slots:
 
     void onBtnResetDirection_clicked();
     //left column
-    void onBtnAcres_clicked();
-    void onBtnSettings_clicked();
     void onBtnAgIO_clicked();
-    void onBtnSteerConfig_clicked();
-    void onBtnSteerMode_clicked();
     //right column
     void onBtnContour_clicked();
-    void onBtnToggleAB_clicked();
-    void onBtnToggleABBack_clicked();
     void onBtnAutoYouTurn_clicked();
     void onBtnSwapAutoYouTurnDirection_clicked();
-    void onBtnContourPriority_clicked();
+    void onBtnContourPriority_clicked(bool isRight);
+    void onBtnContourLock_clicked();
     //bottom row
     void onBtnResetTool_clicked();
     void onBtnHeadland_clicked();
     void onBtnHydLift_clicked();
     void onBtnFlag_clicked();
     void onBtnTramlines_clicked();
-    void onBtnSectionColor_clicked();
-    void onBtnLinePicker_clicked();
+    void onBtnSnapSideways_clicked(double distance);
     void onBtnSnapToPivot_clicked();
     //don't need ablineedit
     void onBtnYouSkip_clicked();
@@ -764,14 +738,17 @@ public slots:
     void onBtnDeleteFlag_clicked();
     void onBtnDeleteAllFlags_clicked();
 
-    void swapDirection();
+    void SwapDirection();
     void turnOffBoundAlarm();
 
     void onBtnManUTurn_clicked(bool right); //TODO add the skip number as a parameter
     void onBtnLateral_clicked(bool right); //TODO add the skip number as a parameter
     void onBtnResetSim_clicked();
+    void onBtnRotateSim_clicked();
 
     void onBtnCenterOgl_clicked();
+
+    void onDeleteAppliedArea_clicked();
 
     /***************************
      * from OpenGL.Designer.cs *
@@ -810,7 +787,7 @@ public slots:
     /*
      * misc
      */
-    void fileSaveEverythingBeforeClosingField();
+    void FileSaveEverythingBeforeClosingField();
 
     /* formgps_classcallbacks.cpp */
     void onStopAutoSteer(); //cancel autosteer and ensure button state

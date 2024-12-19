@@ -1,15 +1,13 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Set the dimensions for a drawn implement
 import QtQuick
 import QtQuick.Controls.Fusion
 
 import ".."
 import "../components"
 
-/*todo:
-//in the application output we get the warning from this page:
-qrc:/qml/ConfigImplementDimensions.qml:26:9: QML SpinBoxCM: Binding loop detected for property "value"
-qrc:/qml/ConfigImplementDimensions.qml:16:9: QML SpinBoxCM: Binding loop detected for property "value"
-I'm not sure why, I think I did them the same as everywhere else.
-*/
 Rectangle{
     id: configImpDimWin
     anchors.fill: parent
@@ -17,7 +15,7 @@ Rectangle{
     visible: false
     Image{
         id: image1
-        source: "/images/ToolHitchPageTrailing.png"
+        source: prefix + "/images/ToolHitchPageTrailing.png"
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top

@@ -1,6 +1,10 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Set line name
 import QtQuick 2.0
 import QtQuick.Controls.Fusion
-import "components"
+import "components" as Comp
 
 Rectangle{
     id: line_Name
@@ -26,13 +30,13 @@ Rectangle{
     }
 
     color: aog.backgroundColor
-            border.width: 1
-            border.color: aog.blackDayWhiteNight
+    border.width: 1
+    border.color: aog.blackDayWhiteNight
 
-            TopLine{
-                id: topLine
-                titleText: line_Name.title
-            }
+    Comp.TopLine{
+        id: topLine
+        titleText: line_Name.title
+    }
 
     TextField {
         id: textInputBox
@@ -47,12 +51,12 @@ Rectangle{
         selectByMouse: true
     }
 
-    IconButtonTransparent{
+    Comp.IconButtonTransparent{
         objectName: "btnAddTime"
         anchors.top: textInputBox.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.margins: 20
-        icon.source: "/images/Time.png"
+        icon.source: prefix + "/images/Time.png"
         onClicked: {
             var time = new Date().toLocaleTimeString(Qt.locale())
             textInputBox.text += " " + time
@@ -66,23 +70,23 @@ Rectangle{
             font.pixelSize: 35
         }
     }
-    IconButtonTransparent{
+    Comp.IconButtonTransparent{
         objectName: "btnCancel"
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.margins: 20
-        icon.source: "/images/Cancel64.png"
+        icon.source: prefix + "/images/Cancel64.png"
         onClicked:{
             parent.visible = false
             rejected()
         }
     }
-    IconButtonTransparent{
+    Comp.IconButtonTransparent{
         objectName: "btnOk"
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         anchors.margins: 20
-        icon.source: "/images/OK64.png"
+        icon.source: prefix + "/images/OK64.png"
         onClicked:{
             line_Name.visible = false
             abLineName = textInputBox.text

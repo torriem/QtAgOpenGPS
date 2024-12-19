@@ -7,6 +7,8 @@
 class CBoundary;
 
 
+/*
+ * defined in ctrack.h
 enum TrackMode {
     None = 0,
     AB = 2,
@@ -15,6 +17,7 @@ enum TrackMode {
     bndTrackInner = 16,
     bndCurve = 32
 };
+*/
 
 class CHeadPath
 {

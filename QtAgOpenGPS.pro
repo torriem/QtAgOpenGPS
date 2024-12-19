@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl quick quickwidgets network
+QT       += core gui opengl quick quickwidgets network concurrent
 
 CONFIG += c++17
 
@@ -138,7 +138,8 @@ HEADERS  += formgps.h \
     classes/cabcurve.h \
     classes/csim.h \
     classes/crecordedpath.h \
-    classes/cdubins.h
+    classes/cdubins.h \
+    setter.h
 
 ! contains(DEFINES,LOCAL_QML) {
 RESOURCES += \
@@ -148,4 +149,18 @@ RESOURCES += \
 DISTFILES += \
     TODO.txt \
     README.md \
-    LICENSE
+    LICENSE \
+    android/AndroidManifest.xml \
+    android/build.gradle \
+    android/gradle.properties \
+    android/gradle/wrapper/gradle-wrapper.jar \
+    android/gradle/wrapper/gradle-wrapper.properties \
+    android/gradlew \
+    android/gradlew.bat \
+    android/res/values/libs.xml \
+    android/res/xml/qtprovider_paths.xml
+
+contains(ANDROID_TARGET_ARCH,arm64-v8a) {
+    ANDROID_PACKAGE_SOURCE_DIR = \
+        $$PWD/android
+}

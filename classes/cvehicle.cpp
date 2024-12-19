@@ -14,6 +14,7 @@
 #include "cabline.h"
 #include "cabcurve.h"
 #include "ccontour.h"
+#include "ctrack.h"
 
 QRect find_bounding_box(int viewport_height, QVector3D p1, QVector3D p2, QVector3D p3, QVector3D p4) {
     float x_min = glm::FLOAT_MAX;
@@ -52,7 +53,6 @@ void CVehicle::loadSettings()
     antennaOffset = property_setVehicle_antennaOffset;
 
     wheelbase = property_setVehicle_wheelbase;
-    minTurningRadius = property_setVehicle_minTurningRadius;
     isSteerAxleAhead = property_setVehicle_isSteerAxleAhead;
 
     slowSpeedCutoff = property_setVehicle_slowSpeedCutoff;
@@ -90,11 +90,11 @@ void CVehicle::loadSettings()
     maxSteerSpeed = property_setAS_maxSteerSpeed;
     minSteerSpeed = property_setAS_minSteerSpeed;
 
+    uturnCompensation = property_setAS_uTurnCompensation;
 }
 
 CVehicle::CVehicle(QObject *parent) : QObject(parent)
 {
-    isHydLiftOn = false;
     isInFreeDriveMode = false;
     loadSettings();
 
@@ -141,10 +141,8 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
                            QRect viewport,
                            const CCamera &camera,
                            const CTool &tool,
-                           CBoundary &bnd,
-                           const CContour &ct,
-                           const CABCurve &curve,
-                           const CABLine &ABLine)
+                           CBoundary &bnd
+                           )
 {
     //draw vehicle
     modelview.rotate(glm::toDegrees(-fixHeading), 0.0, 0.0, 1.0);
@@ -462,12 +460,12 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
         //draw the bright antenna dot
         gldraw.clear();
         color.setRgbF(0,0,0);
-        gldraw.append(QVector3D(0, antennaPivot, 0.1));
+        gldraw.append(QVector3D(-antennaOffset, antennaPivot, 0.1));
         gldraw.draw(gl,mvp,color,GL_POINTS,16.0f);
 
         gldraw.clear();
         color.setRgbF(0.2,0.98,0.98);
-        gldraw.append(QVector3D(0, antennaPivot, 0.1));
+        gldraw.append(QVector3D(-antennaOffset, antennaPivot, 0.1));
         gldraw.draw(gl,mvp,color,GL_POINTS,10.0f);
     }
 
@@ -527,8 +525,13 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
         gldraw.draw(gl,mvp,color,GL_LINE_STRIP,property_setDisplay_lineWidth);
     }
 
-    if(!(bool)property_setDisplay_topTrackNum) {
+    /*
+    // TODO: Track number and nudge offset need to be done in QML.
+    // Probably will need CTrack to put this information in its model
+
+    if(!(bool)property_setDisplay_topTrackNum && trk.idx > -1 && !ct.isContourBtnOn) {
         color.setRgbF(1.269, 1.25, 1.2510, 0.87); //?? why over 1.0?
+
         if (curve.isBtnCurveOn && (bool)ct.isContourBtnOn == false)
         {
             if (curve.howManyPathsAway == 0) {
@@ -561,50 +564,85 @@ void CVehicle::DrawVehicle(QOpenGLFunctions *gl, QMatrix4x4 modelview,
             }
         }
     }
+    */
 
-    if (camera.camSetDistance < -500)
-    {
-        double theta = glm::twoPI / 20;
-        double c = cos(theta);//precalculate the sine and cosine
-        double s = sin(theta);
+    //if (camera.camSetDistance < -500)
+    //{
+    //    double theta = glm::twoPI / 20;
+    //    double c = cos(theta);//precalculate the sine and cosine
+    //    double s = sin(theta);
 
-        double x = camera.camSetDistance * -.015;//we start at angle = 0
-        double y = 0;
+    //    double x = camera.camSetDistance * -.015;//we start at angle = 0
+    //    double y = 0;
 
-        gldraw.clear();
-        gldraw.append(QVector3D(x, y, 0.0));
-        for (int ii = 0; ii < 20; ii++)
-        {
-            //output vertex
-            gldraw.append(QVector3D(x, y, 0.0));
+    //    gldraw.clear();
+    //    gldraw.append(QVector3D(x, y, 0.0));
+    //    for (int ii = 0; ii < 20; ii++)
+    //    {
+    //        //output vertex
+    //        gldraw.append(QVector3D(x, y, 0.0));
 
-            //apply the rotation matrix
-            double t = x;
-            x = (c * x) - (s * y);
-            y = (s * t) + (c * y);
-            // GL.Vertex3(x, y, 0.0);
-        }
-        gldraw.draw(gl,mvp,QColor::fromRgbF(0.5f, 0.5f, 1.2f, 0.25),
-                    GL_TRIANGLE_FAN, 1);
+    //        //apply the rotation matrix
+    //        double t = x;
+    //        x = (c * x) - (s * y);
+    //        y = (s * t) + (c * y);
+    //        // GL.Vertex3(x, y, 0.0);
+    //    }
+    //    gldraw.draw(gl,mvp,QColor::fromRgbF(0.5f, 0.5f, 1.2f, 0.25),
+    //                GL_TRIANGLE_FAN, 1);
 
-        gldraw.clear();
+    //    gldraw.clear();
 
-        for (int ii = 0; ii < 20; ii++)
-        {
-            //output vertex
-            gldraw.append(QVector3D(x, y, 0.0));
+    //    for (int ii = 0; ii < 20; ii++)
+    //    {
+    //        //output vertex
+    //        gldraw.append(QVector3D(x, y, 0.0));
 
-            //apply the rotation matrix
-            double t = x;
-            x = (c * x) - (s * y);
-            y = (s * t) + (c * y);
-            // GL.Vertex3(x, y, 0.0);
-        }
-        gldraw.draw(gl, mvp, QColor::fromRgbF(0.5f, 1.2f, 0.2f),
-                    GL_LINE_LOOP, 2);
-    }
+    //        //apply the rotation matrix
+    //        double t = x;
+    //        x = (c * x) - (s * y);
+    //        y = (s * t) + (c * y);
+    //        // GL.Vertex3(x, y, 0.0);
+    //    }
+    //    gldraw.draw(gl, mvp, QColor::fromRgbF(0.5f, 1.2f, 0.2f),
+    //                GL_LINE_LOOP, 2);
+    //}
 }
 
 void CVehicle::AverageTheSpeed(double newSpeed) {
     avgSpeed = newSpeed * 0.75 + avgSpeed * 0.25;
+}
+
+void CVehicle::setIsHydLiftOn(bool value)
+{
+    if (isHydLiftOn != value) {
+        isHydLiftOn = value;
+        emit isHydLiftOnChanged();
+    }
+}
+
+void CVehicle::setHydLiftDown(bool value)
+{
+    if (hydLiftDown != value) {
+        hydLiftDown = value;
+        emit hydLiftDownChanged();
+    }
+}
+
+void CVehicle::setIsChangingDirection(bool value)
+{
+    if (isChangingDirection != value)
+    {
+        isChangingDirection = value;
+        emit isChangingDirectionChanged();
+    }
+}
+
+void CVehicle::setIsReverse(bool value)
+{
+    if (isReverse != value)
+    {
+        isReverse = value;
+        emit isReverseChanged();
+    }
 }

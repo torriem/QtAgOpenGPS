@@ -1,11 +1,15 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// The panel of buttons where track editing(new, go to select which track, line and ref nudge, etc)
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Fusion
-import "../components"
+import "../components" as Comp
 
 import ".."
 
-TimedRectangle {
+Comp.TimedRectangle {
     id: trackButtons
     color: "white"
     width: 110*7
@@ -13,38 +17,39 @@ TimedRectangle {
     RowLayout{
         anchors.fill: parent
         anchors.margins: 5
-        IconButtonTransparent{
+        Comp.IconButtonTransparent{
             id: marker
-            icon.source: "/images/ABSnapNudgeMenuRef.png"
+            icon.source: prefix + "/images/ABSnapNudgeMenuRef.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: refNudge.show()
         }
-        IconButtonColor{
-            icon.source: "/images/AutoSteerSnapToPivot.png"
+        Comp.IconButtonColor{
+            icon.source: prefix + "/images/AutoSteerSnapToPivot.png"
             implicitWidth: marker.width
             implicitHeight: marker.width
             Layout.alignment: Qt.AlignCenter
         }
-        IconButtonTransparent{
-            icon.source: "/images/SwitchOff.png"
+        Comp.IconButtonTransparent{
+            icon.source: prefix + "/images/SwitchOff.png"
             Layout.alignment: Qt.AlignCenter
         }
-        IconButtonTransparent{
-            icon.source: "/images/ABTracks.png"
+        Comp.IconButtonTransparent{
+            icon.source: prefix + "/images/ABTracks.png"
             Layout.alignment: Qt.AlignCenter
+			onClicked: trackList.show()
         }
-        IconButtonTransparent{
-            icon.source: "/images/AddNew.png"
+        Comp.IconButtonTransparent{
+            icon.source: prefix + "/images/AddNew.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: trackNew.show()
         }
-        IconButtonTransparent{
-            icon.source: "/images/ABDraw.png"
+        Comp.IconButtonTransparent{
+            icon.source: prefix + "/images/ABDraw.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: lineDrawer.show()
         }
-        IconButtonTransparent{
-            icon.source: "/images/ABSnapNudgeMenu.png"
+        Comp.IconButtonTransparent{
+            icon.source: prefix + "/images/ABSnapNudgeMenu.png"
             Layout.alignment: Qt.AlignCenter
             onClicked: lineNudge.show()
         }

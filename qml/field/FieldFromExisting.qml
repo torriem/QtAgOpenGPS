@@ -1,34 +1,27 @@
+// Copyright (C) 2024 Michael Torrie and the QtAgOpenGPS Dev Team
+// SPDX-License-Identifier: GNU General Public License v3.0 or later
+//
+// Menu when we create a field from existing
 import QtQuick
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
+import QtQuick.Controls.Material
 
 import ".."
 import "../components"
 
-Popup {
+Dialog {
     id: fieldFromExisting
-    height: 700
-    width:1024
+    height: 700  * theme.scaleHeight
+    width:1000  * theme.scaleWidth
+    anchors.centerIn: parent
     visible: false
     function show(){
         parent.visible = true
     }
-
-    Rectangle{
+    TopLine{
         id: topLine
-        anchors.top:parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        height: 40
-        z: 1
-        color: aog.backgroundColor
-        Text{
-            anchors.fill: parent
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: "Create New Field from Existing Field"
-            font.pixelSize: 30
-        }
+        titleText: qsTr("Create New Field from Existing Field")
     }
 
     FieldTable {
@@ -57,18 +50,19 @@ Popup {
 
     Rectangle{
         id: bottomRect
-        height: 200
+        height: parent.height*0.4
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         color: aog.backgroundColor
         Rectangle{
             id: editFieldName
-            height: 30
-            width: 550
+            height: parent.height*0.15
+            width: parent.width*0.5
             anchors.left: parent.left
             anchors.bottom: bottomButtons.top
             anchors.bottomMargin: 50
+            anchors.topMargin: 20
             anchors.leftMargin: 10
             color: "lightgray"
             border.color: "darkgray"
@@ -121,8 +115,11 @@ Popup {
             anchors.left: editFieldName.right
             anchors.leftMargin: 5
             objectName: "btnBackSpace"
-            icon.source: "/images/BackSpace.png"
+            icon.source: prefix + "/images/BackSpace.png"
             onClicked: newField.text = ""
+            height: 50  * theme.scaleHeight
+            width: 100  * theme.scaleWidth
+
         }
 
         RowLayout{
@@ -137,7 +134,7 @@ Popup {
             height: children.height
             IconButtonTransparent{
                 id: btnAddVehicleName
-                icon.source: "/images/Config/Con_VehicleMenu.png"
+                icon.source: prefix + "/images/Config/Con_VehicleMenu.png"
                 Text{
                     anchors.right: parent.left
                     anchors.verticalCenter: parent.verticalCenter
@@ -149,7 +146,7 @@ Popup {
             }
             IconButtonTransparent{
                 id: marker
-                icon.source: "/images/JobNameCalendar.png"
+                icon.source: prefix + "/images/JobNameCalendar.png"
                 Text{
                     anchors.right: parent.left
                     anchors.verticalCenter: parent.verticalCenter
@@ -162,7 +159,7 @@ Popup {
             }
             IconButtonTransparent{
                 id: btnAddTime
-                icon.source: "/images/JobNameTime.png"
+                icon.source: prefix + "/images/JobNameTime.png"
                 Text{
                     anchors.right: parent.left
                     anchors.verticalCenter: parent.verticalCenter
@@ -179,7 +176,7 @@ Popup {
                 checked: false
                 width: marker.width
                 height: marker.height
-                icon.source: "/images/FlagRed.png"
+                icon.source: prefix + "/images/FlagRed.png"
                 text: "Flags"
             }
             IconButtonColor{
@@ -188,7 +185,7 @@ Popup {
                 checked: false
                 width: marker.width
                 height: marker.height
-                icon.source: "/images/ManualOff.png"
+                icon.source: prefix + "/images/ManualOff.png"
                 text: "Mapping"
             }
             IconButtonColor{
@@ -197,7 +194,7 @@ Popup {
                 checked: true
                 width: marker.width
                 height: marker.height
-                icon.source: "/images/HeadlandMenu.png"
+                icon.source: prefix + "/images/HeadlandMenu.png"
                 text: "Headland"
             }
             IconButtonColor{
@@ -206,7 +203,7 @@ Popup {
                 checked: true
                 width: marker.width
                 height: marker.height
-                icon.source: "/images/ABLineEdit.png"
+                icon.source: prefix + "/images/ABLineEdit.png"
                 text: "Lines"
             }
         }
@@ -225,16 +222,16 @@ Popup {
                     existingField.text = ""
                     fieldView.clear_selection()
                 }
-                icon.source: "/images/Cancel64.png"
+                icon.source: prefix + "/images/Cancel64.png"
             }
             IconButtonTransparent{
                 objectName: "btnSave"
-                icon.source: "/images/OK64.png"
+                icon.source: prefix + "/images/OK64.png"
                 enabled: (newField.text !== "" && existingField.text !== "" &&
                           newField.text != existingField.text &&
-                          errorMessage.visible == false)
+                          errorMessage.visible === false)
                 onClicked: {
-                    if(newField.text != "" && existingField.text != "" &&
+                    if(newField.text !== "" && existingField.text !== "" &&
                             newField.text != existingField.text) {
                         var flag = 0;
                         if (btnKeepFlags.checked)
