@@ -508,7 +508,7 @@
         <file>images/Config/Con_Display.png</file>
         <file>qml/interfaces/FieldInterface.qml</file>
         <file>qml/interfaces/VehicleInterface.qml</file>
-        <file>qml/interfaces/LinesInterface.qml</file>
+        <file>qml/interfaces/TracksInterface.qml</file>
         <file>images/Config/ToolOverlap.png</file>
         <file>images/Config/ToolOffsetPositiveRight.png</file>
         <file>images/Config/ToolOffsetNegativeLeft.png</file>

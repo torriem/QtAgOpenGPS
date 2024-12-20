@@ -79,6 +79,7 @@ Window {
             console.log("steerConfigWindow visible")
             return true
         }
+        /*
         else if (abCurvePicker.visible === true) {
             console.log("abCurvePicker visible")
             return true
@@ -86,7 +87,7 @@ Window {
         else if (abLinePicker.visible === true) {
             console.log("abLinePicker visible")
             return true
-        }
+        }*/
         else if (tramLinesEditor.visible === true) {
             console.log("tramLinesEditor visible")
             return true
@@ -128,8 +129,8 @@ Window {
         objectName: "aog"
     }
     Interfaces.LinesInterface {
-        objectName: "linesInterface"
-        id: linesInterface
+        objectName: "tracksInterface"
+        id: tracksInterface
     }
 
     Interfaces.FieldInterface {
@@ -1339,6 +1340,7 @@ Window {
             id: steerConfigSettings
             visible: false
         }
+        /*
         ABCurvePicker{
             id: abCurvePicker
             objectName: "abCurvePicker"
@@ -1348,7 +1350,7 @@ Window {
             id: abLinePicker
             objectName: "abLinePicker"
             visible: false
-        }
+        }*/
         TramLinesEditor{
             id: tramLinesEditor
             anchors.right: parent.right
@@ -1391,6 +1393,7 @@ Window {
             anchors.fill: parent
         }
 
+        /*
         Tracks.TrackNewButtons{
             id: trackNewButtons
             visible: false
@@ -1404,7 +1407,7 @@ Window {
         }
         Tracks.TracksNewAddName{
             id: trackAddName
-        }
+        }*/
 
         Rectangle{//show "Are you sure?" when close button clicked
             id: closeDialog

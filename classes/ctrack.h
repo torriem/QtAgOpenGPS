@@ -87,12 +87,6 @@ public:
     SETTER(bool, isAutoSnapToPivot, setIsAutoSnapToPivot)
     SETTER(bool, isAutoSnapped, setIsAutoSnapped)
 
-    inline void reloadModel() {
-        //force QML to reload the model to reflect changes
-        //that may have been made in C++ code.
-        beginResetModel();
-        endResetModel();
-    }
 
     QObject *getModel() { return this;}
 
@@ -108,6 +102,14 @@ signals:
     void isAutoSnapToPivotChanged();
     void isAutoSnappedChanged();
     void isAutoTrackChanged();
+
+public slots:
+    void reloadModel() {
+        //force QML to reload the model to reflect changes
+        //that may have been made in C++ code.
+        beginResetModel();
+        endResetModel();
+    }
 
 private:
     // Used by QML model interface

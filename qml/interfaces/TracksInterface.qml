@@ -6,7 +6,7 @@
 import QtQuick
 
 Item {
-    id: linesInterface
+    id: tracksInterface
 
     property var abLinesList: [
         {index: 0, name: "one", easting: 3, northing: 4, heading: 75, visible: true },
@@ -21,15 +21,19 @@ Item {
         {index: 2, name: "three", visible: true }
     ]
 
-    signal abLine_updateLines()
+    //Assume trk.model is always updated, although I guess we could call for an update?
+    //to select a track, set trk.idx to the index. -1 means tracks are off.
 
-    signal abLine_addLine(string name, double easting, double northing, double heading)
-    signal abLine_deleteLine(int index)
-    //signal changeABLineName(int lineno, string new_name)
-    signal abLine_changeName(int which_one, string new_name)
-    signal abLine_setA(bool start_or_cancel, double easting, double northing, double heading) //true to mark point, false to cancel new point
-    signal abLine_swapHeading(int index)
+    //modes:
+    //AB=2, Curve = 4, waterPivot = 64
+    signal tracks_setA(int mode, bool start_or_cancel, double easting, double northing, double heading)
+    signal tracks_addLine(string name, double easting, double northing, double heading)
+    signal tracks_pauseOrResumeLine(bool pause)
 
+    signal tracks_changeName(int index, string new_name)
+    signal tracks_swapHeading(int index)
+
+    signal tracks_updateModel()
 
 
 }

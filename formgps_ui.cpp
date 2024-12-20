@@ -112,12 +112,6 @@ void FormGPS::setupGui()
     InterfaceProperty<AOGInterface, double>::set_qml_root(qmlItem(qml_root, "aog"));
     InterfaceProperty<AOGInterface, btnStates>::set_qml_root(qmlItem(qml_root, "aog"));
 
-    InterfaceProperty<LinesInterface, int>::set_qml_root(qmlItem(qml_root, "linesInterface"));
-    InterfaceProperty<LinesInterface, uint>::set_qml_root(qmlItem(qml_root, "linesInterface"));
-    InterfaceProperty<LinesInterface, bool>::set_qml_root(qmlItem(qml_root, "linesInterface"));
-    InterfaceProperty<LinesInterface, double>::set_qml_root(qmlItem(qml_root, "linesInterface"));
-    InterfaceProperty<LinesInterface, btnStates>::set_qml_root(qmlItem(qml_root, "linesInterface"));
-
     InterfaceProperty<FieldInterface, int>::set_qml_root(qmlItem(qml_root, "fieldInterface"));
     InterfaceProperty<FieldInterface, uint>::set_qml_root(qmlItem(qml_root, "fieldInterface"));
     InterfaceProperty<FieldInterface, bool>::set_qml_root(qmlItem(qml_root, "fieldInterface"));
@@ -148,7 +142,7 @@ void FormGPS::setupGui()
 
     //hook up our AOGInterface properties
     QObject *aog = qmlItem(qml_root, "aog");
-    QObject *linesInterface = qmlItem(qml_root, "linesInterface");
+    QObject *tracksInterface = qmlItem(qml_root, "tracksInterface");
     //QObject *vehicleInterface = qmlItem(qml_root, "vehicleInterface");
     QObject *fieldInterface = qmlItem(qml_root, "fieldInterface");
     QObject *boundaryInterface = qmlItem(qml_root, "boundaryInterface");
