@@ -45,7 +45,8 @@ class CTrack : public QAbstractListModel
 
 public:
     enum RoleNames {
-        NameRole = Qt::UserRole,
+        index = Qt::UserRole,
+        NameRole,
         IsVisibleRole,
         ModeRole,
         ptA,

@@ -12,6 +12,7 @@ CTrk::CTrk()
 CTrack::CTrack(QObject* parent) : QAbstractListModel(parent)
 {
     // Initialize role names
+    m_roleNames[index] = "index";
     m_roleNames[NameRole] = "name";
     m_roleNames[IsVisibleRole] = "isVisible";
     m_roleNames[ModeRole] = "mode";
@@ -21,7 +22,7 @@ CTrack::CTrack(QObject* parent) : QAbstractListModel(parent)
     m_roleNames[endPtB] = "endPtB";
     m_roleNames[nudgeDistance] = "nudgeDistance";
 
-    idx = -1;
+    setIdx(-1);
 }
 
 int CTrack::FindClosestRefTrack(Vec3 pivot, const CVehicle &vehicle)
@@ -337,6 +338,8 @@ QVariant CTrack::data(const QModelIndex &index, int role) const
     const CTrk &trk = gArr.at(row);
     qDebug() << row << role << trk.name;
     switch(role) {
+    case RoleNames::index:
+        return row;
     case RoleNames::NameRole:
         return trk.name;
     case RoleNames::ModeRole:
