@@ -1278,6 +1278,53 @@ void CABCurve::SmoothAB(int smPts, const CTrack &trk)
     delete[] arr;
 }
 
+void CABCurve::SmoothABDesList(int smPts)
+{
+    //count the reference list of original curve
+    int cnt = desList.count();
+
+    //the temp array
+    //the temp array
+    Vec3 *arr = new Vec3[cnt];
+
+    //read the points before and after the setpoint
+    for (int s = 0; s < smPts / 2; s++)
+    {
+        arr[s].easting = desList[s].easting;
+        arr[s].northing = desList[s].northing;
+        arr[s].heading = desList[s].heading;
+    }
+
+    for (int s = cnt - (smPts / 2); s < cnt; s++)
+    {
+        arr[s].easting = desList[s].easting;
+        arr[s].northing = desList[s].northing;
+        arr[s].heading = desList[s].heading;
+    }
+
+    //average them - center weighted average
+    for (int i = smPts / 2; i < cnt - (smPts / 2); i++)
+    {
+        for (int j = -smPts / 2; j < smPts / 2; j++)
+        {
+            arr[i].easting += desList[j + i].easting;
+            arr[i].northing += desList[j + i].northing;
+        }
+        arr[i].easting /= smPts;
+        arr[i].northing /= smPts;
+        arr[i].heading = desList[i].heading;
+    }
+
+    //make a list to draw
+    desList.clear();
+    for (int i = 0; i < cnt; i++)
+    {
+        desList.append(arr[i]);
+    }
+
+    delete[] arr;
+}
+
 void CABCurve::CalculateHeadings(QVector<Vec3> &xList)
 {
     //to calc heading based on next and previous points to give an average heading.

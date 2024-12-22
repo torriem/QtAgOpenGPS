@@ -124,6 +124,7 @@ public:
 
     void BuildTram(CBoundary &bnd, CTram &tram, const CTrack &trk);
     void SmoothAB(int smPts, const CTrack &trk);
+    void SmoothABDesList(int smPts);
     void CalculateHeadings(QVector<Vec3> &xList);
     void MakePointMinimumSpacing(QVector<Vec3> &xList, double minDistance);
     void SaveSmoothList(CTrack &trk);
