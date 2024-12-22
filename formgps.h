@@ -645,6 +645,19 @@ public slots:
 
     void TimedMessageBox(int timeout, QString s1, QString s2);
 
+    void tracks_start_new(int mode,
+                          double easting,
+                          double northing,
+                          double heading);
+
+    void tracks_finish_new(int mode, QString name, int ref_side, double Beasting,
+                           double Bnorthing, double Bheading);
+
+    void tracks_select(int index);
+    void tracks_delete(int index);
+    void tracks_changeName(int index, QString new_name);
+    void tracks_swapAB(int index);
+
     /*
     //AB Lines in GUI. TODO: rename these, make them consistent
     void update_ABlines_in_qml();

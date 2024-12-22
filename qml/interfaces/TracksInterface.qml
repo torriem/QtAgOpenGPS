@@ -8,30 +8,30 @@ import QtQuick
 Item {
     id: tracksInterface
 
-    property var abLinesList: [
-        {index: 0, name: "one", easting: 3, northing: 4, heading: 75, visible: true },
-        {index: 1, name: "two", easting: 3, northing: 4, heading: 75, visible: true },
-        {index: 2, name: "three", easting: 3, northing: 4, heading: 75, visible: true },
-        {index: 3, name: "four", easting: 3, northing: 4, heading: 75, visible: true }
-    ]
-
-    property var abCurvesList: [
-        {index: 0, name: "one", visible: true },
-        {index: 1, name: "two", visible: true },
-        {index: 2, name: "three", visible: true }
-    ]
-
     //Assume trk.model is always updated, although I guess we could call for an update?
+    //trk.model is like this:
+    /*
+    property var model: [
+        {index: 0, name: "one", isVisible: true, mode: 2 },
+        {index: 1, name: "two", isVisible: false, mode: 4 },
+        {index: 2, name: "three", isVisible: true, mode: 64}
+    ]*/
+
     //to select a track, set trk.idx to the index. -1 means tracks are off.
 
     //modes:
     //AB=2, Curve = 4, waterPivot = 64
-    signal tracks_setA(int mode, bool start_or_cancel, double easting, double northing, double heading)
-    signal tracks_addLine(string name, double easting, double northing, double heading)
-    signal tracks_pauseOrResumeLine(bool pause)
+    signal tracks_start_new(int mode, double easting, double northing, double heading)
 
+    //ref_side is negative for left, positive for right, zero for centered
+    signal tracks_finish_new(int mode, string name, int ref_side, double easting, double northing, double heading)
+    signal tracks_cancel_new(int mode)
+    signal tracks_pause_or_resume(bool pause)
+
+    signal tracks_select(int index)
+    signal tracks_swapAB(int index)
     signal tracks_changeName(int index, string new_name)
-    signal tracks_swapHeading(int index)
+    signal tracks_delete(int index)
 
     signal tracks_updateModel()
 

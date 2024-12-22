@@ -6,7 +6,144 @@
 #include "qmlutil.h"
 #include "aogproperty.h"
 
-/*
+
+void FormGPS::tracks_select(int index)
+{
+    //reset to generate new reference
+    curve.isCurveValid = false;
+    curve.lastHowManyPathsAway = 98888;
+    ABLine.isABValid = false;
+    curve.desList.clear();
+
+    FileSaveTracks();
+
+    //We assume that QML will always pass us a valid index that is
+    //visible, or -1
+    trk.setIdx(index);
+    yt.ResetCreatedYouTurn(makeUTurnCounter);
+}
+
+void FormGPS::tracks_start_new(int mode, double easting, double northing, double heading)
+{
+    switch(mode) {
+    case TrackMode::AB:
+        curve.desList.clear();
+        ABLine.isMakingABLine = true;
+        ABLine.desPtA.easting = easting;
+        ABLine.desPtA.northing = northing;
+
+        ABLine.desLineEndA.easting = ABLine.desPtA.easting - (sin(vehicle.pivotAxlePos.heading) * 1000);
+        ABLine.desLineEndA.northing = ABLine.desPtA.northing - (cos(vehicle.pivotAxlePos.heading) * 1000);
+
+        ABLine.desLineEndB.easting = ABLine.desPtA.easting + (sin(vehicle.pivotAxlePos.heading) * 1000);
+        ABLine.desLineEndB.northing = ABLine.desPtA.northing + (cos(vehicle.pivotAxlePos.heading) * 1000);
+
+        break;
+
+    case TrackMode::Curve:
+        curve.desList.clear();
+        curve.isMakingCurve = true;
+        break;
+
+    case TrackMode::waterPivot:
+        //nothing to do here.
+    default:
+        return;
+    }
+}
+
+void FormGPS::tracks_finish_new(int mode, QString name, int ref_side, double easting, double northing, double heading)
+{
+    double aveLineHeading = 0;
+    int idx;
+    int cnt;
+
+    switch(mode) {
+    case TrackMode::AB:
+       break;
+
+    case TrackMode::Curve:
+        curve.isMakingCurve = false;
+
+        cnt = curve.desList.count();
+        if (cnt > 3)
+        {
+            //make sure point distance isn't too big
+            curve.MakePointMinimumSpacing(curve.desList, 1.6);
+            curve.CalculateHeadings(curve.desList);
+
+            trk.gArr.append(CTrk());
+            //array number is 1 less since it starts at zero
+            idx = trk.gArr.count() - 1;
+
+            trk.gArr[idx].ptA = Vec2(curve.desList[0].easting,
+                                     curve.desList[0].northing);
+            trk.gArr[idx].ptB = Vec2(curve.desList[curve.desList.count() - 1].easting,
+                                     curve.desList[curve.desList.count() - 1].northing);
+
+            trk.gArr[idx].mode = TrackMode::Curve;
+
+            //calculate average heading of line
+            double x = 0, y = 0;
+            for (Vec3 &pt : curve.desList)
+            {
+                x += cos(pt.heading);
+                y += sin(pt.heading);
+            }
+            x /= curve.desList.count();
+            y /= curve.desList.count();
+            aveLineHeading = atan2(y, x);
+            if (aveLineHeading < 0) aveLineHeading += glm::twoPI;
+
+            trk.gArr[idx].heading = aveLineHeading;
+
+            //build the tail extensions
+            curve.AddFirstLastPoints(curve.desList,bnd);
+            curve.SmoothABDesList(4);
+            curve.CalculateHeadings(curve.desList);
+
+            //write out the Curve Points
+            for (Vec3 &item : curve.desList)
+            {
+                trk.gArr[idx].curvePts.append(item);
+            }
+
+            curve.desName = "Cu " + locale.toString(glm::toDegrees(aveLineHeading), 'g', 1) + QChar(0x00B0);
+
+            double dist;
+
+            if (ref_side > 0)
+            {
+                dist = (tool.width - tool.overlap) * 0.5 + tool.offset;
+                trk.NudgeRefCurve(dist,curve);
+            }
+            else if (ref_side < 0)
+            {
+                dist = (tool.width - tool.overlap) * -0.5 + tool.offset;
+                trk.NudgeRefCurve(dist,curve);
+            }
+            //else no nudge, center ref line
+
+            trk.setIdx(idx);
+        }
+        else
+        {
+            curve.isMakingCurve = false;
+            curve.desList.clear();
+        }
+
+         break;
+
+    case TrackMode::waterPivot:
+        break;
+
+    default:
+        return;
+
+    }
+
+}
+    /*
 void FormGPS::update_current_ABline_from_qml()
 {
     //AOGInterface currentABLine property changed; sync our
