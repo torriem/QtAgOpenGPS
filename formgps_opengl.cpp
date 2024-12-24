@@ -383,13 +383,7 @@ void FormGPS::oglMain_Paint()
             else// draw the current and reference AB Lines or CurveAB Ref and line
             {
                 //when switching lines, draw the ghost
-                if (trk.idx > -1)
-                {
-                    if (trk.gArr[trk.idx].mode == (int)TrackMode::AB)
-                        ABLine.DrawABLines(gl,projection * modelview, isFontOn, trk, yt, camera, gyd);
-                    else
-                        curve.DrawCurve(gl, projection * modelview, isFontOn, trk, yt, camera);
-                }
+                trk.DrawTrack(gl, projection*modelview, isfontOn, yt, camera, gyd);
             }
 
             //if (recPath.isRecordOn)
@@ -446,25 +440,7 @@ void FormGPS::oglMain_Paint()
 
             if (camera.camSetDistance > -150)
             {
-                gldraw1.clear();
-                color.setRgbF(0.98, 0.98, 0.098);
-                if (trk.idx > -1)
-                {
-                    if (trk.gArr[trk.idx].mode == (int)TrackMode::AB)
-                    {
-                        gldraw1.clear();
-                        gldraw1.append(QVector3D(ABLine.goalPointAB.easting, ABLine.goalPointAB.northing, 0));
-                        gldraw1.draw(gl,projection*modelview,QColor::fromRgbF(0,0,0),GL_POINTS,16);
-                        gldraw1.draw(gl,projection*modelview,color,GL_POINTS,10);
-                    }
-                    else
-                    {
-                        gldraw1.clear();
-                        gldraw1.append(QVector3D(curve.goalPointCu.easting, curve.goalPointCu.northing, 0));
-                        gldraw1.draw(gl,projection*modelview,QColor::fromRgbF(0,0,0),GL_POINTS,16);
-                        gldraw1.draw(gl,projection*modelview,color,GL_POINTS,10);
-                    }
-                }
+                trk.DrawTrackGoalPoint(gl, projection * modelview);
             }
 
             // 2D Ortho --------------------------

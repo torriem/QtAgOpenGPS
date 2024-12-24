@@ -1078,14 +1078,17 @@ void FormGPS::UpdateFixPosition()
                     }
                     else
                     {
-                        if (trk.gArr[trk.idx].mode == TrackMode::AB)
+                        if (trk.getMode() == TrackMode::AB)
                         {
                             yt.BuildABLineDubinsYouTurn(yt.isYouTurnRight,vehicle,bnd,
                                                         trk,makeUTurnCounter,secondsSinceStart);
                         }
-                        else yt.BuildCurveDubinsYouTurn(yt.isYouTurnRight, vehicle.pivotAxlePos,
+                        else
+                        {
+                            yt.BuildCurveDubinsYouTurn(yt.isYouTurnRight, vehicle.pivotAxlePos,
                                                         vehicle,bnd,trk,makeUTurnCounter,
                                                         secondsSinceStart);
+                        }
                     }
 
                     if (yt.uTurnStyle == 0 && yt.youTurnPhase == 10)
