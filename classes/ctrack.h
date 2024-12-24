@@ -6,10 +6,20 @@
 #include "vec3.h"
 #include "vec2.h"
 #include "setter.h"
+#include "cabcurve.h"
+#include "cabline.h"
 
+class QOpenGLFunctions;
 class CVehicle;
 class CABLine;
 class CABCurve;
+class CBoundary;
+class CYouTurn;
+class CAHRS;
+class CGuidance;
+class CNMEA;
+class CCamera;
+class CTram;
 
 
 enum TrackMode {
@@ -57,6 +67,8 @@ public:
     };
 
     QVector<CTrk> gArr;
+    CABCurve curve;
+    CABLine ABLine;
 
     Q_PROPERTY(int idx MEMBER idx NOTIFY idxChanged)
     //put a pointer to ourselves as a model.  This class is both
@@ -76,12 +88,32 @@ public:
 
     // CTrack interface
     int FindClosestRefTrack(Vec3 pivot, const CVehicle &vehicle);
-    void NudgeTrack(double dist, CABLine &ABLine, CABCurve &curve);
-    void NudgeDistanceReset(CABLine &ABLine, CABCurve &curve);
-    void SnapToPivot(CABLine &ABLine, CABCurve &curve);
-    void NudgeRefTrack(double dist, CABLine &ABLine, CABCurve &curve);
+    void SwitchToClosestRefTrack(Vec3 pivot, const CVehicle &vehicle);
+
+    void NudgeTrack(double dist);
+    void NudgeDistanceReset();
+    void SnapToPivot();
+    void NudgeRefTrack(double dist);
     void NudgeRefABLine(double dist);
-    void NudgeRefCurve(double distAway, CABCurve &curve);
+    void NudgeRefCurve(double distAway);
+
+    void DrawTrackNew(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, const CCamera &camera);
+    void DrawTrack(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
+                   bool isFontOn,
+                   CYouTurn &yt, const CCamera &camera
+                   , const CGuidance &gyd);
+
+    void BuildCurrentLine(Vec3 pivot,
+                          double secondsSinceStart, bool isAutoSteerbtnOn, int &makeUTurnCounter,
+                          CYouTurn &yt,
+                          CVehicle &vehicle,
+                          const CBoundary &bnd,
+                          const CAHRS &ahrs,
+                          CGuidance &gyd,
+                          CNMEA &pn);
+
+    void ResetCurveLine();
+
 
     SETTER(int, idx, setIdx)
     SETTER(bool, isAutoTrack, setIsAutoTrack)

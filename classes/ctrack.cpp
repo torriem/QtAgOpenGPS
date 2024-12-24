@@ -1,8 +1,20 @@
+#include <QOpenGLFunctions>
+#include <QMatrix4x4>
+#include <QVector>
+#include <QFuture>
+#include <QtConcurrent/QtConcurrent>
 #include "ctrack.h"
 #include "cvehicle.h"
 #include "glm.h"
 #include "cabcurve.h"
 #include "cabline.h"
+#include "aogproperty.h"
+#include "cyouturn.h"
+#include "cboundary.h"
+#include "ctram.h"
+#include "ccamera.h"
+#include "cahrs.h"
+#include "cguidance.h"
 
 CTrk::CTrk()
 {
@@ -122,7 +134,19 @@ int CTrack::FindClosestRefTrack(Vec3 pivot, const CVehicle &vehicle)
     return trak;
 }
 
-void CTrack::NudgeTrack(double dist, CABLine &ABLine, CABCurve &curve)
+void CTrack::SwitchToClosestRefTrack(Vec3 pivot, const CVehicle &vehicle)
+{
+    int new_idx;
+
+    new_idx = FindClosestRefTrack(pivot, vehicle);
+    if (new_idx >= 0 && new_idx != idx) {
+        setIdx(new_idx);
+        curve.isCurveValid = false;
+        ABLine.isABValid = false;
+    }
+}
+
+void CTrack::NudgeTrack(double dist)
 {
     if (idx > -1)
     {
@@ -145,7 +169,7 @@ void CTrack::NudgeTrack(double dist, CABLine &ABLine, CABCurve &curve)
     }
 }
 
-void CTrack::NudgeDistanceReset(CABLine &ABLine, CABCurve &curve)
+void CTrack::NudgeDistanceReset()
 {
     if (idx > -1 && gArr.count() > 0)
     {
@@ -165,7 +189,7 @@ void CTrack::NudgeDistanceReset(CABLine &ABLine, CABCurve &curve)
     }
 }
 
-void CTrack::SnapToPivot(CABLine &ABLine, CABCurve &curve)
+void CTrack::SnapToPivot()
 {
     //if (isBtnGuidanceOn)
 
@@ -173,18 +197,18 @@ void CTrack::SnapToPivot(CABLine &ABLine, CABCurve &curve)
     {
         if (gArr[idx].mode == (int)(TrackMode::AB))
         {
-            NudgeTrack(ABLine.distanceFromCurrentLinePivot, ABLine, curve);
+            NudgeTrack(ABLine.distanceFromCurrentLinePivot);
 
         }
         else
         {
-            NudgeTrack(curve.distanceFromCurrentLinePivot, ABLine, curve);
+            NudgeTrack(curve.distanceFromCurrentLinePivot);
         }
 
     }
 }
 
-void CTrack::NudgeRefTrack(double dist, CABLine &ABLine, CABCurve &curve)
+void CTrack::NudgeRefTrack(double dist)
 {
     if (idx > -1)
     {
@@ -199,7 +223,7 @@ void CTrack::NudgeRefTrack(double dist, CABLine &ABLine, CABCurve &curve)
             curve.isCurveValid = false;
             curve.lastHowManyPathsAway = 98888;
             curve.lastSecond = 0;
-            NudgeRefCurve( curve.isHeadingSameWay ? dist : -dist, curve);
+            NudgeRefCurve( curve.isHeadingSameWay ? dist : -dist);
         }
     }
 }
@@ -215,7 +239,7 @@ void CTrack::NudgeRefABLine(double dist)
     gArr[idx].ptB.northing += (cos(head + glm::PIBy2) * (dist));
 }
 
-void CTrack::NudgeRefCurve(double distAway, CABCurve &curve)
+void CTrack::NudgeRefCurve(double distAway)
 {
     curve.isCurveValid = false;
     curve.lastHowManyPathsAway = 98888;
@@ -318,6 +342,66 @@ void CTrack::NudgeRefCurve(double distAway, CABCurve &curve)
         //    arr[i].northing -= sin(arr[i].heading) * (dist);
         //    gArr[idx].curvePts.append(arr[i]);
         //}
+    }
+}
+
+void CTrack::DrawTrackNew(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, const CCamera &camera)
+{
+    if (idx >= 0) {
+        if (gArr[idx].mode == TrackMode::AB)
+            ABLine.DrawABLineNew(gl, mvp, camera);
+        else if (gArr[idx].mode == TrackMode::Curve)
+            curve.DrawCurveNew(gl, mvp);
+    }
+}
+void CTrack::DrawTrack(QOpenGLFunctions *gl,
+                       const QMatrix4x4 &mvp,
+                       bool isFontOn,
+                       CYouTurn &yt,
+                       const CCamera &camera,
+                       const CGuidance &gyd)
+{
+    if (idx >= 0) {
+        if (gArr[idx].mode == TrackMode::AB)
+            ABLine.DrawABLines(gl, mvp, isFontOn,gArr[idx], yt, camera, gyd);
+        else if (gArr[idx].mode == TrackMode::Curve)
+            curve.DrawCurve(gl, mvp, isFontOn, gArr[idx], yt, camera);
+    }
+}
+
+void CTrack::BuildCurrentLine(Vec3 pivot, double secondsSinceStart,
+                              bool isAutoSteerBtnOn,
+                              int &makeUTurnCounter,
+                              CYouTurn &yt,
+                              CVehicle &vehicle,
+                              const CBoundary &bnd,
+                              const CAHRS &ahrs,
+                              CGuidance &gyd,
+                              CNMEA &pn)
+{
+    if (gArr.count() > 0 && idx > -1)
+    {
+        if (gArr[idx].mode == TrackMode::AB)
+        {
+            ABLine.BuildCurrentABLineList(pivot,secondsSinceStart,gArr[idx],yt,vehicle);
+
+            ABLine.GetCurrentABLine(pivot, vehicle.steerAxlePos,isAutoSteerBtnOn,vehicle,yt,ahrs,gyd,pn,makeUTurnCounter);
+        }
+        else
+        {
+            //build new current ref line if required
+            curve.BuildCurveCurrentList(pivot, secondsSinceStart,vehicle,gArr[idx],bnd,yt);
+
+            curve.GetCurrentCurveLine(pivot, vehicle.steerAxlePos,isAutoSteerBtnOn,vehicle,gArr[idx],yt,ahrs,gyd,pn,makeUTurnCounter);
+        }
+    }
+}
+
+void CTrack::ResetCurveLine()
+{
+    if (idx >=0 && gArr[idx].mode == TrackMode::Curve) {
+        curve.curList.clear();
+        setIdx(-1);
     }
 }
 
