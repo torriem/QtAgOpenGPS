@@ -43,6 +43,7 @@
 #include "cguidance.h"
 #include "cheadline.h"
 #include "cpgn.h"
+#include "ctrack.h"
 
 #include "formheadland.h"
 #include "formheadache.h"
@@ -279,10 +280,6 @@ public:
 
     //ABLine Instance
     //QScopedPointer<CABLine> ABLine;
-
-    //NOTE: do these get removed? David
-    CABLine ABLine;
-    CABCurve curve;
 
     CTrack trk;
     CGuidance gyd;
@@ -650,8 +647,8 @@ public slots:
                           double northing,
                           double heading);
 
-    void tracks_finish_new(int mode, QString name, int ref_side, double Beasting,
-                           double Bnorthing, double Bheading);
+    void tracks_create_new(int mode, int ref_side, double Beasting,
+                           double Bnorthing);
 
     void tracks_select(int index);
     void tracks_delete(int index);
