@@ -19,6 +19,7 @@ class CVehicle;
 class QOpenGLFunctions;
 class CVehicle;
 class CNMEA;
+class CTrack;
 
 //class QMatrix4x4;
 
@@ -165,7 +166,6 @@ public:
     bool BuildABLineDubinsYouTurn(bool isTurnLeft,
                                   CVehicle &vehicle,
                                   const CBoundary &bnd,
-                                  CABLine &ABLine,
                                   CTrack &trk,
                                   int &makeUTurnCounter,
                                   int secondsSinceStart

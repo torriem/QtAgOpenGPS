@@ -28,7 +28,7 @@ CABCurve::CABCurve(QObject *parent) : QObject(parent)
 void CABCurve::BuildCurveCurrentList(Vec3 pivot,
                                      double secondsSinceStart,
                                      const CVehicle &vehicle,
-                                     const CTrack &trk,
+                                     const CTrk &track,
                                      const CBoundary &bnd,
                                      const CYouTurn &yt)
 {
@@ -41,11 +41,9 @@ void CABCurve::BuildCurveCurrentList(Vec3 pivot,
     //move the ABLine over based on the overlap amount set in vehicle
     double widthMinusOverlap = tool_width - tool_overlap;
 
-    int idx = trk.idx;
-
-    if (trk.gArr[trk.idx].mode != (int)TrackMode::waterPivot)
+    if (track.mode != (int)TrackMode::waterPivot)
     {
-        int refCount = trk.gArr[trk.idx].curvePts.count();
+        int refCount = track.curvePts.count();
         if (refCount < 5)
         {
             curList.clear();
@@ -57,10 +55,10 @@ void CABCurve::BuildCurveCurrentList(Vec3 pivot,
 
         for (int j = 0; j < refCount; j += 10)
         {
-            double dist = ((vehicle.guidanceLookPos.easting - trk.gArr[trk.idx].curvePts[j].easting)
-                           * (vehicle.guidanceLookPos.easting - trk.gArr[trk.idx].curvePts[j].easting))
-                          + ((vehicle.guidanceLookPos.northing - trk.gArr[trk.idx].curvePts[j].northing)
-                             * (vehicle.guidanceLookPos.northing - trk.gArr[trk.idx].curvePts[j].northing));
+            double dist = ((vehicle.guidanceLookPos.easting - track.curvePts[j].easting)
+                           * (vehicle.guidanceLookPos.easting - track.curvePts[j].easting))
+                          + ((vehicle.guidanceLookPos.northing - track.curvePts[j].northing)
+                             * (vehicle.guidanceLookPos.northing - track.curvePts[j].northing));
             if (dist < minDistA)
             {
                 minDistA = dist;
@@ -78,10 +76,10 @@ void CABCurve::BuildCurveCurrentList(Vec3 pivot,
         //find the closest 2 points to current close call
         for (int j = cc; j < dd; j++)
         {
-            double dist = ((vehicle.guidanceLookPos.easting - trk.gArr[trk.idx].curvePts[j].easting)
-                           * (vehicle.guidanceLookPos.easting - trk.gArr[trk.idx].curvePts[j].easting))
-                          + ((vehicle.guidanceLookPos.northing - trk.gArr[trk.idx].curvePts[j].northing)
-                             * (vehicle.guidanceLookPos.northing - trk.gArr[trk.idx].curvePts[j].northing));
+            double dist = ((vehicle.guidanceLookPos.easting - track.curvePts[j].easting)
+                           * (vehicle.guidanceLookPos.easting - track.curvePts[j].easting))
+                          + ((vehicle.guidanceLookPos.northing - track.curvePts[j].northing)
+                             * (vehicle.guidanceLookPos.northing - track.curvePts[j].northing));
             if (dist < minDistA)
             {
                 minDistB = minDistA;
@@ -106,25 +104,25 @@ void CABCurve::BuildCurveCurrentList(Vec3 pivot,
         }
 
         //same way as line creation or not
-        isHeadingSameWay = M_PI - fabs(fabs(pivot.heading - trk.gArr[trk.idx].curvePts[rA].heading) - M_PI) < glm::PIBy2;
+        isHeadingSameWay = M_PI - fabs(fabs(pivot.heading - track.curvePts[rA].heading) - M_PI) < glm::PIBy2;
 
         if (yt.isYouTurnTriggered && yt.isGoingStraightThrough) isHeadingSameWay = !isHeadingSameWay;
 
         //which side of the closest point are we on is next
         //calculate endpoints of reference line based on closest point
-        refPoint1.easting = trk.gArr[trk.idx].curvePts[rA].easting - (sin(trk.gArr[trk.idx].curvePts[rA].heading) * 300.0);
-        refPoint1.northing = trk.gArr[trk.idx].curvePts[rA].northing - (cos(trk.gArr[trk.idx].curvePts[rA].heading) * 300.0);
+        refPoint1.easting = track.curvePts[rA].easting - (sin(track.curvePts[rA].heading) * 300.0);
+        refPoint1.northing = track.curvePts[rA].northing - (cos(track.curvePts[rA].heading) * 300.0);
 
-        refPoint2.easting = trk.gArr[trk.idx].curvePts[rA].easting + (sin(trk.gArr[trk.idx].curvePts[rA].heading) * 300.0);
-        refPoint2.northing = trk.gArr[trk.idx].curvePts[rA].northing + (cos(trk.gArr[trk.idx].curvePts[rA].heading) * 300.0);
+        refPoint2.easting = track.curvePts[rA].easting + (sin(track.curvePts[rA].heading) * 300.0);
+        refPoint2.northing = track.curvePts[rA].northing + (cos(track.curvePts[rA].heading) * 300.0);
 
-        if (idx > -1 && trk.gArr[trk.idx].nudgeDistance != 0)
+        if (track.nudgeDistance != 0)
         {
-            refPoint1.easting += (sin(trk.gArr[trk.idx].curvePts[rA].heading + glm::PIBy2) * trk.gArr[trk.idx].nudgeDistance);
-            refPoint1.northing += (cos(trk.gArr[trk.idx].curvePts[rA].heading + glm::PIBy2) * trk.gArr[trk.idx].nudgeDistance);
+            refPoint1.easting += (sin(track.curvePts[rA].heading + glm::PIBy2) * track.nudgeDistance);
+            refPoint1.northing += (cos(track.curvePts[rA].heading + glm::PIBy2) * track.nudgeDistance);
 
-            refPoint2.easting += (sin(trk.gArr[trk.idx].curvePts[rA].heading + glm::PIBy2) * trk.gArr[trk.idx].nudgeDistance);
-            refPoint2.northing += (cos(trk.gArr[trk.idx].curvePts[rA].heading + glm::PIBy2) * trk.gArr[trk.idx].nudgeDistance);
+            refPoint2.easting += (sin(track.curvePts[rA].heading + glm::PIBy2) * track.nudgeDistance);
+            refPoint2.northing += (cos(track.curvePts[rA].heading + glm::PIBy2) * track.nudgeDistance);
         }
 
         //x2-x1
@@ -147,7 +145,7 @@ void CABCurve::BuildCurveCurrentList(Vec3 pivot,
         if (RefDist < 0) howManyPathsAway = (int)(RefDist - 0.5);
         else howManyPathsAway = (int)(RefDist + 0.5);
 
-        if (trk.gArr[trk.idx].mode != (int)TrackMode::bndCurve)
+        if (track.mode != (int)TrackMode::bndCurve)
         {
 
             //build current list
@@ -180,17 +178,17 @@ void CABCurve::BuildCurveCurrentList(Vec3 pivot,
             for (int i = 0; i < refCount; i++)
             {
                 point = Vec3(
-                    trk.gArr[trk.idx].curvePts[i].easting + (sin(glm::PIBy2 + trk.gArr[trk.idx].curvePts[i].heading) * distAway),
-                    trk.gArr[trk.idx].curvePts[i].northing + (cos(glm::PIBy2 + trk.gArr[trk.idx].curvePts[i].heading) * distAway),
-                    trk.gArr[trk.idx].curvePts[i].heading);
+                    track.curvePts[i].easting + (sin(glm::PIBy2 + track.curvePts[i].heading) * distAway),
+                    track.curvePts[i].northing + (cos(glm::PIBy2 + track.curvePts[i].heading) * distAway),
+                    track.curvePts[i].heading);
                 bool Add = true;
 
                 for (int t = 0; t < refCount; t++)
                 {
-                    double dist = ((point.easting - trk.gArr[trk.idx].curvePts[t].easting) *
-                                   (point.easting - trk.gArr[trk.idx].curvePts[t].easting))
-                                  + ((point.northing - trk.gArr[trk.idx].curvePts[t].northing) *
-                                     (point.northing - trk.gArr[trk.idx].curvePts[t].northing));
+                    double dist = ((point.easting - track.curvePts[t].easting) *
+                                   (point.easting - track.curvePts[t].easting))
+                                  + ((point.northing - track.curvePts[t].northing) *
+                                     (point.northing - track.curvePts[t].northing));
                     if (dist < distSqAway)
                     {
                         Add = false;
@@ -283,9 +281,7 @@ void CABCurve::BuildCurveCurrentList(Vec3 pivot,
                 if (pt33.heading < 0) pt33.heading += glm::twoPI;
                 curList.append(pt33);
 
-                if (trk.gArr.count() == 0 || idx == -1) return;
-
-                if (bnd.bndList.count() > 0 && !(trk.gArr[trk.idx].mode == (int)TrackMode::bndCurve))
+                if (bnd.bndList.count() > 0 && !(track.mode == (int)TrackMode::bndCurve))
                 {
                     int ptCnt = curList.count() - 1;
 
@@ -370,19 +366,19 @@ void CABCurve::BuildCurveCurrentList(Vec3 pivot,
             //build the current line
             //curList?.Clear();
 
-            double distAway = (tool_width - tool_overlap) * howManyPathsAway + (isHeadingSameWay ? -tool_offset : tool_offset) + trk.gArr[idx].nudgeDistance;
+            double distAway = (tool_width - tool_overlap) * howManyPathsAway + (isHeadingSameWay ? -tool_offset : tool_offset) + track.nudgeDistance;
 
             if (howManyPathsAway > -1) howManyPathsAway += 1;
 
             distAway += (0.5 * (tool_width - tool_overlap));
 
-            if (!isBusyWorking) auto result = QtConcurrent::run([this, distAway, refCount, &trk, idx, &bnd] () { BuildNewCurveAsync( distAway, refCount, trk.gArr[idx], bnd); }  ) ;
+            if (!isBusyWorking) auto result = QtConcurrent::run([this, distAway, refCount, &track, &bnd] () { BuildNewCurveAsync( distAway, refCount, track, bnd); }  ) ;
         }
     }
     else //pivot guide list
     {
         //pivot circle center
-        refPoint1 = trk.gArr[trk.idx].ptA;
+        refPoint1 = track.ptA;
 
         //cross product
         isHeadingSameWay = ((vehicle.pivotAxlePos.easting - refPoint1.easting) * (vehicle.steerAxlePos.northing - refPoint1.northing)
@@ -395,7 +391,7 @@ void CABCurve::BuildCurveCurrentList(Vec3 pivot,
 
         double RefDist = (distanceFromRefLine
                           + (isHeadingSameWay ? tool_offset : -tool_offset)
-                          + trk.gArr[trk.idx].nudgeDistance) / widthMinusOverlap;
+                          + track.nudgeDistance) / widthMinusOverlap;
 
         if (RefDist < 0) howManyPathsAway = (int)(RefDist - 0.5);
         else howManyPathsAway = (int)(RefDist + 0.5);
@@ -407,7 +403,7 @@ void CABCurve::BuildCurveCurrentList(Vec3 pivot,
         curList.clear();
 
         double distAway = widthMinusOverlap * howManyPathsAway
-                          + (isHeadingSameWay ? -tool_offset : tool_offset) - trk.gArr[trk.idx].nudgeDistance;
+                          + (isHeadingSameWay ? -tool_offset : tool_offset) - track.nudgeDistance;
 
         distAway += (0.5 * widthMinusOverlap);
 
@@ -651,7 +647,7 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
                                    Vec3 steer,
                                    bool isAutoSteerBtnOn,
                                    CVehicle &vehicle,
-                                   CTrack &trk,
+                                   CTrk &track,
                                    CYouTurn &yt,
                                    const CAHRS &ahrs,
                                    CGuidance &gyd,
@@ -662,9 +658,9 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
     double wheelBase = property_setVehicle_wheelbase;
     double maxSteerAngle = property_setVehicle_maxSteerAngle;
 
-    if (trk.gArr[trk.idx].curvePts.count() == 0 || trk.gArr[trk.idx].curvePts.count() < 5)
+    if (track.curvePts.count() == 0 || track.curvePts.count() < 5)
     {
-        if (trk.gArr[trk.idx].mode != (int)TrackMode::waterPivot)
+        if (track.mode != (int)TrackMode::waterPivot)
         {
             return;
         }
@@ -698,7 +694,7 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
             //close call hit
 
             //If is a curve
-            if (trk.gArr[trk.idx].mode <= (int)TrackMode::Curve)
+            if (track.mode <= (int)TrackMode::Curve)
             {
                 minDistA = minDistB = glm::DOUBLE_MAX;
                 //close call hit
@@ -896,7 +892,7 @@ void CABCurve::GetCurrentCurveLine(Vec3 pivot,
                 if (i > curList.count() - 1) i = 0;
             }
 
-            if (trk.gArr[trk.idx].mode <= (int)TrackMode::Curve)
+            if (track.mode <= (int)TrackMode::Curve)
             {
                 if (isAutoSteerBtnOn && !vehicle.isReverse)
                 {
@@ -984,7 +980,7 @@ void CABCurve::DrawCurveNew(QOpenGLFunctions *gl, const QMatrix4x4 &mvp)
 
 void CABCurve::DrawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                          bool isFontOn,
-                         const CTrack &trk,
+                         const CTrk &track,
                          CYouTurn &yt, const CCamera &camera)
 {
     //double tool_toolWidth = property_setVehicle_toolWidth;
@@ -1006,15 +1002,15 @@ void CABCurve::DrawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
         gldraw.draw(gl,mvp,QColor::fromRgbF(0.95f, 0.42f, 0.750f),GL_LINE_STRIP,lineWidth);
     }
 
-    int ptCount = trk.gArr[trk.idx].curvePts.count();
-    if (trk.gArr[trk.idx].mode != TrackMode::waterPivot)
+    int ptCount = track.curvePts.count();
+    if (track.mode != TrackMode::waterPivot)
     {
-        if (trk.gArr[trk.idx].curvePts.count() == 0) return;
+        if (track.curvePts.count() == 0) return;
 
         gldraw.clear();
         //cv.color = QVector4D(0.96, 0.2f, 0.2f, 1.0f);
         for (int h = 0; h < ptCount; h++) {
-            gldraw.append(QVector3D(trk.gArr[trk.idx].curvePts[h].easting, trk.gArr[trk.idx].curvePts[h].northing, 0));
+            gldraw.append(QVector3D(track.curvePts[h].easting, track.curvePts[h].northing, 0));
         }
 
         gldraw.draw(gl,mvp,QColor::fromRgbF(0.96, 0.2f, 0.2f), GL_LINES, 4.0);
@@ -1022,8 +1018,8 @@ void CABCurve::DrawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
         if (isFontOn)
         {
             color.setRgbF(0.40f, 0.90f, 0.95f);
-            drawText3D(camera, gl, mvp, trk.gArr[trk.idx].curvePts[0].easting, trk.gArr[trk.idx].curvePts[0].northing, "&A", 1.0, true, color);
-            drawText3D(camera, gl, mvp, trk.gArr[trk.idx].curvePts[trk.gArr[trk.idx].curvePts.count() - 1].easting, trk.gArr[trk.idx].curvePts[trk.gArr[trk.idx].curvePts.count() - 1].northing, "&B", 1.0, true, color);
+            drawText3D(camera, gl, mvp, track.curvePts[0].easting, track.curvePts[0].northing, "&A", 1.0, true, color);
+            drawText3D(camera, gl, mvp, track.curvePts[track.curvePts.count() - 1].easting, track.curvePts[track.curvePts.count() - 1].northing, "&B", 1.0, true, color);
         }
 
         //just draw ref and smoothed line if smoothing window is open
@@ -1050,7 +1046,7 @@ void CABCurve::DrawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
 
                 //ablines and curves are a line - the rest a loop
 
-                if(trk.gArr[trk.idx].mode <= (int)TrackMode::Curve)
+                if(track.mode <= (int)TrackMode::Curve)
                     gldraw.draw(gl,mvp,color,GL_LINE_STRIP,lineWidth);
                 else
                     gldraw.draw(gl,mvp,color,GL_LINE_LOOP,lineWidth);
@@ -1081,7 +1077,7 @@ void CABCurve::DrawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
         if (curList.count() > 0)
         {
             gldraw.clear();
-            gldraw.append(QVector3D(trk.gArr[trk.idx].ptA.easting, trk.gArr[trk.idx].ptA.northing, 0));
+            gldraw.append(QVector3D(track.ptA.easting, track.ptA.northing, 0));
             for (int h = 0; h < curList.count(); h++)
                 gldraw.append(QVector3D(curList[h].easting, curList[h].northing, 0));
 
@@ -1098,7 +1094,7 @@ void CABCurve::DrawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
     }
 }
 
-void CABCurve::BuildTram(CBoundary &bnd, CTram &tram, const CTrack &trk)
+void CABCurve::BuildTram(CBoundary &bnd, CTram &tram, const CTrk &track)
 {
     double halfWheelTrack = (double)property_setVehicle_trackWidth * 0.5;
 
@@ -1120,7 +1116,7 @@ void CABCurve::BuildTram(CBoundary &bnd, CTram &tram, const CTrack &trk)
 
     bool isBndExist = bnd.bndList.count() != 0;
 
-    int refCount = trk.gArr[trk.idx].curvePts.count();
+    int refCount = track.curvePts.count();
 
     int cntr = 0;
     if (isBndExist)
@@ -1145,18 +1141,18 @@ void CABCurve::BuildTram(CBoundary &bnd, CTram &tram, const CTrack &trk)
         for (int j = 0; j < refCount; j += 1)
         {
             Vec2 point(
-                (sin(glm::PIBy2 + trk.gArr[trk.idx].curvePts[j].heading) *
-                 widd) + trk.gArr[trk.idx].curvePts[j].easting,
-                (cos(glm::PIBy2 + trk.gArr[trk.idx].curvePts[j].heading) *
-                 widd) + trk.gArr[trk.idx].curvePts[j].northing
+                (sin(glm::PIBy2 + track.curvePts[j].heading) *
+                 widd) + track.curvePts[j].easting,
+                (cos(glm::PIBy2 + track.curvePts[j].heading) *
+                 widd) + track.curvePts[j].northing
                 );
 
             bool Add = true;
             for (int t = 0; t < refCount; t++)
             {
                 //distance check to be not too close to ref line
-                double dist = ((point.easting - trk.gArr[trk.idx].curvePts[t].easting) * (point.easting - trk.gArr[trk.idx].curvePts[t].easting))
-                              + ((point.northing - trk.gArr[trk.idx].curvePts[t].northing) * (point.northing - trk.gArr[trk.idx].curvePts[t].northing));
+                double dist = ((point.easting - track.curvePts[t].easting) * (point.easting - track.curvePts[t].easting))
+                              + ((point.northing - track.curvePts[t].northing) * (point.northing - track.curvePts[t].northing));
                 if (dist < distSqAway)
                 {
                     Add = false;
@@ -1193,18 +1189,18 @@ void CABCurve::BuildTram(CBoundary &bnd, CTram &tram, const CTrack &trk)
         for (int j = 0; j < refCount; j += 1)
         {
             Vec2 point(
-                sin(glm::PIBy2 + trk.gArr[trk.idx].curvePts[j].heading) *
-                        widd + trk.gArr[trk.idx].curvePts[j].easting,
-                cos(glm::PIBy2 + trk.gArr[trk.idx].curvePts[j].heading) *
-                        widd + trk.gArr[trk.idx].curvePts[j].northing
+                sin(glm::PIBy2 + track.curvePts[j].heading) *
+                        widd + track.curvePts[j].easting,
+                cos(glm::PIBy2 + track.curvePts[j].heading) *
+                        widd + track.curvePts[j].northing
                 );
 
             bool Add = true;
             for (int t = 0; t < refCount; t++)
             {
                 //distance check to be not too close to ref line
-                double dist = ((point.easting - trk.gArr[trk.idx].curvePts[t].easting) * (point.easting - trk.gArr[trk.idx].curvePts[t].easting))
-                              + ((point.northing - trk.gArr[trk.idx].curvePts[t].northing) * (point.northing - trk.gArr[trk.idx].curvePts[t].northing));
+                double dist = ((point.easting - track.curvePts[t].easting) * (point.easting - track.curvePts[t].easting))
+                              + ((point.northing - track.curvePts[t].northing) * (point.northing - track.curvePts[t].northing));
                 if (dist < distSqAway)
                 {
                     Add = false;
@@ -1229,10 +1225,10 @@ void CABCurve::BuildTram(CBoundary &bnd, CTram &tram, const CTrack &trk)
     }
 }
 
-void CABCurve::SmoothAB(int smPts, const CTrack &trk)
+void CABCurve::SmoothAB(int smPts, const CTrk &track)
 {
     //count the reference list of original curve
-    int cnt = trk.gArr[trk.idx].curvePts.count();
+    int cnt = track.curvePts.count();
 
     //just go back if not very long
     if (cnt < 200) return;
@@ -1243,16 +1239,16 @@ void CABCurve::SmoothAB(int smPts, const CTrack &trk)
     //read the points before and after the setpoint
     for (int s = 0; s < smPts / 2; s++)
     {
-        arr[s].easting = trk.gArr[trk.idx].curvePts[s].easting;
-        arr[s].northing = trk.gArr[trk.idx].curvePts[s].northing;
-        arr[s].heading = trk.gArr[trk.idx].curvePts[s].heading;
+        arr[s].easting = track.curvePts[s].easting;
+        arr[s].northing = track.curvePts[s].northing;
+        arr[s].heading = track.curvePts[s].heading;
     }
 
     for (int s = cnt - (smPts / 2); s < cnt; s++)
     {
-        arr[s].easting = trk.gArr[trk.idx].curvePts[s].easting;
-        arr[s].northing = trk.gArr[trk.idx].curvePts[s].northing;
-        arr[s].heading = trk.gArr[trk.idx].curvePts[s].heading;
+        arr[s].easting = track.curvePts[s].easting;
+        arr[s].northing = track.curvePts[s].northing;
+        arr[s].heading = track.curvePts[s].heading;
     }
 
     //average them - center weighted average
@@ -1260,12 +1256,12 @@ void CABCurve::SmoothAB(int smPts, const CTrack &trk)
     {
         for (int j = -smPts / 2; j < smPts / 2; j++)
         {
-            arr[i].easting += trk.gArr[trk.idx].curvePts[j + i].easting;
-            arr[i].northing += trk.gArr[trk.idx].curvePts[j + i].northing;
+            arr[i].easting += track.curvePts[j + i].easting;
+            arr[i].northing += track.curvePts[j + i].northing;
         }
         arr[i].easting /= smPts;
         arr[i].northing /= smPts;
-        arr[i].heading = trk.gArr[trk.idx].curvePts[i].heading;
+        arr[i].heading = track.curvePts[i].heading;
     }
 
     //make a list to draw
@@ -1376,14 +1372,14 @@ void CABCurve::MakePointMinimumSpacing(QVector<Vec3> &xList, double minDistance)
     }
 }
 
-void CABCurve::SaveSmoothList(CTrack &trk)
+void CABCurve::SaveSmoothList(CTrk &track)
 {
     //oops no smooth list generated
     int cnt = smooList.size();
     if (cnt == 0) return;
 
     //eek
-    trk.gArr[trk.idx].curvePts.clear();
+    track.curvePts.clear();
 
     //copy to an array to calculate all the new headings
     QVector<Vec3> arr = smooList;
@@ -1393,7 +1389,7 @@ void CABCurve::SaveSmoothList(CTrack &trk)
     {
         arr[i].heading = atan2(arr[i + 1].easting - arr[i].easting, arr[i + 1].northing - arr[i].northing);
         if (arr[i].heading < 0) arr[i].heading += glm::twoPI;
-        trk.gArr[trk.idx].curvePts.append(arr[i]);
+        track.curvePts.append(arr[i]);
     }
 }
 
@@ -1480,10 +1476,3 @@ void CABCurve::AddFirstLastPoints(QVector<Vec3> &xList,
         }
     }
 }
-
-void CABCurve::ResetCurveLine(CTrack &trk)
-{
-    curList.clear();
-    trk.idx = -1;
-}
-

@@ -16,9 +16,7 @@ class CBoundary;
 class CNMEA;
 class CAHRS;
 class CGuidance;
-class CTrack;
 class CTrk;
-
 
 class CCurveLines
 {
@@ -92,7 +90,7 @@ public:
     void BuildCurveCurrentList(Vec3 pivot,
                                double secondsSinceStart,
                                const CVehicle &vehicle,
-                               const CTrack &trk,
+                               const CTrk &track,
                                const CBoundary &bnd,
                                const CYouTurn &yt);
 
@@ -105,7 +103,7 @@ public:
                              Vec3 steer,
                              bool isAutoSteerBtnOn,
                              CVehicle &vehicle,
-                             CTrack &trk,
+                             CTrk &track,
                              CYouTurn &yt,
                              const CAHRS &ahrs,
                              CGuidance &gyd,
@@ -116,22 +114,21 @@ public:
 
     void DrawCurve(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                    bool isFontOn,
-                   const CTrack &trk,
+                   const CTrk &track,
                    CYouTurn &yt, const CCamera &camera
                    );
 
     //void drawTram(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
 
-    void BuildTram(CBoundary &bnd, CTram &tram, const CTrack &trk);
-    void SmoothAB(int smPts, const CTrack &trk);
+    void BuildTram(CBoundary &bnd, CTram &tram, const CTrk &track);
+    void SmoothAB(int smPts, const CTrk &track);
     void SmoothABDesList(int smPts);
     void CalculateHeadings(QVector<Vec3> &xList);
     void MakePointMinimumSpacing(QVector<Vec3> &xList, double minDistance);
-    void SaveSmoothList(CTrack &trk);
+    void SaveSmoothList(CTrk &track);
     void MoveABCurve(double dist);
     bool PointOnLine(Vec3 pt1, Vec3 pt2, Vec3 pt);
     void AddFirstLastPoints(QVector<Vec3> &xList, const CBoundary &bnd);
-    void ResetCurveLine(CTrack &trk);
 
     CABCurve &operator=(CABCurve &src)
     {

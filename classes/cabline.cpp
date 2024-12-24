@@ -25,7 +25,7 @@ CABLine::CABLine(QObject *parent) : QObject(parent)
 
 void CABLine::BuildCurrentABLineList(Vec3 pivot,
                                      double secondsSinceStart,
-                                     CTrack &trk,
+                                     CTrk &track,
                                      const CYouTurn &yt,
                                      const CVehicle &vehicle)
 {
@@ -34,25 +34,24 @@ void CABLine::BuildCurrentABLineList(Vec3 pivot,
     double tool_offset = property_setVehicle_toolOffset;
 
     double dx, dy;
-    int idx = trk.idx;
 
-    abHeading = trk.gArr[idx].heading;
+    abHeading = track.heading;
 
-    trk.gArr[idx].endPtA.easting = trk.gArr[idx].ptA.easting - (sin(abHeading) * abLength);
-    trk.gArr[idx].endPtA.northing = trk.gArr[idx].ptA.northing - (cos(abHeading) * abLength);
+    track.endPtA.easting = track.ptA.easting - (sin(abHeading) * abLength);
+    track.endPtA.northing = track.ptA.northing - (cos(abHeading) * abLength);
 
-    trk.gArr[idx].endPtB.easting = trk.gArr[idx].ptB.easting + (sin(abHeading) * abLength);
-    trk.gArr[idx].endPtB.northing = trk.gArr[idx].ptB.northing + (cos(abHeading) * abLength);
+    track.endPtB.easting = track.ptB.easting + (sin(abHeading) * abLength);
+    track.endPtB.northing = track.ptB.northing + (cos(abHeading) * abLength);
 
-    refNudgePtA = trk.gArr[idx].endPtA; refNudgePtB = trk.gArr[idx].endPtB;
+    refNudgePtA = track.endPtA; refNudgePtB = track.endPtB;
 
-    if (idx > -1 && trk.gArr[idx].nudgeDistance != 0)
+    if (track.nudgeDistance != 0)
     {
-        refNudgePtA.easting += (sin(abHeading + glm::PIBy2) * trk.gArr[idx].nudgeDistance);
-        refNudgePtA.northing += (cos(abHeading + glm::PIBy2) * trk.gArr[idx].nudgeDistance);
+        refNudgePtA.easting += (sin(abHeading + glm::PIBy2) * track.nudgeDistance);
+        refNudgePtA.northing += (cos(abHeading + glm::PIBy2) * track.nudgeDistance);
 
-        refNudgePtB.easting += ( sin(abHeading + glm::PIBy2) * trk.gArr[idx].nudgeDistance);
-        refNudgePtB.northing += (cos(abHeading + glm::PIBy2) * trk.gArr[idx].nudgeDistance);
+        refNudgePtB.easting += ( sin(abHeading + glm::PIBy2) * track.nudgeDistance);
+        refNudgePtB.northing += (cos(abHeading + glm::PIBy2) * track.nudgeDistance);
     }
 
     lastSecond = secondsSinceStart;
@@ -88,14 +87,14 @@ void CABLine::BuildCurrentABLineList(Vec3 pivot,
     shadowOffset = isHeadingSameWay ? tool_offset : -tool_offset;
 
     //move the curline as well.
-    Vec2 nudgePtA(trk.gArr[idx].ptA);
-    Vec2 nudgePtB(trk.gArr[idx].ptB);
+    Vec2 nudgePtA(track.ptA);
+    Vec2 nudgePtB(track.ptB);
 
-    nudgePtA.easting += (sin(abHeading + glm::PIBy2) * trk.gArr[idx].nudgeDistance);
-    nudgePtA.northing += (cos(abHeading + glm::PIBy2) * trk.gArr[idx].nudgeDistance);
+    nudgePtA.easting += (sin(abHeading + glm::PIBy2) * track.nudgeDistance);
+    nudgePtA.northing += (cos(abHeading + glm::PIBy2) * track.nudgeDistance);
 
-    nudgePtB.easting += (sin(abHeading + glm::PIBy2) * trk.gArr[idx].nudgeDistance);
-    nudgePtB.northing += (cos(abHeading + glm::PIBy2) * trk.gArr[idx].nudgeDistance);
+    nudgePtB.easting += (sin(abHeading + glm::PIBy2) * track.nudgeDistance);
+    nudgePtB.northing += (cos(abHeading + glm::PIBy2) * track.nudgeDistance);
 
     //depending which way you are going, the offset can be either side
     Vec2 point1((cos(-abHeading) * (distAway + (isHeadingSameWay ? -tool_offset : tool_offset))) + nudgePtA.easting,
@@ -336,7 +335,7 @@ void CABLine::DrawABLineNew(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
 
 void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                           bool isFontOn,
-                          const CTrack &trk,
+                          const CTrk &track,
                           CYouTurn &yt,
                           const CCamera &camera,
                           const CGuidance &gyd)
@@ -357,10 +356,10 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
 
     //Draw AB Points
     cv.color = QVector4D(0.95f, 0.0f, 0.0f, 1.0);
-    cv.vertex = QVector3D(trk.gArr[trk.idx].ptB.easting, trk.gArr[trk.idx].ptB.northing, 0.0);
+    cv.vertex = QVector3D(track.ptB.easting, track.ptB.northing, 0.0);
     gldraw1.append(cv);
     cv.color = QVector4D(0.0f, 0.90f, 0.95f, 1.0);
-    cv.vertex = QVector3D(trk.gArr[trk.idx].ptA.easting, trk.gArr[trk.idx].ptA.northing, 0.0);
+    cv.vertex = QVector3D(track.ptA.easting, track.ptA.northing, 0.0);
     gldraw1.append(cv);
     //cv.color = QVector4D(0.00990f, 0.990f, 0.095f,1.0);
     //cv.vertex = QVector3D(bnd.iE, bnd.iN, 0.0);
@@ -370,8 +369,8 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
     if (isFontOn && !isMakingABLine)
     {
         color.setRgbF(0.00990f, 0.990f, 0.095f);
-        drawText3D(camera,gl,mvp, trk.gArr[trk.idx].ptA.easting, trk.gArr[trk.idx].ptA.northing, "&A", 1.0, true, color);
-        drawText3D(camera,gl,mvp, trk.gArr[trk.idx].ptB.easting, trk.gArr[trk.idx].ptB.northing, "&B", 1.0, true, color);
+        drawText3D(camera,gl,mvp, track.ptA.easting, track.ptA.northing, "&A", 1.0, true, color);
+        drawText3D(camera,gl,mvp, track.ptB.easting, track.ptB.northing, "&B", 1.0, true, color);
     }
 
     /*
@@ -500,7 +499,7 @@ void CABLine::DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
     yt.DrawYouTurn(gl,mvp);
 }
 
-void CABLine::BuildTram(const CTrack &trk, CBoundary &bnd, CTram &tram)
+void CABLine::BuildTram(const CTrk &track, CBoundary &bnd, CTram &tram)
 {
     double tramWidth = property_setTram_tramWidth;
     double tool_halfWidth = ((double)property_setVehicle_toolWidth - (double)property_setVehicle_toolOverlap) / 2.0;
@@ -525,18 +524,18 @@ void CABLine::BuildTram(const CTrack &trk, CBoundary &bnd, CTram &tram)
 
     bool isBndExist = bnd.bndList.count() != 0;
 
-    abHeading = trk.gArr[trk.idx].heading;
+    abHeading = track.heading;
 
     double hsin = sin(abHeading);
     double hcos = cos(abHeading);
 
-    double len = glm::Distance(trk.gArr[trk.idx].endPtA, trk.gArr[trk.idx].endPtB);
+    double len = glm::Distance(track.endPtA, track.endPtB);
     //divide up the AB line into segments
     Vec2 P1;
     for (int i = 0; i < (int)len; i += 4)
     {
-        P1.easting = (hsin * i) + trk.gArr[trk.idx].endPtA.easting;
-        P1.northing = (hcos * i) + trk.gArr[trk.idx].endPtA.northing;
+        P1.easting = (hsin * i) + track.endPtA.easting;
+        P1.northing = (hcos * i) + track.endPtA.northing;
         tramRef.append(P1);
     }
 

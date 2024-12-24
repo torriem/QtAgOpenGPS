@@ -6,7 +6,6 @@
 #include "vec2.h"
 #include "vec3.h"
 #include <QString>
-#include "ctrack.h"
 
 class QOpenGLFunctions;
 //namespace AgOpenGPS
@@ -20,6 +19,7 @@ class CTram;
 class CCamera;
 class CAHRS;
 class CGuidance;
+class CTrk;
 
 class CABLines
 {
@@ -55,9 +55,6 @@ public:
 
     //pure pursuit values
     Vec2 goalPointAB = Vec2(0, 0);
-
-    //List of all available ABLines
-    CTrk refLine;
 
     double howManyPathsAway = 0.0;
     bool isMakingABLine;
@@ -100,7 +97,7 @@ public:
 
     void BuildCurrentABLineList(Vec3 pivot,
                                 double secondsSinceStart,
-                                CTrack &trk,
+                                CTrk &track,
                                 const CYouTurn &yt,
                                 const CVehicle &vehicle);
     void GetCurrentABLine(Vec3 pivot, Vec3 steer,
@@ -115,11 +112,11 @@ public:
 
     void DrawABLines(QOpenGLFunctions *gl, const QMatrix4x4 &mvp,
                      bool isFontOn,
-                     const CTrack &trk,
+                     const CTrk &track,
                      CYouTurn &yt,
                      const CCamera &camera,
                      const CGuidance &gyd);
-    void BuildTram(const CTrack &trk, CBoundary &bnd, CTram &tram);
+    void BuildTram(const CTrk &track, CBoundary &bnd, CTram &tram);
 
     CABLine &operator= (CABLine &src)
     {
@@ -142,8 +139,6 @@ public:
         distanceFromRefLine = src.distanceFromRefLine;
 
         goalPointAB = src.goalPointAB;
-
-        refLine = src.refLine;
 
         howManyPathsAway = src.howManyPathsAway;
         isMakingABLine = src.isMakingABLine;

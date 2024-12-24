@@ -6,9 +6,8 @@
 #include "cabline.h"
 #include "cvehicle.h"
 #include "cnmea.h"
-#include "cabline.h"
 #include "cboundary.h"
-#include "cabcurve.h"
+#include "ctrack.h"
 #include "glm.h"
 #include "cdubins.h"
 #include "glutils.h"
@@ -84,7 +83,6 @@ bool CYouTurn::BuildCurveDubinsYouTurn(bool isTurnLeft, Vec3 pivotPos,
 bool CYouTurn::BuildABLineDubinsYouTurn(bool isTurnLeft,
                                         CVehicle &vehicle,
                                         const CBoundary &bnd,
-                                        CABLine &ABLine,
                                         CTrack &trk,
                                         int &makeUTurnCounter,
                                         int secondsSinceStart)
@@ -93,8 +91,8 @@ bool CYouTurn::BuildABLineDubinsYouTurn(bool isTurnLeft,
     double tool_toolOverlap = property_setVehicle_toolOverlap;
     double tool_toolOffset = property_setVehicle_toolOffset;
 
-    if (!(bool)isBtnAutoSteerOn) ABLine.isHeadingSameWay
-            = M_PI - fabs(fabs(vehicle.fixHeading - ABLine.abHeading) - M_PI) < glm::PIBy2;
+    if (!(bool)isBtnAutoSteerOn) trk.ABLine.isHeadingSameWay
+            = M_PI - fabs(fabs(vehicle.fixHeading - trk.ABLine.abHeading) - M_PI) < glm::PIBy2;
 
     double turnOffset = (tool_toolWidth - tool_toolOverlap) * rowSkipsWidth
                         + (isYouTurnRight ? -tool_toolOffset * 2.0 : tool_toolOffset * 2.0);
@@ -107,17 +105,17 @@ bool CYouTurn::BuildABLineDubinsYouTurn(bool isTurnLeft,
         //Wide turn
         if (turnOffset > (youTurnRadius * 2.0))
         {
-            return (CreateABWideTurn(isTurnLeft, makeUTurnCounter, vehicle, bnd, ABLine, trk, secondsSinceStart));
+            return (CreateABWideTurn(isTurnLeft, makeUTurnCounter, vehicle, bnd, trk.ABLine, trk, secondsSinceStart));
         }
         //Small turn
         else
         {
-            return (CreateABOmegaTurn(isTurnLeft, makeUTurnCounter, vehicle, bnd, ABLine));
+            return (CreateABOmegaTurn(isTurnLeft, makeUTurnCounter, vehicle, bnd, trk.ABLine));
         }
     }
     else if (uTurnStyle == 1)
     {
-        return (KStyleTurnAB(isTurnLeft, makeUTurnCounter,vehicle,ABLine,bnd));
+        return (KStyleTurnAB(isTurnLeft, makeUTurnCounter,vehicle,trk.ABLine,bnd));
     }
 
     //prgramming error if you got here
@@ -286,7 +284,7 @@ bool CYouTurn::CreateCurveOmegaTurn(bool isTurnLeft, Vec3 pivotPos,
         //create the next line with this imaginary point
         //nextCurve = QSharedPointer<ABCurve>(new CABCurve());
         CABCurve nextCurve; // = QSharedPointer<CABCurve>(new CABCurve());
-        nextCurve.BuildCurveCurrentList(vehicle.pivotAxlePos,secondsSinceStart,vehicle,trk,bnd,*this);
+        nextCurve.BuildCurveCurrentList(vehicle.pivotAxlePos,secondsSinceStart,vehicle,trk.gArr[trk.idx],bnd,*this);
         vehicle.guidanceLookPos = tempguidanceLookPos;
 
         //get the index of the last yt point
@@ -510,7 +508,7 @@ bool CYouTurn::CreateCurveWideTurn(bool isTurnLeft, Vec3 pivotPos,
 
         //create the next line with this imaginary point
         //nextCurve = QSharedPointer<ABCurve>(new CABCurve());
-        nextCurve.BuildCurveCurrentList(vehicle.pivotAxlePos,secondsSinceStart,vehicle,trk,bnd,*this);
+        nextCurve.BuildCurveCurrentList(vehicle.pivotAxlePos,secondsSinceStart,vehicle,trk.gArr[trk.idx],bnd,*this);
         vehicle.guidanceLookPos = tempguidanceLookPos;
 
 
@@ -987,7 +985,7 @@ bool CYouTurn::CreateABWideTurn(bool isTurnLeft,
         }
 
         CABLine nextLine;
-        nextLine.BuildCurrentABLineList(vehicle.pivotAxlePos,secondsSinceStart,trk,*this,vehicle);
+        nextLine.BuildCurrentABLineList(vehicle.pivotAxlePos,secondsSinceStart,trk.gArr[trk.idx],*this,vehicle);
         vehicle.guidanceLookPos = tempguidanceLookPos;
 
         //going with or against boundary?
