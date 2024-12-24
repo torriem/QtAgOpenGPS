@@ -80,9 +80,15 @@ public:
     Q_PROPERTY(bool isAutoTrack MEMBER isAutoTrack NOTIFY isAutoTrackChanged)
     Q_PROPERTY(bool isAutoSnapToPivot MEMBER isAutoSnapToPivot NOTIFY isAutoSnapToPivotChanged)
     Q_PROPERTY(bool isAutoSnapped MEMBER isAutoSnapped NOTIFY isAutoSnappedChanged)
-    Q_PROPERTY(int howManyPathsAway READ getHowManyPathsAway)
+    Q_PROPERTY(int howManyPathsAway READ getHowManyPathsAway NOTIFY howManyPathsAwayChanged)
+    Q_PROPERTY(int mode READ getMode NOTIFY modeChanged)
 
     bool isLine, isAutoTrack = false, isAutoSnapToPivot = false, isAutoSnapped;
+
+    //creating new track
+    int new_mode;
+    Q_PROPERTY (QString newName MEMBER newName NOTIFY newNameChanged)
+    QString newName;
 
     explicit CTrack(QObject* parent = nullptr);
 
@@ -102,6 +108,7 @@ public:
                    bool isFontOn,
                    CYouTurn &yt, const CCamera &camera
                    , const CGuidance &gyd);
+    void DrawTrackGoalPoint(QOpenGLFunctions *gl, const QMatrix4x4 &mvp);
 
     void BuildCurrentLine(Vec3 pivot,
                           double secondsSinceStart, bool isAutoSteerbtnOn, int &makeUTurnCounter,
@@ -113,17 +120,16 @@ public:
                           CNMEA &pn);
 
     void ResetCurveLine();
+    void AddPathPoint(Vec3 point); //add point while building new curve or AB Line
 
+
+    //getters and setters for properties
     int getHowManyPathsAway();
-
-    void AddPathPoint(Vec3 point);
-
-    SETTER(int, idx, setIdx)
+    int getMode() { if (idx >=0) return gArr[idx].mode; else return 0; }
+    void setIdx(int new_idx);
     SETTER(bool, isAutoTrack, setIsAutoTrack)
     SETTER(bool, isAutoSnapToPivot, setIsAutoSnapToPivot)
     SETTER(bool, isAutoSnapped, setIsAutoSnapped)
-
-
     QObject *getModel() { return this;}
 
     // QML model interface
@@ -135,9 +141,13 @@ protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 signals:
     void idxChanged();
+    void modeChanged();
+    void modelChanged();
     void isAutoSnapToPivotChanged();
     void isAutoSnappedChanged();
     void isAutoTrackChanged();
+    void howManyPathsAwayChanged();
+    void newNameChanged();
 
 public slots:
     void reloadModel() {
@@ -145,7 +155,10 @@ public slots:
         //that may have been made in C++ code.
         beginResetModel();
         endResetModel();
+        emit modelChanged(); //not sure if this is necessary
     }
+
+    void start_new(int mode, double easting, double northing, double heading);
 
 private:
     // Used by QML model interface

@@ -3,6 +3,7 @@
 #include <QVector>
 #include <QFuture>
 #include <QtConcurrent/QtConcurrent>
+#include "glutils.h"
 #include "ctrack.h"
 #include "cvehicle.h"
 #include "glm.h"
@@ -354,6 +355,7 @@ void CTrack::DrawTrackNew(QOpenGLFunctions *gl, const QMatrix4x4 &mvp, const CCa
             curve.DrawCurveNew(gl, mvp);
     }
 }
+
 void CTrack::DrawTrack(QOpenGLFunctions *gl,
                        const QMatrix4x4 &mvp,
                        bool isFontOn,
@@ -366,6 +368,26 @@ void CTrack::DrawTrack(QOpenGLFunctions *gl,
             ABLine.DrawABLines(gl, mvp, isFontOn,gArr[idx], yt, camera, gyd);
         else if (gArr[idx].mode == TrackMode::Curve)
             curve.DrawCurve(gl, mvp, isFontOn, gArr[idx], yt, camera);
+    }
+}
+
+void CTrack::DrawTrackGoalPoint(QOpenGLFunctions *gl,
+                                const QMatrix4x4 &mvp)
+{
+    GLHelperOneColor gldraw1;
+    QColor color;
+
+    if (idx >= 0) {
+        color.setRgbF(0.98, 0.98, 0.098);
+        if (gArr[idx].mode == TrackMode::AB) {
+            gldraw1.append(QVector3D(ABLine.goalPointAB.easting, ABLine.goalPointAB.northing, 0));
+            gldraw1.draw(gl,mvp,QColor::fromRgbF(0,0,0),GL_POINTS,16);
+            gldraw1.draw(gl,mvp,color,GL_POINTS,10);
+        } else if (gArr[idx].mode == TrackMode::Curve) {
+            gldraw1.append(QVector3D(curve.goalPointCu.easting, curve.goalPointCu.northing, 0));
+            gldraw1.draw(gl,mvp,QColor::fromRgbF(0,0,0),GL_POINTS,16);
+            gldraw1.draw(gl,mvp,color,GL_POINTS,10);
+        }
     }
 }
 
@@ -395,6 +417,7 @@ void CTrack::BuildCurrentLine(Vec3 pivot, double secondsSinceStart,
             curve.GetCurrentCurveLine(pivot, vehicle.steerAxlePos,isAutoSteerBtnOn,vehicle,gArr[idx],yt,ahrs,gyd,pn,makeUTurnCounter);
         }
     }
+    emit howManyPathsAwayChanged(); //notify QML property is changed
 }
 
 void CTrack::ResetCurveLine()
@@ -403,18 +426,6 @@ void CTrack::ResetCurveLine()
         curve.curList.clear();
         setIdx(-1);
     }
-}
-
-int CTrack::getHowManyPathsAway()
-{
-    if (idx >= 0) {
-        if (gArr[idx].mode == TrackMode::AB)
-            return ABLine.howManyPathsAway;
-        else
-            return curve.howManyPathsAway;
-    }
-
-    return 0;
 }
 
 void CTrack::AddPathPoint(Vec3 point)
@@ -433,12 +444,32 @@ void CTrack::AddPathPoint(Vec3 point)
     }
 }
 
+int CTrack::getHowManyPathsAway()
+{
+    if (idx >= 0) {
+        if (gArr[idx].mode == TrackMode::AB)
+            return ABLine.howManyPathsAway;
+        else
+            return curve.howManyPathsAway;
+    }
+
+    return 0;
+}
+
+void CTrack::setIdx(int new_idx)
+{
+    if (new_idx < gArr.count()) {
+        idx = new_idx;
+        emit idxChanged();
+        emit modeChanged();
+    }
+}
+
 int CTrack::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return gArr.size();
 }
-
 
 QVariant CTrack::data(const QModelIndex &index, int role) const
 {
