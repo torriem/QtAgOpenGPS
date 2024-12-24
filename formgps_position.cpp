@@ -5,7 +5,6 @@
 #include "formgps.h"
 #include "cnmea.h"
 #include "cmodulecomm.h"
-#include "cabline.h"
 #include "ccontour.h"
 #include "cvehicle.h"
 #include "csection.h"
@@ -1238,19 +1237,8 @@ void FormGPS::UpdateFixPosition()
     aog->setProperty("steerAngleSet", vehicle.guidanceLineSteerAngle);
     aog->setProperty("droppedSentences", udpWatchCounts);
 
-    //NOTE:This will need some help. Also, do we still need the if statement at 1274?
-
-    if (trk.idx > -1) {
-        if (trk.gArr[trk.idx].mode == TrackMode::AB) {
-        //currentABLine_heading is set in formgps_ui.cpp
-            aog->setProperty("current_trackNum", trk.ABLine.howManyPathsAway);
-        } else {
-            aog->setProperty("current_trackNum", trk.curve.howManyPathsAway);
-        }
-    } else {
-        //TODO: add contour
-        aog->setProperty("current_trackNum", 0);
-    }
+    //TODO: access this in QML directly from trk.howManyPathsAway property
+    aog->setProperty("current_trackNum", trk.getHowManyPathsAway());
 
     if (!timerSim.isActive())
         //if running simulator pretend steer module
@@ -1660,21 +1648,7 @@ void FormGPS::AddSectionOrPathPoints()
         recPath.recList.append(CRecPathPt(vehicle.pivotAxlePos.easting, vehicle.pivotAxlePos.northing, vehicle.pivotAxlePos.heading, speed, autoBtn));
     }
 
-    if (trk.curve.isMakingCurve)
-    {
-        trk.curve.desList.append(Vec3(vehicle.pivotAxlePos.easting, vehicle.pivotAxlePos.northing, vehicle.pivotAxlePos.heading));
-    }
-    else if (trk.ABLine.isMakingABLine)
-    {
-        trk.ABLine.desHeading = atan2(vehicle.pivotAxlePos.easting - trk.ABLine.desPtA.easting,
-                                  vehicle.pivotAxlePos.northing - trk.ABLine.desPtA.northing);
-
-        trk.ABLine.desLineEndA.easting = trk.ABLine.desPtA.easting - (sin(trk.ABLine.desHeading) * 1000);
-        trk.ABLine.desLineEndA.northing = trk.ABLine.desPtA.northing - (cos(trk.ABLine.desHeading) * 1000);
-
-        trk.ABLine.desLineEndB.easting = trk.ABLine.desPtA.easting + (sin(trk.ABLine.desHeading) * 1000);
-        trk.ABLine.desLineEndB.northing = trk.ABLine.desPtA.northing + (cos(trk.ABLine.desHeading) * 1000);
-    }
+    trk.AddPathPoint(vehicle.pivotAxlePos);
 
     //save the north & east as previous
     prevSectionPos.northing = pn.fix.northing;

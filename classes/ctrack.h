@@ -80,7 +80,7 @@ public:
     Q_PROPERTY(bool isAutoTrack MEMBER isAutoTrack NOTIFY isAutoTrackChanged)
     Q_PROPERTY(bool isAutoSnapToPivot MEMBER isAutoSnapToPivot NOTIFY isAutoSnapToPivotChanged)
     Q_PROPERTY(bool isAutoSnapped MEMBER isAutoSnapped NOTIFY isAutoSnappedChanged)
-
+    Q_PROPERTY(int howManyPathsAway READ getHowManyPathsAway)
 
     bool isLine, isAutoTrack = false, isAutoSnapToPivot = false, isAutoSnapped;
 
@@ -114,6 +114,9 @@ public:
 
     void ResetCurveLine();
 
+    int getHowManyPathsAway();
+
+    void AddPathPoint(Vec3 point);
 
     SETTER(int, idx, setIdx)
     SETTER(bool, isAutoTrack, setIsAutoTrack)

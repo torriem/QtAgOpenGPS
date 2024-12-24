@@ -405,6 +405,34 @@ void CTrack::ResetCurveLine()
     }
 }
 
+int CTrack::getHowManyPathsAway()
+{
+    if (idx >= 0) {
+        if (gArr[idx].mode == TrackMode::AB)
+            return ABLine.howManyPathsAway;
+        else
+            return curve.howManyPathsAway;
+    }
+
+    return 0;
+}
+
+void CTrack::AddPathPoint(Vec3 point)
+{
+    if (curve.isMakingCurve) {
+        curve.desList.append(point);
+    } else if (ABLine.isMakingABLine) {
+        ABLine.desHeading = atan2(point.easting - ABLine.desPtA.easting,
+                                  point.northing - ABLine.desPtA.northing);
+
+        ABLine.desLineEndA.easting = ABLine.desPtA.easting - (sin(ABLine.desHeading) * 1000);
+        ABLine.desLineEndA.northing = ABLine.desPtA.northing - (cos(ABLine.desHeading) * 1000);
+
+        ABLine.desLineEndB.easting = ABLine.desPtA.easting + (sin(ABLine.desHeading) * 1000);
+        ABLine.desLineEndB.northing = ABLine.desPtA.northing + (cos(ABLine.desHeading) * 1000);
+    }
+}
+
 int CTrack::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
